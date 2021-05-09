@@ -344,7 +344,7 @@ And the full manifest:
   [1520ce14] AbstractTrees v0.3.4
   [79e6a3ab] Adapt v3.3.0
   [ec485272] ArnoldiMethod v0.1.0
-  [4fba245c] ArrayInterface v3.1.10
+  [4fba245c] ArrayInterface v3.1.11
   [9e28174c] BinDeps v1.0.2
   [fa961155] CEnum v0.4.1
   [d360d2e6] ChainRulesCore v0.9.41
@@ -355,17 +355,17 @@ And the full manifest:
   [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.0
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v3.27.0
+  [34da2185] Compat v3.28.0
   [8f4d0f93] Conda v1.5.2
-  [187b0558] ConstructionBase v1.1.0
+  [187b0558] ConstructionBase v1.2.1
   [d38c429a] Contour v0.5.7
   [9a962f9c] DataAPI v1.6.0
   [864edb3b] DataStructures v0.18.9
   [e2d170a0] DataValueInterfaces v1.0.0
-  [2b5f629d] DiffEqBase v6.60.1
+  [2b5f629d] DiffEqBase v6.61.0
   [f3b72e0c] DiffEqDevTools v2.27.2
   [c894b116] DiffEqJump v6.14.1
-  [77a26b50] DiffEqNoiseProcess v5.7.1
+  [77a26b50] DiffEqNoiseProcess v5.7.2
   [163ba53b] DiffResults v1.0.3
   [b552c78f] DiffRules v1.0.2
   [b4f34e82] Distances v0.10.3
@@ -375,6 +375,7 @@ And the full manifest:
   [e2ba6199] ExprTools v0.1.3
   [8f5d6c58] EzXML v1.1.0
   [c87230d0] FFMPEG v0.4.0
+  [7034ab61] FastBroadcast v0.1.4
   [9aa1b823] FastClosures v0.3.2
   [1a297f60] FillArrays v0.11.7
   [6a86dc24] FiniteDiff v2.8.0
@@ -388,7 +389,7 @@ And the full manifest:
   [42e2da0e] Grisu v1.0.2
   [cd3eb016] HTTP v0.9.8
   [eafb193a] Highlights v0.4.5
-  [0e44f5e4] Hwloc v1.3.0
+  [0e44f5e4] Hwloc v2.0.0
   [7073ff75] IJulia v1.23.2
   [615f187c] IfElse v0.1.0
   [d25df0c9] Inflate v0.1.2
@@ -406,7 +407,7 @@ And the full manifest:
   [093fc24a] LightGraphs v1.3.5
   [d3d80556] LineSearches v7.1.1
   [2ab3a3ac] LogExpFunctions v0.2.3
-  [bdcacae8] LoopVectorization v0.12.15
+  [bdcacae8] LoopVectorization v0.12.18
   [1914dd2f] MacroTools v0.5.6
   [739be429] MbedTLS v1.0.3
   [442fdcdd] Measures v0.3.1
@@ -415,7 +416,7 @@ And the full manifest:
   [961ee093] ModelingToolkit v5.16.0
   [46d2c3a1] MuladdMacro v0.2.2
   [ffc61752] Mustache v1.0.10
-  [d8a4904e] MutableArithmetics v0.2.18
+  [d8a4904e] MutableArithmetics v0.2.19
   [d41bc354] NLSolversBase v7.8.0
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v0.3.5
@@ -452,9 +453,9 @@ And the full manifest:
   [79098fc4] Rmath v0.7.0
   [47965b36] RootedTrees v1.0.0
   [7e49a35a] RuntimeGeneratedFunctions v0.5.2
-  [476501e8] SLEEFPirates v0.6.15
+  [476501e8] SLEEFPirates v0.6.17
   [1bc83da4] SafeTestsets v0.0.1
-  [0bca4576] SciMLBase v1.13.0
+  [0bca4576] SciMLBase v1.13.2
   [31c91b34] SciMLBenchmarks v0.1.0 `../..`
   [6c6a2e73] Scratch v1.0.3
   [efcf1570] Setfield v0.7.0
@@ -465,11 +466,11 @@ And the full manifest:
   [47a9eef4] SparseDiffTools v1.13.2
   [276daf66] SpecialFunctions v1.3.0
   [aedffcd0] Static v0.2.4
-  [90137ffa] StaticArrays v1.1.2
+  [90137ffa] StaticArrays v1.1.3
   [82ae8749] StatsAPI v1.0.0
   [2913bbd2] StatsBase v0.33.8
   [4c63d2b9] StatsFuns v0.9.8
-  [7792a7ef] StrideArraysCore v0.1.6
+  [7792a7ef] StrideArraysCore v0.1.7
   [09ab397b] StructArrays v0.5.1
   [c3572dad] Sundials v4.4.3
   [d1185830] SymbolicUtils v0.11.2
@@ -484,7 +485,7 @@ And the full manifest:
   [5c2747f8] URIs v1.3.0
   [3a884ed6] UnPack v1.0.2
   [1986cc42] Unitful v1.7.0
-  [3d5dd08c] VectorizationBase v0.19.34
+  [3d5dd08c] VectorizationBase v0.19.37
   [81def892] VersionParsing v1.2.0
   [19fa3120] VertexSafeGraphs v0.1.2
   [44d3d7a6] Weave v0.10.8
