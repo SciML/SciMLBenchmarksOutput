@@ -6,7 +6,6 @@ title: "VanDerPol Work-Precision Diagrams"
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODE, ODEInterfaceDiffEq, LSODA
 gr()
 using LinearAlgebra
-LinearAlgebra.BLAS.set_num_threads(1)
 
 van = @ode_def begin
   dy = μ*((1-x^2)*y - x)
