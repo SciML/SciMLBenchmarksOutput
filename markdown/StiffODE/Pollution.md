@@ -6,7 +6,6 @@ title: "POLLU Work-Precision Diagrams"
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODE, ODEInterfaceDiffEq, LSODA
 gr() # gr(fmt=:png)
 using LinearAlgebra
-LinearAlgebra.BLAS.set_num_threads(1)
 
 const k1=.35e0
 const k2=.266e2
