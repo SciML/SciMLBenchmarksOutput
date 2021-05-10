@@ -2,7 +2,6 @@
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODE, ODEInterfaceDiffEq, LSODA
 gr()
 using LinearAlgebra
-LinearAlgebra.BLAS.set_num_threads(1)
 
 rober = @ode_def begin
   dy₁ = -k₁*y₁+k₃*y₂*y₃
