@@ -64,7 +64,7 @@ sol = solve(prob,PDIRK44(),dt=2.0^(-8));
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:alg=>Rosenbrock23()),
-          Dict(:alg=>Rodas3()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>rodas()),
@@ -94,6 +94,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>KenCarp3()),
+          Dict(:alg=>lsoda()),
     # Dict(:alg=>SDIRK2()), # Removed because it's bad
           Dict(:alg=>radau())]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
@@ -144,7 +145,7 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (7:13)
 reltols = 1.0 ./ 10.0 .^ (4:10)
 
-setups = [Dict(:alg=>GRK4A()),
+setups = [Dict(:alg=>QNDF()),
           Dict(:alg=>Rodas4P()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
@@ -169,13 +170,14 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;
 plot(wp)
 
 
-setups = [
+setups = [Dict(:alg=>GRK4A()),
           Dict(:alg=>Rodas5()),
           Dict(:alg=>Kvaerno5()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>Rodas4()),
+          Dict(:alg=>lsoda()),
           Dict(:alg=>radau())]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)

@@ -152,7 +152,7 @@ This is the speed when you just want the answer. `ode23s` from ODE.jl was remove
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:alg=>Rosenbrock23()),
-          Dict(:alg=>Rodas3()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>rodas()),
           Dict(:alg=>lsoda()),
@@ -174,6 +174,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>KenCarp3()),
+          Dict(:alg=>lsoda()),
           # Dict(:alg=>SDIRK2()), # Removed because it's bad
           Dict(:alg=>radau())]
 names = ["Rosenbrock23" "Kvaerno3" "KenCarp4" "TRBDF2" "KenCarp3" "radau"]
@@ -182,7 +183,11 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;names=names,
 plot(wp)
 ```
 
-![](figures/ROBER_14_1.png)
+```
+Error: AssertionError: names === nothing || length(setups) == length(names)
+```
+
+
 
 ```julia
 setups = [Dict(:alg=>Rosenbrock23()),
@@ -228,7 +233,7 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:alg=>Rosenbrock23()),
-          Dict(:alg=>Rodas3()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>rodas()),
           Dict(:alg=>lsoda()),
@@ -289,7 +294,7 @@ abstols = 1.0 ./ 10.0 .^ (7:12)
 reltols = 1.0 ./ 10.0 .^ (4:9)
 
 setups = [Dict(:alg=>Rodas5()),
-          Dict(:alg=>Rodas4P()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
           Dict(:alg=>Rodas4()),
@@ -306,14 +311,15 @@ plot(wp)
 ![](figures/ROBER_20_1.png)
 
 ```julia
-setups = [Dict(:alg=>Rodas4P()),
-          Dict(:alg=>Kvaerno4()),
+setups = [Dict(:alg=>Kvaerno4()),
           Dict(:alg=>Kvaerno5()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
+          Dict(:alg=>KenCarp47()),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>Rodas4()),
           Dict(:alg=>Rodas5()),
+          Dict(:alg=>lsoda()),
           Dict(:alg=>radau())]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
@@ -361,59 +367,58 @@ Julia Version 1.6.1
 Commit 6aaedecc44 (2021-04-23 05:59 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
-  CPU: Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz
+  CPU: AMD EPYC 7502 32-Core Processor
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-11.0.1 (ORCJIT, skylake)
+  LLVM: libLLVM-11.0.1 (ORCJIT, znver2)
 Environment:
   JULIA_DEPOT_PATH = /root/.cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-  JULIA_NUM_THREADS = 3
 
 ```
 
 Package Information:
 
 ```
-      Status `/var/lib/buildkite-agent/builds/rtx2070-gpuci1-julia-csail-mit-edu/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+      Status `/var/lib/buildkite-agent/builds/amdci3-julia-csail-mit-edu/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
   [f3b72e0c] DiffEqDevTools v2.27.2
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.0
   [7f56f5a3] LSODA v0.7.0
   [c030b06c] ODE v2.13.0
   [09606e27] ODEInterfaceDiffEq v3.10.0
-  [1dea7af3] OrdinaryDiffEq v5.53.1
+  [1dea7af3] OrdinaryDiffEq v5.56.0
   [65888b18] ParameterizedFunctions v5.10.0
-  [91a5bcdd] Plots v1.13.2
-  [31c91b34] SciMLBenchmarks v0.1.0 `../..#`
+  [91a5bcdd] Plots v1.15.2
+  [31c91b34] SciMLBenchmarks v0.1.0
   [c3572dad] Sundials v4.4.3
-  [a759f4b9] TimerOutputs v0.5.8
+  [a759f4b9] TimerOutputs v0.5.9
   [37e2e46d] LinearAlgebra
 ```
 
 And the full manifest:
 
 ```
-      Status `/var/lib/buildkite-agent/builds/rtx2070-gpuci1-julia-csail-mit-edu/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
+      Status `/var/lib/buildkite-agent/builds/amdci3-julia-csail-mit-edu/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.16.0
   [621f4979] AbstractFFTs v1.0.1
   [1520ce14] AbstractTrees v0.3.4
   [79e6a3ab] Adapt v3.3.0
   [4c88cf16] Aqua v0.5.0
   [ec485272] ArnoldiMethod v0.1.0
-  [4fba245c] ArrayInterface v3.1.11
-  [4c555306] ArrayLayouts v0.4.12
+  [4fba245c] ArrayInterface v3.1.15
+  [4c555306] ArrayLayouts v0.5.4
   [9e28174c] BinDeps v1.0.2
   [b99e7846] BinaryProvider v0.5.10
   [a74b3585] Blosc v0.7.0
   [fa961155] CEnum v0.4.1
-  [d360d2e6] ChainRulesCore v0.9.41
-  [b630d9fa] CheapThreads v0.2.3
+  [d360d2e6] ChainRulesCore v0.9.44
+  [b630d9fa] CheapThreads v0.2.5
   [35d6a980] ColorSchemes v3.12.1
   [3da002f7] ColorTypes v0.11.0
   [5ae59095] Colors v0.12.8
   [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.0
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v3.28.0
+  [34da2185] Compat v3.30.0
   [8f4d0f93] Conda v1.5.2
   [187b0558] ConstructionBase v1.2.1
   [d38c429a] Contour v0.5.7
@@ -422,10 +427,10 @@ And the full manifest:
   [864edb3b] DataStructures v0.18.9
   [e2d170a0] DataValueInterfaces v1.0.0
   [55939f99] DecFP v1.1.0
-  [2b5f629d] DiffEqBase v6.61.0
+  [2b5f629d] DiffEqBase v6.62.2
   [f3b72e0c] DiffEqDevTools v2.27.2
-  [c894b116] DiffEqJump v6.14.1
-  [77a26b50] DiffEqNoiseProcess v5.7.2
+  [c894b116] DiffEqJump v6.14.2
+  [77a26b50] DiffEqNoiseProcess v5.7.3
   [163ba53b] DiffResults v1.0.3
   [b552c78f] DiffRules v1.0.2
   [b4f34e82] Distances v0.10.3
@@ -437,11 +442,11 @@ And the full manifest:
   [8f5d6c58] EzXML v1.1.0
   [c87230d0] FFMPEG v0.4.0
   [7a1cc6ca] FFTW v1.4.1
-  [7034ab61] FastBroadcast v0.1.5
+  [7034ab61] FastBroadcast v0.1.8
   [9aa1b823] FastClosures v0.3.2
   [442a2c76] FastGaussQuadrature v0.4.7
   [057dd010] FastTransforms v0.11.3
-  [1a297f60] FillArrays v0.10.2
+  [1a297f60] FillArrays v0.11.7
   [6a86dc24] FiniteDiff v2.8.0
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
@@ -455,7 +460,7 @@ And the full manifest:
   [d7ba0133] Git v1.2.1
   [42e2da0e] Grisu v1.0.2
   [f67ccb44] HDF5 v0.14.3
-  [cd3eb016] HTTP v0.9.8
+  [cd3eb016] HTTP v0.9.9
   [eafb193a] Highlights v0.4.5
   [0e44f5e4] Hwloc v2.0.0
   [7073ff75] IJulia v1.23.2
@@ -465,18 +470,18 @@ And the full manifest:
   [83e8ac13] IniFile v0.5.0
   [d8418881] Intervals v1.5.0
   [c8e1da08] IterTools v1.3.0
-  [42fd0dbc] IterativeSolvers v0.9.0
+  [42fd0dbc] IterativeSolvers v0.9.1
   [82899510] IteratorInterfaceExtensions v1.0.0
   [692b3bcd] JLLWrappers v1.3.0
   [682c06a0] JSON v0.21.1
   [7f56f5a3] LSODA v0.7.0
   [b964fa9f] LaTeXStrings v1.2.1
-  [2ee39098] LabelledArrays v1.6.0
+  [2ee39098] LabelledArrays v1.6.1
   [23fbe1c1] Latexify v0.15.5
   [093fc24a] LightGraphs v1.3.5
   [d3d80556] LineSearches v7.1.1
-  [2ab3a3ac] LogExpFunctions v0.2.3
-  [bdcacae8] LoopVectorization v0.12.18
+  [2ab3a3ac] LogExpFunctions v0.2.4
+  [bdcacae8] LoopVectorization v0.12.23
   [1914dd2f] MacroTools v0.5.6
   [739be429] MbedTLS v1.0.3
   [442fdcdd] Measures v0.3.1
@@ -493,18 +498,19 @@ And the full manifest:
   [c030b06c] ODE v2.13.0
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.10.0
-  [6fe1bfb0] OffsetArrays v1.8.0
+  [6fe1bfb0] OffsetArrays v1.9.0
   [429524aa] Optim v1.3.0
-  [bac558e1] OrderedCollections v1.4.0
-  [1dea7af3] OrdinaryDiffEq v5.53.1
+  [bac558e1] OrderedCollections v1.4.1
+  [1dea7af3] OrdinaryDiffEq v5.56.0
   [90014a1f] PDMats v0.11.0
   [65888b18] ParameterizedFunctions v5.10.0
   [d96e819e] Parameters v0.12.2
   [69de0a69] Parsers v1.1.0
   [ccf2f8ad] PlotThemes v2.0.1
   [995b91a9] PlotUtils v1.0.10
-  [91a5bcdd] Plots v1.13.2
+  [91a5bcdd] Plots v1.15.2
   [e409e4f3] PoissonRandom v0.4.0
+  [f517fe37] Polyester v0.3.1
   [f27b6e38] Polynomials v1.2.1
   [85a6dd25] PositiveFactorizations v0.2.4
   [21216c6a] Preferences v1.2.2
@@ -515,7 +521,7 @@ And the full manifest:
   [e6cf234a] RandomNumbers v1.4.0
   [3cdcf5f2] RecipesBase v1.1.1
   [01d81517] RecipesPipeline v0.3.2
-  [731186ca] RecursiveArrayTools v2.11.3
+  [731186ca] RecursiveArrayTools v2.11.4
   [f2c3362d] RecursiveFactorization v0.1.12
   [189a3867] Reexport v0.2.0
   [ae029012] Requires v1.1.3
@@ -523,10 +529,10 @@ And the full manifest:
   [79098fc4] Rmath v0.7.0
   [47965b36] RootedTrees v1.0.0
   [7e49a35a] RuntimeGeneratedFunctions v0.5.2
-  [476501e8] SLEEFPirates v0.6.17
+  [476501e8] SLEEFPirates v0.6.20
   [1bc83da4] SafeTestsets v0.0.1
-  [0bca4576] SciMLBase v1.13.2
-  [31c91b34] SciMLBenchmarks v0.1.0 `../..#`
+  [0bca4576] SciMLBase v1.13.4
+  [31c91b34] SciMLBenchmarks v0.1.0
   [6c6a2e73] Scratch v1.0.3
   [efcf1570] Setfield v0.7.0
   [992d4aef] Showoff v1.0.3
@@ -537,27 +543,27 @@ And the full manifest:
   [276daf66] SpecialFunctions v0.10.3
   [a25cea48] SpecialPolynomials v0.1.0
   [aedffcd0] Static v0.2.4
-  [90137ffa] StaticArrays v1.1.3
+  [90137ffa] StaticArrays v1.2.0
   [82ae8749] StatsAPI v1.0.0
   [2913bbd2] StatsBase v0.33.8
   [4c63d2b9] StatsFuns v0.9.8
-  [7792a7ef] StrideArraysCore v0.1.7
+  [7792a7ef] StrideArraysCore v0.1.11
   [09ab397b] StructArrays v0.5.1
   [c3572dad] Sundials v4.4.3
   [d1185830] SymbolicUtils v0.11.2
   [0c5d862f] Symbolics v0.1.25
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.4.2
-  [8290d209] ThreadingUtilities v0.4.1
-  [f269a46b] TimeZones v1.5.4
-  [a759f4b9] TimerOutputs v0.5.8
+  [8290d209] ThreadingUtilities v0.4.4
+  [f269a46b] TimeZones v1.5.5
+  [a759f4b9] TimerOutputs v0.5.9
   [c751599d] ToeplitzMatrices v0.6.3
   [a2a6695c] TreeViews v0.3.0
   [30578b45] URIParser v0.4.1
   [5c2747f8] URIs v1.3.0
   [3a884ed6] UnPack v1.0.2
   [1986cc42] Unitful v1.7.0
-  [3d5dd08c] VectorizationBase v0.19.37
+  [3d5dd08c] VectorizationBase v0.20.11
   [81def892] VersionParsing v1.2.0
   [19fa3120] VertexSafeGraphs v0.1.2
   [44d3d7a6] Weave v0.10.8
@@ -569,7 +575,7 @@ And the full manifest:
   [83423d85] Cairo_jll v1.16.0+6
   [47200ebd] DecFP_jll v2.0.2+0
   [5ae413db] EarCut_jll v2.1.5+1
-  [2e619515] Expat_jll v2.2.7+6
+  [2e619515] Expat_jll v2.2.10+0
   [b22a6f82] FFMPEG_jll v4.3.1+4
   [f5851436] FFTW_jll v3.3.9+7
   [34b6f7d7] FastTransforms_jll v0.4.1+0
@@ -587,32 +593,32 @@ And the full manifest:
   [aacddb02] JpegTurbo_jll v2.0.1+3
   [c1c5ebd0] LAME_jll v3.100.0+3
   [aae0fff6] LSODA_jll v0.1.1+0
-  [dd4b983a] LZO_jll v2.10.0+3
+  [dd4b983a] LZO_jll v2.10.1+0
   [dd192d2f] LibVPX_jll v1.9.0+1
-  [e9f186c6] Libffi_jll v3.2.1+4
-  [d4300ac3] Libgcrypt_jll v1.8.5+4
+  [e9f186c6] Libffi_jll v3.2.2+0
+  [d4300ac3] Libgcrypt_jll v1.8.7+0
   [7e76a0d4] Libglvnd_jll v1.3.0+3
-  [7add5ba3] Libgpg_error_jll v1.36.0+3
-  [94ce4f54] Libiconv_jll v1.16.0+7
-  [4b2f31a3] Libmount_jll v2.34.0+3
+  [7add5ba3] Libgpg_error_jll v1.42.0+0
+  [94ce4f54] Libiconv_jll v1.16.1+0
+  [4b2f31a3] Libmount_jll v2.35.0+0
   [89763e89] Libtiff_jll v4.1.0+2
-  [38a345b3] Libuuid_jll v2.34.0+7
-  [5ced341a] Lz4_jll v1.9.2+2
+  [38a345b3] Libuuid_jll v2.36.0+0
+  [5ced341a] Lz4_jll v1.9.3+0
   [856f044c] MKL_jll v2021.1.1+1
   [c771fb93] ODEInterface_jll v0.0.1+0
   [e7412a2a] Ogg_jll v1.3.4+2
   [458c3c95] OpenSSL_jll v1.1.1+6
   [efe28fd5] OpenSpecFun_jll v0.5.4+0
   [91d4177d] Opus_jll v1.3.1+3
-  [2f80f16e] PCRE_jll v8.42.0+4
-  [30392449] Pixman_jll v0.40.0+0
+  [2f80f16e] PCRE_jll v8.44.0+0
+  [30392449] Pixman_jll v0.40.1+0
   [ea2cea3b] Qt5Base_jll v5.15.2+0
   [f50d1b31] Rmath_jll v0.3.0+0
   [fb77eaff] Sundials_jll v5.2.0+1
   [a2964d1f] Wayland_jll v1.17.0+4
   [2381bf8a] Wayland_protocols_jll v1.18.0+4
-  [02c8fc9c] XML2_jll v2.9.11+0
-  [aed1982a] XSLT_jll v1.1.33+4
+  [02c8fc9c] XML2_jll v2.9.12+0
+  [aed1982a] XSLT_jll v1.1.34+0
   [4f6342f7] Xorg_libX11_jll v1.6.9+4
   [0c0b7dd1] Xorg_libXau_jll v1.0.9+4
   [935fb764] Xorg_libXcursor_jll v1.2.0+4
@@ -635,10 +641,10 @@ And the full manifest:
   [33bec58e] Xorg_xkeyboard_config_jll v2.27.0+4
   [c5fb5394] Xorg_xtrans_jll v1.4.0+3
   [8f1865be] ZeroMQ_jll v4.3.2+6
-  [3161d3a3] Zstd_jll v1.4.8+0
+  [3161d3a3] Zstd_jll v1.5.0+0
   [0ac62f75] libass_jll v0.14.0+4
   [f638f0a6] libfdk_aac_jll v0.1.6+4
-  [b53b4c65] libpng_jll v1.6.37+6
+  [b53b4c65] libpng_jll v1.6.38+0
   [a9144af2] libsodium_jll v1.0.20+0
   [f27f6e37] libvorbis_jll v1.3.6+6
   [1270edf5] x264_jll v2020.7.14+2

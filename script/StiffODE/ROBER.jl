@@ -66,7 +66,7 @@ sol = solve(prob,PDIRK44(),dt=2.0^(-8));
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:alg=>Rosenbrock23()),
-          Dict(:alg=>Rodas3()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>rodas()),
           Dict(:alg=>lsoda()),
@@ -85,6 +85,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>KenCarp3()),
+          Dict(:alg=>lsoda()),
           # Dict(:alg=>SDIRK2()), # Removed because it's bad
           Dict(:alg=>radau())]
 names = ["Rosenbrock23" "Kvaerno3" "KenCarp4" "TRBDF2" "KenCarp3" "radau"]
@@ -126,7 +127,7 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:alg=>Rosenbrock23()),
-          Dict(:alg=>Rodas3()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>rodas()),
           Dict(:alg=>lsoda()),
@@ -172,7 +173,7 @@ abstols = 1.0 ./ 10.0 .^ (7:12)
 reltols = 1.0 ./ 10.0 .^ (4:9)
 
 setups = [Dict(:alg=>Rodas5()),
-          Dict(:alg=>Rodas4P()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
           Dict(:alg=>Rodas4()),
@@ -186,14 +187,15 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;
 plot(wp)
 
 
-setups = [Dict(:alg=>Rodas4P()),
-          Dict(:alg=>Kvaerno4()),
+setups = [Dict(:alg=>Kvaerno4()),
           Dict(:alg=>Kvaerno5()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
+          Dict(:alg=>KenCarp47()),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>Rodas4()),
           Dict(:alg=>Rodas5()),
+          Dict(:alg=>lsoda()),
           Dict(:alg=>radau())]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)

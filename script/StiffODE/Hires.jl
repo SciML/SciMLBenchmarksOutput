@@ -52,7 +52,7 @@ setups = [
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:alg=>Rosenbrock23()),
-          Dict(:alg=>Rodas3()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>rodas()),
@@ -135,8 +135,8 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (7:13)
 reltols = 1.0 ./ 10.0 .^ (4:10)
 
-setups = [Dict(:alg=>GRK4A()),
-          Dict(:alg=>Rodas4P()),
+setups = [Dict(:alg=>QNDF()),
+          Dict(:alg=>Rodas4()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
           Dict(:alg=>Rodas5()),
@@ -160,10 +160,11 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;
 plot(wp)
 
 
-setups = [
+setups = [Dict(:alg=>GRK4A()),
           Dict(:alg=>Rodas5()),
           Dict(:alg=>Kvaerno5()),
           Dict(:alg=>CVODE_BDF()),
+          Dict(:alg=>lsoda()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>Rodas4()),
           Dict(:alg=>radau())]
@@ -182,7 +183,7 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;
 plot(wp)
 
 
-setups = [Dict(:alg=>Rosenbrock23()),
+setups = [Dict(:alg=>Rodas5()),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>KenCarp3()),

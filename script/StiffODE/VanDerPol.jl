@@ -72,6 +72,7 @@ abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
 setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>ddebdf()),
@@ -144,6 +145,7 @@ abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
 setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>ddebdf()),
@@ -201,7 +203,7 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 setups = [Dict(:alg=>Rodas3()),
-          Dict(:alg=>GRK4A()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>Rodas4P()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>Rodas4()),
@@ -246,7 +248,7 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 setups = [Dict(:alg=>Rodas3()),
-          Dict(:alg=>GRK4A()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>Rodas4P()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>Rodas4()),
