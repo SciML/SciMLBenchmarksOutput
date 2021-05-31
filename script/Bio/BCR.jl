@@ -2,7 +2,7 @@
 using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
       Sundials, Plots, DiffEqDevTools, ODEInterface, ODEInterfaceDiffEq,
       LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit
-      
+
 gr()
 datadir  = joinpath(dirname(pathof(ReactionNetworkImporters)),"../data/bcr")
 const to = TimerOutput()
@@ -62,6 +62,7 @@ reltols = 1.0 ./ 10.0 .^ (5:8);
 setups = [
           #Dict(:alg=>Rosenbrock23(autodiff=false)),
           Dict(:alg=>TRBDF2(autodiff=false)),
+          Dict(:alg=>QNDF(autodiff=false)),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>CVODE_BDF(linear_solver=:LapackDense)),
           #Dict(:alg=>rodas()),
@@ -69,6 +70,7 @@ setups = [
           #Dict(:alg=>Rodas4(autodiff=false)),
           #Dict(:alg=>Rodas5(autodiff=false)),
           Dict(:alg=>KenCarp4(autodiff=false)),
+          Dict(:alg=>KenCarp47(autodiff=false)),
           #Dict(:alg=>RadauIIA5(autodiff=false)),
           #Dict(:alg=>lsoda()),
           ]
@@ -87,16 +89,22 @@ plot(wp)
 setups = [
           #Dict(:alg=>Rosenbrock23(autodiff=false)),
           Dict(:alg=>TRBDF2(autodiff=false)),
-          #Dict(:alg=>CVODE_BDF(linear_solver=:KLU)),
+          Dict(:alg=>QNDF(autodiff=false)),
+          #Dict(:alg=>CVODE_BDF(linear_solver=:KLU)), # Fails!
           #Dict(:alg=>rodas()),
           #Dict(:alg=>radau()),
           #Dict(:alg=>Rodas4(autodiff=false)),
           #Dict(:alg=>Rodas5(autodiff=false)),
           Dict(:alg=>KenCarp4(autodiff=false)),
+          Dict(:alg=>KenCarp47(autodiff=false)),
           #Dict(:alg=>RadauIIA5(autodiff=false)),
           #Dict(:alg=>lsoda()),
           ]
 wp = WorkPrecisionSet(sparsejacprob,abstols,reltols,setups;error_estimate=:l2,
                       saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=1)
 plot(wp)
+
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
 
