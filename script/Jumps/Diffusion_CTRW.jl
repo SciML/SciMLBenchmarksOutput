@@ -1,37 +1,23 @@
 
-using DiffEqBase, DiffEqBiological, DiffEqJump, Plots, Statistics, DataFrames
+using DiffEqBase, Catalyst, DiffEqJump, DiffEqProblemLibrary.JumpProblemLibrary, Plots, Statistics, DataFrames
 gr()
 fmt = :png
+JumpProblemLibrary.importjumpproblems()
 
 
 N = 256
 h = 1 / N
-rn = @empty_reaction_network
-function getDiffNetwork!(rn,N)    
-    for i = 1:N
-        addspecies!(rn, Symbol(:u, i))
-    end
-    addparam!(rn, :β)
-    for i = 1:N
-        (i < N) && addreaction!(rn, :β, (Symbol(:u,i)=>1,), (Symbol(:u,i+1)=>1,))
-        (i > 1) && addreaction!(rn, :β, (Symbol(:u,i)=>1,), (Symbol(:u,i-1)=>1,))
-    end
-    rn
-end
-getDiffNetwork!(rn,N)
-addjumps!(rn, build_regular_jumps=false, minimal_jumps=true)
-rnpar = [1/(h*h)]
 u0 = 10*ones(Int64, N)
 tf = .01
-
-
 methods = (Direct(),DirectFW(),SortingDirect(),NRM(),DirectCR(),RSSA())
 shortlabels = [string(leg)[12:end-2] for leg in methods]
-prob    = prob = DiscreteProblem(u0, (0.0, tf), rnpar)
+jprob   = prob_jump_diffnetwork
+prob    = DiscreteProblem(u0, (0.0, tf), [1 / (h*h)])
+rn      = jprob.network(N)
 ploth   = plot(reuse=false)
 for (i,method) in enumerate(methods)
     println("Benchmarking method: ", method)
-    jump_prob = JumpProblem(prob, method, rn, save_positions=(false,false))
+    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
     sol = solve(jump_prob, SSAStepper(), saveat=tf/1000.)
     plot!(ploth,sol.t,sol[Int(N//2),:],label=shortlabels[i], format=fmt)
 end
@@ -49,7 +35,7 @@ end
 nsims = 50
 benchmarks = Vector{Vector{Float64}}()
 for method in methods
-    jump_prob = JumpProblem(prob, method, rn, save_positions=(false,false))
+    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
     stepper = SSAStepper()
     t = Vector{Float64}(undef,nsims)
     run_benchmark!(t, jump_prob, stepper)
@@ -77,6 +63,6 @@ ylabel!("median relative to Direct")
 title!("256 Site 1D Diffusion CTRW")
 
 
-using DiffEqBenchmarks
-DiffEqBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
 

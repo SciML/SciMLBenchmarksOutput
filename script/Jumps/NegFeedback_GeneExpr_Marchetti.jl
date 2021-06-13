@@ -1,5 +1,5 @@
 
-using DiffEqBase, OrdinaryDiffEq, DiffEqBiological, DiffEqJump, DiffEqProblemLibrary.JumpProblemLibrary, Plots, Statistics
+using DiffEqBase, OrdinaryDiffEq, Catalyst, DiffEqJump, DiffEqProblemLibrary.JumpProblemLibrary, Plots, Statistics
 gr()
 fmt = :png
 JumpProblemLibrary.importjumpproblems()
@@ -15,8 +15,8 @@ tf = jprob.tstop
 
 u0f = [1000., 0., 0., 0.,0.]
 odeprob = ODEProblem(rn, u0f, (0.,tf),rnpar)
-sol = solve(odeprob,Tsit5())
-plot(sol, format=:png, label=varlabels)
+solution = solve(odeprob,Tsit5())
+plot(solution, format=:png, label=varlabels)
 
 
 tf      = 4000.
@@ -26,7 +26,7 @@ prob    = prob = DiscreteProblem(u0, (0.0, tf), rnpar)
 ploth   = plot(reuse=false)
 p = []
 for (i,method) in enumerate(methods)
-    jump_prob = JumpProblem(prob, method, rn, save_positions=(false,false))
+    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
     sol = solve(jump_prob, SSAStepper(), saveat=tf/1000.)
     plot!(ploth,sol.t,sol[3,:],label=shortlabels[i], format=fmt)
     push!(p, plot(sol,title=shortlabels[i],leg=false,format=fmt))
@@ -48,7 +48,7 @@ end
 nsims = 50
 benchmarks = Vector{Vector{Float64}}()
 for method in methods
-    jump_prob = JumpProblem(prob, method, rn, save_positions=(false,false))
+    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
     stepper = SSAStepper()
     t = Vector{Float64}(undef, nsims)
     run_benchmark!(t, jump_prob, stepper)
@@ -74,6 +74,6 @@ ylabel!("median relative to Direct")
 title!("Marchetti Gene Expression Model")
 
 
-using DiffEqBenchmarks
-DiffEqBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
 

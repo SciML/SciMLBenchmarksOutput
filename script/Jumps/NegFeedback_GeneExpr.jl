@@ -13,7 +13,7 @@ tf      = prob_jump_dnarepressor.tstop
 rn      = prob_jump_dnarepressor.network
 ploth   = plot(reuse=false)
 for (i,method) in enumerate(methods)
-    jump_prob = JumpProblem(prob, method, rn, save_positions=(false,false))
+    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
     sol = solve(jump_prob, SSAStepper(), saveat=tf/1000.)
     plot!(ploth,sol.t,sol[3,:],label=shortlabels[i], format=fmt)
 end
@@ -22,7 +22,7 @@ plot(ploth, title="Protein level", xlabel="time",format=fmt)
 
 p = []
 for (i,method) in enumerate(methods)
-    jump_prob = JumpProblem(prob, method, rn, save_positions=(false,false))
+    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
     sol = solve(jump_prob, SSAStepper(), saveat=tf/1000.)
     push!(p, plot(sol,title=shortlabels[i],leg=false,format=fmt))
 end
@@ -40,7 +40,7 @@ end
 nsims = 500
 benchmarks = Vector{Vector{Float64}}()
 for method in methods
-    jump_prob = JumpProblem(prob, method, rn, save_positions=(false,false))
+    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
     stepper = SSAStepper()
     t = Vector{Float64}(undef,nsims)
     run_benchmark!(t, jump_prob, stepper)
@@ -68,6 +68,6 @@ ylabel!("median relative to Direct")
 title!("Negative Feedback Gene Expression Model")
 
 
-using DiffEqBenchmarks
-DiffEqBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
 
