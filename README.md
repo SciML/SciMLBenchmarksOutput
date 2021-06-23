@@ -1,22 +1,15 @@
-# SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Differential Equation Solver Software
+# SciMLBenchmarksOutput.jl: Benchmarks for Scientific Machine Learning (SciML) and Differential Equation Solver Software
 
 [![Join the chat at https://gitter.im/JuliaDiffEq/Lobby](https://badges.gitter.im/JuliaDiffEq/Lobby.svg)](https://gitter.im/JuliaDiffEq/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-SciMLBenchmarks.jl holds webpages, pdfs, and notebooks showing the benchmarks
+SciMLBenchmarksOutput.jl holds webpages, pdfs, and notebooks showing the benchmarks
 for the SciML Scientific Machine Learning Software ecosystem, including cross-language
 benchmarks of differential equation solvers and methods for parameter estimation,
 training universal differential equations (and subsets like neural ODEs), and more.
 
-## Interactive Notebooks
-
-To run the tutorials interactively via Jupyter notebooks and benchmark on your
-own machine, install the package and open the tutorials like:
-
-```julia
-]add "https://github.com/SciML/SciMLBenchmarks.jl"
-using SciMLBenchmarks
-SciMLBenchmarks.open_notebooks()
-```
+Currently, only the html, pdf, and markdown versions should be viewed here. To use
+the interactive notebooks and scripts, see https://github.com/SciML/SciMLBenchmarks.jl,
+since the interactive components require the environments contained in that repo.
 
 ## Table of Contents
 
@@ -194,27 +187,7 @@ over the set of tested equations and some specific examples may differ.
   any of the backends with the fine tuning of stepsize, constraints on the parameters, tightness of the
   priors and number of iterations being passed.
 
-## Contributing
-
-All of the files are generated from the Weave.jl files in the `benchmarks` folder. To run the generation process, do for example:
-
-```julia
-]activate SciMLBenchmarks # Get all of the packages
-using SciMLBenchmarks
-SciMLBenchmarks.weave_file("NonStiffODE","linear_wpd.jmd")
-```
-
-To generate all of the files in a folder, for example, run:
-
-```julia
-SciMLBenchmarks.weave_folder("NonStiffODE")
-```
-
-To generate all of the notebooks, do:
-
-```julia
-SciMLBenchmarks.weave_all()
-```
+### Notes
 
 Each of the benchmarks displays the computer characteristics at the bottom of
 the benchmark. Since performance-necessary computations are normally performed on
