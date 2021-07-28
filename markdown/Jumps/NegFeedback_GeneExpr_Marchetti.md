@@ -131,8 +131,8 @@ SciMLBenchmarks.weave_file("benchmarks/Jumps","NegFeedback_GeneExpr_Marchetti.jm
 Computer Information:
 
 ```
-Julia Version 1.6.1
-Commit 6aaedecc44 (2021-04-23 05:59 UTC)
+Julia Version 1.6.2
+Commit 1b93d53fc4 (2021-07-14 15:36 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
   CPU: AMD EPYC 7502 32-Core Processor

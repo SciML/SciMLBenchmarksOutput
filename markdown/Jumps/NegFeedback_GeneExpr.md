@@ -94,8 +94,8 @@ println(medtimes/medtimes[1])
 ```
 
 ```
-[1.0, 1.0072947176454796, 1.1299596580009, 1.1308928134399645, 0.9539406475
-246117, 1.53764121673364, 1.8636740429630447, 1.6135078591898442]
+[1.0, 1.0062984511189816, 1.1688812047750687, 1.1121003025619816, 0.9325547
+98545961, 1.5026913401350177, 1.8490641723701517, 1.566406602256932]
 ```
 
 
@@ -127,8 +127,8 @@ SciMLBenchmarks.weave_file("benchmarks/Jumps","NegFeedback_GeneExpr.jmd")
 Computer Information:
 
 ```
-Julia Version 1.6.1
-Commit 6aaedecc44 (2021-04-23 05:59 UTC)
+Julia Version 1.6.2
+Commit 1b93d53fc4 (2021-07-14 15:36 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
   CPU: AMD EPYC 7502 32-Core Processor
