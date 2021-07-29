@@ -83,22 +83,22 @@ show(to)
   
                              ──────────────────────   ─────────────────────
 ──
-      Tot / % measured:            312s / 100%            51.1GiB / 100%   
+      Tot / % measured:            316s / 100%            51.1GiB / 100%   
   
 
  Section             ncalls     time   %tot     avg     alloc   %tot      a
 vg
  ──────────────────────────────────────────────────────────────────────────
 ──
- ODEProb DenseJac         1     271s  86.8%    271s   42.4GiB  83.0%  42.4G
+ ODEProb DenseJac         1     274s  86.7%    274s   42.4GiB  83.0%  42.4G
 iB
- ODEProb SparseJac        1    27.7s  8.88%   27.7s   5.24GiB  10.3%  5.24G
+ ODEProb SparseJac        1    28.6s  9.03%   28.6s   5.24GiB  10.3%  5.24G
 iB
- ODEProb No Jac           1    11.4s  3.65%   11.4s   2.80GiB  5.49%  2.80G
+ ODEProb No Jac           1    11.2s  3.55%   11.2s   2.80GiB  5.49%  2.80G
 iB
- Create ODESys            1    1.20s  0.39%   1.20s    494MiB  0.94%   494M
+ Parse Network            1    1.43s  0.45%   1.43s    163MiB  0.31%   163M
 iB
- Parse Network            1    971ms  0.31%   971ms    163MiB  0.31%   163M
+ Create ODESys            1    840ms  0.27%   840ms    501MiB  0.96%   501M
 iB
  ──────────────────────────────────────────────────────────────────────────
 ──
@@ -186,7 +186,7 @@ test_sol  = TestSolution(sol)
 ```
 
 ```
-626.279363 seconds (4.70 M allocations: 2.204 GiB, 0.23% gc time, 0.09% com
+634.934950 seconds (4.71 M allocations: 2.204 GiB, 0.22% gc time, 0.09% com
 pilation time)
 retcode: Success
 Interpolation: 3rd order Hermite
@@ -342,8 +342,8 @@ SciMLBenchmarks.weave_file("benchmarks/Bio","BCR.jmd")
 Computer Information:
 
 ```
-Julia Version 1.6.1
-Commit 6aaedecc44 (2021-04-23 05:59 UTC)
+Julia Version 1.6.2
+Commit 1b93d53fc4 (2021-07-14 15:36 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
   CPU: AMD EPYC 7502 32-Core Processor
