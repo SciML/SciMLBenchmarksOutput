@@ -95,22 +95,24 @@ df = DataFrame(names=shortlabels,medtimes=medtimes,relmedtimes=(medtimes/medtime
 
 ```
 6×6 DataFrame
- Row │ names          medtimes  relmedtimes  avgtimes  std         cv
-     │ String         Float64   Float64      Float64   Float64     Float64
+ Row │ names          medtimes  relmedtimes  avgtimes  std         cv      
+    ⋯
+     │ String         Float64   Float64      Float64   Float64     Float64 
+    ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
-───
-   1 │ Direct         7.52408     1.0        7.52526   0.0107626   0.001430
-19
-   2 │ DirectFW       7.85886     1.04449    7.85742   0.012658    0.001610
-96
-   3 │ SortingDirect  1.16819     0.15526    1.16824   0.00330802  0.002831
-63
-   4 │ NRM            0.938239    0.124698   0.938778  0.00271122  0.002888
-03
-   5 │ DirectCR       0.686199    0.0912004  0.687267  0.00340709  0.004957
-45
-   6 │ RSSA           1.47649     0.196236   1.47604   0.00289684  0.001962
-57
+─────
+   1 │ Direct         7.46123      1.0       7.46191   0.00682438  0.000914
+562 ⋯
+   2 │ DirectFW       7.84583      1.05155   7.84386   0.0204513   0.002607
+3
+   3 │ SortingDirect  1.16642      0.156331  1.16616   0.0038116   0.003268
+5
+   4 │ NRM            0.933437     0.125105  0.933979  0.00175234  0.001876
+21
+   5 │ DirectCR       0.703743     0.09432   0.706227  0.00867802  0.012287
+9   ⋯
+   6 │ RSSA           1.47849      0.198156  1.47805   0.00250793  0.001696
+79
 ```
 
 
