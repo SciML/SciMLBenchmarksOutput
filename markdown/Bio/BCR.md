@@ -83,22 +83,22 @@ show(to)
   
                              ──────────────────────   ─────────────────────
 ──
-      Tot / % measured:            307s / 100%            51.1GiB / 100%   
+      Tot / % measured:            303s / 100%            51.1GiB / 100%   
   
 
  Section             ncalls     time   %tot     avg     alloc   %tot      a
 vg
  ──────────────────────────────────────────────────────────────────────────
 ──
- ODEProb DenseJac         1     266s  86.6%    266s   42.4GiB  83.0%  42.4G
+ ODEProb DenseJac         1     262s  86.5%    262s   42.4GiB  83.0%  42.4G
 iB
- ODEProb SparseJac        1    27.1s  8.80%   27.1s   5.24GiB  10.3%  5.24G
+ ODEProb SparseJac        1    27.2s  8.99%   27.2s   5.24GiB  10.3%  5.24G
 iB
- ODEProb No Jac           1    12.2s  3.96%   12.2s   2.80GiB  5.49%  2.80G
+ ODEProb No Jac           1    11.6s  3.84%   11.6s   2.80GiB  5.49%  2.80G
 iB
- Parse Network            1    987ms  0.32%   987ms    163MiB  0.31%   163M
+ Parse Network            1    1.25s  0.41%   1.25s    163MiB  0.31%   163M
 iB
- Create ODESys            1    958ms  0.31%   958ms    500MiB  0.96%   500M
+ Create ODESys            1    861ms  0.28%   861ms    501MiB  0.96%   501M
 iB
  ──────────────────────────────────────────────────────────────────────────
 ──
@@ -186,7 +186,7 @@ test_sol  = TestSolution(sol)
 ```
 
 ```
-628.210374 seconds (4.70 M allocations: 2.204 GiB, 0.43% gc time, 0.09% com
+625.709217 seconds (4.71 M allocations: 2.204 GiB, 0.41% gc time, 0.09% com
 pilation time)
 retcode: Success
 Interpolation: 3rd order Hermite
