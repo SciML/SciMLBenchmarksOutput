@@ -1,7 +1,7 @@
 
 using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
       Sundials, Plots, DiffEqDevTools, ODEInterface, ODEInterfaceDiffEq,
-      LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit
+      LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit, BenchmarkTools
 
 gr()
 datadir  = joinpath(dirname(pathof(ReactionNetworkImporters)),"../data/bcr")
@@ -31,12 +31,14 @@ show(to)
 
 u  = copy(u₀)
 du = similar(u)
-@timeit to "ODERHS Eval1" oprob.f(du,u,p,0.)
-@timeit to "ODERHS Eval2" oprob.f(du,u,p,0.)
-
-# force compilation for dense and sparse problem rhs
+@timeit to "ODE rhs Eval1" oprob.f(du,u,p,0.)
+@timeit to "ODE rhs Eval2" oprob.f(du,u,p,0.)
 densejacprob.f(du,u,p,0.)
 sparsejacprob.f(du,u,p,0.)
+
+
+@btime oprob.f($du,$u,$p,0.)
+
 
 J = zeros(length(u),length(u))
 @timeit to "DenseJac Eval1" densejacprob.f.jac(J,u,p,0.)
