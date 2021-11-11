@@ -99,18 +99,18 @@ df = DataFrame(names=shortlabels,medtimes=medtimes,relmedtimes=(medtimes/medtime
      │ String         Float64   Float64      Float64   Float64     Float64
 ─────┼─────────────────────────────────────────────────────────────────────
 ───
-   1 │ Direct         7.3644      1.0        7.36628   0.0159138   0.002160
-35
-   2 │ DirectFW       7.85598     1.06675    7.8586    0.0169428   0.002155
-95
-   3 │ SortingDirect  1.16383     0.158035   1.1641    0.00430912  0.003701
-68
-   4 │ NRM            0.954633    0.129628   0.957283  0.011125    0.011621
-5
-   5 │ DirectCR       0.682198    0.0926346  0.683164  0.00316508  0.004632
-97
-   6 │ RSSA           1.4688      0.199447   1.4693    0.00310265  0.002111
-66
+   1 │ Direct         7.31573     1.0        7.32097   0.0287634   0.003928
+91
+   2 │ DirectFW       7.76574     1.06151    7.76477   0.029427    0.003789
+81
+   3 │ SortingDirect  1.16258     0.158916   1.16305   0.00476312  0.004095
+38
+   4 │ NRM            0.946914    0.129435   0.950523  0.022528    0.023700
+6
+   5 │ DirectCR       0.684622    0.0935823  0.687381  0.00846155  0.012309
+8
+   6 │ RSSA           1.52625     0.208626   1.5269    0.00453423  0.002969
+57
 ```
 
 
@@ -143,8 +143,8 @@ SciMLBenchmarks.weave_file("benchmarks/Jumps","Diffusion_CTRW.jmd")
 Computer Information:
 
 ```
-Julia Version 1.6.2
-Commit 1b93d53fc4 (2021-07-14 15:36 UTC)
+Julia Version 1.6.3
+Commit ae8452a9e0 (2021-09-23 17:34 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
   CPU: AMD EPYC 7502 32-Core Processor
