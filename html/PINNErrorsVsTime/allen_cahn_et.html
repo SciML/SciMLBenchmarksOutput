@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<HTML lang = "en">
+<HEAD>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</title>
+  
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]},
+      TeX: { equationNumbers: { autoNumber: "AMS" } }
+    });
+  </script>
+
+  <script type="text/javascript" async src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+  </script>
+
+  
+<style>
+pre.hljl {
+    border: 1px solid #ccc;
+    margin: 5px;
+    padding: 5px;
+    overflow-x: auto;
+    color: rgb(68,68,68); background-color: rgb(251,251,251); }
+pre.hljl > span.hljl-t { }
+pre.hljl > span.hljl-w { }
+pre.hljl > span.hljl-e { }
+pre.hljl > span.hljl-eB { }
+pre.hljl > span.hljl-o { }
+pre.hljl > span.hljl-k { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kc { color: rgb(59,151,46); font-style: italic; }
+pre.hljl > span.hljl-kd { color: rgb(214,102,97); font-style: italic; }
+pre.hljl > span.hljl-kn { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kp { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kr { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-kt { color: rgb(148,91,176); font-weight: bold; }
+pre.hljl > span.hljl-n { }
+pre.hljl > span.hljl-na { }
+pre.hljl > span.hljl-nb { }
+pre.hljl > span.hljl-nbp { }
+pre.hljl > span.hljl-nc { }
+pre.hljl > span.hljl-ncB { }
+pre.hljl > span.hljl-nd { color: rgb(214,102,97); }
+pre.hljl > span.hljl-ne { }
+pre.hljl > span.hljl-neB { }
+pre.hljl > span.hljl-nf { color: rgb(66,102,213); }
+pre.hljl > span.hljl-nfm { color: rgb(66,102,213); }
+pre.hljl > span.hljl-np { }
+pre.hljl > span.hljl-nl { }
+pre.hljl > span.hljl-nn { }
+pre.hljl > span.hljl-no { }
+pre.hljl > span.hljl-nt { }
+pre.hljl > span.hljl-nv { }
+pre.hljl > span.hljl-nvc { }
+pre.hljl > span.hljl-nvg { }
+pre.hljl > span.hljl-nvi { }
+pre.hljl > span.hljl-nvm { }
+pre.hljl > span.hljl-l { }
+pre.hljl > span.hljl-ld { color: rgb(148,91,176); font-style: italic; }
+pre.hljl > span.hljl-s { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sa { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sb { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sc { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sd { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sdC { color: rgb(201,61,57); }
+pre.hljl > span.hljl-se { color: rgb(59,151,46); }
+pre.hljl > span.hljl-sh { color: rgb(201,61,57); }
+pre.hljl > span.hljl-si { }
+pre.hljl > span.hljl-so { color: rgb(201,61,57); }
+pre.hljl > span.hljl-sr { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ss { color: rgb(201,61,57); }
+pre.hljl > span.hljl-ssB { color: rgb(201,61,57); }
+pre.hljl > span.hljl-nB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nbB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nfB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nh { color: rgb(59,151,46); }
+pre.hljl > span.hljl-ni { color: rgb(59,151,46); }
+pre.hljl > span.hljl-nil { color: rgb(59,151,46); }
+pre.hljl > span.hljl-noB { color: rgb(59,151,46); }
+pre.hljl > span.hljl-oB { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-ow { color: rgb(102,102,102); font-weight: bold; }
+pre.hljl > span.hljl-p { }
+pre.hljl > span.hljl-c { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-ch { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cm { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cp { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cpB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-cs { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-csB { color: rgb(153,153,119); font-style: italic; }
+pre.hljl > span.hljl-g { }
+pre.hljl > span.hljl-gd { }
+pre.hljl > span.hljl-ge { }
+pre.hljl > span.hljl-geB { }
+pre.hljl > span.hljl-gh { }
+pre.hljl > span.hljl-gi { }
+pre.hljl > span.hljl-go { }
+pre.hljl > span.hljl-gp { }
+pre.hljl > span.hljl-gs { }
+pre.hljl > span.hljl-gsB { }
+pre.hljl > span.hljl-gt { }
+</style>
+
+
+
+  <style type="text/css">
+  @font-face {
+  font-style: normal;
+  font-weight: 300;
+}
+@font-face {
+  font-style: normal;
+  font-weight: 400;
+}
+@font-face {
+  font-style: normal;
+  font-weight: 600;
+}
+html {
+  font-family: sans-serif; /* 1 */
+  -ms-text-size-adjust: 100%; /* 2 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+}
+body {
+  margin: 0;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+menu,
+nav,
+section,
+summary {
+  display: block;
+}
+audio,
+canvas,
+progress,
+video {
+  display: inline-block; /* 1 */
+  vertical-align: baseline; /* 2 */
+}
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+[hidden],
+template {
+  display: none;
+}
+a:active,
+a:hover {
+  outline: 0;
+}
+abbr[title] {
+  border-bottom: 1px dotted;
+}
+b,
+strong {
+  font-weight: bold;
+}
+dfn {
+  font-style: italic;
+}
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+mark {
+  background: #ff0;
+  color: #000;
+}
+small {
+  font-size: 80%;
+}
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+sup {
+  top: -0.5em;
+}
+sub {
+  bottom: -0.25em;
+}
+img {
+  border: 0;
+}
+svg:not(:root) {
+  overflow: hidden;
+}
+figure {
+  margin: 1em 40px;
+}
+hr {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  height: 0;
+}
+pre {
+  overflow: auto;
+}
+code,
+kbd,
+pre,
+samp {
+  font-family: monospace, monospace;
+  font-size: 1em;
+}
+button,
+input,
+optgroup,
+select,
+textarea {
+  color: inherit; /* 1 */
+  font: inherit; /* 2 */
+  margin: 0; /* 3 */
+}
+button {
+  overflow: visible;
+}
+button,
+select {
+  text-transform: none;
+}
+button,
+html input[type="button"], /* 1 */
+input[type="reset"],
+input[type="submit"] {
+  -webkit-appearance: button; /* 2 */
+  cursor: pointer; /* 3 */
+}
+button[disabled],
+html input[disabled] {
+  cursor: default;
+}
+button::-moz-focus-inner,
+input::-moz-focus-inner {
+  border: 0;
+  padding: 0;
+}
+input {
+  line-height: normal;
+}
+input[type="checkbox"],
+input[type="radio"] {
+  box-sizing: border-box; /* 1 */
+  padding: 0; /* 2 */
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+input[type="search"] {
+  -webkit-appearance: textfield; /* 1 */
+  -moz-box-sizing: content-box;
+  -webkit-box-sizing: content-box; /* 2 */
+  box-sizing: content-box;
+}
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+fieldset {
+  border: 1px solid #c0c0c0;
+  margin: 0 2px;
+  padding: 0.35em 0.625em 0.75em;
+}
+legend {
+  border: 0; /* 1 */
+  padding: 0; /* 2 */
+}
+textarea {
+  overflow: auto;
+}
+optgroup {
+  font-weight: bold;
+}
+table {
+  font-family: monospace, monospace;
+  font-size : 0.8em;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+td,
+th {
+  padding: 0;
+}
+thead th {
+    border-bottom: 1px solid black;
+    background-color: white;
+}
+tr:nth-child(odd){
+  background-color: rgb(248,248,248);
+}
+
+
+/*
+* Skeleton V2.0.4
+* Copyright 2014, Dave Gamache
+* www.getskeleton.com
+* Free to use under the MIT license.
+* http://www.opensource.org/licenses/mit-license.php
+* 12/29/2014
+*/
+.container {
+  position: relative;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box; }
+.column,
+.columns {
+  width: 100%;
+  float: left;
+  box-sizing: border-box; }
+@media (min-width: 400px) {
+  .container {
+    width: 85%;
+    padding: 0; }
+}
+@media (min-width: 550px) {
+  .container {
+    width: 80%; }
+  .column,
+  .columns {
+    margin-left: 4%; }
+  .column:first-child,
+  .columns:first-child {
+    margin-left: 0; }
+
+  .one.column,
+  .one.columns                    { width: 4.66666666667%; }
+  .two.columns                    { width: 13.3333333333%; }
+  .three.columns                  { width: 22%;            }
+  .four.columns                   { width: 30.6666666667%; }
+  .five.columns                   { width: 39.3333333333%; }
+  .six.columns                    { width: 48%;            }
+  .seven.columns                  { width: 56.6666666667%; }
+  .eight.columns                  { width: 65.3333333333%; }
+  .nine.columns                   { width: 74.0%;          }
+  .ten.columns                    { width: 82.6666666667%; }
+  .eleven.columns                 { width: 91.3333333333%; }
+  .twelve.columns                 { width: 100%; margin-left: 0; }
+
+  .one-third.column               { width: 30.6666666667%; }
+  .two-thirds.column              { width: 65.3333333333%; }
+
+  .one-half.column                { width: 48%; }
+
+  /* Offsets */
+  .offset-by-one.column,
+  .offset-by-one.columns          { margin-left: 8.66666666667%; }
+  .offset-by-two.column,
+  .offset-by-two.columns          { margin-left: 17.3333333333%; }
+  .offset-by-three.column,
+  .offset-by-three.columns        { margin-left: 26%;            }
+  .offset-by-four.column,
+  .offset-by-four.columns         { margin-left: 34.6666666667%; }
+  .offset-by-five.column,
+  .offset-by-five.columns         { margin-left: 43.3333333333%; }
+  .offset-by-six.column,
+  .offset-by-six.columns          { margin-left: 52%;            }
+  .offset-by-seven.column,
+  .offset-by-seven.columns        { margin-left: 60.6666666667%; }
+  .offset-by-eight.column,
+  .offset-by-eight.columns        { margin-left: 69.3333333333%; }
+  .offset-by-nine.column,
+  .offset-by-nine.columns         { margin-left: 78.0%;          }
+  .offset-by-ten.column,
+  .offset-by-ten.columns          { margin-left: 86.6666666667%; }
+  .offset-by-eleven.column,
+  .offset-by-eleven.columns       { margin-left: 95.3333333333%; }
+
+  .offset-by-one-third.column,
+  .offset-by-one-third.columns    { margin-left: 34.6666666667%; }
+  .offset-by-two-thirds.column,
+  .offset-by-two-thirds.columns   { margin-left: 69.3333333333%; }
+
+  .offset-by-one-half.column,
+  .offset-by-one-half.columns     { margin-left: 52%; }
+
+}
+html {
+  font-size: 62.5%; }
+body {
+  font-size: 1.5em; /* currently ems cause chrome bug misinterpreting rems on body element */
+  line-height: 1.6;
+  font-weight: 400;
+  font-family: "Raleway", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #222; }
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  margin-bottom: 2rem;
+  font-weight: 300; }
+h1 { font-size: 3.6rem; line-height: 1.2;  letter-spacing: -.1rem;}
+h2 { font-size: 3.4rem; line-height: 1.25; letter-spacing: -.1rem; }
+h3 { font-size: 3.2rem; line-height: 1.3;  letter-spacing: -.1rem; }
+h4 { font-size: 2.8rem; line-height: 1.35; letter-spacing: -.08rem; }
+h5 { font-size: 2.4rem; line-height: 1.5;  letter-spacing: -.05rem; }
+h6 { font-size: 1.5rem; line-height: 1.6;  letter-spacing: 0; }
+
+p {
+  margin-top: 0; }
+a {
+  color: #1EAEDB; }
+a:hover {
+  color: #0FA0CE; }
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  display: inline-block;
+  height: 38px;
+  padding: 0 30px;
+  color: #555;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 38px;
+  letter-spacing: .1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  box-sizing: border-box; }
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover,
+.button:focus,
+button:focus,
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+input[type="button"]:focus {
+  color: #333;
+  border-color: #888;
+  outline: 0; }
+.button.button-primary,
+button.button-primary,
+input[type="submit"].button-primary,
+input[type="reset"].button-primary,
+input[type="button"].button-primary {
+  color: #FFF;
+  background-color: #33C3F0;
+  border-color: #33C3F0; }
+.button.button-primary:hover,
+button.button-primary:hover,
+input[type="submit"].button-primary:hover,
+input[type="reset"].button-primary:hover,
+input[type="button"].button-primary:hover,
+.button.button-primary:focus,
+button.button-primary:focus,
+input[type="submit"].button-primary:focus,
+input[type="reset"].button-primary:focus,
+input[type="button"].button-primary:focus {
+  color: #FFF;
+  background-color: #1EAEDB;
+  border-color: #1EAEDB; }
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea,
+select {
+  height: 38px;
+  padding: 6px 10px; /* The 6px vertically centers text on FF, ignored by Webkit */
+  background-color: #fff;
+  border: 1px solid #D1D1D1;
+  border-radius: 4px;
+  box-shadow: none;
+  box-sizing: border-box; }
+/* Removes awkward default styles on some inputs for iOS */
+input[type="email"],
+input[type="number"],
+input[type="search"],
+input[type="text"],
+input[type="tel"],
+input[type="url"],
+input[type="password"],
+textarea {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none; }
+textarea {
+  min-height: 65px;
+  padding-top: 6px;
+  padding-bottom: 6px; }
+input[type="email"]:focus,
+input[type="number"]:focus,
+input[type="search"]:focus,
+input[type="text"]:focus,
+input[type="tel"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid #33C3F0;
+  outline: 0; }
+label,
+legend {
+  display: block;
+  margin-bottom: .5rem;
+  font-weight: 600; }
+fieldset {
+  padding: 0;
+  border-width: 0; }
+input[type="checkbox"],
+input[type="radio"] {
+  display: inline; }
+label > .label-body {
+  display: inline-block;
+  margin-left: .5rem;
+  font-weight: normal; }
+ul {
+  list-style: circle; }
+ol {
+  list-style: decimal; }
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+  margin: 1.5rem 0 1.5rem 3rem;
+  font-size: 90%; }
+li > p {margin : 0;}
+th,
+td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #E1E1E1; }
+th:first-child,
+td:first-child {
+  padding-left: 0; }
+th:last-child,
+td:last-child {
+  padding-right: 0; }
+button,
+.button {
+  margin-bottom: 1rem; }
+input,
+textarea,
+select,
+fieldset {
+  margin-bottom: 1.5rem; }
+pre,
+blockquote,
+dl,
+figure,
+table,
+p,
+ul,
+ol,
+form {
+  margin-bottom: 1.0rem; }
+.u-full-width {
+  width: 100%;
+  box-sizing: border-box; }
+.u-max-full-width {
+  max-width: 100%;
+  box-sizing: border-box; }
+.u-pull-right {
+  float: right; }
+.u-pull-left {
+  float: left; }
+hr {
+  margin-top: 3rem;
+  margin-bottom: 3.5rem;
+  border-width: 0;
+  border-top: 1px solid #E1E1E1; }
+.container:after,
+.row:after,
+.u-cf {
+  content: "";
+  display: table;
+  clear: both; }
+
+pre {
+  display: block;
+  padding: 9.5px;
+  margin: 0 0 10px;
+  font-size: 13px;
+  line-height: 1.42857143;
+  word-break: break-all;
+  word-wrap: break-word;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+pre.hljl {
+  margin: 0 0 10px;
+  display: block;
+  background: #f5f5f5;
+  border-radius: 4px;
+  padding : 5px;
+}
+
+pre.output {
+  background: #ffffff;
+}
+
+pre.code {
+  background: #ffffff;
+}
+
+pre.julia-error {
+  color : red
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  font-size: 0.9em;
+}
+
+
+@media (min-width: 400px) {}
+@media (min-width: 550px) {}
+@media (min-width: 750px) {}
+@media (min-width: 1000px) {}
+@media (min-width: 1200px) {}
+
+h1.title {margin-top : 20px}
+img {max-width : 100%}
+div.title {text-align: center;}
+
+  </style>
+</HEAD>
+
+<BODY>
+  <div class ="container">
+    <div class = "row">
+      <div class = "col-md-12 twelve columns">
+        <div class="title">
+          <h1 class="title">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</h1>
+          <h5>Kirill Zubov, Zoe McCarthy, Yingbo Ma, Francesco Calisto, Valerio Pagliarino, Simone Azeglio, Luca Bottero, Emmanuel Luján, Valentin Sulzer, Ashutosh Bharambe, Nand Vinchhi, Kaushik Balakrishnan, Devesh Upadhyay, Chris Rackauckas</h5>
+          
+        </div>
+
+        <p>Adapted from <a href="https://arxiv.org/abs/2107.09443">NeuralPDE: Automating Physics-Informed Neural Networks &#40;PINNs&#41; with Error Approximations</a>. Uses the <a href="https://neuralpde.sciml.ai/dev/">NeuralPDE.jl</a> library from the <a href="https://sciml.ai/">SciML Scientific Machine Learning Open Source Organization</a> for the implementation of physics-informed neural networks &#40;PINNs&#41; and other science-guided AI techniques.</p>
+<h2>Setup Code</h2>
+
+
+<pre class='hljl'>
+<span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-t'>
+</span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>Quadrature</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Cubature</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Cuba</span><span class='hljl-t'>
+</span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>Flux</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>ModelingToolkit</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>GalacticOptim</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>Optim</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>DiffEqFlux</span><span class='hljl-t'>
+</span><span class='hljl-cs'>#using Plots</span><span class='hljl-t'>
+</span><span class='hljl-cs'>#using PyPlot</span><span class='hljl-t'>
+</span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>DelimitedFiles</span><span class='hljl-t'>
+</span><span class='hljl-k'>using</span><span class='hljl-t'> </span><span class='hljl-n'>QuasiMonteCarlo</span><span class='hljl-t'>
+
+</span><span class='hljl-k'>function</span><span class='hljl-t'> </span><span class='hljl-nf'>allen_cahn</span><span class='hljl-p'>(</span><span class='hljl-n'>strategy</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizer</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>maxIters</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-cs'>##  DECLARATIONS</span><span class='hljl-t'>
+    </span><span class='hljl-nd'>@parameters</span><span class='hljl-t'>  </span><span class='hljl-n'>t</span><span class='hljl-t'> </span><span class='hljl-n'>x1</span><span class='hljl-t'> </span><span class='hljl-n'>x2</span><span class='hljl-t'> </span><span class='hljl-n'>x3</span><span class='hljl-t'> </span><span class='hljl-n'>x4</span><span class='hljl-t'>
+    </span><span class='hljl-nd'>@variables</span><span class='hljl-t'>   </span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-oB'>..</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>Dt</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Differential</span><span class='hljl-p'>(</span><span class='hljl-n'>t</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>Dxx1</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Differential</span><span class='hljl-p'>(</span><span class='hljl-n'>x1</span><span class='hljl-p'>)</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'>
+    </span><span class='hljl-n'>Dxx2</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Differential</span><span class='hljl-p'>(</span><span class='hljl-n'>x2</span><span class='hljl-p'>)</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'>
+    </span><span class='hljl-n'>Dxx3</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Differential</span><span class='hljl-p'>(</span><span class='hljl-n'>x3</span><span class='hljl-p'>)</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'>
+    </span><span class='hljl-n'>Dxx4</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Differential</span><span class='hljl-p'>(</span><span class='hljl-n'>x4</span><span class='hljl-p'>)</span><span class='hljl-oB'>^</span><span class='hljl-ni'>2</span><span class='hljl-t'>
+
+
+    </span><span class='hljl-cs'># Discretization</span><span class='hljl-t'>
+    </span><span class='hljl-n'>tmax</span><span class='hljl-t'>         </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1.0</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x1width</span><span class='hljl-t'>      </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1.0</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x2width</span><span class='hljl-t'>      </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1.0</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x3width</span><span class='hljl-t'>      </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1.0</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x4width</span><span class='hljl-t'>      </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1.0</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>tMeshNum</span><span class='hljl-t'>     </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>10</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x1MeshNum</span><span class='hljl-t'>    </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>10</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x2MeshNum</span><span class='hljl-t'>    </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>10</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x3MeshNum</span><span class='hljl-t'>    </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>10</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x4MeshNum</span><span class='hljl-t'>    </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>10</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>dt</span><span class='hljl-t'>   </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>tmax</span><span class='hljl-oB'>/</span><span class='hljl-n'>tMeshNum</span><span class='hljl-t'>
+    </span><span class='hljl-n'>dx1</span><span class='hljl-t'>  </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>x1width</span><span class='hljl-oB'>/</span><span class='hljl-n'>x1MeshNum</span><span class='hljl-t'>
+    </span><span class='hljl-n'>dx2</span><span class='hljl-t'>  </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>x2width</span><span class='hljl-oB'>/</span><span class='hljl-n'>x2MeshNum</span><span class='hljl-t'>
+    </span><span class='hljl-n'>dx3</span><span class='hljl-t'>  </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>x3width</span><span class='hljl-oB'>/</span><span class='hljl-n'>x3MeshNum</span><span class='hljl-t'>
+    </span><span class='hljl-n'>dx4</span><span class='hljl-t'>  </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>x4width</span><span class='hljl-oB'>/</span><span class='hljl-n'>x4MeshNum</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>domains</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-n'>t</span><span class='hljl-t'> </span><span class='hljl-oB'>∈</span><span class='hljl-t'> </span><span class='hljl-nf'>IntervalDomain</span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.0</span><span class='hljl-p'>,</span><span class='hljl-n'>tmax</span><span class='hljl-p'>),</span><span class='hljl-t'>
+               </span><span class='hljl-n'>x1</span><span class='hljl-t'> </span><span class='hljl-oB'>∈</span><span class='hljl-t'> </span><span class='hljl-nf'>IntervalDomain</span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.0</span><span class='hljl-p'>,</span><span class='hljl-n'>x1width</span><span class='hljl-p'>),</span><span class='hljl-t'>
+               </span><span class='hljl-n'>x2</span><span class='hljl-t'> </span><span class='hljl-oB'>∈</span><span class='hljl-t'> </span><span class='hljl-nf'>IntervalDomain</span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.0</span><span class='hljl-p'>,</span><span class='hljl-n'>x2width</span><span class='hljl-p'>),</span><span class='hljl-t'>
+               </span><span class='hljl-n'>x3</span><span class='hljl-t'> </span><span class='hljl-oB'>∈</span><span class='hljl-t'> </span><span class='hljl-nf'>IntervalDomain</span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.0</span><span class='hljl-p'>,</span><span class='hljl-n'>x3width</span><span class='hljl-p'>),</span><span class='hljl-t'>
+               </span><span class='hljl-n'>x4</span><span class='hljl-t'> </span><span class='hljl-oB'>∈</span><span class='hljl-t'> </span><span class='hljl-nf'>IntervalDomain</span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.0</span><span class='hljl-p'>,</span><span class='hljl-n'>x4width</span><span class='hljl-p'>)]</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>ts</span><span class='hljl-t'>  </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.0</span><span class='hljl-t'> </span><span class='hljl-oB'>:</span><span class='hljl-t'> </span><span class='hljl-n'>dt</span><span class='hljl-t'> </span><span class='hljl-oB'>:</span><span class='hljl-t'> </span><span class='hljl-n'>tmax</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x1s</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.0</span><span class='hljl-t'> </span><span class='hljl-oB'>:</span><span class='hljl-t'> </span><span class='hljl-n'>dx1</span><span class='hljl-t'> </span><span class='hljl-oB'>:</span><span class='hljl-t'> </span><span class='hljl-n'>x1width</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x2s</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.0</span><span class='hljl-t'> </span><span class='hljl-oB'>:</span><span class='hljl-t'> </span><span class='hljl-n'>dx2</span><span class='hljl-t'> </span><span class='hljl-oB'>:</span><span class='hljl-t'> </span><span class='hljl-n'>x2width</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x3s</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.0</span><span class='hljl-t'> </span><span class='hljl-oB'>:</span><span class='hljl-t'> </span><span class='hljl-n'>dx3</span><span class='hljl-t'> </span><span class='hljl-oB'>:</span><span class='hljl-t'> </span><span class='hljl-n'>x3width</span><span class='hljl-t'>
+    </span><span class='hljl-n'>x4s</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.0</span><span class='hljl-t'> </span><span class='hljl-oB'>:</span><span class='hljl-t'> </span><span class='hljl-n'>dx4</span><span class='hljl-t'> </span><span class='hljl-oB'>:</span><span class='hljl-t'> </span><span class='hljl-n'>x4width</span><span class='hljl-t'>
+
+    </span><span class='hljl-cs'># Operators</span><span class='hljl-t'>
+    </span><span class='hljl-n'>Δu</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Dxx1</span><span class='hljl-p'>(</span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>))</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-nf'>Dxx2</span><span class='hljl-p'>(</span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>))</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-nf'>Dxx3</span><span class='hljl-p'>(</span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>))</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-nf'>Dxx4</span><span class='hljl-p'>(</span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>))</span><span class='hljl-t'> </span><span class='hljl-cs'># Laplacian</span><span class='hljl-t'>
+
+
+    </span><span class='hljl-cs'># Equation</span><span class='hljl-t'>
+    </span><span class='hljl-n'>eq</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Dt</span><span class='hljl-p'>(</span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>))</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-n'>Δu</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>)</span><span class='hljl-oB'>*</span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>)</span><span class='hljl-oB'>*</span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>~</span><span class='hljl-t'> </span><span class='hljl-ni'>0</span><span class='hljl-t'>  </span><span class='hljl-cs'>#ALLEN CAHN EQUATION</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>initialCondition</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'>  </span><span class='hljl-ni'>1</span><span class='hljl-oB'>/</span><span class='hljl-p'>(</span><span class='hljl-ni'>2</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.4</span><span class='hljl-t'> </span><span class='hljl-oB'>*</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>x1</span><span class='hljl-oB'>*</span><span class='hljl-n'>x1</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>x2</span><span class='hljl-oB'>*</span><span class='hljl-n'>x2</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>x3</span><span class='hljl-oB'>*</span><span class='hljl-n'>x3</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-n'>x4</span><span class='hljl-oB'>*</span><span class='hljl-n'>x4</span><span class='hljl-p'>))</span><span class='hljl-t'> </span><span class='hljl-cs'># see PNAS paper</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>bcs</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-nf'>u</span><span class='hljl-p'>(</span><span class='hljl-ni'>0</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>~</span><span class='hljl-t'> </span><span class='hljl-n'>initialCondition</span><span class='hljl-p'>]</span><span class='hljl-t'>  </span><span class='hljl-cs'>#from literature</span><span class='hljl-t'>
+
+    </span><span class='hljl-cs'>## NEURAL NETWORK</span><span class='hljl-t'>
+    </span><span class='hljl-n'>n</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>20</span><span class='hljl-t'>   </span><span class='hljl-cs'>#neuron number</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>chain</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>FastChain</span><span class='hljl-p'>(</span><span class='hljl-nf'>FastDense</span><span class='hljl-p'>(</span><span class='hljl-ni'>5</span><span class='hljl-p'>,</span><span class='hljl-n'>n</span><span class='hljl-p'>,</span><span class='hljl-n'>Flux</span><span class='hljl-oB'>.</span><span class='hljl-n'>σ</span><span class='hljl-p'>),</span><span class='hljl-nf'>FastDense</span><span class='hljl-p'>(</span><span class='hljl-n'>n</span><span class='hljl-p'>,</span><span class='hljl-n'>n</span><span class='hljl-p'>,</span><span class='hljl-n'>Flux</span><span class='hljl-oB'>.</span><span class='hljl-n'>σ</span><span class='hljl-p'>),</span><span class='hljl-nf'>FastDense</span><span class='hljl-p'>(</span><span class='hljl-n'>n</span><span class='hljl-p'>,</span><span class='hljl-ni'>1</span><span class='hljl-p'>))</span><span class='hljl-t'>   </span><span class='hljl-cs'>#Neural network from Flux library</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>indvars</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>]</span><span class='hljl-t'>   </span><span class='hljl-cs'>#phisically independent variables</span><span class='hljl-t'>
+    </span><span class='hljl-n'>depvars</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-n'>u</span><span class='hljl-p'>]</span><span class='hljl-t'>       </span><span class='hljl-cs'>#dependent (target) variable</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>dim</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>length</span><span class='hljl-p'>(</span><span class='hljl-n'>domains</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>losses</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[]</span><span class='hljl-t'>
+    </span><span class='hljl-n'>error</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[]</span><span class='hljl-t'>
+    </span><span class='hljl-n'>times</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[]</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>dx_err</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.1</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>error_strategy</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>GridTraining</span><span class='hljl-p'>(</span><span class='hljl-n'>dx_err</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>initθ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>DiffEqFlux</span><span class='hljl-oB'>.</span><span class='hljl-nf'>initial_params</span><span class='hljl-p'>(</span><span class='hljl-n'>chain</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>eltypeθ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>eltype</span><span class='hljl-p'>(</span><span class='hljl-n'>initθ</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>parameterless_type_θ</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>DiffEqBase</span><span class='hljl-oB'>.</span><span class='hljl-nf'>parameterless_type</span><span class='hljl-p'>(</span><span class='hljl-n'>initθ</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>phi</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>get_phi</span><span class='hljl-p'>(</span><span class='hljl-n'>chain</span><span class='hljl-p'>,</span><span class='hljl-n'>parameterless_type_θ</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>derivative</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>get_numeric_derivative</span><span class='hljl-p'>()</span><span class='hljl-t'>
+
+
+    </span><span class='hljl-n'>_pde_loss_function</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>build_loss_function</span><span class='hljl-p'>(</span><span class='hljl-n'>eq</span><span class='hljl-p'>,</span><span class='hljl-n'>indvars</span><span class='hljl-p'>,</span><span class='hljl-n'>depvars</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                                             </span><span class='hljl-n'>phi</span><span class='hljl-p'>,</span><span class='hljl-n'>derivative</span><span class='hljl-p'>,</span><span class='hljl-n'>chain</span><span class='hljl-p'>,</span><span class='hljl-n'>initθ</span><span class='hljl-p'>,</span><span class='hljl-n'>error_strategy</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>bc_indvars</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>get_variables</span><span class='hljl-p'>(</span><span class='hljl-n'>bcs</span><span class='hljl-p'>,</span><span class='hljl-n'>indvars</span><span class='hljl-p'>,</span><span class='hljl-n'>depvars</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>_bc_loss_functions</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>build_loss_function</span><span class='hljl-p'>(</span><span class='hljl-n'>bc</span><span class='hljl-p'>,</span><span class='hljl-n'>indvars</span><span class='hljl-p'>,</span><span class='hljl-n'>depvars</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                                              </span><span class='hljl-n'>phi</span><span class='hljl-p'>,</span><span class='hljl-n'>derivative</span><span class='hljl-p'>,</span><span class='hljl-n'>chain</span><span class='hljl-p'>,</span><span class='hljl-n'>initθ</span><span class='hljl-p'>,</span><span class='hljl-n'>error_strategy</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                                              </span><span class='hljl-n'>bc_indvars</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>bc_indvar</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-k'>for</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>bc</span><span class='hljl-p'>,</span><span class='hljl-n'>bc_indvar</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-kp'>in</span><span class='hljl-t'> </span><span class='hljl-nf'>zip</span><span class='hljl-p'>(</span><span class='hljl-n'>bcs</span><span class='hljl-p'>,</span><span class='hljl-n'>bc_indvars</span><span class='hljl-p'>)]</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>train_sets</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>generate_training_sets</span><span class='hljl-p'>(</span><span class='hljl-n'>domains</span><span class='hljl-p'>,</span><span class='hljl-n'>dx_err</span><span class='hljl-p'>,[</span><span class='hljl-n'>eq</span><span class='hljl-p'>],</span><span class='hljl-n'>bcs</span><span class='hljl-p'>,</span><span class='hljl-n'>indvars</span><span class='hljl-p'>,</span><span class='hljl-n'>depvars</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>train_domain_set</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>train_bound_set</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>train_sets</span><span class='hljl-t'>
+
+
+    </span><span class='hljl-n'>pde_loss_function</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>get_loss_function</span><span class='hljl-p'>([</span><span class='hljl-n'>_pde_loss_function</span><span class='hljl-p'>],</span><span class='hljl-t'>
+                                          </span><span class='hljl-n'>train_domain_set</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                                          </span><span class='hljl-n'>error_strategy</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>bc_loss_function</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>get_loss_function</span><span class='hljl-p'>(</span><span class='hljl-n'>_bc_loss_functions</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                                         </span><span class='hljl-n'>train_bound_set</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                                         </span><span class='hljl-n'>error_strategy</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-k'>function</span><span class='hljl-t'> </span><span class='hljl-nf'>loss_function_</span><span class='hljl-p'>(</span><span class='hljl-n'>θ</span><span class='hljl-p'>,</span><span class='hljl-n'>p</span><span class='hljl-p'>)</span><span class='hljl-t'>
+        </span><span class='hljl-k'>return</span><span class='hljl-t'> </span><span class='hljl-nf'>pde_loss_function</span><span class='hljl-p'>(</span><span class='hljl-n'>θ</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-nf'>bc_loss_function</span><span class='hljl-p'>(</span><span class='hljl-n'>θ</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-k'>end</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>cb_</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-k'>function</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-n'>p</span><span class='hljl-p'>,</span><span class='hljl-n'>l</span><span class='hljl-p'>)</span><span class='hljl-t'>
+        </span><span class='hljl-n'>deltaT_s</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>time_ns</span><span class='hljl-p'>()</span><span class='hljl-t'> </span><span class='hljl-cs'>#Start a clock when the callback begins, this will evaluate questo misurerà anche il calcolo degli uniform error</span><span class='hljl-t'>
+
+        </span><span class='hljl-n'>ctime</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>time_ns</span><span class='hljl-p'>()</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-n'>startTime</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-n'>timeCounter</span><span class='hljl-t'> </span><span class='hljl-cs'>#This variable is the time to use for the time benchmark plot</span><span class='hljl-t'>
+        </span><span class='hljl-nf'>append!</span><span class='hljl-p'>(</span><span class='hljl-n'>times</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>ctime</span><span class='hljl-oB'>/</span><span class='hljl-ni'>10</span><span class='hljl-oB'>^</span><span class='hljl-ni'>9</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'>#Conversion nanosec to seconds</span><span class='hljl-t'>
+        </span><span class='hljl-nf'>append!</span><span class='hljl-p'>(</span><span class='hljl-n'>losses</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>l</span><span class='hljl-p'>)</span><span class='hljl-t'>
+        </span><span class='hljl-nf'>append!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-nf'>pde_loss_function</span><span class='hljl-p'>(</span><span class='hljl-n'>p</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-nf'>bc_loss_function</span><span class='hljl-p'>(</span><span class='hljl-n'>p</span><span class='hljl-p'>))</span><span class='hljl-t'>
+        </span><span class='hljl-cs'>##println(length(losses), &quot; Current loss is: &quot;, l, &quot; uniform error is, &quot;,  pde_loss_function(p) + bc_loss_function(p))</span><span class='hljl-t'>
+
+        </span><span class='hljl-n'>timeCounter</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>timeCounter</span><span class='hljl-t'> </span><span class='hljl-oB'>+</span><span class='hljl-t'> </span><span class='hljl-nf'>time_ns</span><span class='hljl-p'>()</span><span class='hljl-t'> </span><span class='hljl-oB'>-</span><span class='hljl-t'> </span><span class='hljl-n'>deltaT_s</span><span class='hljl-t'> </span><span class='hljl-cs'>#timeCounter sums all delays due to the callback functions of the previous iterations</span><span class='hljl-t'>
+
+        </span><span class='hljl-cs'>#if (ctime/10^9 &gt; time) #if I exceed the limit time I stop the training</span><span class='hljl-t'>
+        </span><span class='hljl-cs'>#    return true #Stop the minimizer and continue from line 142</span><span class='hljl-t'>
+        </span><span class='hljl-cs'>#end</span><span class='hljl-t'>
+
+        </span><span class='hljl-k'>return</span><span class='hljl-t'> </span><span class='hljl-kc'>false</span><span class='hljl-t'>
+    </span><span class='hljl-k'>end</span><span class='hljl-t'>
+
+    </span><span class='hljl-nd'>@named</span><span class='hljl-t'> </span><span class='hljl-n'>pde_system</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>PDESystem</span><span class='hljl-p'>(</span><span class='hljl-n'>eq</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>bcs</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>domains</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>indvars</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>depvars</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>discretization</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>PhysicsInformedNN</span><span class='hljl-p'>(</span><span class='hljl-n'>chain</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>strategy</span><span class='hljl-p'>)</span><span class='hljl-t'>
+    </span><span class='hljl-n'>prob</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>discretize</span><span class='hljl-p'>(</span><span class='hljl-n'>pde_system</span><span class='hljl-p'>,</span><span class='hljl-n'>discretization</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>timeCounter</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>0.0</span><span class='hljl-t'>
+    </span><span class='hljl-n'>startTime</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>time_ns</span><span class='hljl-p'>()</span><span class='hljl-t'> </span><span class='hljl-cs'>#Fix initial time (t=0) before starting the training</span><span class='hljl-t'>
+    </span><span class='hljl-n'>res</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>GalacticOptim</span><span class='hljl-oB'>.</span><span class='hljl-nf'>solve</span><span class='hljl-p'>(</span><span class='hljl-n'>prob</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizer</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>cb</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>cb_</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>maxiters</span><span class='hljl-oB'>=</span><span class='hljl-n'>maxIters</span><span class='hljl-p'>)</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>phi</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>discretization</span><span class='hljl-oB'>.</span><span class='hljl-n'>phi</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>params</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>res</span><span class='hljl-oB'>.</span><span class='hljl-n'>minimizer</span><span class='hljl-t'>
+
+    </span><span class='hljl-cs'># Model prediction</span><span class='hljl-t'>
+    </span><span class='hljl-n'>domain</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-n'>ts</span><span class='hljl-p'>,</span><span class='hljl-n'>x1s</span><span class='hljl-p'>,</span><span class='hljl-n'>x2s</span><span class='hljl-p'>,</span><span class='hljl-n'>x3s</span><span class='hljl-p'>,</span><span class='hljl-n'>x4s</span><span class='hljl-p'>]</span><span class='hljl-t'>
+
+    </span><span class='hljl-n'>u_predict</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-nf'>reshape</span><span class='hljl-p'>([</span><span class='hljl-nf'>first</span><span class='hljl-p'>(</span><span class='hljl-nf'>phi</span><span class='hljl-p'>([</span><span class='hljl-n'>t</span><span class='hljl-p'>,</span><span class='hljl-n'>x1</span><span class='hljl-p'>,</span><span class='hljl-n'>x2</span><span class='hljl-p'>,</span><span class='hljl-n'>x3</span><span class='hljl-p'>,</span><span class='hljl-n'>x4</span><span class='hljl-p'>],</span><span class='hljl-n'>res</span><span class='hljl-oB'>.</span><span class='hljl-n'>minimizer</span><span class='hljl-p'>))</span><span class='hljl-t'> </span><span class='hljl-k'>for</span><span class='hljl-t'> </span><span class='hljl-n'>x1</span><span class='hljl-t'> </span><span class='hljl-kp'>in</span><span class='hljl-t'> </span><span class='hljl-n'>x1s</span><span class='hljl-t'> </span><span class='hljl-k'>for</span><span class='hljl-t'> </span><span class='hljl-n'>x2</span><span class='hljl-t'> </span><span class='hljl-kp'>in</span><span class='hljl-t'> </span><span class='hljl-n'>x2s</span><span class='hljl-t'> </span><span class='hljl-k'>for</span><span class='hljl-t'> </span><span class='hljl-n'>x3</span><span class='hljl-t'> </span><span class='hljl-kp'>in</span><span class='hljl-t'> </span><span class='hljl-n'>x3s</span><span class='hljl-t'> </span><span class='hljl-k'>for</span><span class='hljl-t'> </span><span class='hljl-n'>x4</span><span class='hljl-t'> </span><span class='hljl-kp'>in</span><span class='hljl-t'> </span><span class='hljl-n'>x4s</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-nf'>length</span><span class='hljl-p'>(</span><span class='hljl-n'>x1s</span><span class='hljl-p'>),</span><span class='hljl-nf'>length</span><span class='hljl-p'>(</span><span class='hljl-n'>x2s</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-nf'>length</span><span class='hljl-p'>(</span><span class='hljl-n'>x3s</span><span class='hljl-p'>),</span><span class='hljl-nf'>length</span><span class='hljl-p'>(</span><span class='hljl-n'>x4s</span><span class='hljl-p'>)))</span><span class='hljl-t'> </span><span class='hljl-k'>for</span><span class='hljl-t'> </span><span class='hljl-n'>t</span><span class='hljl-t'> </span><span class='hljl-kp'>in</span><span class='hljl-t'> </span><span class='hljl-n'>ts</span><span class='hljl-p'>]</span><span class='hljl-t'>  </span><span class='hljl-cs'>#matrix of model&#39;s prediction</span><span class='hljl-t'>
+
+    </span><span class='hljl-k'>return</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>params</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>domain</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>losses</span><span class='hljl-p'>]</span><span class='hljl-t'>
+</span><span class='hljl-k'>end</span>
+</pre>
+
+
+<pre class="output">
+allen_cahn &#40;generic function with 1 method&#41;
+</pre>
+
+
+
+<pre class='hljl'>
+<span class='hljl-n'>maxIters</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[(</span><span class='hljl-ni'>0</span><span class='hljl-p'>,</span><span class='hljl-ni'>0</span><span class='hljl-p'>,</span><span class='hljl-ni'>0</span><span class='hljl-p'>,</span><span class='hljl-ni'>0</span><span class='hljl-p'>,</span><span class='hljl-ni'>0</span><span class='hljl-p'>,</span><span class='hljl-ni'>0</span><span class='hljl-p'>,</span><span class='hljl-ni'>20000</span><span class='hljl-p'>),(</span><span class='hljl-ni'>300</span><span class='hljl-p'>,</span><span class='hljl-ni'>300</span><span class='hljl-p'>,</span><span class='hljl-ni'>300</span><span class='hljl-p'>,</span><span class='hljl-ni'>300</span><span class='hljl-p'>,</span><span class='hljl-ni'>300</span><span class='hljl-p'>,</span><span class='hljl-ni'>300</span><span class='hljl-p'>,</span><span class='hljl-ni'>300</span><span class='hljl-p'>)]</span><span class='hljl-t'> </span><span class='hljl-cs'>#iters for ADAM/LBFGS</span><span class='hljl-t'>
+
+</span><span class='hljl-n'>strategies</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>QuadratureTraining</span><span class='hljl-p'>(</span><span class='hljl-n'>quadrature_alg</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>CubaCuhre</span><span class='hljl-p'>(),</span><span class='hljl-t'> </span><span class='hljl-n'>reltol</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>abstol</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1e-4</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>maxiters</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>100</span><span class='hljl-p'>),</span><span class='hljl-t'>
+              </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>QuadratureTraining</span><span class='hljl-p'>(</span><span class='hljl-n'>quadrature_alg</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>HCubatureJL</span><span class='hljl-p'>(),</span><span class='hljl-t'> </span><span class='hljl-n'>reltol</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>abstol</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1e-4</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>maxiters</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>100</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>batch</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>0</span><span class='hljl-p'>),</span><span class='hljl-t'>
+              </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>QuadratureTraining</span><span class='hljl-p'>(</span><span class='hljl-n'>quadrature_alg</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>CubatureJLh</span><span class='hljl-p'>(),</span><span class='hljl-t'> </span><span class='hljl-n'>reltol</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>abstol</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1e-4</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>maxiters</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>100</span><span class='hljl-p'>),</span><span class='hljl-t'>
+              </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>QuadratureTraining</span><span class='hljl-p'>(</span><span class='hljl-n'>quadrature_alg</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>CubatureJLp</span><span class='hljl-p'>(),</span><span class='hljl-t'> </span><span class='hljl-n'>reltol</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>1</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>abstol</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nfB'>1e-4</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>maxiters</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>100</span><span class='hljl-p'>),</span><span class='hljl-t'>
+              </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>GridTraining</span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.09</span><span class='hljl-p'>),</span><span class='hljl-t'>
+              </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>StochasticTraining</span><span class='hljl-p'>(</span><span class='hljl-ni'>100</span><span class='hljl-p'>),</span><span class='hljl-t'>
+              </span><span class='hljl-n'>NeuralPDE</span><span class='hljl-oB'>.</span><span class='hljl-nf'>QuasiRandomTraining</span><span class='hljl-p'>(</span><span class='hljl-ni'>100</span><span class='hljl-p'>;</span><span class='hljl-t'> </span><span class='hljl-n'>sampling_alg</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>UniformSample</span><span class='hljl-p'>(),</span><span class='hljl-t'> </span><span class='hljl-n'>minibatch</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-ni'>100</span><span class='hljl-p'>)]</span><span class='hljl-t'>
+
+</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;CubaCuhre&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                        </span><span class='hljl-s'>&quot;HCubatureJL&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                        </span><span class='hljl-s'>&quot;CubatureJLh&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                        </span><span class='hljl-s'>&quot;CubatureJLp&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                        </span><span class='hljl-s'>&quot;GridTraining&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                        </span><span class='hljl-s'>&quot;StochasticTraining&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'>
+                        </span><span class='hljl-s'>&quot;QuasiRandomTraining&quot;</span><span class='hljl-p'>]</span><span class='hljl-t'>
+
+</span><span class='hljl-n'>minimizers</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-nf'>ADAM</span><span class='hljl-p'>(</span><span class='hljl-nfB'>0.005</span><span class='hljl-p'>)]</span><span class='hljl-t'>
+              </span><span class='hljl-cs'>#BFGS()]</span><span class='hljl-t'>
+              </span><span class='hljl-cs'>#LBFGS()]</span><span class='hljl-t'>
+
+
+</span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;ADAM&quot;</span><span class='hljl-p'>]</span><span class='hljl-t'>
+                        </span><span class='hljl-cs'>#&quot;LBFGS&quot;]</span><span class='hljl-t'>
+                        </span><span class='hljl-cs'># &quot;BFGS&quot;]</span><span class='hljl-t'>
+
+
+</span><span class='hljl-cs'># Run models</span><span class='hljl-t'>
+</span><span class='hljl-n'>error_res</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'>  </span><span class='hljl-nf'>Dict</span><span class='hljl-p'>()</span><span class='hljl-t'>
+</span><span class='hljl-n'>domains</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Dict</span><span class='hljl-p'>()</span><span class='hljl-t'>
+</span><span class='hljl-n'>params_res</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Dict</span><span class='hljl-p'>()</span><span class='hljl-t'>  </span><span class='hljl-cs'>#to use same params for the next run</span><span class='hljl-t'>
+</span><span class='hljl-n'>times</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Dict</span><span class='hljl-p'>()</span><span class='hljl-t'>
+</span><span class='hljl-n'>losses_res</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>Dict</span><span class='hljl-p'>()</span>
+</pre>
+
+
+<pre class="output">
+Dict&#123;Any, Any&#125;&#40;&#41;
+</pre>
+
+
+<h2>Solve</h2>
+
+
+<pre class='hljl'>
+<span class='hljl-cs'>## Convergence</span><span class='hljl-t'>
+
+</span><span class='hljl-k'>for</span><span class='hljl-t'> </span><span class='hljl-n'>min</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-ni'>1</span><span class='hljl-oB'>:</span><span class='hljl-nf'>length</span><span class='hljl-p'>(</span><span class='hljl-n'>minimizers</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># minimizer</span><span class='hljl-t'>
+      </span><span class='hljl-k'>for</span><span class='hljl-t'> </span><span class='hljl-n'>strat</span><span class='hljl-oB'>=</span><span class='hljl-ni'>1</span><span class='hljl-oB'>:</span><span class='hljl-nf'>length</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-cs'># strategy</span><span class='hljl-t'>
+            </span><span class='hljl-cs'>##println(string(strategies_short_name[strat], &quot;  &quot;, minimizers_short_name[min]))</span><span class='hljl-t'>
+            </span><span class='hljl-n'>res</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>allen_cahn</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies</span><span class='hljl-p'>[</span><span class='hljl-n'>strat</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers</span><span class='hljl-p'>[</span><span class='hljl-n'>min</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>maxIters</span><span class='hljl-p'>[</span><span class='hljl-n'>min</span><span class='hljl-p'>][</span><span class='hljl-n'>strat</span><span class='hljl-p'>])</span><span class='hljl-t'>
+            </span><span class='hljl-nf'>push!</span><span class='hljl-p'>(</span><span class='hljl-n'>error_res</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strat</span><span class='hljl-p'>,</span><span class='hljl-n'>min</span><span class='hljl-p'>)</span><span class='hljl-t'>     </span><span class='hljl-oB'>=&gt;</span><span class='hljl-t'> </span><span class='hljl-n'>res</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>])</span><span class='hljl-t'>
+            </span><span class='hljl-nf'>push!</span><span class='hljl-p'>(</span><span class='hljl-n'>params_res</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strat</span><span class='hljl-p'>,</span><span class='hljl-n'>min</span><span class='hljl-p'>)</span><span class='hljl-t'> </span><span class='hljl-oB'>=&gt;</span><span class='hljl-t'> </span><span class='hljl-n'>res</span><span class='hljl-p'>[</span><span class='hljl-ni'>2</span><span class='hljl-p'>])</span><span class='hljl-t'>
+            </span><span class='hljl-nf'>push!</span><span class='hljl-p'>(</span><span class='hljl-n'>domains</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strat</span><span class='hljl-p'>,</span><span class='hljl-n'>min</span><span class='hljl-p'>)</span><span class='hljl-t'>        </span><span class='hljl-oB'>=&gt;</span><span class='hljl-t'> </span><span class='hljl-n'>res</span><span class='hljl-p'>[</span><span class='hljl-ni'>3</span><span class='hljl-p'>])</span><span class='hljl-t'>
+            </span><span class='hljl-nf'>push!</span><span class='hljl-p'>(</span><span class='hljl-n'>times</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strat</span><span class='hljl-p'>,</span><span class='hljl-n'>min</span><span class='hljl-p'>)</span><span class='hljl-t'>        </span><span class='hljl-oB'>=&gt;</span><span class='hljl-t'> </span><span class='hljl-n'>res</span><span class='hljl-p'>[</span><span class='hljl-ni'>4</span><span class='hljl-p'>])</span><span class='hljl-t'>
+            </span><span class='hljl-nf'>push!</span><span class='hljl-p'>(</span><span class='hljl-n'>losses_res</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strat</span><span class='hljl-p'>,</span><span class='hljl-n'>min</span><span class='hljl-p'>)</span><span class='hljl-t'>        </span><span class='hljl-oB'>=&gt;</span><span class='hljl-t'> </span><span class='hljl-n'>res</span><span class='hljl-p'>[</span><span class='hljl-ni'>5</span><span class='hljl-p'>])</span><span class='hljl-t'>
+      </span><span class='hljl-k'>end</span><span class='hljl-t'>
+</span><span class='hljl-k'>end</span>
+</pre>
+
+
+<pre class="julia-error">
+ERROR: MethodError: no method matching build_loss_function&#40;::Symbolics.Equation, ::Vector&#123;Symbolics.Num&#125;, ::Vector&#123;Symbolics.CallWithMetadata&#123;SymbolicUtils.FnType&#123;Tuple, Real&#125;, Base.ImmutableDict&#123;DataType, Any&#125;&#125;&#125;, ::NeuralPDE.var&quot;#270#272&quot;&#123;DiffEqFlux.FastChain&#123;Tuple&#123;DiffEqFlux.FastDense&#123;typeof&#40;NNlib.σ&#41;, DiffEqFlux.var&quot;#initial_params#90&quot;&#123;Vector&#123;Float32&#125;&#125;&#125;, DiffEqFlux.FastDense&#123;typeof&#40;NNlib.σ&#41;, DiffEqFlux.var&quot;#initial_params#90&quot;&#123;Vector&#123;Float32&#125;&#125;&#125;, DiffEqFlux.FastDense&#123;typeof&#40;identity&#41;, DiffEqFlux.var&quot;#initial_params#90&quot;&#123;Vector&#123;Float32&#125;&#125;&#125;&#125;&#125;, UnionAll&#125;, ::NeuralPDE.var&quot;#276#277&quot;, ::DiffEqFlux.FastChain&#123;Tuple&#123;DiffEqFlux.FastDense&#123;typeof&#40;NNlib.σ&#41;, DiffEqFlux.var&quot;#initial_params#90&quot;&#123;Vector&#123;Float32&#125;&#125;&#125;, DiffEqFlux.FastDense&#123;typeof&#40;NNlib.σ&#41;, DiffEqFlux.var&quot;#initial_params#90&quot;&#123;Vector&#123;Float32&#125;&#125;&#125;, DiffEqFlux.FastDense&#123;typeof&#40;identity&#41;, DiffEqFlux.var&quot;#initial_params#90&quot;&#123;Vector&#123;Float32&#125;&#125;&#125;&#125;&#125;, ::Vector&#123;Float32&#125;, ::NeuralPDE.GridTraining&#41;
+Closest candidates are:
+  build_loss_function&#40;::Any, ::Any, ::Any, ::Any, ::Any, ::Any, ::Any, ::Any, &#33;Matched::Any; bc_indvars, eq_params, param_estim, default_p&#41; at /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/NeuralPDE/nxvU8/src/pinns_pde_solve.jl:559
+  build_loss_function&#40;::Any, ::Any, ::Any, ::Any, ::Any, ::Any, ::Any, ::Any, &#33;Matched::Any, &#33;Matched::Any, &#33;Matched::Any, &#33;Matched::Any; bc_indvars, integration_indvars, eq_params, param_estim, default_p&#41; at /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/NeuralPDE/nxvU8/src/pinns_pde_solve.jl:578
+</pre>
+
+
+<h2>Results</h2>
+
+
+<pre class='hljl'>
+<span class='hljl-nf'>print</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;</span><span class='hljl-se'>\n</span><span class='hljl-s'> Plotting error vs iters&quot;</span><span class='hljl-p'>)</span><span class='hljl-t'>
+</span><span class='hljl-cs'>#Plotting the first strategy with the first minimizer out from the loop to initialize the canvas</span><span class='hljl-t'>
+</span><span class='hljl-n'>current_label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>])</span><span class='hljl-t'>
+</span><span class='hljl-n'>error</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>Plots</span><span class='hljl-oB'>.</span><span class='hljl-nf'>plot</span><span class='hljl-p'>(</span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;11&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;11&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-n'>current_label</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>xlims</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-p'>(</span><span class='hljl-ni'>0</span><span class='hljl-p'>,</span><span class='hljl-ni'>10</span><span class='hljl-p'>))</span><span class='hljl-cs'>#legend = true)#, size=(1200,700))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;21&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;21&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>2</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;31&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;31&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>3</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;41&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;41&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>4</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;51&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;51&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>5</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;61&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;61&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>6</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;71&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;71&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Allen Cahn convergence&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>7</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+
+
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;12&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;12&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>1</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>2</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;22&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;22&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>2</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>2</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;32&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;32&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>3</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>2</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;42&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;42&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>4</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>2</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;52&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;52&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>5</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>2</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;62&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;62&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Level Set&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>6</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>2</span><span class='hljl-p'>]))</span><span class='hljl-t'>
+</span><span class='hljl-nf'>plot!</span><span class='hljl-p'>(</span><span class='hljl-n'>error</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>times</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;72&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>error_res</span><span class='hljl-p'>[</span><span class='hljl-s'>&quot;72&quot;</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-n'>yaxis</span><span class='hljl-oB'>=:</span><span class='hljl-n'>log10</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>title</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-s'>&quot;Allen Cahn convergence ADAM/LBFGS&quot;</span><span class='hljl-p'>),</span><span class='hljl-t'> </span><span class='hljl-n'>ylabel</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-s'>&quot;log(error)&quot;</span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>label</span><span class='hljl-t'> </span><span class='hljl-oB'>=</span><span class='hljl-t'> </span><span class='hljl-nf'>string</span><span class='hljl-p'>(</span><span class='hljl-n'>strategies_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>7</span><span class='hljl-p'>],</span><span class='hljl-t'> </span><span class='hljl-s'>&quot; + &quot;</span><span class='hljl-t'> </span><span class='hljl-p'>,</span><span class='hljl-t'> </span><span class='hljl-n'>minimizers_short_name</span><span class='hljl-p'>[</span><span class='hljl-ni'>2</span><span class='hljl-p'>]))</span>
+</pre>
+
+
+<pre class="output">
+Plotting error vs iters
+</pre>
+
+<pre class="julia-error">
+ERROR: KeyError: key &quot;11&quot; not found
+</pre>
+
+
+
+<div class="markdown"><h2>Appendix</h2>
+<p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p>
+</div>
+<div class="markdown"><p>To locally run this benchmark, do the following commands:</p>
+<pre><code>using SciMLBenchmarks
+SciMLBenchmarks.weave_file&#40;&quot;benchmarks/PINNErrorsVsTime&quot;,&quot;allen_cahn_et.jmd&quot;&#41;</code></pre>
+</div>
+<div class="markdown"><p>Computer Information:</p>
+</div>
+<div class="markdown"><pre><code>Julia Version 1.6.4
+Commit 35f0c911f4 &#40;2021-11-19 03:54 UTC&#41;
+Platform Info:
+  OS: Linux &#40;x86_64-pc-linux-gnu&#41;
+  CPU: AMD EPYC 7502 32-Core Processor
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-11.0.1 &#40;ORCJIT, znver2&#41;
+Environment:
+  BUILDKITE_PLUGIN_JULIA_CACHE_DIR &#61; /cache/julia-buildkite-plugin
+  JULIA_DEPOT_PATH &#61; /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+</code></pre>
+</div>
+<div class="markdown"><p>Package Information:</p>
+</div>
+<div class="markdown"><pre><code>      Status &#96;/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Project.toml&#96;
+  &#91;8a292aeb&#93; Cuba v2.2.0
+  &#91;667455a9&#93; Cubature v1.5.1
+  &#91;aae7a2af&#93; DiffEqFlux v1.44.0
+  &#91;587475ba&#93; Flux v0.12.8
+  &#91;a75be94c&#93; GalacticOptim v2.2.0
+  &#91;961ee093&#93; ModelingToolkit v6.7.1
+  &#91;315f7962&#93; NeuralPDE v4.0.1
+  &#91;429524aa&#93; Optim v1.5.0
+  &#91;67601950&#93; Quadrature v1.12.0
+  &#91;8a4e6c94&#93; QuasiMonteCarlo v0.2.3
+  &#91;31c91b34&#93; SciMLBenchmarks v0.1.0
+  &#91;8bb1440f&#93; DelimitedFiles</code></pre>
+<p>And the full manifest:</p>
+<pre><code>      Status &#96;/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Manifest.toml&#96;
+  &#91;621f4979&#93; AbstractFFTs v1.0.1
+  &#91;1520ce14&#93; AbstractTrees v0.3.4
+  &#91;79e6a3ab&#93; Adapt v3.3.1
+  &#91;ec485272&#93; ArnoldiMethod v0.1.0
+  &#91;4fba245c&#93; ArrayInterface v3.1.40
+  &#91;13072b0f&#93; AxisAlgorithms v1.0.1
+  &#91;ab4f0b2a&#93; BFloat16s v0.2.0
+  &#91;e2ed5e7c&#93; Bijections v0.1.3
+  &#91;62783981&#93; BitTwiddlingConvenienceFunctions v0.1.1
+  &#91;fa961155&#93; CEnum v0.4.1
+  &#91;2a0fbf3d&#93; CPUSummary v0.1.6
+  &#91;00ebfdb7&#93; CSTParser v3.3.0
+  &#91;052768ef&#93; CUDA v3.5.0
+  &#91;7057c7e9&#93; Cassette v0.3.9
+  &#91;082447d4&#93; ChainRules v1.14.0
+  &#91;d360d2e6&#93; ChainRulesCore v1.11.1
+  &#91;9e997f8a&#93; ChangesOfVariables v0.1.1
+  &#91;fb6a15b2&#93; CloseOpenIntervals v0.1.4
+  &#91;944b1d66&#93; CodecZlib v0.7.0
+  &#91;3da002f7&#93; ColorTypes v0.11.0
+  &#91;5ae59095&#93; Colors v0.12.8
+  &#91;861a8166&#93; Combinatorics v1.0.2
+  &#91;a80b9123&#93; CommonMark v0.8.3
+  &#91;38540f10&#93; CommonSolve v0.2.0
+  &#91;bbf7d656&#93; CommonSubexpressions v0.3.0
+  &#91;34da2185&#93; Compat v3.40.0
+  &#91;b152e2b5&#93; CompositeTypes v0.1.2
+  &#91;8f4d0f93&#93; Conda v1.5.2
+  &#91;88cd18e8&#93; ConsoleProgressMonitor v0.1.2
+  &#91;187b0558&#93; ConstructionBase v1.3.0
+  &#91;a8cc5b0e&#93; Crayons v4.0.4
+  &#91;8a292aeb&#93; Cuba v2.2.0
+  &#91;667455a9&#93; Cubature v1.5.1
+  &#91;754358af&#93; DEDataArrays v0.2.0
+  &#91;9a962f9c&#93; DataAPI v1.9.0
+  &#91;82cc6244&#93; DataInterpolations v3.6.1
+  &#91;864edb3b&#93; DataStructures v0.18.10
+  &#91;e2d170a0&#93; DataValueInterfaces v1.0.0
+  &#91;b429d917&#93; DensityInterface v0.4.0
+  &#91;2b5f629d&#93; DiffEqBase v6.76.0
+  &#91;459566f4&#93; DiffEqCallbacks v2.17.0
+  &#91;aae7a2af&#93; DiffEqFlux v1.44.0
+  &#91;c894b116&#93; DiffEqJump v7.3.1
+  &#91;77a26b50&#93; DiffEqNoiseProcess v5.9.0
+  &#91;41bf760c&#93; DiffEqSensitivity v6.60.3
+  &#91;163ba53b&#93; DiffResults v1.0.3
+  &#91;b552c78f&#93; DiffRules v1.5.0
+  &#91;b4f34e82&#93; Distances v0.10.6
+  &#91;31c24e10&#93; Distributions v0.25.34
+  &#91;ced4e74d&#93; DistributionsAD v0.6.34
+  &#91;ffbed154&#93; DocStringExtensions v0.8.6
+  &#91;5b8099bc&#93; DomainSets v0.5.9
+  &#91;7c1d4256&#93; DynamicPolynomials v0.3.21
+  &#91;da5c29d0&#93; EllipsisNotation v1.1.1
+  &#91;7da242da&#93; Enzyme v0.7.2
+  &#91;d4d017d3&#93; ExponentialUtilities v1.10.2
+  &#91;e2ba6199&#93; ExprTools v0.1.6
+  &#91;7a1cc6ca&#93; FFTW v1.4.5
+  &#91;7034ab61&#93; FastBroadcast v0.1.11
+  &#91;9aa1b823&#93; FastClosures v0.3.2
+  &#91;1a297f60&#93; FillArrays v0.12.7
+  &#91;6a86dc24&#93; FiniteDiff v2.8.1
+  &#91;53c48c17&#93; FixedPointNumbers v0.8.4
+  &#91;587475ba&#93; Flux v0.12.8
+  &#91;59287772&#93; Formatting v0.4.2
+  &#91;f6369f11&#93; ForwardDiff v0.10.23
+  &#91;069b7b12&#93; FunctionWrappers v1.1.2
+  &#91;d9f16b24&#93; Functors v0.2.7
+  &#91;0c68f7d7&#93; GPUArrays v8.1.2
+  &#91;61eb1bfa&#93; GPUCompiler v0.13.8
+  &#91;a75be94c&#93; GalacticOptim v2.2.0
+  &#91;d7ba0133&#93; Git v1.2.1
+  &#91;af5da776&#93; GlobalSensitivity v1.2.2
+  &#91;86223c79&#93; Graphs v1.4.1
+  &#91;19dc6840&#93; HCubature v1.5.0
+  &#91;eafb193a&#93; Highlights v0.4.5
+  &#91;3e5b6fbb&#93; HostCPUFeatures v0.1.5
+  &#91;0e44f5e4&#93; Hwloc v2.0.0
+  &#91;7073ff75&#93; IJulia v1.23.2
+  &#91;7869d1d1&#93; IRTools v0.4.4
+  &#91;615f187c&#93; IfElse v0.1.1
+  &#91;d25df0c9&#93; Inflate v0.1.2
+  &#91;a98d9a8b&#93; Interpolations v0.13.4
+  &#91;8197267c&#93; IntervalSets v0.5.3
+  &#91;3587e190&#93; InverseFunctions v0.1.2
+  &#91;92d709cd&#93; IrrationalConstants v0.1.1
+  &#91;42fd0dbc&#93; IterativeSolvers v0.9.2
+  &#91;82899510&#93; IteratorInterfaceExtensions v1.0.0
+  &#91;692b3bcd&#93; JLLWrappers v1.3.0
+  &#91;682c06a0&#93; JSON v0.21.2
+  &#91;98e50ef6&#93; JuliaFormatter v0.18.1
+  &#91;e5e0dc1b&#93; Juno v0.8.4
+  &#91;5ab0869b&#93; KernelDensity v0.6.3
+  &#91;929cbde3&#93; LLVM v4.7.0
+  &#91;b964fa9f&#93; LaTeXStrings v1.3.0
+  &#91;2ee39098&#93; LabelledArrays v1.6.7
+  &#91;23fbe1c1&#93; Latexify v0.15.9
+  &#91;a5e1c1ea&#93; LatinHypercubeSampling v1.8.0
+  &#91;73f95e8e&#93; LatticeRules v0.0.1
+  &#91;10f19ff3&#93; LayoutPointers v0.1.4
+  &#91;1d6d02ad&#93; LeftChildRightSiblingTrees v0.1.2
+  &#91;093fc24a&#93; LightGraphs v1.3.5
+  &#91;d3d80556&#93; LineSearches v7.1.1
+  &#91;2ab3a3ac&#93; LogExpFunctions v0.3.5
+  &#91;e6f89c97&#93; LoggingExtras v0.4.7
+  &#91;bdcacae8&#93; LoopVectorization v0.12.98
+  &#91;1914dd2f&#93; MacroTools v0.5.9
+  &#91;d125e4d3&#93; ManualMemory v0.1.6
+  &#91;739be429&#93; MbedTLS v1.0.3
+  &#91;e89f7d12&#93; Media v0.5.0
+  &#91;e1d29d7a&#93; Missings v1.0.2
+  &#91;961ee093&#93; ModelingToolkit v6.7.1
+  &#91;4886b29c&#93; MonteCarloIntegration v0.0.3
+  &#91;46d2c3a1&#93; MuladdMacro v0.2.2
+  &#91;102ac46a&#93; MultivariatePolynomials v0.3.18
+  &#91;ffc61752&#93; Mustache v1.0.12
+  &#91;d8a4904e&#93; MutableArithmetics v0.2.22
+  &#91;d41bc354&#93; NLSolversBase v7.8.2
+  &#91;2774e3e8&#93; NLsolve v4.5.1
+  &#91;872c559c&#93; NNlib v0.7.31
+  &#91;a00861dc&#93; NNlibCUDA v0.1.10
+  &#91;77ba4419&#93; NaNMath v0.3.5
+  &#91;315f7962&#93; NeuralPDE v4.0.1
+  &#91;8913a72c&#93; NonlinearSolve v0.3.11
+  &#91;d8793406&#93; ObjectFile v0.3.7
+  &#91;6fe1bfb0&#93; OffsetArrays v1.10.8
+  &#91;429524aa&#93; Optim v1.5.0
+  &#91;bac558e1&#93; OrderedCollections v1.4.1
+  &#91;1dea7af3&#93; OrdinaryDiffEq v5.68.0
+  &#91;90014a1f&#93; PDMats v0.11.5
+  &#91;d96e819e&#93; Parameters v0.12.3
+  &#91;69de0a69&#93; Parsers v2.1.2
+  &#91;e409e4f3&#93; PoissonRandom v0.4.0
+  &#91;f517fe37&#93; Polyester v0.5.4
+  &#91;1d0040c9&#93; PolyesterWeave v0.1.2
+  &#91;85a6dd25&#93; PositiveFactorizations v0.2.4
+  &#91;d236fae5&#93; PreallocationTools v0.2.0
+  &#91;21216c6a&#93; Preferences v1.2.2
+  &#91;33c8b6b6&#93; ProgressLogging v0.1.4
+  &#91;92933f4c&#93; ProgressMeter v1.7.1
+  &#91;1fd47b50&#93; QuadGK v2.4.2
+  &#91;67601950&#93; Quadrature v1.12.0
+  &#91;8a4e6c94&#93; QuasiMonteCarlo v0.2.3
+  &#91;74087812&#93; Random123 v1.4.2
+  &#91;e6cf234a&#93; RandomNumbers v1.5.3
+  &#91;c84ed2f1&#93; Ratios v0.4.2
+  &#91;c1ae055f&#93; RealDot v0.1.0
+  &#91;3cdcf5f2&#93; RecipesBase v1.2.1
+  &#91;731186ca&#93; RecursiveArrayTools v2.20.0
+  &#91;f2c3362d&#93; RecursiveFactorization v0.2.5
+  &#91;189a3867&#93; Reexport v1.2.2
+  &#91;05181044&#93; RelocatableFolders v0.1.3
+  &#91;ae029012&#93; Requires v1.1.3
+  &#91;ae5879a3&#93; ResettableStacks v1.1.1
+  &#91;37e2e3b7&#93; ReverseDiff v1.10.0
+  &#91;79098fc4&#93; Rmath v0.7.0
+  &#91;7e49a35a&#93; RuntimeGeneratedFunctions v0.5.3
+  &#91;3cdde19b&#93; SIMDDualNumbers v0.1.0
+  &#91;94e857df&#93; SIMDTypes v0.1.0
+  &#91;476501e8&#93; SLEEFPirates v0.6.28
+  &#91;1bc83da4&#93; SafeTestsets v0.0.1
+  &#91;0bca4576&#93; SciMLBase v1.19.5
+  &#91;31c91b34&#93; SciMLBenchmarks v0.1.0
+  &#91;6c6a2e73&#93; Scratch v1.1.0
+  &#91;efcf1570&#93; Setfield v0.8.0
+  &#91;699a6c99&#93; SimpleTraits v0.9.4
+  &#91;ed01d8cd&#93; Sobol v1.5.0
+  &#91;b85f4697&#93; SoftGlobalScope v1.1.0
+  &#91;a2af1166&#93; SortingAlgorithms v1.0.1
+  &#91;47a9eef4&#93; SparseDiffTools v1.18.1
+  &#91;276daf66&#93; SpecialFunctions v1.8.1
+  &#91;860ef19b&#93; StableRNGs v1.0.0
+  &#91;aedffcd0&#93; Static v0.4.0
+  &#91;90137ffa&#93; StaticArrays v1.2.13
+  &#91;82ae8749&#93; StatsAPI v1.1.0
+  &#91;2913bbd2&#93; StatsBase v0.33.13
+  &#91;4c63d2b9&#93; StatsFuns v0.9.14
+  &#91;789caeaf&#93; StochasticDiffEq v6.41.0
+  &#91;7792a7ef&#93; StrideArraysCore v0.2.9
+  &#91;69024149&#93; StringEncodings v0.3.5
+  &#91;53d494c1&#93; StructIO v0.3.0
+  &#91;d1185830&#93; SymbolicUtils v0.16.0
+  &#91;0c5d862f&#93; Symbolics v3.5.1
+  &#91;3783bdb8&#93; TableTraits v1.0.1
+  &#91;bd369af6&#93; Tables v1.6.0
+  &#91;8ea1fca8&#93; TermInterface v0.1.8
+  &#91;5d786b92&#93; TerminalLoggers v0.1.5
+  &#91;8290d209&#93; ThreadingUtilities v0.4.6
+  &#91;a759f4b9&#93; TimerOutputs v0.5.13
+  &#91;0796e94c&#93; Tokenize v0.5.21
+  &#91;9f7883ad&#93; Tracker v0.2.16
+  &#91;3bb67fe8&#93; TranscodingStreams v0.9.6
+  &#91;592b5752&#93; Trapz v2.0.3
+  &#91;a2a6695c&#93; TreeViews v0.3.0
+  &#91;d5829a12&#93; TriangularSolve v0.1.8
+  &#91;5c2747f8&#93; URIs v1.3.0
+  &#91;3a884ed6&#93; UnPack v1.0.2
+  &#91;1986cc42&#93; Unitful v1.9.2
+  &#91;3d5dd08c&#93; VectorizationBase v0.21.21
+  &#91;81def892&#93; VersionParsing v1.2.1
+  &#91;19fa3120&#93; VertexSafeGraphs v0.2.0
+  &#91;44d3d7a6&#93; Weave v0.10.10
+  &#91;efce3f68&#93; WoodburyMatrices v0.5.5
+  &#91;ddb6d928&#93; YAML v0.4.7
+  &#91;c2297ded&#93; ZMQ v1.2.1
+  &#91;a5390f91&#93; ZipFile v0.9.4
+  &#91;e88e6eb3&#93; Zygote v0.6.32
+  &#91;700de1a5&#93; ZygoteRules v0.2.2
+  &#91;3bed1096&#93; Cuba_jll v4.2.2&#43;0
+  &#91;7bc98958&#93; Cubature_jll v1.0.5&#43;0
+  &#91;7cc45869&#93; Enzyme_jll v0.0.22&#43;0
+  &#91;2e619515&#93; Expat_jll v2.2.10&#43;0
+  &#91;f5851436&#93; FFTW_jll v3.3.10&#43;0
+  &#91;78b55507&#93; Gettext_jll v0.20.1&#43;7
+  &#91;f8c6e375&#93; Git_jll v2.31.0&#43;0
+  &#91;e33a78d0&#93; Hwloc_jll v2.5.0&#43;0
+  &#91;1d5cc7b8&#93; IntelOpenMP_jll v2018.0.3&#43;2
+  &#91;dad2f222&#93; LLVMExtra_jll v0.0.13&#43;0
+  &#91;94ce4f54&#93; Libiconv_jll v1.16.1&#43;1
+  &#91;856f044c&#93; MKL_jll v2021.1.1&#43;2
+  &#91;458c3c95&#93; OpenSSL_jll v1.1.10&#43;0
+  &#91;efe28fd5&#93; OpenSpecFun_jll v0.5.5&#43;0
+  &#91;f50d1b31&#93; Rmath_jll v0.3.0&#43;0
+  &#91;02c8fc9c&#93; XML2_jll v2.9.12&#43;0
+  &#91;8f1865be&#93; ZeroMQ_jll v4.3.4&#43;0
+  &#91;a9144af2&#93; libsodium_jll v1.0.20&#43;0
+  &#91;0dad84c5&#93; ArgTools
+  &#91;56f22d72&#93; Artifacts
+  &#91;2a0f44e3&#93; Base64
+  &#91;ade2ca70&#93; Dates
+  &#91;8bb1440f&#93; DelimitedFiles
+  &#91;8ba89e20&#93; Distributed
+  &#91;f43a241f&#93; Downloads
+  &#91;7b1f6079&#93; FileWatching
+  &#91;9fa8497b&#93; Future
+  &#91;b77e0a4c&#93; InteractiveUtils
+  &#91;4af54fe1&#93; LazyArtifacts
+  &#91;b27032c2&#93; LibCURL
+  &#91;76f85450&#93; LibGit2
+  &#91;8f399da3&#93; Libdl
+  &#91;37e2e46d&#93; LinearAlgebra
+  &#91;56ddb016&#93; Logging
+  &#91;d6f4376e&#93; Markdown
+  &#91;a63ad114&#93; Mmap
+  &#91;ca575930&#93; NetworkOptions
+  &#91;44cfe95a&#93; Pkg
+  &#91;de0858da&#93; Printf
+  &#91;9abbd945&#93; Profile
+  &#91;3fa0cd96&#93; REPL
+  &#91;9a3f8284&#93; Random
+  &#91;ea8e919c&#93; SHA
+  &#91;9e88b42a&#93; Serialization
+  &#91;1a1011a3&#93; SharedArrays
+  &#91;6462fe0b&#93; Sockets
+  &#91;2f01184e&#93; SparseArrays
+  &#91;10745b16&#93; Statistics
+  &#91;4607b0f0&#93; SuiteSparse
+  &#91;fa267f1f&#93; TOML
+  &#91;a4e569a6&#93; Tar
+  &#91;8dfed614&#93; Test
+  &#91;cf7118a7&#93; UUIDs
+  &#91;4ec0a83e&#93; Unicode
+  &#91;e66e0078&#93; CompilerSupportLibraries_jll
+  &#91;deac9b47&#93; LibCURL_jll
+  &#91;29816b5a&#93; LibSSH2_jll
+  &#91;c8ffd9c3&#93; MbedTLS_jll
+  &#91;14a3606d&#93; MozillaCACerts_jll
+  &#91;05823500&#93; OpenLibm_jll
+  &#91;efcefdf7&#93; PCRE2_jll
+  &#91;83775a58&#93; Zlib_jll
+  &#91;8e850ede&#93; nghttp2_jll
+  &#91;3f19e933&#93; p7zip_jll</code></pre>
+</div>
+
+
+        <HR/>
+        <div class="footer">
+          <p>
+            Published from <a href="allen_cahn_et.jmd">allen_cahn_et.jmd</a>
+            using <a href="http://github.com/JunoLab/Weave.jl">Weave.jl</a> v0.10.10 on 2021-11-29.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</BODY>
+
+</HTML>
