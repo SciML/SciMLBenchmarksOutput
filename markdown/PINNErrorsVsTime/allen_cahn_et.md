@@ -20,6 +20,7 @@ using Flux, ModelingToolkit, GalacticOptim, Optim, DiffEqFlux
 #using PyPlot
 using DelimitedFiles
 using QuasiMonteCarlo
+import ModelingToolkit: Interval, infimum, supremum
 
 function allen_cahn(strategy, minimizer, maxIters)
 
@@ -53,11 +54,11 @@ function allen_cahn(strategy, minimizer, maxIters)
     dx3  = x3width/x3MeshNum
     dx4  = x4width/x4MeshNum
 
-    domains = [t ∈ IntervalDomain(0.0,tmax),
-               x1 ∈ IntervalDomain(0.0,x1width),
-               x2 ∈ IntervalDomain(0.0,x2width),
-               x3 ∈ IntervalDomain(0.0,x3width),
-               x4 ∈ IntervalDomain(0.0,x4width)]
+    domains = [t ∈ Interval(0.0,tmax),
+               x1 ∈ Interval(0.0,x1width),
+               x2 ∈ Interval(0.0,x2width),
+               x3 ∈ Interval(0.0,x3width),
+               x4 ∈ Interval(0.0,x4width)]
 
     ts  = 0.0 : dt : tmax
     x1s = 0.0 : dx1 : x1width
@@ -82,7 +83,7 @@ function allen_cahn(strategy, minimizer, maxIters)
     chain = FastChain(FastDense(5,n,Flux.σ),FastDense(n,n,Flux.σ),FastDense(n,1))   #Neural network from Flux library
 
     indvars = [t,x1,x2,x3,x4]   #phisically independent variables
-    depvars = [u]       #dependent (target) variable
+    depvars = [u(t,x1,x2,x3,x4)]       #dependent (target) variable
 
     dim = length(domains)
 
@@ -94,7 +95,7 @@ function allen_cahn(strategy, minimizer, maxIters)
 
     error_strategy = GridTraining(dx_err)
 
-    initθ = DiffEqFlux.initial_params(chain)
+    initθ = Float64.(DiffEqFlux.initial_params(chain))
     eltypeθ = eltype(initθ)
     parameterless_type_θ = DiffEqBase.parameterless_type(initθ)
 
@@ -102,28 +103,34 @@ function allen_cahn(strategy, minimizer, maxIters)
     derivative = NeuralPDE.get_numeric_derivative()
 
 
+    # integral = NeuralPDE.get_numeric_integral(quadrature_strategy, indvars, depvars, chain, derivative)
+    integral = nothing
     _pde_loss_function = NeuralPDE.build_loss_function(eq,indvars,depvars,
-                                             phi,derivative,chain,initθ,error_strategy)
+                                             phi,derivative,integral, chain,initθ,error_strategy)
 
     bc_indvars = NeuralPDE.get_variables(bcs,indvars,depvars)
     _bc_loss_functions = [NeuralPDE.build_loss_function(bc,indvars,depvars,
-                                              phi,derivative,chain,initθ,error_strategy,
+                                              phi,derivative,integral,chain,initθ,error_strategy,
                                               bc_indvars = bc_indvar) for (bc,bc_indvar) in zip(bcs,bc_indvars)]
 
-    train_sets = NeuralPDE.generate_training_sets(domains,dx_err,[eq],bcs,indvars,depvars)
+
+    train_sets = NeuralPDE.generate_training_sets(domains,dx_err,[eq],bcs,eltypeθ,indvars,depvars)
     train_domain_set, train_bound_set = train_sets
+    pde_loss_functions = [NeuralPDE.get_loss_function(_pde_loss_function,
+                                          train_domain_set[1],
+                                          eltypeθ, parameterless_type_θ,
+                                          error_strategy)]
+
+    bc_loss_functions = [NeuralPDE.get_loss_function(bc,
+                                         train_set,
+                                         eltypeθ, parameterless_type_θ,
+                                         error_strategy) for (train_set,bc) in zip(train_bound_set, _bc_loss_functions)]
 
 
-    pde_loss_function = NeuralPDE.get_loss_function([_pde_loss_function],
-                                          train_domain_set,
-                                          error_strategy)
-
-    bc_loss_function = NeuralPDE.get_loss_function(_bc_loss_functions,
-                                         train_bound_set,
-                                         error_strategy)
+    loss_functions =  [pde_loss_functions;bc_loss_functions]
 
     function loss_function_(θ,p)
-        return pde_loss_function(θ) + bc_loss_function(θ)
+        sum(map(l->l(θ) ,loss_functions))
     end
 
     cb_ = function (p,l)
@@ -132,7 +139,9 @@ function allen_cahn(strategy, minimizer, maxIters)
         ctime = time_ns() - startTime - timeCounter #This variable is the time to use for the time benchmark plot
         append!(times, ctime/10^9) #Conversion nanosec to seconds
         append!(losses, l)
-        append!(error, pde_loss_function(p) + bc_loss_function(p))
+        pde_loss = sum(map(l_->l_(p) ,pde_loss_functions))
+        bc_loss= sum(map(l_->l_(p) ,bc_loss_functions))
+        append!(error, pde_loss + bc_loss)
         ##println(length(losses), " Current loss is: ", l, " uniform error is, ",  pde_loss_function(p) + bc_loss_function(p))
 
         timeCounter = timeCounter + time_ns() - deltaT_s #timeCounter sums all delays due to the callback functions of the previous iterations
@@ -173,7 +182,7 @@ allen_cahn (generic function with 1 method)
 
 
 ```julia
-maxIters = [(0,0,0,0,0,0,20000),(300,300,300,300,300,300,300)] #iters for ADAM/LBFGS
+maxIters = [(1,1,1,1,1,1,20000),(300,300,300,300,300,300,300)] #iters for ADAM/LBFGS
 
 strategies = [NeuralPDE.QuadratureTraining(quadrature_alg = CubaCuhre(), reltol = 1, abstol = 1e-4, maxiters = 100),
               NeuralPDE.QuadratureTraining(quadrature_alg = HCubatureJL(), reltol = 1, abstol = 1e-4, maxiters = 100, batch = 0),
@@ -235,33 +244,6 @@ for min =1:length(minimizers) # minimizer
 end
 ```
 
-```
-Error: MethodError: no method matching build_loss_function(::Symbolics.Equa
-tion, ::Vector{Symbolics.Num}, ::Vector{Symbolics.CallWithMetadata{Symbolic
-Utils.FnType{Tuple, Real}, Base.ImmutableDict{DataType, Any}}}, ::NeuralPDE
-.var"#270#272"{DiffEqFlux.FastChain{Tuple{DiffEqFlux.FastDense{typeof(NNlib
-.σ), DiffEqFlux.var"#initial_params#90"{Vector{Float32}}}, DiffEqFlux.FastD
-ense{typeof(NNlib.σ), DiffEqFlux.var"#initial_params#90"{Vector{Float32}}},
- DiffEqFlux.FastDense{typeof(identity), DiffEqFlux.var"#initial_params#90"{
-Vector{Float32}}}}}, UnionAll}, ::NeuralPDE.var"#276#277", ::DiffEqFlux.Fas
-tChain{Tuple{DiffEqFlux.FastDense{typeof(NNlib.σ), DiffEqFlux.var"#initial_
-params#90"{Vector{Float32}}}, DiffEqFlux.FastDense{typeof(NNlib.σ), DiffEqF
-lux.var"#initial_params#90"{Vector{Float32}}}, DiffEqFlux.FastDense{typeof(
-identity), DiffEqFlux.var"#initial_params#90"{Vector{Float32}}}}}, ::Vector
-{Float32}, ::NeuralPDE.GridTraining)
-Closest candidates are:
-  build_loss_function(::Any, ::Any, ::Any, ::Any, ::Any, ::Any, ::Any, ::An
-y, !Matched::Any; bc_indvars, eq_params, param_estim, default_p) at /cache/
-julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages
-/NeuralPDE/nxvU8/src/pinns_pde_solve.jl:559
-  build_loss_function(::Any, ::Any, ::Any, ::Any, ::Any, ::Any, ::Any, ::An
-y, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any; bc_indvars, 
-integration_indvars, eq_params, param_estim, default_p) at /cache/julia-bui
-ldkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/NeuralPD
-E/nxvU8/src/pinns_pde_solve.jl:578
-```
-
-
 
 
 
@@ -290,7 +272,7 @@ plot!(error, times["72"], error_res["72"], yaxis=:log10, title = string("Allen C
 ```
 
 ```
-Plotting error vs itersError: KeyError: key "11" not found
+Plotting error vs itersError: UndefVarError: Plots not defined
 ```
 
 
