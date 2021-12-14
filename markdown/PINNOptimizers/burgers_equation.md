@@ -20,7 +20,7 @@ using Plots
 
 
 ```julia
-# Physical and numerical parameters (fixed) ####################################
+# Physical and numerical parameters (fixed)
 nu = 0.07
 nx = 10001 #101
 x_max = 2.0 * pi
@@ -29,48 +29,22 @@ nt = 2 #10
 dt = dx * nu
 t_max = dt * nt
 
-# Analytic function ############################################################
-@parameters x t
-analytic_sol_func(x, t) = -2*nu*(-(-8*t + 2*x)*exp(-(-4*t + x)^2/(4*nu*(t + 1)))/
+# Analytic function
+analytic_sol_func(t, x) = -2*nu*(-(-8*t + 2*x)*exp(-(-4*t + x)^2/(4*nu*(t + 1)))/
                           (4*nu*(t + 1)) - (-8*t + 2*x - 12.5663706143592)*
                           exp(-(-4*t + x - 6.28318530717959)^2/(4*nu*(t + 1)))/
                           (4*nu*(t + 1)))/(exp(-(-4*t + x - 6.28318530717959)^2/
                           (4*nu*(t + 1))) + exp(-(-4*t + x)^2/(4*nu*(t + 1)))) + 4
-domains = [x ∈ IntervalDomain(0.0, x_max),
-           t ∈ IntervalDomain(0.0, t_max)]
-xs, ts = [domain.domain.lower:dx:domain.domain.upper for (dx, domain) in zip([dx, dt], domains)]
-u_real = reshape([analytic_sol_func(x, t) for t in ts for x in xs], (length(xs), length(ts)))
 ```
 
 ```
-10001×3 Matrix{Float64}:
- 4.0      3.99982  3.99965
- 4.00063  4.00045  4.00028
- 4.00126  4.00108  4.0009
- 4.00188  4.00171  4.00153
- 4.00251  4.00234  4.00216
- 4.00314  4.00297  4.00279
- 4.00377  4.00359  4.00342
- 4.0044   4.00422  4.00405
- 4.00503  4.00485  4.00467
- 4.00565  4.00548  4.0053
- ⋮                 
- 3.99497  3.9948   3.99462
- 3.9956   3.99543  3.99525
- 3.99623  3.99605  3.99588
- 3.99686  3.99668  3.99651
- 3.99749  3.99731  3.99714
- 3.99812  3.99794  3.99776
- 3.99874  3.99857  3.99839
- 3.99937  3.9992   3.99902
- 4.0      3.99982  3.99965
+analytic_sol_func (generic function with 1 method)
 ```
 
 
 
 ```julia
-function solve(opt)
-    strategy = QuadratureTraining()
+function burgers(strategy, minimizer)
 
     @parameters x t
     @variables u(..)
@@ -90,76 +64,96 @@ function solve(opt)
     discretization = PhysicsInformedNN(chain, strategy)
 
     indvars = [x, t]   #physically independent variables
-    depvars = [u]       #dependent (target) variable
+    depvars = [u]      #dependent (target) variable
 
-    loss = []
-    initial_time = 0
+    dim = length(domains)
 
+    losses = []
+    error = []
     times = []
 
+    dx_err = 0.00005
+
+    error_strategy = GridTraining(dx_err)
+
+    initθ = Float64.(DiffEqFlux.initial_params(chain))
+    eltypeθ = eltype(initθ)
+    parameterless_type_θ = DiffEqBase.parameterless_type(initθ)
+    phi = NeuralPDE.get_phi(chain,parameterless_type_θ)
+    derivative = NeuralPDE.get_numeric_derivative()
+
+    _pde_loss_function = NeuralPDE.build_loss_function(eq,indvars,depvars,
+                                             phi,derivative,nothing,chain,initθ,error_strategy)
+
+    bc_indvars = NeuralPDE.get_variables(bcs,indvars,depvars)
+    _bc_loss_functions = [NeuralPDE.build_loss_function(bc,indvars,depvars,
+                                              phi,derivative,nothing,chain,initθ,error_strategy,
+                                              bc_indvars = bc_indvar) for (bc,bc_indvar) in zip(bcs,bc_indvars)]
+
+    train_sets = NeuralPDE.generate_training_sets(domains,dx_err,[eq],bcs,eltypeθ,indvars,depvars)
+    train_domain_set, train_bound_set = train_sets
+
+
+    pde_loss_function = NeuralPDE.get_loss_function(_pde_loss_function,
+                                          train_domain_set[1],eltypeθ,
+                                          parameterless_type_θ,error_strategy)
+
+    bc_loss_functions = [NeuralPDE.get_loss_function(loss,set,
+                                                 eltypeθ, parameterless_type_θ,
+                                                 error_strategy) for (loss, set) in zip(_bc_loss_functions,train_bound_set)]
+
+    loss_functions = [pde_loss_function; bc_loss_functions]
+    loss_function__ = θ -> sum(map(l->l(θ) ,loss_functions))
+        
+    function loss_function_(θ,p)
+            return loss_function__(θ)
+    end
+
+
     cb = function (p,l)
-        if initial_time == 0
-            initial_time = time()
-        end
-        push!(times, time() - initial_time)
-        #println("Current loss for $opt is: $l")
-        push!(loss, l)
+        
+        timeCounter = 0.0
+        deltaT_s = time_ns() #Start a clock when the callback begins, this will evaluate questo misurerà anche il calcolo degli uniform error
+
+        ctime = time_ns() - startTime - timeCounter #This variable is the time to use for the time benchmark plot
+        append!(times, ctime/10^9) #Conversion nanosec to seconds
+        append!(losses, l)
+        append!(error, loss_function__(p))
+        #println(length(losses), " Current loss is: ", l, " uniform error is, ", loss_function__(p))
+
+        timeCounter = timeCounter + time_ns() - deltaT_s #timeCounter sums all delays due to the callback functions of the previous iterations
+
         return false
     end
 
     @named pde_system = PDESystem(eq, bcs, domains, indvars, depvars)
-    prob = discretize(pde_system, discretization)
 
-    if opt == "both"
-        res = GalacticOptim.solve(prob, ADAM(); cb = cb, maxiters=50)
+    discretization = NeuralPDE.PhysicsInformedNN(chain, strategy, init_params =initθ)
+    prob = NeuralPDE.discretize(pde_system,discretization)
+
+    startTime = time_ns() #Fix initial time (t=0) before starting the training
+    
+    
+    if minimizer == "both"
+        res = GalacticOptim.solve(prob, ADAM(); cb = cb, maxiters=5)
         prob = remake(prob,u0=res.minimizer)
-        res = GalacticOptim.solve(prob, BFGS(); cb = cb, maxiters=150)
+        res = GalacticOptim.solve(prob, BFGS(); cb = cb, maxiters=15)
     else
-        res = GalacticOptim.solve(prob, opt; cb = cb, maxiters=200)
+        res = GalacticOptim.solve(prob, minimizer; cb = cb, maxiters=500)
     end
 
-    times[1] = 0.001
+    phi = discretization.phi
 
-    return loss, times #add numeric solution
+    params = res.minimizer
+
+    return [error, params, times, losses]
 end
 ```
 
 ```
-solve (generic function with 1 method)
+burgers (generic function with 1 method)
 ```
 
-
-
-```julia
-opt1 = ADAM()
-opt2 = ADAM(0.005)
-opt3 = ADAM(0.05)
-opt4 = RMSProp()
-opt5 = RMSProp(0.005)
-opt6 = RMSProp(0.05)
-opt7 = Optim.BFGS()
-opt8 = Optim.LBFGS()
-```
-
-```
-Optim.LBFGS{Nothing, LineSearches.InitialStatic{Float64}, LineSearches.Hage
-rZhang{Float64, Base.RefValue{Bool}}, Optim.var"#17#19"}(10, LineSearches.I
-nitialStatic{Float64}
-  alpha: Float64 1.0
-  scaled: Bool false
-, LineSearches.HagerZhang{Float64, Base.RefValue{Bool}}
-  delta: Float64 0.1
-  sigma: Float64 0.9
-  alphamax: Float64 Inf
-  rho: Float64 5.0
-  epsilon: Float64 1.0e-6
-  gamma: Float64 0.66
-  linesearchmax: Int64 50
-  psi3: Float64 0.1
-  display: Int64 0
-  mayterminate: Base.RefValue{Bool}
-, nothing, Optim.var"#17#19"(), Optim.Flat(), true)
-```
 
 
 
@@ -168,30 +162,71 @@ nitialStatic{Float64}
 ## Solve
 
 ```julia
-loss_1, times_1 = solve(opt1)
-loss_2, times_2 = solve(opt2)
-loss_3, times_3 = solve(opt3)
-loss_4, times_4 = solve(opt4)
-loss_5, times_5 = solve(opt5)
-loss_6, times_6 = solve(opt6)
-loss_7, times_7 = solve(opt7)
-loss_8, times_8 = solve(opt8)
-loss_9, times_9 = solve("both")
+# Settings:
+#maxIters = [(0,0,0,0,0,0,20000),(300,300,300,300,300,300,300)] #iters
+
+strategies = [NeuralPDE.QuadratureTraining()]
+
+strategies_short_name = ["QuadratureTraining"]
+
+minimizers = [ADAM(),
+              ADAM(0.000005),
+              ADAM(0.0005),
+              RMSProp(),
+              RMSProp(0.00005),
+              RMSProp(0.05),
+              BFGS(),
+              LBFGS()]
+
+
+minimizers_short_name = ["ADAM",
+                         "ADAM(0.000005)",
+                         "ADAM(0.0005)",
+                         "RMS",
+                         "RMS(0.00005)",
+                         "RMS(0.05)",
+                         "BFGS",
+                         "LBFGS"]
 ```
 
 ```
-(Any[145.46902452973123, 143.7278445895801, 141.9963094092557, 140.27470286
-35504, 138.56328958184685, 136.86232928836844, 135.17208104632311, 133.4927
-954940895, 131.82472059156237, 130.1680926281776  …  -2.9686361741929526e12
-, -3.0138780563957393e12, -3.5291670154747246e12, -5.045072172288618e15, -5
-.356253761276538e15, -5.04592690520305e18, -5.045994973836694e18, -5.253320
-699094463e18, -6.245505961196077e18, -1.5388655342845012e31], Any[0.001, 0.
-015945911407470703, 0.031941890716552734, 0.04803609848022461, 0.0641829967
-4987793, 0.08022594451904297, 0.09637093544006348, 0.11255693435668945, 0.1
-2872910499572754, 0.19677305221557617  …  3.976223945617676, 4.040671110153
-198, 5.220717906951904, 5.828866004943848, 6.453103065490723, 7.36433696746
-8262, 8.210402965545654, 9.088619947433472, 10.080639123916626, 11.49238300
-3234863])
+8-element Vector{String}:
+ "ADAM"
+ "ADAM(0.000005)"
+ "ADAM(0.0005)"
+ "RMS"
+ "RMS(0.00005)"
+ "RMS(0.05)"
+ "BFGS"
+ "LBFGS"
+```
+
+
+
+```julia
+# Run models
+error_res =  Dict()
+params_res = Dict()  
+times = Dict()
+losses_res = Dict()
+
+print("Starting run \n")
+
+
+for min in 1:length(minimizers) # minimizer
+      for strat in 1:length(strategies) # strategy
+            #println(string(strategies_short_name[1], "  ", minimizers_short_name[min]))
+            res = burgers(strategies[strat], minimizers[min])
+            push!(error_res, string(strat,min)     => res[1])
+            push!(params_res, string(strat,min) => res[2])
+            push!(times, string(strat,min)        => res[3])
+            push!(losses_res, string(strat,min)        => res[4])
+      end
+end
+```
+
+```
+Starting run
 ```
 
 
@@ -201,37 +236,59 @@ loss_9, times_9 = solve("both")
 ## Results
 
 ```julia
-p = plot([times_1, times_2, times_3, times_4, times_5, times_6, times_7, times_8, times_9], [loss_1, loss_2, loss_3, loss_4, loss_5, loss_6, loss_7, loss_8, loss_9],xlabel="time (s)", ylabel="loss", xscale=:log10, yscale=:log10, labels=["ADAM(0.001)" "ADAM(0.005)" "ADAM(0.05)" "RMSProp(0.001)" "RMSProp(0.005)" "RMSProp(0.05)" "BFGS()" "LBFGS()" "ADAM + BFGS"], legend=:bottomleft, linecolor=["#2660A4" "#4CD0F4" "#FEC32F" "#F763CD" "#44BD79" "#831894" "#A6ED18" "#980000" "#FF912B"])
+#PLOT ERROR VS ITER: to compare to compare between minimizers, keeping the same strategy (easily adjustable to compare between strategies)
+error_iter = Plots.plot(1:length(error_res["11"]), error_res["11"], yaxis=:log10, title = string("Burger error vs iter"), ylabel = "Error", label = string(minimizers_short_name[1]), ylims = (0.0001,1))
+plot!(error_iter, 1:length(error_res["12"]), error_res["12"], yaxis=:log10, label = string(minimizers_short_name[2]))
+plot!(error_iter, 1:length(error_res["13"]), error_res["13"], yaxis=:log10, label = string(minimizers_short_name[3]))
+plot!(error_iter, 1:length(error_res["14"]), error_res["14"], yaxis=:log10, label = string(minimizers_short_name[4]))
+plot!(error_iter, 1:length(error_res["15"]), error_res["15"], yaxis=:log10, label = string(minimizers_short_name[5]))
+plot!(error_iter, 1:length(error_res["16"]), error_res["16"], yaxis=:log10, label = string(minimizers_short_name[6]))
+plot!(error_iter, 1:length(error_res["17"]), error_res["17"], yaxis=:log10, label = string(minimizers_short_name[7]))
+plot!(error_iter, 1:length(error_res["18"]), error_res["18"], yaxis=:log10, label = string(minimizers_short_name[8]))
+
+Plots.plot(error_iter)
 ```
 
 ![](figures/burgers_equation_6_1.png)
 
 ```julia
-p = plot(1:201, [loss_1, loss_2, loss_3, loss_4, loss_5, loss_6, loss_7, loss_8, loss_9[2:end]], xlabel="iterations", ylabel="loss", yscale=:log10, labels=["ADAM(0.001)" "ADAM(0.005)" "ADAM(0.05)" "RMSProp(0.001)" "RMSProp(0.005)" "RMSProp(0.05)" "BFGS()" "LBFGS()" "ADAM + BFGS"], legend=:bottomleft, linecolor=["#2660A4" "#4CD0F4" "#FEC32F" "#F763CD" "#44BD79" "#831894" "#A6ED18" "#980000" "#FF912B"])
+#Use after having modified the analysis setting correctly --> Error vs iter: to compare different strategies, keeping the same minimizer
+#error_iter = Plots.plot(1:length(error_res["11"]), error_res["11"], yaxis=:log10, title = string("Burger error vs iter"), ylabel = "Error", label = string(strategies_short_name[1]), ylims = (0.0001,1))
+#plot!(error_iter, 1:length(error_res["21"]), error_res["21"], yaxis=:log10, label = string(strategies_short_name[2]))
+#plot!(error_iter, 1:length(error_res["31"]), error_res["31"], yaxis=:log10, label = string(strategies_short_name[3]))
+#plot!(error_iter, 1:length(error_res["41"]), error_res["41"], yaxis=:log10, label = string(strategies_short_name[4]))
+#plot!(error_iter, 1:length(error_res["51"]), error_res["51"], yaxis=:log10, label = string(strategies_short_name[5]))
+#plot!(error_iter, 1:length(error_res["61"]), error_res["61"], yaxis=:log10, label = string(strategies_short_name[6]))
+#plot!(error_iter, 1:length(error_res["71"]), error_res["71"], yaxis=:log10, label = string(strategies_short_name[7]))
 ```
-
-```
-Error: BoundsError: attempt to access 106-element Vector{Float64} at index 
-[1:201]
-```
-
 
 
 ```julia
-@show loss_1[end], loss_2[end], loss_3[end], loss_4[end], loss_5[end], loss_6[end], loss_7[end], loss_8[end], loss_9[end]
+#PLOT ERROR VS TIME: to compare to compare between minimizers, keeping the same strategy
+error_time = plot(times["11"], error_res["11"], yaxis=:log10, label = string(minimizers_short_name[1]),title = string("Burger error vs time"), ylabel = "Error", size = (1500,500))
+plot!(error_time, times["12"], error_res["12"], yaxis=:log10, label = string(minimizers_short_name[2]))
+plot!(error_time, times["13"], error_res["13"], yaxis=:log10, label = string(minimizers_short_name[3]))
+plot!(error_time, times["14"], error_res["14"], yaxis=:log10, label = string(minimizers_short_name[4]))
+plot!(error_time, times["15"], error_res["15"], yaxis=:log10, label = string(minimizers_short_name[5]))
+plot!(error_time, times["16"], error_res["16"], yaxis=:log10, label = string(minimizers_short_name[6]))
+plot!(error_time, times["17"], error_res["17"], yaxis=:log10, label = string(minimizers_short_name[7]))
+plot!(error_time, times["18"], error_res["18"], yaxis=:log10, label = string(minimizers_short_name[7]))
+
+Plots.plot(error_time)
 ```
 
-```
-(loss_1[end], loss_2[end], loss_3[end], loss_4[end], loss_5[end], loss_6[en
-d], loss_7[end], loss_8[end], loss_9[end]) = (54.20756469391171, 23.0973975
-86133486, -1.4736670535901976e10, 42.592066714605856, -20.8813815025754, -3
-.336360501501546e8, -2.406106282630721e15, -11.905721227292567, -1.53886553
-42845012e31)
-(54.20756469391171, 23.097397586133486, -1.4736670535901976e10, 42.59206671
-4605856, -20.8813815025754, -3.336360501501546e8, -2.406106282630721e15, -1
-1.905721227292567, -1.5388655342845012e31)
-```
+![](figures/burgers_equation_8_1.png)
 
+```julia
+#Use after having modified the analysis setting correctly --> Error vs time: to compare different strategies, keeping the same minimizer
+#error_time = plot(times["11"], error_res["11"], yaxis=:log10, label = string(strategies_short_name[1]),title = string("Burger error vs time"), ylabel = "Error", size = (1500,500))
+#plot!(error_time, times["21"], error_res["21"], yaxis=:log10, label = string(strategies_short_name[2]))
+#plot!(error_time, times["31"], error_res["31"], yaxis=:log10, label = string(strategies_short_name[3]))
+#plot!(error_time, times["41"], error_res["41"], yaxis=:log10, label = string(strategies_short_name[4]))
+#plot!(error_time, times["51"], error_res["51"], yaxis=:log10, label = string(strategies_short_name[5]))
+#plot!(error_time, times["61"], error_res["61"], yaxis=:log10, label = string(strategies_short_name[6]))
+#plot!(error_time, times["71"], error_res["71"], yaxis=:log10, label = string(strategies_short_name[7]))
+```
 
 
 
