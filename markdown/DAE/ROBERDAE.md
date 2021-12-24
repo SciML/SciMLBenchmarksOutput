@@ -221,8 +221,8 @@ SciMLBenchmarks.weave_file("benchmarks/DAE","ROBERDAE.jmd")
 Computer Information:
 
 ```
-Julia Version 1.6.4
-Commit 35f0c911f4 (2021-11-19 03:54 UTC)
+Julia Version 1.6.5
+Commit 9058264a69 (2021-12-19 12:30 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
   CPU: AMD EPYC 7502 32-Core Processor
