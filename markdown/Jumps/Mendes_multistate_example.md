@@ -129,8 +129,8 @@ SciMLBenchmarks.weave_file("benchmarks/Jumps","Mendes_multistate_example.jmd")
 Computer Information:
 
 ```
-Julia Version 1.6.3
-Commit ae8452a9e0 (2021-09-23 17:34 UTC)
+Julia Version 1.6.5
+Commit 9058264a69 (2021-12-19 12:30 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
   CPU: AMD EPYC 7502 32-Core Processor
@@ -138,14 +138,15 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-11.0.1 (ORCJIT, znver2)
 Environment:
-  JULIA_DEPOT_PATH = /root/.cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+  BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
+  JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
 
 ```
 
 Package Information:
 
 ```
-      Status `/var/lib/buildkite-agent/builds/amdci3-julia-csail-mit-edu/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Project.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Project.toml`
   [479239e8] Catalyst v6.13.0
   [a93c6f00] DataFrames v1.1.1
   [2b5f629d] DiffEqBase v6.62.2
@@ -161,7 +162,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/var/lib/buildkite-agent/builds/amdci3-julia-csail-mit-edu/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Manifest.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.17.1
   [1520ce14] AbstractTrees v0.3.4
   [79e6a3ab] Adapt v3.3.1

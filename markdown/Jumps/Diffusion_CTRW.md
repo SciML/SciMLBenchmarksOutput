@@ -95,22 +95,24 @@ df = DataFrame(names=shortlabels,medtimes=medtimes,relmedtimes=(medtimes/medtime
 
 ```
 6×6 DataFrame
- Row │ names          medtimes  relmedtimes  avgtimes  std         cv
-     │ String         Float64   Float64      Float64   Float64     Float64
+ Row │ names          medtimes  relmedtimes  avgtimes  std         cv      
+    ⋯
+     │ String         Float64   Float64      Float64   Float64     Float64 
+    ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
-───
-   1 │ Direct         7.31573     1.0        7.32097   0.0287634   0.003928
-91
-   2 │ DirectFW       7.76574     1.06151    7.76477   0.029427    0.003789
-81
-   3 │ SortingDirect  1.16258     0.158916   1.16305   0.00476312  0.004095
-38
-   4 │ NRM            0.946914    0.129435   0.950523  0.022528    0.023700
-6
-   5 │ DirectCR       0.684622    0.0935823  0.687381  0.00846155  0.012309
-8
-   6 │ RSSA           1.52625     0.208626   1.5269    0.00453423  0.002969
-57
+─────
+   1 │ Direct         7.25834     1.0        7.2574    0.00779967  0.001074
+72  ⋯
+   2 │ DirectFW       7.26559     1.001      7.26305   0.00725465  0.000998
+843
+   3 │ SortingDirect  1.06289     0.146437   1.0639    0.00428316  0.004025
+9
+   4 │ NRM            0.832275    0.114665   0.833451  0.00438451  0.005260
+67
+   5 │ DirectCR       0.511687    0.0704965  0.517935  0.0203384   0.039268
+2   ⋯
+   6 │ RSSA           1.44241     0.198724   1.44275   0.0027708   0.001920
+49
 ```
 
 
@@ -143,8 +145,8 @@ SciMLBenchmarks.weave_file("benchmarks/Jumps","Diffusion_CTRW.jmd")
 Computer Information:
 
 ```
-Julia Version 1.6.3
-Commit ae8452a9e0 (2021-09-23 17:34 UTC)
+Julia Version 1.6.5
+Commit 9058264a69 (2021-12-19 12:30 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
   CPU: AMD EPYC 7502 32-Core Processor
@@ -152,14 +154,15 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-11.0.1 (ORCJIT, znver2)
 Environment:
-  JULIA_DEPOT_PATH = /root/.cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+  BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
+  JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
 
 ```
 
 Package Information:
 
 ```
-      Status `/var/lib/buildkite-agent/builds/amdci3-julia-csail-mit-edu/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Project.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Project.toml`
   [479239e8] Catalyst v6.13.0
   [a93c6f00] DataFrames v1.1.1
   [2b5f629d] DiffEqBase v6.62.2
@@ -175,7 +178,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/var/lib/buildkite-agent/builds/amdci3-julia-csail-mit-edu/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Manifest.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.17.1
   [1520ce14] AbstractTrees v0.3.4
   [79e6a3ab] Adapt v3.3.1
