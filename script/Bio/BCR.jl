@@ -13,24 +13,23 @@ tf       = 100000.0
 rn    = prnbng.rn
 @timeit to "Create ODESys" osys = convert(ODESystem, rn)
 
-u₀    = prnbng.u₀
-p     = prnbng.p
 tspan = (0.,tf)
-@timeit to "ODEProb No Jac" oprob = ODEProblem(osys, u₀, tspan, p)
-@timeit to "ODEProb DenseJac" densejacprob = ODEProblem(osys, u₀, tspan, p, jac=true)
+@timeit to "ODEProb No Jac" oprob = ODEProblem(osys, Float64[], tspan, Float64[])
+@timeit to "ODEProb DenseJac" densejacprob = ODEProblem(osys, Float64[], tspan, Float64[], jac=true)
 
 
-@timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem(osys, u₀, tspan, p, jac=true, sparse=true)
+@timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem(osys, Float64[], tspan, Float64[], jac=true, sparse=true)
 show(to)
 
 
 @show numspecies(rn) # Number of ODEs
 @show numreactions(rn) # Apprx. number of terms in the ODE
-@show numparams(rn) # Number of Parameters
+@show length(parameters(rn)) # Number of Parameters
 
 
-u  = copy(u₀)
-du = similar(u)
+u  = ModelingToolkit.varmap_to_vars(nothing, species(rn); defaults=ModelingToolkit.defaults(rn))
+du = copy(u)
+p  = ModelingToolkit.varmap_to_vars(nothing, parameters(rn); defaults=ModelingToolkit.defaults(rn))
 @timeit to "ODE rhs Eval1" oprob.f(du,u,p,0.)
 @timeit to "ODE rhs Eval2" oprob.f(du,u,p,0.)
 densejacprob.f(du,u,p,0.)
@@ -65,6 +64,7 @@ setups = [
           #Dict(:alg=>Rosenbrock23(autodiff=false)),
           Dict(:alg=>TRBDF2(autodiff=false)),
           Dict(:alg=>QNDF(autodiff=false)),
+          Dict(:alg=>FBDF(autodiff=false)),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>CVODE_BDF(linear_solver=:LapackDense)),
           #Dict(:alg=>rodas()),
@@ -92,6 +92,7 @@ setups = [
           #Dict(:alg=>Rosenbrock23(autodiff=false)),
           Dict(:alg=>TRBDF2(autodiff=false)),
           Dict(:alg=>QNDF(autodiff=false)),
+          Dict(:alg=>FBDF(autodiff=false)),
           #Dict(:alg=>CVODE_BDF(linear_solver=:KLU)), # Fails!
           #Dict(:alg=>rodas()),
           #Dict(:alg=>radau()),
