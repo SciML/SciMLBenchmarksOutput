@@ -228,6 +228,11 @@ for min =1:length(minimizers) # minimizer
 end
 ```
 
+```
+Error: AssertionError: B > A
+```
+
+
 
 
 
@@ -254,7 +259,11 @@ plot!(error, times["62"], error_res["62"], yaxis=:log10, label = string(strategi
 plot!(error, times["72"], error_res["72"], yaxis=:log10, title = string("Level Set convergence ADAM/LBFGS"), ylabel = "log(error)", xlabel = "t", label = string(strategies_short_name[7], " + " , minimizers_short_name[2]))
 ```
 
-![](figures/level_set_et_4_1.png)
+```
+Error: KeyError: key "72" not found
+```
+
+
 
 
 ## Appendix

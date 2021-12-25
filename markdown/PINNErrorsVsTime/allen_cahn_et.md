@@ -233,6 +233,11 @@ for min =1:length(minimizers) # minimizer
 end
 ```
 
+```
+Error: AssertionError: B > A
+```
+
+
 
 
 
@@ -261,11 +266,10 @@ plot!(error, times["72"], error_res["72"], yaxis=:log10, title = string("Allen C
 ```
 
 ```
-Plotting error vs times
+Plotting error vs timesError: KeyError: key "62" not found
 ```
 
 
-![](figures/allen_cahn_et_4_1.png)
 
 
 ## Appendix
