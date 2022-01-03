@@ -66,6 +66,7 @@ sol = solve(prob,PDIRK44(),dt=2.0^(-8));
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>rodas()),
@@ -115,6 +116,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           #Dict(:alg=>ImplicitDeuflhardExtrapolation()), # Diverges
           #Dict(:alg=>ImplicitHairerWannerExtrapolation()), # Diverges
           #Dict(:alg=>ABDF2()), # Maxiters
+          Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>Exprb43()),
           Dict(:alg=>Exprb32()),
@@ -127,6 +129,7 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>rodas()),
@@ -160,6 +163,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           #Dict(:alg=>ImplicitDeuflhardExtrapolation()), # Diverges
           #Dict(:alg=>ImplicitHairerWannerExtrapolation()), # Diverges
           #Dict(:alg=>ABDF2()), # Maxiters
+          Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>Exprb43()),
           Dict(:alg=>Exprb32()),
@@ -172,7 +176,8 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (7:12)
 reltols = 1.0 ./ 10.0 .^ (4:9)
 
-setups = [Dict(:alg=>Rodas5()),
+setups = [#Dict(:alg=>Rodas5()),
+          Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
@@ -194,7 +199,7 @@ setups = [Dict(:alg=>Kvaerno4()),
           Dict(:alg=>KenCarp47()),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>Rodas4()),
-          Dict(:alg=>Rodas5()),
+          #Dict(:alg=>Rodas5()),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau())]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;

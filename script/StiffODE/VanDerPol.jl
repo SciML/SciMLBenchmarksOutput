@@ -72,6 +72,7 @@ abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
 setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>TRBDF2()),
@@ -132,6 +133,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           #Dict(:alg=>ImplicitDeuflhardExtrapolation()), # Diverges
           #Dict(:alg=>ImplicitHairerWannerExtrapolation()), # Diverges
           Dict(:alg=>ABDF2()),
+          Dict(:alg=>FBDF()),
           #Dict(:alg=>QNDF()), # ???
           #Dict(:alg=>Exprb43()), # Diverges
           Dict(:alg=>Exprb32()),
@@ -145,7 +147,8 @@ abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
 setups = [Dict(:alg=>Rosenbrock23()),
-          Dict(:alg=>QNDF()),
+          Dict(:alg=>FBDF()),
+          #Dict(:alg=>QNDF()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>ddebdf()),
@@ -191,6 +194,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           #Dict(:alg=>ImplicitDeuflhardExtrapolation()), # Diverges
           #Dict(:alg=>ImplicitHairerWannerExtrapolation()), # Diverges
           Dict(:alg=>ABDF2()),
+          Dict(:alg=>FBDF()),
           #Dict(:alg=>QNDF()), # ???
           #Dict(:alg=>Exprb43()), # Diverges
           Dict(:alg=>Exprb32()),
@@ -203,7 +207,8 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 setups = [Dict(:alg=>Rodas3()),
-          Dict(:alg=>QNDF()),
+          Dict(:alg=>FBDF()),
+          #Dict(:alg=>QNDF()),
           Dict(:alg=>Rodas4P()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>Rodas4()),
@@ -248,6 +253,7 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 setups = [Dict(:alg=>Rodas3()),
+          Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>Rodas4P()),
           Dict(:alg=>CVODE_BDF()),

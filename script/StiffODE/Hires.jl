@@ -52,6 +52,7 @@ setups = [
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>CVODE_BDF()),
@@ -123,6 +124,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           #Dict(:alg=>ImplicitDeuflhardExtrapolation()), # Diverges
           #Dict(:alg=>ImplicitHairerWannerExtrapolation()), # Diverges
           Dict(:alg=>ABDF2()),
+          Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>Exprb43()),
           Dict(:alg=>Exprb32()),
@@ -135,7 +137,9 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (7:13)
 reltols = 1.0 ./ 10.0 .^ (4:10)
 
-setups = [Dict(:alg=>QNDF()),
+setups = [
+          Dict(:alg=>FBDF()),
+          Dict(:alg=>QNDF()),
           Dict(:alg=>Rodas4()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
