@@ -1,0 +1,11 @@
+name = "SciMLBenchmarksOutput"
+uuid = "d91efeb5-c178-44a6-a2ee-51685df7c78e"
+authors = ["Chris Rackauckas <accounts@chrisrackauckas.com>"]
+version = "1.0.0"
+
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+
+[compat]
+Documenter = "0.27"
+julia = "1.6"
