@@ -1,4 +1,4 @@
-using Documenter
+using Documenter, SciMLBenchmarksOutput
 
 makedocs(
     sitename="The SciML Benchmarks: Differential Equations, Inverse Problems, Physics-Informed ML, Science-Guided AI",
