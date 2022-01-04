@@ -7,13 +7,14 @@ makedocs(
     authors="Chris Rackauckas",
     modules=[SciMLBenchmarksOutput],
     clean=true,doctest=false,
+    root = joinpath(pwd(),"../"),
     format = Documenter.HTML(#analytics = "UA-90474609-3",
                              assets = ["assets/favicon.ico"],
                              canonical="https://benchmarks.sciml.ai/stable/"),
     pages=[
-        "Home" => "index.md",
+        "Home" => "README.md",
         "Non-Stiff Ordinary Differential Equation (ODE) Solver Benchmarks" => Any[
-            "../NonStiffODE/linear_wpd.md"
+            "NonStiffODE/linear_wpd.md"
         ],
     ]
 )
