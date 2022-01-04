@@ -3,7 +3,7 @@ using Documenter
 makedocs(
     sitename="The SciML Benchmarks: Differential Equations, Inverse Problems, Physics-Informed ML, Science-Guided AI",
     authors="Chris Rackauckas",
-    modules=[],
+    modules=[SciMLBenchmarksOutput],
     clean=true,doctest=false,
     format = Documenter.HTML(#analytics = "UA-90474609-3",
                              assets = ["assets/favicon.ico"],
