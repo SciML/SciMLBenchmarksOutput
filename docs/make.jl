@@ -19,4 +19,5 @@ makedocs(
 deploydocs(;
     repo="github.com/SciML/SciMLBenchmarksOutput",
     devbranch="main",
+    branch = "main"
 )
