@@ -11,7 +11,7 @@ makedocs(
     pages=[
         "Home" => "README.md",
         "Non-Stiff Ordinary Differential Equation (ODE) Solver Benchmarks" => Any[
-            "NonStiffODE/linear_wpd.md"
+            "NonStiffODE/LotkaVolterra_wpd.md"
         ],
     ]
 )
