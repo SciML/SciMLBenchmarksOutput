@@ -130,13 +130,14 @@ plot(wp)
 setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>ImplicitEulerExtrapolation()),
-          #Dict(:alg=>ImplicitDeuflhardExtrapolation()), # Diverges
-          #Dict(:alg=>ImplicitHairerWannerExtrapolation()), # Diverges
+          Dict(:alg=>ImplicitEulerExtrapolation()),
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
           Dict(:alg=>ABDF2()),
           Dict(:alg=>FBDF()),
           #Dict(:alg=>QNDF()), # ???
           #Dict(:alg=>Exprb43()), # Diverges
-          Dict(:alg=>Exprb32()),
+          #Dict(:alg=>Exprb32()), # SingularException
 ]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
@@ -191,8 +192,8 @@ plot(wp)
 setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>ImplicitEulerExtrapolation()),
-          #Dict(:alg=>ImplicitDeuflhardExtrapolation()), # Diverges
-          #Dict(:alg=>ImplicitHairerWannerExtrapolation()), # Diverges
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
           Dict(:alg=>ABDF2()),
           Dict(:alg=>FBDF()),
           #Dict(:alg=>QNDF()), # ???
@@ -207,7 +208,7 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 setups = [Dict(:alg=>Rodas3()),
-          Dict(:alg=>FBDF()),
+          #Dict(:alg=>FBDF()), #Diverges
           #Dict(:alg=>QNDF()),
           Dict(:alg=>Rodas4P()),
           Dict(:alg=>CVODE_BDF()),
@@ -216,7 +217,11 @@ setups = [Dict(:alg=>Rodas3()),
           Dict(:alg=>radau()),
           Dict(:alg=>lsoda()),
           Dict(:alg=>RadauIIA5()),
-          Dict(:alg=>Rodas5())]
+          Dict(:alg=>Rodas5()),
+          Dict(:alg=>ImplicitEulerExtrapolation()),
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
+          ]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e6),seconds=5)
 plot(wp)
@@ -253,8 +258,8 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 setups = [Dict(:alg=>Rodas3()),
-          Dict(:alg=>FBDF()),
-          Dict(:alg=>QNDF()),
+          #Dict(:alg=>FBDF()), #Diverges
+          #Dict(:alg=>QNDF()),
           Dict(:alg=>Rodas4P()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>Rodas4()),
@@ -289,6 +294,21 @@ setups = [Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>Rodas5())]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e6),error_estimate=:l2,seconds=5)
+plot(wp)
+
+
+#Setting BLAS to one thread to measure gains
+LinearAlgebra.BLAS.set_num_threads(1)
+abstols = 1.0 ./ 10.0 .^ (7:11)
+reltols = 1.0 ./ 10.0 .^ (4:8)
+setups = [Dict(:alg=>ImplicitHairerWannerExtrapolation()),
+		      Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = true)),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
+          ]
+
+names = ["unthreaded","threaded","Polyester"];
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+                      names = names,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
 plot(wp)
 
 
