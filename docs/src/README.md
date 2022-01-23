@@ -24,7 +24,6 @@ Static outputs in pdf, markdown, and html reside in [SciMLBenchmarksOutput](http
   - [DiffEqFlux.jl / DifferentialEquations.jl vs Jax on an epidemic model](https://gist.github.com/ChrisRackauckas/62a063f23cccf3a55a4ac9f6e497739a)
   - [DifferentialEquations.jl vs SciPy vs NumbaLSODA on a stiff ODE](https://gist.github.com/ChrisRackauckas/fd62e005c4c86520306338b6bdae6b79)
   - [DifferentialEquations.jl vs SciPy vs NumbaLSODA](https://github.com/Nicholaswogan/NumbaLSODA/tree/main/benchmark)
-  - [Brusselator Stiff Partial Differential Equation Benchmark: Julia DifferentialEquations.jl vs Python SciPy](https://gist.github.com/ChrisRackauckas/0bdbea0079a8a3ce28522e9bc8473bf0)
 - Non-stiff Ordinary Differential Equations (ODEs)
   - [Linear Work-Precision Diagrams](https://benchmarks.sciml.ai/html/NonStiffODE/linear_wpd.html)
   - [Three-Body Work-Precision Diagrams](https://benchmarks.sciml.ai/html/NonStiffODE/ThreeBody_wpd.html)
@@ -255,7 +254,7 @@ SciMLBenchmarks.weave_all()
 Each of the benchmarks displays the computer characteristics at the bottom of
 the benchmark. Since performance-necessary computations are normally performed on
 compute clusters, the official benchmarks use a workstation with an
-AMD EPYC 7502 32-Core Processor @ 2.50GHz to match the performance characteristics of
+Intel Xeon CPU E5-2680 v4 @ 2.40GHz to match the performance characteristics of
 a standard node in a high performance computing (HPC) cluster or cloud computing
 setup.
 
