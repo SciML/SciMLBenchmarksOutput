@@ -1,58 +1,73 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>- · The SciML Benchmarks: Differential Equations, Inverse Problems, Physics-Informed ML, Science-Guided AI</title><script data-outdated-warner src="../../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/markdown/NonStiffODE/LotkaVolterra_wpd/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.039/juliamono-regular.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><script src="../../../../copy.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../../README/">The SciML Benchmarks: Differential Equations, Inverse Problems, Physics-Informed ML, Science-Guided AI</a></span></div><form class="docs-search" action="../../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../../README/">Home</a></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equation (ODE) Solver Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>-</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>-</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/master/docs/src/markdown/NonStiffODE/LotkaVolterra_wpd.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><hr/><p>author: &quot;Chris Rackauckas&quot; title: &quot;Lotka-Volterra Work-Precision Diagrams&quot; –-</p><h2 id="Lotka-Volterra"><a class="docs-heading-anchor" href="#Lotka-Volterra">Lotka-Volterra</a><a id="Lotka-Volterra-1"></a><a class="docs-heading-anchor-permalink" href="#Lotka-Volterra" title="Permalink"></a></h2><p>The purpose of this problem is to test the performance on easy problems. Since it&#39;s periodic, the error is naturally low, and so most of the difference will come down to startup times and, when measuring the interpolations, the algorithm choices.</p><pre><code class="language-julia hljs">using OrdinaryDiffEq, ParameterizedFunctions, ODE, ODEInterfaceDiffEq, LSODA,
-      Sundials, DiffEqDevTools
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>- · The SciML Benchmarks: Differential Equations, Inverse Problems, Physics-Informed ML, Science-Guided AI</title><script data-outdated-warner src="../../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/markdown/NonStiffODE/Pleiades_wpd/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.039/juliamono-regular.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.11/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../../assets/documenter.js"></script><script src="../../../siteinfo.js"></script><script src="../../../../versions.js"></script><script src="../../../../copy.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../../assets/themeswap.js"></script><link href="../../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../../README/">The SciML Benchmarks: Differential Equations, Inverse Problems, Physics-Informed ML, Science-Guided AI</a></span></div><form class="docs-search" action="../../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../../README/">Home</a></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equation (ODE) Solver Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li class="is-active"><a href>-</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>-</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/master/docs/src/markdown/NonStiffODE/Pleiades_wpd.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><hr/><p>author: &quot;Chris Rackauckas&quot; title: &quot;Pleiades Work-Precision Diagrams&quot; –-</p><pre><code class="language-julia hljs">using OrdinaryDiffEq, ODE, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools
 
-f = @ode_def LotkaVolterra begin
-  dx = a*x - b*x*y
-  dy = -c*y + d*x*y
-end a b c d
+f = (du,u,p,t) -&gt; begin
+  @inbounds begin
+  x = view(u,1:7)   # x
+  y = view(u,8:14)  # y
+  v = view(u,15:21) # x′
+  w = view(u,22:28) # y′
+  du[1:7] .= v
+  du[8:14].= w
+  for i in 15:28
+    du[i] = zero(u[1])
+  end
+  for i=1:7,j=1:7
+    if i != j
+      r = ((x[i]-x[j])^2 + (y[i] - y[j])^2)^(3/2)
+      du[14+i] += j*(x[j] - x[i])/r
+      du[21+i] += j*(y[j] - y[i])/r
+    end
+  end
+  end
+end
 
-p = [1.5,1.0,3.0,1.0]
-prob = ODEProblem(f,[1.0;1.0],(0.0,10.0),p)
+prob = ODEProblem(f,[3.0,3.0,-1.0,-3.0,2.0,-2.0,2.0,3.0,-3.0,2.0,0,0,-4.0,4.0,0,0,0,0,0,1.75,-1.5,0,0,0,-1.25,1,0,0],(0.0,3.0))
 
-abstols = 1.0 ./ 10.0 .^ (6:13)
-reltols = 1.0 ./ 10.0 .^ (3:10);
-sol = solve(prob,Vern7(),abstol=1/10^14,reltol=1/10^14)
-test_sol = TestSolution(sol)
-using Plots; gr()</code></pre><pre><code class="nohighlight hljs">Plots.GRBackend()</code></pre><pre><code class="language-julia hljs">plot(sol)</code></pre><p><img src="figures/LotkaVolterra_wpd_2_1.png" alt/></p><h3 id="Low-Order"><a class="docs-heading-anchor" href="#Low-Order">Low Order</a><a id="Low-Order-1"></a><a class="docs-heading-anchor-permalink" href="#Low-Order" title="Permalink"></a></h3><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;DP5())
-          #Dict(:alg=&gt;ode45()) # fail
+abstols = 1.0 ./ 10.0 .^ (6:9)
+reltols = 1.0 ./ 10.0 .^ (3:6);
+
+using Plots; gr()</code></pre><pre><code class="nohighlight hljs">Plots.GRBackend()</code></pre><pre><code class="language-julia hljs">sol = solve(prob,Vern8(),abstol=1/10^12,reltol=1/10^10,maxiters=1000000)
+test_sol = TestSolution(sol);
+plot(sol)</code></pre><p><img src="figures/Pleiades_wpd_2_1.png" alt/></p><h2 id="Low-Order"><a class="docs-heading-anchor" href="#Low-Order">Low Order</a><a id="Low-Order-1"></a><a class="docs-heading-anchor-permalink" href="#Low-Order" title="Permalink"></a></h2><p>ODE.jl had to be discarded. The error estimate is off since it throws errors and aborts and so that artificially lowers the error the the time is serverly diminished.</p><pre><code class="language-julia hljs">#setups = [Dict(:alg=&gt;ode45())]
+#wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,numruns=100,maxiters=10000)
+#plot(wp)</code></pre><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;DP5())
           Dict(:alg=&gt;dopri5())
           Dict(:alg=&gt;Tsit5())
           Dict(:alg=&gt;Vern6())
 ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,maxiters=10000,numruns=100)
-plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_3_1.png" alt/></p><p>Here we see the OrdinaryDiffEq.jl algorithms once again far in the lead.</p><h3 id="Interpolation-Error"><a class="docs-heading-anchor" href="#Interpolation-Error">Interpolation Error</a><a id="Interpolation-Error-1"></a><a class="docs-heading-anchor-permalink" href="#Interpolation-Error" title="Permalink"></a></h3><p>Since the problem is periodic, the real measure of error is the error throughout the solution.</p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;DP5())
-          #Dict(:alg=&gt;ode45())
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,numruns=100,maxiters=10000)
+plot(wp)</code></pre><p><img src="figures/Pleiades_wpd_4_1.png" alt/></p><h3 id="Interpolation"><a class="docs-heading-anchor" href="#Interpolation">Interpolation</a><a id="Interpolation-1"></a><a class="docs-heading-anchor-permalink" href="#Interpolation" title="Permalink"></a></h3><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;DP5())
           Dict(:alg=&gt;Tsit5())
           Dict(:alg=&gt;Vern6())
 ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,maxiters=10000,error_estimate=:L2,dense_errors=true,numruns=100)
-plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_4_1.png" alt/></p><p>Here we see the power of algorithm specific interpolations. The ODE.jl algorithm is only able to reach <span>$10^{-7}$</span> error even at a tolerance of <span>$10^{-13}$</span>, while the DifferentialEquations.jl algorithms are below <span>$10^{-10}$</span></p><h2 id="Higher-Order"><a class="docs-heading-anchor" href="#Higher-Order">Higher Order</a><a id="Higher-Order-1"></a><a class="docs-heading-anchor-permalink" href="#Higher-Order" title="Permalink"></a></h2><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;DP8())
-          #Dict(:alg=&gt;ode78()) # fails
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,numruns=100,maxiters=10000,error_estimate=:L2,dense_errors=true)
+plot(wp)</code></pre><p><img src="figures/Pleiades_wpd_5_1.png" alt/></p><h2 id="Higher-Order"><a class="docs-heading-anchor" href="#Higher-Order">Higher Order</a><a id="Higher-Order-1"></a><a class="docs-heading-anchor-permalink" href="#Higher-Order" title="Permalink"></a></h2><p>Once again ODE.jl had to be discarded since it errors.</p><pre><code class="language-julia hljs">#setups = [Dict(:alg=&gt;ode78())]
+#wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,numruns=100,maxiters=1000)
+#plot(wp)</code></pre><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;DP8())
           Dict(:alg=&gt;Vern7())
           Dict(:alg=&gt;Vern8())
           Dict(:alg=&gt;dop853())
           Dict(:alg=&gt;Vern6())
 ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,maxiters=1000,numruns=100)
-plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_5_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;odex())
-          Dict(:alg=&gt;ddeabm())
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,numruns=100,maxiters=1000)
+plot(wp)</code></pre><p><img src="figures/Pleiades_wpd_7_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;odex())
           Dict(:alg=&gt;Vern7())
-          Dict(:alg=&gt;Vern8())
           Dict(:alg=&gt;CVODE_Adams())
           Dict(:alg=&gt;lsoda())
           Dict(:alg=&gt;Vern6())
+          Dict(:alg=&gt;Tsit5())
+          Dict(:alg=&gt;ddeabm())
           Dict(:alg=&gt;ARKODE(Sundials.Explicit(),order=6))
-          ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,maxiters=1000,numruns=100)
-plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_6_1.png" alt/></p><p>Again we look at interpolations:</p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;DP8())
-          #Dict(:alg=&gt;ode78())
+]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,numruns=20)
+plot(wp)</code></pre><p><img src="figures/Pleiades_wpd_8_1.png" alt/></p><h3 id="Interpolations"><a class="docs-heading-anchor" href="#Interpolations">Interpolations</a><a id="Interpolations-1"></a><a class="docs-heading-anchor-permalink" href="#Interpolations" title="Permalink"></a></h3><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;DP8())
           Dict(:alg=&gt;Vern7())
           Dict(:alg=&gt;Vern8())
           Dict(:alg=&gt;Vern6())
 ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,dense=true,maxiters=1000,error_estimate=:L2,numruns=100)
-plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_7_1.png" alt/></p><p>Again, the ODE.jl algorithms suffer when measuring the interpolations due to relying on an order 3 Hermite polynomial instead of an algorithm-specific order matching interpolation which uses the timesteps.</p><h2 id="Comparison-with-Non-RK-methods"><a class="docs-heading-anchor" href="#Comparison-with-Non-RK-methods">Comparison with Non-RK methods</a><a id="Comparison-with-Non-RK-methods-1"></a><a class="docs-heading-anchor-permalink" href="#Comparison-with-Non-RK-methods" title="Permalink"></a></h2><p>Now let&#39;s test Tsit5 and Vern9 against parallel extrapolation methods and an Adams-Bashforth-Moulton:</p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;Tsit5())
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,numruns=100,maxiters=1000,error_estimate=:L2,dense_errors=true)
+plot(wp)</code></pre><p><img src="figures/Pleiades_wpd_9_1.png" alt/></p><h2 id="Comparison-with-Non-RK-methods"><a class="docs-heading-anchor" href="#Comparison-with-Non-RK-methods">Comparison with Non-RK methods</a><a id="Comparison-with-Non-RK-methods-1"></a><a class="docs-heading-anchor-permalink" href="#Comparison-with-Non-RK-methods" title="Permalink"></a></h2><p>Now let&#39;s test Tsit5 and Vern9 against parallel extrapolation methods and an Adams-Bashforth-Moulton:</p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;Tsit5())
           Dict(:alg=&gt;Vern9())
           Dict(:alg=&gt;VCABM())
           Dict(:alg=&gt;AitkenNeville(min_order=1, max_order=9, init_order=4, threading=true))
@@ -61,7 +76,7 @@ plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_7_1.png" alt/></p><p
 solnames = [&quot;Tsit5&quot;,&quot;Vern9&quot;,&quot;VCABM&quot;,&quot;AitkenNeville&quot;,&quot;Midpoint Deuflhard&quot;,&quot;Midpoint Hairer Wanner&quot;]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,names=solnames,
                       save_everystep=false,verbose=false,numruns=100)
-plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_8_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;ExtrapolationMidpointDeuflhard(min_order=1, max_order=9, init_order=9, threading=false))
+plot(wp)</code></pre><p><img src="figures/Pleiades_wpd_10_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;ExtrapolationMidpointDeuflhard(min_order=1, max_order=9, init_order=9, threading=false))
           Dict(:alg=&gt;ExtrapolationMidpointHairerWanner(min_order=2, max_order=11, init_order=4, threading=false))
           Dict(:alg=&gt;ExtrapolationMidpointHairerWanner(min_order=2, max_order=11, init_order=4, threading=true))
           Dict(:alg=&gt;ExtrapolationMidpointHairerWanner(min_order=2, max_order=11, init_order=4, sequence = :romberg, threading=true))
@@ -69,7 +84,7 @@ plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_8_1.png" alt/></p><p
 solnames = [&quot;Deuflhard&quot;,&quot;No threads&quot;,&quot;standard&quot;,&quot;Romberg&quot;,&quot;Bulirsch&quot;]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,names=solnames,
                       save_everystep=false,verbose=false,numruns=100)
-plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_9_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;ExtrapolationMidpointHairerWanner(min_order=2, max_order=11, init_order=10, threading=true))
+plot(wp)</code></pre><p><img src="figures/Pleiades_wpd_11_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;ExtrapolationMidpointHairerWanner(min_order=2, max_order=11, init_order=10, threading=true))
           Dict(:alg=&gt;ExtrapolationMidpointHairerWanner(min_order=2, max_order=11, init_order=4, threading=true))
           Dict(:alg=&gt;ExtrapolationMidpointHairerWanner(min_order=5, max_order=11, init_order=10, threading=true))
           Dict(:alg=&gt;ExtrapolationMidpointHairerWanner(min_order=2, max_order=15, init_order=10, threading=true))
@@ -77,8 +92,8 @@ plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_9_1.png" alt/></p><p
 solnames = [&quot;1&quot;,&quot;2&quot;,&quot;3&quot;,&quot;4&quot;,&quot;5&quot;]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,names=solnames,
                       save_everystep=false,verbose=false,numruns=100)
-plot(wp)</code></pre><p><img src="figures/LotkaVolterra_wpd_10_1.png" alt/></p><h2 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h2><p>The OrdinaryDiffEq.jl are quicker and still solve to a much higher accuracy, especially when the interpolations are involved. ODE.jl errors a lot.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
-SciMLBenchmarks.weave_file(&quot;benchmarks/NonStiffODE&quot;,&quot;LotkaVolterra_wpd.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.6.5
+plot(wp)</code></pre><p><img src="figures/Pleiades_wpd_12_1.png" alt/></p><h2 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h2><p>One big conclusion is that, once again, the ODE.jl algorithms fail to run on difficult problems. Its minimum timestep is essentially machine epsilon, and so this shows some fatal flaws in its timestepping algorithm. The OrdinaryDiffEq.jl algorithms come out as faster in each case than the ODEInterface algorithms. Overall, the Verner methods have a really good showing once again. The <code>CVODE_Adams</code> method does really well here when the tolerances are higher.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+SciMLBenchmarks.weave_file(&quot;benchmarks/NonStiffODE&quot;,&quot;Pleiades_wpd.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.6.5
 Commit 9058264a69 (2021-12-19 12:30 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
