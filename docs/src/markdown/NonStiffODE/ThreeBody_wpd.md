@@ -1,138 +1,212 @@
 ---
 author: "Chris Rackauckas"
-title: "Lotka-Volterra Work-Precision Diagrams"
+title: "Three Body Work-Precision Diagrams"
 ---
+```julia
+using OrdinaryDiffEq, ODE, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools, Plots; gr()
+
+## Define the ThreeBody Problem
+const threebody_μ = parse(Float64,"0.012277471")
+const threebody_μ′ = 1 - threebody_μ
+
+f = (du,u,p,t) -> begin
+  @inbounds begin
+  # 1 = y₁
+  # 2 = y₂
+  # 3 = y₁'
+  # 4 = y₂'
+  D₁ = ((u[1]+threebody_μ)^2 + u[2]^2)^(3/2)
+  D₂ = ((u[1]-threebody_μ′)^2 + u[2]^2)^(3/2)
+  du[1] = u[3]
+  du[2] = u[4]
+  du[3] = u[1] + 2u[4] - threebody_μ′*(u[1]+threebody_μ)/D₁ - threebody_μ*(u[1]-threebody_μ′)/D₂
+  du[4] = u[2] - 2u[3] - threebody_μ′*u[2]/D₁ - threebody_μ*u[2]/D₂
+  end
+end
+
+t₀ = 0.0; T = parse(Float64,"17.0652165601579625588917206249")
+tspan = (t₀,2T)
+
+prob = ODEProblem(f,[0.994, 0.0, 0.0, parse(Float64,"-2.00158510637908252240537862224")],tspan)
+
+test_sol = TestSolution(T,[prob.u0])
+abstols = 1.0 ./ 10.0 .^ (3:13); reltols = 1.0 ./ 10.0 .^ (0:10);
+```
 
 
-## Lotka-Volterra
 
 
-The purpose of this problem is to test the performance on easy problems. Since it's periodic, the error is naturally low, and so most of the difference will come down to startup times and, when measuring the interpolations, the algorithm choices.
+See that it's periodic in the chosen timespan:
 
 ```julia
-using OrdinaryDiffEq, ParameterizedFunctions, ODE, ODEInterfaceDiffEq, LSODA,
-      Sundials, DiffEqDevTools
-
-f = @ode_def LotkaVolterra begin
-  dx = a*x - b*x*y
-  dy = -c*y + d*x*y
-end a b c d
-
-p = [1.5,1.0,3.0,1.0]
-prob = ODEProblem(f,[1.0;1.0],(0.0,10.0),p)
-
-abstols = 1.0 ./ 10.0 .^ (6:13)
-reltols = 1.0 ./ 10.0 .^ (3:10);
-sol = solve(prob,Vern7(),abstol=1/10^14,reltol=1/10^14)
-test_sol = TestSolution(sol)
-using Plots; gr()
+sol = solve(prob,Vern9(),abstol=1e-14,reltol=1e-14)
+@show sol[1] - sol[end]
+@show sol[end] - prob.u0;
 ```
 
 ```
-Plots.GRBackend()
+sol[1] - sol[end] = [-1.063673593648673e-10, -3.162927231499068e-10, -5.160
+479797103475e-8, -1.6555705695253664e-8]
+sol[end] - prob.u0 = [1.063673593648673e-10, 3.162927231499068e-10, 5.16047
+9797103475e-8, 1.6555705695253664e-8]
 ```
 
 
 
 ```julia
-plot(sol)
+apr = appxtrue(sol,test_sol)
+@show sol[end]
+@show apr.u[end]
+@show apr.errors
 ```
 
-![](figures/LotkaVolterra_wpd_2_1.png)
+```
+sol[end] = [0.9940000001063674, 3.162927231499068e-10, 5.160479797103475e-8
+, -2.0015850898233767]
+apr.u[end] = [0.9940000001063674, 3.162927231499068e-10, 5.160479797103475e
+-8, -2.0015850898233767]
+apr.errors = Dict(:final => 1.7145790937200795e-8)
+Dict{Symbol, Float64} with 1 entry:
+  :final => 1.71458e-8
+```
 
 
 
-### Low Order
+
+
+This three-body problem is known to be a tough problem. Let's see how the algorithms fair at standard tolerances.
+
+### 5th Order Runge-Kutta Methods
+
 
 ```julia
 setups = [Dict(:alg=>DP5())
-          #Dict(:alg=>ode45()) # fail
-          Dict(:alg=>dopri5())
+          #Dict(:alg=>ode45()) #fails
+          Dict(:alg=>BS5())
           Dict(:alg=>Tsit5())
-          Dict(:alg=>Vern6())
-]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,maxiters=10000,numruns=100)
+          Dict(:alg=>dopri5())];
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,numruns=100)
 plot(wp)
 ```
 
-![](figures/LotkaVolterra_wpd_3_1.png)
+![](figures/ThreeBody_wpd_4_1.png)
 
 
 
-Here we see the OrdinaryDiffEq.jl algorithms once again far in the lead.
+#### Full save, but no dense
 
-### Interpolation Error
+```julia
+setups = [Dict(:alg=>DP5(),:dense=>false)
+          #Dict(:alg=>ode45()) # Fails
+          Dict(:alg=>BS5(),:dense=>false)
+          Dict(:alg=>Tsit5(),:dense=>false)
+          Dict(:alg=>dopri5())];
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,numruns=100)
+plot(wp)
+```
 
-Since the problem is periodic, the real measure of error is the error throughout the solution.
+![](figures/ThreeBody_wpd_5_1.png)
+
+
+
+#### Dense
 
 ```julia
 setups = [Dict(:alg=>DP5())
-          #Dict(:alg=>ode45())
+          #Dict(:alg=>ode45()) #fails
+          Dict(:alg=>BS5())
           Dict(:alg=>Tsit5())
-          Dict(:alg=>Vern6())
-]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,maxiters=10000,error_estimate=:L2,dense_errors=true,numruns=100)
+          Dict(:alg=>dopri5())];
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,numruns=100)
 plot(wp)
 ```
 
-![](figures/LotkaVolterra_wpd_4_1.png)
+![](figures/ThreeBody_wpd_6_1.png)
 
 
 
-Here we see the power of algorithm specific interpolations. The ODE.jl algorithm is only able to reach $10^{-7}$ error even at a tolerance of $10^{-13}$, while the DifferentialEquations.jl algorithms are below $10^{-10}$
+In these tests we see that most of the algorithms are close,with `BS5` and `DP5` showing much better than `Tsit5`. `ode45` errors.
 
-## Higher Order
+### Higher Order Algorithms
 
 ```julia
-setups = [Dict(:alg=>DP8())
-          #Dict(:alg=>ode78()) # fails
+setups = [Dict(:alg=>DP5())
+          Dict(:alg=>Vern6())
           Dict(:alg=>Vern7())
+          Dict(:alg=>TanYam7())
           Dict(:alg=>Vern8())
+          Dict(:alg=>DP8())
           Dict(:alg=>dop853())
-          Dict(:alg=>Vern6())
-]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,maxiters=1000,numruns=100)
+          Dict(:alg=>Vern9())];
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,numruns=100)
 plot(wp)
 ```
 
-![](figures/LotkaVolterra_wpd_5_1.png)
+![](figures/ThreeBody_wpd_7_1.png)
 
 ```julia
-setups = [Dict(:alg=>odex())
-          Dict(:alg=>ddeabm())
+setups = [Dict(:alg=>DP5())
+          Dict(:alg=>Vern6())
           Dict(:alg=>Vern7())
+          Dict(:alg=>TanYam7())
           Dict(:alg=>Vern8())
-          Dict(:alg=>CVODE_Adams())
+          Dict(:alg=>DP8())
+          Dict(:alg=>dop853())
+          Dict(:alg=>Vern9())];
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,dense=false,numruns=100,verbose=false)
+plot(wp)
+```
+
+![](figures/ThreeBody_wpd_8_1.png)
+
+```julia
+setups = [Dict(:alg=>DP5())
+          Dict(:alg=>Vern6())
+          Dict(:alg=>Vern7())
+          Dict(:alg=>TanYam7())
+          Dict(:alg=>Vern8())
+          Dict(:alg=>DP8())
+          Dict(:alg=>dop853())
+          Dict(:alg=>Vern9())];
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,numruns=100)
+plot(wp)
+```
+
+![](figures/ThreeBody_wpd_9_1.png)
+
+
+
+In this test we see `Vern7` and `Vern8` shine.
+
+### Other Algorithms
+
+Once again we separate ODE.jl because it fails. We also separate Sundials' `CVODE_Adams` since it fails at high tolerances.
+
+```julia
+#setups = [Dict(:alg=>ode78())
+#          Dict(:alg=>VCABM())
+#          Dict(:alg=>CVODE_Adams())];
+#wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,dense=false,numruns=100)
+```
+
+
+```julia
+setups = [Dict(:alg=>DP5())
           Dict(:alg=>lsoda())
-          Dict(:alg=>Vern6())
-          Dict(:alg=>ARKODE(Sundials.Explicit(),order=6))
-          ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,maxiters=1000,numruns=100)
-plot(wp)
-```
-
-![](figures/LotkaVolterra_wpd_6_1.png)
-
-
-
-Again we look at interpolations:
-
-```julia
-setups = [Dict(:alg=>DP8())
-          #Dict(:alg=>ode78())
-          Dict(:alg=>Vern7())
           Dict(:alg=>Vern8())
-          Dict(:alg=>Vern6())
-]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,dense=true,maxiters=1000,error_estimate=:L2,numruns=100)
+          Dict(:alg=>ddeabm())
+          Dict(:alg=>odex())
+          Dict(:alg=>ARKODE(Sundials.Explicit(),order=6))
+    ];
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,numruns=100)
 plot(wp)
 ```
 
-![](figures/LotkaVolterra_wpd_7_1.png)
+![](figures/ThreeBody_wpd_11_1.png)
 
 
 
-Again, the ODE.jl algorithms suffer when measuring the interpolations due to relying on an order 3 Hermite polynomial instead of an algorithm-specific order matching interpolation which uses the timesteps.
+Again, on cheap function calculations the Adams methods are shown to not be efficient once the error is sufficiently small. Also, as seen in other places, the extrapolation methods do not fare as well as the Runge-Kutta methods.
 
 ## Comparison with Non-RK methods
 
@@ -140,19 +214,19 @@ Now let's test Tsit5 and Vern9 against parallel extrapolation methods and an
 Adams-Bashforth-Moulton:
 
 ```julia
+abstols = 1.0 ./ 10.0 .^ (3:13); reltols = 1.0 ./ 10.0 .^ (0:10);
 setups = [Dict(:alg=>Tsit5())
           Dict(:alg=>Vern9())
-          Dict(:alg=>VCABM())
           Dict(:alg=>AitkenNeville(min_order=1, max_order=9, init_order=4, threading=true))
           Dict(:alg=>ExtrapolationMidpointDeuflhard(min_order=1, max_order=9, init_order=4, threading=true))
           Dict(:alg=>ExtrapolationMidpointHairerWanner(min_order=2, max_order=11, init_order=4, threading=true))]
-solnames = ["Tsit5","Vern9","VCABM","AitkenNeville","Midpoint Deuflhard","Midpoint Hairer Wanner"]
+solnames = ["Tsit5","Vern9","AitkenNeville","Midpoint Deuflhard","Midpoint Hairer Wanner"]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,names=solnames,
                       save_everystep=false,verbose=false,numruns=100)
 plot(wp)
 ```
 
-![](figures/LotkaVolterra_wpd_8_1.png)
+![](figures/ThreeBody_wpd_12_1.png)
 
 ```julia
 setups = [Dict(:alg=>ExtrapolationMidpointDeuflhard(min_order=1, max_order=9, init_order=9, threading=false))
@@ -166,7 +240,7 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,names=solname
 plot(wp)
 ```
 
-![](figures/LotkaVolterra_wpd_9_1.png)
+![](figures/ThreeBody_wpd_13_1.png)
 
 ```julia
 setups = [Dict(:alg=>ExtrapolationMidpointHairerWanner(min_order=2, max_order=11, init_order=10, threading=true))
@@ -180,14 +254,14 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,names=solname
 plot(wp)
 ```
 
-![](figures/LotkaVolterra_wpd_10_1.png)
+![](figures/ThreeBody_wpd_14_1.png)
 
 
 
 
-## Conclusion
+### Conclusion
 
-The OrdinaryDiffEq.jl are quicker and still solve to a much higher accuracy, especially when the interpolations are involved. ODE.jl errors a lot.
+As in the other tests, the OrdinaryDiffEq.jl algorithms with the Verner Efficient methods are the most efficient solvers at stringent tolerances for most of the tests, while the order 5 methods do well at cruder tolerances. ODE.jl fails to run the test problems without erroring.
 
 
 ## Appendix
@@ -198,7 +272,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/NonStiffODE","LotkaVolterra_wpd.jmd")
+SciMLBenchmarks.weave_file("benchmarks/NonStiffODE","ThreeBody_wpd.jmd")
 ```
 
 Computer Information:
