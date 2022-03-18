@@ -295,13 +295,14 @@ plot(wp)
 setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>ImplicitEulerExtrapolation()),
-          #Dict(:alg=>ImplicitDeuflhardExtrapolation()), # Diverges
-          #Dict(:alg=>ImplicitHairerWannerExtrapolation()), # Diverges
+          Dict(:alg=>ImplicitEulerExtrapolation()),
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
           Dict(:alg=>ABDF2()),
           Dict(:alg=>FBDF()),
           #Dict(:alg=>QNDF()),
-          Dict(:alg=>Exprb43()),
-          Dict(:alg=>Exprb32()),
+          #Dict(:alg=>Exprb43()), #matrix contains Infs or NaNs
+          #Dict(:alg=>Exprb32()), #matrix contains Infs or NaNs
 ]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
@@ -345,7 +346,11 @@ setups = [Dict(:alg=>GRK4A()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>Rodas4()),
-          Dict(:alg=>radau())]
+          Dict(:alg=>radau()),
+          Dict(:alg=>ImplicitEulerExtrapolation(min_order = 3)),
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
+          ]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
@@ -369,6 +374,19 @@ plot(wp)
 #wp = WorkPrecisionSet(prob,abstols,reltols,setups;
 #                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 #plot(wp)
+
+
+#Setting BLAS to one thread to measure gains
+LinearAlgebra.BLAS.set_num_threads(1)
+setups = [Dict(:alg=>ImplicitHairerWannerExtrapolation()),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = true)),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
+          ]
+
+names = ["unthreaded","threaded","Polyester"];
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+                      names = names,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
+plot(wp)
 
 
 using SciMLBenchmarks
