@@ -9,7 +9,7 @@ makedocs(
                              assets = ["assets/favicon.ico"],
                              canonical="https://benchmarks.sciml.ai/stable/"),
     pages=[
-        "Home" => "README.md",
+        "Home" => "index.md",
         "Non-Stiff Ordinary Differential Equation (ODE) Solver Benchmarks" => Any[
             "markdown/MultiLanguage/wrapper_packages.md"
         ],
