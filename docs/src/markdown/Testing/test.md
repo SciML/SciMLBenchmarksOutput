@@ -12,8 +12,8 @@ versioninfo()
 ```
 
 ```
-Julia Version 1.6.5
-Commit 9058264a69 (2021-12-19 12:30 UTC)
+Julia Version 1.6.6
+Commit b8708f954a (2022-03-28 07:17 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
   CPU: AMD EPYC 7502 32-Core Processor
@@ -74,8 +74,8 @@ SciMLBenchmarks.weave_file("benchmarks/Testing","test.jmd")
 Computer Information:
 
 ```
-Julia Version 1.6.5
-Commit 9058264a69 (2021-12-19 12:30 UTC)
+Julia Version 1.6.6
+Commit b8708f954a (2022-03-28 07:17 UTC)
 Platform Info:
   OS: Linux (x86_64-pc-linux-gnu)
   CPU: AMD EPYC 7502 32-Core Processor
@@ -91,7 +91,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Testing/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Testing/Project.toml`
   [91a5bcdd] Plots v1.13.2
   [31c91b34] SciMLBenchmarks v0.1.0 `../..`
 ```
@@ -99,7 +99,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Testing/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Testing/Manifest.toml`
   [79e6a3ab] Adapt v3.3.0
   [35d6a980] ColorSchemes v3.12.1
   [3da002f7] ColorTypes v0.11.0
