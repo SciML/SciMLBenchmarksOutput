@@ -144,6 +144,25 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;names=solnames,
 plot(wp)
 
 
+abstols = 1.0 ./ 10.0 .^ (12:15)
+reltols = 1.0 ./ 10.0 .^ (9:12)
+
+setups = [Dict(:alg=>Tsit5())
+          Dict(:alg=>Vern9())
+          Dict(:alg=>VCABM())
+          #Dict(:alg=>AitkenNeville(threading = OrdinaryDiffEq.PolyesterThreads()))
+          Dict(:alg=>ExtrapolationMidpointDeuflhard(threading = OrdinaryDiffEq.PolyesterThreads()))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(threading = OrdinaryDiffEq.PolyesterThreads()))
+          Dict(:alg=>odex())
+          Dict(:alg=>dop853())
+          Dict(:alg=>CVODE_Adams())
+          ]
+
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+                      save_everystep=false,verbose=false,numruns=100)
+plot(wp)
+
+
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
 
