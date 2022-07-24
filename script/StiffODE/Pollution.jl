@@ -310,16 +310,6 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;
 plot(wp)
 
 
-solve(prob,ImplicitEulerBarycentricExtrapolation(),save_everystep = false,abstol = abstols[1], reltol = reltols[1])
-
-
-@profile for i in 1:1000 solve(prob,ImplicitEulerBarycentricExtrapolation(),save_everystep = false, abstol = abstols[1], reltol = reltols[1]) end
-ProfileSVG.view(maxdepth=100, yflip=true)
-
-
-@benchmark solve(prob,ImplicitEulerBarycentricExtrapolation(),save_everystep = false, abstol = abstols[1], reltol = reltols[1])
-
-
 setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>ImplicitEulerExtrapolation(linsolve = RFLUFactorization())),
@@ -427,6 +417,9 @@ setups = [
 
 solnames = ["CVODE_BDF","KenCarp4","Rodas4","QNDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
             "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
+
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+                    names = solnames,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 
 plot(wp, title = "Implicit Methods: POLLUTION",legend=:outertopleft,size = (1000,500),
      xticks = 10.0 .^ (-15:1:1),
