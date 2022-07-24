@@ -1,5 +1,6 @@
 
-using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODE, ODEInterfaceDiffEq, LSODA
+using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODE, ODEInterfaceDiffEq, LSODA, LinearSolve
+using ProfileSVG, BenchmarkTools, Profile
 gr() # gr(fmt=:png)
 using LinearAlgebra
 
@@ -309,6 +310,32 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;
 plot(wp)
 
 
+solve(prob,ImplicitEulerBarycentricExtrapolation(),save_everystep = false,abstol = abstols[1], reltol = reltols[1])
+
+
+@profile for i in 1:1000 solve(prob,ImplicitEulerBarycentricExtrapolation(),save_everystep = false, abstol = abstols[1], reltol = reltols[1]) end
+ProfileSVG.view(maxdepth=100, yflip=true)
+
+
+@benchmark solve(prob,ImplicitEulerBarycentricExtrapolation(),save_everystep = false, abstol = abstols[1], reltol = reltols[1])
+
+
+setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>TRBDF2()),
+          Dict(:alg=>ImplicitEulerExtrapolation(linsolve = RFLUFactorization())),
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation(linsolve = RFLUFactorization())),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation(linsolve = RFLUFactorization())),
+          Dict(:alg=>ABDF2()),
+          Dict(:alg=>FBDF()),
+          #Dict(:alg=>QNDF()),
+          #Dict(:alg=>Exprb43()), #matrix contains Infs or NaNs
+          #Dict(:alg=>Exprb32()), #matrix contains Infs or NaNs
+]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
+plot(wp)
+
+
 abstols = 1.0 ./ 10.0 .^ (7:13)
 reltols = 1.0 ./ 10.0 .^ (4:10)
 
@@ -378,15 +405,33 @@ plot(wp)
 
 #Setting BLAS to one thread to measure gains
 LinearAlgebra.BLAS.set_num_threads(1)
-setups = [Dict(:alg=>ImplicitHairerWannerExtrapolation()),
-          Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = true)),
-          Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
-          ]
 
-names = ["unthreaded","threaded","Polyester"];
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-                      names = names,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
-plot(wp)
+abstols = 1.0 ./ 10.0 .^ (11:13)
+reltols = 1.0 ./ 10.0 .^ (8:10)
+
+setups = [
+            Dict(:alg=>CVODE_BDF()),
+            Dict(:alg=>KenCarp4()),
+            Dict(:alg=>Rodas4()),
+            Dict(:alg=>QNDF()),
+            Dict(:alg=>lsoda()),
+            Dict(:alg=>radau()),
+            Dict(:alg=>seulex()),
+            Dict(:alg=>ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = OrdinaryDiffEq.PolyesterThreads())),
+            Dict(:alg=>ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = false)),
+            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = OrdinaryDiffEq.PolyesterThreads())),
+            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = false)),
+            Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
+            Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = false)),
+            ]
+
+solnames = ["CVODE_BDF","KenCarp4","Rodas4","QNDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
+            "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
+
+plot(wp, title = "Implicit Methods: POLLUTION",legend=:outertopleft,size = (1000,500),
+     xticks = 10.0 .^ (-15:1:1),
+     yticks = 10.0 .^ (-6:0.3:5),
+     bottom_margin= 5Plots.mm)
 
 
 using SciMLBenchmarks
