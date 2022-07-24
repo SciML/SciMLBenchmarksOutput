@@ -228,7 +228,6 @@ setups = [
             Dict(:alg=>KenCarp4()),
             Dict(:alg=>Rodas4()),
             Dict(:alg=>QNDF()),
-            #Dict(:alg=>Rodas5()),
             Dict(:alg=>lsoda()),
             Dict(:alg=>radau()),
             Dict(:alg=>seulex()),
