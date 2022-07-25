@@ -1,15 +1,28 @@
-# SciMLBenchmarksOutput.jl: Benchmarks for Scientific Machine Learning (SciML) and Differential Equation Solver Software
+# SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers
 
 [![Join the chat at https://gitter.im/JuliaDiffEq/Lobby](https://badges.gitter.im/JuliaDiffEq/Lobby.svg)](https://gitter.im/JuliaDiffEq/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build status](https://badge.buildkite.com/2f4b5708bf098c75ce193f04b3f3c4047f993f0e363e314c61.svg)](https://buildkite.com/julialang/scimlbenchmarks-dot-jl)
 
-SciMLBenchmarksOutput.jl holds webpages, pdfs, and notebooks showing the benchmarks
-for the SciML Scientific Machine Learning Software ecosystem, including cross-language
-benchmarks of differential equation solvers and methods for parameter estimation,
-training universal differential equations (and subsets like neural ODEs), and more.
+SciMLBenchmarks.jl holds webpages, pdfs, and notebooks showing the benchmarks
+for the SciML Scientific Machine Learning Software ecosystem, including:
 
-Currently, only the html, pdf, and markdown versions should be viewed here. To use
-the interactive notebooks and scripts, see https://github.com/SciML/SciMLBenchmarks.jl,
-since the interactive components require the environments contained in that repo.
+- Benchmarks of equation solver implementations
+- Speed and robustness comparisons of methods for parameter estimation / inverse problems
+- Training universal differential equations (and subsets like neural ODEs)
+- Training of physics-informed neural networks (PINNs)
+- Surrogate comparisons, including radial basis functions, neural operators (DeepONets, Fourier Neural Operators), and more
+
+## Rules: Optimal, Fair, and Reproducible
+
+These benchmarks are meant to represent good optimized coding style. Benchmarks are preferred to be run on the provided open
+benchmarking hardware for full reproducibility (though in some cases, such as with language barriers, this can be difficult).
+Each benchmark is documented with the compute devices used along with package versions for necessary reproduction.
+
+**If any of the code from any of the languages can be improved, please open a pull request**.
+
+## Results
+
+Static outputs in pdf, markdown, and html reside in [SciMLBenchmarksOutput](https://github.com/SciML/SciMLBenchmarksOutput).
 
 ## Table of Contents
 
@@ -19,8 +32,12 @@ since the interactive components require the environments contained in that repo
   - [torchdiffeq vs Julia DiffEqFlux Neural ODE Training Benchmark](https://gist.github.com/ChrisRackauckas/4a4d526c15cc4170ce37da837bfc32c4)
   - [torchsde vs DifferentialEquations.jl / DiffEqFlux.jl](https://gist.github.com/ChrisRackauckas/6a03e7b151c86b32d74b41af54d495c6)
   - [JITCODE vs SciPy vs DifferentialEquations.jl on large network dynamics](https://github.com/PIK-ICoN/NetworkDynamicsBenchmarks)
-  - [DifferentialEquations.jl vs Mujuco and DiffTaichi](https://homes.cs.washington.edu/~thickstn/ctpg-project-page/ctpg.html)
-- Non-stiff ODEs
+  - [DifferentialEquations.jl vs Mujuco and DiffTaichi](https://arxiv.org/abs/2012.06684)
+  - [DiffEqFlux.jl / DifferentialEquations.jl vs Jax on an epidemic model](https://gist.github.com/ChrisRackauckas/62a063f23cccf3a55a4ac9f6e497739a)
+  - [DifferentialEquations.jl vs SciPy vs NumbaLSODA on a stiff ODE](https://gist.github.com/ChrisRackauckas/fd62e005c4c86520306338b6bdae6b79)
+  - [DifferentialEquations.jl vs SciPy vs NumbaLSODA](https://github.com/Nicholaswogan/NumbaLSODA/tree/main/benchmark)
+  - [Brusselator Stiff Partial Differential Equation Benchmark: Julia DifferentialEquations.jl vs Python SciPy](https://gist.github.com/ChrisRackauckas/0bdbea0079a8a3ce28522e9bc8473bf0)
+- Non-stiff Ordinary Differential Equations (ODEs)
   - [Linear Work-Precision Diagrams](https://benchmarks.sciml.ai/html/NonStiffODE/linear_wpd.html)
   - [Three-Body Work-Precision Diagrams](https://benchmarks.sciml.ai/html/NonStiffODE/ThreeBody_wpd.html)
   - [Pleides Work-Precision Diagrams](https://benchmarks.sciml.ai/html/NonStiffODE/Pleiades_wpd.html)
@@ -29,13 +46,18 @@ since the interactive components require the environments contained in that repo
   - [Lotka-Volterra Work-Precision Diagrams](https://benchmarks.sciml.ai/html/NonStiffODE/LotkaVolterra_wpd.html)
   - [Direct vs MATLAB Benchmark](https://github.com/JuliaDiffEq/MATLABDiffEq.jl#benchmark)
   - [Runge-Kutta vs Taylor Integration on Pleides](https://gist.github.com/ChrisRackauckas/1301b23aa12ad83de7138d8e41d64dd6)
-- Stiff ODEs
+- Stiff Ordinary Differential Equations (ODEs)
   - [Van der Pol Work-Precision Diagrams](https://benchmarks.sciml.ai/html/StiffODE/VanDerPol.html)
   - [ROBER Work-Precision Diagrams](https://benchmarks.sciml.ai/html/StiffODE/ROBER.html)
   - [Orego Work-Precision Diagrams](https://benchmarks.sciml.ai/html/StiffODE/Orego.html)
   - [Hires Work-Precision Diagrams](https://benchmarks.sciml.ai/html/StiffODE/Hires.html)
   - [Pollution Work-Precision Diagrams](https://benchmarks.sciml.ai/html/StiffODE/Pollution.html)
   - [BCR (1122 ODE) Work-Precision Diagrams](https://benchmarks.sciml.ai/html/Bio/BCR.html)
+  - [Bidkhori 2012 SBML Model (109 ODE) Work-Precision Diagrams](https://benchmarks.sciml.ai/html/Bio/Bidkhori2012.html)
+- Differential-Algebraic Equations (DAEs)
+  - [ROBER DAE Work-Precision Diagrams](https://benchmarks.sciml.ai/html/DAE/ROBERDAE.html)
+  - [OREGO DAE Work-Precision Diagrams](https://benchmarks.sciml.ai/html/DAE/OregoDAE.html)
+  - [Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams](https://benchmarks.sciml.ai/html/DAE/ChemicalAkzoNobel.html)
 - Method of Lines PDEs
   - [Filament PDE Discretization Work-Precision Diagrams](https://benchmarks.sciml.ai/html/MOLPDE/Filament.html)
   - [Allen-Cahn Finite Difference Work-Precision Diagrams](https://benchmarks.sciml.ai/html/MOLPDE/allen_cahn_fdm_wpd.html)
@@ -81,6 +103,19 @@ since the interactive components require the environments contained in that repo
   - [Bayesian FitzHugh-Nagumo Equation Estimation](https://benchmarks.sciml.ai/html/ParameterEstimation/DiffEqBayesFitzHughNagumo.html)
   - [Lotka Volterra Equation Parameter Estimation by Optimization Methods](https://benchmarks.sciml.ai/html/ParameterEstimation/LotkaVolterraParameterEstimation.html)
   - [FitzHugh-Nagumo Equation Parameter Estimation by Optimization Methods](https://benchmarks.sciml.ai/html/ParameterEstimation/FitzHughNagumoParameterEstimation.html)
+- Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks
+  - [Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks](https://benchmarks.sciml.ai/html/PINNErrorsVsTime/allen_cahn_et.html)
+  - [Diffusion Equation Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks](https://benchmarks.sciml.ai/html/PINNErrorsVsTime/diffusion_et.html)
+  - [Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks](https://benchmarks.sciml.ai/html/PINNErrorsVsTime/hamilton_jacobi_et.html)
+  - [Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks](https://benchmarks.sciml.ai/html/PINNErrorsVsTime/level_set_et.html)
+  - [Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks](https://benchmarks.sciml.ai/html/PINNErrorsVsTime/nernst_planck_et.html)
+- Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks
+  - [Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks](https://benchmarks.sciml.ai/html/PINNOptimizers/1d_diffusion.html)
+  - [1D Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks](https://benchmarks.sciml.ai/html/PINNOptimizers/1d_poisson_nernst_planck.html)
+  - [Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks](https://benchmarks.sciml.ai/html/PINNOptimizers/allen_cahn.html)
+  - [Berger's Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks](https://benchmarks.sciml.ai/html/PINNOptimizers/burgers_equation.html)
+  - [Hamilton-Jacobi Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks](https://benchmarks.sciml.ai/html/PINNOptimizers/hamilton_jacobi.html)
+  - [Poisson Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks](https://benchmarks.sciml.ai/html/PINNOptimizers/poisson.html)
 
 The following tests were developed for the paper *Adaptive Methods for Stochastic Differential Equations via Natural Embeddings and Rejection Sampling with Memory*. These notebooks track their latest developments.
 
@@ -111,11 +146,11 @@ over the set of tested equations and some specific examples may differ.
 
 - In this category, the best methods are much more problem dependent.
 - For smaller problems:
-  - `Rosenbrock23`, `lsoda`, and `TRBDF2` tend to be the most efficient at high  
+  - `Rosenbrock23`, `lsoda`, and `TRBDF2` tend to be the most efficient at high
     tolerances.
   - `Rodas4` and `Rodas5` tend to be the most efficient at low tolerances.
 - For larger problems (Filament PDE):
-  - `CVODE_BDF` does the best at all tolerances.
+  - `QNDF` and `FBDF` does the best at all normal tolerances.
   - The ESDIRK methods like `TRBDF2` and `KenCarp4` can come close.
 - `radau` is always the most efficient when tolerances go to the low extreme
   (`1e-13`)
@@ -187,11 +222,59 @@ over the set of tested equations and some specific examples may differ.
   any of the backends with the fine tuning of stepsize, constraints on the parameters, tightness of the
   priors and number of iterations being passed.
 
-### Notes
+## Interactive Notebooks
+
+To run the tutorials interactively via Jupyter notebooks and benchmark on your
+own machine
+1. Run Weave for the file (or folder) you are interested in
+2. Activate the appropriate environment
+3. Open and run the notebook.
+
+Note: Since notebooks default to looking for a Project.toml file at the same level or parent folder, you might need to move the notebook to the folder with the appropriate Project.toml.
+
+### Example (starting from the project root folder)
+```julia
+]activate .
+]instantiate
+using SciMLBenchmarks
+SciMLBenchmarks.weave_file("benchmarks/Jumps", "Diffusion_CTRW.jmd", [:notebook])
+]activate benchmarks/Jumps
+```
+
+Then move `Diffusion_CTRW.ipynb` to "benchmarks/Jumps" and open the notebook.
+
+## Contributing
+
+All of the files are generated from the Weave.jl files in the `benchmarks` folder. To run the generation process, do for example:
+
+```julia
+]activate SciMLBenchmarks # Get all of the packages
+using SciMLBenchmarks
+SciMLBenchmarks.weave_file("NonStiffODE","linear_wpd.jmd")
+```
+
+To generate all of the files in a folder, for example, run:
+
+```julia
+SciMLBenchmarks.weave_folder("NonStiffODE")
+```
+
+To generate all of the notebooks, do:
+
+```julia
+SciMLBenchmarks.weave_all()
+```
 
 Each of the benchmarks displays the computer characteristics at the bottom of
 the benchmark. Since performance-necessary computations are normally performed on
 compute clusters, the official benchmarks use a workstation with an
-Intel Xeon CPU E5-2680 v4 @ 2.40GHz to match the performance characteristics of
+AMD EPYC 7502 32-Core Processor @ 2.50GHz to match the performance characteristics of
 a standard node in a high performance computing (HPC) cluster or cloud computing
 setup.
+
+### Inspecting Benchmark Results
+
+To see benchmark results before merging, click into the BuildKite, click onto
+Artifacts, and then investigate the trained results.
+
+![](https://user-images.githubusercontent.com/1814174/118359358-02ddc980-b551-11eb-8a9b-24de947cefee.PNG)
