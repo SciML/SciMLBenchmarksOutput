@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Quorum Sensing Work-Precision Diagrams · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/StiffDDE/QuorumSensing/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks</a></li><li><span class="tocitem">Bio</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">DAE</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jumps</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li></ul></li><li><span class="tocitem">MOLPDE</span><ul><li><a class="tocitem" href="../../MOLPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_fdm_wpd/">Burger&#39;s Finite Difference Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">MultiLanguage</span><ul><li><a class="tocitem" href="../../MultiLanguage/wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li></ul></li><li><span class="tocitem">NBodySimulator</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">NonStiffDDE</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">NonStiffODE</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">PINNErrorsVsTime</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">PINNOptimizers</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">ParameterEstimation</span><ul><li><a class="tocitem" href="../../ParameterEstimation/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">StiffDDE</span><ul><li class="is-active"><a class="tocitem" href>Quorum Sensing Work-Precision Diagrams</a><ul class="internal"><li><a class="tocitem" href="#Qualitative-comparisons"><span>Qualitative comparisons</span></a></li><li><a class="tocitem" href="#Qualitative-comparisons-2"><span>Qualitative comparisons</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li></ul></li><li><span class="tocitem">StiffODE</span><ul><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">StiffSDE</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">StiffDDE</a></li><li class="is-active"><a href>Quorum Sensing Work-Precision Diagrams</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Quorum Sensing Work-Precision Diagrams</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/StiffDDE/QuorumSensing.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Quorum-Sensing"><a class="docs-heading-anchor" href="#Quorum-Sensing">Quorum Sensing</a><a id="Quorum-Sensing-1"></a><a class="docs-heading-anchor-permalink" href="#Quorum-Sensing" title="Permalink"></a></h1><p>Here we test a model of quorum sensing of Pseudomonas putida IsoF in continuous cultures with constant delay which was published by K. Buddrus-Schiemann et al. in &quot;Analysis of N-Acylhomoserine Lactone Dynamics in Continuous Cultures of Pseudomonas Putida IsoF By Use of ELISA and UHPLC/qTOF-MS-derived Measurements and Mathematical Models&quot;, Analytical and Bioanalytical Chemistry, 2014.</p><pre><code class="language-julia hljs">using DelayDiffEq, DiffEqDevTools, DiffEqProblemLibrary, Plots
+using DiffEqProblemLibrary.DDEProblemLibrary: importddeproblems; importddeproblems()
+import DiffEqProblemLibrary.DDEProblemLibrary: prob_dde_qs
+gr()
+
+sol = solve(prob_dde_qs, MethodOfSteps(Vern9(); fpsolve = NLFunctional(; max_iter = 1000)); reltol=1e-14, abstol=1e-14)
+plot(sol)</code></pre><p><img src="../figures/QuorumSensing_1_1.png" alt/></p><p>Particularly, we are interested in the third, low-level component of the system:</p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(Vern9(); fpsolve = NLFunctional(; max_iter = 1000)); reltol=1e-14, abstol=1e-14, save_idxs=3)
+test_sol = TestSolution(sol)
+plot(sol)</code></pre><p><img src="../figures/QuorumSensing_2_1.png" alt/></p><h2 id="Qualitative-comparisons"><a class="docs-heading-anchor" href="#Qualitative-comparisons">Qualitative comparisons</a><a id="Qualitative-comparisons-1"></a><a class="docs-heading-anchor-permalink" href="#Qualitative-comparisons" title="Permalink"></a></h2><p>First we compare the quality of the solution&#39;s third component for different algorithms, using the default tolerances.</p><h3 id="RK-methods"><a class="docs-heading-anchor" href="#RK-methods">RK methods</a><a id="RK-methods-1"></a><a class="docs-heading-anchor-permalink" href="#RK-methods" title="Permalink"></a></h3><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(BS3()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_3_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(Tsit5()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_4_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(RK4()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_5_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(DP5()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_6_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(DP8()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_7_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(OwrenZen3()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_8_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(OwrenZen4()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_9_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(OwrenZen5()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_10_1.png" alt/></p><h3 id="Rosenbrock-methods"><a class="docs-heading-anchor" href="#Rosenbrock-methods">Rosenbrock methods</a><a id="Rosenbrock-methods-1"></a><a class="docs-heading-anchor-permalink" href="#Rosenbrock-methods" title="Permalink"></a></h3><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(Rosenbrock23()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_11_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(Rosenbrock32()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_12_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(Rodas4()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_13_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(Rodas5()); reltol=1e-4, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_14_1.png" alt/></p><h3 id="Lazy-interpolants"><a class="docs-heading-anchor" href="#Lazy-interpolants">Lazy interpolants</a><a id="Lazy-interpolants-1"></a><a class="docs-heading-anchor-permalink" href="#Lazy-interpolants" title="Permalink"></a></h3><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(Vern7()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_15_1.png" alt/></p><pre><code class="language-julia hljs">sol = solve(prob_dde_qs, MethodOfSteps(Vern9()); reltol=1e-3, abstol=1e-6, save_idxs=3)
+p = plot(sol);
+scatter!(p,sol.t, sol.u)
+p</code></pre><p><img src="../figures/QuorumSensing_16_1.png" alt/></p><h2 id="Qualitative-comparisons-2"><a class="docs-heading-anchor" href="#Qualitative-comparisons-2">Qualitative comparisons</a><a class="docs-heading-anchor-permalink" href="#Qualitative-comparisons-2" title="Permalink"></a></h2><p>Now we compare these methods quantitatively.</p><h3 id="High-tolerances"><a class="docs-heading-anchor" href="#High-tolerances">High tolerances</a><a id="High-tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#High-tolerances" title="Permalink"></a></h3><h4 id="RK-methods-2"><a class="docs-heading-anchor" href="#RK-methods-2">RK methods</a><a class="docs-heading-anchor-permalink" href="#RK-methods-2" title="Permalink"></a></h4><p>We start with RK methods at high tolerances.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(BS3())),
+          Dict(:alg=&gt;MethodOfSteps(Tsit5())),
+          Dict(:alg=&gt;MethodOfSteps(RK4())),
+          Dict(:alg=&gt;MethodOfSteps(DP5())),
+          Dict(:alg=&gt;MethodOfSteps(OwrenZen3())),
+          Dict(:alg=&gt;MethodOfSteps(OwrenZen4())),
+          Dict(:alg=&gt;MethodOfSteps(OwrenZen5()))]
+names = [&quot;BS3&quot;, &quot;Tsit5&quot;, &quot;RK4&quot;, &quot;DP5&quot;, &quot;OwrenZen3&quot;, &quot;OwrenZen4&quot;, &quot;OwrenZen5&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_17_1.png" alt/></p><p>We also compare interpolation errors:</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(BS3())),
+          Dict(:alg=&gt;MethodOfSteps(Tsit5())),
+          Dict(:alg=&gt;MethodOfSteps(RK4())),
+          Dict(:alg=&gt;MethodOfSteps(DP5())),
+          Dict(:alg=&gt;MethodOfSteps(OwrenZen3())),
+          Dict(:alg=&gt;MethodOfSteps(OwrenZen4())),
+          Dict(:alg=&gt;MethodOfSteps(OwrenZen5()))]
+names = [&quot;BS3&quot;, &quot;Tsit5&quot;, &quot;RK4&quot;, &quot;DP5&quot;, &quot;OwrenZen3&quot;, &quot;OwrenZen4&quot;, &quot;OwrenZen5&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_18_1.png" alt/></p><p>And the maximal interpolation error:</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(BS3())),
+          Dict(:alg=&gt;MethodOfSteps(Tsit5())),
+          Dict(:alg=&gt;MethodOfSteps(RK4())),
+          Dict(:alg=&gt;MethodOfSteps(DP5())),
+          Dict(:alg=&gt;MethodOfSteps(OwrenZen3())),
+          Dict(:alg=&gt;MethodOfSteps(OwrenZen4())),
+          Dict(:alg=&gt;MethodOfSteps(OwrenZen5()))]
+names = [&quot;BS3&quot;, &quot;Tsit5&quot;, &quot;RK4&quot;, &quot;DP5&quot;, &quot;OwrenZen3&quot;, &quot;OwrenZen4&quot;, &quot;OwrenZen5&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L∞)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_19_1.png" alt/></p><p>Since the correct solution is in the range of 1e-7, we see that most solutions, even at the lower end of tested tolerances, always lead to relative maximal interpolation errors of at least 1e-1 (and usually worse). <code>RK4</code> performs slightly better with relative maximal errors of at least 1e-2. This matches our qualitative analysis above.</p><h4 id="Rosenbrock-methods-2"><a class="docs-heading-anchor" href="#Rosenbrock-methods-2">Rosenbrock methods</a><a class="docs-heading-anchor-permalink" href="#Rosenbrock-methods-2" title="Permalink"></a></h4><p>We repeat these tests with Rosenbrock methods, and include <code>RK4</code> as reference.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(Rosenbrock23())),
+          Dict(:alg=&gt;MethodOfSteps(Rosenbrock32())),
+          Dict(:alg=&gt;MethodOfSteps(Rodas4())),
+          Dict(:alg=&gt;MethodOfSteps(RK4()))]
+names = [&quot;Rosenbrock23&quot;, &quot;Rosenbrock32&quot;, &quot;Rodas4&quot;, &quot;RK4&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_20_1.png" alt/></p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(Rosenbrock23())),
+          Dict(:alg=&gt;MethodOfSteps(Rosenbrock32())),
+          Dict(:alg=&gt;MethodOfSteps(Rodas4())),
+          Dict(:alg=&gt;MethodOfSteps(RK4()))]
+names = [&quot;Rosenbrock23&quot;, &quot;Rosenbrock32&quot;, &quot;Rodas4&quot;, &quot;RK4&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_21_1.png" alt/></p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(Rosenbrock23())),
+          Dict(:alg=&gt;MethodOfSteps(Rosenbrock32())),
+          Dict(:alg=&gt;MethodOfSteps(Rodas4())),
+          Dict(:alg=&gt;MethodOfSteps(RK4()))]
+names = [&quot;Rosenbrock23&quot;, &quot;Rosenbrock32&quot;, &quot;Rodas4&quot;, &quot;RK4&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L∞)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_22_1.png" alt/></p><p>Out of the tested Rosenbrock methods <code>Rodas4</code> and <code>Rosenbrock23</code> perform best at high tolerances.</p><h4 id="Lazy-interpolants-2"><a class="docs-heading-anchor" href="#Lazy-interpolants-2">Lazy interpolants</a><a class="docs-heading-anchor-permalink" href="#Lazy-interpolants-2" title="Permalink"></a></h4><p>Finally we test the Verner methods with lazy interpolants, and include <code>Rosenbrock23</code> as reference.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(Vern6())),
+          Dict(:alg=&gt;MethodOfSteps(Vern7())),
+          Dict(:alg=&gt;MethodOfSteps(Vern8())),
+          Dict(:alg=&gt;MethodOfSteps(Vern9())),
+          Dict(:alg=&gt;MethodOfSteps(Rosenbrock23()))]
+names = [&quot;Vern6&quot;, &quot;Vern7&quot;, &quot;Vern8&quot;, &quot;Vern9&quot;, &quot;Rosenbrock23&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_23_1.png" alt/></p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(Vern6())),
+          Dict(:alg=&gt;MethodOfSteps(Vern7())),
+          Dict(:alg=&gt;MethodOfSteps(Vern8())),
+          Dict(:alg=&gt;MethodOfSteps(Vern9())),
+          Dict(:alg=&gt;MethodOfSteps(Rosenbrock23()))]
+names = [&quot;Vern6&quot;, &quot;Vern7&quot;, &quot;Vern8&quot;, &quot;Vern9&quot;, &quot;Rosenbrock23&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_24_1.png" alt/></p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(Vern6())),
+          Dict(:alg=&gt;MethodOfSteps(Vern7())),
+          Dict(:alg=&gt;MethodOfSteps(Vern8())),
+          Dict(:alg=&gt;MethodOfSteps(Vern9())),
+          Dict(:alg=&gt;MethodOfSteps(Rosenbrock23()))]
+names = [&quot;Vern6&quot;, &quot;Vern7&quot;, &quot;Vern8&quot;, &quot;Vern9&quot;, &quot;Rosenbrock23&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L∞)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_25_1.png" alt/></p><p>All in all, at high tolerances <code>Rodas5</code> and <code>Rosenbrock23</code> are the best methods for solving this stiff DDE.</p><h3 id="Low-tolerances"><a class="docs-heading-anchor" href="#Low-tolerances">Low tolerances</a><a id="Low-tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#Low-tolerances" title="Permalink"></a></h3><h4 id="Rosenbrock-methods-3"><a class="docs-heading-anchor" href="#Rosenbrock-methods-3">Rosenbrock methods</a><a class="docs-heading-anchor-permalink" href="#Rosenbrock-methods-3" title="Permalink"></a></h4><p>We repeat our tests of Rosenbrock methods <code>Rosenbrock23</code> and <code>Rodas5</code> at low tolerances:</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (8:11)
+reltols = 1.0 ./ 10.0 .^ (5:8)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(Rosenbrock23())),
+          Dict(:alg=&gt;MethodOfSteps(Rodas4())),
+          Dict(:alg=&gt;MethodOfSteps(Rodas5()))]
+names = [&quot;Rosenbrock23&quot;, &quot;Rodas4&quot;, &quot;Rodas5&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_26_1.png" alt/></p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (8:11)
+reltols = 1.0 ./ 10.0 .^ (5:8)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(Rosenbrock23())),
+          Dict(:alg=&gt;MethodOfSteps(Rodas4())),
+          Dict(:alg=&gt;MethodOfSteps(Rodas5()))]
+names = [&quot;Rosenbrock23&quot;, &quot;Rodas4&quot;, &quot;Rodas5&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_27_1.png" alt/></p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (8:11)
+reltols = 1.0 ./ 10.0 .^ (5:8)
+
+setups = [Dict(:alg=&gt;MethodOfSteps(Rosenbrock23())),
+          Dict(:alg=&gt;MethodOfSteps(Rodas4())),
+          Dict(:alg=&gt;MethodOfSteps(Rodas5()))]
+names = [&quot;Rosenbrock23&quot;, &quot;Rodas4&quot;, &quot;Rodas5&quot;]
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+                      save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L∞)
+plot(wp)</code></pre><p><img src="../figures/QuorumSensing_28_1.png" alt/></p><p>Thus at low tolerances <code>Rodas5</code> outperforms <code>Rosenbrock23</code>.</p><pre><code class="language-julia hljs">using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+SciMLBenchmarks.weave_file(&quot;StiffDDE&quot;,&quot;QuorumSensing.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.4.2
+Commit 44fa15b150* (2020-05-23 18:35 UTC)
+Platform Info:
+  OS: Linux (x86_64-pc-linux-gnu)
+  CPU: Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-8.0.1 (ORCJIT, skylake)
+Environment:
+  JULIA_LOAD_PATH = /builds/JuliaGPU/DiffEqBenchmarks.jl:
+  JULIA_DEPOT_PATH = /builds/JuliaGPU/DiffEqBenchmarks.jl/.julia
+  JULIA_CUDA_MEMORY_LIMIT = 2147483648
+  JULIA_NUM_THREADS = 8
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status: `/builds/JuliaGPU/DiffEqBenchmarks.jl/benchmarks/StiffDDE/Project.toml`
+[bcd4f6db-9728-5f36-b5f7-82caef46ccdb] DelayDiffEq 5.24.1
+[f3b72e0c-5b89-59e1-b016-84e28bfd966d] DiffEqDevTools 2.24.0
+[a077e3f3-b75c-5d7f-a0c6-6bc4c8ec64a9] DiffEqProblemLibrary 4.8.1
+[91a5bcdd-55d7-5caf-9e0b-520d859cae80] Plots 1.5.6</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../ParameterEstimation/DiffEqBayesLotkaVolterra/">« Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a><a class="docs-footer-nextpage" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Monday 25 July 2022 00:58">Monday 25 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
