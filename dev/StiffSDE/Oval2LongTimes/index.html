@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Oval2 Long Times · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/StiffSDE/Oval2LongTimes/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks</a></li><li><span class="tocitem">Bio</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">DAE</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jumps</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li></ul></li><li><span class="tocitem">MOLPDE</span><ul><li><a class="tocitem" href="../../MOLPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_fdm_wpd/">Burger&#39;s Finite Difference Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">MultiLanguage</span><ul><li><a class="tocitem" href="../../MultiLanguage/wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li></ul></li><li><span class="tocitem">NBodySimulator</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">NonStiffDDE</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">NonStiffODE</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">PINNErrorsVsTime</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">PINNOptimizers</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">ParameterEstimation</span><ul><li><a class="tocitem" href="../../ParameterEstimation/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">StiffDDE</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">StiffODE</span><ul><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">StiffSDE</span><ul><li><a class="tocitem" href="../Oval2LongRun/">Oval2 Long Run</a></li><li class="is-active"><a class="tocitem" href>Oval2 Long Times</a><ul class="internal"><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">StiffSDE</a></li><li class="is-active"><a href>Oval2 Long Times</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Oval2 Long Times</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/StiffSDE/Oval2LongTimes.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><pre><code class="language-julia hljs">using StochasticDiffEq, DiffEqProblemLibrary, Random
+Random.seed!(200)
+using DiffEqProblemLibrary.SDEProblemLibrary: importsdeproblems; importsdeproblems()
+prob = DiffEqProblemLibrary.SDEProblemLibrary.oval2ModelExample(largeFluctuations=true,useBigs=false)</code></pre><pre><code class="nohighlight hljs">SDEProblem with uType Array{Float64,1} and tType Float64. In-place: true
+timespan: (0.0, 500.0)
+u0: [0.128483, 1.256853, 0.0030203, 0.0027977, 0.0101511, 0.0422942, 0.2391
+346, 0.0008014, 0.0001464, 2.67e-5, 4.8e-6, 9.0e-7, 0.0619917, 1.2444292, 0
+.0486676, 199.9383546, 137.4267984, 1.5180203, 1.5180203]</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    sol = solve(prob,SRIW1(),dt=(1/2)^(18),qmax=1.125,
+        saveat=0.1,maxiters=1e7,abstol=1e-5,reltol=1e-3)
+end</code></pre><pre><code class="nohighlight hljs">84.678687 seconds (337.57 M allocations: 56.860 GiB, 5.50% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    @show i
+    sol = solve(prob,ImplicitEM(),dt=1/60000)
+end</code></pre><pre><code class="nohighlight hljs">i = 1
+i = 2
+i = 3
+i = 4
+i = 5
+i = 6
+i = 7
+i = 8
+i = 9
+i = 10
+  0.249773 seconds (1.21 M allocations: 89.070 MiB, 3.72% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    @show i
+    sol = solve(prob,ImplicitRKMil(),dt=1/50000)
+end</code></pre><pre><code class="nohighlight hljs">i = 1
+i = 2
+i = 3
+i = 4
+i = 5
+i = 6
+i = 7
+i = 8
+i = 9
+i = 10
+  1.376454 seconds (6.78 M allocations: 602.419 MiB, 4.65% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+          saveat=0.1,maxiters=1e7,abstol=1e-4,reltol=1e-2)
+end</code></pre><pre><code class="nohighlight hljs">40.144343 seconds (118.55 M allocations: 20.732 GiB, 3.99% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    sol = solve(prob,SOSRI2(),dt=(1/2)^(18),qmax=1.125,
+          saveat=0.1,maxiters=1e7,abstol=1e-4,reltol=1e-4)
+end</code></pre><pre><code class="nohighlight hljs">136.956188 seconds (403.18 M allocations: 70.490 GiB, 3.39% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    sol = solve(prob,SOSRI2(),dt=(1/2)^(18),qmax=1.125,
+          saveat=0.1,maxiters=1e7,abstol=1e-5,reltol=1e-3)
+end</code></pre><pre><code class="nohighlight hljs">138.472426 seconds (404.03 M allocations: 70.675 GiB, 3.46% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+          saveat=0.1,maxiters=1e7,abstol=1e-3,reltol=1e-2)
+end</code></pre><pre><code class="nohighlight hljs">22.330188 seconds (65.20 M allocations: 11.399 GiB, 3.70% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+          saveat=0.1,maxiters=1e7,abstol=1e-4,reltol=1e-4)
+end</code></pre><pre><code class="nohighlight hljs">139.197769 seconds (402.36 M allocations: 70.411 GiB, 3.66% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+          saveat=0.1,maxiters=1e7,abstol=1e-2,reltol=1e-2)
+end</code></pre><pre><code class="nohighlight hljs">13.217099 seconds (38.40 M allocations: 6.703 GiB, 3.96% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+          saveat=0.1,maxiters=1e7,abstol=1e-5,reltol=1e-3)
+end</code></pre><pre><code class="nohighlight hljs">141.717081 seconds (404.77 M allocations: 70.792 GiB, 3.82% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+          saveat=0.1,maxiters=1e7,abstol=1e-2,reltol=1e-1)
+end</code></pre><pre><code class="nohighlight hljs">13.955336 seconds (39.82 M allocations: 6.958 GiB, 4.02% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    sol = solve(prob,SOSRI2(),dt=(1/2)^(18),qmax=1.125,
+          saveat=0.1,maxiters=1e7,abstol=1e-4,reltol=1e-1)
+end</code></pre><pre><code class="nohighlight hljs">8.372071 seconds (24.10 M allocations: 4.158 GiB, 4.08% gc time)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    @show i
+    sol = solve(prob,ImplicitEM(),dt=1/50000)
+end</code></pre><pre><code class="nohighlight hljs">i = 1
+i = 2
+i = 3
+i = 4
+i = 5
+i = 6
+i = 7
+i = 8
+i = 9
+i = 10
+  0.184929 seconds (935.58 k allocations: 67.902 MiB)</code></pre><pre><code class="language-julia hljs">Random.seed!(200)
+@time for i in 1:10
+    @show i
+    sol = solve(prob,ImplicitRKMil(),dt=1/40000)
+end</code></pre><pre><code class="nohighlight hljs">i = 1
+i = 2
+i = 3
+i = 4
+i = 5
+i = 6
+i = 7
+i = 8
+i = 9
+i = 10
+  0.742090 seconds (3.69 M allocations: 328.117 MiB, 4.14% gc time)</code></pre><pre><code class="language-julia hljs">using DiffEqBenchmarks
+DiffEqBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the DiffEqBenchmarks.jl repository, found at: <a href="https://github.com/JuliaDiffEq/DiffEqBenchmarks.jl">https://github.com/JuliaDiffEq/DiffEqBenchmarks.jl</a></p><p>To locally run this tutorial, do the following commands:</p><pre><code class="nohighlight hljs">using DiffEqBenchmarks
+DiffEqBenchmarks.weave_file(&quot;StiffSDE&quot;,&quot;Oval2LongTimes.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.4.2
+Commit 44fa15b150* (2020-05-23 18:35 UTC)
+Platform Info:
+  OS: Linux (x86_64-pc-linux-gnu)
+  CPU: Intel(R) Core(TM) i7-9700K CPU @ 3.60GHz
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-8.0.1 (ORCJIT, skylake)
+Environment:
+  JULIA_DEPOT_PATH = /builds/JuliaGPU/DiffEqBenchmarks.jl/.julia
+  JULIA_CUDA_MEMORY_LIMIT = 2147483648
+  JULIA_PROJECT = @.
+  JULIA_NUM_THREADS = 8
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status: `/builds/JuliaGPU/DiffEqBenchmarks.jl/benchmarks/StiffSDE/Project.toml`
+[f3b72e0c-5b89-59e1-b016-84e28bfd966d] DiffEqDevTools 2.22.0
+[77a26b50-5914-5dd7-bc55-306e6241c503] DiffEqNoiseProcess 5.0.2
+[a077e3f3-b75c-5d7f-a0c6-6bc4c8ec64a9] DiffEqProblemLibrary 4.8.0
+[91a5bcdd-55d7-5caf-9e0b-520d859cae80] Plots 1.5.3
+[789caeaf-c7a9-5a7d-9973-96adeb23e2a0] StochasticDiffEq 6.24.0
+[37e2e46d-f89d-539d-b4ee-838fcccc9c8e] LinearAlgebra 
+[9a3f8284-a2c9-5f02-9a11-845980a1fd5c] Random 
+[10745b16-79ce-11e8-11f9-7d13ad32a3b2] Statistics </code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Oval2LongRun/">« Oval2 Long Run</a><a class="docs-footer-nextpage" href="../Oval2Timings/">Oval2 Timings »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Monday 25 July 2022 00:58">Monday 25 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
