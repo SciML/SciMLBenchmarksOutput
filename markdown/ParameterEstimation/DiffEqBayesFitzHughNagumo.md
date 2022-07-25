@@ -1,3 +1,7 @@
+---
+author: "Vaibhav Dixit, Chris Rackauckas"
+title: "Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks"
+---
 
 ````julia
 using DiffEqBayes, BenchmarkTools
@@ -230,7 +234,7 @@ Thinning interval = 1
 Chains            = 1
 Samples per chain = 9000
 internals         = acceptance_rate, hamiltonian_energy, hamiltonian_energy
-_error, is_accept, log_density, lp, max_hamiltonian_energy_error, n_steps, 
+_error, is_accept, log_density, lp, max_hamiltonian_energy_error, n_steps,
 nom_step_size, numerical_error, step_size, tree_depth
 parameters        = theta[1], theta[2], theta[3], theta[4], σ[1]
 
@@ -262,7 +266,7 @@ Quantiles
 
 # Conclusion
 
-FitzHugh-Ngumo is a standard problem for parameter estimation studies. In the FitzHugh-Nagumo model the parameters to be estimated were `[0.7,0.8,0.08,0.5]`. 
+FitzHugh-Ngumo is a standard problem for parameter estimation studies. In the FitzHugh-Nagumo model the parameters to be estimated were `[0.7,0.8,0.08,0.5]`.
 `dynamichmc_inference` has issues with the model and hence was excluded from this benchmark.
 
 ````julia
@@ -329,9 +333,8 @@ Status: `/Users/vaibhav/DiffEqBenchmarks.jl/Project.toml`
 [c3572dad-4567-51f8-b174-8c6c989267f4] Sundials 3.9.0
 [a759f4b9-e2f1-59dc-863e-4aeb61b1ea8f] TimerOutputs 0.5.3
 [44d3d7a6-8a23-5bf8-98c5-b353f8df5ec9] Weave 0.9.4
-[b77e0a4c-d291-57a0-90e8-8db25a27a240] InteractiveUtils 
-[d6f4376e-aef5-505a-96c1-9c027394607a] Markdown 
-[44cfe95a-1eb2-52ea-b672-e2afdf69b78f] Pkg 
-[9a3f8284-a2c9-5f02-9a11-845980a1fd5c] Random 
+[b77e0a4c-d291-57a0-90e8-8db25a27a240] InteractiveUtils
+[d6f4376e-aef5-505a-96c1-9c027394607a] Markdown
+[44cfe95a-1eb2-52ea-b672-e2afdf69b78f] Pkg
+[9a3f8284-a2c9-5f02-9a11-845980a1fd5c] Random
 ```
-

@@ -1,3 +1,7 @@
+---
+author: "HAO HAO"
+title: "Allen-Cahn Pseudospectral Methods Work-Precision Diagrams"
+---
 
 ````julia
 using ApproxFun, OrdinaryDiffEq, Sundials
@@ -433,4 +437,3 @@ Package Information:
 Status: `/home/chrisrackauckas/.julia/dev/DiffEqBenchmarks/Project.toml`
 
 ```
-

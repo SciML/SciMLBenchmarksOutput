@@ -1,3 +1,8 @@
+---
+author: "Sebastian Micluța-Câmpeanu, Mikhail Vaganov"
+title: "Acceleration function benchmarks"
+---
+
 Solving the equations of notions for an N-body problem implies solving a (large)
 system of differential equations. In `DifferentialEquations.jl` these are represented
 through ODE or SDE problems. To build the problem we need a function that
@@ -359,5 +364,3 @@ memory(r)
   "water_spcfw" => 124912
   "magnetic_dipole" => 25555200
 ````
-
-

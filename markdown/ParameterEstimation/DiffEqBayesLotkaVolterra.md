@@ -1,3 +1,8 @@
+---
+author: "Vaibhav Dixit, Chris Rackauckas"
+title: "Lotka-Volterra Bayesian Parameter Estimation Benchmarks"
+---
+
 ## Parameter Estimation of Lotka-Volterra Equation using DiffEqBayes.jl
 
 ````julia
@@ -232,7 +237,7 @@ ame =                    "parameter_estimation_model"
 , 0, [-8.52568 0.968447 … 3.30807 1.0637; -6.58667 0.944431 … 3.38828 1.022
 49; … ; -5.8813 0.999428 … 2.76305 0.937836; -4.78428 0.99239 … 2.79557 0.8
 68411], ["lp__", "accept_stat__", "stepsize__", "treedepth__", "n_leapfrog_
-_", "divergent__", "energy__", "sigma1.1", "sigma1.2", "theta1", "theta2", 
+_", "divergent__", "energy__", "sigma1.1", "sigma1.2", "theta1", "theta2",
 "theta3", "theta4", "theta.1", "theta.2", "theta.3", "theta.4"])
 ````
 
@@ -256,7 +261,7 @@ Thinning interval = 1
 Chains            = 1
 Samples per chain = 9000
 internals         = acceptance_rate, hamiltonian_energy, hamiltonian_energy
-_error, is_accept, log_density, lp, max_hamiltonian_energy_error, n_steps, 
+_error, is_accept, log_density, lp, max_hamiltonian_energy_error, n_steps,
 nom_step_size, numerical_error, step_size, tree_depth
 parameters        = theta[1], theta[2], theta[3], theta[4], σ[1]
 
@@ -296,7 +301,7 @@ Quantiles
 40.471 s (190748921 allocations: 18.76 GiB)
 (posterior = NamedTuple{(:parameters, :σ),Tuple{Array{Float64,1},Array{Floa
 t64,1}}}[(parameters = [1.465630775843807, 1.110311741190626, 3.00120523063
-12325, 0.9730604529733278], σ = [0.4544734605480289, 0.6745909222023634]), 
+12325, 0.9730604529733278], σ = [0.4544734605480289, 0.6745909222023634]),
 (parameters = [1.5232301517457223, 0.980646535742799, 2.9576784823488556, 0
 .9673276813117795], σ = [0.359496981166905, 0.4445382927044592]), (paramete
 rs = [1.507586341992819, 0.9934729781874589, 2.9370761936354293, 0.95381181
@@ -315,7 +320,7 @@ rs = [1.507586341992819, 0.9934729781874589, 2.9370761936354293, 0.95381181
 054538521]), (parameters = [1.4156177264072696, 1.050992353405477, 3.246085
 936926085, 1.0532589797307128], σ = [0.3310357263727346, 0.4632371102034147
 ])  …  (parameters = [1.3106129514208757, 0.9570860305999817, 3.61963965212
-63745, 1.1893279246270572], σ = [0.36056090028966425, 0.587669248424538]), 
+63745, 1.1893279246270572], σ = [0.36056090028966425, 0.587669248424538]),
 (parameters = [1.3977535365686748, 0.872613074096041, 3.361314236818876, 1.
 0748293788183856], σ = [1.0300993563548055, 0.5437560909153833]), (paramete
 rs = [1.354045149519009, 1.006975655497879, 3.502316490497921, 1.1915924153
@@ -354,9 +359,9 @@ rs = [1.354045149519009, 1.006975655497879, 3.502316490497921, 1.1915924153
 868, 0.17338837836026869, -1.0200944036823372, -0.5315909920268513], [0.334
 8663311082705, -0.13626303548481444, 1.212332039409437, 0.07216193160444409
 , 0.029655260069732327, -0.609254494958518], [0.3030965192214449, 0.0069514
-38169003961, 1.2534246039942976, 0.17529057675655937, -0.2565798954824429, 
+38169003961, 1.2534246039942976, 0.17529057675655937, -0.2565798954824429,
 -0.5988766892895566], [0.30726107115178974, -0.06945856975020885, 1.2208931
-212617609, 0.10984611607494749, -0.6691593101881326, -0.8350203779457236], 
+212617609, 0.10984611607494749, -0.6691593101881326, -0.8350203779457236],
 [0.28161606828377855, -0.12303537148409655, 1.2328561299592053, 0.170887916
 97866546, -0.6179689669149233, -0.6478470158966517], [0.2920017982020267, -
 0.13759444833628542, 1.2302834762154202, 0.14667222404610764, -0.5959874939
@@ -375,7 +380,7 @@ icsNUTS(-26.14519910948132, 6, turning at positions -14:49, 0.7440894459889
 -24.03261942192681, 2, turning at positions -1:2, 0.9999999999999999, 3, Dy
 namicHMC.Directions(0x54bd74ce)), DynamicHMC.TreeStatisticsNUTS(-17.4223545
 1272565, 3, turning at positions -6:-9, 0.9002888521795784, 15, DynamicHMC.
-Directions(0xba87fcf6)), DynamicHMC.TreeStatisticsNUTS(-18.57425436230774, 
+Directions(0xba87fcf6)), DynamicHMC.TreeStatisticsNUTS(-18.57425436230774,
 5, turning at positions 18:49, 0.9738034668664788, 63, DynamicHMC.Direction
 s(0xf01419f1)), DynamicHMC.TreeStatisticsNUTS(-18.424672629553278, 6, turni
 ng at positions -56:7, 0.9989243629662449, 63, DynamicHMC.Directions(0x4dba
@@ -418,7 +423,7 @@ netic energy (LinearAlgebra.Diagonal), √diag(M⁻¹): [0.059021627348001746, 0
 
 ## Conclusion
 
-Lotka-Volterra Equation is a "predator-prey" model, it models population of two species in which one is the predator (wolf) and the other is the prey (rabbit). 
+Lotka-Volterra Equation is a "predator-prey" model, it models population of two species in which one is the predator (wolf) and the other is the prey (rabbit).
 It depicts a cyclic behaviour, which is also seen in its Uncertainity Quantification Plots. This behaviour makes it easy to estimate even at very high tolerance values (1e-3).
 
 
@@ -487,9 +492,8 @@ Status: `/Users/vaibhav/DiffEqBenchmarks.jl/Project.toml`
 [c3572dad-4567-51f8-b174-8c6c989267f4] Sundials 3.9.0
 [a759f4b9-e2f1-59dc-863e-4aeb61b1ea8f] TimerOutputs 0.5.3
 [44d3d7a6-8a23-5bf8-98c5-b353f8df5ec9] Weave 0.9.4
-[b77e0a4c-d291-57a0-90e8-8db25a27a240] InteractiveUtils 
-[d6f4376e-aef5-505a-96c1-9c027394607a] Markdown 
-[44cfe95a-1eb2-52ea-b672-e2afdf69b78f] Pkg 
-[9a3f8284-a2c9-5f02-9a11-845980a1fd5c] Random 
+[b77e0a4c-d291-57a0-90e8-8db25a27a240] InteractiveUtils
+[d6f4376e-aef5-505a-96c1-9c027394607a] Markdown
+[44cfe95a-1eb2-52ea-b672-e2afdf69b78f] Pkg
+[9a3f8284-a2c9-5f02-9a11-845980a1fd5c] Random
 ```
-

@@ -20,6 +20,6 @@ for folder in readdir(benchmarksdir)
                 @show folder, file, e
             end
         end
-        push!(pages, Any[folder=>newpages])
+        push!(pages, folder=>newpages)
     end
 end

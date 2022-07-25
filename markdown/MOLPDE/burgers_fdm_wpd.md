@@ -1,3 +1,7 @@
+---
+author: "HAO HAO"
+title: "Burger's Finite Difference Methods Work-Precision Diagrams"
+---
 
 ````julia
 using ApproxFun, OrdinaryDiffEq, Sundials
@@ -463,9 +467,8 @@ Status: `/home/chrisrackauckas/.julia/dev/DiffEqBenchmarks/Project.toml`
 [c3572dad-4567-51f8-b174-8c6c989267f4] Sundials 3.8.1
 [a759f4b9-e2f1-59dc-863e-4aeb61b1ea8f] TimerOutputs 0.5.3
 [44d3d7a6-8a23-5bf8-98c5-b353f8df5ec9] Weave 0.9.1
-[b77e0a4c-d291-57a0-90e8-8db25a27a240] InteractiveUtils 
-[d6f4376e-aef5-505a-96c1-9c027394607a] Markdown 
-[44cfe95a-1eb2-52ea-b672-e2afdf69b78f] Pkg 
-[9a3f8284-a2c9-5f02-9a11-845980a1fd5c] Random 
+[b77e0a4c-d291-57a0-90e8-8db25a27a240] InteractiveUtils
+[d6f4376e-aef5-505a-96c1-9c027394607a] Markdown
+[44cfe95a-1eb2-52ea-b672-e2afdf69b78f] Pkg
+[9a3f8284-a2c9-5f02-9a11-845980a1fd5c] Random
 ```
-

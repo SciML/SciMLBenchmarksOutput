@@ -1,3 +1,8 @@
+---
+author: "Sebastian Micluța-Câmpeanu, Mikhail Vaganov"
+title: "Liquid argon benchmarks"
+---
+
 The purpose of these benchmarks is to compare several integrators for use in
 molecular dynamics simulation. We will use a simulation of liquid argon form the
 examples of NBodySimulator as test case.
@@ -117,7 +122,7 @@ symplectic_integrators = [
 
 
 Since for each method there is a different cost for a timestep, we need to take that
-into account when choosing the tolerances (`dt`s or `abstol`&`reltol`) for the 
+into account when choosing the tolerances (`dt`s or `abstol`&`reltol`) for the
 solvers. This cost was estimated using the commented code below and the
 results were hardcoded in order to prevent fluctuations in the results
 between runs due to differences in callibration times.
@@ -191,40 +196,40 @@ run_benchmark!(results, t, symplectic_integrators, τs, c=c_symplectic)
 90×7 DataFrame. Omitted printing of 2 columns
 │ Row │ integrator           │ runtime │ τ        │ EnergyError │ timesteps
  │
-│     │ String               │ Float64 │ Float64  │ Float64     │ Int64    
+│     │ String               │ Float64 │ Float64  │ Float64     │ Int64
  │
 ├─────┼──────────────────────┼─────────┼──────────┼─────────────┼──────────
 ─┤
-│ 1   │ VelocityVerlet       │ 2622.12 │ 0.0001   │ 0.000645418 │ 400000   
+│ 1   │ VelocityVerlet       │ 2622.12 │ 0.0001   │ 0.000645418 │ 400000
  │
-│ 2   │ VerletLeapfrog       │ 2712.61 │ 0.000105 │ 9.19241e-5  │ 380953   
+│ 2   │ VerletLeapfrog       │ 2712.61 │ 0.000105 │ 9.19241e-5  │ 380953
  │
-│ 3   │ PseudoVerletLeapfrog │ 2893.71 │ 9.8e-5   │ 0.000707672 │ 408164   
+│ 3   │ PseudoVerletLeapfrog │ 2893.71 │ 9.8e-5   │ 0.000707672 │ 408164
  │
-│ 4   │ McAte2               │ 2787.94 │ 0.000102 │ 0.000284938 │ 392157   
+│ 4   │ McAte2               │ 2787.94 │ 0.000102 │ 0.000284938 │ 392157
  │
-│ 5   │ CalvoSanz4           │ 2968.49 │ 0.000238 │ 0.00075854  │ 168068   
+│ 5   │ CalvoSanz4           │ 2968.49 │ 0.000238 │ 0.00075854  │ 168068
  │
-│ 6   │ McAte5               │ 2909.46 │ 0.000292 │ 0.00028132  │ 136987   
+│ 6   │ McAte5               │ 2909.46 │ 0.000292 │ 0.00028132  │ 136987
  │
-│ 7   │ Yoshida6             │ 3033.24 │ 0.000374 │ 0.00351961  │ 106952   
+│ 7   │ Yoshida6             │ 3033.24 │ 0.000374 │ 0.00351961  │ 106952
  │
 ⋮
-│ 83  │ VerletLeapfrog       │ 269.556 │ 0.00105  │ 0.0599366   │ 38096    
+│ 83  │ VerletLeapfrog       │ 269.556 │ 0.00105  │ 0.0599366   │ 38096
  │
-│ 84  │ PseudoVerletLeapfrog │ 286.269 │ 0.00098  │ 0.171365    │ 40817    
+│ 84  │ PseudoVerletLeapfrog │ 286.269 │ 0.00098  │ 0.171365    │ 40817
  │
-│ 85  │ McAte2               │ 277.655 │ 0.00102  │ 0.0308871   │ 39216    
+│ 85  │ McAte2               │ 277.655 │ 0.00102  │ 0.0308871   │ 39216
  │
-│ 86  │ CalvoSanz4           │ 298.283 │ 0.00238  │ 0.00468181  │ 16807    
+│ 86  │ CalvoSanz4           │ 298.283 │ 0.00238  │ 0.00468181  │ 16807
  │
-│ 87  │ McAte5               │ 287.913 │ 0.00292  │ 0.00849251  │ 13699    
+│ 87  │ McAte5               │ 287.913 │ 0.00292  │ 0.00849251  │ 13699
  │
-│ 88  │ Yoshida6             │ 303.586 │ 0.00374  │ 0.0128785   │ 10696    
+│ 88  │ Yoshida6             │ 303.586 │ 0.00374  │ 0.0128785   │ 10696
  │
-│ 89  │ KahanLi8             │ 280.787 │ 0.00844  │ 0.0382047   │ 4740     
+│ 89  │ KahanLi8             │ 280.787 │ 0.00844  │ 0.0382047   │ 4740
  │
-│ 90  │ SofSpa10             │ 322.134 │ 0.01576  │ 0.27519     │ 2539     
+│ 90  │ SofSpa10             │ 322.134 │ 0.01576  │ 0.27519     │ 2539
  │
 ````
 
@@ -460,7 +465,7 @@ results1
 80×9 DataFrame. Omitted printing of 4 columns
 │ Row │ integrator           │ runtime │ τ           │ EnergyError │ timest
 eps │
-│     │ String               │ Float64 │ Float64?    │ Float64     │ Int64 
+│     │ String               │ Float64 │ Float64?    │ Float64     │ Int64
     │
 ├─────┼──────────────────────┼─────────┼─────────────┼─────────────┼───────
 ────┤
@@ -479,21 +484,21 @@ eps │
 │ 7   │ VerletLeapfrog       │ 1800.22 │ 0.000135613 │ 0.00151847  │ 294958
     │
 ⋮
-│ 73  │ DPRKN8               │ 80.3047 │ missing     │ 0.17482     │ 2875  
+│ 73  │ DPRKN8               │ 80.3047 │ missing     │ 0.17482     │ 2875
     │
-│ 74  │ DPRKN12              │ 72.2393 │ missing     │ 6.97224     │ 1378  
+│ 74  │ DPRKN12              │ 72.2393 │ missing     │ 6.97224     │ 1378
     │
-│ 75  │ DPRKN6               │ 75.209  │ missing     │ 10.2122     │ 4087  
+│ 75  │ DPRKN6               │ 75.209  │ missing     │ 10.2122     │ 4087
     │
-│ 76  │ DPRKN8               │ 79.1033 │ missing     │ 0.0892482   │ 2765  
+│ 76  │ DPRKN8               │ 79.1033 │ missing     │ 0.0892482   │ 2765
     │
-│ 77  │ DPRKN12              │ 64.6068 │ missing     │ 33.5284     │ 1210  
+│ 77  │ DPRKN12              │ 64.6068 │ missing     │ 33.5284     │ 1210
     │
-│ 78  │ DPRKN6               │ 64.757  │ missing     │ 26.2489     │ 3523  
+│ 78  │ DPRKN6               │ 64.757  │ missing     │ 26.2489     │ 3523
     │
-│ 79  │ DPRKN8               │ 69.7529 │ missing     │ 0.231174    │ 2408  
+│ 79  │ DPRKN8               │ 69.7529 │ missing     │ 0.231174    │ 2408
     │
-│ 80  │ DPRKN12              │ 54.625  │ missing     │ 571.101     │ 998   
+│ 80  │ DPRKN12              │ 54.625  │ missing     │ 571.101     │ 998
     │
 ````
 
