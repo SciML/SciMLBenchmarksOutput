@@ -704,7 +704,7 @@ u0: 19-element Vector&#123;Float64&#125;:
 
 
 <pre class="output">
-0.159483 seconds &#40;530.42 k allocations: 32.891 MiB, 96.04&#37; compilation ti
+0.155315 seconds &#40;530.42 k allocations: 32.885 MiB, 96.52&#37; compilation ti
 me&#41;
 </pre>
 
@@ -730,7 +730,7 @@ i &#61; 7
 i &#61; 8
 i &#61; 9
 i &#61; 10
- 23.378443 seconds &#40;43.41 M allocations: 2.527 GiB, 2.68&#37; gc time, 99.63&#37; c
+ 23.090718 seconds &#40;43.46 M allocations: 2.532 GiB, 2.81&#37; gc time, 99.65&#37; c
 ompilation time&#41;
 </pre>
 
@@ -756,7 +756,7 @@ i &#61; 7
 i &#61; 8
 i &#61; 9
 i &#61; 10
-  3.926769 seconds &#40;9.45 M allocations: 677.212 MiB, 4.02&#37; gc time, 84.06&#37; 
+  3.917407 seconds &#40;9.46 M allocations: 678.243 MiB, 4.40&#37; gc time, 84.32&#37; 
 compilation time&#41;
 </pre>
 
@@ -772,7 +772,7 @@ compilation time&#41;
 
 
 <pre class="output">
-2.988610 seconds &#40;5.55 M allocations: 282.420 MiB, 2.70&#37; gc time, 91.99&#37; 
+2.975989 seconds &#40;5.56 M allocations: 282.895 MiB, 2.49&#37; gc time, 91.99&#37; 
 compilation time&#41;
 </pre>
 
@@ -788,7 +788,7 @@ compilation time&#41;
 
 
 <pre class="output">
-6.654497 seconds &#40;4.28 M allocations: 212.786 MiB, 0.63&#37; gc time, 36.16&#37; 
+6.638298 seconds &#40;4.28 M allocations: 213.286 MiB, 0.64&#37; gc time, 36.39&#37; 
 compilation time&#41;
 </pre>
 
@@ -804,7 +804,7 @@ compilation time&#41;
 
 
 <pre class="output">
-1.315817 seconds &#40;4.76 k allocations: 2.701 MiB&#41;
+1.309383 seconds &#40;4.76 k allocations: 2.701 MiB&#41;
 </pre>
 
 
@@ -819,7 +819,7 @@ compilation time&#41;
 
 
 <pre class="output">
-0.125915 seconds &#40;7.63 k allocations: 3.271 MiB&#41;
+0.125268 seconds &#40;7.63 k allocations: 3.271 MiB&#41;
 </pre>
 
 
@@ -834,7 +834,7 @@ compilation time&#41;
 
 
 <pre class="output">
-3.015216 seconds &#40;4.03 k allocations: 2.556 MiB&#41;
+3.028513 seconds &#40;4.03 k allocations: 2.556 MiB&#41;
 </pre>
 
 
@@ -849,7 +849,7 @@ compilation time&#41;
 
 
 <pre class="output">
-0.089061 seconds &#40;10.15 k allocations: 3.769 MiB&#41;
+0.089063 seconds &#40;10.15 k allocations: 3.769 MiB&#41;
 </pre>
 
 
@@ -864,7 +864,7 @@ compilation time&#41;
 
 
 <pre class="output">
-1.724830 seconds &#40;6.36 k allocations: 3.018 MiB&#41;
+1.722787 seconds &#40;6.36 k allocations: 3.018 MiB&#41;
 </pre>
 
 
@@ -879,7 +879,7 @@ compilation time&#41;
 
 
 <pre class="output">
-23.131504 seconds &#40;391.67 k allocations: 79.450 MiB, 0.20&#37; gc time&#41;
+23.023476 seconds &#40;391.67 k allocations: 79.450 MiB&#41;
 </pre>
 
 
@@ -894,7 +894,7 @@ compilation time&#41;
 
 
 <pre class="output">
-2.105774 seconds &#40;53.42 k allocations: 12.353 MiB&#41;
+2.158838 seconds &#40;53.42 k allocations: 12.353 MiB, 3.00&#37; gc time&#41;
 </pre>
 
 
@@ -919,7 +919,7 @@ i &#61; 7
 i &#61; 8
 i &#61; 9
 i &#61; 10
-  0.082004 seconds &#40;237.60 k allocations: 23.144 MiB&#41;
+  0.077577 seconds &#40;237.59 k allocations: 23.141 MiB&#41;
 </pre>
 
 
@@ -944,7 +944,7 @@ i &#61; 7
 i &#61; 8
 i &#61; 9
 i &#61; 10
-  0.821996 seconds &#40;2.00 M allocations: 211.435 MiB, 3.66&#37; gc time&#41;
+  0.801025 seconds &#40;2.00 M allocations: 211.432 MiB, 3.70&#37; gc time&#41;
 </pre>
 
 
@@ -967,13 +967,14 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-12.0.1 &#40;ORCJIT, znver2&#41;
 Environment:
+  JULIA_CPU_THREADS &#61; 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR &#61; /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH &#61; /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
 </code></pre>
 </div>
 <div class="markdown"><p>Package Information:</p>
 </div>
-<div class="markdown"><pre><code>      Status &#96;/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Project.toml&#96;
+<div class="markdown"><pre><code>      Status &#96;/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Project.toml&#96;
   &#91;f3b72e0c&#93; DiffEqDevTools v2.30.0
   &#91;77a26b50&#93; DiffEqNoiseProcess v5.12.0
   &#91;a077e3f3&#93; DiffEqProblemLibrary v4.17.0
@@ -984,7 +985,7 @@ Environment:
   &#91;9a3f8284&#93; Random
   &#91;10745b16&#93; Statistics</code></pre>
 <p>And the full manifest:</p>
-<pre><code>      Status &#96;/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Manifest.toml&#96;
+<pre><code>      Status &#96;/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Manifest.toml&#96;
   &#91;c3fe647b&#93; AbstractAlgebra v0.27.0
   &#91;1520ce14&#93; AbstractTrees v0.4.2
   &#91;79e6a3ab&#93; Adapt v3.3.3
@@ -1331,7 +1332,7 @@ Environment:
         <div class="footer">
           <p>
             Published from <a href="Oval2LongTimes.jmd">Oval2LongTimes.jmd</a>
-            using <a href="http://github.com/JunoLab/Weave.jl">Weave.jl</a> v0.10.10 on 2022-07-25.
+            using <a href="http://github.com/JunoLab/Weave.jl">Weave.jl</a> v0.10.10 on 2022-07-26.
           </p>
         </div>
       </div>

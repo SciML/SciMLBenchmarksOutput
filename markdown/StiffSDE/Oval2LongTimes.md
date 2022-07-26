@@ -45,7 +45,7 @@ end
 ```
 
 ```
-0.006237 seconds (3.40 k allocations: 2.431 MiB)
+0.005526 seconds (3.40 k allocations: 2.431 MiB)
 ```
 
 
@@ -69,7 +69,7 @@ i = 7
 i = 8
 i = 9
 i = 10
-  0.075465 seconds (233.70 k allocations: 22.654 MiB)
+  0.077082 seconds (233.69 k allocations: 22.652 MiB)
 ```
 
 
@@ -93,7 +93,7 @@ i = 7
 i = 8
 i = 9
 i = 10
-  0.607142 seconds (1.46 M allocations: 155.155 MiB, 4.16% gc time)
+  0.560894 seconds (1.46 M allocations: 155.152 MiB)
 ```
 
 
@@ -107,7 +107,7 @@ end
 ```
 
 ```
-0.238941 seconds (9.80 k allocations: 3.701 MiB)
+0.238753 seconds (9.80 k allocations: 3.701 MiB)
 ```
 
 
@@ -121,7 +121,7 @@ end
 ```
 
 ```
-4.249261 seconds (4.29 k allocations: 2.608 MiB)
+4.243276 seconds (4.29 k allocations: 2.608 MiB)
 ```
 
 
@@ -135,7 +135,7 @@ end
 ```
 
 ```
-1.317010 seconds (4.76 k allocations: 2.701 MiB)
+1.309241 seconds (4.76 k allocations: 2.701 MiB)
 ```
 
 
@@ -149,7 +149,7 @@ end
 ```
 
 ```
-0.126460 seconds (7.63 k allocations: 3.271 MiB)
+0.125653 seconds (7.63 k allocations: 3.271 MiB)
 ```
 
 
@@ -163,7 +163,7 @@ end
 ```
 
 ```
-3.016933 seconds (4.03 k allocations: 2.556 MiB)
+3.010432 seconds (4.02 k allocations: 2.556 MiB)
 ```
 
 
@@ -177,7 +177,7 @@ end
 ```
 
 ```
-0.088923 seconds (10.15 k allocations: 3.769 MiB)
+0.088255 seconds (10.15 k allocations: 3.770 MiB)
 ```
 
 
@@ -191,7 +191,7 @@ end
 ```
 
 ```
-1.722931 seconds (6.36 k allocations: 3.018 MiB)
+1.720519 seconds (6.36 k allocations: 3.018 MiB)
 ```
 
 
@@ -205,7 +205,7 @@ end
 ```
 
 ```
-23.099056 seconds (391.67 k allocations: 79.450 MiB)
+23.024246 seconds (391.67 k allocations: 79.450 MiB)
 ```
 
 
@@ -219,7 +219,7 @@ end
 ```
 
 ```
-2.105130 seconds (53.42 k allocations: 12.353 MiB)
+2.095505 seconds (53.42 k allocations: 12.353 MiB)
 ```
 
 
@@ -243,7 +243,7 @@ i = 7
 i = 8
 i = 9
 i = 10
-  0.111384 seconds (237.60 k allocations: 23.143 MiB, 28.97% gc time)
+  0.074772 seconds (237.59 k allocations: 23.141 MiB)
 ```
 
 
@@ -267,7 +267,7 @@ i = 7
 i = 8
 i = 9
 i = 10
-  0.805339 seconds (2.00 M allocations: 211.435 MiB, 2.69% gc time)
+  0.807269 seconds (2.00 M allocations: 211.432 MiB, 6.19% gc time)
 ```
 
 
@@ -296,6 +296,7 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-12.0.1 (ORCJIT, znver2)
 Environment:
+  JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
 
@@ -304,7 +305,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Project.toml`
   [f3b72e0c] DiffEqDevTools v2.30.0
   [77a26b50] DiffEqNoiseProcess v5.12.0
   [a077e3f3] DiffEqProblemLibrary v4.17.0
@@ -319,7 +320,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.0
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.3.3

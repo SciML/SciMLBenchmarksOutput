@@ -47,7 +47,7 @@ prob = remake(prob,tspan = (0.0,500.0))
 ```
 
 ```
-0.000692 seconds (331 allocations: 247.203 KiB)
+0.000613 seconds (331 allocations: 247.203 KiB)
 ```
 
 
@@ -129,32 +129,32 @@ Unrecognized keyword arguments: [:progressbar]
 EM
 Unrecognized keyword arguments: [:progressbar]
 
-  0.389047 seconds (390 allocations: 33.062 KiB)
+  0.387163 seconds (390 allocations: 33.062 KiB)
 Unrecognized keyword arguments: [:progressbar]
 
 SRI
 Unrecognized keyword arguments: [:progressbar]
 
-  0.669600 seconds (571 allocations: 55.406 KiB)
+  0.667633 seconds (570 allocations: 55.109 KiB)
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
 SRIW1
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
-  0.209333 seconds (419 allocations: 38.953 KiB)
+  0.205408 seconds (419 allocations: 38.953 KiB)
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
 SRI Adaptive
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
-  0.007145 seconds (755 allocations: 76.906 KiB)
+  0.006962 seconds (754 allocations: 76.609 KiB)
 length(sol.t) = 1
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
 SRIW1 Adaptive
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
-  0.013010 seconds (649 allocations: 69.672 KiB)
+  0.012781 seconds (650 allocations: 69.969 KiB)
 length(sol.t) = 6
 6
 ```
@@ -185,6 +185,7 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-12.0.1 (ORCJIT, znver2)
 Environment:
+  JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
 
@@ -193,7 +194,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Project.toml`
   [f3b72e0c] DiffEqDevTools v2.30.0
   [77a26b50] DiffEqNoiseProcess v5.12.0
   [a077e3f3] DiffEqProblemLibrary v4.17.0
@@ -208,7 +209,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.0
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.3.3

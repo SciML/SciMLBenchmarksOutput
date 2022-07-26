@@ -56,7 +56,7 @@ prob = generate_stiff_stoch_heat(1.0,1.0)
 ```
 
 ```
-10.657284 seconds (4.98 M allocations: 867.993 MiB, 3.98% gc time, 17.79% 
+13.754263 seconds (4.99 M allocations: 868.477 MiB, 4.94% gc time, 14.47% 
 compilation time)
 ```
 
@@ -73,7 +73,7 @@ Let's try to find the highest possible dt:
 ```
 
 ```
-1.693952 seconds (1.11 M allocations: 145.591 MiB, 20.84% compilation tim
+2.024719 seconds (1.11 M allocations: 145.599 MiB, 17.99% compilation tim
 e)
 ```
 
@@ -84,7 +84,7 @@ e)
 ```
 
 ```
-0.816253 seconds (438.75 k allocations: 79.350 MiB, 12.14% compilation ti
+0.989616 seconds (438.75 k allocations: 79.350 MiB, 10.87% compilation ti
 me)
 ```
 
@@ -95,7 +95,7 @@ me)
 ```
 
 ```
-1.800776 seconds (3.28 M allocations: 216.714 MiB, 79.64% compilation tim
+1.928137 seconds (3.29 M allocations: 217.192 MiB, 76.42% compilation tim
 e)
 ```
 
@@ -106,7 +106,7 @@ e)
 ```
 
 ```
-3.070922 seconds (8.14 M allocations: 542.079 MiB, 99.64% compilation tim
+3.159342 seconds (8.16 M allocations: 543.523 MiB, 99.69% compilation tim
 e)
 ```
 
@@ -117,7 +117,7 @@ e)
 ```
 
 ```
-0.004080 seconds (3.07 k allocations: 655.500 KiB)
+0.004331 seconds (3.06 k allocations: 655.219 KiB)
 ```
 
 
@@ -127,7 +127,7 @@ e)
 ```
 
 ```
-0.003913 seconds (3.11 k allocations: 658.688 KiB)
+0.004296 seconds (3.11 k allocations: 658.406 KiB)
 ```
 
 
@@ -137,7 +137,7 @@ e)
 ```
 
 ```
-3.441994 seconds (7.58 M allocations: 506.443 MiB, 18.12% gc time, 99.83%
+3.588978 seconds (7.59 M allocations: 507.456 MiB, 19.22% gc time, 99.82%
  compilation time)
 ```
 
@@ -272,6 +272,7 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-12.0.1 (ORCJIT, znver2)
 Environment:
+  JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
 
@@ -280,7 +281,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Project.toml`
   [f3b72e0c] DiffEqDevTools v2.30.0
   [77a26b50] DiffEqNoiseProcess v5.12.0
   [a077e3f3] DiffEqProblemLibrary v4.17.0
@@ -295,7 +296,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.0
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.3.3
