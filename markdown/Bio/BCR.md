@@ -80,20 +80,20 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:            442s / 100.0%            197GiB / 100.0%
+      Tot / % measured:            440s / 100.0%            197GiB / 100.0%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1     431s   97.5%    431s    194GiB   98.2%   19
+ ODEProb SparseJac        1     429s   97.6%    429s    194GiB   98.2%   19
 4GiB
- ODEProb No Jac           1    6.14s    1.4%   6.14s   1.89GiB    1.0%  1.8
+ ODEProb No Jac           1    5.68s    1.3%   5.68s   1.89GiB    1.0%  1.8
 9GiB
  Create ODESys            1    3.87s    0.9%   3.87s   1.48GiB    0.7%  1.4
 8GiB
- Parse Network            1    948ms    0.2%   948ms    193MiB    0.1%   19
+ Parse Network            1    985ms    0.2%   985ms    193MiB    0.1%   19
 3MiB
  ──────────────────────────────────────────────────────────────────────────
 ────
@@ -141,7 +141,7 @@ given how fast evaluating `f` is:
 ```
 
 ```
-39.880 μs (3 allocations: 576 bytes)
+39.210 μs (3 allocations: 576 bytes)
 ```
 
 
@@ -160,28 +160,28 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:            458s /  96.5%            197GiB / 100.0%
+      Tot / % measured:            457s /  96.3%            197GiB / 100.0%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1     431s   97.5%    431s    194GiB   98.2%   19
+ ODEProb SparseJac        1     429s   97.6%    429s    194GiB   98.2%   19
 4GiB
- ODEProb No Jac           1    6.14s    1.4%   6.14s   1.89GiB    1.0%  1.8
+ ODEProb No Jac           1    5.68s    1.3%   5.68s   1.89GiB    1.0%  1.8
 9GiB
  Create ODESys            1    3.87s    0.9%   3.87s   1.48GiB    0.7%  1.4
 8GiB
- Parse Network            1    948ms    0.2%   948ms    193MiB    0.1%   19
+ Parse Network            1    985ms    0.2%   985ms    193MiB    0.1%   19
 3MiB
- SparseJac Eval1          1    596μs    0.0%   596μs      848B    0.0%     
+ SparseJac Eval1          1    546μs    0.0%   546μs      848B    0.0%     
 848B
- ODE rhs Eval1            1    390μs    0.0%   390μs      752B    0.0%     
+ ODE rhs Eval1            1    364μs    0.0%   364μs      752B    0.0%     
 752B
- SparseJac Eval2          1   57.5μs    0.0%  57.5μs      848B    0.0%     
+ SparseJac Eval2          1   59.5μs    0.0%  59.5μs      848B    0.0%     
 848B
- ODE rhs Eval2            1   43.6μs    0.0%  43.6μs      752B    0.0%     
+ ODE rhs Eval2            1   43.1μs    0.0%  43.1μs      752B    0.0%     
 752B
  ──────────────────────────────────────────────────────────────────────────
 ────
@@ -214,7 +214,7 @@ test_sol  = TestSolution(sol)
 ```
 
 ```
-653.256569 seconds (3.81 M allocations: 2.066 GiB, 0.40% gc time)
+651.691835 seconds (3.81 M allocations: 2.066 GiB, 0.45% gc time)
 retcode: Success
 Interpolation: 3rd order Hermite
 t: nothing
@@ -318,6 +318,7 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-12.0.1 (ORCJIT, znver2)
 Environment:
+  JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
 
@@ -326,7 +327,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [479239e8] Catalyst v12.1.2
   [2b5f629d] DiffEqBase v6.94.3
@@ -347,7 +348,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.0
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.3.3

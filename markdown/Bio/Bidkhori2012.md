@@ -803,16 +803,16 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           1.50s /  99.6%            384MiB /  99.9%
+      Tot / % measured:           1.50s /  99.6%            383MiB /  99.9%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb DenseJac         1    1.24s   83.1%   1.24s    311MiB   81.1%   31
-1MiB
- ODEProb SparseJac        1    221ms   14.8%   221ms   60.5MiB   15.8%  60.
+ ODEProb DenseJac         1    1.24s   83.4%   1.24s    310MiB   81.1%   31
+0MiB
+ ODEProb SparseJac        1    217ms   14.5%   217ms   60.5MiB   15.8%  60.
 5MiB
  ODEProb No Jac           1   31.4ms    2.1%  31.4ms   11.8MiB    3.1%  11.
 8MiB
@@ -863,7 +863,7 @@ test_sol  = TestSolution(sol)
 ```
 
 ```
-0.023521 seconds (22.23 k allocations: 4.367 MiB)
+0.023398 seconds (22.23 k allocations: 4.367 MiB)
 retcode: Success
 Interpolation: 3rd order Hermite
 t: nothing
@@ -1057,6 +1057,7 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-12.0.1 (ORCJIT, znver2)
 Environment:
+  JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
 
@@ -1065,7 +1066,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [479239e8] Catalyst v12.1.2
   [2b5f629d] DiffEqBase v6.94.3
@@ -1086,7 +1087,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.0
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.3.3
