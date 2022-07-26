@@ -50,20 +50,20 @@ show(to)</code></pre><pre><code class="nohighlight hljs">───────�
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:            442s / 100.0%            197GiB / 100.0%
+      Tot / % measured:            440s / 100.0%            197GiB / 100.0%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1     431s   97.5%    431s    194GiB   98.2%   19
+ ODEProb SparseJac        1     429s   97.6%    429s    194GiB   98.2%   19
 4GiB
- ODEProb No Jac           1    6.14s    1.4%   6.14s   1.89GiB    1.0%  1.8
+ ODEProb No Jac           1    5.68s    1.3%   5.68s   1.89GiB    1.0%  1.8
 9GiB
  Create ODESys            1    3.87s    0.9%   3.87s   1.48GiB    0.7%  1.4
 8GiB
- Parse Network            1    948ms    0.2%   948ms    193MiB    0.1%   19
+ Parse Network            1    985ms    0.2%   985ms    193MiB    0.1%   19
 3MiB
  ──────────────────────────────────────────────────────────────────────────
 ────</code></pre><pre><code class="language-julia hljs">@show numspecies(rn) # Number of ODEs
@@ -76,7 +76,7 @@ du = copy(u)
 p  = ModelingToolkit.varmap_to_vars(nothing, parameters(rn); defaults=ModelingToolkit.defaults(rn))
 @timeit to &quot;ODE rhs Eval1&quot; oprob.f(du,u,p,0.)
 @timeit to &quot;ODE rhs Eval2&quot; oprob.f(du,u,p,0.)
-sparsejacprob.f(du,u,p,0.)</code></pre><p>We also time the ODE rhs function with BenchmarkTools as it is more accurate given how fast evaluating <code>f</code> is:</p><pre><code class="language-julia hljs">@btime oprob.f($du,$u,$p,0.)</code></pre><pre><code class="nohighlight hljs">39.880 μs (3 allocations: 576 bytes)</code></pre><pre><code class="language-julia hljs">Js = similar(sparsejacprob.f.jac_prototype)
+sparsejacprob.f(du,u,p,0.)</code></pre><p>We also time the ODE rhs function with BenchmarkTools as it is more accurate given how fast evaluating <code>f</code> is:</p><pre><code class="language-julia hljs">@btime oprob.f($du,$u,$p,0.)</code></pre><pre><code class="nohighlight hljs">39.210 μs (3 allocations: 576 bytes)</code></pre><pre><code class="language-julia hljs">Js = similar(sparsejacprob.f.jac_prototype)
 @timeit to &quot;SparseJac Eval1&quot; sparsejacprob.f.jac(Js,u,p,0.)
 @timeit to &quot;SparseJac Eval2&quot; sparsejacprob.f.jac(Js,u,p,0.)
 show(to)</code></pre><pre><code class="nohighlight hljs">──────────────────────────────────────────────────────────────────────────
@@ -85,33 +85,33 @@ show(to)</code></pre><pre><code class="nohighlight hljs">───────�
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:            458s /  96.5%            197GiB / 100.0%
+      Tot / % measured:            457s /  96.3%            197GiB / 100.0%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1     431s   97.5%    431s    194GiB   98.2%   19
+ ODEProb SparseJac        1     429s   97.6%    429s    194GiB   98.2%   19
 4GiB
- ODEProb No Jac           1    6.14s    1.4%   6.14s   1.89GiB    1.0%  1.8
+ ODEProb No Jac           1    5.68s    1.3%   5.68s   1.89GiB    1.0%  1.8
 9GiB
  Create ODESys            1    3.87s    0.9%   3.87s   1.48GiB    0.7%  1.4
 8GiB
- Parse Network            1    948ms    0.2%   948ms    193MiB    0.1%   19
+ Parse Network            1    985ms    0.2%   985ms    193MiB    0.1%   19
 3MiB
- SparseJac Eval1          1    596μs    0.0%   596μs      848B    0.0%     
+ SparseJac Eval1          1    546μs    0.0%   546μs      848B    0.0%     
 848B
- ODE rhs Eval1            1    390μs    0.0%   390μs      752B    0.0%     
+ ODE rhs Eval1            1    364μs    0.0%   364μs      752B    0.0%     
 752B
- SparseJac Eval2          1   57.5μs    0.0%  57.5μs      848B    0.0%     
+ SparseJac Eval2          1   59.5μs    0.0%  59.5μs      848B    0.0%     
 848B
- ODE rhs Eval2            1   43.6μs    0.0%  43.6μs      752B    0.0%     
+ ODE rhs Eval2            1   43.1μs    0.0%  43.1μs      752B    0.0%     
 752B
  ──────────────────────────────────────────────────────────────────────────
 ────</code></pre><h2 id="Picture-of-the-solution"><a class="docs-heading-anchor" href="#Picture-of-the-solution">Picture of the solution</a><a id="Picture-of-the-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Picture-of-the-solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">sol = solve(oprob, CVODE_BDF(), saveat=tf/1000., reltol=1e-5, abstol=1e-5)
-plot(sol, legend=false, fmt=:png)</code></pre><p><img src="figures/BCR_7_1.png" alt/></p><p>For these benchmarks we will be using the time-series error with these saving points since the final time point is not well-indicative of the solution behavior (capturing the oscillation is the key!).</p><h2 id="Generate-Test-Solution"><a class="docs-heading-anchor" href="#Generate-Test-Solution">Generate Test Solution</a><a id="Generate-Test-Solution-1"></a><a class="docs-heading-anchor-permalink" href="#Generate-Test-Solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">@time sol = solve(oprob, CVODE_BDF(), abstol=1/10^12, reltol=1/10^12)
-test_sol  = TestSolution(sol)</code></pre><pre><code class="nohighlight hljs">653.256569 seconds (3.81 M allocations: 2.066 GiB, 0.40% gc time)
+plot(sol, legend=false, fmt=:png)</code></pre><p><img src="../figures/BCR_7_1.png" alt/></p><p>For these benchmarks we will be using the time-series error with these saving points since the final time point is not well-indicative of the solution behavior (capturing the oscillation is the key!).</p><h2 id="Generate-Test-Solution"><a class="docs-heading-anchor" href="#Generate-Test-Solution">Generate Test Solution</a><a id="Generate-Test-Solution-1"></a><a class="docs-heading-anchor-permalink" href="#Generate-Test-Solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">@time sol = solve(oprob, CVODE_BDF(), abstol=1/10^12, reltol=1/10^12)
+test_sol  = TestSolution(sol)</code></pre><pre><code class="nohighlight hljs">651.691835 seconds (3.81 M allocations: 2.066 GiB, 0.45% gc time)
 retcode: Success
 Interpolation: 3rd order Hermite
 t: nothing
@@ -134,7 +134,7 @@ setups = [
           #Dict(:alg=&gt;lsoda()),
           ];</code></pre><h2 id="Automatic-Jacobian-Solves"><a class="docs-heading-anchor" href="#Automatic-Jacobian-Solves">Automatic Jacobian Solves</a><a id="Automatic-Jacobian-Solves-1"></a><a class="docs-heading-anchor-permalink" href="#Automatic-Jacobian-Solves" title="Permalink"></a></h2><p>Due to the computational cost of the problem, we are only going to focus on the methods which demonstrated computational efficiency on the smaller biochemical benchmark problems. This excludes the exponential integrator, stabilized explicit, and extrapolation classes of methods.</p><p>First we test using auto-generated Jacobians (finite difference)</p><pre><code class="language-julia hljs">wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
                       saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=1)
-plot(wp)</code></pre><p><img src="figures/BCR_10_1.png" alt/></p><h2 id="Sparse-Jacobian"><a class="docs-heading-anchor" href="#Sparse-Jacobian">Sparse Jacobian</a><a id="Sparse-Jacobian-1"></a><a class="docs-heading-anchor-permalink" href="#Sparse-Jacobian" title="Permalink"></a></h2><p>Finally we test using the generated sparse analytic Jacobian function.</p><pre><code class="language-julia hljs">setups = [
+plot(wp)</code></pre><p><img src="../figures/BCR_10_1.png" alt/></p><h2 id="Sparse-Jacobian"><a class="docs-heading-anchor" href="#Sparse-Jacobian">Sparse Jacobian</a><a id="Sparse-Jacobian-1"></a><a class="docs-heading-anchor-permalink" href="#Sparse-Jacobian" title="Permalink"></a></h2><p>Finally we test using the generated sparse analytic Jacobian function.</p><pre><code class="language-julia hljs">setups = [
           #Dict(:alg=&gt;Rosenbrock23(autodiff=false)),
           Dict(:alg=&gt;TRBDF2(autodiff=false)),
           Dict(:alg=&gt;QNDF(autodiff=false)),
@@ -151,7 +151,7 @@ plot(wp)</code></pre><p><img src="figures/BCR_10_1.png" alt/></p><h2 id="Sparse-
           ];
 wp = WorkPrecisionSet(sparsejacprob,abstols,reltols,setups;error_estimate=:l2,
                       saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=1)
-plot(wp)</code></pre><p><img src="figures/BCR_11_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+plot(wp)</code></pre><p><img src="../figures/BCR_11_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/Bio&quot;,&quot;BCR.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.7.3
 Commit 742b9abb4d (2022-05-06 12:58 UTC)
 Platform Info:
@@ -161,9 +161,10 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-12.0.1 (ORCJIT, znver2)
 Environment:
+  JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [479239e8] Catalyst v12.1.2
   [2b5f629d] DiffEqBase v6.94.3
@@ -178,7 +179,7 @@ Environment:
   [b4db0fb7] ReactionNetworkImporters v0.13.4
   [31c91b34] SciMLBenchmarks v0.1.0
   [c3572dad] Sundials v4.9.4
-  [a759f4b9] TimerOutputs v0.5.20</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
+  [a759f4b9] TimerOutputs v0.5.20</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.0
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.3.3
@@ -520,4 +521,4 @@ Environment:
   [83775a58] Zlib_jll
   [8e850b90] libblastrampoline_jll v3.1.0+2
   [8e850ede] nghttp2_jll
-  [3f19e933] p7zip_jll</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../StiffODE/VanDerPol/">« VanDerPol Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Tuesday 26 July 2022 09:21">Tuesday 26 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [3f19e933] p7zip_jll</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../StiffODE/VanDerPol/">« VanDerPol Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Tuesday 26 July 2022 18:41">Tuesday 26 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

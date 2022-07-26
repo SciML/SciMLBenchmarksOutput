@@ -23,7 +23,7 @@ ref_sol = solve(daeprob,IDA(),abstol=1/10^14,reltol=1/10^14);
 ode_ref_sol = solve(odaeprob,CVODE_BDF(),abstol=1/10^14,reltol=1/10^14);
 
 probs = [mmprob,daeprob,odaeprob]
-refs = [ref_sol,ref_sol,ode_ref_sol];</code></pre><pre><code class="language-julia hljs">plot(ref_sol)</code></pre><p><img src="figures/OregoDAE_2_1.png" alt/></p><h2 id="High-Tolerances"><a class="docs-heading-anchor" href="#High-Tolerances">High Tolerances</a><a id="High-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#High-Tolerances" title="Permalink"></a></h2><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (6:9)
+refs = [ref_sol,ref_sol,ode_ref_sol];</code></pre><pre><code class="language-julia hljs">plot(ref_sol)</code></pre><p><img src="../figures/OregoDAE_2_1.png" alt/></p><h2 id="High-Tolerances"><a class="docs-heading-anchor" href="#High-Tolerances">High Tolerances</a><a id="High-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#High-Tolerances" title="Permalink"></a></h2><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (6:9)
 reltols = 1.0 ./ 10.0 .^ (2:5);
 setups = [Dict(:prob_choice =&gt; 1, :alg=&gt;Rosenbrock23()),
           Dict(:prob_choice =&gt; 1, :alg=&gt;Rodas4()),
@@ -173,10 +173,9 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-12.0.1 (ORCJIT, znver2)
 Environment:
-  JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Project.toml`
   [165a45c3] DASKR v2.8.0
   [e993076c] DASSL v2.6.0
   [f3b72e0c] DiffEqDevTools v2.30.0
@@ -185,7 +184,7 @@ Environment:
   [1dea7af3] OrdinaryDiffEq v6.19.0
   [91a5bcdd] Plots v1.31.4
   [31c91b34] SciMLBenchmarks v0.1.0
-  [c3572dad] Sundials v4.9.4</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Manifest.toml`
+  [c3572dad] Sundials v4.9.4</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.0
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.3.3
@@ -520,4 +519,4 @@ Environment:
   [83775a58] Zlib_jll v1.2.12+3
   [8e850b90] libblastrampoline_jll v5.1.0+0
   [8e850ede] nghttp2_jll v1.41.0+1
-  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../ChemicalAkzoNobel/">« Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Tuesday 26 July 2022 09:21">Tuesday 26 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../ChemicalAkzoNobel/">« Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Tuesday 26 July 2022 18:41">Tuesday 26 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

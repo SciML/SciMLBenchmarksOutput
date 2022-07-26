@@ -762,16 +762,16 @@ show(to)</code></pre><pre><code class="nohighlight hljs">───────�
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           1.50s /  99.6%            384MiB /  99.9%
+      Tot / % measured:           1.50s /  99.6%            383MiB /  99.9%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb DenseJac         1    1.24s   83.1%   1.24s    311MiB   81.1%   31
-1MiB
- ODEProb SparseJac        1    221ms   14.8%   221ms   60.5MiB   15.8%  60.
+ ODEProb DenseJac         1    1.24s   83.4%   1.24s    310MiB   81.1%   31
+0MiB
+ ODEProb SparseJac        1    217ms   14.5%   217ms   60.5MiB   15.8%  60.
 5MiB
  ODEProb No Jac           1   31.4ms    2.1%  31.4ms   11.8MiB    3.1%  11.
 8MiB
@@ -782,8 +782,8 @@ show(to)</code></pre><pre><code class="nohighlight hljs">───────�
 numreactions(sys) = 109
 length(parameters(sys)) = 188
 188</code></pre><h2 id="Picture-of-the-solution"><a class="docs-heading-anchor" href="#Picture-of-the-solution">Picture of the solution</a><a id="Picture-of-the-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Picture-of-the-solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">sol = solve(oprob, CVODE_BDF())
-plot(sol, legend=false, fmt=:png)</code></pre><p><img src="figures/Bidkhori2012_5_1.png" alt/></p><p>For these benchmarks we will be using the time-series error with these saving points since the final time point is not well-indicative of the solution behavior (capturing the oscillation is the key!).</p><h2 id="Generate-Test-Solution"><a class="docs-heading-anchor" href="#Generate-Test-Solution">Generate Test Solution</a><a id="Generate-Test-Solution-1"></a><a class="docs-heading-anchor-permalink" href="#Generate-Test-Solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">@time sol = solve(oprob, CVODE_BDF(), abstol=1/10^14, reltol=1/10^14)
-test_sol  = TestSolution(sol)</code></pre><pre><code class="nohighlight hljs">0.023521 seconds (22.23 k allocations: 4.367 MiB)
+plot(sol, legend=false, fmt=:png)</code></pre><p><img src="../figures/Bidkhori2012_5_1.png" alt/></p><p>For these benchmarks we will be using the time-series error with these saving points since the final time point is not well-indicative of the solution behavior (capturing the oscillation is the key!).</p><h2 id="Generate-Test-Solution"><a class="docs-heading-anchor" href="#Generate-Test-Solution">Generate Test Solution</a><a id="Generate-Test-Solution-1"></a><a class="docs-heading-anchor-permalink" href="#Generate-Test-Solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">@time sol = solve(oprob, CVODE_BDF(), abstol=1/10^14, reltol=1/10^14)
+test_sol  = TestSolution(sol)</code></pre><pre><code class="nohighlight hljs">0.023398 seconds (22.23 k allocations: 4.367 MiB)
 retcode: Success
 Interpolation: 3rd order Hermite
 t: nothing
@@ -827,7 +827,7 @@ solnames = [&quot;CVODE_BDF&quot;,&quot;KenCarp4&quot;,&quot;Rodas4&quot;,&quot;
 plot(wp, title = &quot;Implicit Methods: SBML Model&quot;,legend=:outertopleft,size = (1000,500),
      xticks = 10.0 .^ (-15:1:1),
      yticks = 10.0 .^ (-6:0.3:5),
-     bottom_margin= 5Plots.mm)</code></pre><p><img src="figures/Bidkhori2012_8_1.png" alt/></p><h2 id="Analytical-Jacobian"><a class="docs-heading-anchor" href="#Analytical-Jacobian">Analytical Jacobian</a><a id="Analytical-Jacobian-1"></a><a class="docs-heading-anchor-permalink" href="#Analytical-Jacobian" title="Permalink"></a></h2><p>Now we test using the generated analytic Jacobian function.</p><pre><code class="language-julia hljs">setups = [
+     bottom_margin= 5Plots.mm)</code></pre><p><img src="../figures/Bidkhori2012_8_1.png" alt/></p><h2 id="Analytical-Jacobian"><a class="docs-heading-anchor" href="#Analytical-Jacobian">Analytical Jacobian</a><a id="Analytical-Jacobian-1"></a><a class="docs-heading-anchor-permalink" href="#Analytical-Jacobian" title="Permalink"></a></h2><p>Now we test using the generated analytic Jacobian function.</p><pre><code class="language-julia hljs">setups = [
             Dict(:alg=&gt;CVODE_BDF()),
             Dict(:alg=&gt;KenCarp4()),
             Dict(:alg=&gt;Rodas4()),
@@ -852,7 +852,7 @@ wp = WorkPrecisionSet(densejacprob,abstols,reltols,setups;
 plot(wp, title = &quot;Implicit Methods: SBML Model&quot;,legend=:outertopleft,size = (1000,500),
      xticks = 10.0 .^ (-15:1:1),
      yticks = 10.0 .^ (-6:0.3:5),
-     bottom_margin= 5Plots.mm)</code></pre><p><img src="figures/Bidkhori2012_9_1.png" alt/></p><h2 id="Sparse-Jacobian"><a class="docs-heading-anchor" href="#Sparse-Jacobian">Sparse Jacobian</a><a id="Sparse-Jacobian-1"></a><a class="docs-heading-anchor-permalink" href="#Sparse-Jacobian" title="Permalink"></a></h2><p>Finally we test using the generated sparse analytic Jacobian function.</p><pre><code class="language-julia hljs">setups = [
+     bottom_margin= 5Plots.mm)</code></pre><p><img src="../figures/Bidkhori2012_9_1.png" alt/></p><h2 id="Sparse-Jacobian"><a class="docs-heading-anchor" href="#Sparse-Jacobian">Sparse Jacobian</a><a id="Sparse-Jacobian-1"></a><a class="docs-heading-anchor-permalink" href="#Sparse-Jacobian" title="Permalink"></a></h2><p>Finally we test using the generated sparse analytic Jacobian function.</p><pre><code class="language-julia hljs">setups = [
             #Dict(:alg=&gt;CVODE_BDF()), #Fails!
             Dict(:alg=&gt;KenCarp4(autodiff = false)),
             Dict(:alg=&gt;Rodas4(autodiff = false)),
@@ -904,9 +904,10 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-12.0.1 (ORCJIT, znver2)
 Environment:
+  JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [479239e8] Catalyst v12.1.2
   [2b5f629d] DiffEqBase v6.94.3
@@ -921,7 +922,7 @@ Environment:
   [b4db0fb7] ReactionNetworkImporters v0.13.4
   [31c91b34] SciMLBenchmarks v0.1.0
   [c3572dad] Sundials v4.9.4
-  [a759f4b9] TimerOutputs v0.5.20</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
+  [a759f4b9] TimerOutputs v0.5.20</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.0
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.3.3
@@ -1263,4 +1264,4 @@ Environment:
   [83775a58] Zlib_jll
   [8e850b90] libblastrampoline_jll v3.1.0+2
   [8e850ede] nghttp2_jll
-  [3f19e933] p7zip_jll</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BCR/">« BCR Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Tuesday 26 July 2022 09:21">Tuesday 26 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [3f19e933] p7zip_jll</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BCR/">« BCR Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Tuesday 26 July 2022 18:41">Tuesday 26 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
