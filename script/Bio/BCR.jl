@@ -15,7 +15,6 @@ rn    = prnbng.rn
 
 tspan = (0.,tf)
 @timeit to "ODEProb No Jac" oprob = ODEProblem(osys, Float64[], tspan, Float64[])
-@timeit to "ODEProb DenseJac" densejacprob = ODEProblem(osys, Float64[], tspan, Float64[], jac=true)
 
 
 @timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem(osys, Float64[], tspan, Float64[], jac=true, sparse=true)
@@ -32,16 +31,10 @@ du = copy(u)
 p  = ModelingToolkit.varmap_to_vars(nothing, parameters(rn); defaults=ModelingToolkit.defaults(rn))
 @timeit to "ODE rhs Eval1" oprob.f(du,u,p,0.)
 @timeit to "ODE rhs Eval2" oprob.f(du,u,p,0.)
-densejacprob.f(du,u,p,0.)
 sparsejacprob.f(du,u,p,0.)
 
 
 @btime oprob.f($du,$u,$p,0.)
-
-
-J = zeros(length(u),length(u))
-@timeit to "DenseJac Eval1" densejacprob.f.jac(J,u,p,0.)
-@timeit to "DenseJac Eval2" densejacprob.f.jac(J,u,p,0.)
 
 
 Js = similar(sparsejacprob.f.jac_prototype)
@@ -75,15 +68,10 @@ setups = [
           Dict(:alg=>KenCarp47(autodiff=false)),
           #Dict(:alg=>RadauIIA5(autodiff=false)),
           #Dict(:alg=>lsoda()),
-          ]
+          ];
 
 
 wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
-                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=1)
-plot(wp)
-
-
-wp = WorkPrecisionSet(densejacprob,abstols,reltols,setups;error_estimate=:l2,
                       saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=1)
 plot(wp)
 
@@ -102,7 +90,7 @@ setups = [
           Dict(:alg=>KenCarp47(autodiff=false)),
           #Dict(:alg=>RadauIIA5(autodiff=false)),
           #Dict(:alg=>lsoda()),
-          ]
+          ];
 wp = WorkPrecisionSet(sparsejacprob,abstols,reltols,setups;error_estimate=:l2,
                       saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=1)
 plot(wp)
