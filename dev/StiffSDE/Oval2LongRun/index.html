@@ -29,7 +29,7 @@ sol = solve(prob,SRIW1(),dt=(1/2)^(18),progress=true,qmax=1.125,
 Random.seed!(250)
 prob = remake(prob,tspan = (0.0,500.0))
 @time sol = solve(prob,SRIW1(),dt=(1/2)^(18),progress=true,qmax=1.125,
-    saveat=0.1,abstol=1e-5,reltol=1e-3,maxiters=1e7);</code></pre><pre><code class="nohighlight hljs">0.000692 seconds (331 allocations: 247.203 KiB)</code></pre><pre><code class="language-julia hljs">println(maximum(sol[:,2]))
+    saveat=0.1,abstol=1e-5,reltol=1e-3,maxiters=1e7);</code></pre><pre><code class="nohighlight hljs">0.000613 seconds (331 allocations: 247.203 KiB)</code></pre><pre><code class="language-julia hljs">println(maximum(sol[:,2]))
 using Plots; gr()
 lw = 2
 lw2 = 3
@@ -81,32 +81,32 @@ println(&quot;SRIW1 Adaptive&quot;)
 EM
 Unrecognized keyword arguments: [:progressbar]
 
-  0.389047 seconds (390 allocations: 33.062 KiB)
+  0.387163 seconds (390 allocations: 33.062 KiB)
 Unrecognized keyword arguments: [:progressbar]
 
 SRI
 Unrecognized keyword arguments: [:progressbar]
 
-  0.669600 seconds (571 allocations: 55.406 KiB)
+  0.667633 seconds (570 allocations: 55.109 KiB)
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
 SRIW1
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
-  0.209333 seconds (419 allocations: 38.953 KiB)
+  0.205408 seconds (419 allocations: 38.953 KiB)
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
 SRI Adaptive
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
-  0.007145 seconds (755 allocations: 76.906 KiB)
+  0.006962 seconds (754 allocations: 76.609 KiB)
 length(sol.t) = 1
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
 SRIW1 Adaptive
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
-  0.013010 seconds (649 allocations: 69.672 KiB)
+  0.012781 seconds (650 allocations: 69.969 KiB)
 length(sol.t) = 6
 6</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/StiffSDE&quot;,&quot;Oval2LongRun.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.7.3
@@ -118,9 +118,10 @@ Platform Info:
   LIBM: libopenlibm
   LLVM: libLLVM-12.0.1 (ORCJIT, znver2)
 Environment:
+  JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Project.toml`
   [f3b72e0c] DiffEqDevTools v2.30.0
   [77a26b50] DiffEqNoiseProcess v5.12.0
   [a077e3f3] DiffEqProblemLibrary v4.17.0
@@ -129,7 +130,7 @@ Environment:
   [789caeaf] StochasticDiffEq v6.50.1
   [37e2e46d] LinearAlgebra
   [9a3f8284] Random
-  [10745b16] Statistics</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Manifest.toml`
+  [10745b16] Statistics</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffSDE/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.0
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.3.3
@@ -468,4 +469,4 @@ Environment:
   [83775a58] Zlib_jll v1.2.12+3
   [8e850b90] libblastrampoline_jll v5.1.0+0
   [8e850ede] nghttp2_jll v1.41.0+1
-  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../NBodySimulator/liquid_argon/">« Liquid argon benchmarks</a><a class="docs-footer-nextpage" href="../Oval2LongTimes/">Oval2 Long Times »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Tuesday 26 July 2022 01:51">Tuesday 26 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../NBodySimulator/liquid_argon/">« Liquid argon benchmarks</a><a class="docs-footer-nextpage" href="../Oval2LongTimes/">Oval2 Long Times »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.22 on <span class="colophon-date" title="Tuesday 26 July 2022 09:06">Tuesday 26 July 2022</span>. Using Julia version 1.7.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
