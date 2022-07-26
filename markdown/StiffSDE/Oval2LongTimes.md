@@ -45,7 +45,7 @@ end
 ```
 
 ```
-0.005526 seconds (3.40 k allocations: 2.431 MiB)
+0.005064 seconds (3.40 k allocations: 2.431 MiB)
 ```
 
 
@@ -69,7 +69,7 @@ i = 7
 i = 8
 i = 9
 i = 10
-  0.077082 seconds (233.69 k allocations: 22.652 MiB)
+  0.075084 seconds (233.69 k allocations: 22.651 MiB)
 ```
 
 
@@ -93,7 +93,7 @@ i = 7
 i = 8
 i = 9
 i = 10
-  0.560894 seconds (1.46 M allocations: 155.152 MiB)
+  0.586131 seconds (1.46 M allocations: 155.152 MiB, 5.08% gc time)
 ```
 
 
@@ -107,7 +107,7 @@ end
 ```
 
 ```
-0.238753 seconds (9.80 k allocations: 3.701 MiB)
+0.265487 seconds (9.80 k allocations: 3.701 MiB)
 ```
 
 
@@ -121,7 +121,7 @@ end
 ```
 
 ```
-4.243276 seconds (4.29 k allocations: 2.608 MiB)
+4.207954 seconds (4.29 k allocations: 2.608 MiB)
 ```
 
 
@@ -135,7 +135,7 @@ end
 ```
 
 ```
-1.309241 seconds (4.76 k allocations: 2.701 MiB)
+1.305739 seconds (4.76 k allocations: 2.701 MiB)
 ```
 
 
@@ -149,7 +149,7 @@ end
 ```
 
 ```
-0.125653 seconds (7.63 k allocations: 3.271 MiB)
+0.142831 seconds (7.63 k allocations: 3.271 MiB)
 ```
 
 
@@ -163,7 +163,7 @@ end
 ```
 
 ```
-3.010432 seconds (4.02 k allocations: 2.556 MiB)
+3.390450 seconds (4.02 k allocations: 2.556 MiB)
 ```
 
 
@@ -177,7 +177,7 @@ end
 ```
 
 ```
-0.088255 seconds (10.15 k allocations: 3.770 MiB)
+0.099868 seconds (10.15 k allocations: 3.769 MiB)
 ```
 
 
@@ -191,7 +191,7 @@ end
 ```
 
 ```
-1.720519 seconds (6.36 k allocations: 3.018 MiB)
+1.949839 seconds (6.36 k allocations: 3.018 MiB)
 ```
 
 
@@ -205,7 +205,7 @@ end
 ```
 
 ```
-23.024246 seconds (391.67 k allocations: 79.450 MiB)
+26.232851 seconds (391.67 k allocations: 79.450 MiB, 0.14% gc time)
 ```
 
 
@@ -219,7 +219,7 @@ end
 ```
 
 ```
-2.095505 seconds (53.42 k allocations: 12.353 MiB)
+2.097715 seconds (53.42 k allocations: 12.353 MiB)
 ```
 
 
@@ -243,7 +243,7 @@ i = 7
 i = 8
 i = 9
 i = 10
-  0.074772 seconds (237.59 k allocations: 23.141 MiB)
+  0.074797 seconds (237.59 k allocations: 23.141 MiB)
 ```
 
 
@@ -267,7 +267,7 @@ i = 7
 i = 8
 i = 9
 i = 10
-  0.807269 seconds (2.00 M allocations: 211.432 MiB, 6.19% gc time)
+  0.783717 seconds (2.00 M allocations: 211.432 MiB, 3.45% gc time)
 ```
 
 

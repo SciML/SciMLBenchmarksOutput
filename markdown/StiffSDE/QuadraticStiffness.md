@@ -69,10 +69,10 @@ prob = remake(prob_sde_stiffquadito,p=(50.0,1.0))
 ```
 
 ```
-0.000159 seconds (1.42 k allocations: 82.688 KiB)
-  0.000156 seconds (1.57 k allocations: 76.234 KiB)
-  0.000086 seconds (309 allocations: 16.672 KiB)
-  0.000151 seconds (1.57 k allocations: 68.625 KiB)
+0.000168 seconds (1.42 k allocations: 82.688 KiB)
+  0.000157 seconds (1.57 k allocations: 76.234 KiB)
+  0.000110 seconds (309 allocations: 16.672 KiB)
+  0.000152 seconds (1.57 k allocations: 68.625 KiB)
 ```
 
 
@@ -90,10 +90,10 @@ prob = remake(prob_sde_stiffquadito,p=(500.0,1.0))
 ```
 
 ```
-0.000848 seconds (9.85 k allocations: 572.922 KiB)
-  0.000532 seconds (7.58 k allocations: 360.828 KiB)
-  0.000093 seconds (372 allocations: 21.219 KiB)
-  0.000514 seconds (7.58 k allocations: 338.906 KiB)
+0.000877 seconds (9.85 k allocations: 572.922 KiB)
+  0.000536 seconds (7.58 k allocations: 360.828 KiB)
+  0.000104 seconds (372 allocations: 21.219 KiB)
+  0.000494 seconds (7.58 k allocations: 338.906 KiB)
 ```
 
 
@@ -111,10 +111,10 @@ prob = remake(prob_sde_stiffquadito,p=(5000.0,70.0))
 ```
 
 ```
-0.001541 seconds (216 allocations: 689.234 KiB)
-  0.098057 seconds (1.50 M allocations: 62.111 MiB)
-  0.281514 seconds (228 allocations: 39.479 MiB)
-  0.098620 seconds (1.50 M allocations: 56.884 MiB)
+0.001596 seconds (216 allocations: 689.234 KiB)
+  0.098008 seconds (1.50 M allocations: 62.111 MiB)
+  0.300131 seconds (228 allocations: 39.479 MiB)
+  0.093111 seconds (1.50 M allocations: 56.884 MiB)
 ```
 
 
