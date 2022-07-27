@@ -332,7 +332,7 @@ Package Information:
   [f3b72e0c] DiffEqDevTools v2.30.0
   [961ee093] ModelingToolkit v8.17.0
   [09606e27] ODEInterfaceDiffEq v3.10.1
-  [1dea7af3] OrdinaryDiffEq v6.19.0
+  [1dea7af3] OrdinaryDiffEq v6.19.1
   [91a5bcdd] Plots v1.31.4
   [31c91b34] SciMLBenchmarks v0.1.0
   [c3572dad] Sundials v4.9.4
@@ -347,8 +347,8 @@ And the full manifest:
   [79e6a3ab] Adapt v3.3.3
   [dce04be8] ArgCheck v2.3.0
   [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v6.0.20
-  [30b0a656] ArrayInterfaceCore v0.1.14
+  [4fba245c] ArrayInterface v6.0.21
+  [30b0a656] ArrayInterfaceCore v0.1.15
   [6ba088a2] ArrayInterfaceGPUArrays v0.2.1
   [015c0d05] ArrayInterfaceOffsetArrays v0.1.6
   [b0d46f97] ArrayInterfaceStaticArrays v0.1.4
@@ -413,7 +413,7 @@ And the full manifest:
   [59287772] Formatting v0.4.2
   [f6369f11] ForwardDiff v0.10.30
   [069b7b12] FunctionWrappers v1.1.2
-  [46192b85] GPUArraysCore v0.1.0
+  [46192b85] GPUArraysCore v0.1.1
   [28b8d3ca] GR v0.66.0
   [c145ed77] GenericSchur v0.5.3
   [5c1252a2] GeometryBasics v0.4.2
@@ -475,7 +475,7 @@ And the full manifest:
   [6fe1bfb0] OffsetArrays v1.12.7
   [429524aa] Optim v1.7.0
   [bac558e1] OrderedCollections v1.4.1
-  [1dea7af3] OrdinaryDiffEq v6.19.0
+  [1dea7af3] OrdinaryDiffEq v6.19.1
   [90014a1f] PDMats v0.11.16
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.3.2
@@ -508,7 +508,7 @@ And the full manifest:
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.33
-  [0bca4576] SciMLBase v1.43.0
+  [0bca4576] SciMLBase v1.44.1
   [31c91b34] SciMLBenchmarks v0.1.0
   [6c6a2e73] Scratch v1.1.1
   [efcf1570] Setfield v0.8.2
@@ -524,7 +524,7 @@ And the full manifest:
   [90137ffa] StaticArrays v1.5.2
   [1e83bf80] StaticArraysCore v1.0.1
   [82ae8749] StatsAPI v1.4.0
-  [2913bbd2] StatsBase v0.33.19
+  [2913bbd2] StatsBase v0.33.20
   [4c63d2b9] StatsFuns v1.0.1
   [7792a7ef] StrideArraysCore v0.3.15
   [69024149] StringEncodings v0.3.5
