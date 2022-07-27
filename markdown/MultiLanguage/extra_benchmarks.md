@@ -1,6 +1,6 @@
 ---
 author: "Chris Rackauckas"
-title: "Extra Multi-Language Differential Equation Solver Comparison Benchmarks"
+title: "Special Multi-Language Differential Equation Solver Comparison Benchmarks"
 ---
 
 
