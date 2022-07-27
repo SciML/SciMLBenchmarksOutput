@@ -129,32 +129,32 @@ Unrecognized keyword arguments: [:progressbar]
 EM
 Unrecognized keyword arguments: [:progressbar]
 
-  0.387163 seconds (390 allocations: 33.062 KiB)
+  0.384543 seconds (391 allocations: 33.359 KiB)
 Unrecognized keyword arguments: [:progressbar]
 
 SRI
 Unrecognized keyword arguments: [:progressbar]
 
-  0.667633 seconds (570 allocations: 55.109 KiB)
+  0.668617 seconds (570 allocations: 55.109 KiB)
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
 SRIW1
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
-  0.205408 seconds (419 allocations: 38.953 KiB)
+  0.212286 seconds (420 allocations: 39.250 KiB)
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
 SRI Adaptive
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
-  0.006962 seconds (754 allocations: 76.609 KiB)
+  0.007039 seconds (754 allocations: 76.609 KiB)
 length(sol.t) = 1
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
 SRIW1 Adaptive
 Unrecognized keyword arguments: [:adaptivealg, :progressbar]
 
-  0.012781 seconds (650 allocations: 69.969 KiB)
+  0.012947 seconds (649 allocations: 69.672 KiB)
 length(sol.t) = 6
 6
 ```

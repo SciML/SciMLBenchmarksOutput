@@ -56,7 +56,7 @@ prob = generate_stiff_stoch_heat(1.0,1.0)
 ```
 
 ```
-13.754263 seconds (4.99 M allocations: 868.477 MiB, 4.94% gc time, 14.47% 
+11.436644 seconds (4.99 M allocations: 868.432 MiB, 1.42% gc time, 16.57% 
 compilation time)
 ```
 
@@ -73,7 +73,7 @@ Let's try to find the highest possible dt:
 ```
 
 ```
-2.024719 seconds (1.11 M allocations: 145.599 MiB, 17.99% compilation tim
+1.758056 seconds (1.11 M allocations: 145.601 MiB, 20.25% compilation tim
 e)
 ```
 
@@ -84,8 +84,8 @@ e)
 ```
 
 ```
-0.989616 seconds (438.75 k allocations: 79.350 MiB, 10.87% compilation ti
-me)
+1.009126 seconds (438.75 k allocations: 79.354 MiB, 9.67% gc time, 20.97%
+ compilation time)
 ```
 
 
@@ -95,7 +95,7 @@ me)
 ```
 
 ```
-1.928137 seconds (3.29 M allocations: 217.192 MiB, 76.42% compilation tim
+1.877603 seconds (3.29 M allocations: 217.135 MiB, 77.77% compilation tim
 e)
 ```
 
@@ -106,8 +106,8 @@ e)
 ```
 
 ```
-3.159342 seconds (8.16 M allocations: 543.523 MiB, 99.69% compilation tim
-e)
+3.318805 seconds (8.16 M allocations: 543.324 MiB, 4.49% gc time, 99.74% 
+compilation time)
 ```
 
 
@@ -117,7 +117,7 @@ e)
 ```
 
 ```
-0.004331 seconds (3.06 k allocations: 655.219 KiB)
+0.004084 seconds (3.06 k allocations: 655.219 KiB)
 ```
 
 
@@ -127,7 +127,7 @@ e)
 ```
 
 ```
-0.004296 seconds (3.11 k allocations: 658.406 KiB)
+0.004095 seconds (3.11 k allocations: 658.406 KiB)
 ```
 
 
@@ -137,8 +137,8 @@ e)
 ```
 
 ```
-3.588978 seconds (7.59 M allocations: 507.456 MiB, 19.22% gc time, 99.82%
- compilation time)
+2.902864 seconds (7.59 M allocations: 507.324 MiB, 2.82% gc time, 99.80% 
+compilation time)
 ```
 
 
