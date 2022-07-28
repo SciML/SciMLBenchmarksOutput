@@ -1,4 +1,4 @@
-pages = Any["SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers"=>"index.md"]
+pages = Any["SciMLBenchmarks"=>"index.md"]
 
 for folder in readdir(benchmarksdir)
     newpages = Any[]
