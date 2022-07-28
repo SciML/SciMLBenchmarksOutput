@@ -68,17 +68,11 @@ rodas
 radau
 RadauIIA5
 DFBDF
-Error: Incompatible problem+solver pairing.
-For example, this can occur if an ODE solver is passed with an SDEProblem.
-Solvers are only capable of handling specific problem types. Please double
-check that the chosen pairing is capable for handling the given problems.
-
-Problem type: SciMLBase.ODEProblem
-Solver type: OrdinaryDiffEq.DFBDF
-Problem types compatible with the chosen solver: SciMLBase.DAEProblem
+IDA
 ```
 
 
+![](figures/OregoDAE_3_1.png)
 
 ```julia
 setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
@@ -95,18 +89,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-```
-Error: Incompatible problem+solver pairing.
-For example, this can occur if an ODE solver is passed with an SDEProblem.
-Solvers are only capable of handling specific problem types. Please double
-check that the chosen pairing is capable for handling the given problems.
-
-Problem type: SciMLBase.ODEProblem
-Solver type: Sundials.IDA
-Problem types compatible with the chosen solver: SciMLBase.DAEProblem
-```
-
-
+![](figures/OregoDAE_4_1.png)
 
 ```julia
 abstols = 1.0 ./ 10.0 .^ (6:8)
@@ -122,18 +105,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-```
-Error: Incompatible problem+solver pairing.
-For example, this can occur if an ODE solver is passed with an SDEProblem.
-Solvers are only capable of handling specific problem types. Please double
-check that the chosen pairing is capable for handling the given problems.
-
-Problem type: SciMLBase.ODEProblem
-Solver type: Sundials.IDA
-Problem types compatible with the chosen solver: SciMLBase.DAEProblem
-```
-
-
+![](figures/OregoDAE_5_1.png)
 
 
 
@@ -158,18 +130,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;error_estimate = :l2,
 plot(wp)
 ```
 
-```
-Error: Incompatible problem+solver pairing.
-For example, this can occur if an ODE solver is passed with an SDEProblem.
-Solvers are only capable of handling specific problem types. Please double
-check that the chosen pairing is capable for handling the given problems.
-
-Problem type: SciMLBase.ODEProblem
-Solver type: OrdinaryDiffEq.DFBDF
-Problem types compatible with the chosen solver: SciMLBase.DAEProblem
-```
-
-
+![](figures/OregoDAE_6_1.png)
 
 ```julia
 abstols = 1.0 ./ 10.0 .^ (6:9)
@@ -188,18 +149,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;error_estimate = :l2,
 plot(wp)
 ```
 
-```
-Error: Incompatible problem+solver pairing.
-For example, this can occur if an ODE solver is passed with an SDEProblem.
-Solvers are only capable of handling specific problem types. Please double
-check that the chosen pairing is capable for handling the given problems.
-
-Problem type: SciMLBase.ODEProblem
-Solver type: Sundials.IDA
-Problem types compatible with the chosen solver: SciMLBase.DAEProblem
-```
-
-
+![](figures/OregoDAE_7_1.png)
 
 
 
@@ -229,18 +179,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-```
-Error: Incompatible problem+solver pairing.
-For example, this can occur if an ODE solver is passed with an SDEProblem.
-Solvers are only capable of handling specific problem types. Please double
-check that the chosen pairing is capable for handling the given problems.
-
-Problem type: SciMLBase.ODEProblem
-Solver type: OrdinaryDiffEq.DFBDF
-Problem types compatible with the chosen solver: SciMLBase.DAEProblem
-```
-
-
+![](figures/OregoDAE_8_1.png)
 
 ```julia
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;error_estimate = :l2,
@@ -248,18 +187,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;error_estimate = :l2,
 plot(wp)
 ```
 
-```
-Error: Incompatible problem+solver pairing.
-For example, this can occur if an ODE solver is passed with an SDEProblem.
-Solvers are only capable of handling specific problem types. Please double
-check that the chosen pairing is capable for handling the given problems.
-
-Problem type: SciMLBase.ODEProblem
-Solver type: OrdinaryDiffEq.DFBDF
-Problem types compatible with the chosen solver: SciMLBase.DAEProblem
-```
-
-
+![](figures/OregoDAE_9_1.png)
 
 
 
@@ -300,10 +228,10 @@ Package Information:
       Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Project.toml`
   [165a45c3] DASKR v2.8.0
   [e993076c] DASSL v2.6.0
-  [f3b72e0c] DiffEqDevTools v2.30.0
-  [961ee093] ModelingToolkit v8.17.0
+  [f3b72e0c] DiffEqDevTools v2.31.0
+  [961ee093] ModelingToolkit v8.18.0
   [09606e27] ODEInterfaceDiffEq v3.10.1
-  [1dea7af3] OrdinaryDiffEq v6.19.1
+  [1dea7af3] OrdinaryDiffEq v6.19.2
   [91a5bcdd] Plots v1.31.4
   [31c91b34] SciMLBenchmarks v0.1.0
   [c3572dad] Sundials v4.9.4
@@ -360,9 +288,9 @@ And the full manifest:
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
   [b429d917] DensityInterface v0.4.0
-  [2b5f629d] DiffEqBase v6.94.3
+  [2b5f629d] DiffEqBase v6.94.4
   [459566f4] DiffEqCallbacks v2.23.1
-  [f3b72e0c] DiffEqDevTools v2.30.0
+  [f3b72e0c] DiffEqDevTools v2.31.0
   [77a26b50] DiffEqNoiseProcess v5.12.0
   [163ba53b] DiffResults v1.0.3
   [b552c78f] DiffRules v1.11.0
@@ -414,7 +342,7 @@ And the full manifest:
   [98e50ef6] JuliaFormatter v1.0.7
   [ccbc3e58] JumpProcesses v9.0.1
   [ef3ab10e] KLU v0.3.0
-  [ba0b0d4f] Krylov v0.8.2
+  [ba0b0d4f] Krylov v0.8.3
   [0b1a1467] KrylovKit v0.5.4
   [b964fa9f] LaTeXStrings v1.3.0
   [2ee39098] LabelledArrays v1.11.1
@@ -432,7 +360,7 @@ And the full manifest:
   [e9d8d322] Metatheory v1.3.4
   [128add7d] MicroCollections v0.1.2
   [e1d29d7a] Missings v1.0.2
-  [961ee093] ModelingToolkit v8.17.0
+  [961ee093] ModelingToolkit v8.18.0
   [46d2c3a1] MuladdMacro v0.2.2
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
@@ -444,9 +372,9 @@ And the full manifest:
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.10.1
   [6fe1bfb0] OffsetArrays v1.12.7
-  [429524aa] Optim v1.7.0
+  [429524aa] Optim v1.7.1
   [bac558e1] OrderedCollections v1.4.1
-  [1dea7af3] OrdinaryDiffEq v6.19.1
+  [1dea7af3] OrdinaryDiffEq v6.19.2
   [90014a1f] PDMats v0.11.16
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.3.2
@@ -474,12 +402,12 @@ And the full manifest:
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
   [79098fc4] Rmath v0.7.0
-  [47965b36] RootedTrees v1.2.1
+  [47965b36] RootedTrees v2.11.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.3
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.33
-  [0bca4576] SciMLBase v1.44.1
+  [0bca4576] SciMLBase v1.45.0
   [31c91b34] SciMLBenchmarks v0.1.0
   [6c6a2e73] Scratch v1.1.1
   [efcf1570] Setfield v0.8.2
@@ -502,7 +430,7 @@ And the full manifest:
   [09ab397b] StructArrays v0.6.11
   [c3572dad] Sundials v4.9.4
   [d1185830] SymbolicUtils v0.19.11
-  [0c5d862f] Symbolics v4.9.0
+  [0c5d862f] Symbolics v4.10.2
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.7.0
   [62fd8b95] TensorCore v0.1.1
