@@ -36,13 +36,6 @@ using DiffEqDevTools
 using LinearAlgebra, StaticArrays
 ```
 
-```
-Error: ArgumentError: Package ODEInterfaceDiffEq not found in current path:
-- Run `import Pkg; Pkg.add("ODEInterfaceDiffEq")` to install the ODEInterfa
-ceDiffEq package.
-```
-
-
 
 
 
@@ -115,10 +108,25 @@ plot(wp,title="Non-stiff 1: Lotka-Volterra",legend=:outertopleft,
 ```
 
 ```
-Error: UndefVarError: SVector not defined
+Julia: DP5
+Julia: Tsit5
+Julia: Vern7
+Julia: DP5 Static
+Julia: Tsit5 Static
+Julia: Vern7 Static
+Hairer: dopri5
+MATLAB: ode45
+MATLAB: ode113
+SciPy: RK45
+SciPy: LSODA
+SciPy: odeint
+deSolve: lsoda
+deSolve: ode45
+Sundials: Adams
 ```
 
 
+![](figures/wrapper_packages_2_1.png)
 
 
 
@@ -189,10 +197,25 @@ plot(wp,title="Non-stiff 2: Rigid-Body",legend=:outertopleft,
 ```
 
 ```
-Error: UndefVarError: SVector not defined
+Julia: DP5
+Julia: Tsit5
+Julia: Vern7
+Julia: DP5 Static
+Julia: Tsit5 Static
+Julia: Vern7 Static
+Hairer: dopri5
+MATLAB: ode45
+MATLAB: ode113
+SciPy: RK45
+SciPy: LSODA
+SciPy: odeint
+deSolve: lsoda
+deSolve: ode45
+Sundials: Adams
 ```
 
 
+![](figures/wrapper_packages_3_1.png)
 
 
 
@@ -264,10 +287,25 @@ plot(wp,title="Stiff 1: ROBER", legend=:outertopleft,
 ```
 
 ```
-Error: UndefVarError: SVector not defined
+Julia: Rosenbrock23
+Julia: Rodas4
+Julia: Rodas5
+Julia: Rosenbrock23 Static
+Julia: Rodas4 Static
+Julia: Rodas5 Static
+Hairer: rodas
+Hairer: radau
+MATLAB: ode23s
+MATLAB: ode15s
+SciPy: LSODA
+SciPy: BDF
+SciPy: odeint
+deSolve: lsoda
+Sundials: CVODE
 ```
 
 
+![](figures/wrapper_packages_4_1.png)
 
 
 
@@ -348,7 +386,22 @@ plot(wp,title="Stiff 2: Hires",legend=:outertopleft,
 ```
 
 ```
-Error: UndefVarError: SVector not defined
+Julia: Rosenbrock23
+Julia: Rodas4
+Julia: radau
+Julia: Rosenbrock23 Static
+Julia: Rodas4 Static
+Julia: radau Static
+Hairer: rodas
+Hairer: radau
+MATLAB: ode23s
+MATLAB: ode15s
+SciPy: LSODA
+SciPy: BDF
+SciPy: odeint
+deSolve: lsoda
+Sundials: CVODE
 ```
 
 
+![](figures/wrapper_packages_5_1.png)
