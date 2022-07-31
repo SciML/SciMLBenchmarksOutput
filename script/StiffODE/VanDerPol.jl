@@ -157,7 +157,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau())]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-                      error_estimator=:l2,appxsol=test_sol,maxiters=Int(1e5),seconds=5)
+                      error_estimate=:l2,appxsol=test_sol,maxiters=Int(1e5),seconds=5)
 plot(wp)
 
 
@@ -171,7 +171,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>ROS34PW1a()),
           ]
 gr()
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;error_estimator=:l2,
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;error_estimate=:l2,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 
@@ -200,7 +200,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           #Dict(:alg=>Exprb43()), # Diverges
           Dict(:alg=>Exprb32()),
 ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;error_estimator=:l2,
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;error_estimate=:l2,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 
