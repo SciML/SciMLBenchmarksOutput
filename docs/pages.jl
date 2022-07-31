@@ -1,4 +1,6 @@
-# This file assumes `dir` is the directory for the package! dir = @__DIR__() * "/.."
+# This file assumes `dir` is the directory for the package!
+
+dir = @__DIR__() * "/.."
 
 cp(joinpath(dir, "markdown"), joinpath(dir, "docs", "src"), force=true)
 cp(joinpath(dir, "README.md"), joinpath(dir, "docs", "src", "index.md"), force=true)
