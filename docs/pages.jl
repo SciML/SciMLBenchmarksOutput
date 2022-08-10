@@ -1,4 +1,4 @@
-# This file assumes `dir` is the directory for the package!
+# This file assumes `dir` is the directory for the package! dir = @__DIR__() * "/.."
 
 dir = @__DIR__() * "/.."
 
@@ -6,7 +6,7 @@ cp(joinpath(dir, "markdown"), joinpath(dir, "docs", "src"), force=true)
 cp(joinpath(dir, "README.md"), joinpath(dir, "docs", "src", "index.md"), force=true)
 benchmarksdir = joinpath(dir, "docs", "src")
 
-pages = Any["SciMLBenchmarks"=>"index.md"]
+pages = Any["SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML), Equation Solvers, and AI for Science"=>"index.md"]
 
 for folder in readdir(benchmarksdir)
     newpages = Any[]
@@ -41,7 +41,7 @@ permute!(pages,
 )
 
 names = [
-    "SciMLBenchmarks",
+    "SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers",
     "Multi-Language Wrapper Benchmarks",
     "Non-Stiff Ordinary Differential Equations",
     "Stiff Ordinary Differential Equations",
