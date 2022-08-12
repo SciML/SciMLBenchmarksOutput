@@ -6,11 +6,14 @@
 SciMLBenchmarks.jl holds webpages, pdfs, and notebooks showing the benchmarks
 for the SciML Scientific Machine Learning Software ecosystem, including:
 
-- Benchmarks of equation solver implementations
+- Benchmarks of equation solver implementations 
 - Speed and robustness comparisons of methods for parameter estimation / inverse problems
-- Training universal differential equations (and subsets like neural ODEs)
+- Training universal differential equations (and subsets like neural ODEs) 
 - Training of physics-informed neural networks (PINNs)
 - Surrogate comparisons, including radial basis functions, neural operators (DeepONets, Fourier Neural Operators), and more
+
+The SciML Bench suite is made to be a comprehensive open source benchmark from the ground up, covering the methods of
+computational science and scientific computing all the way to AI for science.
 
 ## Rules: Optimal, Fair, and Reproducible
 
@@ -146,7 +149,7 @@ over the set of tested equations and some specific examples may differ.
 
 - In this category, the best methods are much more problem dependent.
 - For smaller problems:
-  - `Rosenbrock23`, `lsoda`, and `TRBDF2` tend to be the most efficient at high
+  - `Rosenbrock23`, `lsoda`, and `TRBDF2` tend to be the most efficient at high  
     tolerances.
   - `Rodas4` and `Rodas5` tend to be the most efficient at low tolerances.
 - For larger problems (Filament PDE):
