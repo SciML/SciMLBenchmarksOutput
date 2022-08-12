@@ -1,7 +1,7 @@
 
-using NeuralPDE, Flux, ModelingToolkit, GalacticOptim, Optim, DiffEqFlux
-using Quadrature,Cubature,Cuba
-using Plots
+using NeuralPDE, OptimizationFlux, ModelingToolkit, Optimization, OptimizationOptimJL
+using Lux, Plots
+import ModelingToolkit: Interval, infimum, supremum
 
 
 function solve(opt)
@@ -43,11 +43,11 @@ function solve(opt)
     dx3  = x3width/x3MeshNum
     dx4  = x4width/x4MeshNum
 
-    domains = [t ∈ IntervalDomain(0.0,tmax),
-               x1 ∈ IntervalDomain(0.0,x1width),
-               x2 ∈ IntervalDomain(0.0,x2width),
-               x3 ∈ IntervalDomain(0.0,x3width),
-               x4 ∈ IntervalDomain(0.0,x4width)]
+    domains = [t ∈ Interval(0.0,tmax),
+               x1 ∈ Interval(0.0,x1width),
+               x2 ∈ Interval(0.0,x2width),
+               x3 ∈ Interval(0.0,x3width),
+               x4 ∈ Interval(0.0,x4width)]
 
     ts  = 0.0 : dt : tmax
     x1s = 0.0 : dx1 : x1width
@@ -71,7 +71,7 @@ function solve(opt)
     ## NEURAL NETWORK
     n = 20   #neuron number
 
-    chain = FastChain(FastDense(5,n,Flux.σ),FastDense(n,n,Flux.σ),FastDense(n,1))   #Neural network from Flux library
+    chain = Lux.Chain(Lux.Dense(5,n,Lux.σ),Lux.Dense(n,n,Lux.σ),Lux.Dense(n,1))   #Neural network from OptimizationFlux library
 
     discretization = PhysicsInformedNN(chain, strategy)
 
@@ -97,11 +97,11 @@ function solve(opt)
     prob = discretize(pde_system, discretization)
 
     if opt == "both"
-        res = GalacticOptim.solve(prob, ADAM(); cb = cb, maxiters=50)
+        res = Optimization.solve(prob, ADAM(); callback = cb, maxiters=50)
         prob = remake(prob,u0=res.minimizer)
-        res = GalacticOptim.solve(prob, BFGS(); cb = cb, maxiters=150)
+        res = Optimization.solve(prob, BFGS(); callback = cb, maxiters=150)
     else
-        res = GalacticOptim.solve(prob, opt; cb = cb, maxiters=200)
+        res = Optimization.solve(prob, opt; callback = cb, maxiters=200)
     end
 
     times[1] = 0.001
@@ -116,8 +116,8 @@ opt3 = ADAM(0.05)
 opt4 = RMSProp()
 opt5 = RMSProp(0.005)
 opt6 = RMSProp(0.05)
-opt7 = Optim.BFGS()
-opt8 = Optim.LBFGS()
+opt7 = OptimizationOptimJL.BFGS()
+opt8 = OptimizationOptimJL.LBFGS()
 
 
 loss_1, times_1 = solve(opt1)
@@ -134,7 +134,7 @@ loss_9, times_9 = solve("both")
 p = plot([times_1, times_2, times_3, times_4, times_5, times_6, times_7, times_8, times_9], [loss_1, loss_2, loss_3, loss_4, loss_5, loss_6, loss_7, loss_8, loss_9],xlabel="time (s)", ylabel="loss", xscale=:log10, yscale=:log10, labels=["ADAM(0.001)" "ADAM(0.005)" "ADAM(0.05)" "RMSProp(0.001)" "RMSProp(0.005)" "RMSProp(0.05)" "BFGS()" "LBFGS()" "ADAM + BFGS"], legend=:bottomleft, linecolor=["#2660A4" "#4CD0F4" "#FEC32F" "#F763CD" "#44BD79" "#831894" "#A6ED18" "#980000" "#FF912B"])
 
 
-p = plot(1:201, [loss_1, loss_2, loss_3, loss_4, loss_5, loss_6, loss_7, loss_8, loss_9[2:end]], xlabel="iterations", ylabel="loss", yscale=:log10, labels=["ADAM(0.001)" "ADAM(0.005)" "ADAM(0.05)" "RMSProp(0.001)" "RMSProp(0.005)" "RMSProp(0.05)" "BFGS()" "LBFGS()" "ADAM + BFGS"], legend=:bottomleft, linecolor=["#2660A4" "#4CD0F4" "#FEC32F" "#F763CD" "#44BD79" "#831894" "#A6ED18" "#980000" "#FF912B"])
+p = plot([loss_1, loss_2, loss_3, loss_4, loss_5, loss_6, loss_7, loss_8, loss_9], xlabel="iterations", ylabel="loss", yscale=:log10, labels=["ADAM(0.001)" "ADAM(0.005)" "ADAM(0.05)" "RMSProp(0.001)" "RMSProp(0.005)" "RMSProp(0.05)" "BFGS()" "LBFGS()" "ADAM + BFGS"], legend=:bottomleft, linecolor=["#2660A4" "#4CD0F4" "#FEC32F" "#F763CD" "#44BD79" "#831894" "#A6ED18" "#980000" "#FF912B"])
 
 
 @show loss_1[end], loss_2[end], loss_3[end], loss_4[end], loss_5[end], loss_6[end], loss_7[end], loss_8[end], loss_9[end]
