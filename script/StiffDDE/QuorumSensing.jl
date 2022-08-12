@@ -107,8 +107,7 @@ setups = [Dict(:alg=>MethodOfSteps(BS3())),
           Dict(:alg=>MethodOfSteps(OwrenZen3())),
           Dict(:alg=>MethodOfSteps(OwrenZen4())),
           Dict(:alg=>MethodOfSteps(OwrenZen5()))]
-names = ["BS3", "Tsit5", "RK4", "DP5", "OwrenZen3", "OwrenZen4", "OwrenZen5"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
 plot(wp)
 
@@ -123,8 +122,7 @@ setups = [Dict(:alg=>MethodOfSteps(BS3())),
           Dict(:alg=>MethodOfSteps(OwrenZen3())),
           Dict(:alg=>MethodOfSteps(OwrenZen4())),
           Dict(:alg=>MethodOfSteps(OwrenZen5()))]
-names = ["BS3", "Tsit5", "RK4", "DP5", "OwrenZen3", "OwrenZen4", "OwrenZen5"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -139,8 +137,7 @@ setups = [Dict(:alg=>MethodOfSteps(BS3())),
           Dict(:alg=>MethodOfSteps(OwrenZen3())),
           Dict(:alg=>MethodOfSteps(OwrenZen4())),
           Dict(:alg=>MethodOfSteps(OwrenZen5()))]
-names = ["BS3", "Tsit5", "RK4", "DP5", "OwrenZen3", "OwrenZen4", "OwrenZen5"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L∞)
 plot(wp)
 
@@ -152,8 +149,7 @@ setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
           Dict(:alg=>MethodOfSteps(Rosenbrock32())),
           Dict(:alg=>MethodOfSteps(Rodas4())),
           Dict(:alg=>MethodOfSteps(RK4()))]
-names = ["Rosenbrock23", "Rosenbrock32", "Rodas4", "RK4"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
 plot(wp)
 
@@ -165,8 +161,7 @@ setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
           Dict(:alg=>MethodOfSteps(Rosenbrock32())),
           Dict(:alg=>MethodOfSteps(Rodas4())),
           Dict(:alg=>MethodOfSteps(RK4()))]
-names = ["Rosenbrock23", "Rosenbrock32", "Rodas4", "RK4"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -178,8 +173,7 @@ setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
           Dict(:alg=>MethodOfSteps(Rosenbrock32())),
           Dict(:alg=>MethodOfSteps(Rodas4())),
           Dict(:alg=>MethodOfSteps(RK4()))]
-names = ["Rosenbrock23", "Rosenbrock32", "Rodas4", "RK4"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L∞)
 plot(wp)
 
@@ -192,8 +186,7 @@ setups = [Dict(:alg=>MethodOfSteps(Vern6())),
           Dict(:alg=>MethodOfSteps(Vern8())),
           Dict(:alg=>MethodOfSteps(Vern9())),
           Dict(:alg=>MethodOfSteps(Rosenbrock23()))]
-names = ["Vern6", "Vern7", "Vern8", "Vern9", "Rosenbrock23"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
 plot(wp)
 
@@ -206,8 +199,7 @@ setups = [Dict(:alg=>MethodOfSteps(Vern6())),
           Dict(:alg=>MethodOfSteps(Vern8())),
           Dict(:alg=>MethodOfSteps(Vern9())),
           Dict(:alg=>MethodOfSteps(Rosenbrock23()))]
-names = ["Vern6", "Vern7", "Vern8", "Vern9", "Rosenbrock23"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -220,8 +212,7 @@ setups = [Dict(:alg=>MethodOfSteps(Vern6())),
           Dict(:alg=>MethodOfSteps(Vern8())),
           Dict(:alg=>MethodOfSteps(Vern9())),
           Dict(:alg=>MethodOfSteps(Rosenbrock23()))]
-names = ["Vern6", "Vern7", "Vern8", "Vern9", "Rosenbrock23"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L∞)
 plot(wp)
 
@@ -232,8 +223,7 @@ reltols = 1.0 ./ 10.0 .^ (5:8)
 setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
           Dict(:alg=>MethodOfSteps(Rodas4())),
           Dict(:alg=>MethodOfSteps(Rodas5()))]
-names = ["Rosenbrock23", "Rodas4", "Rodas5"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
 plot(wp)
 
@@ -244,8 +234,7 @@ reltols = 1.0 ./ 10.0 .^ (5:8)
 setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
           Dict(:alg=>MethodOfSteps(Rodas4())),
           Dict(:alg=>MethodOfSteps(Rodas5()))]
-names = ["Rosenbrock23", "Rodas4", "Rodas5"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -256,8 +245,7 @@ reltols = 1.0 ./ 10.0 .^ (5:8)
 setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
           Dict(:alg=>MethodOfSteps(Rodas4())),
           Dict(:alg=>MethodOfSteps(Rodas5()))]
-names = ["Rosenbrock23", "Rodas4", "Rodas5"]
-wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;names=names,
+wp = WorkPrecisionSet(prob_dde_qs,abstols,reltols,setups;
                       save_idxs=3,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L∞)
 plot(wp)
 
