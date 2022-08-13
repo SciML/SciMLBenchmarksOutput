@@ -154,7 +154,7 @@ p0 = zeros(2)
 t0, t1 = -20.0, 20.0
 prob = HamiltonianProblem(H, q0, p0, (t0, t1))
 
-integrator = VelocityVerlet()
+integrator = McAte4()
 Δt = 0.1
 sol = solve(prob, integrator, dt=Δt)
 @time sol = solve(prob, integrator, dt=Δt)
@@ -207,6 +207,6 @@ k = 0.999
 singlependulum(k, SymplecticEuler(), Δt)
 
 
-using DiffEqBenchmarks
-DiffEqBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
 
