@@ -33,7 +33,7 @@ se = get_sample_errors(prob,setups[6],numruns=sample_size,
 
 times = [wp[i].times for i in 1:length(wp)]
 times = [minimum(minimum(t) for t in times),maximum(maximum(t) for t in times)]
-plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 10000",lw=3)
+plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 1000",lw=3)
 
 
 prob = prob_sde_additive
@@ -62,7 +62,7 @@ se = get_sample_errors(prob,setups[4],numruns=sample_size,
 
 times = [wp[i].times for i in 1:length(wp)]
 times = [minimum(minimum(t) for t in times),maximum(maximum(t) for t in times)]
-plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 10000",lw=3)
+plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 1000",lw=3)
 
 
 prob = prob_sde_linear
@@ -90,7 +90,7 @@ se = get_sample_errors(prob,setups[1],numruns=sample_size,
 
 times = [wp[i].times for i in 1:length(wp)]
 times = [minimum(minimum(t) for t in times),maximum(maximum(t) for t in times)]
-plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 10000",lw=3)
+plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 1000",lw=3)
 
 
 prob = prob_sde_linear
@@ -121,7 +121,7 @@ se = get_sample_errors(prob,setups[6],numruns=sample_size,
 
 times = [wp[i].times for i in 1:length(wp)]
 times = [minimum(minimum(t) for t in times),maximum(maximum(t) for t in times)]
-plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 10000",lw=3)
+plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 1000",lw=3)
 
 
 prob = prob_sde_wave
@@ -151,7 +151,7 @@ se = get_sample_errors(prob,setups[4],numruns=sample_size,
 
 times = [wp[i].times for i in 1:length(wp)]
 times = [minimum(minimum(t) for t in times),maximum(maximum(t) for t in times)]
-plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 10000",lw=3)
+plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 1000",lw=3)
 
 
 prob = prob_sde_wave
@@ -182,9 +182,9 @@ se = get_sample_errors(prob,setups[6],numruns=sample_size,
 
 times = [wp[i].times for i in 1:length(wp)]
 times = [minimum(minimum(t) for t in times),maximum(maximum(t) for t in times)]
-plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 10000",lw=3)
+plot!([se[end];se[end]],times,color=:red,linestyle=:dash,label="Sample Error: 1000",lw=3)
 
 
-using DiffEqBenchmarks
-DiffEqBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
 

@@ -76,6 +76,6 @@ times = [minimum(minimum(t) for t in times),maximum(maximum(t) for t in times)]
 plot!([se[end];se[end]],times,color=:orange,linestyle=:dash,label="Sample Error: 1000",lw=3)
 
 
-using DiffEqBenchmarks
-DiffEqBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
 
