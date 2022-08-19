@@ -60,7 +60,7 @@ import ModelingToolkit: Interval, infimum, supremum</code></pre><pre><code class
     ## NEURAL NETWORK
     n = 20   #neuron number
 
-    chain = Lux.Chain(Lux.Dense(5,n,Lux.σ),Lux.Dense(n,n,Lux.σ),Lux.Dense(n,1))   #Neural network from OptimizationFlux library
+    chain = Lux.Chain(Lux.Dense(5,n,tanh),Lux.Dense(n,n,tanh),Lux.Dense(n,1))   #Neural network from OptimizationFlux library
 
     discretization = PhysicsInformedNN(chain, strategy)
 
@@ -127,24 +127,24 @@ loss_5, times_5 = solve(opt5)
 loss_6, times_6 = solve(opt6)
 loss_7, times_7 = solve(opt7)
 loss_8, times_8 = solve(opt8)
-loss_9, times_9 = solve(&quot;both&quot;)</code></pre><pre><code class="nohighlight hljs">(Any[16.134729057252237, 15.620742551833663, 15.307822296862959, 15.1314197
-85639531, 15.034681110441245, 14.974859713460457, 14.928289296549472, 14.88
-1443836893336, 14.83131024398402, 14.775022993972163  …  0.3697196075359876
-, 0.3697112199436184, 0.3697046266859988, 0.3697044271750105, 0.36970416945
-35506, 0.3696943730463407, 0.3696940929306969, 0.36969361590939315, 0.36969
-361590939315, 0.36969361590939315], Any[0.001, 0.18742895126342773, 0.34653
-306007385254, 0.5352010726928711, 0.7175140380859375, 0.876594066619873, 1.
-0585410594940186, 1.2399868965148926, 1.4213879108428955, 1.580235958099365
-2  …  90.25661706924438, 98.47275495529175, 105.12706184387207, 114.4218599
-7962952, 123.0158269405365, 131.6027638912201, 139.63456988334656, 145.4199
-8100280762, 151.6944968700409, 158.33624291419983])</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><pre><code class="language-julia hljs">p = plot([times_1, times_2, times_3, times_4, times_5, times_6, times_7, times_8, times_9], [loss_1, loss_2, loss_3, loss_4, loss_5, loss_6, loss_7, loss_8, loss_9],xlabel=&quot;time (s)&quot;, ylabel=&quot;loss&quot;, xscale=:log10, yscale=:log10, labels=[&quot;ADAM(0.001)&quot; &quot;ADAM(0.005)&quot; &quot;ADAM(0.05)&quot; &quot;RMSProp(0.001)&quot; &quot;RMSProp(0.005)&quot; &quot;RMSProp(0.05)&quot; &quot;BFGS()&quot; &quot;LBFGS()&quot; &quot;ADAM + BFGS&quot;], legend=:bottomleft, linecolor=[&quot;#2660A4&quot; &quot;#4CD0F4&quot; &quot;#FEC32F&quot; &quot;#F763CD&quot; &quot;#44BD79&quot; &quot;#831894&quot; &quot;#A6ED18&quot; &quot;#980000&quot; &quot;#FF912B&quot;])</code></pre><p><img src="../figures/allen_cahn_5_1.png" alt/></p><pre><code class="language-julia hljs">p = plot([loss_1, loss_2, loss_3, loss_4, loss_5, loss_6, loss_7, loss_8, loss_9[2:end]], xlabel=&quot;iterations&quot;, ylabel=&quot;loss&quot;, yscale=:log10, labels=[&quot;ADAM(0.001)&quot; &quot;ADAM(0.005)&quot; &quot;ADAM(0.05)&quot; &quot;RMSProp(0.001)&quot; &quot;RMSProp(0.005)&quot; &quot;RMSProp(0.05)&quot; &quot;BFGS()&quot; &quot;LBFGS()&quot; &quot;ADAM + BFGS&quot;], legend=:bottomleft, linecolor=[&quot;#2660A4&quot; &quot;#4CD0F4&quot; &quot;#FEC32F&quot; &quot;#F763CD&quot; &quot;#44BD79&quot; &quot;#831894&quot; &quot;#A6ED18&quot; &quot;#980000&quot; &quot;#FF912B&quot;])</code></pre><p><img src="../figures/allen_cahn_6_1.png" alt/></p><pre><code class="language-julia hljs">@show loss_1[end], loss_2[end], loss_3[end], loss_4[end], loss_5[end], loss_6[end], loss_7[end], loss_8[end], loss_9[end]</code></pre><pre><code class="nohighlight hljs">(loss_1[end], loss_2[end], loss_3[end], loss_4[end], loss_5[end], loss_6[en
-d], loss_7[end], loss_8[end], loss_9[end]) = (4.3489723200496595, 0.2745378
-4064872644, 0.011874923991109534, 0.14379050312817276, 0.21238480466036092,
- 0.27250186083706074, 3.985223070647032, 0.006902465633085464, 0.3696936159
-0939315)
-(4.3489723200496595, 0.27453784064872644, 0.011874923991109534, 0.143790503
-12817276, 0.21238480466036092, 0.27250186083706074, 3.985223070647032, 0.00
-6902465633085464, 0.36969361590939315)</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+loss_9, times_9 = solve(&quot;both&quot;)</code></pre><pre><code class="nohighlight hljs">(Any[26.567743974600845, 22.68815659346612, 19.183449843343702, 16.05035262
+453601, 13.281843186240838, 10.868019197396226, 8.79565126675499, 7.0480917
+37359222, 5.605747038486074, 4.447032692155303  …  8.075166671786921e-5, 7.
+961553161320333e-5, 7.905398686682212e-5, 7.669427968514353e-5, 7.663201980
+442745e-5, 7.657958597339967e-5, 7.61097035255219e-5, 7.494893897503556e-5,
+ 7.494493346787498e-5, 7.4659491637836e-5], Any[0.001, 0.18399500846862793,
+ 0.3608229160308838, 0.5336778163909912, 0.7062849998474121, 0.878044843673
+706, 1.0503458976745605, 1.2233049869537354, 1.3947649002075195, 1.57020783
+42437744  …  87.56821298599243, 88.09763693809509, 88.4503448009491, 88.978
+20091247559, 98.57003092765808, 108.25928592681885, 108.63129377365112, 108
+.98457479476929, 118.37964677810669, 118.9108510017395])</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><pre><code class="language-julia hljs">p = plot([times_1, times_2, times_3, times_4, times_5, times_6, times_7, times_8, times_9], [loss_1, loss_2, loss_3, loss_4, loss_5, loss_6, loss_7, loss_8, loss_9],xlabel=&quot;time (s)&quot;, ylabel=&quot;loss&quot;, xscale=:log10, yscale=:log10, labels=[&quot;ADAM(0.001)&quot; &quot;ADAM(0.005)&quot; &quot;ADAM(0.05)&quot; &quot;RMSProp(0.001)&quot; &quot;RMSProp(0.005)&quot; &quot;RMSProp(0.05)&quot; &quot;BFGS()&quot; &quot;LBFGS()&quot; &quot;ADAM + BFGS&quot;], legend=:bottomleft, linecolor=[&quot;#2660A4&quot; &quot;#4CD0F4&quot; &quot;#FEC32F&quot; &quot;#F763CD&quot; &quot;#44BD79&quot; &quot;#831894&quot; &quot;#A6ED18&quot; &quot;#980000&quot; &quot;#FF912B&quot;])</code></pre><p><img src="../figures/allen_cahn_5_1.png" alt/></p><pre><code class="language-julia hljs">p = plot([loss_1, loss_2, loss_3, loss_4, loss_5, loss_6, loss_7, loss_8, loss_9[2:end]], xlabel=&quot;iterations&quot;, ylabel=&quot;loss&quot;, yscale=:log10, labels=[&quot;ADAM(0.001)&quot; &quot;ADAM(0.005)&quot; &quot;ADAM(0.05)&quot; &quot;RMSProp(0.001)&quot; &quot;RMSProp(0.005)&quot; &quot;RMSProp(0.05)&quot; &quot;BFGS()&quot; &quot;LBFGS()&quot; &quot;ADAM + BFGS&quot;], legend=:bottomleft, linecolor=[&quot;#2660A4&quot; &quot;#4CD0F4&quot; &quot;#FEC32F&quot; &quot;#F763CD&quot; &quot;#44BD79&quot; &quot;#831894&quot; &quot;#A6ED18&quot; &quot;#980000&quot; &quot;#FF912B&quot;])</code></pre><p><img src="../figures/allen_cahn_6_1.png" alt/></p><pre><code class="language-julia hljs">@show loss_1[end], loss_2[end], loss_3[end], loss_4[end], loss_5[end], loss_6[end], loss_7[end], loss_8[end], loss_9[end]</code></pre><pre><code class="nohighlight hljs">(loss_1[end], loss_2[end], loss_3[end], loss_4[end], loss_5[end], loss_6[en
+d], loss_7[end], loss_8[end], loss_9[end]) = (0.11734122479338271, 0.015842
+0514056297, 0.0477406516485296, 0.07689746593308862, 0.1336227906567366, 0.
+11211269356589085, 25.425266552636153, 0.001989564422994538, 7.465949163783
+6e-5)
+(0.11734122479338271, 0.0158420514056297, 0.0477406516485296, 0.07689746593
+308862, 0.1336227906567366, 0.11211269356589085, 25.425266552636153, 0.0019
+89564422994538, 7.4659491637836e-5)</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/PINNOptimizers&quot;,&quot;allen_cahn.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.7.3
 Commit 742b9abb4d (2022-05-06 12:58 UTC)
 Platform Info:
@@ -157,7 +157,7 @@ Environment:
   JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNOptimizers/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNOptimizers/Project.toml`
   [b2108857] Lux v0.4.11
   [961ee093] ModelingToolkit v8.18.1
   [315f7962] NeuralPDE v5.0.0
@@ -165,7 +165,7 @@ Environment:
   [253f991c] OptimizationFlux v0.1.0
   [36348300] OptimizationOptimJL v0.1.2
   [91a5bcdd] Plots v1.31.4
-  [31c91b34] SciMLBenchmarks v0.1.0</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNOptimizers/Manifest.toml`
+  [31c91b34] SciMLBenchmarks v0.1.0</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNOptimizers/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.1
   [621f4979] AbstractFFTs v1.2.1
   [1520ce14] AbstractTrees v0.4.2
