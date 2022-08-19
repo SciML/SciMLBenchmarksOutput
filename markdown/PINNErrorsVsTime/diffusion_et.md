@@ -47,7 +47,7 @@ function diffusion(strategy, minimizer, maxIters)
     indvars = [x,t]
     depvars = [u(x,t)]
 
-    chain = Lux.Chain(Lux.Dense(2,10,Lux.σ),Lux.Dense(10,10,Lux.σ),Lux.Dense(10,1))
+    chain = Lux.Chain(Lux.Dense(2,10,tanh),Lux.Dense(10,10,tanh),Lux.Dense(10,1))
 
     losses = []
     error = []
@@ -241,7 +241,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Project.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Project.toml`
   [de52edbc] Integrals v3.1.1
   [e00cd5f1] IntegralsCuba v0.2.0
   [c31f79ba] IntegralsCubature v0.2.0
@@ -260,7 +260,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Manifest.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.2
   [621f4979] AbstractFFTs v1.2.1
   [1520ce14] AbstractTrees v0.4.2
