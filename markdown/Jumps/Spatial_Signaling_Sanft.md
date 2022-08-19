@@ -1,130 +1,376 @@
 ---
-author: "Samuel Isaacson, Chris Rackauckas"
-title: "Negative Feedback Marchetti Model"
+author: "Vasily Ilin and Samuel Isaacson"
+title: "Spatial Signaling Model from Sanft and Othmer (2015)"
 ---
 ```julia
-using OrdinaryDiffEq, Catalyst, JumpProcesses, DiffEqProblemLibrary.JumpProblemLibrary, Plots, Statistics
-fmt = :png
-JumpProblemLibrary.importjumpproblems()
+using Catalyst, JumpProcesses, BenchmarkTools, Plots, Random
 ```
 
 
 
 
-# Model and example solutions
-Here we implement the gene expression model from appendix A.6 of Marchetti,
-Priami and Thanh, *Simulation Algorithms for Comptuational Systems Biology*,
-Springer (2017).
+# Model description and setup
+Here we implement the model from [^1] (8 species and 12 reactions) for different
+mesh sizes, and benchmark the performance of JumpProcesses.jl's spatial
+stochastic simulation alorithms (SSAs). Below, the value `N` will denote the
+number of subvolumes along one dimension of a cubic grid, representing the
+reaction volume. In [^1] this value ranges from 20 to 60.
 
+We first define some helper functions to convert concentration units into number
+units, as needed for spatial SSAs.
 ```julia
-jprob = prob_jump_dnadimer_repressor
-rnpar = jprob.rates
-u0 = jprob.u0
-tf = jprob.tstop
-rn = jprob.network
-reactions(rn)
+invmicromolar_to_cubicmicrometer(invconcen) = invconcen / (6.02214076e2)
+micromolar_to_invcubicmicrometer(concen) = (6.02214076e2) * concen
 ```
 
 ```
-8-element Vector{Catalyst.Reaction}:
- c1, G --> G + M
- c2, M --> M + P
- c3, M --> ∅
- c4, P --> ∅
- c5, 2*P --> P2
- c6, P2 --> 2*P
- c7, P2 + G --> P2G
- c8, P2G --> P2 + G
+micromolar_to_invcubicmicrometer (generic function with 1 method)
 ```
 
 
 
+
+
+Next we create a well-mixed model with the desired chemistry
 ```julia
-u0f = [1000., 0., 0., 0., 0.]
-odeprob = ODEProblem(rn, u0f, (0.,tf), rnpar)
-solution = solve(odeprob, Tsit5())
-plot(solution, format=fmt)
+rn = @reaction_network begin
+    k₁, EA --> EA + A
+    k₁, EB --> EB + B
+    (ka,kd), EA + B <--> EAB
+    (ka,kd), EAB + B <--> EAB₂
+    (ka,kd), EB + A <--> EBA
+    (ka,kd), EBA + A <--> EBA₂
+    k₄, A --> ∅
+    k₄, B --> ∅
+end k₁ ka kd k₄
 ```
 
-![](figures/NegFeedback_GeneExpr_Marchetti_3_1.png)
+```
+Model ##ReactionSystem#327
+States (8):
+  EA(t)
+  A(t)
+  EB(t)
+  B(t)
+⋮
+Parameters (4):
+  k₁
+  ka
+  kd
+  k₄
+```
 
+
+
+
+Let's next make a function to calculate the spatial transport rates, mesh/graph
+that will represent our domain, and initial condition. We use a cubic lattice of
+size `N` by `N` by `N` with reflecting boundary conditions
 ```julia
-tf = 4000.
-methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR())
-shortlabels = [string(leg)[15:end-2] for leg in methods]
-prob = prob = DiscreteProblem(rn, u0, (0.0, tf), rnpar)
-ploth = plot(reuse=false)
-p = []
-for (i,method) in enumerate(methods)
-    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
-    sol = solve(jump_prob, SSAStepper(), saveat=tf/1000.)
-    plot!(ploth, sol.t, sol[3,:], label=shortlabels[i], format=fmt)
-    push!(p, plot(sol, title=shortlabels[i], format=fmt))
+# domain_len is the physical length of each side of the cubic domain
+# units should be in μm (6.0 or 12.0 in Sanft)
+# D is the diffusivity in units of (μm)^2 s⁻¹
+function transport_model(rn, N; domain_len = 6.0, D = 1.0, rng = Random.default_rng())
+    # topology
+    h = domain_len / N
+    dims = (N, N, N)
+    num_nodes = prod(dims)
+
+    # Cartesian grid with reflecting BC at boundaries
+    grid = CartesianGrid(dims)
+
+    # Cartesian grid hopping rate to neighbors
+    hopping_rate = D / h^2
+
+    # this indicates we have a uniform rate of D/h^2 along each edge at each site
+    hopping_constants = hopping_rate * ones(numspecies(rn))
+
+    # figure out the indices of species EA and EB
+    @unpack EA, EB = rn
+    EAidx = findfirst(isequal(EA), species(rn))
+    EBidx = findfirst(isequal(EB), species(rn))
+
+    # spatial initial condition
+    # initial concentration of 12.3 nM = 12.3 * 1e-3 μM
+    num_molecules = trunc(Int, micromolar_to_invcubicmicrometer(12.3*1e-3) * (domain_len^3))
+    u0 = zeros(Int, 8, num_nodes)
+    rand_EA = rand(rng, 1:num_nodes, num_molecules)
+    rand_EB = rand(rng, 1:num_nodes, num_molecules)
+    for i in 1:num_molecules
+        u0[EAidx, rand_EA[i]] += 1
+        u0[EBidx, rand_EB[i]] += 1
+    end
+
+    grid, hopping_constants, h, u0
 end
-plot(ploth, title="Protein level", xlabel="time", format=fmt)
 ```
 
-![](figures/NegFeedback_GeneExpr_Marchetti_4_1.png)
+```
+transport_model (generic function with 1 method)
+```
 
+
+
+
+Finally, let's make a function to setup the well-mixed model from the reaction
+model in a cube of side length `h`:
 ```julia
-plot(p[end])
+function wellmixed_model(rn, u0, end_time, h)
+    kaval = invmicromolar_to_cubicmicrometer(46.2) / h^3
+    setdefaults!(rn, [:k₁ => 150, :ka => kaval, :kd => 3.82, :k₄ => 6.0])
+
+    # well-mixed initial condition corresponding to the spatial initial condition
+    u0wm = sum(u0, dims = 2)
+    dprobwm = DiscreteProblem(rn, u0wm, (0.0, end_time))
+    jprobwm = JumpProblem(rn, dprobwm, Direct(), save_positions = (false,false))
+    majumps = jprobwm.massaction_jump
+    majumps, dprobwm, jprobwm, u0wm
+end
 ```
 
-![](figures/NegFeedback_GeneExpr_Marchetti_5_1.png)
+```
+wellmixed_model (generic function with 1 method)
+```
+
+
+
+
+
+# Model Solution
+Let's look at one example to check our model seems reasonable. We'll plot the
+total number of molecules in the system to verify we get around 28,000
+molecules, as reported in Sanft [^1], when using a domain length of 6 μm.
+```julia
+end_time = 3.0
+grid, hopping_constants, h, u0 = transport_model(rn, 60)
+majumps, dprobwm, jprobwm, u0wm = wellmixed_model(rn, u0, end_time, 6.0)
+sol = solve(jprobwm, SSAStepper(); saveat = end_time/200)
+Ntot = [sum(u) for u in sol.u]
+plt = plot(sol.t, Ntot, label="Well-mixed", ylabel="Total Number of Molecules",
+                        xlabel="time")
+
+# spatial model
+majumps, dprobwm, jprobwm, u0wm = wellmixed_model(rn, u0, end_time, h)
+dprob = DiscreteProblem(u0, (0.0, end_time), copy(dprobwm.p))
+jprob = JumpProblem(dprob, DirectCRDirect(), majumps; hopping_constants,
+                    spatial_system = grid, save_positions = (false, false))
+spatial_sol = solve(jprob, SSAStepper(); saveat = end_time/200)
+Ntot = [sum(vec(u)) for u in spatial_sol.u]
+plot!(plt, spatial_sol.t, Ntot, label="Spatial",
+      title="Steady-state number of molecules is $(Ntot[end])")
+```
+
+![](figures/Spatial_Signaling_Sanft_6_1.png)
 
 
 
 # Benchmarking performance of the methods
-
+We can now run the solvers and record the performance with `BenchmarkTools`.
+Let's first create a `DiscreteCallback` to terminate simulations once we reach
+`10^8` events:
 ```julia
-function run_benchmark!(t, jump_prob, stepper)
-    sol = solve(jump_prob, stepper)
-    @inbounds for i in 1:length(t)
-        t[i] = @elapsed (sol = solve(jump_prob, stepper))
+@Base.kwdef mutable struct EventCallback
+    n::Int = 0
+end
+
+function (ecb::EventCallback)(u, t, integ)
+    ecb.n += 1
+    ecb.n == 10^8
+end
+
+function (ecb::EventCallback)(integ)
+    # save the final state
+    terminate!(integ)
+    nothing
+end
+```
+
+
+
+We next create a function to run and return our benchmarking results.
+```julia
+function benchmark_and_save!(bench_dict, end_times, Nv, algs, domain_len)
+    @assert length(end_times) == length(Nv)
+
+    # callback for terminating simulations
+    ecb = EventCallback()
+    cb = DiscreteCallback(ecb, ecb)
+
+    for (end_time, N) in zip(end_times, Nv)
+        names = ["$s"[1:end-2] for s in algs]
+
+        grid, hopping_constants, h, u0 = transport_model(rn, N; domain_len)
+
+        # we create a well-mixed model within a domain of the size of *one* voxel, h
+        majumps, dprobwm, jprobwm, u0wm = wellmixed_model(rn, u0, end_time, h)
+
+        # the spatial problem
+        dprob = DiscreteProblem(u0, (0.0, end_time), copy(dprobwm.p))
+
+        @show N
+
+        # benchmarking and saving
+        benchmarks = Vector{BenchmarkTools.Trial}(undef, length(algs))
+
+        # callback for terminating simulations
+
+        for (i, alg) in enumerate(algs)
+            name = names[i]
+            println("benchmarking $name")
+            jp = JumpProblem(dprob, alg, majumps, hopping_constants=hopping_constants,
+                             spatial_system = grid, save_positions=(false,false))
+            b = @benchmarkable solve($jp, SSAStepper(); saveat = $(dprob.tspan[2]), callback) setup = (callback = deepcopy($cb)) samples = 10 seconds = 3600
+            bench_dict[name, N] = run(b)
+        end
     end
 end
 ```
 
 ```
-run_benchmark! (generic function with 1 method)
+benchmark_and_save! (generic function with 1 method)
+```
+
+
+
+
+Finally, let's make a function to plot the benchmarking data.
+```julia
+function fetch_and_plot(bench_dict, domain_len)
+    names = unique([key[1] for key in keys(bench_dict)])
+    Nv = sort(unique([key[2] for key in keys(bench_dict)]))
+
+    plt1 = plot()
+    plt2 = plot()
+
+    medtimes = [Float64[] for i in 1:length(names)]
+    for (i,name) in enumerate(names)
+        for N in Nv
+            try
+                push!(medtimes[i], median(bench_dict[name, N]).time/1e9)
+            catch
+                break
+            end
+        end
+        len = length(medtimes[i])
+        plot!(plt1, Nv[1:len], medtimes[i], marker = :hex, label = name, lw = 2)
+        plot!(plt2, (Nv.^3)[1:len], medtimes[i], marker = :hex, label = name, lw = 2)
+    end
+
+    plot!(plt1, xlabel = "number of sites per edge", ylabel = "median time in seconds",
+                xticks = Nv, legend = :bottomright)
+    plot!(plt2, xlabel = "total number of sites", ylabel = "median time in seconds",
+                xticks = (Nv.^3, string.(Nv.^3)), legend = :bottomright)
+    plot(plt1, plt2; size = (1200,800), legendtitle = "SSAs",
+                     plot_title="3D RDME, domain length = $domain_len", left_margin=5Plots.mm)
+end
+```
+
+```
+fetch_and_plot (generic function with 1 method)
+```
+
+
+
+
+We are now ready to run the benchmarks and plot the results. We start with a
+domain length of `12` μm, analogous to Fig. 6 in [^1]:
+```julia
+bench_dict = Dict{Tuple{String, Int}, BenchmarkTools.Trial}()
+algs = [NSM(), DirectCRDirect()]
+Nv = [20, 30, 40, 50, 60, 90, 120, 240, 360]
+end_times = 20000.0 * ones(length(Nv))
+domain_len = 12.0
+benchmark_and_save!(bench_dict, end_times, Nv, algs, domain_len)
+```
+
+```
+N = 20
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 30
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 40
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 50
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 60
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 90
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 120
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 240
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 360
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
 ```
 
 
 
 ```julia
-nsims = 200
-benchmarks = Vector{Vector{Float64}}()
-for method in methods
-    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
-    stepper = SSAStepper()
-    t = Vector{Float64}(undef, nsims)
-    run_benchmark!(t, jump_prob, stepper)
-    push!(benchmarks, t)
-end
+plt=fetch_and_plot(bench_dict, domain_len)
 ```
+
+![](figures/Spatial_Signaling_Sanft_11_1.png)
+
+
+We next consider a domain of length `6` μm, analogous to Fig. 7 in [^1].
+```julia
+bench_dict = Dict{Tuple{String, Int}, BenchmarkTools.Trial}()
+domain_len = 6.0
+benchmark_and_save!(bench_dict, end_times, Nv, algs, domain_len)
+```
+
+```
+N = 20
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 30
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 40
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 50
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 60
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 90
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 120
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 240
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+N = 360
+benchmarking JumpProcesses.NSM
+benchmarking JumpProcesses.DirectCRDirect
+```
+
 
 
 ```julia
-medtimes = Vector{Float64}(undef, length(methods))
-stdtimes = Vector{Float64}(undef, length(methods))
-avgtimes = Vector{Float64}(undef, length(methods))
-for i in 1:length(methods)
-    medtimes[i] = median(benchmarks[i])
-    avgtimes[i] = mean(benchmarks[i])
-    stdtimes[i] = std(benchmarks[i])
-end
-
-using DataFrames
-df = DataFrame(names=shortlabels, medtimes=medtimes, relmedtimes=(medtimes/medtimes[1]),
-               avgtimes=avgtimes, std=stdtimes, cv=stdtimes./avgtimes)
-sa = [text(string(round(mt,digits=3),"s"),:center,12) for mt in df.medtimes]
-bar(df.names,df.relmedtimes,legend=:false, fmt=fmt)
-scatter!(df.names, .05 .+ df.relmedtimes, markeralpha=0, series_annotations=sa, fmt=fmt)
-ylabel!("median relative to Direct")
-title!("Marchetti Gene Expression Model")
+plt=fetch_and_plot(bench_dict, domain_len)
 ```
 
-![](figures/NegFeedback_GeneExpr_Marchetti_8_1.png)
+![](figures/Spatial_Signaling_Sanft_13_1.png)
+
+
+
+# References
+[^1]: Sanft, Kevin R and Othmer, Hans G. *Constant-complexity stochastic simulation algorithm with optimal binning*. J. Chem. Phys., 143(7), 11 pp. (2015).
 
 
 ## Appendix
@@ -135,7 +381,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/Jumps","NegFeedback_GeneExpr_Marchetti.jmd")
+SciMLBenchmarks.weave_file("benchmarks/Jumps","Spatial_Signaling_Sanft.jmd")
 ```
 
 Computer Information:

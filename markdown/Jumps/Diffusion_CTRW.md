@@ -3,9 +3,7 @@ author: "Samuel Isaacson, Chris Rackauckas"
 title: "Diffusion Model"
 ---
 ```julia
-using DiffEqBase, Catalyst, DiffEqJump, DiffEqProblemLibrary.JumpProblemLibrary, Plots, Statistics, DataFrames
-gr()
-fmt = :png
+using Catalyst, JumpProcesses, DiffEqProblemLibrary.JumpProblemLibrary, Plots, Statistics, DataFrames
 JumpProblemLibrary.importjumpproblems()
 ```
 
@@ -13,34 +11,43 @@ JumpProblemLibrary.importjumpproblems()
 
 
 # Model and example solutions
-Here we implement a 1D continuous time random walk approximation of diffusion for $N$ lattice sites on $\left[0,1\right]$, with reflecting boundary conditions at $x=0$ and $x=1$.
+Here we implement a 1D continuous time random walk approximation of diffusion
+for $N$ lattice sites on $\left[0,1\right]$, with reflecting boundary conditions
+at $x=0$ and $x=1$. Note that our goal is to benchmark the non-spatial
+well-mixed stochastic simulation algorithms (SSAs), so we do not benchmark the
+spatial SSAs too here.
 
 ```julia
 N = 256
 h = 1 / N
-u0 = 10*ones(Int64, N)
+u0 = 10 * ones(Int64, N)
 tf = .01
-methods = (Direct(),DirectFW(),SortingDirect(),NRM(),DirectCR(),RSSA())
-shortlabels = [string(leg)[12:end-2] for leg in methods]
-jprob   = prob_jump_diffnetwork
-prob    = DiscreteProblem(u0, (0.0, tf), [1 / (h*h)])
-rn      = jprob.network(N)
-ploth   = plot(reuse=false)
+methods = (Direct(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR())
+shortlabels = [string(leg)[15:end-2] for leg in methods]
+jprob = prob_jump_diffnetwork
+rn = jprob.network(N)
+prob = DiscreteProblem(rn, u0, (0.0, tf), [1 / (h*h)])
+ploth = plot(reuse=false)
 for (i,method) in enumerate(methods)
     println("Benchmarking method: ", method)
     jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
-    sol = solve(jump_prob, SSAStepper(), saveat=tf/1000.)
-    plot!(ploth,sol.t,sol[Int(N//2),:],label=shortlabels[i], format=fmt)
+    sol = solve(jump_prob, SSAStepper(); saveat=tf/1000.)
+    plot!(ploth, sol.t, sol[Int(N//2),:], label=shortlabels[i])
 end
-plot!(ploth, title="Population at middle lattice site", xlabel="time",format=fmt)
+plot!(ploth, title="Population at middle lattice site", xlabel="time")
 ```
 
 ```
-Benchmarking method: DiffEqJump.Direct()
-Error: UndefVarError: JumpProblem not defined
+Benchmarking method: JumpProcesses.Direct()
+Benchmarking method: JumpProcesses.SortingDirect()
+Benchmarking method: JumpProcesses.NRM()
+Benchmarking method: JumpProcesses.DirectCR()
+Benchmarking method: JumpProcesses.RSSA()
+Benchmarking method: JumpProcesses.RSSACR()
 ```
 
 
+![](figures/Diffusion_CTRW_2_1.png)
 
 
 
@@ -67,16 +74,11 @@ benchmarks = Vector{Vector{Float64}}()
 for method in methods
     jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
     stepper = SSAStepper()
-    t = Vector{Float64}(undef,nsims)
+    t = Vector{Float64}(undef, nsims)
     run_benchmark!(t, jump_prob, stepper)
     push!(benchmarks, t)
 end
 ```
-
-```
-Error: UndefVarError: JumpProblem not defined
-```
-
 
 
 ```julia
@@ -89,13 +91,30 @@ for i in 1:length(methods)
     stdtimes[i] = std(benchmarks[i])
 end
 
-df = DataFrame(names=shortlabels,medtimes=medtimes,relmedtimes=(medtimes/medtimes[1]),
-                avgtimes=avgtimes, std=stdtimes, cv=stdtimes./avgtimes)
+df = DataFrame(names=shortlabels, medtimes=medtimes, relmedtimes=(medtimes/medtimes[1]),
+               avgtimes=avgtimes, std=stdtimes, cv=stdtimes./avgtimes)
 ```
 
 ```
-Error: BoundsError: attempt to access 0-element Vector{Vector{Float64}} at 
-index [1]
+6×6 DataFrame
+ Row │ names          medtimes  relmedtimes  avgtimes  std         cv      
+    ⋯
+     │ String         Float64   Float64      Float64   Float64     Float64 
+    ⋯
+─────┼─────────────────────────────────────────────────────────────────────
+─────
+   1 │ Direct         7.05932     1.0        7.05963   0.00608528  0.000861
+982 ⋯
+   2 │ SortingDirect  1.06453     0.150797   1.06555   0.00462617  0.004341
+6
+   3 │ NRM            0.747589    0.105901   0.749745  0.00557371  0.007434
+14
+   4 │ DirectCR       0.480899    0.0681226  0.481337  0.0031673   0.006580
+21
+   5 │ RSSA           1.41081     0.199851   1.41131   0.00273747  0.001939
+66  ⋯
+   6 │ RSSACR         0.423172    0.0599451  0.423023  0.00231268  0.005467
+04
 ```
 
 
@@ -105,17 +124,13 @@ index [1]
 # Plotting
 ```julia
 sa = [string(round(mt,digits=4),"s") for mt in df.medtimes]
-bar(df.names,df.relmedtimes,legend=:false, fmt=fmt)
-scatter!(df.names, .05 .+ df.relmedtimes, markeralpha=0, series_annotations=sa, fmt=fmt)
+bar(df.names, df.relmedtimes, legend=:false)
+scatter!(df.names, .05 .+ df.relmedtimes, markeralpha=0, series_annotations=sa)
 ylabel!("median relative to Direct")
 title!("256 Site 1D Diffusion CTRW")
 ```
 
-```
-Error: UndefVarError: df not defined
-```
-
-
+![](figures/Diffusion_CTRW_6_1.png)
 
 
 ## Appendix
@@ -150,47 +165,49 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Project.toml`
-  [479239e8] Catalyst v12.1.3
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Project.toml`
+  [6e4b80f9] BenchmarkTools v1.3.1
+  [479239e8] Catalyst v12.2.0
   [a93c6f00] DataFrames v1.3.4
-  [2b5f629d] DiffEqBase v6.94.4
-  [c894b116] DiffEqJump v8.6.3
   [a077e3f3] DiffEqProblemLibrary v4.17.0
-  [961ee093] ModelingToolkit v8.18.0
-  [1dea7af3] OrdinaryDiffEq v6.19.1
-  [91a5bcdd] Plots v1.31.4
-  [31c91b34] SciMLBenchmarks v0.1.0
+  [ccbc3e58] JumpProcesses v9.1.0
+  [961ee093] ModelingToolkit v8.18.9
+  [1dea7af3] OrdinaryDiffEq v6.20.0
+  [91a5bcdd] Plots v1.31.6
+  [31c91b34] SciMLBenchmarks v0.1.1
+  [9a3f8284] Random
   [10745b16] Statistics
 ```
 
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Manifest.toml`
-  [c3fe647b] AbstractAlgebra v0.27.0
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Manifest.toml`
+  [c3fe647b] AbstractAlgebra v0.27.3
   [1520ce14] AbstractTrees v0.4.2
-  [79e6a3ab] Adapt v3.3.3
+  [79e6a3ab] Adapt v3.4.0
   [dce04be8] ArgCheck v2.3.0
   [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v6.0.21
-  [30b0a656] ArrayInterfaceCore v0.1.15
+  [4fba245c] ArrayInterface v6.0.22
+  [30b0a656] ArrayInterfaceCore v0.1.17
   [6ba088a2] ArrayInterfaceGPUArrays v0.2.1
   [015c0d05] ArrayInterfaceOffsetArrays v0.1.6
   [b0d46f97] ArrayInterfaceStaticArrays v0.1.4
   [dd5226c6] ArrayInterfaceStaticArraysCore v0.1.0
-  [4c555306] ArrayLayouts v0.8.9
+  [4c555306] ArrayLayouts v0.8.11
   [15f4f7f2] AutoHashEquals v0.2.0
-  [aae01518] BandedMatrices v0.17.3
+  [aae01518] BandedMatrices v0.17.4
   [198e06fe] BangBang v0.3.36
   [9718e550] Baselet v0.1.1
+  [6e4b80f9] BenchmarkTools v1.3.1
   [e2ed5e7c] Bijections v0.1.4
   [62783981] BitTwiddlingConvenienceFunctions v0.1.4
-  [8e7c35d0] BlockArrays v0.16.19
-  [ffab5731] BlockBandedMatrices v0.11.7
+  [8e7c35d0] BlockArrays v0.16.20
+  [ffab5731] BlockBandedMatrices v0.11.9
   [2a0fbf3d] CPUSummary v0.1.25
   [00ebfdb7] CSTParser v3.3.6
   [49dc2e85] Calculus v0.5.1
-  [479239e8] Catalyst v12.1.3
+  [479239e8] Catalyst v12.2.0
   [d360d2e6] ChainRulesCore v1.15.3
   [9e997f8a] ChangesOfVariables v0.1.4
   [fb6a15b2] CloseOpenIntervals v0.1.10
@@ -217,9 +234,8 @@ And the full manifest:
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
   [b429d917] DensityInterface v0.4.0
-  [2b5f629d] DiffEqBase v6.94.4
+  [2b5f629d] DiffEqBase v6.95.2
   [459566f4] DiffEqCallbacks v2.23.1
-  [c894b116] DiffEqJump v8.6.3
   [9fdde737] DiffEqOperators v4.43.1
   [a077e3f3] DiffEqProblemLibrary v4.17.0
   [163ba53b] DiffResults v1.0.3
@@ -232,26 +248,28 @@ And the full manifest:
   [7c1d4256] DynamicPolynomials v0.4.5
   [d4d017d3] ExponentialUtilities v1.18.0
   [e2ba6199] ExprTools v0.1.8
+  [411431e0] Extents v0.1.1
   [c87230d0] FFMPEG v0.4.1
   [7034ab61] FastBroadcast v0.2.1
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v1.1.0
+  [29a986be] FastLapackInterface v1.2.2
   [1a297f60] FillArrays v0.13.2
-  [6a86dc24] FiniteDiff v2.13.1
+  [6a86dc24] FiniteDiff v2.15.0
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
-  [f6369f11] ForwardDiff v0.10.30
+  [f6369f11] ForwardDiff v0.10.32
   [069b7b12] FunctionWrappers v1.1.2
   [46192b85] GPUArraysCore v0.1.1
   [28b8d3ca] GR v0.66.0
   [c145ed77] GenericSchur v0.5.3
-  [5c1252a2] GeometryBasics v0.4.2
+  [cf35fbd7] GeoInterface v1.0.1
+  [5c1252a2] GeometryBasics v0.4.3
   [d7ba0133] Git v1.2.1
   [86223c79] Graphs v1.7.1
   [42e2da0e] Grisu v1.0.2
-  [0b43b601] Groebner v0.2.8
+  [0b43b601] Groebner v0.2.10
   [d5909c97] GroupsCore v0.4.0
-  [cd3eb016] HTTP v1.2.0
+  [cd3eb016] HTTP v1.2.1
   [eafb193a] Highlights v0.4.5
   [3e5b6fbb] HostCPUFeatures v0.1.8
   [34004b35] HypergeometricFunctions v0.3.11
@@ -270,31 +288,31 @@ And the full manifest:
   [82899510] IteratorInterfaceExtensions v1.0.0
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
-  [98e50ef6] JuliaFormatter v1.0.7
-  [ccbc3e58] JumpProcesses v9.0.1
+  [98e50ef6] JuliaFormatter v1.0.9
+  [ccbc3e58] JumpProcesses v9.1.0
   [ef3ab10e] KLU v0.3.0
-  [ba0b0d4f] Krylov v0.8.2
+  [ba0b0d4f] Krylov v0.8.3
   [0b1a1467] KrylovKit v0.5.4
   [b964fa9f] LaTeXStrings v1.3.0
-  [2ee39098] LabelledArrays v1.11.1
+  [2ee39098] LabelledArrays v1.12.0
   [23fbe1c1] Latexify v0.15.16
   [10f19ff3] LayoutPointers v0.1.10
   [5078a376] LazyArrays v0.22.11
   [d7e5e226] LazyBandedMatrices v0.7.17
   [d3d80556] LineSearches v7.1.1
-  [7ed4a6bd] LinearSolve v1.23.0
-  [2ab3a3ac] LogExpFunctions v0.3.16
+  [7ed4a6bd] LinearSolve v1.23.3
+  [2ab3a3ac] LogExpFunctions v0.3.17
   [e6f89c97] LoggingExtras v0.4.9
-  [bdcacae8] LoopVectorization v0.12.120
+  [bdcacae8] LoopVectorization v0.12.121
   [1914dd2f] MacroTools v0.5.9
   [d125e4d3] ManualMemory v0.1.8
-  [a3b82374] MatrixFactorizations v0.9.1
-  [739be429] MbedTLS v1.1.1
+  [a3b82374] MatrixFactorizations v0.9.2
+  [739be429] MbedTLS v1.1.3
   [442fdcdd] Measures v0.3.1
   [e9d8d322] Metatheory v1.3.4
   [128add7d] MicroCollections v0.1.2
   [e1d29d7a] Missings v1.0.2
-  [961ee093] ModelingToolkit v8.18.0
+  [961ee093] ModelingToolkit v8.18.9
   [46d2c3a1] MuladdMacro v0.2.2
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
@@ -303,21 +321,21 @@ And the full manifest:
   [2774e3e8] NLsolve v4.5.1
   [872c559c] NNlib v0.8.9
   [77ba4419] NaNMath v0.3.7
-  [8913a72c] NonlinearSolve v0.3.21
+  [8913a72c] NonlinearSolve v0.3.22
   [6fe1bfb0] OffsetArrays v1.12.7
   [bac558e1] OrderedCollections v1.4.1
-  [1dea7af3] OrdinaryDiffEq v6.19.1
+  [1dea7af3] OrdinaryDiffEq v6.20.0
   [90014a1f] PDMats v0.11.16
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.3.2
   [ccf2f8ad] PlotThemes v3.0.0
   [995b91a9] PlotUtils v1.3.0
-  [91a5bcdd] Plots v1.31.4
+  [91a5bcdd] Plots v1.31.6
   [e409e4f3] PoissonRandom v0.4.1
   [f517fe37] Polyester v0.6.14
-  [1d0040c9] PolyesterWeave v0.1.7
+  [1d0040c9] PolyesterWeave v0.1.8
   [2dfb63ee] PooledArrays v1.4.2
-  [d236fae5] PreallocationTools v0.4.0
+  [d236fae5] PreallocationTools v0.4.2
   [21216c6a] Preferences v1.3.0
   [08abe8d2] PrettyTables v1.3.1
   [27ebfcd6] Primes v0.5.3
@@ -325,41 +343,43 @@ And the full manifest:
   [fb686558] RandomExtensions v0.4.3
   [e6cf234a] RandomNumbers v1.5.3
   [3cdcf5f2] RecipesBase v1.2.1
-  [01d81517] RecipesPipeline v0.6.2
-  [731186ca] RecursiveArrayTools v2.31.2
+  [01d81517] RecipesPipeline v0.6.3
+  [731186ca] RecursiveArrayTools v2.32.0
   [f2c3362d] RecursiveFactorization v0.2.11
   [189a3867] Reexport v1.2.2
   [42d2dcc6] Referenceables v0.1.2
   [05181044] RelocatableFolders v0.1.3
   [ae029012] Requires v1.3.0
+  [37e2e3b7] ReverseDiff v1.14.1
   [79098fc4] Rmath v0.7.0
   [7e49a35a] RuntimeGeneratedFunctions v0.5.3
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.33
-  [0bca4576] SciMLBase v1.44.1
-  [31c91b34] SciMLBenchmarks v0.1.0
+  [0bca4576] SciMLBase v1.48.0
+  [31c91b34] SciMLBenchmarks v0.1.1
   [6c6a2e73] Scratch v1.1.1
   [efcf1570] Setfield v0.8.2
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
   [699a6c99] SimpleTraits v0.9.4
+  [66db9d55] SnoopPrecompile v1.0.0
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.0.1
-  [47a9eef4] SparseDiffTools v1.24.0
+  [47a9eef4] SparseDiffTools v1.25.1
   [276daf66] SpecialFunctions v2.1.7
   [171d559e] SplittablesBase v0.1.14
   [aedffcd0] Static v0.7.6
   [90137ffa] StaticArrays v1.5.2
   [1e83bf80] StaticArraysCore v1.0.1
-  [82ae8749] StatsAPI v1.4.0
-  [2913bbd2] StatsBase v0.33.20
+  [82ae8749] StatsAPI v1.5.0
+  [2913bbd2] StatsBase v0.33.21
   [4c63d2b9] StatsFuns v1.0.1
   [7792a7ef] StrideArraysCore v0.3.15
   [69024149] StringEncodings v0.3.5
   [09ab397b] StructArrays v0.6.11
   [d1185830] SymbolicUtils v0.19.11
-  [0c5d862f] Symbolics v4.10.0
+  [0c5d862f] Symbolics v4.10.4
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.7.0
   [62fd8b95] TensorCore v0.1.1
@@ -371,13 +391,13 @@ And the full manifest:
   [3bb67fe8] TranscodingStreams v0.9.6
   [28d57a85] Transducers v0.4.73
   [a2a6695c] TreeViews v0.3.0
-  [d5829a12] TriangularSolve v0.1.12
+  [d5829a12] TriangularSolve v0.1.13
   [5c2747f8] URIs v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
   [1986cc42] Unitful v1.11.0
   [41fe7b60] Unzip v0.1.2
-  [3d5dd08c] VectorizationBase v0.21.43
+  [3d5dd08c] VectorizationBase v0.21.46
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
   [44d3d7a6] Weave v0.10.10
@@ -392,7 +412,7 @@ And the full manifest:
   [a3f928ae] Fontconfig_jll v2.13.93+0
   [d7e528f0] FreeType2_jll v2.10.4+0
   [559328eb] FriBidi_jll v1.0.10+0
-  [0656b61e] GLFW_jll v3.3.6+0
+  [0656b61e] GLFW_jll v3.3.8+0
   [d2c73de3] GR_jll v0.66.0+0
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.34.1+0
@@ -454,7 +474,7 @@ And the full manifest:
   [f27f6e37] libvorbis_jll v1.3.7+1
   [1270edf5] x264_jll v2021.5.5+0
   [dfaa095f] x265_jll v3.5.0+0
-  [d8fb68d0] xkbcommon_jll v0.9.1+5
+  [d8fb68d0] xkbcommon_jll v1.4.1+0
   [0dad84c5] ArgTools v1.1.1
   [56f22d72] Artifacts
   [2a0f44e3] Base64
@@ -475,6 +495,7 @@ And the full manifest:
   [ca575930] NetworkOptions v1.2.0
   [44cfe95a] Pkg v1.8.0
   [de0858da] Printf
+  [9abbd945] Profile
   [3fa0cd96] REPL
   [9a3f8284] Random
   [ea8e919c] SHA v0.7.0
@@ -496,11 +517,11 @@ And the full manifest:
   [14a3606d] MozillaCACerts_jll v2022.2.1
   [4536629a] OpenBLAS_jll v0.3.20+0
   [05823500] OpenLibm_jll v0.8.1+0
-  [efcefdf7] PCRE2_jll v10.40.0+0
+  [efcefdf7] PCRE2_jll v10.36.0+2
   [bea87d4a] SuiteSparse_jll v5.10.1+0
-  [83775a58] Zlib_jll v1.2.12+3
+  [83775a58] Zlib_jll v1.2.12+1
   [8e850b90] libblastrampoline_jll v5.1.0+0
   [8e850ede] nghttp2_jll v1.41.0+1
-  [3f19e933] p7zip_jll v17.4.0+0
+  [3f19e933] p7zip_jll v16.2.1+1
 ```
 

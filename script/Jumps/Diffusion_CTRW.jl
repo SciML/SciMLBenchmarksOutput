@@ -1,27 +1,25 @@
 
-using DiffEqBase, Catalyst, DiffEqJump, DiffEqProblemLibrary.JumpProblemLibrary, Plots, Statistics, DataFrames
-gr()
-fmt = :png
+using Catalyst, JumpProcesses, DiffEqProblemLibrary.JumpProblemLibrary, Plots, Statistics, DataFrames
 JumpProblemLibrary.importjumpproblems()
 
 
 N = 256
 h = 1 / N
-u0 = 10*ones(Int64, N)
+u0 = 10 * ones(Int64, N)
 tf = .01
-methods = (Direct(),DirectFW(),SortingDirect(),NRM(),DirectCR(),RSSA())
-shortlabels = [string(leg)[12:end-2] for leg in methods]
-jprob   = prob_jump_diffnetwork
-prob    = DiscreteProblem(u0, (0.0, tf), [1 / (h*h)])
-rn      = jprob.network(N)
-ploth   = plot(reuse=false)
+methods = (Direct(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR())
+shortlabels = [string(leg)[15:end-2] for leg in methods]
+jprob = prob_jump_diffnetwork
+rn = jprob.network(N)
+prob = DiscreteProblem(rn, u0, (0.0, tf), [1 / (h*h)])
+ploth = plot(reuse=false)
 for (i,method) in enumerate(methods)
     println("Benchmarking method: ", method)
     jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
-    sol = solve(jump_prob, SSAStepper(), saveat=tf/1000.)
-    plot!(ploth,sol.t,sol[Int(N//2),:],label=shortlabels[i], format=fmt)
+    sol = solve(jump_prob, SSAStepper(); saveat=tf/1000.)
+    plot!(ploth, sol.t, sol[Int(N//2),:], label=shortlabels[i])
 end
-plot!(ploth, title="Population at middle lattice site", xlabel="time",format=fmt)
+plot!(ploth, title="Population at middle lattice site", xlabel="time")
 
 
 function run_benchmark!(t, jump_prob, stepper)
@@ -37,7 +35,7 @@ benchmarks = Vector{Vector{Float64}}()
 for method in methods
     jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
     stepper = SSAStepper()
-    t = Vector{Float64}(undef,nsims)
+    t = Vector{Float64}(undef, nsims)
     run_benchmark!(t, jump_prob, stepper)
     push!(benchmarks, t)
 end
@@ -52,13 +50,13 @@ for i in 1:length(methods)
     stdtimes[i] = std(benchmarks[i])
 end
 
-df = DataFrame(names=shortlabels,medtimes=medtimes,relmedtimes=(medtimes/medtimes[1]),
-                avgtimes=avgtimes, std=stdtimes, cv=stdtimes./avgtimes)
+df = DataFrame(names=shortlabels, medtimes=medtimes, relmedtimes=(medtimes/medtimes[1]),
+               avgtimes=avgtimes, std=stdtimes, cv=stdtimes./avgtimes)
 
 
 sa = [string(round(mt,digits=4),"s") for mt in df.medtimes]
-bar(df.names,df.relmedtimes,legend=:false, fmt=fmt)
-scatter!(df.names, .05 .+ df.relmedtimes, markeralpha=0, series_annotations=sa, fmt=fmt)
+bar(df.names, df.relmedtimes, legend=:false)
+scatter!(df.names, .05 .+ df.relmedtimes, markeralpha=0, series_annotations=sa)
 ylabel!("median relative to Direct")
 title!("256 Site 1D Diffusion CTRW")
 
