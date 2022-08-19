@@ -87,7 +87,7 @@ function hamilton_jacobi(strategy, minimizer, maxIters)
     ## NEURAL NETWORK
     n = 10   #neuron number
 
-    chain = Lux.Chain(Lux.Dense(5, n, Lux.σ), Lux.Dense(n, n, Lux.σ), Lux.Dense(n, 1))   #Neural network from OptimizationFlux library
+    chain = Lux.Chain(Lux.Dense(5, n, tanh), Lux.Dense(n, n, tanh), Lux.Dense(n, 1))   #Neural network from OptimizationFlux library
 
     indvars = [t, x1, x2, x3, x4]   #phisically independent variables
     depvars = [u(t, x1, x2, x3, x4)]       #dependent (target) variable
@@ -271,7 +271,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Project.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Project.toml`
   [de52edbc] Integrals v3.1.1
   [e00cd5f1] IntegralsCuba v0.2.0
   [c31f79ba] IntegralsCubature v0.2.0
@@ -290,7 +290,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Manifest.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.2
   [621f4979] AbstractFFTs v1.2.1
   [1520ce14] AbstractTrees v0.4.2
