@@ -274,4 +274,6 @@ root, x0 = analyze(obj,splits,lower,upper)
 minimum(root)
 
 
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
 
