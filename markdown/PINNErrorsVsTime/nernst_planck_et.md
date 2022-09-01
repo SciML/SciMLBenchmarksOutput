@@ -73,8 +73,8 @@ function nernst_planck(strategy, minimizer, maxIters)
     uz = 10 #dummy
 
     # Operators
-    div = - D*(Dxx(c(t,x,y,z)) + Dyy(c(t,x,y,z)) + Dzz(c(t,x,y,z)))
-          + (ux*Dx(c(t,x,y,z)) + uy*Dy(c(t,x,y,z)) + uz*Dz(c(t,x,y,z)))
+    div = - D*(Dxx(c(t,x,y,z)) + Dyy(c(t,x,y,z)) + Dzz(c(t,x,y,z))) + 
+            (ux*Dx(c(t,x,y,z)) + uy*Dy(c(t,x,y,z)) + uz*Dz(c(t,x,y,z)))
 
     # Equation
     eq = Dt(c(t,x,y,z)) + div ~ 0      #NERNST-PLANCK EQUATION
@@ -268,7 +268,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Project.toml`
   [de52edbc] Integrals v3.1.1
   [e00cd5f1] IntegralsCuba v0.2.0
   [c31f79ba] IntegralsCubature v0.2.0
@@ -287,7 +287,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNErrorsVsTime/Manifest.toml`
   [c3fe647b] AbstractAlgebra v0.27.2
   [621f4979] AbstractFFTs v1.2.1
   [1520ce14] AbstractTrees v0.4.2
