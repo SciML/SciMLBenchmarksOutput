@@ -1,51 +1,49 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/BayesianInference/DiffEqBayesFitzHughNagumo/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams for parallel extrapolation methods</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Method of Lines Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../MOLPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_fdm_wpd/">Burger&#39;s Finite Difference Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li class="is-active"><a class="tocitem" href>Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Conclusion"><span>Conclusion</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</a></li><li class="is-active"><a href>Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/BayesianInference/DiffEqBayesFitzHughNagumo.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Fitzhugh-Nagumo-Bayesian-Parameter-Estimation-Benchmarks"><a class="docs-heading-anchor" href="#Fitzhugh-Nagumo-Bayesian-Parameter-Estimation-Benchmarks">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a><a id="Fitzhugh-Nagumo-Bayesian-Parameter-Estimation-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Fitzhugh-Nagumo-Bayesian-Parameter-Estimation-Benchmarks" title="Permalink"></a></h1><pre><code class="language-julia hljs">using DiffEqBayes, BenchmarkTools</code></pre><pre><code class="language-julia hljs">using OrdinaryDiffEq, RecursiveArrayTools, Distributions, ParameterizedFunctions, StanSample, DynamicHMC
 using Plots</code></pre><pre><code class="language-julia hljs">gr(fmt=:png)</code></pre><pre><code class="nohighlight hljs">Plots.GRBackend()</code></pre><h3 id="Defining-the-problem."><a class="docs-heading-anchor" href="#Defining-the-problem.">Defining the problem.</a><a id="Defining-the-problem.-1"></a><a class="docs-heading-anchor-permalink" href="#Defining-the-problem." title="Permalink"></a></h3><p>The <a href="https://en.wikipedia.org/wiki/FitzHugh%E2%80%93Nagumo_model">FitzHugh-Nagumo model</a> is a simplified version of <a href="https://en.wikipedia.org/wiki/Hodgkin%E2%80%93Huxley_model">Hodgkin-Huxley model</a> and is used to describe an excitable system (e.g. neuron).</p><pre><code class="language-julia hljs">fitz = @ode_def FitzhughNagumo begin
-  dv = v - v^3/3 -w + l
+  dv = v - 0.33*v^3 -w + l
   dw = τinv*(v +  a - b*w)
 end a b τinv l</code></pre><pre><code class="nohighlight hljs">(::Main.##WeaveSandBox#291.FitzhughNagumo{Main.##WeaveSandBox#291.var&quot;###Pa
 rameterizedDiffEqFunction#474&quot;, Main.##WeaveSandBox#291.var&quot;###Parameterize
 dTGradFunction#475&quot;, Main.##WeaveSandBox#291.var&quot;###ParameterizedJacobianFu
 nction#476&quot;, Nothing, Nothing, ModelingToolkit.ODESystem}) (generic functio
-n with 1 method)</code></pre><pre><code class="language-julia hljs">prob_ode_fitzhughnagumo = ODEProblem(fitz,[1.0,1.0],(0.0,10.0),[0.7,0.8,1/12.5,0.5])
+n with 1 method)</code></pre><pre><code class="language-julia hljs">prob_ode_fitzhughnagumo = ODEProblem(fitz, [1.0,1.0], (0.0,10.0), [0.7,0.8,1/12.5,0.5])
 sol = solve(prob_ode_fitzhughnagumo, Tsit5())</code></pre><pre><code class="nohighlight hljs">retcode: Success
 Interpolation: specialized 4th order &quot;free&quot; interpolation
-t: 14-element Vector{Float64}:
+t: 13-element Vector{Float64}:
   0.0
-  0.15079562872319327
-  0.6663735500745417
-  1.4549121831880751
-  2.6341750328847153
-  3.787286306555317
-  5.149281980854215
-  6.7648099160689386
-  7.606020767982898
-  8.324334020953115
-  9.040772533539053
-  9.552574456558219
-  9.985205763666121
+  0.1502916178003539
+  0.6611859977697417
+  1.4391494636342572
+  2.5894515498152293
+  3.760237603808549
+  5.101014094147208
+  6.709997158618223
+  7.604553280596642
+  8.336547620442024
+  9.03127910678863
+  9.55639994619208
  10.0
-u: 14-element Vector{Vector{Float64}}:
+u: 13-element Vector{Vector{Float64}}:
  [1.0, 1.0]
- [1.0242787914016627, 1.0109527801835287]
- [1.092538282536039, 1.0495725586393927]
- [1.147894455050522, 1.1102123746508352]
- [1.134543879398286, 1.1975474699280848]
- [1.043276210840273, 1.271868870768599]
- [0.8446920608722805, 1.3381007150055888]
- [0.31354431600484334, 1.3689380066234902]
- [-0.40983461431568685, 1.342759553988513]
- [-1.4082542877988236, 1.2706202676829645]
- [-1.9097832365284388, 1.1563319270772914]
- [-1.9618464462657994, 1.068871311583418]
- [-1.9544223952589859, 0.9966726802665666]
- [-1.953862989878742, 0.9942458207861209]</code></pre><p>Data is genereated by adding noise to the solution obtained above.</p><pre><code class="language-julia hljs">t = collect(range(1,stop=10,length=10))
+ [1.0247192356111163, 1.0109189409610948]
+ [1.0944137320832108, 1.0492393331998289]
+ [1.1525604499975908, 1.1092966016287371]
+ [1.1446577644416096, 1.195273810878899]
+ [1.0557695278493895, 1.2718985704582837]
+ [0.865959919956831, 1.3388184704641362]
+ [0.3675855933126252, 1.3735376027635644]
+ [-0.359442563141841, 1.3493319765636338]
+ [-1.3772888489033577, 1.2781711287398287]
+ [-1.905699772833817, 1.1680024379627088]
+ [-1.9707492682163554, 1.0777291974859278]
+ [-1.965045343773361, 1.0031251493361766]</code></pre><p>Data is genereated by adding noise to the solution obtained above.</p><pre><code class="language-julia hljs">t = collect(range(1,stop=10,length=10))
 sig = 0.20
 data = convert(Array, VectorOfArray([(sol(t[i]) + sig*randn(2)) for i in 1:length(t)]))</code></pre><pre><code class="nohighlight hljs">2×10 Matrix{Float64}:
- 0.925003  1.30003   1.3525   0.771624  …  -1.02135  -2.10478   -2.27248
- 1.15794   0.945443  1.41933  1.52572       1.1178    0.863596   1.25334</code></pre><h3 id="Plot-of-the-data-and-the-solution."><a class="docs-heading-anchor" href="#Plot-of-the-data-and-the-solution.">Plot of the data and the solution.</a><a id="Plot-of-the-data-and-the-solution.-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-of-the-data-and-the-solution." title="Permalink"></a></h3><pre><code class="language-julia hljs">scatter(t, data[1,:])
+ 0.94004   1.27344  1.04628  0.940266  …  -1.06071  -1.80895  -2.0739
+ 0.771674  1.17933  1.0349   1.2149        1.49237   1.11235   1.14467</code></pre><h3 id="Plot-of-the-data-and-the-solution."><a class="docs-heading-anchor" href="#Plot-of-the-data-and-the-solution.">Plot of the data and the solution.</a><a id="Plot-of-the-data-and-the-solution.-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-of-the-data-and-the-solution." title="Permalink"></a></h3><pre><code class="language-julia hljs">scatter(t, data[1,:])
 scatter!(t, data[2,:])
-plot!(sol)</code></pre><p><img src="../figures/DiffEqBayesFitzHughNagumo_7_1.png" alt/></p><h3 id="Priors-for-the-parameters-which-will-be-passed-for-the-Bayesian-Inference"><a class="docs-heading-anchor" href="#Priors-for-the-parameters-which-will-be-passed-for-the-Bayesian-Inference">Priors for the parameters which will be passed for the Bayesian Inference</a><a id="Priors-for-the-parameters-which-will-be-passed-for-the-Bayesian-Inference-1"></a><a class="docs-heading-anchor-permalink" href="#Priors-for-the-parameters-which-will-be-passed-for-the-Bayesian-Inference" title="Permalink"></a></h3><pre><code class="language-julia hljs">priors = [truncated(Normal(1.0,0.5),0,1.5),truncated(Normal(1.0,0.5),0,1.5),truncated(Normal(0.0,0.5),0.0,0.5),truncated(Normal(0.5,0.5),0,1)]</code></pre><pre><code class="nohighlight hljs">4-element Vector{Distributions.Truncated{Distributions.Normal{Float64}, Dis
+plot!(sol)</code></pre><p><img src="../figures/DiffEqBayesFitzHughNagumo_7_1.png" alt/></p><h3 id="Priors-for-the-parameters-which-will-be-passed-for-the-Bayesian-Inference"><a class="docs-heading-anchor" href="#Priors-for-the-parameters-which-will-be-passed-for-the-Bayesian-Inference">Priors for the parameters which will be passed for the Bayesian Inference</a><a id="Priors-for-the-parameters-which-will-be-passed-for-the-Bayesian-Inference-1"></a><a class="docs-heading-anchor-permalink" href="#Priors-for-the-parameters-which-will-be-passed-for-the-Bayesian-Inference" title="Permalink"></a></h3><pre><code class="language-julia hljs">priors = [truncated(Normal(1.0,0.5),0,1.5), truncated(Normal(1.0,0.5),0,1.5), truncated(Normal(0.0,0.5),0.0,0.5), truncated(Normal(0.5,0.5),0,1)]</code></pre><pre><code class="nohighlight hljs">4-element Vector{Distributions.Truncated{Distributions.Normal{Float64}, Dis
 tributions.Continuous, Float64}}:
  Truncated(Distributions.Normal{Float64}(μ=1.0, σ=0.5); lower=0.0, upper=1.
 5)
@@ -54,14 +52,48 @@ tributions.Continuous, Float64}}:
  Truncated(Distributions.Normal{Float64}(μ=0.0, σ=0.5); lower=0.0, upper=0.
 5)
  Truncated(Distributions.Normal{Float64}(μ=0.5, σ=0.5); lower=0.0, upper=1.
-0)</code></pre><h3 id="Benchmarks"><a class="docs-heading-anchor" href="#Benchmarks">Benchmarks</a><a id="Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarks" title="Permalink"></a></h3><h4 id="Stan.jl-backend"><a class="docs-heading-anchor" href="#Stan.jl-backend">Stan.jl backend</a><a id="Stan.jl-backend-1"></a><a class="docs-heading-anchor-permalink" href="#Stan.jl-backend" title="Permalink"></a></h4><pre><code class="language-julia hljs">@btime bayesian_result_stan = stan_inference(prob_ode_fitzhughnagumo,t,data,priors; print_summary=false, vars=(DiffEqBayes.StanODEData(), InverseGamma(2, 3)))</code></pre><pre><code class="nohighlight hljs">Error: IOError: cd(&quot;&quot;): no such file or directory (ENOENT)</code></pre><h4 id="Turing.jl-backend"><a class="docs-heading-anchor" href="#Turing.jl-backend">Turing.jl backend</a><a id="Turing.jl-backend-1"></a><a class="docs-heading-anchor-permalink" href="#Turing.jl-backend" title="Permalink"></a></h4><pre><code class="language-julia hljs">@btime bayesian_result_turing = turing_inference(prob_ode_fitzhughnagumo,Tsit5(),t,data,priors;num_samples = 10_000)</code></pre><pre><code class="nohighlight hljs">45.500 s (374329729 allocations: 40.83 GiB)
+0)</code></pre><h3 id="Benchmarks"><a class="docs-heading-anchor" href="#Benchmarks">Benchmarks</a><a id="Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarks" title="Permalink"></a></h3><h4 id="Stan.jl-backend"><a class="docs-heading-anchor" href="#Stan.jl-backend">Stan.jl backend</a><a id="Stan.jl-backend-1"></a><a class="docs-heading-anchor-permalink" href="#Stan.jl-backend" title="Permalink"></a></h4><pre><code class="language-julia hljs">@btime bayesian_result_stan = stan_inference(prob_ode_fitzhughnagumo,t,data,priors; num_samples = 10_000, print_summary=false, vars=(DiffEqBayes.StanODEData(), InverseGamma(2, 3)))</code></pre><pre><code class="nohighlight hljs">46.103647 seconds (6.75 M allocations: 413.960 MiB, 0.20% gc time, 4.60% c
+ompilation time)
+ 42.998614 seconds (558 allocations: 53.570 KiB)
+ 37.580653 seconds (558 allocations: 53.570 KiB)
+ 38.168030 seconds (558 allocations: 53.570 KiB)
+  56.970 s (401108 allocations: 36.28 MiB)
+Chains MCMC chain (10000×6×1 Array{Float64, 3}):
+
+Iterations        = 1:1:10000
+Number of chains  = 1
+Samples per chain = 10000
+parameters        = sigma1.1, sigma1.2, theta_1, theta_2, theta_3, theta_4
+internals         = 
+
+Summary Statistics
+  parameters      mean       std   naive_se      mcse         ess      rhat
+      Symbol   Float64   Float64    Float64   Float64     Float64   Float64
+
+    sigma1.1    0.3954    0.1219     0.0012    0.0023   3950.3456    1.0006
+    sigma1.2    0.4123    0.1184     0.0012    0.0017   4897.6442    0.9999
+     theta_1    0.9483    0.3338     0.0033    0.0078   1469.0631    1.0016
+     theta_2    0.8305    0.3033     0.0030    0.0042   6838.0868    0.9999
+     theta_3    0.0830    0.0375     0.0004    0.0008   2317.3052    1.0002
+     theta_4    0.5460    0.0988     0.0010    0.0020   2944.7919    1.0001
+
+Quantiles
+  parameters      2.5%     25.0%     50.0%     75.0%     97.5%
+      Symbol   Float64   Float64   Float64   Float64   Float64
+
+    sigma1.1    0.2304    0.3110    0.3745    0.4544    0.6906
+    sigma1.2    0.2458    0.3297    0.3907    0.4705    0.7070
+     theta_1    0.2527    0.7187    0.9873    1.2150    1.4655
+     theta_2    0.2019    0.6214    0.8437    1.0496    1.3826
+     theta_3    0.0281    0.0557    0.0769    0.1037    0.1688
+     theta_4    0.3802    0.4768    0.5371    0.6032    0.7734</code></pre><h4 id="Turing.jl-backend"><a class="docs-heading-anchor" href="#Turing.jl-backend">Turing.jl backend</a><a id="Turing.jl-backend-1"></a><a class="docs-heading-anchor-permalink" href="#Turing.jl-backend" title="Permalink"></a></h4><pre><code class="language-julia hljs">@btime bayesian_result_turing = turing_inference(prob_ode_fitzhughnagumo,Tsit5(),t,data,priors;num_samples = 10_000)</code></pre><pre><code class="nohighlight hljs">46.134 s (361627754 allocations: 39.28 GiB)
 Chains MCMC chain (10000×17×1 Array{Float64, 3}):
 
 Iterations        = 1001:1:11000
 Number of chains  = 1
 Samples per chain = 10000
-Wall duration     = 45.38 seconds
-Compute duration  = 45.38 seconds
+Wall duration     = 46.02 seconds
+Compute duration  = 46.02 seconds
 parameters        = theta[1], theta[2], theta[3], theta[4], σ[1]
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, h
 amiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, 
@@ -73,15 +105,15 @@ Summary Statistics
       Symbol   Float64   Float64    Float64   Float64     Float64   Float64
     ⋯
 
-    theta[1]    0.9568    0.3165     0.0032    0.0048   3954.4668    1.0003
+    theta[1]    0.9714    0.3150     0.0032    0.0040   5493.6059    1.0001
     ⋯
-    theta[2]    0.8886    0.3162     0.0032    0.0051   3987.4750    0.9999
+    theta[2]    0.7965    0.3003     0.0030    0.0040   5649.2757    1.0005
     ⋯
-    theta[3]    0.0626    0.0336     0.0003    0.0006   2872.4762    1.0002
+    theta[3]    0.0734    0.0296     0.0003    0.0004   3837.9387    0.9999
     ⋯
-    theta[4]    0.4575    0.0755     0.0008    0.0012   3202.4666    1.0000
+    theta[4]    0.5325    0.0792     0.0008    0.0011   3695.2692    1.0001
     ⋯
-        σ[1]    0.3125    0.0633     0.0006    0.0010   3514.1320    0.9999
+        σ[1]    0.2984    0.0601     0.0006    0.0008   4686.8764    0.9999
     ⋯
                                                                 1 column om
 itted
@@ -90,11 +122,11 @@ Quantiles
   parameters      2.5%     25.0%     50.0%     75.0%     97.5%
       Symbol   Float64   Float64   Float64   Float64   Float64
 
-    theta[1]    0.2920    0.7433    0.9861    1.2035    1.4614
-    theta[2]    0.2227    0.6729    0.9079    1.1297    1.4301
-    theta[3]    0.0148    0.0381    0.0567    0.0804    0.1452
-    theta[4]    0.3291    0.4049    0.4499    0.5022    0.6271
-        σ[1]    0.2168    0.2675    0.3026    0.3467    0.4623</code></pre><h1 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h1><p>FitzHugh-Ngumo is a standard problem for parameter estimation studies. In the FitzHugh-Nagumo model the parameters to be estimated were <code>[0.7,0.8,0.08,0.5]</code>. <code>dynamichmc_inference</code> has issues with the model and hence was excluded from this benchmark.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+    theta[1]    0.2843    0.7578    1.0025    1.2222    1.4611
+    theta[2]    0.1734    0.5906    0.8111    1.0179    1.3384
+    theta[3]    0.0283    0.0518    0.0692    0.0901    0.1434
+    theta[4]    0.3946    0.4786    0.5265    0.5796    0.7084
+        σ[1]    0.2064    0.2556    0.2897    0.3319    0.4403</code></pre><h1 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h1><p>FitzHugh-Ngumo is a standard problem for parameter estimation studies. In the FitzHugh-Nagumo model the parameters to be estimated were <code>[0.7,0.8,0.08,0.5]</code>. <code>dynamichmc_inference</code> has issues with the model and hence was excluded from this benchmark.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/BayesianInference&quot;,&quot;DiffEqBayesFitzHughNagumo.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.7.3
 Commit 742b9abb4d (2022-05-06 12:58 UTC)
 Platform Info:
@@ -107,19 +139,20 @@ Environment:
   JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [ebbdde9d] DiffEqBayes v3.0.0
-  [459566f4] DiffEqCallbacks v2.24.0
+  [459566f4] DiffEqCallbacks v2.24.1
   [31c24e10] Distributions v0.25.67
-  [bbc10e6e] DynamicHMC v3.1.2
-  [1dea7af3] OrdinaryDiffEq v6.20.0
-  [65888b18] ParameterizedFunctions v5.13.2
+  [bbc10e6e] DynamicHMC v3.2.0
+  [1dea7af3] OrdinaryDiffEq v6.22.0
+  [65888b18] ParameterizedFunctions v5.14.0
   [91a5bcdd] Plots v1.31.7
   [731186ca] RecursiveArrayTools v2.32.0
   [31c91b34] SciMLBenchmarks v0.1.1
   [c1514b29] StanSample v6.9.4
-  [fce5fe82] Turing v0.21.10</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Manifest.toml`
+  [fce5fe82] Turing v0.21.10
+  [37e2e46d] LinearAlgebra</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.3
   [621f4979] AbstractFFTs v1.2.1
@@ -165,13 +198,13 @@ Environment:
   [a80b9123] CommonMark v0.8.6
   [38540f10] CommonSolve v0.2.1
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v3.45.0
+  [34da2185] Compat v3.46.0
   [5224ae11] CompatHelperLocal v0.1.24
   [b152e2b5] CompositeTypes v0.1.2
   [a33af91c] CompositionsBase v0.1.1
   [8f4d0f93] Conda v1.7.0
   [88cd18e8] ConsoleProgressMonitor v0.1.2
-  [187b0558] ConstructionBase v1.4.0
+  [187b0558] ConstructionBase v1.4.1
   [d38c429a] Contour v0.6.2
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
@@ -181,9 +214,9 @@ Environment:
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
   [b429d917] DensityInterface v0.4.0
-  [2b5f629d] DiffEqBase v6.95.3
+  [2b5f629d] DiffEqBase v6.97.0
   [ebbdde9d] DiffEqBayes v3.0.0
-  [459566f4] DiffEqCallbacks v2.24.0
+  [459566f4] DiffEqCallbacks v2.24.1
   [163ba53b] DiffResults v1.0.3
   [b552c78f] DiffRules v1.11.0
   [b4f34e82] Distances v0.10.7
@@ -191,9 +224,9 @@ Environment:
   [ced4e74d] DistributionsAD v0.6.42
   [ffbed154] DocStringExtensions v0.8.6
   [e30172f5] Documenter v0.27.22
-  [5b8099bc] DomainSets v0.5.11
+  [5b8099bc] DomainSets v0.5.12
   [fa6b7ba4] DualNumbers v0.6.8
-  [bbc10e6e] DynamicHMC v3.1.2
+  [bbc10e6e] DynamicHMC v3.2.0
   [366bfd00] DynamicPPL v0.20.0
   [7c1d4256] DynamicPolynomials v0.4.5
   [cad2338a] EllipticalSliceSampling v1.0.0
@@ -204,7 +237,7 @@ Environment:
   [7a1cc6ca] FFTW v1.5.0
   [7034ab61] FastBroadcast v0.2.1
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v1.2.3
+  [29a986be] FastLapackInterface v1.2.5
   [48062228] FilePathsBase v0.9.18
   [1a297f60] FillArrays v0.13.2
   [6a86dc24] FiniteDiff v2.15.0
@@ -212,14 +245,15 @@ Environment:
   [59287772] Formatting v0.4.2
   [f6369f11] ForwardDiff v0.10.32
   [069b7b12] FunctionWrappers v1.1.2
+  [77dc65aa] FunctionWrappersWrappers v0.1.0
   [d9f16b24] Functors v0.2.8
-  [46192b85] GPUArraysCore v0.1.1
+  [46192b85] GPUArraysCore v0.1.2
   [28b8d3ca] GR v0.66.2
   [c145ed77] GenericSchur v0.5.3
   [cf35fbd7] GeoInterface v1.0.1
   [5c1252a2] GeometryBasics v0.4.3
   [d7ba0133] Git v1.2.1
-  [86223c79] Graphs v1.7.1
+  [86223c79] Graphs v1.7.2
   [42e2da0e] Grisu v1.0.2
   [0b43b601] Groebner v0.2.10
   [d5909c97] GroupsCore v0.4.0
@@ -230,14 +264,14 @@ Environment:
   [7073ff75] IJulia v1.23.3
   [b5f81e59] IOCapture v0.2.2
   [615f187c] IfElse v0.1.1
-  [d25df0c9] Inflate v0.1.2
+  [d25df0c9] Inflate v0.1.3
   [83e8ac13] IniFile v0.5.1
   [22cec73e] InitialValues v0.3.1
   [842dd82b] InlineStrings v1.1.4
   [505f98c9] InplaceOps v0.3.0
   [18e54dd8] IntegerMathUtils v0.1.0
   [a98d9a8b] Interpolations v0.14.4
-  [8197267c] IntervalSets v0.7.1
+  [8197267c] IntervalSets v0.7.2
   [3587e190] InverseFunctions v0.1.7
   [41ab1584] InvertedIndices v1.1.0
   [92d709cd] IrrationalConstants v0.1.1
@@ -292,9 +326,9 @@ Environment:
   [6fe1bfb0] OffsetArrays v1.12.7
   [429524aa] Optim v1.7.1
   [bac558e1] OrderedCollections v1.4.1
-  [1dea7af3] OrdinaryDiffEq v6.20.0
+  [1dea7af3] OrdinaryDiffEq v6.22.0
   [90014a1f] PDMats v0.11.16
-  [65888b18] ParameterizedFunctions v5.13.2
+  [65888b18] ParameterizedFunctions v5.14.0
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.3.2
   [ccf2f8ad] PlotThemes v3.0.0
@@ -302,7 +336,7 @@ Environment:
   [91a5bcdd] Plots v1.31.7
   [e409e4f3] PoissonRandom v0.4.1
   [f517fe37] Polyester v0.6.14
-  [1d0040c9] PolyesterWeave v0.1.8
+  [1d0040c9] PolyesterWeave v0.1.9
   [2dfb63ee] PooledArrays v1.4.2
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.2
@@ -332,7 +366,7 @@ Environment:
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.33
-  [0bca4576] SciMLBase v1.49.2
+  [0bca4576] SciMLBase v1.50.1
   [31c91b34] SciMLBenchmarks v0.1.1
   [30f210dd] ScientificTypesBase v3.0.0
   [6c6a2e73] Scratch v1.1.1
@@ -341,7 +375,7 @@ Environment:
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
   [699a6c99] SimpleTraits v0.9.4
-  [66db9d55] SnoopPrecompile v1.0.0
+  [66db9d55] SnoopPrecompile v1.0.1
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.0.1
   [47a9eef4] SparseDiffTools v1.25.1
@@ -514,4 +548,4 @@ Environment:
   [83775a58] Zlib_jll v1.2.12+3
   [8e850b90] libblastrampoline_jll v5.1.0+0
   [8e850ede] nghttp2_jll v1.41.0+1
-  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">« Lotka-Volterra Parameter Estimation Benchmarks</a><a class="docs-footer-nextpage" href="../DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Thursday 1 September 2022 00:43">Thursday 1 September 2022</span>. Using Julia version 1.8.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">« Lotka-Volterra Parameter Estimation Benchmarks</a><a class="docs-footer-nextpage" href="../DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Thursday 1 September 2022 03:01">Thursday 1 September 2022</span>. Using Julia version 1.8.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
