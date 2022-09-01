@@ -3,7 +3,7 @@ using DiffEqBayes
 using DiffEqCallbacks
 using Distributions, StanSample, DynamicHMC
 using OrdinaryDiffEq, RecursiveArrayTools, ParameterizedFunctions, DiffEqCallbacks
-using Plots
+using Plots, LinearAlgebra
 
 
 gr(fmt=:png)
@@ -21,11 +21,11 @@ tspan = (0.0, 30.0)
 p = [10.0,28.0,2.66]
 
 
-prob = ODEProblem(g1,r0,tspan,p)
+prob = ODEProblem(g1, r0, tspan, p)
 sol = solve(prob,Tsit5())
 
 
-t = collect(range(1,stop=30,length=30))
+t = collect(range(1, stop=30, length=30))
 sig = 0.49
 data = convert(Array, VectorOfArray([(sol(t[i]) + sig*randn(3)) for i in 1:length(t)]))
 

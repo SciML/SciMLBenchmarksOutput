@@ -11,7 +11,7 @@ using DiffEqBayes
 using DiffEqCallbacks
 using Distributions, StanSample, DynamicHMC
 using OrdinaryDiffEq, RecursiveArrayTools, ParameterizedFunctions, DiffEqCallbacks
-using Plots
+using Plots, LinearAlgebra
 ```
 
 
@@ -38,10 +38,10 @@ end σ ρ β
 ```
 
 ```
-(::Main.##WeaveSandBox#500.LorenzExample{Main.##WeaveSandBox#500.var"###Par
-ameterizedDiffEqFunction#502", Main.##WeaveSandBox#500.var"###Parameterized
-TGradFunction#503", Main.##WeaveSandBox#500.var"###ParameterizedJacobianFun
-ction#504", Nothing, Nothing, ModelingToolkit.ODESystem}) (generic function
+(::Main.##WeaveSandBox#501.LorenzExample{Main.##WeaveSandBox#501.var"###Par
+ameterizedDiffEqFunction#503", Main.##WeaveSandBox#501.var"###Parameterized
+TGradFunction#504", Main.##WeaveSandBox#501.var"###ParameterizedJacobianFun
+ction#505", Nothing, Nothing, ModelingToolkit.ODESystem}) (generic function
  with 1 method)
 ```
 
@@ -63,7 +63,7 @@ p = [10.0,28.0,2.66]
 
 
 ```julia
-prob = ODEProblem(g1,r0,tspan,p)
+prob = ODEProblem(g1, r0, tspan, p)
 sol = solve(prob,Tsit5())
 ```
 
@@ -121,16 +121,16 @@ u: 362-element Vector{Vector{Float64}}:
 #### Generating data for bayesian estimation of parameters from the obtained solutions using the `Tsit5` algorithm by adding random noise to it.
 
 ```julia
-t = collect(range(1,stop=30,length=30))
+t = collect(range(1, stop=30, length=30))
 sig = 0.49
 data = convert(Array, VectorOfArray([(sol(t[i]) + sig*randn(3)) for i in 1:length(t)]))
 ```
 
 ```
 3×30 Matrix{Float64}:
- -9.72835  -7.02351  -7.77443  -10.4597  …  11.101    3.50172    0.10191
- -9.82333  -8.70366  -6.726    -10.2606     16.4315   0.962765   0.0925805
- 28.1524   24.5321   28.0985    27.1124     24.4697  25.1366    12.2724
+ -9.4863   -8.26604  -9.4762   -9.43856  …  10.8774   1.88372   0.817086
+ -8.95311  -8.95638  -6.83362  -9.24249     15.5811   1.22196  -0.0205546
+ 28.6646   25.8673   27.6821   25.7067      25.0258  26.1566   12.5355
 ```
 
 
@@ -207,7 +207,38 @@ Lorenz equation is a chaotic system hence requires very low tolerance to be esti
 ```
 
 ```
-Error: IOError: cd(""): no such file or directory (ENOENT)
+654.988133 seconds (741 allocations: 92.414 KiB)
+674.015461 seconds (620.74 k allocations: 35.161 MiB, 0.04% compilation tim
+e)
+Chains MCMC chain (1000×6×1 Array{Float64, 3}):
+
+Iterations        = 1:1:1000
+Number of chains  = 1
+Samples per chain = 1000
+parameters        = sigma1.1, sigma1.2, sigma1.3, theta_1, theta_2, theta_3
+internals         = 
+
+Summary Statistics
+  parameters      mean       std   naive_se      mcse       ess      rhat
+      Symbol   Float64   Float64    Float64   Float64   Float64   Float64
+
+    sigma1.1    5.9499    0.6965     0.0220    0.1207    2.5828    1.9818
+    sigma1.2    7.5049    0.7299     0.0231    0.1233    2.6396    1.9115
+    sigma1.3    8.2681    0.2744     0.0087    0.0363    4.7009    1.3262
+     theta_1    5.8557    0.1385     0.0044    0.0203   16.1014    1.0807
+     theta_2   20.5747    0.1210     0.0038    0.0185    7.7210    1.1569
+     theta_3    1.4274    0.0051     0.0002    0.0006    4.0871    1.3896
+
+Quantiles
+  parameters      2.5%     25.0%     50.0%     75.0%     97.5%
+      Symbol   Float64   Float64   Float64   Float64   Float64
+
+    sigma1.1    5.3775    5.4055    5.4333    6.8006    6.8489
+    sigma1.2    6.8951    6.9438    6.9698    8.3409    8.4836
+    sigma1.3    8.0865    8.1165    8.1468    8.4608    8.5208
+     theta_1    5.4184    5.7923    5.8507    5.9638    6.0539
+     theta_2   20.4441   20.4607   20.6151   20.6260   20.8323
+     theta_3    1.4237    1.4246    1.4251    1.4316    1.4320
 ```
 
 
@@ -221,7 +252,51 @@ Error: IOError: cd(""): no such file or directory (ENOENT)
 ```
 
 ```
-Error: UndefVarError: Diagonal not defined
+6160.450610 seconds (20.46 G allocations: 467.651 GiB, 0.93% gc time, 0.65%
+ compilation time)
+Chains MCMC chain (1000×18×1 Array{Float64, 3}):
+
+Iterations        = 501:1:1500
+Number of chains  = 1
+Samples per chain = 1000
+Wall duration     = 6142.78 seconds
+Compute duration  = 6142.78 seconds
+parameters        = theta[1], theta[2], theta[3], σ[1], σ[2], σ[3]
+internals         = lp, n_steps, is_accept, acceptance_rate, log_density, h
+amiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, 
+tree_depth, numerical_error, step_size, nom_step_size
+
+Summary Statistics
+  parameters      mean       std   naive_se      mcse       ess      rhat  
+ es ⋯
+      Symbol   Float64   Float64    Float64   Float64   Float64   Float64  
+    ⋯
+
+    theta[1]    6.5135    0.0000     0.0000    0.0000    2.4143    2.4026  
+    ⋯
+    theta[2]   31.7512    0.0000     0.0000    0.0000    5.3423    1.1635  
+    ⋯
+    theta[3]    2.5091    0.0000     0.0000    0.0000    3.9214    1.2309  
+    ⋯
+        σ[1]    1.7857    0.0000     0.0000    0.0000    5.6279    1.2962  
+    ⋯
+        σ[2]    0.6606    0.0000     0.0000    0.0000    3.9877    1.2967  
+    ⋯
+        σ[3]    6.1540    0.0000     0.0000    0.0000   11.3917    1.0002  
+    ⋯
+                                                                1 column om
+itted
+
+Quantiles
+  parameters      2.5%     25.0%     50.0%     75.0%     97.5%
+      Symbol   Float64   Float64   Float64   Float64   Float64
+
+    theta[1]    6.5135    6.5135    6.5135    6.5135    6.5135
+    theta[2]   31.7512   31.7512   31.7512   31.7512   31.7512
+    theta[3]    2.5091    2.5091    2.5091    2.5091    2.5091
+        σ[1]    1.7857    1.7857    1.7857    1.7857    1.7857
+        σ[2]    0.6606    0.6606    0.6606    0.6606    0.6606
+        σ[3]    6.1540    6.1540    6.1540    6.1540    6.1540
 ```
 
 
@@ -282,25 +357,26 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Project.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [ebbdde9d] DiffEqBayes v3.0.0
-  [459566f4] DiffEqCallbacks v2.24.0
+  [459566f4] DiffEqCallbacks v2.24.1
   [31c24e10] Distributions v0.25.67
-  [bbc10e6e] DynamicHMC v3.1.2
-  [1dea7af3] OrdinaryDiffEq v6.20.0
-  [65888b18] ParameterizedFunctions v5.13.2
+  [bbc10e6e] DynamicHMC v3.2.0
+  [1dea7af3] OrdinaryDiffEq v6.22.0
+  [65888b18] ParameterizedFunctions v5.14.0
   [91a5bcdd] Plots v1.31.7
   [731186ca] RecursiveArrayTools v2.32.0
   [31c91b34] SciMLBenchmarks v0.1.1
   [c1514b29] StanSample v6.9.4
   [fce5fe82] Turing v0.21.10
+  [37e2e46d] LinearAlgebra
 ```
 
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Manifest.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.3
   [621f4979] AbstractFFTs v1.2.1
@@ -346,13 +422,13 @@ And the full manifest:
   [a80b9123] CommonMark v0.8.6
   [38540f10] CommonSolve v0.2.1
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v3.45.0
+  [34da2185] Compat v3.46.0
   [5224ae11] CompatHelperLocal v0.1.24
   [b152e2b5] CompositeTypes v0.1.2
   [a33af91c] CompositionsBase v0.1.1
   [8f4d0f93] Conda v1.7.0
   [88cd18e8] ConsoleProgressMonitor v0.1.2
-  [187b0558] ConstructionBase v1.4.0
+  [187b0558] ConstructionBase v1.4.1
   [d38c429a] Contour v0.6.2
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
@@ -362,9 +438,9 @@ And the full manifest:
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
   [b429d917] DensityInterface v0.4.0
-  [2b5f629d] DiffEqBase v6.95.3
+  [2b5f629d] DiffEqBase v6.97.0
   [ebbdde9d] DiffEqBayes v3.0.0
-  [459566f4] DiffEqCallbacks v2.24.0
+  [459566f4] DiffEqCallbacks v2.24.1
   [163ba53b] DiffResults v1.0.3
   [b552c78f] DiffRules v1.11.0
   [b4f34e82] Distances v0.10.7
@@ -372,9 +448,9 @@ And the full manifest:
   [ced4e74d] DistributionsAD v0.6.42
   [ffbed154] DocStringExtensions v0.8.6
   [e30172f5] Documenter v0.27.22
-  [5b8099bc] DomainSets v0.5.11
+  [5b8099bc] DomainSets v0.5.12
   [fa6b7ba4] DualNumbers v0.6.8
-  [bbc10e6e] DynamicHMC v3.1.2
+  [bbc10e6e] DynamicHMC v3.2.0
   [366bfd00] DynamicPPL v0.20.0
   [7c1d4256] DynamicPolynomials v0.4.5
   [cad2338a] EllipticalSliceSampling v1.0.0
@@ -385,7 +461,7 @@ And the full manifest:
   [7a1cc6ca] FFTW v1.5.0
   [7034ab61] FastBroadcast v0.2.1
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v1.2.3
+  [29a986be] FastLapackInterface v1.2.5
   [48062228] FilePathsBase v0.9.18
   [1a297f60] FillArrays v0.13.2
   [6a86dc24] FiniteDiff v2.15.0
@@ -393,14 +469,15 @@ And the full manifest:
   [59287772] Formatting v0.4.2
   [f6369f11] ForwardDiff v0.10.32
   [069b7b12] FunctionWrappers v1.1.2
+  [77dc65aa] FunctionWrappersWrappers v0.1.0
   [d9f16b24] Functors v0.2.8
-  [46192b85] GPUArraysCore v0.1.1
+  [46192b85] GPUArraysCore v0.1.2
   [28b8d3ca] GR v0.66.2
   [c145ed77] GenericSchur v0.5.3
   [cf35fbd7] GeoInterface v1.0.1
   [5c1252a2] GeometryBasics v0.4.3
   [d7ba0133] Git v1.2.1
-  [86223c79] Graphs v1.7.1
+  [86223c79] Graphs v1.7.2
   [42e2da0e] Grisu v1.0.2
   [0b43b601] Groebner v0.2.10
   [d5909c97] GroupsCore v0.4.0
@@ -411,14 +488,14 @@ And the full manifest:
   [7073ff75] IJulia v1.23.3
   [b5f81e59] IOCapture v0.2.2
   [615f187c] IfElse v0.1.1
-  [d25df0c9] Inflate v0.1.2
+  [d25df0c9] Inflate v0.1.3
   [83e8ac13] IniFile v0.5.1
   [22cec73e] InitialValues v0.3.1
   [842dd82b] InlineStrings v1.1.4
   [505f98c9] InplaceOps v0.3.0
   [18e54dd8] IntegerMathUtils v0.1.0
   [a98d9a8b] Interpolations v0.14.4
-  [8197267c] IntervalSets v0.7.1
+  [8197267c] IntervalSets v0.7.2
   [3587e190] InverseFunctions v0.1.7
   [41ab1584] InvertedIndices v1.1.0
   [92d709cd] IrrationalConstants v0.1.1
@@ -473,9 +550,9 @@ And the full manifest:
   [6fe1bfb0] OffsetArrays v1.12.7
   [429524aa] Optim v1.7.1
   [bac558e1] OrderedCollections v1.4.1
-  [1dea7af3] OrdinaryDiffEq v6.20.0
+  [1dea7af3] OrdinaryDiffEq v6.22.0
   [90014a1f] PDMats v0.11.16
-  [65888b18] ParameterizedFunctions v5.13.2
+  [65888b18] ParameterizedFunctions v5.14.0
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.3.2
   [ccf2f8ad] PlotThemes v3.0.0
@@ -483,7 +560,7 @@ And the full manifest:
   [91a5bcdd] Plots v1.31.7
   [e409e4f3] PoissonRandom v0.4.1
   [f517fe37] Polyester v0.6.14
-  [1d0040c9] PolyesterWeave v0.1.8
+  [1d0040c9] PolyesterWeave v0.1.9
   [2dfb63ee] PooledArrays v1.4.2
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.2
@@ -513,7 +590,7 @@ And the full manifest:
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.33
-  [0bca4576] SciMLBase v1.49.2
+  [0bca4576] SciMLBase v1.50.1
   [31c91b34] SciMLBenchmarks v0.1.1
   [30f210dd] ScientificTypesBase v3.0.0
   [6c6a2e73] Scratch v1.1.1
@@ -522,7 +599,7 @@ And the full manifest:
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
   [699a6c99] SimpleTraits v0.9.4
-  [66db9d55] SnoopPrecompile v1.0.0
+  [66db9d55] SnoopPrecompile v1.0.1
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.0.1
   [47a9eef4] SparseDiffTools v1.25.1
