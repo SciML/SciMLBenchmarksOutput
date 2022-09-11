@@ -259,3 +259,7 @@ results1
 @df results1 plot(:EnergyError, :runtime, group=:integrator,
     xscale=:log10, yscale=:log10, xlabel="Energy error", ylabel="Runtime (s)")
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+
