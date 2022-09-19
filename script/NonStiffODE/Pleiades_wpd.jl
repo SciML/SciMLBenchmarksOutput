@@ -22,7 +22,7 @@ f = (du,u,p,t) -> begin
   end
 end
 
-prob = ODEProblem(f,[3.0,3.0,-1.0,-3.0,2.0,-2.0,2.0,3.0,-3.0,2.0,0,0,-4.0,4.0,0,0,0,0,0,1.75,-1.5,0,0,0,-1.25,1,0,0],(0.0,3.0))
+prob = ODEProblem{true, SciMLBase.FullSpecialize}(f,[3.0,3.0,-1.0,-3.0,2.0,-2.0,2.0,3.0,-3.0,2.0,0,0,-4.0,4.0,0,0,0,0,0,1.75,-1.5,0,0,0,-1.25,1,0,0],(0.0,3.0))
 
 abstols = 1.0 ./ 10.0 .^ (6:9)
 reltols = 1.0 ./ 10.0 .^ (3:6);
@@ -63,10 +63,11 @@ plot(wp)
 
 
 setups = [Dict(:alg=>DP8())
+          Dict(:alg=>Vern6())
           Dict(:alg=>Vern7())
           Dict(:alg=>Vern8())
+          Dict(:alg=>Vern9())
           Dict(:alg=>dop853())
-          Dict(:alg=>Vern6())
 ]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,save_everystep=false,numruns=100,maxiters=1000)
 plot(wp)
@@ -86,9 +87,10 @@ plot(wp)
 
 
 setups = [Dict(:alg=>DP8())
+          Dict(:alg=>Vern6())
           Dict(:alg=>Vern7())
           Dict(:alg=>Vern8())
-          Dict(:alg=>Vern6())
+          Dict(:alg=>Vern9())
 ]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;appxsol=test_sol,numruns=100,maxiters=1000,error_estimate=:L2,dense_errors=true)
 plot(wp)
