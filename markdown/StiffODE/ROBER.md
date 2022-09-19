@@ -380,7 +380,7 @@ setups = [
           Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = false)),
           ]
 
-solnames = ["CVODE_BDF","KenCarp4","Rodas4","QNDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
+solnames = ["CVODE_BDF","KenCarp4","Rodas4","Rodas5P","QNDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
            "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
 
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
@@ -392,11 +392,7 @@ plot(wp, title = "Implicit Methods: ROBER",legend=:outertopleft,size = (1000,500
      bottom_margin= 5Plots.mm)
 ```
 
-```
-Error: AssertionError: names === nothing || length(setups) == length(names)
-```
-
-
+![](figures/ROBER_23_1.png)
 
 
 
