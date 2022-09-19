@@ -439,7 +439,7 @@ setups = [Dict(:alg=>Rodas3()),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>Rodas4()),
           Dict(:alg=>radau()),
-          Dict(:alg=>Rodas5())
+          Dict(:alg=>Rodas5()),
           Dict(:alg=>Rodas5P())]
 names = ["Rodas3" "Kvaerno4" "Kvaerno5" "CVODE_BDF" "KenCarp4" "KenCarp5" "Rodas4" "radau" "Rodas5" "Rodas5P"]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;
@@ -447,11 +447,7 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;
 plot(wp)
 ```
 
-```
-Error: syntax: missing separator in array expression
-```
-
-
+![](figures/VanDerPol_27_1.png)
 
 ```julia
 setups = [Dict(:alg=>CVODE_BDF()),
@@ -531,7 +527,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [f3b72e0c] DiffEqDevTools v2.32.0
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.5
@@ -554,7 +550,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.4
   [621f4979] AbstractFFTs v1.2.1
