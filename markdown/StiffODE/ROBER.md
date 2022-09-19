@@ -301,7 +301,7 @@ setups = [#Dict(:alg=>Rodas5()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
           Dict(:alg=>Rodas4()),
-          Dict(:alg=>Rodas5P()),
+          #Dict(:alg=>Rodas5P()),
           Dict(:alg=>rodas()),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau()),
@@ -322,7 +322,7 @@ setups = [Dict(:alg=>Kvaerno4()),
           Dict(:alg=>KenCarp47()),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>Rodas4()),
-          Dict(:alg=>Rodas5P()),
+          #Dict(:alg=>Rodas5P()),
           #Dict(:alg=>Rodas5()),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau()),
@@ -342,8 +342,9 @@ abstols = 1.0 ./ 10.0 .^ (10:12)
 reltols = 1.0 ./ 10.0 .^ (7:9)
 
 setups = [Dict(:alg=>Rodas4())
-          Dict(:alg=>Rodas5())]
-names = ["Rodas4" "Rodas5"]
+          Dict(:alg=>Rodas5())
+          Dict(:alg=>Rodas5P())]
+names = ["Rodas4" "Rodas5" "Rodas5P"]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;names=names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
@@ -436,7 +437,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [f3b72e0c] DiffEqDevTools v2.32.0
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.5
@@ -459,7 +460,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.4
   [621f4979] AbstractFFTs v1.2.1
