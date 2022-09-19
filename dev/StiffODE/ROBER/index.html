@@ -127,7 +127,7 @@ setups = [#Dict(:alg=&gt;Rodas5()),
           Dict(:alg=&gt;CVODE_BDF()),
           Dict(:alg=&gt;ddebdf()),
           Dict(:alg=&gt;Rodas4()),
-          Dict(:alg=&gt;Rodas5P()),
+          #Dict(:alg=&gt;Rodas5P()),
           Dict(:alg=&gt;rodas()),
           Dict(:alg=&gt;lsoda()),
           Dict(:alg=&gt;radau()),
@@ -142,7 +142,7 @@ plot(wp)</code></pre><p><img src="../figures/ROBER_20_1.png" alt/></p><pre><code
           Dict(:alg=&gt;KenCarp47()),
           Dict(:alg=&gt;KenCarp5()),
           Dict(:alg=&gt;Rodas4()),
-          Dict(:alg=&gt;Rodas5P()),
+          #Dict(:alg=&gt;Rodas5P()),
           #Dict(:alg=&gt;Rodas5()),
           Dict(:alg=&gt;lsoda()),
           Dict(:alg=&gt;radau()),
@@ -156,8 +156,9 @@ plot(wp)</code></pre><p><img src="../figures/ROBER_21_1.png" alt/></p><pre><code
 reltols = 1.0 ./ 10.0 .^ (7:9)
 
 setups = [Dict(:alg=&gt;Rodas4())
-          Dict(:alg=&gt;Rodas5())]
-names = [&quot;Rodas4&quot; &quot;Rodas5&quot;]
+          Dict(:alg=&gt;Rodas5())
+          Dict(:alg=&gt;Rodas5P())]
+names = [&quot;Rodas4&quot; &quot;Rodas5&quot; &quot;Rodas5P&quot;]
 wp = WorkPrecisionSet(prob,abstols,reltols,setups;names=names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)</code></pre><p><img src="../figures/ROBER_22_1.png" alt/></p><p>Multithreading benchmarks with Parallel Extrapolation Methods</p><pre><code class="language-julia hljs">#Setting BLAS to one thread to measure gains
@@ -205,7 +206,7 @@ Environment:
   JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [f3b72e0c] DiffEqDevTools v2.32.0
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.5
@@ -222,7 +223,7 @@ Environment:
   [c3572dad] Sundials v4.10.1
   [a759f4b9] TimerOutputs v0.5.21
   [37e2e46d] LinearAlgebra
-  [2f01184e] SparseArrays</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
+  [2f01184e] SparseArrays</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.4
   [621f4979] AbstractFFTs v1.2.1
@@ -612,4 +613,4 @@ Environment:
   [83775a58] Zlib_jll
   [8e850b90] libblastrampoline_jll
   [8e850ede] nghttp2_jll
-  [3f19e933] p7zip_jll</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Pollution/">« POLLU Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../VanDerPol/">VanDerPol Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Monday 19 September 2022 11:38">Monday 19 September 2022</span>. Using Julia version 1.8.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [3f19e933] p7zip_jll</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Pollution/">« POLLU Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../VanDerPol/">VanDerPol Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Monday 19 September 2022 11:45">Monday 19 September 2022</span>. Using Julia version 1.8.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
