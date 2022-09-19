@@ -10,7 +10,7 @@ f = @ode_def Orego begin
 end p1 p2 p3
 
 p = [77.27,8.375e-6,0.161]
-prob = ODEProblem(f,[1.0,2.0,3.0],(0.0,30.0),p)
+prob = ODEProblem{true, SciMLBase.FullSpecialize}(f,[1.0,2.0,3.0],(0.0,30.0),p)
 sol = solve(prob,Rodas5(),abstol=1/10^14,reltol=1/10^14)
 test_sol = TestSolution(sol)
 abstols = 1.0 ./ 10.0 .^ (4:11)
@@ -154,6 +154,7 @@ setups = [
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
           Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
           Dict(:alg=>rodas()),
           Dict(:alg=>radau()),
           Dict(:alg=>RadauIIA5()),
@@ -176,6 +177,7 @@ plot(wp)
 
 setups = [Dict(:alg=>GRK4A()),
           Dict(:alg=>Rodas5()),
+          Dict(:alg=>Rodas5P()),
           Dict(:alg=>Kvaerno5()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
@@ -227,6 +229,7 @@ setups = [
             Dict(:alg=>CVODE_BDF()),
             Dict(:alg=>KenCarp4()),
             Dict(:alg=>Rodas4()),
+            Dict(:alg=>Rodas5P()),
             Dict(:alg=>QNDF()),
             Dict(:alg=>lsoda()),
             Dict(:alg=>radau()),

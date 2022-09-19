@@ -19,7 +19,7 @@ end
 u0 = zeros(8)
 u0[1] = 1
 u0[8] = 0.0057
-prob = ODEProblem(f,u0,(0.0,321.8122))
+prob = ODEProblem{true, SciMLBase.FullSpecialize}(f,u0,(0.0,321.8122))
 
 sol = solve(prob,Rodas5(),abstol=1/10^14,reltol=1/10^14)
 test_sol = TestSolution(sol)
@@ -144,6 +144,7 @@ setups = [
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
           Dict(:alg=>Rodas5()),
+          Dict(:alg=>Rodas5P()),
           Dict(:alg=>rodas()),
           Dict(:alg=>radau()),
           Dict(:alg=>lsoda()),
@@ -166,6 +167,7 @@ plot(wp)
 
 setups = [Dict(:alg=>GRK4A()),
           Dict(:alg=>Rodas5()),
+          Dict(:alg=>Rodas5P()),
           Dict(:alg=>Kvaerno5()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>lsoda()),
@@ -231,7 +233,7 @@ setups = [
             Dict(:alg=>CVODE_BDF()),
             Dict(:alg=>KenCarp4()),
             Dict(:alg=>Rodas4()),
-            Dict(:alg=>Rodas5()),
+            Dict(:alg=>Rodas5P()),
             Dict(:alg=>QNDF()),
             Dict(:alg=>lsoda()),
             Dict(:alg=>radau()),

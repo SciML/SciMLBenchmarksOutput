@@ -8,7 +8,7 @@ rober = @ode_def begin
   dy₂ =  k₁*y₁-k₂*y₂^2-k₃*y₂*y₃
   dy₃ =  k₂*y₂^2
 end k₁ k₂ k₃
-prob = ODEProblem(rober,[1.0,0.0,0.0],(0.0,1e5),(0.04,3e7,1e4))
+prob = ODEProblem{true, SciMLBase.FullSpecialize}(rober,[1.0,0.0,0.0],(0.0,1e5),(0.04,3e7,1e4))
 sol = solve(prob,CVODE_BDF(),abstol=1/10^14,reltol=1/10^14)
 test_sol = TestSolution(sol)
 abstols = 1.0 ./ 10.0 .^ (4:11)
@@ -184,6 +184,7 @@ setups = [#Dict(:alg=>Rodas5()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
           Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
           Dict(:alg=>rodas()),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau()),
@@ -201,6 +202,7 @@ setups = [Dict(:alg=>Kvaerno4()),
           Dict(:alg=>KenCarp47()),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
           #Dict(:alg=>Rodas5()),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau()),
@@ -234,6 +236,7 @@ setups = [
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau()),
