@@ -127,32 +127,7 @@ plot(wp)</code></pre><p><img src="../figures/VanDerPol_19_1.png" alt/></p><pre><
 gr()
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;error_estimate=:l2,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)</code></pre><p><img src="../figures/VanDerPol_20_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;Rosenbrock23(),:dense=&gt;false),
-          Dict(:alg=&gt;Rosenbrock23(), :dense =&gt; false, :prob_choice =&gt; 2),
-          Dict(:alg=&gt;Kvaerno3(),:dense=&gt;false),
-          Dict(:alg=&gt;KenCarp4(),:dense=&gt;false),
-          Dict(:alg=&gt;TRBDF2(),:dense=&gt;false),
-          Dict(:alg=&gt;KenCarp3(),:dense=&gt;false),
-          Dict(:alg=&gt;SDIRK2(),:dense=&gt;false),
-          Dict(:alg=&gt;radau())]
-names = [&quot;Rosenbrock23&quot; &quot;Rosenbrock23 Static&quot; &quot;Kvaerno3&quot; &quot;KenCarp4&quot; &quot;TRBDF2&quot; &quot;KenCarp3&quot; &quot;SDIRK2&quot; &quot;radau&quot;]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
-                      names=names,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:l2,seconds=5)
-plot(wp)</code></pre><p><img src="../figures/VanDerPol_21_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;Rosenbrock23()),
-          #Dict(:alg=&gt;Rosenbrock23(), :prob_choice =&gt; 2),
-          Dict(:alg=&gt;TRBDF2()),
-          Dict(:alg=&gt;ImplicitEulerExtrapolation()),
-          Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation()),
-          Dict(:alg=&gt;ImplicitHairerWannerExtrapolation()),
-          Dict(:alg=&gt;ABDF2()),
-          Dict(:alg=&gt;FBDF()),
-          #Dict(:alg=&gt;QNDF()), # ???
-          #Dict(:alg=&gt;Exprb43()), # Diverges
-          Dict(:alg=&gt;Exprb32()),
-]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;error_estimate=:l2,
-                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)</code></pre><pre><code class="nohighlight hljs">Error: LinearAlgebra.SingularException(2)</code></pre><h3 id="Higher-accuracy-tests"><a class="docs-heading-anchor" href="#Higher-accuracy-tests">Higher accuracy tests</a><a id="Higher-accuracy-tests-1"></a><a class="docs-heading-anchor-permalink" href="#Higher-accuracy-tests" title="Permalink"></a></h3><p>Now we transition to higher accracy tests. In this domain higher order methods are stable and much more efficient.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:11)
+plot(wp)</code></pre><p><img src="../figures/VanDerPol_20_1.png" alt/></p><h3 id="Higher-accuracy-tests"><a class="docs-heading-anchor" href="#Higher-accuracy-tests">Higher accuracy tests</a><a id="Higher-accuracy-tests-1"></a><a class="docs-heading-anchor-permalink" href="#Higher-accuracy-tests" title="Permalink"></a></h3><p>Now we transition to higher accracy tests. In this domain higher order methods are stable and much more efficient.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 setups = [Dict(:alg=&gt;Rodas3()),
           #Dict(:alg=&gt;FBDF()), #Diverges
@@ -174,7 +149,7 @@ setups = [Dict(:alg=&gt;Rodas3()),
           ]
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e6),seconds=5)
-plot(wp)</code></pre><p><img src="../figures/VanDerPol_23_1.png" alt/></p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:11)
+plot(wp)</code></pre><p><img src="../figures/VanDerPol_21_1.png" alt/></p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 setups = [Dict(:alg=&gt;Rodas3()),
           Dict(:alg=&gt;Kvaerno4()),
@@ -191,7 +166,7 @@ setups = [Dict(:alg=&gt;Rodas3()),
 names = [&quot;Rodas3&quot; &quot;Kvaerno4&quot; &quot;Kvaerno5&quot; &quot;CVODE_BDF&quot; &quot;KenCarp4&quot; &quot;KenCarp5&quot; &quot;ARKODE&quot; &quot;Rodas4&quot; &quot;Rodas5P&quot; &quot;Rodas5P Static&quot; &quot;radau&quot; &quot;Rodas5&quot;]
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       names=names,save_everystep=false,appxsol=test_sol,maxiters=Int(1e6),seconds=5)
-plot(wp)</code></pre><p><img src="../figures/VanDerPol_24_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;Rodas3()),
+plot(wp)</code></pre><p><img src="../figures/VanDerPol_22_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;Rodas3()),
           Dict(:alg=&gt;CVODE_BDF()),
           Dict(:alg=&gt;Rodas4()),
           Dict(:alg=&gt;radau()),
@@ -200,7 +175,7 @@ plot(wp)</code></pre><p><img src="../figures/VanDerPol_24_1.png" alt/></p><pre><
           Dict(:alg=&gt;Rodas5P(), :prob_choice =&gt; 2)]
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e6),seconds=5)
-plot(wp)</code></pre><p><img src="../figures/VanDerPol_25_1.png" alt/></p><h4 id="Timeseries-Errors"><a class="docs-heading-anchor" href="#Timeseries-Errors">Timeseries Errors</a><a id="Timeseries-Errors-1"></a><a class="docs-heading-anchor-permalink" href="#Timeseries-Errors" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:11)
+plot(wp)</code></pre><p><img src="../figures/VanDerPol_23_1.png" alt/></p><h4 id="Timeseries-Errors"><a class="docs-heading-anchor" href="#Timeseries-Errors">Timeseries Errors</a><a id="Timeseries-Errors-1"></a><a class="docs-heading-anchor-permalink" href="#Timeseries-Errors" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 setups = [Dict(:alg=&gt;Rodas3()),
           #Dict(:alg=&gt;FBDF()), #Diverges
@@ -217,7 +192,7 @@ setups = [Dict(:alg=&gt;Rodas3()),
           Dict(:alg=&gt;Rodas5())]
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;error_estimate=:l2,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e6),seconds=5)
-plot(wp)</code></pre><p><img src="../figures/VanDerPol_26_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;Rodas3()),
+plot(wp)</code></pre><p><img src="../figures/VanDerPol_24_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;Rodas3()),
           Dict(:alg=&gt;Kvaerno4()),
           Dict(:alg=&gt;Kvaerno5()),
           Dict(:alg=&gt;CVODE_BDF()),
@@ -231,7 +206,7 @@ plot(wp)</code></pre><p><img src="../figures/VanDerPol_26_1.png" alt/></p><pre><
 names = [&quot;Rodas3&quot; &quot;Kvaerno4&quot; &quot;Kvaerno5&quot; &quot;CVODE_BDF&quot; &quot;KenCarp4&quot; &quot;KenCarp5&quot; &quot;Rodas4&quot; &quot;radau&quot; &quot;Rodas5&quot; &quot;Rodas5P&quot; &quot;Rodas5P Static&quot;]
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       names=names,appxsol=test_sol,maxiters=Int(1e6),error_estimate=:l2,seconds=5)
-plot(wp)</code></pre><p><img src="../figures/VanDerPol_27_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;CVODE_BDF()),
+plot(wp)</code></pre><p><img src="../figures/VanDerPol_25_1.png" alt/></p><pre><code class="language-julia hljs">setups = [Dict(:alg=&gt;CVODE_BDF()),
           Dict(:alg=&gt;Rodas4()),
           Dict(:alg=&gt;radau()),
           Dict(:alg=&gt;Rodas5()),
@@ -239,7 +214,7 @@ plot(wp)</code></pre><p><img src="../figures/VanDerPol_27_1.png" alt/></p><pre><
           Dict(:alg=&gt;Rodas5P(), :prob_choice =&gt; 2)]
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e6),error_estimate=:l2,seconds=5)
-plot(wp)</code></pre><p><img src="../figures/VanDerPol_28_1.png" alt/></p><p>Multithreading benchmarks with Parallel Extrapolation Methods</p><pre><code class="language-julia hljs">#Setting BLAS to one thread to measure gains
+plot(wp)</code></pre><p><img src="../figures/VanDerPol_26_1.png" alt/></p><p>Multithreading benchmarks with Parallel Extrapolation Methods</p><pre><code class="language-julia hljs">#Setting BLAS to one thread to measure gains
 LinearAlgebra.BLAS.set_num_threads(1)
 abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
@@ -251,7 +226,7 @@ setups = [Dict(:alg=&gt;ImplicitHairerWannerExtrapolation()),
 names = [&quot;unthreaded&quot;,&quot;threaded&quot;,&quot;Polyester&quot;];
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       names = names,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
-plot(wp)</code></pre><p><img src="../figures/VanDerPol_29_1.png" alt/></p><p>The timeseries test is a little odd here because of the high peaks in the VanDerPol oscillator. At a certain accuracy, the steps try to resolve those peaks and so the error becomes higher.</p><p>While the higher order order Julia-based Rodas methods (<code>Rodas4</code> and <code>Rodas4P</code>) Rosenbrock methods are not viable at higher tolerances, they dominate for a large portion of this benchmark. When the tolerance gets low enough, <code>radau</code> adaptive high order (up to order 13) takes the lead.</p><h3 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h3><p><code>Rosenbrock23</code> and <code>Rodas3</code> do well when tolerances are higher. In most standard tolerances, <code>Rodas4</code> and <code>Rodas4P</code> do extremely well. Only when the tolerances get very low does <code>radau</code> do well. The Julia Rosenbrock methods vastly outperform their Fortran counterparts. <code>CVODE_BDF</code> is a top performer in the final timepoint errors with low accuracy, but take that with a grain of salt because the problem is periodic which means it&#39;s getting the spikes wrong but the low parts correct. <code>ARKODE</code> does poorly in these tests. <code>lsoda</code> does quite well in both low and high accuracy domains, but is never the top.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+plot(wp)</code></pre><p><img src="../figures/VanDerPol_27_1.png" alt/></p><p>The timeseries test is a little odd here because of the high peaks in the VanDerPol oscillator. At a certain accuracy, the steps try to resolve those peaks and so the error becomes higher.</p><p>While the higher order order Julia-based Rodas methods (<code>Rodas4</code> and <code>Rodas4P</code>) Rosenbrock methods are not viable at higher tolerances, they dominate for a large portion of this benchmark. When the tolerance gets low enough, <code>radau</code> adaptive high order (up to order 13) takes the lead.</p><h3 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h3><p><code>Rosenbrock23</code> and <code>Rodas3</code> do well when tolerances are higher. In most standard tolerances, <code>Rodas4</code> and <code>Rodas4P</code> do extremely well. Only when the tolerances get very low does <code>radau</code> do well. The Julia Rosenbrock methods vastly outperform their Fortran counterparts. <code>CVODE_BDF</code> is a top performer in the final timepoint errors with low accuracy, but take that with a grain of salt because the problem is periodic which means it&#39;s getting the spikes wrong but the low parts correct. <code>ARKODE</code> does poorly in these tests. <code>lsoda</code> does quite well in both low and high accuracy domains, but is never the top.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/StiffODE&quot;,&quot;VanDerPol.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.7.3
 Commit 742b9abb4d (2022-05-06 12:58 UTC)
 Platform Info:
@@ -264,7 +239,7 @@ Environment:
   JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [f3b72e0c] DiffEqDevTools v2.32.0
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.5
@@ -282,7 +257,7 @@ Environment:
   [c3572dad] Sundials v4.10.1
   [a759f4b9] TimerOutputs v0.5.21
   [37e2e46d] LinearAlgebra
-  [2f01184e] SparseArrays</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
+  [2f01184e] SparseArrays</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.4
   [621f4979] AbstractFFTs v1.2.1
@@ -674,4 +649,4 @@ Environment:
   [83775a58] Zlib_jll v1.2.12+3
   [8e850b90] libblastrampoline_jll v5.1.1+0
   [8e850ede] nghttp2_jll v1.48.0+0
-  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../ROBER/">« ROBER Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../../Bio/BCR/">BCR Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Monday 26 September 2022 17:32">Monday 26 September 2022</span>. Using Julia version 1.8.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../ROBER/">« ROBER Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../../Bio/BCR/">BCR Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Monday 26 September 2022 17:36">Monday 26 September 2022</span>. Using Julia version 1.8.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
