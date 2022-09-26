@@ -8,73 +8,166 @@ We try to demonstrate advantages of parallelism in extrapolation methods. While 
 The Brusselator problem aims to demonstrate these performance gains.
 
 ```julia
-using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODE, ODEInterfaceDiffEq, LSODA, SparsityDetection, SparseArrays
+using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, 
+      ODEInterfaceDiffEq, LSODA, SparseArrays, LinearSolve,
+      LinearAlgebra, IncompleteLU, AlgebraicMultigrid, Symbolics, ModelingToolkit
 gr()
-using LinearAlgebra
-LinearAlgebra.BLAS.set_num_threads(1)
-function bruss(N)
-  xyd_brusselator = range(0,stop=1,length=N)
-  brusselator_f(x, y, t) = (((x-0.3)^2 + (y-0.6)^2) <= 0.1^2) * (t >= 1.1) * 5.
-  limit(a, N) = a == N+1 ? 1 : a == 0 ? N : a
-  function brusselator_2d_loop(du, u, p, t)
-    A, B, alpha, dx = p
-    alpha = alpha/dx^2
-    @inbounds for I in CartesianIndices((N, N))
-      i, j = Tuple(I)
-      x, y = xyd_brusselator[I[1]], xyd_brusselator[I[2]]
-      ip1, im1, jp1, jm1 = limit(i+1, N), limit(i-1, N), limit(j+1, N), limit(j-1, N)
-      du[i,j,1] = alpha*(u[im1,j,1] + u[ip1,j,1] + u[i,jp1,1] + u[i,jm1,1] - 4u[i,j,1]) +
-                  B + u[i,j,1]^2*u[i,j,2] - (A + 1)*u[i,j,1] + brusselator_f(x, y, t)
-      du[i,j,2] = alpha*(u[im1,j,2] + u[ip1,j,2] + u[i,jp1,2] + u[i,jm1,2] - 4u[i,j,2]) +
-                  A*u[i,j,1] - u[i,j,1]^2*u[i,j,2]
-      end
-  end
-  p = (3.4, 1., 10., step(xyd_brusselator))
 
-  input = rand(N,N,2)
-  output = similar(input)
-  sparsity_pattern = jacobian_sparsity(brusselator_2d_loop,output,input,p,0.0)
-  jac_sparsity = Float64.(sparse(sparsity_pattern))
-  f =  ODEFunction{true, SciMLBase.FullSpecialize}(brusselator_2d_loop;jac_prototype=jac_sparsity)
-  function init_brusselator_2d(xyd)
-    N = length(xyd)
-    u = zeros(N, N, 2)
-    for I in CartesianIndices((N, N))
-      x = xyd[I[1]]
-      y = xyd[I[2]]
-      u[I,1] = 22*(y*(1-y))^(3/2)
-      u[I,2] = 27*(x*(1-x))^(3/2)
+const N = 8
+
+xyd_brusselator = range(0,stop=1,length=N)
+brusselator_f(x, y, t) = (((x-0.3)^2 + (y-0.6)^2) <= 0.1^2) * (t >= 1.1) * 5.
+limit(a, N) = a == N+1 ? 1 : a == 0 ? N : a
+function brusselator_2d_loop(du, u, p, t)
+  A, B, alpha, dx = p
+  alpha = alpha/dx^2
+  @inbounds for I in CartesianIndices((N, N))
+    i, j = Tuple(I)
+    x, y = xyd_brusselator[I[1]], xyd_brusselator[I[2]]
+    ip1, im1, jp1, jm1 = limit(i+1, N), limit(i-1, N), limit(j+1, N), limit(j-1, N)
+    du[i,j,1] = alpha*(u[im1,j,1] + u[ip1,j,1] + u[i,jp1,1] + u[i,jm1,1] - 4u[i,j,1]) +
+                B + u[i,j,1]^2*u[i,j,2] - (A + 1)*u[i,j,1] + brusselator_f(x, y, t)
+    du[i,j,2] = alpha*(u[im1,j,2] + u[ip1,j,2] + u[i,jp1,2] + u[i,jm1,2] - 4u[i,j,2]) +
+                A*u[i,j,1] - u[i,j,1]^2*u[i,j,2]
     end
-    u
-  end
-  u0 = init_brusselator_2d(xyd_brusselator)
-  return ODEProblem(f,u0,(0.,11.5),p)
 end
-N = 8
-prob = bruss(N)
+p = (3.4, 1., 10., step(xyd_brusselator))
+
+input = rand(N,N,2)
+output = similar(input)
+sparsity_pattern = Symbolics.jacobian_sparsity(brusselator_2d_loop,output,input,p,0.0)
+jac_sparsity = Float64.(sparse(sparsity_pattern))
+f = ODEFunction{true, SciMLBase.FullSpecialize}(brusselator_2d_loop;jac_prototype=jac_sparsity)
+function init_brusselator_2d(xyd)
+  N = length(xyd)
+  u = zeros(N, N, 2)
+  for I in CartesianIndices((N, N))
+    x = xyd[I[1]]
+    y = xyd[I[2]]
+    u[I,1] = 22*(y*(1-y))^(3/2)
+    u[I,2] = 27*(x*(1-x))^(3/2)
+  end
+  u
+end
+u0 = init_brusselator_2d(xyd_brusselator)
+prob = ODEProblem(f,u0,(0.,11.5),p);
+```
+
+
+```julia
+prob_mtk = ODEProblem(modelingtoolkitize(prob),[],(0.0,11.5),jac=true,sparse=true);
+```
+
+
+```julia
 sol = solve(prob,CVODE_BDF(),abstol=1/10^14,reltol=1/10^14)
-test_sol = TestSolution(sol)
-abstols = 1.0 ./ 10.0 .^ (4:11)
-reltols = 1.0 ./ 10.0 .^ (1:8);
+sol2 = solve(prob_mtk,CVODE_BDF(linear_solver = :KLU),abstol=1/10^14,reltol=1/10^14)
+test_sol = [sol,sol2]
+probs = [prob,prob_mtk];
 ```
-
-```
-Explored path: SparsityDetection.Path(Bool[], 1)
-```
-
 
 
 ```julia
 plot(sol,vars = 1)
 ```
 
-![](figures/Bruss_2_1.png)
+![](figures/Bruss_4_1.png)
 
 ```julia
 plot(sol,vars = 10)
 ```
 
-![](figures/Bruss_3_1.png)
+![](figures/Bruss_5_1.png)
+
+
+
+## Setup Preconditioners
+
+### OrdinaryDiffEq
+
+```julia
+function incompletelu(W,du,u,p,t,newW,Plprev,Prprev,solverdata)
+  if newW === nothing || newW
+    Pl = ilu(convert(AbstractMatrix,W), τ = 50.0)
+  else
+    Pl = Plprev
+  end
+  Pl,nothing
+end
+
+function algebraicmultigrid(W,du,u,p,t,newW,Plprev,Prprev,solverdata)
+  if newW === nothing || newW
+    Pl = aspreconditioner(ruge_stuben(convert(AbstractMatrix,W)))
+  else
+    Pl = Plprev
+  end
+  Pl,nothing
+end
+```
+
+```
+algebraicmultigrid (generic function with 1 method)
+```
+
+
+
+
+
+### Sundials
+
+```julia
+const jaccache = prob_mtk.f.jac(prob.u0,prob.p,0.0)
+const W = I - 1.0*jaccache
+
+prectmp = ilu(W, τ = 50.0)
+const preccache = Ref(prectmp)
+
+function psetupilu(p, t, u, du, jok, jcurPtr, gamma)
+  if jok
+    prob_mtk.f.jac(jaccache,u,p,t)
+    jcurPtr[] = true
+
+    # W = I - gamma*J
+    @. W = -gamma*jaccache
+    idxs = diagind(W)
+    @. @view(W[idxs]) = @view(W[idxs]) + 1
+
+    # Build preconditioner on W
+    preccache[] = ilu(W, τ = 5.0)
+  end
+end
+
+function precilu(z,r,p,t,y,fy,gamma,delta,lr)
+  ldiv!(z,preccache[],r)
+end
+
+prectmp2 = aspreconditioner(ruge_stuben(W, presmoother = AlgebraicMultigrid.Jacobi(rand(size(W,1))), postsmoother = AlgebraicMultigrid.Jacobi(rand(size(W,1)))))
+const preccache2 = Ref(prectmp2)
+function psetupamg(p, t, u, du, jok, jcurPtr, gamma)
+  if jok
+    prob_mtk.f.jac(jaccache,u,p,t)
+    jcurPtr[] = true
+
+    # W = I - gamma*J
+    @. W = -gamma*jaccache
+    idxs = diagind(W)
+    @. @view(W[idxs]) = @view(W[idxs]) + 1
+
+    # Build preconditioner on W
+    preccache2[] = aspreconditioner(ruge_stuben(W, presmoother = AlgebraicMultigrid.Jacobi(rand(size(W,1))), postsmoother = AlgebraicMultigrid.Jacobi(rand(size(W,1)))))
+  end
+end
+
+function precamg(z,r,p,t,y,fy,gamma,delta,lr)
+  ldiv!(z,preccache2[],r)
+end
+```
+
+```
+precamg (generic function with 1 method)
+```
+
+
 
 
 
@@ -85,18 +178,60 @@ This is the speed when you just want the answer.
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [
-    		  Dict(:alg=>ImplicitHairerWannerExtrapolation()),
-		      Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = true)),
-          Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
+    		  Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 2),
+		      Dict(:alg=>CVODE_BDF(linear_solver = :GMRES)),
+          Dict(:alg=>CVODE_BDF(linear_solver = :GMRES), :prob_choice => 2),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1)),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precamg,psetup=psetupamg,prec_side=1)),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1), :prob_choice => 2),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precamg,psetup=psetupamg,prec_side=1), :prob_choice => 2),
           ]
-
-names = ["unthreaded","threaded","Polyester"];
-gr()
-#wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-#                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-#plot(wp)
+names = ["CVODE MTK KLU","CVODE GMRES","CVODE MTK GMRES", "CVODE iLU GMRES", "CVODE AMG GMRES", "CVODE iLU MTK GMRES", "CVODE AMG MTK GMRES"];
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;names=names,
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
 ```
 
+![](figures/Bruss_8_1.png)
+
+```julia
+setups = [
+          Dict(:alg=>KenCarp47(linsolve=KLUFactorization())),
+          Dict(:alg=>KenCarp47(linsolve=KLUFactorization()), :prob_choice => 2),
+          Dict(:alg=>KenCarp47(linsolve=UMFPACKFactorization())),
+          Dict(:alg=>KenCarp47(linsolve=UMFPACKFactorization()), :prob_choice => 2),
+          Dict(:alg=>KenCarp47(linsolve=KrylovJL_GMRES())),
+          Dict(:alg=>KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
+          Dict(:alg=>KenCarp47(linsolve=KrylovJL_GMRES(),precs=incompletelu,concrete_jac=true)),
+          Dict(:alg=>KenCarp47(linsolve=KrylovJL_GMRES(),precs=incompletelu,concrete_jac=true), :prob_choice => 2),
+          Dict(:alg=>KenCarp47(linsolve=KrylovJL_GMRES(),precs=algebraicmultigrid,concrete_jac=true)),
+          Dict(:alg=>KenCarp47(linsolve=KrylovJL_GMRES(),precs=algebraicmultigrid,concrete_jac=true), :prob_choice => 2),
+
+          ]
+names = ["KenCarp47 KLU","KenCarp47 KLU MTK","KenCarp47 UMFPACK", "KenCarp47 UMFPACK MTK", "KenCarp47 GMRES", 
+        "KenCarp47 GMRES MTK", "KenCarp47 iLU GMRES", "KenCarp47 iLU GMRES MTK", "KenCarp47 AMG GMRES", 
+        "KenCarp47 AMG GMRES MTK"];
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
+```
+
+![](figures/Bruss_9_1.png)
+
+```julia
+setups = [
+          Dict(:alg=>TRBDF2()),
+          Dict(:alg=>KenCarp4()),
+          Dict(:alg=>KenCarp47()),
+    		  Dict(:alg=>QNDF()),
+          Dict(:alg=>FBDF()),
+          ]
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
+```
+
+![](figures/Bruss_10_1.png)
 
 
 
@@ -109,18 +244,21 @@ abstols = 1.0 ./ 10.0 .^ (7:12)
 reltols = 1.0 ./ 10.0 .^ (4:9)
 
 setups = [
-    		  Dict(:alg=>ImplicitHairerWannerExtrapolation()),
-		      Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = true)),
-          Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
+    		  Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 2),
+		      Dict(:alg=>CVODE_BDF(linear_solver = :GMRES)),
+          Dict(:alg=>CVODE_BDF(linear_solver = :GMRES), :prob_choice => 2),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1)),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precamg,psetup=psetupamg,prec_side=1)),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1), :prob_choice => 2),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precamg,psetup=psetupamg,prec_side=1), :prob_choice => 2),
           ]
-
-names = ["unthreaded","threaded","Polyester"];
-gr()
-#wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-#                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-#plot(wp)
+names = ["CVODE MTK KLU","CVODE GMRES","CVODE MTK GMRES", "CVODE iLU GMRES", "CVODE AMG GMRES", "CVODE iLU MTK GMRES", "CVODE AMG MTK GMRES"];
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
 ```
 
+![](figures/Bruss_11_1.png)
 
 
 ## Appendix
@@ -156,21 +294,25 @@ Package Information:
 
 ```
       Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+  [2169fc97] AlgebraicMultigrid v0.5.1
   [6e4b80f9] BenchmarkTools v1.3.1
   [f3b72e0c] DiffEqDevTools v2.32.0
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.5
+  [40713840] IncompleteLU v0.2.0
   [7f56f5a3] LSODA v0.7.0
   [7ed4a6bd] LinearSolve v1.26.0
+  [961ee093] ModelingToolkit v8.23.0
   [c030b06c] ODE v2.15.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
   [1dea7af3] OrdinaryDiffEq v6.27.2
   [65888b18] ParameterizedFunctions v5.14.0
-  [91a5bcdd] Plots v1.33.0
+  [91a5bcdd] Plots v1.34.0
   [132c30aa] ProfileSVG v0.2.1
   [31c91b34] SciMLBenchmarks v0.1.1
   [684fba80] SparsityDetection v0.3.4
   [90137ffa] StaticArrays v1.5.8
   [c3572dad] Sundials v4.10.1
+  [0c5d862f] Symbolics v4.10.4
   [a759f4b9] TimerOutputs v0.5.21
   [37e2e46d] LinearAlgebra
   [2f01184e] SparseArrays
@@ -185,6 +327,7 @@ And the full manifest:
   [621f4979] AbstractFFTs v1.2.1
   [1520ce14] AbstractTrees v0.3.4
   [79e6a3ab] Adapt v3.4.0
+  [2169fc97] AlgebraicMultigrid v0.5.1
   [4c88cf16] Aqua v0.5.5
   [dce04be8] ArgCheck v2.3.0
   [ec485272] ArnoldiMethod v0.2.0
@@ -271,7 +414,7 @@ And the full manifest:
   [069b7b12] FunctionWrappers v1.1.2
   [77dc65aa] FunctionWrappersWrappers v0.1.1
   [46192b85] GPUArraysCore v0.1.2
-  [28b8d3ca] GR v0.66.2
+  [28b8d3ca] GR v0.68.0
   [14197337] GenericLinearAlgebra v0.3.3
   [c145ed77] GenericSchur v0.5.3
   [9a0b12b7] GeometricBase v0.2.6
@@ -291,6 +434,7 @@ And the full manifest:
   [7073ff75] IJulia v1.23.3
   [b5f81e59] IOCapture v0.2.2
   [615f187c] IfElse v0.1.1
+  [40713840] IncompleteLU v0.2.0
   [9b13fd28] IndirectArrays v1.0.0
   [4858937d] InfiniteArrays v0.12.6
   [e1ba4f0e] Infinities v0.1.5
@@ -304,6 +448,7 @@ And the full manifest:
   [c8e1da08] IterTools v1.4.0
   [42fd0dbc] IterativeSolvers v0.9.2
   [82899510] IteratorInterfaceExtensions v1.0.0
+  [1019f520] JLFzf v0.1.5
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
   [98e50ef6] JuliaFormatter v1.0.10
@@ -352,9 +497,10 @@ And the full manifest:
   [65888b18] ParameterizedFunctions v5.14.0
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.4.0
+  [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.0.0
   [995b91a9] PlotUtils v1.3.1
-  [91a5bcdd] Plots v1.33.0
+  [91a5bcdd] Plots v1.34.0
   [e409e4f3] PoissonRandom v0.4.1
   [f517fe37] Polyester v0.6.15
   [1d0040c9] PolyesterWeave v0.1.10
@@ -378,7 +524,7 @@ And the full manifest:
   [f2c3362d] RecursiveFactorization v0.2.12
   [189a3867] Reexport v1.2.2
   [42d2dcc6] Referenceables v0.1.2
-  [05181044] RelocatableFolders v0.3.0
+  [05181044] RelocatableFolders v1.0.0
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
   [79098fc4] Rmath v0.7.0
@@ -452,7 +598,7 @@ And the full manifest:
   [d7e528f0] FreeType2_jll v2.10.4+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.68.0+0
+  [d2c73de3] GR_jll v0.69.0+0
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.34.1+0
   [7746bdde] Glib_jll v2.68.3+2
@@ -512,6 +658,7 @@ And the full manifest:
   [c5fb5394] Xorg_xtrans_jll v1.4.0+3
   [8f1865be] ZeroMQ_jll v4.3.4+0
   [3161d3a3] Zstd_jll v1.5.2+0
+  [214eeab7] fzf_jll v0.29.0+0
   [a4ae2306] libaom_jll v3.4.0+0
   [0ac62f75] libass_jll v0.15.1+0
   [f638f0a6] libfdk_aac_jll v2.0.2+0

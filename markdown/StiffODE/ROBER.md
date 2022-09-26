@@ -456,21 +456,25 @@ Package Information:
 
 ```
       Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+  [2169fc97] AlgebraicMultigrid v0.5.1
   [6e4b80f9] BenchmarkTools v1.3.1
   [f3b72e0c] DiffEqDevTools v2.32.0
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.5
+  [40713840] IncompleteLU v0.2.0
   [7f56f5a3] LSODA v0.7.0
   [7ed4a6bd] LinearSolve v1.26.0
+  [961ee093] ModelingToolkit v8.23.0
   [c030b06c] ODE v2.15.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
   [1dea7af3] OrdinaryDiffEq v6.27.2
   [65888b18] ParameterizedFunctions v5.14.0
-  [91a5bcdd] Plots v1.33.0
+  [91a5bcdd] Plots v1.34.0
   [132c30aa] ProfileSVG v0.2.1
   [31c91b34] SciMLBenchmarks v0.1.1
   [684fba80] SparsityDetection v0.3.4
   [90137ffa] StaticArrays v1.5.8
   [c3572dad] Sundials v4.10.1
+  [0c5d862f] Symbolics v4.10.4
   [a759f4b9] TimerOutputs v0.5.21
   [37e2e46d] LinearAlgebra
   [2f01184e] SparseArrays
@@ -485,6 +489,7 @@ And the full manifest:
   [621f4979] AbstractFFTs v1.2.1
   [1520ce14] AbstractTrees v0.3.4
   [79e6a3ab] Adapt v3.4.0
+  [2169fc97] AlgebraicMultigrid v0.5.1
   [4c88cf16] Aqua v0.5.5
   [dce04be8] ArgCheck v2.3.0
   [ec485272] ArnoldiMethod v0.2.0
@@ -571,7 +576,7 @@ And the full manifest:
   [069b7b12] FunctionWrappers v1.1.2
   [77dc65aa] FunctionWrappersWrappers v0.1.1
   [46192b85] GPUArraysCore v0.1.2
-  [28b8d3ca] GR v0.66.2
+  [28b8d3ca] GR v0.68.0
   [14197337] GenericLinearAlgebra v0.3.3
   [c145ed77] GenericSchur v0.5.3
   [9a0b12b7] GeometricBase v0.2.6
@@ -591,6 +596,7 @@ And the full manifest:
   [7073ff75] IJulia v1.23.3
   [b5f81e59] IOCapture v0.2.2
   [615f187c] IfElse v0.1.1
+  [40713840] IncompleteLU v0.2.0
   [9b13fd28] IndirectArrays v1.0.0
   [4858937d] InfiniteArrays v0.12.6
   [e1ba4f0e] Infinities v0.1.5
@@ -604,6 +610,7 @@ And the full manifest:
   [c8e1da08] IterTools v1.4.0
   [42fd0dbc] IterativeSolvers v0.9.2
   [82899510] IteratorInterfaceExtensions v1.0.0
+  [1019f520] JLFzf v0.1.5
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
   [98e50ef6] JuliaFormatter v1.0.10
@@ -652,9 +659,10 @@ And the full manifest:
   [65888b18] ParameterizedFunctions v5.14.0
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.4.0
+  [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.0.0
   [995b91a9] PlotUtils v1.3.1
-  [91a5bcdd] Plots v1.33.0
+  [91a5bcdd] Plots v1.34.0
   [e409e4f3] PoissonRandom v0.4.1
   [f517fe37] Polyester v0.6.15
   [1d0040c9] PolyesterWeave v0.1.10
@@ -678,7 +686,7 @@ And the full manifest:
   [f2c3362d] RecursiveFactorization v0.2.12
   [189a3867] Reexport v1.2.2
   [42d2dcc6] Referenceables v0.1.2
-  [05181044] RelocatableFolders v0.3.0
+  [05181044] RelocatableFolders v1.0.0
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
   [79098fc4] Rmath v0.7.0
@@ -752,7 +760,7 @@ And the full manifest:
   [d7e528f0] FreeType2_jll v2.10.4+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.68.0+0
+  [d2c73de3] GR_jll v0.69.0+0
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.34.1+0
   [7746bdde] Glib_jll v2.68.3+2
@@ -812,6 +820,7 @@ And the full manifest:
   [c5fb5394] Xorg_xtrans_jll v1.4.0+3
   [8f1865be] ZeroMQ_jll v4.3.4+0
   [3161d3a3] Zstd_jll v1.5.2+0
+  [214eeab7] fzf_jll v0.29.0+0
   [a4ae2306] libaom_jll v3.4.0+0
   [0ac62f75] libass_jll v0.15.1+0
   [f638f0a6] libfdk_aac_jll v2.0.2+0
