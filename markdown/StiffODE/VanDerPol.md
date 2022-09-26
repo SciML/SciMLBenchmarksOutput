@@ -302,47 +302,6 @@ plot(wp)
 
 ![](figures/VanDerPol_20_1.png)
 
-```julia
-setups = [Dict(:alg=>Rosenbrock23(),:dense=>false),
-          Dict(:alg=>Rosenbrock23(), :dense => false, :prob_choice => 2),
-          Dict(:alg=>Kvaerno3(),:dense=>false),
-          Dict(:alg=>KenCarp4(),:dense=>false),
-          Dict(:alg=>TRBDF2(),:dense=>false),
-          Dict(:alg=>KenCarp3(),:dense=>false),
-          Dict(:alg=>SDIRK2(),:dense=>false),
-          Dict(:alg=>radau())]
-names = ["Rosenbrock23" "Rosenbrock23 Static" "Kvaerno3" "KenCarp4" "TRBDF2" "KenCarp3" "SDIRK2" "radau"]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
-                      names=names,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:l2,seconds=5)
-plot(wp)
-```
-
-![](figures/VanDerPol_21_1.png)
-
-```julia
-setups = [Dict(:alg=>Rosenbrock23()),
-          #Dict(:alg=>Rosenbrock23(), :prob_choice => 2),
-          Dict(:alg=>TRBDF2()),
-          Dict(:alg=>ImplicitEulerExtrapolation()),
-          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
-          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
-          Dict(:alg=>ABDF2()),
-          Dict(:alg=>FBDF()),
-          #Dict(:alg=>QNDF()), # ???
-          #Dict(:alg=>Exprb43()), # Diverges
-          Dict(:alg=>Exprb32()),
-]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;error_estimate=:l2,
-                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)
-```
-
-```
-Error: LinearAlgebra.SingularException(2)
-```
-
-
-
 
 
 ### Higher accuracy tests
@@ -375,7 +334,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-![](figures/VanDerPol_23_1.png)
+![](figures/VanDerPol_21_1.png)
 
 ```julia
 abstols = 1.0 ./ 10.0 .^ (7:11)
@@ -398,7 +357,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-![](figures/VanDerPol_24_1.png)
+![](figures/VanDerPol_22_1.png)
 
 ```julia
 setups = [Dict(:alg=>Rodas3()),
@@ -413,7 +372,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-![](figures/VanDerPol_25_1.png)
+![](figures/VanDerPol_23_1.png)
 
 
 
@@ -440,7 +399,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;error_estimate=:l2,
 plot(wp)
 ```
 
-![](figures/VanDerPol_26_1.png)
+![](figures/VanDerPol_24_1.png)
 
 ```julia
 setups = [Dict(:alg=>Rodas3()),
@@ -460,7 +419,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-![](figures/VanDerPol_27_1.png)
+![](figures/VanDerPol_25_1.png)
 
 ```julia
 setups = [Dict(:alg=>CVODE_BDF()),
@@ -474,7 +433,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-![](figures/VanDerPol_28_1.png)
+![](figures/VanDerPol_26_1.png)
 
 
 
@@ -496,7 +455,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-![](figures/VanDerPol_29_1.png)
+![](figures/VanDerPol_27_1.png)
 
 
 
@@ -541,7 +500,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [f3b72e0c] DiffEqDevTools v2.32.0
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.5
@@ -565,7 +524,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.4
   [621f4979] AbstractFFTs v1.2.1
