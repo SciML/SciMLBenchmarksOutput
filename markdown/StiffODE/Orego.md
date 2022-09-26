@@ -5,7 +5,7 @@ title: "OREGO Work-Precision Diagrams"
 ```julia
 using OrdinaryDiffEq, DiffEqDevTools, ParameterizedFunctions, Plots, ODE, ODEInterfaceDiffEq, LSODA, Sundials
 gr() #gr(fmt=:png)
-using LinearAlgebra
+using LinearAlgebra, StaticArrays
 
 f = @ode_def Orego begin
   dy1 = p1*(y2+y1*(1-p2*y1-y2))
@@ -13,10 +13,15 @@ f = @ode_def Orego begin
   dy3 = p3*(y1-y3)
 end p1 p2 p3
 
-p = [77.27,8.375e-6,0.161]
+p = SA[77.27,8.375e-6,0.161]
 prob = ODEProblem{true, SciMLBase.FullSpecialize}(f,[1.0,2.0,3.0],(0.0,30.0),p)
-sol = solve(prob,Rodas5(),abstol=1/10^14,reltol=1/10^14)
-test_sol = TestSolution(sol)
+probstatic = ODEProblem{false}(f,SA[1.0,2.0,3.0],(0.0,30.0),p)
+
+sol = solve(prob,CVODE_BDF(),abstol=1/10^14,reltol=1/10^14)
+sol2 = solve(probstatic,Rodas5P(),abstol=1/10^14,reltol=1/10^14)
+probs = [prob,probstatic]
+test_sol = [sol,sol2];
+
 abstols = 1.0 ./ 10.0 .^ (4:11)
 reltols = 1.0 ./ 10.0 .^ (1:8);
 ```
@@ -125,6 +130,7 @@ This is the speed when you just want the answer.
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>Rosenbrock23(), :prob_choice => 2),
           Dict(:alg=>FBDF()),
           Dict(:alg=>QNDF()),
           Dict(:alg=>TRBDF2()),
@@ -135,7 +141,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>ROS34PW1a()),
           Dict(:alg=>lsoda()),
           ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 ```
@@ -143,7 +149,7 @@ plot(wp)
 ![](figures/Orego_12_1.png)
 
 ```julia
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;dense = false,verbose=false,
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;dense = false,verbose=false,
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:l2,numruns=10)
 plot(wp)
 ```
@@ -151,7 +157,7 @@ plot(wp)
 ![](figures/Orego_13_1.png)
 
 ```julia
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2,numruns=10)
 plot(wp)
 ```
@@ -160,6 +166,7 @@ plot(wp)
 
 ```julia
 setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>Rosenbrock23(), :prob_choice => 2),
           Dict(:alg=>Kvaerno3()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
@@ -168,7 +175,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>lsoda()),
     # Dict(:alg=>SDIRK2()), # Removed because it's bad
           Dict(:alg=>radau())]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 ```
@@ -176,7 +183,7 @@ plot(wp)
 ![](figures/Orego_15_1.png)
 
 ```julia
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;dense = false,verbose = false,
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;dense = false,verbose = false,
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:l2,numruns=10)
 plot(wp)
 ```
@@ -184,7 +191,7 @@ plot(wp)
 ![](figures/Orego_16_1.png)
 
 ```julia
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2,numruns=10)
 plot(wp)
 ```
@@ -193,15 +200,17 @@ plot(wp)
 
 ```julia
 setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>Rosenbrock23(), :prob_choice => 2),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>KenCarp4()),
+          Dict(:alg=>KenCarp4(), :prob_choice => 2),
           Dict(:alg=>KenCarp3()),
           Dict(:alg=>ARKODE(order=5)),
           Dict(:alg=>ARKODE(nonlinear_convergence_coefficient = 1e-6)),
           Dict(:alg=>ARKODE(nonlinear_convergence_coefficient = 1e-5,order=3))
           ]
-names = ["Rosenbrock23" "KenCarp5" "KenCarp4" "KenCarp3" "ARKODE5" "ARKODE4" "ARKODE3"]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+names = ["Rosenbrock23" "Rosenbrock23 Static" "KenCarp5" "KenCarp4" "KenCarp4 Static" "KenCarp3" "ARKODE5" "ARKODE4" "ARKODE3"]
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       names=names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
@@ -211,6 +220,7 @@ plot(wp)
 
 ```julia
 setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>Rosenbrock23(), :prob_choice => 2),
           Dict(:alg=>TRBDF2()),
           #Dict(:alg=>ImplicitEulerExtrapolation()), #Diverges
           Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
@@ -221,7 +231,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>Exprb43()),
           Dict(:alg=>Exprb32()),
 ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 ```
@@ -249,13 +259,15 @@ setups = [
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>ddebdf()),
           Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas4(), :prob_choice => 2),
           Dict(:alg=>Rodas5P()),
+          Dict(:alg=>Rodas5P(), :prob_choice => 2),
           Dict(:alg=>rodas()),
           Dict(:alg=>radau()),
           Dict(:alg=>RadauIIA5()),
           Dict(:alg=>lsoda()),
 ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 ```
@@ -263,7 +275,7 @@ plot(wp)
 ![](figures/Orego_20_1.png)
 
 ```julia
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;verbose=false,
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false,
                       dense=false,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:l2,numruns=10)
 plot(wp)
 ```
@@ -271,7 +283,7 @@ plot(wp)
 ![](figures/Orego_21_1.png)
 
 ```julia
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2,numruns=10)
 plot(wp)
 ```
@@ -282,18 +294,21 @@ plot(wp)
 setups = [Dict(:alg=>GRK4A()),
           Dict(:alg=>Rodas5()),
           Dict(:alg=>Rodas5P()),
+          Dict(:alg=>Rodas5P(), :prob_choice => 2),
           Dict(:alg=>Kvaerno5()),
           Dict(:alg=>CVODE_BDF()),
           Dict(:alg=>KenCarp4()),
+          Dict(:alg=>KenCarp4(), :prob_choice => 2),
           Dict(:alg=>KenCarp5()),
           Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas4(), :prob_choice => 2),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau()),
           Dict(:alg=>ImplicitEulerExtrapolation()),
           Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
           Dict(:alg=>ImplicitHairerWannerExtrapolation()),
           ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 ```
@@ -301,7 +316,7 @@ plot(wp)
 ![](figures/Orego_23_1.png)
 
 ```julia
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;verbose=false,
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false,
                       dense=false,appxsol=test_sol,maxiters=Int(1e5),error_estimate=:l2,numruns=10)
 plot(wp)
 ```
@@ -309,7 +324,7 @@ plot(wp)
 ![](figures/Orego_24_1.png)
 
 ```julia
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2,numruns=10)
 plot(wp)
 ```
@@ -327,7 +342,7 @@ The following algorithms were removed since they failed.
           #Dict(:alg=>Kvaerno4()),
           #Dict(:alg=>Cash4())
 #]
-#wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+#wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 #                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 #plot(wp)
 ```
@@ -359,7 +374,9 @@ setups = [
             Dict(:alg=>CVODE_BDF()),
             Dict(:alg=>KenCarp4()),
             Dict(:alg=>Rodas4()),
+            Dict(:alg=>Rodas4(), :prob_choice => 2),
             Dict(:alg=>Rodas5P()),
+            Dict(:alg=>Rodas5P(), :prob_choice => 2),
             Dict(:alg=>QNDF()),
             Dict(:alg=>lsoda()),
             Dict(:alg=>radau()),
@@ -372,10 +389,10 @@ setups = [
             Dict(:alg=>ImplicitHairerWannerExtrapolation(init_order = 5,threading = false)),
             ]
 
-solnames = ["CVODE_BDF","KenCarp4","Rodas4","QNDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
+solnames = ["CVODE_BDF","KenCarp4","Rodas4","Rodas4 Static","Rodas%P","Rodas5P Static","QNDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
             "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
 
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                     names = solnames,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 
 plot(wp, title = "Implicit Methods: OREGO",legend=:outertopleft,size = (1000,500),
@@ -384,11 +401,7 @@ plot(wp, title = "Implicit Methods: OREGO",legend=:outertopleft,size = (1000,500
      bottom_margin= 5Plots.mm)
 ```
 
-```
-Error: AssertionError: names === nothing || length(setups) == length(names)
-```
-
-
+![](figures/Orego_28_1.png)
 
 
 
@@ -437,12 +450,13 @@ Package Information:
   [7ed4a6bd] LinearSolve v1.26.0
   [c030b06c] ODE v2.15.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
-  [1dea7af3] OrdinaryDiffEq v6.27.0
+  [1dea7af3] OrdinaryDiffEq v6.27.2
   [65888b18] ParameterizedFunctions v5.14.0
   [91a5bcdd] Plots v1.33.0
   [132c30aa] ProfileSVG v0.2.1
   [31c91b34] SciMLBenchmarks v0.1.1
   [684fba80] SparsityDetection v0.3.4
+  [90137ffa] StaticArrays v1.5.8
   [c3572dad] Sundials v4.10.1
   [a759f4b9] TimerOutputs v0.5.21
   [37e2e46d] LinearAlgebra
@@ -463,18 +477,19 @@ And the full manifest:
   [ec485272] ArnoldiMethod v0.2.0
   [4fba245c] ArrayInterface v6.0.23
   [30b0a656] ArrayInterfaceCore v0.1.20
-  [6ba088a2] ArrayInterfaceGPUArrays v0.2.1
+  [6ba088a2] ArrayInterfaceGPUArrays v0.2.2
   [015c0d05] ArrayInterfaceOffsetArrays v0.1.6
   [b0d46f97] ArrayInterfaceStaticArrays v0.1.4
   [dd5226c6] ArrayInterfaceStaticArraysCore v0.1.0
   [4c555306] ArrayLayouts v0.8.11
   [15f4f7f2] AutoHashEquals v0.2.0
   [aae01518] BandedMatrices v0.17.6
-  [198e06fe] BangBang v0.3.36
+  [198e06fe] BangBang v0.3.37
   [9718e550] Baselet v0.1.1
   [6e4b80f9] BenchmarkTools v1.3.1
   [e2ed5e7c] Bijections v0.1.4
   [9e28174c] BinDeps v1.0.2
+  [d1d4a3ce] BitFlags v0.1.5
   [62783981] BitTwiddlingConvenienceFunctions v0.1.4
   [8e7c35d0] BlockArrays v0.16.20
   [fa961155] CEnum v0.4.2
@@ -482,7 +497,7 @@ And the full manifest:
   [00ebfdb7] CSTParser v3.3.6
   [49dc2e85] Calculus v0.5.1
   [7057c7e9] Cassette v0.3.10
-  [d360d2e6] ChainRulesCore v1.15.5
+  [d360d2e6] ChainRulesCore v1.15.6
   [9e997f8a] ChangesOfVariables v0.1.4
   [fb6a15b2] CloseOpenIntervals v0.1.10
   [944b1d66] CodecZlib v0.7.0
@@ -505,20 +520,20 @@ And the full manifest:
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
   [717857b8] DSP v0.7.7
-  [9a962f9c] DataAPI v1.10.0
+  [9a962f9c] DataAPI v1.11.0
   [864edb3b] DataStructures v0.18.13
   [e2d170a0] DataValueInterfaces v1.0.0
   [55939f99] DecFP v1.3.1
   [244e2a9f] DefineSingletons v0.1.2
   [b429d917] DensityInterface v0.4.0
-  [2b5f629d] DiffEqBase v6.104.3
+  [2b5f629d] DiffEqBase v6.105.0
   [459566f4] DiffEqCallbacks v2.24.1
   [f3b72e0c] DiffEqDevTools v2.32.0
   [77a26b50] DiffEqNoiseProcess v5.13.0
-  [163ba53b] DiffResults v1.0.3
+  [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.11.1
   [b4f34e82] Distances v0.10.7
-  [31c24e10] Distributions v0.25.73
+  [31c24e10] Distributions v0.25.75
   [ffbed154] DocStringExtensions v0.8.6
   [e30172f5] Documenter v0.27.23
   [5b8099bc] DomainSets v0.5.13
@@ -551,12 +566,12 @@ And the full manifest:
   [dcce2d33] GeometricIntegrators v0.9.2
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.5
   [d7ba0133] Git v1.2.1
-  [86223c79] Graphs v1.7.3
+  [86223c79] Graphs v1.7.4
   [42e2da0e] Grisu v1.0.2
   [0b43b601] Groebner v0.2.10
   [d5909c97] GroupsCore v0.4.0
   [f67ccb44] HDF5 v0.16.11
-  [cd3eb016] HTTP v1.3.3
+  [cd3eb016] HTTP v1.4.0
   [eafb193a] Highlights v0.4.5
   [3e5b6fbb] HostCPUFeatures v0.1.8
   [34004b35] HypergeometricFunctions v0.3.11
@@ -578,7 +593,7 @@ And the full manifest:
   [82899510] IteratorInterfaceExtensions v1.0.0
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
-  [98e50ef6] JuliaFormatter v1.0.9
+  [98e50ef6] JuliaFormatter v1.0.10
   [ccbc3e58] JumpProcesses v9.2.0
   [ef3ab10e] KLU v0.3.0
   [ba0b0d4f] Krylov v0.8.4
@@ -594,13 +609,13 @@ And the full manifest:
   [7ed4a6bd] LinearSolve v1.26.0
   [2ab3a3ac] LogExpFunctions v0.3.18
   [e6f89c97] LoggingExtras v0.4.9
-  [bdcacae8] LoopVectorization v0.12.127
+  [bdcacae8] LoopVectorization v0.12.128
   [1914dd2f] MacroTools v0.5.9
   [d125e4d3] ManualMemory v0.1.8
   [a3b82374] MatrixFactorizations v0.9.2
   [739be429] MbedTLS v1.1.6
   [442fdcdd] Measures v0.3.1
-  [e9d8d322] Metatheory v1.3.4
+  [e9d8d322] Metatheory v1.3.5
   [128add7d] MicroCollections v0.1.2
   [e1d29d7a] Missings v1.0.2
   [961ee093] ModelingToolkit v8.23.0
@@ -616,9 +631,10 @@ And the full manifest:
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
   [6fe1bfb0] OffsetArrays v1.12.7
+  [4d8831e6] OpenSSL v1.1.1
   [429524aa] Optim v1.7.3
   [bac558e1] OrderedCollections v1.4.1
-  [1dea7af3] OrdinaryDiffEq v6.27.0
+  [1dea7af3] OrdinaryDiffEq v6.27.2
   [90014a1f] PDMats v0.11.16
   [65888b18] ParameterizedFunctions v5.14.0
   [d96e819e] Parameters v0.12.3
@@ -659,7 +675,7 @@ And the full manifest:
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.35
-  [0bca4576] SciMLBase v1.58.0
+  [0bca4576] SciMLBase v1.59.3
   [31c91b34] SciMLBenchmarks v0.1.1
   [6c6a2e73] Scratch v1.1.1
   [efcf1570] Setfield v0.8.2
@@ -674,9 +690,9 @@ And the full manifest:
   [684fba80] SparsityDetection v0.3.4
   [276daf66] SpecialFunctions v1.8.7
   [171d559e] SplittablesBase v0.1.14
-  [aedffcd0] Static v0.7.6
-  [90137ffa] StaticArrays v1.5.7
-  [1e83bf80] StaticArraysCore v1.3.0
+  [aedffcd0] Static v0.7.7
+  [90137ffa] StaticArrays v1.5.8
+  [1e83bf80] StaticArraysCore v1.4.0
   [82ae8749] StatsAPI v1.5.0
   [2913bbd2] StatsBase v0.33.21
   [4c63d2b9] StatsFuns v1.0.1
@@ -686,7 +702,7 @@ And the full manifest:
   [d1185830] SymbolicUtils v0.19.11
   [0c5d862f] Symbolics v4.10.4
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.8.1
+  [bd369af6] Tables v1.9.0
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v0.2.3
   [8290d209] ThreadingUtilities v0.5.0
@@ -697,7 +713,7 @@ And the full manifest:
   [3bb67fe8] TranscodingStreams v0.9.9
   [28d57a85] Transducers v0.4.73
   [a2a6695c] TreeViews v0.3.0
-  [d5829a12] TriangularSolve v0.1.13
+  [d5829a12] TriangularSolve v0.1.14
   [410a4b4d] Tricks v0.1.6
   [30578b45] URIParser v0.4.1
   [5c2747f8] URIs v1.4.0
@@ -723,7 +739,7 @@ And the full manifest:
   [d7e528f0] FreeType2_jll v2.10.4+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.67.0+0
+  [d2c73de3] GR_jll v0.68.0+0
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.34.1+0
   [7746bdde] Glib_jll v2.68.3+2
@@ -792,56 +808,56 @@ And the full manifest:
   [1270edf5] x264_jll v2021.5.5+0
   [dfaa095f] x265_jll v3.5.0+0
   [d8fb68d0] xkbcommon_jll v1.4.1+0
-  [0dad84c5] ArgTools
+  [0dad84c5] ArgTools v1.1.1
   [56f22d72] Artifacts
   [2a0f44e3] Base64
   [ade2ca70] Dates
   [8bb1440f] DelimitedFiles
   [8ba89e20] Distributed
-  [f43a241f] Downloads
+  [f43a241f] Downloads v1.6.0
   [7b1f6079] FileWatching
   [9fa8497b] Future
   [b77e0a4c] InteractiveUtils
   [4af54fe1] LazyArtifacts
-  [b27032c2] LibCURL
+  [b27032c2] LibCURL v0.6.3
   [76f85450] LibGit2
   [8f399da3] Libdl
   [37e2e46d] LinearAlgebra
   [56ddb016] Logging
   [d6f4376e] Markdown
   [a63ad114] Mmap
-  [ca575930] NetworkOptions
-  [44cfe95a] Pkg
+  [ca575930] NetworkOptions v1.2.0
+  [44cfe95a] Pkg v1.8.0
   [de0858da] Printf
   [9abbd945] Profile
   [3fa0cd96] REPL
   [9a3f8284] Random
-  [ea8e919c] SHA
+  [ea8e919c] SHA v0.7.0
   [9e88b42a] Serialization
   [1a1011a3] SharedArrays
   [6462fe0b] Sockets
   [2f01184e] SparseArrays
   [10745b16] Statistics
   [4607b0f0] SuiteSparse
-  [fa267f1f] TOML
-  [a4e569a6] Tar
+  [fa267f1f] TOML v1.0.0
+  [a4e569a6] Tar v1.10.0
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll
-  [781609d7] GMP_jll
-  [deac9b47] LibCURL_jll
-  [29816b5a] LibSSH2_jll
-  [3a97d323] MPFR_jll
-  [c8ffd9c3] MbedTLS_jll
-  [14a3606d] MozillaCACerts_jll
-  [4536629a] OpenBLAS_jll
-  [05823500] OpenLibm_jll
-  [efcefdf7] PCRE2_jll
-  [bea87d4a] SuiteSparse_jll
-  [83775a58] Zlib_jll
-  [8e850b90] libblastrampoline_jll
-  [8e850ede] nghttp2_jll
-  [3f19e933] p7zip_jll
+  [e66e0078] CompilerSupportLibraries_jll v0.5.2+0
+  [781609d7] GMP_jll v6.2.1+2
+  [deac9b47] LibCURL_jll v7.84.0+0
+  [29816b5a] LibSSH2_jll v1.10.2+0
+  [3a97d323] MPFR_jll v4.1.1+1
+  [c8ffd9c3] MbedTLS_jll v2.28.0+0
+  [14a3606d] MozillaCACerts_jll v2022.2.1
+  [4536629a] OpenBLAS_jll v0.3.20+0
+  [05823500] OpenLibm_jll v0.8.1+0
+  [efcefdf7] PCRE2_jll v10.40.0+0
+  [bea87d4a] SuiteSparse_jll v5.10.1+0
+  [83775a58] Zlib_jll v1.2.12+3
+  [8e850b90] libblastrampoline_jll v5.1.1+0
+  [8e850ede] nghttp2_jll v1.48.0+0
+  [3f19e933] p7zip_jll v17.4.0+0
 ```
 
