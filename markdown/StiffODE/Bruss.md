@@ -211,7 +211,7 @@ setups = [
 names = ["KenCarp47 KLU","KenCarp47 KLU MTK","KenCarp47 UMFPACK", "KenCarp47 UMFPACK MTK", "KenCarp47 GMRES", 
         "KenCarp47 GMRES MTK", "KenCarp47 iLU GMRES", "KenCarp47 iLU GMRES MTK", "KenCarp47 AMG GMRES", 
         "KenCarp47 AMG GMRES MTK"];
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 ```
@@ -223,7 +223,7 @@ setups = [
           Dict(:alg=>TRBDF2()),
           Dict(:alg=>KenCarp4()),
           Dict(:alg=>KenCarp47()),
-    		  Dict(:alg=>QNDF()),
+    		  # Dict(:alg=>QNDF()), # bad
           Dict(:alg=>FBDF()),
           ]
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
@@ -232,6 +232,28 @@ plot(wp)
 ```
 
 ![](figures/Bruss_10_1.png)
+
+```julia
+setups = [
+          Dict(:alg=>KenCarp47(linsolve=KLUFactorization()), :prob_choice => 2),
+          Dict(:alg=>KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
+          Dict(:alg=>FBDF(linsolve=KLUFactorization()), :prob_choice => 2),
+          Dict(:alg=>FBDF(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
+          Dict(:alg=>Rodas5P(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
+          Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 2),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1)),
+          ]
+names = ["KenCarp47 KLU MTK", "KenCarp47 GMRES MTK",
+         "FBDF KLU MTK", "FBDF GMRES MTK",
+         "Rodas5P GMRES MTK",
+         "CVODE MTK KLU", "CVODE iLU MTK GMRES"
+];
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
+```
+
+![](figures/Bruss_11_1.png)
 
 
 
@@ -253,12 +275,34 @@ setups = [
           Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precamg,psetup=psetupamg,prec_side=1), :prob_choice => 2),
           ]
 names = ["CVODE MTK KLU","CVODE GMRES","CVODE MTK GMRES", "CVODE iLU GMRES", "CVODE AMG GMRES", "CVODE iLU MTK GMRES", "CVODE AMG MTK GMRES"];
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 ```
 
-![](figures/Bruss_11_1.png)
+![](figures/Bruss_12_1.png)
+
+```julia
+setups = [
+          Dict(:alg=>KenCarp47(linsolve=KLUFactorization()), :prob_choice => 2),
+          Dict(:alg=>KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
+          Dict(:alg=>FBDF(linsolve=KLUFactorization()), :prob_choice => 2),
+          Dict(:alg=>FBDF(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
+          Dict(:alg=>Rodas5P(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
+          Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 2),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1)),
+          ]
+names = ["KenCarp47 KLU MTK", "KenCarp47 GMRES MTK",
+         "FBDF KLU MTK", "FBDF GMRES MTK",
+         "Rodas5P GMRES MTK",
+         "CVODE MTK KLU", "CVODE iLU MTK GMRES"
+];
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
+```
+
+![](figures/Bruss_13_1.png)
 
 
 ## Appendix
@@ -293,7 +337,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
   [2169fc97] AlgebraicMultigrid v0.5.1
   [6e4b80f9] BenchmarkTools v1.3.1
   [f3b72e0c] DiffEqDevTools v2.32.0
@@ -321,7 +365,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
+      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.4
   [621f4979] AbstractFFTs v1.2.1
