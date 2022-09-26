@@ -218,30 +218,6 @@ plot(wp)
 
 ![](figures/Orego_18_1.png)
 
-```julia
-setups = [Dict(:alg=>Rosenbrock23()),
-          Dict(:alg=>Rosenbrock23(), :prob_choice => 2),
-          Dict(:alg=>TRBDF2()),
-          #Dict(:alg=>ImplicitEulerExtrapolation()), #Diverges
-          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
-          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
-          Dict(:alg=>ABDF2()),
-          Dict(:alg=>FBDF()),
-          Dict(:alg=>QNDF()),
-          Dict(:alg=>Exprb43()),
-          Dict(:alg=>Exprb32()),
-]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
-                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)
-```
-
-```
-Error: LinearAlgebra.SingularException(2)
-```
-
-
-
 
 
 ### Low Tolerances
@@ -272,7 +248,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-![](figures/Orego_20_1.png)
+![](figures/Orego_19_1.png)
 
 ```julia
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false,
@@ -280,7 +256,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false,
 plot(wp)
 ```
 
-![](figures/Orego_21_1.png)
+![](figures/Orego_20_1.png)
 
 ```julia
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
@@ -288,7 +264,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-![](figures/Orego_22_1.png)
+![](figures/Orego_21_1.png)
 
 ```julia
 setups = [Dict(:alg=>GRK4A()),
@@ -313,7 +289,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-![](figures/Orego_23_1.png)
+![](figures/Orego_22_1.png)
 
 ```julia
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false,
@@ -321,7 +297,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false,
 plot(wp)
 ```
 
-![](figures/Orego_24_1.png)
+![](figures/Orego_23_1.png)
 
 ```julia
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
@@ -329,7 +305,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 ```
 
-![](figures/Orego_25_1.png)
+![](figures/Orego_24_1.png)
 
 
 
@@ -401,7 +377,7 @@ plot(wp, title = "Implicit Methods: OREGO",legend=:outertopleft,size = (1000,500
      bottom_margin= 5Plots.mm)
 ```
 
-![](figures/Orego_28_1.png)
+![](figures/Orego_27_1.png)
 
 
 

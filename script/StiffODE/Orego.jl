@@ -137,23 +137,6 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;
 plot(wp)
 
 
-setups = [Dict(:alg=>Rosenbrock23()),
-          Dict(:alg=>Rosenbrock23(), :prob_choice => 2),
-          Dict(:alg=>TRBDF2()),
-          #Dict(:alg=>ImplicitEulerExtrapolation()), #Diverges
-          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
-          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
-          Dict(:alg=>ABDF2()),
-          Dict(:alg=>FBDF()),
-          Dict(:alg=>QNDF()),
-          Dict(:alg=>Exprb43()),
-          Dict(:alg=>Exprb32()),
-]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
-                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)
-
-
 abstols = 1.0 ./ 10.0 .^ (7:13)
 reltols = 1.0 ./ 10.0 .^ (4:10)
 
