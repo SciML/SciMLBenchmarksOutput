@@ -134,18 +134,34 @@ plot(wp)</code></pre><p><img src="../figures/Bruss_8_1.png" alt/></p><pre><code 
 names = [&quot;KenCarp47 KLU&quot;,&quot;KenCarp47 KLU MTK&quot;,&quot;KenCarp47 UMFPACK&quot;, &quot;KenCarp47 UMFPACK MTK&quot;, &quot;KenCarp47 GMRES&quot;, 
         &quot;KenCarp47 GMRES MTK&quot;, &quot;KenCarp47 iLU GMRES&quot;, &quot;KenCarp47 iLU GMRES MTK&quot;, &quot;KenCarp47 AMG GMRES&quot;, 
         &quot;KenCarp47 AMG GMRES MTK&quot;];
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)</code></pre><p><img src="../figures/Bruss_9_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
           Dict(:alg=&gt;TRBDF2()),
           Dict(:alg=&gt;KenCarp4()),
           Dict(:alg=&gt;KenCarp47()),
-    		  Dict(:alg=&gt;QNDF()),
+    		  # Dict(:alg=&gt;QNDF()), # bad
           Dict(:alg=&gt;FBDF()),
           ]
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)</code></pre><p><img src="../figures/Bruss_10_1.png" alt/></p><h3 id="Low-Tolerances"><a class="docs-heading-anchor" href="#Low-Tolerances">Low Tolerances</a><a id="Low-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#Low-Tolerances" title="Permalink"></a></h3><p>This is the speed at lower tolerances, measuring what&#39;s good when accuracy is needed.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:12)
+plot(wp)</code></pre><p><img src="../figures/Bruss_10_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
+          Dict(:alg=&gt;KenCarp47(linsolve=KLUFactorization()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;FBDF(linsolve=KLUFactorization()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;FBDF(linsolve=KrylovJL_GMRES()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;Rodas5P(linsolve=KrylovJL_GMRES()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;CVODE_BDF(linear_solver = :KLU), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1)),
+          ]
+names = [&quot;KenCarp47 KLU MTK&quot;, &quot;KenCarp47 GMRES MTK&quot;,
+         &quot;FBDF KLU MTK&quot;, &quot;FBDF GMRES MTK&quot;,
+         &quot;Rodas5P GMRES MTK&quot;,
+         &quot;CVODE MTK KLU&quot;, &quot;CVODE iLU MTK GMRES&quot;
+];
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)</code></pre><p><img src="../figures/Bruss_11_1.png" alt/></p><h3 id="Low-Tolerances"><a class="docs-heading-anchor" href="#Low-Tolerances">Low Tolerances</a><a id="Low-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#Low-Tolerances" title="Permalink"></a></h3><p>This is the speed at lower tolerances, measuring what&#39;s good when accuracy is needed.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:12)
 reltols = 1.0 ./ 10.0 .^ (4:9)
 
 setups = [
@@ -158,9 +174,25 @@ setups = [
           Dict(:alg=&gt;CVODE_BDF(linear_solver=:GMRES,prec=precamg,psetup=psetupamg,prec_side=1), :prob_choice =&gt; 2),
           ]
 names = [&quot;CVODE MTK KLU&quot;,&quot;CVODE GMRES&quot;,&quot;CVODE MTK GMRES&quot;, &quot;CVODE iLU GMRES&quot;, &quot;CVODE AMG GMRES&quot;, &quot;CVODE iLU MTK GMRES&quot;, &quot;CVODE AMG MTK GMRES&quot;];
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)</code></pre><p><img src="../figures/Bruss_11_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+plot(wp)</code></pre><p><img src="../figures/Bruss_12_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
+          Dict(:alg=&gt;KenCarp47(linsolve=KLUFactorization()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;FBDF(linsolve=KLUFactorization()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;FBDF(linsolve=KrylovJL_GMRES()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;Rodas5P(linsolve=KrylovJL_GMRES()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;CVODE_BDF(linear_solver = :KLU), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1)),
+          ]
+names = [&quot;KenCarp47 KLU MTK&quot;, &quot;KenCarp47 GMRES MTK&quot;,
+         &quot;FBDF KLU MTK&quot;, &quot;FBDF GMRES MTK&quot;,
+         &quot;Rodas5P GMRES MTK&quot;,
+         &quot;CVODE MTK KLU&quot;, &quot;CVODE iLU MTK GMRES&quot;
+];
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)</code></pre><p><img src="../figures/Bruss_13_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/StiffODE&quot;,&quot;Bruss.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.7.3
 Commit 742b9abb4d (2022-05-06 12:58 UTC)
 Platform Info:
@@ -173,7 +205,7 @@ Environment:
   JULIA_CPU_THREADS = 128
   BUILDKITE_PLUGIN_JULIA_CACHE_DIR = /cache/julia-buildkite-plugin
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
   [2169fc97] AlgebraicMultigrid v0.5.1
   [6e4b80f9] BenchmarkTools v1.3.1
   [f3b72e0c] DiffEqDevTools v2.32.0
@@ -195,7 +227,7 @@ Environment:
   [0c5d862f] Symbolics v4.10.4
   [a759f4b9] TimerOutputs v0.5.21
   [37e2e46d] LinearAlgebra
-  [2f01184e] SparseArrays</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
+  [2f01184e] SparseArrays</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.4
   [621f4979] AbstractFFTs v1.2.1
@@ -592,4 +624,4 @@ Environment:
   [83775a58] Zlib_jll v1.2.12+3
   [8e850b90] libblastrampoline_jll v5.1.1+0
   [8e850ede] nghttp2_jll v1.48.0+0
-  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../NonStiffODE/linear_wpd/">« 100 Independent Linear Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../Hires/">HIRES Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Monday 26 September 2022 19:14">Monday 26 September 2022</span>. Using Julia version 1.8.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../NonStiffODE/linear_wpd/">« 100 Independent Linear Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../Hires/">HIRES Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Monday 26 September 2022 20:53">Monday 26 September 2022</span>. Using Julia version 1.8.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
