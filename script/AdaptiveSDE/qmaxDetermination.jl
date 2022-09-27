@@ -3,13 +3,12 @@ qs = 1.0 .+ 2.0.^(-5:2)
 times = Array{Float64}(undef,length(qs),4)
 means = Array{Float64}(undef,length(qs),4)
 
-using StochasticDiffEq, DiffEqProblemLibrary, Random,
+using StochasticDiffEq, SDEProblemLibrary, Random,
       Plots, ParallelDataTransfer, DiffEqMonteCarlo, Distributed
 Random.seed!(99)
 
-using DiffEqProblemLibrary.SDEProblemLibrary: importsdeproblems; importsdeproblems()
-full_prob = DiffEqProblemLibrary.SDEProblemLibrary.oval2ModelExample(largeFluctuations=true,useBigs=false)
-import DiffEqProblemLibrary.SDEProblemLibrary: prob_sde_additivesystem,
+full_prob = SDEProblemLibrary.oval2ModelExample(largeFluctuations=true,useBigs=false)
+import SDEProblemLibrary: prob_sde_additivesystem,
             prob_sde_additive, prob_sde_2Dlinear, prob_sde_linear, prob_sde_wave
 prob = remake(full_prob,tspan=(0.0,1.0))
 
@@ -41,8 +40,8 @@ function runAdaptive(i,k)
 end
 
 #Compile
-monte_prob = MonteCarloProblem(probs[1])
-test_mc = solve(monte_prob,SRIW1(),dt=1/2^(4),adaptive=true,num_monte=1000,abstol=2.0^(-1),reltol=0)
+monte_prob = EnsembleProblem(probs[1])
+test_mc = solve(monte_prob,SRIW1(),dt=1/2^(4),adaptive=true,trajectories=1000,abstol=2.0^(-1),reltol=0)
 DiffEqBase.calculate_monte_errors(test_mc);
 
 
@@ -62,7 +61,7 @@ for k in eachindex(probs)
   prob = probs[k]
 
   for i in eachindex(qs)
-    msim = solve(monte_prob,dt=1/2^(4),SRIW1(),adaptive=true,num_monte=num_runs,abstol=2.0^(-13),reltol=0,qmax=qs[i])
+    msim = solve(monte_prob,dt=1/2^(4),SRIW1(),adaptive=true,trajectories=num_runs,abstol=2.0^(-13),reltol=0,qmax=qs[i])
     test_msim = DiffEqBase.calculate_monte_errors(msim)
     times[i,k] = test_msim.elapsedTime
     means[i,k] = test_msim.error_means[:final]
@@ -71,6 +70,6 @@ for k in eachindex(probs)
 end
 
 
-using DiffEqBenchmarks
-DiffEqBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
 
