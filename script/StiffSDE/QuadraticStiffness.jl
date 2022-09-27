@@ -1,7 +1,6 @@
 
-using DiffEqProblemLibrary, StochasticDiffEq, DiffEqDevTools
-using DiffEqProblemLibrary.SDEProblemLibrary: importsdeproblems; importsdeproblems()
-import DiffEqProblemLibrary.SDEProblemLibrary: prob_sde_stiffquadito
+using SDEProblemLibrary, StochasticDiffEq, DiffEqDevTools
+import SDEProblemLibrary: prob_sde_stiffquadito
 using Plots; gr()
 const N = 10
 

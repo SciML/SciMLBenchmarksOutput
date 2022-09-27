@@ -1,8 +1,10 @@
 
-using StochasticDiffEq, DiffEqProblemLibrary, Random
+using StochasticDiffEq, SDEProblemLibrary, Random
 Random.seed!(200)
-using DiffEqProblemLibrary.SDEProblemLibrary: importsdeproblems; importsdeproblems()
-prob = DiffEqProblemLibrary.SDEProblemLibrary.oval2ModelExample(largeFluctuations=true,useBigs=false)
+prob = SDEProblemLibrary.oval2ModelExample(largeFluctuations=true,useBigs=false)
+
+using LinearAlgebra
+BLAS.set_num_threads(1)
 
 
 Random.seed!(200)
