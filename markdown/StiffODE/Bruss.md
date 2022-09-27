@@ -1,12 +1,7 @@
 ---
 author: "Chris Rackauckas and Utkarsh"
-title: "Brusselator Work-Precision Diagrams for parallel extrapolation methods"
+title: "Brusselator Work-Precision Diagrams"
 ---
-
-
-We try to demonstrate advantages of parallelism in extrapolation methods. While sufficiently large sets of ODEs will be parallelized inside of the LU-factorization stage, on systems of stiff ODEs of approximately 100 ODEs or less this does not overcome the threading overhead in the factorization stage and thus the solves are effectively serial.
-The Brusselator problem aims to demonstrate these performance gains.
-
 ```julia
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, 
       ODEInterfaceDiffEq, LSODA, SparseArrays, LinearSolve,
@@ -239,13 +234,11 @@ setups = [
           Dict(:alg=>KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
           Dict(:alg=>FBDF(linsolve=KLUFactorization()), :prob_choice => 2),
           Dict(:alg=>FBDF(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
-          Dict(:alg=>Rodas5P(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
           Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 2),
           Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1)),
           ]
 names = ["KenCarp47 KLU MTK", "KenCarp47 GMRES MTK",
          "FBDF KLU MTK", "FBDF GMRES MTK",
-         "Rodas5P GMRES MTK",
          "CVODE MTK KLU", "CVODE iLU MTK GMRES"
 ];
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
@@ -337,7 +330,7 @@ Environment:
 Package Information:
 
 ```
-      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
   [2169fc97] AlgebraicMultigrid v0.5.1
   [6e4b80f9] BenchmarkTools v1.3.1
   [f3b72e0c] DiffEqDevTools v2.32.0
@@ -365,7 +358,7 @@ Package Information:
 And the full manifest:
 
 ```
-      Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
+      Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [c3fe647b] AbstractAlgebra v0.27.4
   [621f4979] AbstractFFTs v1.2.1
