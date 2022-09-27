@@ -1,7 +1,6 @@
 
-using DelayDiffEq, DiffEqDevTools, DiffEqProblemLibrary, Plots
-using DiffEqProblemLibrary.DDEProblemLibrary: importddeproblems; importddeproblems()
-import DiffEqProblemLibrary.DDEProblemLibrary: prob_dde_qs
+using DelayDiffEq, DiffEqDevTools, DDEProblemLibrary, Plots
+import DDEProblemLibrary: prob_dde_qs
 gr()
 
 sol = solve(prob_dde_qs, MethodOfSteps(Vern9(); fpsolve = NLFunctional(; max_iter = 1000)); reltol=1e-14, abstol=1e-14)
