@@ -13,7 +13,7 @@ pages = Any["SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (Sci
 
 for folder in readdir(benchmarksdir)
     newpages = Any[]
-    if folder[end-2:end] != ".md" && folder != "Testing" && folder != "figures"
+    if folder[end-2:end] != ".md" && folder != "Testing" && folder != "figures" && folder != "assets"
         for file in filter(x -> x[end-2:end] == ".md", readdir(
             joinpath(benchmarksdir, folder)))
             try
