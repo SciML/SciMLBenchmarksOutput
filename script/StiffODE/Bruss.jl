@@ -180,13 +180,11 @@ setups = [
           Dict(:alg=>KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
           Dict(:alg=>FBDF(linsolve=KLUFactorization()), :prob_choice => 2),
           Dict(:alg=>FBDF(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
-          Dict(:alg=>Rodas5P(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
           Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 2),
           Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1)),
           ]
 names = ["KenCarp47 KLU MTK", "KenCarp47 GMRES MTK",
          "FBDF KLU MTK", "FBDF GMRES MTK",
-         "Rodas5P GMRES MTK",
          "CVODE MTK KLU", "CVODE iLU MTK GMRES"
 ];
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
