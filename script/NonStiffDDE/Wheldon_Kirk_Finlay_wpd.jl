@@ -1,10 +1,9 @@
 
-using DelayDiffEq, DiffEqDevTools, DiffEqProblemLibrary, Plots
-using DiffEqProblemLibrary.DDEProblemLibrary: importddeproblems; importddeproblems()
-import DiffEqProblemLibrary.DDEProblemLibrary: prob_dde_wheldon
+using DelayDiffEq, DiffEqDevTools, Plots
+using DDEProblemLibrary: prob_dde_DDETST_A2 as prob
 gr()
 
-sol = solve(prob_dde_wheldon, MethodOfSteps(Vern9(); fpsolve = NLFunctional(; max_iter = 1000)); reltol=1e-14, abstol=1e-14)
+sol = solve(prob, MethodOfSteps(Vern9(); fpsolve = NLFunctional(; max_iter = 1000)); reltol=1e-14, abstol=1e-14)
 test_sol = TestSolution(sol)
 plot(sol)
 
@@ -19,7 +18,7 @@ setups = [Dict(:alg=>MethodOfSteps(BS3())),
           Dict(:alg=>MethodOfSteps(OwrenZen3())),
           Dict(:alg=>MethodOfSteps(OwrenZen4())),
           Dict(:alg=>MethodOfSteps(OwrenZen5()))]
-wp = WorkPrecisionSet(prob_dde_wheldon,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
 plot(wp)
 
@@ -34,7 +33,7 @@ setups = [Dict(:alg=>MethodOfSteps(BS3())),
           Dict(:alg=>MethodOfSteps(OwrenZen3())),
           Dict(:alg=>MethodOfSteps(OwrenZen4())),
           Dict(:alg=>MethodOfSteps(OwrenZen5()))]
-wp = WorkPrecisionSet(prob_dde_wheldon,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -49,7 +48,7 @@ setups = [Dict(:alg=>MethodOfSteps(BS3())),
           Dict(:alg=>MethodOfSteps(OwrenZen3())),
           Dict(:alg=>MethodOfSteps(OwrenZen4())),
           Dict(:alg=>MethodOfSteps(OwrenZen5()))]
-wp = WorkPrecisionSet(prob_dde_wheldon,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
 plot(wp)
 
@@ -64,7 +63,7 @@ setups = [Dict(:alg=>MethodOfSteps(BS3())),
           Dict(:alg=>MethodOfSteps(OwrenZen3())),
           Dict(:alg=>MethodOfSteps(OwrenZen4())),
           Dict(:alg=>MethodOfSteps(OwrenZen5()))]
-wp = WorkPrecisionSet(prob_dde_wheldon,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -77,7 +76,7 @@ setups = [Dict(:alg=>MethodOfSteps(Vern6())),
           Dict(:alg=>MethodOfSteps(Vern8())),
           Dict(:alg=>MethodOfSteps(Vern9())),
           Dict(:alg=>MethodOfSteps(OwrenZen4()))]
-wp = WorkPrecisionSet(prob_dde_wheldon,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
 plot(wp)
 
@@ -90,7 +89,7 @@ setups = [Dict(:alg=>MethodOfSteps(Vern6())),
           Dict(:alg=>MethodOfSteps(Vern8())),
           Dict(:alg=>MethodOfSteps(Vern9())),
           Dict(:alg=>MethodOfSteps(OwrenZen4()))]
-wp = WorkPrecisionSet(prob_dde_wheldon,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -103,7 +102,7 @@ setups = [Dict(:alg=>MethodOfSteps(Vern6())),
           Dict(:alg=>MethodOfSteps(Vern8())),
           Dict(:alg=>MethodOfSteps(Vern9())),
           Dict(:alg=>MethodOfSteps(OwrenZen4()))]
-wp = WorkPrecisionSet(prob_dde_wheldon,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:final)
 plot(wp)
 
@@ -116,7 +115,7 @@ setups = [Dict(:alg=>MethodOfSteps(Vern6())),
           Dict(:alg=>MethodOfSteps(Vern8())),
           Dict(:alg=>MethodOfSteps(Vern9())),
           Dict(:alg=>MethodOfSteps(OwrenZen4()))]
-wp = WorkPrecisionSet(prob_dde_wheldon,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
