@@ -1,10 +1,9 @@
 
-using OrdinaryDiffEq, Catalyst, JumpProcesses, DiffEqProblemLibrary.JumpProblemLibrary, Plots, Statistics
+using OrdinaryDiffEq, Catalyst, JumpProcesses, JumpProblemLibrary, Plots, Statistics
 fmt = :png
-JumpProblemLibrary.importjumpproblems()
 
 
-jprob = prob_jump_dnadimer_repressor
+jprob = JumpProblemLibrary.prob_jump_dnadimer_repressor
 rnpar = jprob.rates
 u0 = jprob.u0
 tf = jprob.tstop

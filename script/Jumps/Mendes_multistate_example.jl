@@ -1,10 +1,9 @@
 
-using Catalyst, JumpProcesses, DiffEqProblemLibrary.JumpProblemLibrary, Plots, Statistics
+using Catalyst, JumpProcesses, JumpProblemLibrary, Plots, Statistics
 fmt = :png
-JumpProblemLibrary.importjumpproblems()
 
 
-jprob = prob_jump_multistate
+jprob = JumpProblemLibrary.prob_jump_multistate
 rn  = jprob.network
 reactions(rn)
 

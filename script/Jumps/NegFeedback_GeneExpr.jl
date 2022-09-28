@@ -1,8 +1,6 @@
 
-using JumpProcesses, Catalyst, DiffEqProblemLibrary, Plots, Statistics
-using DiffEqProblemLibrary.JumpProblemLibrary: importjumpproblems
-importjumpproblems()
-import DiffEqProblemLibrary.JumpProblemLibrary: prob_jump_dnarepressor
+using JumpProcesses, Catalyst, JumpProblemLibrary, Plots, Statistics
+import JumpProblemLibrary: prob_jump_dnarepressor
 fmt = :png
 
 
