@@ -1,7 +1,8 @@
 
 using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
       Sundials, Plots, DiffEqDevTools, ODEInterface, ODEInterfaceDiffEq,
-      LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit, BenchmarkTools
+      LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit, BenchmarkTools,
+      LinearSolve
 
 gr()
 const to = TimerOutput()
@@ -13,10 +14,9 @@ rn    = prnbng.rn
 @timeit to "Create ODESys" osys = convert(ODESystem, rn)
 
 tspan = (0.,tf)
-@timeit to "ODEProb No Jac" oprob = ODEProblem(osys, Float64[], tspan, Float64[])
-
-
 @timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem(osys, Float64[], tspan, Float64[], jac=true, sparse=true)
+
+
 show(to)
 
 
@@ -28,12 +28,11 @@ show(to)
 u  = ModelingToolkit.varmap_to_vars(nothing, species(rn); defaults=ModelingToolkit.defaults(rn))
 du = copy(u)
 p  = ModelingToolkit.varmap_to_vars(nothing, parameters(rn); defaults=ModelingToolkit.defaults(rn))
-@timeit to "ODE rhs Eval1" oprob.f(du,u,p,0.)
-@timeit to "ODE rhs Eval2" oprob.f(du,u,p,0.)
+@timeit to "ODE rhs Eval1" sparsejacprob.f(du,u,p,0.)
 sparsejacprob.f(du,u,p,0.)
 
 
-@btime oprob.f($du,$u,$p,0.)
+@btime sparsejacprob.f($du,$u,$p,0.)
 
 
 sol = solve(oprob, CVODE_BDF(), saveat=tf/1000., reltol=1e-5, abstol=1e-5)
@@ -56,7 +55,7 @@ setups = [
           ];
 
 
-wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
+wp = WorkPrecisionSet(sparsejacprob,abstols,reltols,setups;error_estimate=:l2,
                       saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 
