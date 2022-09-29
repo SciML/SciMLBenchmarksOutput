@@ -4,7 +4,7 @@ title: "Multistate Work-Precision Diagrams"
 ---
 
 
-The following benchmark is of 9 ODEs with 18 terms that describe a stiff
+The following benchmark is of 9 ODEs with 18 terms that describe a
 chemical reaction network. This multistate model was used as a benchmark model in [Gupta et
 al.](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6013266/). We use
 [`ReactionNetworkImporters`](https://github.com/isaacsas/ReactionNetworkImporters.jl)
@@ -12,7 +12,6 @@ to load the BioNetGen model files as a
 [Catalyst](https://github.com/SciML/Catalyst.jl) model, and then use
 [ModelingToolkit](https://github.com/SciML/ModelingToolkit.jl) to convert the
 Catalyst network model to ODEs.
-
 
 ```julia
 using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
@@ -68,20 +67,20 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           93.1s /  97.0%           17.1GiB /  97.9%
+      Tot / % measured:           56.7s /  95.4%           11.1GiB /  96.9%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb No Jac           1    44.1s   48.8%   44.1s   8.17GiB   48.8%  8.1
-7GiB
- Create ODESys            1    25.8s   28.6%   25.8s   5.42GiB   32.4%  5.4
+ ODEProb No Jac           1    26.0s   48.1%   26.0s   5.52GiB   51.3%  5.5
 2GiB
- Parse Network            1    11.1s   12.3%   11.1s   2.04GiB   12.2%  2.0
+ Create ODESys            1    10.0s   18.4%   10.0s   2.24GiB   20.8%  2.2
 4GiB
- ODEProb SparseJac        1    9.35s   10.4%   9.35s   1.11GiB    6.6%  1.1
+ ODEProb SparseJac        1    9.50s   17.6%   9.50s   1.19GiB   11.0%  1.1
+9GiB
+ Parse Network            1    8.59s   15.9%   8.59s   1.81GiB   16.9%  1.8
 1GiB
  ──────────────────────────────────────────────────────────────────────────
 ────
@@ -129,7 +128,7 @@ given how fast evaluating `f` is:
 ```
 
 ```
-182.833 ns (3 allocations: 1.00 KiB)
+171.232 ns (3 allocations: 1.00 KiB)
 ```
 
 
@@ -158,8 +157,8 @@ test_sol  = TestSolution(sol)
 ```
 
 ```
-0.878724 seconds (1.33 M allocations: 72.277 MiB, 4.41% gc time, 97.86% c
-ompilation time)
+0.855551 seconds (1.32 M allocations: 71.690 MiB, 97.70% compilation time
+)
 retcode: Success
 Interpolation: 3rd order Hermite
 t: nothing
@@ -189,7 +188,7 @@ setups = [
 
 
 
-## Work-Precision Diagram
+## Work-Precision with Implicit Methods
 
 Finally, we generate a work-precision diagram for the selection of solvers.
 ```julia
@@ -202,43 +201,34 @@ plot(wp)
 
 
 
-Multithreading benchmarks with Parallel Extrapolation Methods
+Implicit methods doing poorly suggests it's non-stiff.
+
+## Non-Stiff Work-Precision Diagrams
 
 ```julia
-#Setting BLAS to one thread to measure gains
-LinearAlgebra.BLAS.set_num_threads(1)
-
-abstols = 1.0 ./ 10.0 .^ (10:14)
-reltols = 1.0 ./ 10.0 .^ (7:11)
-
+abstols = 1.0 ./ 10.0 .^ (6:10)
+reltols = 1.0 ./ 10.0 .^ (6:10);
 setups = [
-            Dict(:alg=>CVODE_BDF()),
-            Dict(:alg=>KenCarp4()),
-            Dict(:alg=>Rodas4()),
-            Dict(:alg=>Rodas5()),
-            #Dict(:alg=>QNDF()),
-            Dict(:alg=>lsoda()),
-            Dict(:alg=>radau()),
-            Dict(:alg=>seulex()),
-            Dict(:alg=>ImplicitEulerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitEulerExtrapolation(threading = false)),
-            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(threading = false)),
-            Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = false)),
-            ]
-
-
-solnames = ["CVODE_BDF","KenCarp4","Rodas4","Rodas5","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
-            "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
-
-plot(wp, title = "Implicit Methods",legend=:outertopleft,size = (1000,500),
-     xticks = 10.0 .^ (-15:1:1),
-     yticks = 10.0 .^ (-6:0.3:5),
-     bottom_margin= 5Plots.mm)
+          Dict(:alg=>lsoda()),
+          Dict(:alg=>CVODE_Adams()),
+          Dict(:alg=>Tsit5()),
+          Dict(:alg=>BS5()),
+          Dict(:alg=>VCABM()),
+          Dict(:alg=>Vern6()),
+          Dict(:alg=>Vern7()),
+          Dict(:alg=>Vern8()),
+          Dict(:alg=>Vern9()),
+          ];
 ```
 
-![](figures/multistate_10_1.png)
+
+```julia
+wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
+                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=200)
+plot(wp)
+```
+
+![](figures/multistate_11_1.png)
 
 
 ## Appendix
@@ -276,15 +266,16 @@ Package Information:
       Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [479239e8] Catalyst v12.2.1
-  [2b5f629d] DiffEqBase v6.100.1
-  [f3b72e0c] DiffEqDevTools v2.31.2
-  [033835bb] JLD2 v0.4.22
+  [2b5f629d] DiffEqBase v6.104.0
+  [f3b72e0c] DiffEqDevTools v2.32.0
+  [033835bb] JLD2 v0.4.23
   [7f56f5a3] LSODA v0.7.0
-  [961ee093] ModelingToolkit v8.21.0
+  [7ed4a6bd] LinearSolve v1.26.0
+  [961ee093] ModelingToolkit v8.22.0
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
-  [1dea7af3] OrdinaryDiffEq v6.26.2
-  [91a5bcdd] Plots v1.32.0
+  [1dea7af3] OrdinaryDiffEq v6.26.4
+  [91a5bcdd] Plots v1.33.0
   [b4db0fb7] ReactionNetworkImporters v0.13.4
   [31c91b34] SciMLBenchmarks v0.1.1
   [c3572dad] Sundials v4.10.1
@@ -314,11 +305,11 @@ And the full manifest:
   [9e28174c] BinDeps v1.0.2
   [62783981] BitTwiddlingConvenienceFunctions v0.1.4
   [fa961155] CEnum v0.4.2
-  [2a0fbf3d] CPUSummary v0.1.25
+  [2a0fbf3d] CPUSummary v0.1.27
   [00ebfdb7] CSTParser v3.3.6
   [49dc2e85] Calculus v0.5.1
   [479239e8] Catalyst v12.2.1
-  [d360d2e6] ChainRulesCore v1.15.4
+  [d360d2e6] ChainRulesCore v1.15.5
   [9e997f8a] ChangesOfVariables v0.1.4
   [fb6a15b2] CloseOpenIntervals v0.1.10
   [944b1d66] CodecZlib v0.7.0
@@ -343,21 +334,20 @@ And the full manifest:
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
   [b429d917] DensityInterface v0.4.0
-  [2b5f629d] DiffEqBase v6.100.1
+  [2b5f629d] DiffEqBase v6.104.0
   [459566f4] DiffEqCallbacks v2.24.1
-  [f3b72e0c] DiffEqDevTools v2.31.2
-  [77a26b50] DiffEqNoiseProcess v5.12.3
+  [f3b72e0c] DiffEqDevTools v2.32.0
+  [77a26b50] DiffEqNoiseProcess v5.13.0
   [163ba53b] DiffResults v1.0.3
   [b552c78f] DiffRules v1.11.1
   [b4f34e82] Distances v0.10.7
-  [31c24e10] Distributions v0.25.70
+  [31c24e10] Distributions v0.25.71
   [ffbed154] DocStringExtensions v0.8.6
   [5b8099bc] DomainSets v0.5.13
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.4.5
   [d4d017d3] ExponentialUtilities v1.18.0
   [e2ba6199] ExprTools v0.1.8
-  [411431e0] Extents v0.1.1
   [c87230d0] FFMPEG v0.4.1
   [7034ab61] FastBroadcast v0.2.1
   [9aa1b823] FastClosures v0.3.2
@@ -373,8 +363,6 @@ And the full manifest:
   [46192b85] GPUArraysCore v0.1.2
   [28b8d3ca] GR v0.66.2
   [c145ed77] GenericSchur v0.5.3
-  [cf35fbd7] GeoInterface v1.0.1
-  [5c1252a2] GeometryBasics v0.4.3
   [d7ba0133] Git v1.2.1
   [86223c79] Graphs v1.7.2
   [42e2da0e] Grisu v1.0.2
@@ -393,10 +381,9 @@ And the full manifest:
   [8197267c] IntervalSets v0.7.2
   [3587e190] InverseFunctions v0.1.7
   [92d709cd] IrrationalConstants v0.1.1
-  [c8e1da08] IterTools v1.4.0
   [42fd0dbc] IterativeSolvers v0.9.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [033835bb] JLD2 v0.4.22
+  [033835bb] JLD2 v0.4.23
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
   [98e50ef6] JuliaFormatter v1.0.9
@@ -407,13 +394,13 @@ And the full manifest:
   [7f56f5a3] LSODA v0.7.0
   [b964fa9f] LaTeXStrings v1.3.0
   [2ee39098] LabelledArrays v1.12.0
-  [23fbe1c1] Latexify v0.15.16
+  [23fbe1c1] Latexify v0.15.17
   [10f19ff3] LayoutPointers v0.1.10
   [d3d80556] LineSearches v7.2.0
   [7ed4a6bd] LinearSolve v1.26.0
   [2ab3a3ac] LogExpFunctions v0.3.18
   [e6f89c97] LoggingExtras v0.4.9
-  [bdcacae8] LoopVectorization v0.12.125
+  [bdcacae8] LoopVectorization v0.12.127
   [1914dd2f] MacroTools v0.5.9
   [d125e4d3] ManualMemory v0.1.8
   [739be429] MbedTLS v1.1.5
@@ -421,7 +408,7 @@ And the full manifest:
   [e9d8d322] Metatheory v1.3.4
   [128add7d] MicroCollections v0.1.2
   [e1d29d7a] Missings v1.0.2
-  [961ee093] ModelingToolkit v8.21.0
+  [961ee093] ModelingToolkit v8.22.0
   [46d2c3a1] MuladdMacro v0.2.2
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
@@ -433,20 +420,20 @@ And the full manifest:
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
   [6fe1bfb0] OffsetArrays v1.12.7
-  [429524aa] Optim v1.7.2
+  [429524aa] Optim v1.7.3
   [bac558e1] OrderedCollections v1.4.1
-  [1dea7af3] OrdinaryDiffEq v6.26.2
+  [1dea7af3] OrdinaryDiffEq v6.26.4
   [90014a1f] PDMats v0.11.16
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.4.0
   [ccf2f8ad] PlotThemes v3.0.0
-  [995b91a9] PlotUtils v1.3.0
-  [91a5bcdd] Plots v1.32.0
+  [995b91a9] PlotUtils v1.3.1
+  [91a5bcdd] Plots v1.33.0
   [e409e4f3] PoissonRandom v0.4.1
   [f517fe37] Polyester v0.6.15
-  [1d0040c9] PolyesterWeave v0.1.9
+  [1d0040c9] PolyesterWeave v0.1.10
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.2
+  [d236fae5] PreallocationTools v0.4.4
   [21216c6a] Preferences v1.3.0
   [27ebfcd6] Primes v0.5.3
   [1fd47b50] QuadGK v2.5.0
@@ -460,17 +447,16 @@ And the full manifest:
   [f2c3362d] RecursiveFactorization v0.2.12
   [189a3867] Reexport v1.2.2
   [42d2dcc6] Referenceables v0.1.2
-  [05181044] RelocatableFolders v0.1.3
+  [05181044] RelocatableFolders v0.3.0
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
-  [37e2e3b7] ReverseDiff v1.14.1
   [79098fc4] Rmath v0.7.0
-  [47965b36] RootedTrees v2.13.0
+  [47965b36] RootedTrees v2.14.0
   [7e49a35a] RuntimeGeneratedFunctions v0.5.3
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.35
-  [0bca4576] SciMLBase v1.53.2
+  [0bca4576] SciMLBase v1.56.1
   [31c91b34] SciMLBenchmarks v0.1.1
   [6c6a2e73] Scratch v1.1.1
   [efcf1570] Setfield v0.8.2
@@ -484,14 +470,13 @@ And the full manifest:
   [276daf66] SpecialFunctions v2.1.7
   [171d559e] SplittablesBase v0.1.14
   [aedffcd0] Static v0.7.6
-  [90137ffa] StaticArrays v1.5.6
+  [90137ffa] StaticArrays v1.5.7
   [1e83bf80] StaticArraysCore v1.3.0
   [82ae8749] StatsAPI v1.5.0
   [2913bbd2] StatsBase v0.33.21
   [4c63d2b9] StatsFuns v1.0.1
   [7792a7ef] StrideArraysCore v0.3.15
   [69024149] StringEncodings v0.3.5
-  [09ab397b] StructArrays v0.6.12
   [c3572dad] Sundials v4.10.1
   [d1185830] SymbolicUtils v0.19.11
   [0c5d862f] Symbolics v4.10.4
@@ -514,16 +499,15 @@ And the full manifest:
   [1cfade01] UnicodeFun v0.4.1
   [1986cc42] Unitful v1.11.0
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.47
+  [3d5dd08c] VectorizationBase v0.21.48
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
-  [44d3d7a6] Weave v0.10.10
+  [44d3d7a6] Weave v0.10.9
   [ddb6d928] YAML v0.4.7
   [c2297ded] ZMQ v1.2.1
   [700de1a5] ZygoteRules v0.2.2
   [6e34b625] Bzip2_jll v1.0.8+0
   [83423d85] Cairo_jll v1.16.1+1
-  [5ae413db] EarCut_jll v2.2.3+0
   [2e619515] Expat_jll v2.4.8+0
   [b22a6f82] FFMPEG_jll v4.4.2+0
   [a3f928ae] Fontconfig_jll v2.13.93+0
@@ -595,53 +579,53 @@ And the full manifest:
   [1270edf5] x264_jll v2021.5.5+0
   [dfaa095f] x265_jll v3.5.0+0
   [d8fb68d0] xkbcommon_jll v1.4.1+0
-  [0dad84c5] ArgTools v1.1.1
+  [0dad84c5] ArgTools
   [56f22d72] Artifacts
   [2a0f44e3] Base64
   [ade2ca70] Dates
   [8bb1440f] DelimitedFiles
   [8ba89e20] Distributed
-  [f43a241f] Downloads v1.6.0
+  [f43a241f] Downloads
   [7b1f6079] FileWatching
   [9fa8497b] Future
   [b77e0a4c] InteractiveUtils
-  [b27032c2] LibCURL v0.6.3
+  [b27032c2] LibCURL
   [76f85450] LibGit2
   [8f399da3] Libdl
   [37e2e46d] LinearAlgebra
   [56ddb016] Logging
   [d6f4376e] Markdown
   [a63ad114] Mmap
-  [ca575930] NetworkOptions v1.2.0
-  [44cfe95a] Pkg v1.8.0
+  [ca575930] NetworkOptions
+  [44cfe95a] Pkg
   [de0858da] Printf
   [9abbd945] Profile
   [3fa0cd96] REPL
   [9a3f8284] Random
-  [ea8e919c] SHA v0.7.0
+  [ea8e919c] SHA
   [9e88b42a] Serialization
   [1a1011a3] SharedArrays
   [6462fe0b] Sockets
   [2f01184e] SparseArrays
   [10745b16] Statistics
   [4607b0f0] SuiteSparse
-  [fa267f1f] TOML v1.0.0
-  [a4e569a6] Tar v1.10.0
+  [fa267f1f] TOML
+  [a4e569a6] Tar
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v0.5.2+0
-  [deac9b47] LibCURL_jll v7.84.0+0
-  [29816b5a] LibSSH2_jll v1.10.2+0
-  [c8ffd9c3] MbedTLS_jll v2.28.0+0
-  [14a3606d] MozillaCACerts_jll v2022.2.1
-  [4536629a] OpenBLAS_jll v0.3.20+0
-  [05823500] OpenLibm_jll v0.8.1+0
-  [efcefdf7] PCRE2_jll v10.40.0+0
-  [bea87d4a] SuiteSparse_jll v5.10.1+0
-  [83775a58] Zlib_jll v1.2.12+3
-  [8e850b90] libblastrampoline_jll v5.1.1+0
-  [8e850ede] nghttp2_jll v1.48.0+0
-  [3f19e933] p7zip_jll v17.4.0+0
+  [e66e0078] CompilerSupportLibraries_jll
+  [deac9b47] LibCURL_jll
+  [29816b5a] LibSSH2_jll
+  [c8ffd9c3] MbedTLS_jll
+  [14a3606d] MozillaCACerts_jll
+  [4536629a] OpenBLAS_jll
+  [05823500] OpenLibm_jll
+  [efcefdf7] PCRE2_jll
+  [bea87d4a] SuiteSparse_jll
+  [83775a58] Zlib_jll
+  [8e850b90] libblastrampoline_jll
+  [8e850ede] nghttp2_jll
+  [3f19e933] p7zip_jll
 ```
 
