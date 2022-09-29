@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Brusselator Work-Precision Diagrams · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/StiffODE/Bruss/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations</span><ul><li class="is-active"><a class="tocitem" href>Brusselator Work-Precision Diagrams</a><ul class="internal"><li><a class="tocitem" href="#Setup-Preconditioners"><span>Setup Preconditioners</span></a></li><li><a class="tocitem" href="#High-Tolerances"><span>High Tolerances</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Method of Lines Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../MOLPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_fdm_wpd/">Burger&#39;s Finite Difference Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Stiff Ordinary Differential Equations</a></li><li class="is-active"><a href>Brusselator Work-Precision Diagrams</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Brusselator Work-Precision Diagrams</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/StiffODE/Bruss.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Brusselator-Work-Precision-Diagrams"><a class="docs-heading-anchor" href="#Brusselator-Work-Precision-Diagrams">Brusselator Work-Precision Diagrams</a><a id="Brusselator-Work-Precision-Diagrams-1"></a><a class="docs-heading-anchor-permalink" href="#Brusselator-Work-Precision-Diagrams" title="Permalink"></a></h1><pre><code class="language-julia hljs">using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, 
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Brusselator Work-Precision Diagrams · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/StiffODE/Bruss/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations</span><ul><li class="is-active"><a class="tocitem" href>Brusselator Work-Precision Diagrams</a><ul class="internal"><li><a class="tocitem" href="#Setup-Preconditioners"><span>Setup Preconditioners</span></a></li><li><a class="tocitem" href="#Compare-Problem-Implementations"><span>Compare Problem Implementations</span></a></li><li><a class="tocitem" href="#High-Tolerances"><span>High Tolerances</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Method of Lines Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../MOLPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_fdm_wpd/">Burger&#39;s Finite Difference Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Stiff Ordinary Differential Equations</a></li><li class="is-active"><a href>Brusselator Work-Precision Diagrams</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Brusselator Work-Precision Diagrams</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/StiffODE/Bruss.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Brusselator-Work-Precision-Diagrams"><a class="docs-heading-anchor" href="#Brusselator-Work-Precision-Diagrams">Brusselator Work-Precision Diagrams</a><a id="Brusselator-Work-Precision-Diagrams-1"></a><a class="docs-heading-anchor-permalink" href="#Brusselator-Work-Precision-Diagrams" title="Permalink"></a></h1><pre><code class="language-julia hljs">using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, 
       ODEInterfaceDiffEq, LSODA, SparseArrays, LinearSolve,
       LinearAlgebra, IncompleteLU, AlgebraicMultigrid, Symbolics, ModelingToolkit
 gr()
@@ -41,10 +41,154 @@ function init_brusselator_2d(xyd)
   u
 end
 u0 = init_brusselator_2d(xyd_brusselator)
-prob = ODEProblem(f,u0,(0.,11.5),p);</code></pre><pre><code class="language-julia hljs">prob_mtk = ODEProblem(modelingtoolkitize(prob),[],(0.0,11.5),jac=true,sparse=true);</code></pre><pre><code class="language-julia hljs">sol = solve(prob,CVODE_BDF(),abstol=1/10^14,reltol=1/10^14)
+prob = ODEProblem(f,u0,(0.,11.5),p);</code></pre><pre><code class="language-julia hljs">prob_mtk = ODEProblem(modelingtoolkitize(prob),[],(0.0,11.5),jac=true,sparse=true);</code></pre><pre><code class="language-julia hljs">using Base.Experimental: Const, @aliasscope
+macro vp(expr)
+  nodes = (Symbol(&quot;llvm.loop.vectorize.predicate.enable&quot;), 1)
+  if expr.head != :for
+    error(&quot;Syntax error: loopinfo needs a for loop&quot;)
+  end
+  push!(expr.args[2].args, Expr(:loopinfo, nodes))
+  return esc(expr)
+end
+
+struct Brusselator2DLoop
+  N::Int
+  s::Float64
+end
+function (b::Brusselator2DLoop)(du, unc, p, t)
+  N = b.N
+  s = b.s
+  A, B, alpha, dx = p
+  alpha = alpha/abs2(dx)
+  u = Base.Experimental.Const(unc)
+  Base.Experimental.@aliasscope begin
+  @inbounds @fastmath begin
+    b = ((abs2(-0.3) + abs2(-0.6)) &lt;= abs2(0.1)) * (t &gt;= 1.1) * 5.0
+    du1 = alpha*(u[N,1,1] + u[2,1,1] + u[1,2,1] + u[1,N,1] - 4u[1,1,1]) +
+      B + abs2(u[1,1,1])*u[1,1,2] - (A + 1)*u[1,1,1] + b
+    du2 = alpha*(u[N,1,2] + u[2,1,2] + u[1,2,2] + u[1,N,2] - 4u[1,1,2]) +
+      A*u[1,1,1] - abs2(u[1,1,1])*u[1,1,2]
+    du[1,1,1] = du1
+    du[1,1,2] = du2
+    @vp for i = 2:N-1
+      x = (i-1)*s
+      ip1 = i+1
+      im1 = i-1
+      b = ((abs2(x-0.3) + abs2(-0.6)) &lt;= abs2(0.1)) * (t &gt;= 1.1) * 5.0
+      du1 = alpha*(u[im1,1,1] + u[ip1,1,1] + u[i,2,1] + u[i,N,1] - 4u[i,1,1]) +
+        B + abs2(u[i,1,1])*u[i,1,2] - (A + 1)*u[i,1,1] + b
+      du2 = alpha*(u[im1,1,2] + u[ip1,1,2] + u[i,2,2] + u[i,N,2] - 4u[i,1,2]) +
+        A*u[i,1,1] - abs2(u[i,1,1])*u[i,1,2]
+      du[i,1,1] = du1
+      du[i,1,2] = du2
+    end
+    b = ((abs2(0.7) + abs2(-0.6)) &lt;= abs2(0.1)) * (t &gt;= 1.1) * 5.0
+    du1 = alpha*(u[N-1,1,1] + u[1,1,1] + u[N,2,1] + u[N,N,1] - 4u[N,1,1]) +
+      B + abs2(u[N,1,1])*u[N,1,2] - (A + 1)*u[N,1,1] + b
+    du2 = alpha*(u[N-1,1,2] + u[1,1,2] + u[N,2,2] + u[N,N,2] - 4u[N,1,2]) +
+      A*u[N,1,1] - abs2(u[N,1,1])*u[N,1,2]
+    du[N,1,1] = du1
+    du[N,1,2] = du2
+    for j = 2:N-1
+      y = (j-1)*s
+      jp1 = j+1
+      jm1 = j-1
+      b0 = ((abs2(-0.3) + abs2(y-0.6)) &lt;= abs2(0.1)) * (t &gt;= 1.1) * 5.0
+      du[1,j,1] = alpha*(u[N,j,1] + u[2,j,1] + u[1,jp1,1] + u[1,jm1,1] - 4u[1,j,1]) +
+        B + abs2(u[1,j,1])*u[1,j,2] - (A + 1)*u[1,j,1] + b0
+      du[1,j,2] = alpha*(u[N,j,2] + u[2,j,2] + u[1,jp1,2] + u[1,jm1,2] - 4u[1,j,2]) +
+        A*u[1,j,1] - abs2(u[1,j,1])*u[1,j,2]
+      @vp for i = 2:N-1
+        x = (i-1)*s
+        b = ((abs2(x-0.3) + abs2(y-0.6)) &lt;= abs2(0.1)) * (t &gt;= 1.1) * 5.0
+        du1 = alpha*(u[i-1,j,1] + u[i+1,j,1] + u[i,jp1,1] + u[i,jm1,1] - 4u[i,j,1]) +
+          B + abs2(u[i,j,1])*u[i,j,2] - (A + 1)*u[i,j,1] + b
+        du2 = alpha*(u[i-1,j,2] + u[i+1,j,2] + u[i,jp1,2] + u[i,jm1,2] - 4u[i,j,2]) +
+          A*u[i,j,1] - abs2(u[i,j,1])*u[i,j,2]
+        du[i,j,1] = du1
+        du[i,j,2] = du2
+      end
+      bN = ((abs2(0.7) + abs2(y-0.6)) &lt;= abs2(0.1)) * (t &gt;= 1.1) * 5.0
+      du[N,j,1] = alpha*(u[N-1,j,1] + u[1,j,1] + u[N,jp1,1] + u[N,jm1,1] - 4u[N,j,1]) +
+        B + abs2(u[N,j,1])*u[N,j,2] - (A + 1)*u[N,j,1] + bN
+      du[N,j,2] = alpha*(u[N-1,j,2] + u[1,j,2] + u[N,jp1,2] + u[N,jm1,2] - 4u[N,j,2]) +
+        A*u[N,j,1] - abs2(u[N,j,1])*u[N,j,2]
+    end
+    b = ((abs2(-0.3) + abs2(0.4)) &lt;= abs2(0.1)) * (t &gt;= 1.1) * 5.0
+    du1 = alpha*(u[N,N,1] + u[2,N,1] + u[1,1,1] + u[1,N-1,1] - 4u[1,N,1]) +
+      B + abs2(u[1,N,1])*u[1,N,2] - (A + 1)*u[1,N,1] + b
+    du2 = alpha*(u[N,N,2] + u[2,N,2] + u[1,1,2] + u[1,N-1,2] - 4u[1,N,2]) +
+      A*u[1,N,1] - abs2(u[1,N,1])*u[1,N,2]
+    du[1,N,1] = du1
+    du[1,N,2] = du2
+    @vp for i = 2:N-1
+      x = (i-1)*s
+      ip1 = i+1
+      im1 = i-1
+      b = ((abs2(x-0.3) + abs2(0.4)) &lt;= abs2(0.1)) * (t &gt;= 1.1) * 5.0
+      du1 = alpha*(u[im1,N,1] + u[ip1,N,1] + u[i,1,1] + u[i,N-1,1] - 4u[i,N,1]) +
+        B + abs2(u[i,N,1])*u[i,N,2] - (A + 1)*u[i,N,1] + b
+      du2 = alpha*(u[im1,N,2] + u[ip1,N,2] + u[i,1,2] + u[i,N-1,2] - 4u[i,N,2]) +
+        A*u[i,N,1] - abs2(u[i,N,1])*u[i,N,2]
+      du[i,N,1] = du1
+      du[i,N,2] = du2
+    end
+    b = ((abs2(0.7) + abs2(0.4)) &lt;= abs2(0.1)) * (t &gt;= 1.1) * 5.0
+    du1 = alpha*(u[N-1,N,1] + u[1,N,1] + u[N,1,1] + u[N,N-1,1] - 4u[N,N,1]) +
+      B + abs2(u[N,N,1])*u[N,N,2] - (A + 1)*u[N,N,1] + b
+    du2 = alpha*(u[N-1,N,2] + u[1,N,2] + u[N,1,2] + u[N,N-1,2] - 4u[N,N,2]) +
+      A*u[N,N,1] - abs2(u[N,N,1])*u[N,N,2]
+    du[N,N,1] = du1
+    du[N,N,2] = du2
+  end
+  end
+end
+
+function fast_bruss(N)
+  xyd_brusselator = range(0,stop=1,length=N)
+  brusselator_2d_loop = Brusselator2DLoop(N,Float64(step(xyd_brusselator)))
+  p = (3.4, 1., 10., step(xyd_brusselator))
+
+  input = rand(N,N,2)
+  output = similar(input)
+  sparsity_pattern = Symbolics.jacobian_sparsity(brusselator_2d_loop,output,input,p,0.0)
+  jac_sparsity = Float64.(sparse(sparsity_pattern))
+  f =  ODEFunction(brusselator_2d_loop;jac_prototype=jac_sparsity)
+  u0 = zeros(N, N, 2)
+  @inbounds for I in CartesianIndices((N, N))
+    x = xyd_brusselator[I[1]]
+    y = xyd_brusselator[I[2]]
+    u0[I,1] = 22*(y*(1-y))^(3/2)
+    u0[I,2] = 27*(x*(1-x))^(3/2)
+  end
+  return ODEProblem(f,u0,(0.,11.5),p)
+end
+
+fastprob = fast_bruss(N)</code></pre><pre><code class="nohighlight hljs">ODEProblem with uType Array{Float64, 3} and tType Float64. In-place: true
+timespan: (0.0, 11.5)
+u0: 8×8×2 Array{Float64, 3}:
+[:, :, 1] =
+ 0.0  0.942661  2.02828  2.66625  2.66625  2.02828  0.942661  0.0
+ 0.0  0.942661  2.02828  2.66625  2.66625  2.02828  0.942661  0.0
+ 0.0  0.942661  2.02828  2.66625  2.66625  2.02828  0.942661  0.0
+ 0.0  0.942661  2.02828  2.66625  2.66625  2.02828  0.942661  0.0
+ 0.0  0.942661  2.02828  2.66625  2.66625  2.02828  0.942661  0.0
+ 0.0  0.942661  2.02828  2.66625  2.66625  2.02828  0.942661  0.0
+ 0.0  0.942661  2.02828  2.66625  2.66625  2.02828  0.942661  0.0
+ 0.0  0.942661  2.02828  2.66625  2.66625  2.02828  0.942661  0.0
+
+[:, :, 2] =
+ 0.0      0.0      0.0      0.0      0.0      0.0      0.0      0.0
+ 1.1569   1.1569   1.1569   1.1569   1.1569   1.1569   1.1569   1.1569
+ 2.48926  2.48926  2.48926  2.48926  2.48926  2.48926  2.48926  2.48926
+ 3.27221  3.27221  3.27221  3.27221  3.27221  3.27221  3.27221  3.27221
+ 3.27221  3.27221  3.27221  3.27221  3.27221  3.27221  3.27221  3.27221
+ 2.48926  2.48926  2.48926  2.48926  2.48926  2.48926  2.48926  2.48926
+ 1.1569   1.1569   1.1569   1.1569   1.1569   1.1569   1.1569   1.1569
+ 0.0      0.0      0.0      0.0      0.0      0.0      0.0      0.0</code></pre><pre><code class="language-julia hljs">sol = solve(prob,CVODE_BDF(),abstol=1/10^14,reltol=1/10^14)
 sol2 = solve(prob_mtk,CVODE_BDF(linear_solver = :KLU),abstol=1/10^14,reltol=1/10^14)
-test_sol = [sol,sol2]
-probs = [prob,prob_mtk];</code></pre><pre><code class="language-julia hljs">plot(sol,vars = 1)</code></pre><p><img src="../figures/Bruss_4_1.png" alt/></p><pre><code class="language-julia hljs">plot(sol,vars = 10)</code></pre><p><img src="../figures/Bruss_5_1.png" alt/></p><h2 id="Setup-Preconditioners"><a class="docs-heading-anchor" href="#Setup-Preconditioners">Setup Preconditioners</a><a id="Setup-Preconditioners-1"></a><a class="docs-heading-anchor-permalink" href="#Setup-Preconditioners" title="Permalink"></a></h2><h3 id="OrdinaryDiffEq"><a class="docs-heading-anchor" href="#OrdinaryDiffEq">OrdinaryDiffEq</a><a id="OrdinaryDiffEq-1"></a><a class="docs-heading-anchor-permalink" href="#OrdinaryDiffEq" title="Permalink"></a></h3><pre><code class="language-julia hljs">function incompletelu(W,du,u,p,t,newW,Plprev,Prprev,solverdata)
+test_sol = [sol,sol2,sol]
+probs = [prob,prob_mtk,fastprob];</code></pre><pre><code class="language-julia hljs">plot(sol,vars = 1)</code></pre><p><img src="../figures/Bruss_5_1.png" alt/></p><pre><code class="language-julia hljs">plot(sol,vars = 10)</code></pre><p><img src="../figures/Bruss_6_1.png" alt/></p><h2 id="Setup-Preconditioners"><a class="docs-heading-anchor" href="#Setup-Preconditioners">Setup Preconditioners</a><a id="Setup-Preconditioners-1"></a><a class="docs-heading-anchor-permalink" href="#Setup-Preconditioners" title="Permalink"></a></h2><h3 id="OrdinaryDiffEq"><a class="docs-heading-anchor" href="#OrdinaryDiffEq">OrdinaryDiffEq</a><a id="OrdinaryDiffEq-1"></a><a class="docs-heading-anchor-permalink" href="#OrdinaryDiffEq" title="Permalink"></a></h3><pre><code class="language-julia hljs">function incompletelu(W,du,u,p,t,newW,Plprev,Prprev,solverdata)
   if newW === nothing || newW
     Pl = ilu(convert(AbstractMatrix,W), τ = 50.0)
   else
@@ -104,7 +248,22 @@ end
 
 function precamg(z,r,p,t,y,fy,gamma,delta,lr)
   ldiv!(z,preccache2[],r)
-end</code></pre><pre><code class="nohighlight hljs">precamg (generic function with 1 method)</code></pre><h2 id="High-Tolerances"><a class="docs-heading-anchor" href="#High-Tolerances">High Tolerances</a><a id="High-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#High-Tolerances" title="Permalink"></a></h2><p>This is the speed when you just want the answer.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (5:8)
+end</code></pre><pre><code class="nohighlight hljs">precamg (generic function with 1 method)</code></pre><h2 id="Compare-Problem-Implementations"><a class="docs-heading-anchor" href="#Compare-Problem-Implementations">Compare Problem Implementations</a><a id="Compare-Problem-Implementations-1"></a><a class="docs-heading-anchor-permalink" href="#Compare-Problem-Implementations" title="Permalink"></a></h2><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (5:8)
+reltols = 1.0 ./ 10.0 .^ (1:4);
+setups = [
+          Dict(:alg=&gt;KenCarp47(linsolve=KLUFactorization())),
+          Dict(:alg=&gt;KenCarp47(linsolve=KLUFactorization()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;KenCarp47(linsolve=KLUFactorization()), :prob_choice =&gt; 3),
+          Dict(:alg=&gt;KenCarp47(linsolve=KrylovJL_GMRES())),
+          Dict(:alg=&gt;KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice =&gt; 2),
+          Dict(:alg=&gt;KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice =&gt; 3),
+
+          ]
+names = [&quot;KenCarp47 KLU&quot;,&quot;KenCarp47 KLU MTK&quot;,&quot;KenCarp47 KLU FastBruss&quot;, 
+         &quot;KenCarp47 GMRES&quot;, &quot;KenCarp47 GMRES MTK&quot;, &quot;KenCarp47 GMRES FastBruss&quot;];
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)</code></pre><p><img src="../figures/Bruss_9_1.png" alt/></p><h2 id="High-Tolerances"><a class="docs-heading-anchor" href="#High-Tolerances">High Tolerances</a><a id="High-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#High-Tolerances" title="Permalink"></a></h2><p>This is the speed when you just want the answer.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [
     		  Dict(:alg=&gt;CVODE_BDF(linear_solver = :KLU), :prob_choice =&gt; 2),
@@ -118,7 +277,7 @@ setups = [
 names = [&quot;CVODE MTK KLU&quot;,&quot;CVODE GMRES&quot;,&quot;CVODE MTK GMRES&quot;, &quot;CVODE iLU GMRES&quot;, &quot;CVODE AMG GMRES&quot;, &quot;CVODE iLU MTK GMRES&quot;, &quot;CVODE AMG MTK GMRES&quot;];
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;names=names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)</code></pre><p><img src="../figures/Bruss_8_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
+plot(wp)</code></pre><p><img src="../figures/Bruss_10_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
           Dict(:alg=&gt;KenCarp47(linsolve=KLUFactorization())),
           Dict(:alg=&gt;KenCarp47(linsolve=KLUFactorization()), :prob_choice =&gt; 2),
           Dict(:alg=&gt;KenCarp47(linsolve=UMFPACKFactorization())),
@@ -136,7 +295,7 @@ names = [&quot;KenCarp47 KLU&quot;,&quot;KenCarp47 KLU MTK&quot;,&quot;KenCarp47
         &quot;KenCarp47 AMG GMRES MTK&quot;];
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)</code></pre><p><img src="../figures/Bruss_9_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
+plot(wp)</code></pre><p><img src="../figures/Bruss_11_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
           Dict(:alg=&gt;TRBDF2()),
           Dict(:alg=&gt;KenCarp4()),
           Dict(:alg=&gt;KenCarp47()),
@@ -145,7 +304,7 @@ plot(wp)</code></pre><p><img src="../figures/Bruss_9_1.png" alt/></p><pre><code 
           ]
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)</code></pre><p><img src="../figures/Bruss_10_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
+plot(wp)</code></pre><p><img src="../figures/Bruss_12_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
           Dict(:alg=&gt;KenCarp47(linsolve=KLUFactorization()), :prob_choice =&gt; 2),
           Dict(:alg=&gt;KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice =&gt; 2),
           Dict(:alg=&gt;FBDF(linsolve=KLUFactorization()), :prob_choice =&gt; 2),
@@ -159,7 +318,7 @@ names = [&quot;KenCarp47 KLU MTK&quot;, &quot;KenCarp47 GMRES MTK&quot;,
 ];
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)</code></pre><p><img src="../figures/Bruss_11_1.png" alt/></p><h3 id="Low-Tolerances"><a class="docs-heading-anchor" href="#Low-Tolerances">Low Tolerances</a><a id="Low-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#Low-Tolerances" title="Permalink"></a></h3><p>This is the speed at lower tolerances, measuring what&#39;s good when accuracy is needed.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:12)
+plot(wp)</code></pre><p><img src="../figures/Bruss_13_1.png" alt/></p><h3 id="Low-Tolerances"><a class="docs-heading-anchor" href="#Low-Tolerances">Low Tolerances</a><a id="Low-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#Low-Tolerances" title="Permalink"></a></h3><p>This is the speed at lower tolerances, measuring what&#39;s good when accuracy is needed.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:12)
 reltols = 1.0 ./ 10.0 .^ (4:9)
 
 setups = [
@@ -174,7 +333,7 @@ setups = [
 names = [&quot;CVODE MTK KLU&quot;,&quot;CVODE GMRES&quot;,&quot;CVODE MTK GMRES&quot;, &quot;CVODE iLU GMRES&quot;, &quot;CVODE AMG GMRES&quot;, &quot;CVODE iLU MTK GMRES&quot;, &quot;CVODE AMG MTK GMRES&quot;];
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)</code></pre><p><img src="../figures/Bruss_12_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
+plot(wp)</code></pre><p><img src="../figures/Bruss_14_1.png" alt/></p><pre><code class="language-julia hljs">setups = [
           Dict(:alg=&gt;KenCarp47(linsolve=KLUFactorization()), :prob_choice =&gt; 2),
           Dict(:alg=&gt;KenCarp47(linsolve=KrylovJL_GMRES()), :prob_choice =&gt; 2),
           Dict(:alg=&gt;FBDF(linsolve=KLUFactorization()), :prob_choice =&gt; 2),
@@ -190,7 +349,7 @@ names = [&quot;KenCarp47 KLU MTK&quot;, &quot;KenCarp47 GMRES MTK&quot;,
 ];
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;names = names,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
-plot(wp)</code></pre><p><img src="../figures/Bruss_13_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+plot(wp)</code></pre><p><img src="../figures/Bruss_15_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/StiffODE&quot;,&quot;Bruss.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.7.3
 Commit 742b9abb4d (2022-05-06 12:58 UTC)
 Platform Info:
@@ -622,4 +781,4 @@ Environment:
   [83775a58] Zlib_jll v1.2.12+3
   [8e850b90] libblastrampoline_jll v5.1.1+0
   [8e850ede] nghttp2_jll v1.48.0+0
-  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../NonStiffODE/linear_wpd/">« 100 Independent Linear Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../Hires/">HIRES Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Thursday 29 September 2022 07:44">Thursday 29 September 2022</span>. Using Julia version 1.8.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [3f19e933] p7zip_jll v17.4.0+0</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../NonStiffODE/linear_wpd/">« 100 Independent Linear Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../Hires/">HIRES Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Thursday 29 September 2022 07:47">Thursday 29 September 2022</span>. Using Julia version 1.8.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
