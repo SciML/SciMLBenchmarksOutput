@@ -1,7 +1,8 @@
 
 using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
       Sundials, Plots, DiffEqDevTools, ODEInterface, ODEInterfaceDiffEq,
-      LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit, BenchmarkTools
+      LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit, BenchmarkTools,
+      LinearSolve
 
 gr()
 const to = TimerOutput()
@@ -62,37 +63,24 @@ wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
 plot(wp)
 
 
-#Setting BLAS to one thread to measure gains
-LinearAlgebra.BLAS.set_num_threads(1)
-
-abstols = 1.0 ./ 10.0 .^ (10:14)
-reltols = 1.0 ./ 10.0 .^ (7:11)
-
+abstols = 1.0 ./ 10.0 .^ (6:10)
+reltols = 1.0 ./ 10.0 .^ (6:10);
 setups = [
-            Dict(:alg=>CVODE_BDF()),
-            Dict(:alg=>KenCarp4()),
-            Dict(:alg=>Rodas4()),
-            Dict(:alg=>Rodas5()),
-            #Dict(:alg=>QNDF()),
-            Dict(:alg=>lsoda()),
-            Dict(:alg=>radau()),
-            Dict(:alg=>seulex()),
-            Dict(:alg=>ImplicitEulerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitEulerExtrapolation(threading = false)),
-            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(threading = false)),
-            Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = false)),
-            ]
+          Dict(:alg=>lsoda()),
+          Dict(:alg=>CVODE_Adams()),
+          Dict(:alg=>Tsit5()),
+          Dict(:alg=>BS5()),
+          Dict(:alg=>VCABM()),
+          Dict(:alg=>Vern6()),
+          Dict(:alg=>Vern7()),
+          Dict(:alg=>Vern8()),
+          Dict(:alg=>Vern9()),
+          ];
 
 
-solnames = ["CVODE_BDF","KenCarp4","Rodas4","Rodas5","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
-            "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
-
-plot(wp, title = "Implicit Methods",legend=:outertopleft,size = (1000,500),
-     xticks = 10.0 .^ (-15:1:1),
-     yticks = 10.0 .^ (-6:0.3:5),
-     bottom_margin= 5Plots.mm)
+wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
+                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=200)
+plot(wp)
 
 
 using SciMLBenchmarks
