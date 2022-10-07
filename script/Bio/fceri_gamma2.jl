@@ -35,11 +35,11 @@ sparsejacprob.f(du,u,p,0.)
 @btime sparsejacprob.f($du,$u,$p,0.)
 
 
-sol = solve(oprob, CVODE_BDF(), saveat=tf/1000., reltol=1e-5, abstol=1e-5)
+sol = solve(sparsejacprob, CVODE_BDF(linear_solver=:GMRES), saveat=tf/1000., reltol=1e-5, abstol=1e-5)
 plot(sol, legend=false, fmt=:png)
 
 
-@time sol = solve(oprob, CVODE_BDF(), reltol=1e-15, abstol=1e-15)
+@time sol = solve(sparsejacprob, CVODE_BDF(linear_solver=:GMRES), reltol=1e-15, abstol=1e-15)
 test_sol  = TestSolution(sol)
 
 
