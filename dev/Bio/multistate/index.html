@@ -5,7 +5,7 @@
 
 gr()
 const to = TimerOutput()
-tf       = 20.0
+tf       = 0.5
 
 # generate ModelingToolkit ODEs
 @timeit to &quot;Parse Network&quot; prnbng = loadrxnetwork(BNGNetwork(), joinpath(@__DIR__, &quot;Models/multistate.net&quot;))
@@ -21,7 +21,7 @@ Creating species and parameters for evaluating expressions...done
 Parsing and adding reactions...done
 Parsing groups...done
 ODEProblem with uType Vector{Float64} and tType Float64. In-place: true
-timespan: (0.0, 20.0)
+timespan: (0.0, 0.5)
 u0: 9-element Vector{Float64}:
  5360.0
  1160.0
@@ -38,21 +38,21 @@ show(to)</code></pre><pre><code class="nohighlight hljs">───────�
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           587ms /  87.6%           43.0MiB /  94.1%
+      Tot / % measured:           46.3s /  95.2%           7.84GiB /  96.7%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb No Jac           1    288ms   56.0%   288ms   22.1MiB   54.7%  22.
-1MiB
- ODEProb SparseJac        1    219ms   42.6%   219ms   17.3MiB   42.8%  17.
-3MiB
- Parse Network            1   4.45ms    0.9%  4.45ms    473KiB    1.1%   47
-3KiB
- Create ODESys            1   2.67ms    0.5%  2.67ms    594KiB    1.4%   59
-4KiB
+ ODEProb No Jac           1    19.6s   44.4%   19.6s   3.30GiB   43.6%  3.3
+0GiB
+ Create ODESys            1    8.68s   19.7%   8.68s   1.93GiB   25.4%  1.9
+3GiB
+ ODEProb SparseJac        1    8.59s   19.5%   8.59s   1.22GiB   16.1%  1.2
+2GiB
+ Parse Network            1    7.21s   16.4%   7.21s   1.13GiB   14.9%  1.1
+3GiB
  ──────────────────────────────────────────────────────────────────────────
 ────</code></pre><pre><code class="language-julia hljs">@show numspecies(rn) # Number of ODEs
 @show numreactions(rn) # Apprx. number of terms in the ODE
@@ -64,10 +64,10 @@ du = copy(u)
 p  = ModelingToolkit.varmap_to_vars(nothing, parameters(rn); defaults=ModelingToolkit.defaults(rn))
 @timeit to &quot;ODE rhs Eval1&quot; oprob.f(du,u,p,0.)
 @timeit to &quot;ODE rhs Eval2&quot; oprob.f(du,u,p,0.)
-sparsejacprob.f(du,u,p,0.)</code></pre><p>We also time the ODE rhs function with BenchmarkTools as it is more accurate given how fast evaluating <code>f</code> is:</p><pre><code class="language-julia hljs">@btime oprob.f($du,$u,$p,0.)</code></pre><pre><code class="nohighlight hljs">262.701 ns (3 allocations: 976 bytes)</code></pre><h2 id="Picture-of-the-solution"><a class="docs-heading-anchor" href="#Picture-of-the-solution">Picture of the solution</a><a id="Picture-of-the-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Picture-of-the-solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">sol = solve(oprob, CVODE_BDF(), saveat=tf/1000., reltol=1e-5, abstol=1e-5)
+sparsejacprob.f(du,u,p,0.)</code></pre><p>We also time the ODE rhs function with BenchmarkTools as it is more accurate given how fast evaluating <code>f</code> is:</p><pre><code class="language-julia hljs">@btime oprob.f($du,$u,$p,0.)</code></pre><pre><code class="nohighlight hljs">284.558 ns (3 allocations: 976 bytes)</code></pre><h2 id="Picture-of-the-solution"><a class="docs-heading-anchor" href="#Picture-of-the-solution">Picture of the solution</a><a id="Picture-of-the-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Picture-of-the-solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">sol = solve(oprob, CVODE_BDF(), saveat=tf/1000., reltol=1e-5, abstol=1e-5)
 plot(sol, legend=false, fmt=:png)</code></pre><p><img src="../figures/multistate_6_1.png" alt/></p><p>For these benchmarks we will be using the time-series error with these saving points.</p><h2 id="Generate-Test-Solution"><a class="docs-heading-anchor" href="#Generate-Test-Solution">Generate Test Solution</a><a id="Generate-Test-Solution-1"></a><a class="docs-heading-anchor-permalink" href="#Generate-Test-Solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">@time sol = solve(oprob, CVODE_BDF(), reltol=1e-15, abstol=1e-15)
-test_sol  = TestSolution(sol)</code></pre><pre><code class="nohighlight hljs">0.115987 seconds (164.25 k allocations: 8.686 MiB, 83.70% compilation tim
-e)
+test_sol  = TestSolution(sol)</code></pre><pre><code class="nohighlight hljs">0.661055 seconds (886.56 k allocations: 48.532 MiB, 97.91% compilation ti
+me)
 retcode: Success
 Interpolation: 3rd order Hermite
 t: nothing
@@ -80,7 +80,8 @@ setups = [
           Dict(:alg=&gt;QNDF()),
           Dict(:alg=&gt;FBDF()),
           Dict(:alg=&gt;KenCarp4()),
-          Dict(:alg=&gt;Rosenbrock23()),
+          Dict(:alg=&gt;Rodas4()),
+          Dict(:alg=&gt;Rodas5P()),
           ];</code></pre><h2 id="Work-Precision-with-Implicit-Methods"><a class="docs-heading-anchor" href="#Work-Precision-with-Implicit-Methods">Work-Precision with Implicit Methods</a><a id="Work-Precision-with-Implicit-Methods-1"></a><a class="docs-heading-anchor-permalink" href="#Work-Precision-with-Implicit-Methods" title="Permalink"></a></h2><p>Finally, we generate a work-precision diagram for the selection of solvers.</p><pre><code class="language-julia hljs">wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
                       saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=200)
 plot(wp)</code></pre><p><img src="../figures/multistate_9_1.png" alt/></p><p>Implicit methods doing poorly suggests it&#39;s non-stiff.</p><h2 id="Non-Stiff-Work-Precision-Diagrams"><a class="docs-heading-anchor" href="#Non-Stiff-Work-Precision-Diagrams">Non-Stiff Work-Precision Diagrams</a><a id="Non-Stiff-Work-Precision-Diagrams-1"></a><a class="docs-heading-anchor-permalink" href="#Non-Stiff-Work-Precision-Diagrams" title="Permalink"></a></h2><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (6:10)
@@ -111,24 +112,24 @@ Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
   LD_LIBRARY_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/7661e5a9aa217ce3c468389d834a4fb43b0911e8/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/2e8fae88dcadc37883e31246fe7397f4f1039f88/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/d00220164876dea2cb19993200662745eed5e2db/lib:/cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.8/julia-1.8-latest-linux-x86_64/bin/../lib/julia:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/3e19866657986912870f596aecfee137473965a9/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/dc526f26fb179a3f68eb13fcbe5d2d2a5aa7eeac/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/5a508a62784097dab7c7ae5805f2c89d2cc97397/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/303fe895f57042ea41055187ec4af6322989b5cc/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/f3337de0321b3370b90643d18bf63bd4ee79c991/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/ddfc455343aff48d27c1b39d7fcb07e0d9242b50/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/54c97eb1b0a6f74bac96297a815ddec2204a7db7/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/2b77b304b0975d15bd5aeb4d1d5097ac6256ea3c/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/fac7e6d8fc4c5775bf5118ab494120d2a0db4d64/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/387d89822da323c098aba6f8ab316874d4e90f2e/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/16154f990153825ec24b52aac11165df2084b9dc/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/92111ef825c608ea220f8e679dd8d908d7ac5b83/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/f3ec73d7bf2f4419ba0943e94f7738cf56050797/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/4487a7356408c3a92924e56f9d3891724855282c/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/51c48c945ae76d6c0102649044d9976d93b78125/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/5ba11d7fb2ceb4ca812844eb4af886a212b47f65/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/431a0e3706ffe717ab5d35c47bc38626c6169504/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/fc6071b99b67da0ae4e49ebab70c369ce9a76c9e/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/527e66fb9b12dfd1f58157fe0b3fd52b84062432/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/921a059ebce52878d7a7944c9c345327958d1f5b/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/8b0284dc2781b9481ff92e281f1db532d8421040/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/d11639e2a53726f2593e25ba98ed7b416f62bbc5/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/62c010876222f83fe8878bf2af0e362083d20ee3/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/ee20a84d0166c074dfa736b642902dd87b4da48d/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/459252c01ffcd08700841efdd4b6d3edfe5916e7/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/cc415631aeb190b075329ce756f690a90e1f873b/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/e19f3bb2eef5fb956b672235ea5323b5be9a0626/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/0631e2a6a31b5692eec7a575836451b16b734ec0/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/89ed5dda220da4354ada1970107e13679914bbbc/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/595f9476b128877ab5bf73883ff6c8dc8dacfe66/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/587de110e5f58fd435dc35b294df31bb7a75f692/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/fc239b3ff5739aeab252bd154fa4dd045fefe629/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/25fa81dbac6496585a91dbdc258273d39442466f/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/eff86eedadb59cff1a61399e3242b3f529ca6f59/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/b409c0eafb4254a980f9e730f6fbe56867890f6a/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/a84cc58d5161b950f268bb562e105bbbf4d6004a/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/f0d193662fead3500b523f94b4f1878daab59a93/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/05616da88f6b36c7c94164d4070776aef18ce46b/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/2df316da869cd97f7d70029428ee1e2e521407cd/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/7190f0cb0832b80761cc6d513dd9b935f3e26358/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/4daa3879a820580557ef34945e2ae243dfcbba11/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/5aa80c7b8e919cbfee41019069d9b25269befe10/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/8793267ae1f4b96f626caa27147aa0218389c30d/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/694cae97bb3cbf8f1f73f2ecabd891602ccf1751/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/d22cde7583df1d5f71160a8e4676955a66a91f33/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/b610fc4e040c9a46c250ea4792cc64098003578a/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/cacd8c147f866d6672e1aca9bb01fb919a81e96a/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/b7dc5dce963737414a564aca8d4b82ee388f4fa1/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/0d364e900393f710a03a5bafe2852d76e4d2c2cd/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/79cc5446ced978de84b6e673e01da0ebfdd6e4a5/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/1a2adcee7d99fea18ead33c350332626b262e29a/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/84f18b0f422f5d6a023fe871b59a9fc536d04f5c/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/3c7eef5f322b19cd4b5db6b21f8cafda87b8b26c/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/4443e44120d70a97f8094a67268a886256077e69/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/988066cc974e30c89774b0c471f47201975a4423/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/26099abd23e11fc440259049997307380be745c8/lib:/cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.8/julia-1.8-latest-linux-x86_64/bin/../lib/julia:/cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.8/julia-1.8-latest-linux-x86_64/bin/../lib:
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [479239e8] Catalyst v12.3.0
 ⌃ [2b5f629d] DiffEqBase v6.105.0
   [f3b72e0c] DiffEqDevTools v2.32.0
-  [033835bb] JLD2 v0.4.24
+⌃ [033835bb] JLD2 v0.4.24
   [7f56f5a3] LSODA v0.7.0
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
-  [961ee093] ModelingToolkit v8.26.1
+⌃ [961ee093] ModelingToolkit v8.26.1
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
   [1dea7af3] OrdinaryDiffEq v6.28.0
-  [91a5bcdd] Plots v1.35.2
+⌃ [91a5bcdd] Plots v1.35.2
   [b4db0fb7] ReactionNetworkImporters v0.13.4
   [31c91b34] SciMLBenchmarks v0.1.1
   [c3572dad] Sundials v4.10.1
   [a759f4b9] TimerOutputs v0.5.21
-Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
+Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
 ⌃ [c3fe647b] AbstractAlgebra v0.27.4
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.4.0
@@ -227,7 +228,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [92d709cd] IrrationalConstants v0.1.1
   [42fd0dbc] IterativeSolvers v0.9.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [033835bb] JLD2 v0.4.24
+⌃ [033835bb] JLD2 v0.4.24
   [1019f520] JLFzf v0.1.5
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
@@ -245,7 +246,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
   [2ab3a3ac] LogExpFunctions v0.3.18
   [e6f89c97] LoggingExtras v0.4.9
-  [bdcacae8] LoopVectorization v0.12.132
+⌃ [bdcacae8] LoopVectorization v0.12.132
   [1914dd2f] MacroTools v0.5.10
   [d125e4d3] ManualMemory v0.1.8
   [739be429] MbedTLS v1.1.6
@@ -253,11 +254,11 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [e9d8d322] Metatheory v1.3.5
 ⌃ [128add7d] MicroCollections v0.1.2
   [e1d29d7a] Missings v1.0.2
-  [961ee093] ModelingToolkit v8.26.1
+⌃ [961ee093] ModelingToolkit v8.26.1
   [46d2c3a1] MuladdMacro v0.2.2
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
-  [d8a4904e] MutableArithmetics v1.0.4
+⌃ [d8a4904e] MutableArithmetics v1.0.4
   [d41bc354] NLSolversBase v7.8.2
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.1
@@ -275,7 +276,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.0.0
   [995b91a9] PlotUtils v1.3.1
-  [91a5bcdd] Plots v1.35.2
+⌃ [91a5bcdd] Plots v1.35.2
   [e409e4f3] PoissonRandom v0.4.1
 ⌃ [f517fe37] Polyester v0.6.15
   [1d0040c9] PolyesterWeave v0.1.10
@@ -289,7 +290,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [e6cf234a] RandomNumbers v1.5.3
   [b4db0fb7] ReactionNetworkImporters v0.13.4
   [3cdcf5f2] RecipesBase v1.3.0
-  [01d81517] RecipesPipeline v0.6.6
+⌃ [01d81517] RecipesPipeline v0.6.6
   [731186ca] RecursiveArrayTools v2.32.0
   [f2c3362d] RecursiveFactorization v0.2.12
   [189a3867] Reexport v1.2.2
@@ -303,7 +304,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.36
-  [0bca4576] SciMLBase v1.59.4
+⌃ [0bca4576] SciMLBase v1.59.4
   [31c91b34] SciMLBenchmarks v0.1.1
   [6c6a2e73] Scratch v1.1.1
 ⌅ [efcf1570] Setfield v0.8.2
@@ -475,4 +476,4 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [8e850b90] libblastrampoline_jll v5.1.1+0
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../multisite2/">« Multisite2 Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Friday 7 October 2022 12:47">Friday 7 October 2022</span>. Using Julia version 1.8.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../multisite2/">« Multisite2 Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Saturday 8 October 2022 15:46">Saturday 8 October 2022</span>. Using Julia version 1.8.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
