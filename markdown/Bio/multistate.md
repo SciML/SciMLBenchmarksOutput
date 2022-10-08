@@ -20,7 +20,7 @@ using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
 
 gr()
 const to = TimerOutput()
-tf       = 20.0
+tf       = 0.5
 
 # generate ModelingToolkit ODEs
 @timeit to "Parse Network" prnbng = loadrxnetwork(BNGNetwork(), joinpath(@__DIR__, "Models/multistate.net"))
@@ -40,7 +40,7 @@ Creating species and parameters for evaluating expressions...done
 Parsing and adding reactions...done
 Parsing groups...done
 ODEProblem with uType Vector{Float64} and tType Float64. In-place: true
-timespan: (0.0, 20.0)
+timespan: (0.0, 0.5)
 u0: 9-element Vector{Float64}:
  5360.0
  1160.0
@@ -67,21 +67,21 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           587ms /  87.6%           43.0MiB /  94.1%
+      Tot / % measured:           46.3s /  95.2%           7.84GiB /  96.7%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb No Jac           1    288ms   56.0%   288ms   22.1MiB   54.7%  22.
-1MiB
- ODEProb SparseJac        1    219ms   42.6%   219ms   17.3MiB   42.8%  17.
-3MiB
- Parse Network            1   4.45ms    0.9%  4.45ms    473KiB    1.1%   47
-3KiB
- Create ODESys            1   2.67ms    0.5%  2.67ms    594KiB    1.4%   59
-4KiB
+ ODEProb No Jac           1    19.6s   44.4%   19.6s   3.30GiB   43.6%  3.3
+0GiB
+ Create ODESys            1    8.68s   19.7%   8.68s   1.93GiB   25.4%  1.9
+3GiB
+ ODEProb SparseJac        1    8.59s   19.5%   8.59s   1.22GiB   16.1%  1.2
+2GiB
+ Parse Network            1    7.21s   16.4%   7.21s   1.13GiB   14.9%  1.1
+3GiB
  ──────────────────────────────────────────────────────────────────────────
 ────
 ```
@@ -128,7 +128,7 @@ given how fast evaluating `f` is:
 ```
 
 ```
-262.701 ns (3 allocations: 976 bytes)
+284.558 ns (3 allocations: 976 bytes)
 ```
 
 
@@ -157,8 +157,8 @@ test_sol  = TestSolution(sol)
 ```
 
 ```
-0.115987 seconds (164.25 k allocations: 8.686 MiB, 83.70% compilation tim
-e)
+0.661055 seconds (886.56 k allocations: 48.532 MiB, 97.91% compilation ti
+me)
 retcode: Success
 Interpolation: 3rd order Hermite
 t: nothing
@@ -181,7 +181,8 @@ setups = [
           Dict(:alg=>QNDF()),
           Dict(:alg=>FBDF()),
           Dict(:alg=>KenCarp4()),
-          Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
           ];
 ```
 
@@ -264,19 +265,19 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.1
   [479239e8] Catalyst v12.3.0
 ⌃ [2b5f629d] DiffEqBase v6.105.0
   [f3b72e0c] DiffEqDevTools v2.32.0
-  [033835bb] JLD2 v0.4.24
+⌃ [033835bb] JLD2 v0.4.24
   [7f56f5a3] LSODA v0.7.0
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
-  [961ee093] ModelingToolkit v8.26.1
+⌃ [961ee093] ModelingToolkit v8.26.1
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
   [1dea7af3] OrdinaryDiffEq v6.28.0
-  [91a5bcdd] Plots v1.35.2
+⌃ [91a5bcdd] Plots v1.35.2
   [b4db0fb7] ReactionNetworkImporters v0.13.4
   [31c91b34] SciMLBenchmarks v0.1.1
   [c3572dad] Sundials v4.10.1
@@ -287,7 +288,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
 ⌃ [c3fe647b] AbstractAlgebra v0.27.4
   [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.4.0
@@ -386,7 +387,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [92d709cd] IrrationalConstants v0.1.1
   [42fd0dbc] IterativeSolvers v0.9.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [033835bb] JLD2 v0.4.24
+⌃ [033835bb] JLD2 v0.4.24
   [1019f520] JLFzf v0.1.5
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
@@ -404,7 +405,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
   [2ab3a3ac] LogExpFunctions v0.3.18
   [e6f89c97] LoggingExtras v0.4.9
-  [bdcacae8] LoopVectorization v0.12.132
+⌃ [bdcacae8] LoopVectorization v0.12.132
   [1914dd2f] MacroTools v0.5.10
   [d125e4d3] ManualMemory v0.1.8
   [739be429] MbedTLS v1.1.6
@@ -412,11 +413,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e9d8d322] Metatheory v1.3.5
 ⌃ [128add7d] MicroCollections v0.1.2
   [e1d29d7a] Missings v1.0.2
-  [961ee093] ModelingToolkit v8.26.1
+⌃ [961ee093] ModelingToolkit v8.26.1
   [46d2c3a1] MuladdMacro v0.2.2
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
-  [d8a4904e] MutableArithmetics v1.0.4
+⌃ [d8a4904e] MutableArithmetics v1.0.4
   [d41bc354] NLSolversBase v7.8.2
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.1
@@ -434,7 +435,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.0.0
   [995b91a9] PlotUtils v1.3.1
-  [91a5bcdd] Plots v1.35.2
+⌃ [91a5bcdd] Plots v1.35.2
   [e409e4f3] PoissonRandom v0.4.1
 ⌃ [f517fe37] Polyester v0.6.15
   [1d0040c9] PolyesterWeave v0.1.10
@@ -448,7 +449,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e6cf234a] RandomNumbers v1.5.3
   [b4db0fb7] ReactionNetworkImporters v0.13.4
   [3cdcf5f2] RecipesBase v1.3.0
-  [01d81517] RecipesPipeline v0.6.6
+⌃ [01d81517] RecipesPipeline v0.6.6
   [731186ca] RecursiveArrayTools v2.32.0
   [f2c3362d] RecursiveFactorization v0.2.12
   [189a3867] Reexport v1.2.2
@@ -462,7 +463,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.36
-  [0bca4576] SciMLBase v1.59.4
+⌃ [0bca4576] SciMLBase v1.59.4
   [31c91b34] SciMLBenchmarks v0.1.1
   [6c6a2e73] Scratch v1.1.1
 ⌅ [efcf1570] Setfield v0.8.2

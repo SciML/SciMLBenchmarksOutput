@@ -5,7 +5,7 @@ using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
 
 gr()
 const to = TimerOutput()
-tf       = 20.0
+tf       = 0.5
 
 # generate ModelingToolkit ODEs
 @timeit to "Parse Network" prnbng = loadrxnetwork(BNGNetwork(), joinpath(@__DIR__, "Models/multistate.net"))
@@ -53,7 +53,8 @@ setups = [
           Dict(:alg=>QNDF()),
           Dict(:alg=>FBDF()),
           Dict(:alg=>KenCarp4()),
-          Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
           ];
 
 
