@@ -22,7 +22,7 @@ using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
 
 gr()
 const to = TimerOutput()
-tf       = 200.0
+tf       = 0.5
 
 # generate ModelingToolkit ODEs
 @timeit to "Parse Network" prnbng = loadrxnetwork(BNGNetwork(), joinpath(@__DIR__, "Models/fceri_gamma2.net"))
@@ -42,7 +42,7 @@ Creating species and parameters for evaluating expressions...done
 Parsing and adding reactions...done
 Parsing groups...done
 ODEProblem with uType Vector{Float64} and tType Float64. In-place: true
-timespan: (0.0, 200.0)
+timespan: (0.0, 0.5)
 u0: 3744-element Vector{Float64}:
  6000.0
    28.0
@@ -79,19 +79,19 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           1.89h / 100.0%           10.1TiB / 100.0%
+      Tot / % measured:           1.66h / 100.0%           10.1TiB / 100.0%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1    1.89h   99.8%   1.89h   10.0TiB   99.9%  10.
-0TiB
- Create ODESys            1    9.59s    0.1%   9.59s   5.68GiB    0.1%  5.6
-8GiB
- Parse Network            1    4.14s    0.1%   4.14s   1.67GiB    0.0%  1.6
-7GiB
+ ODEProb SparseJac        1    1.65h   99.5%   1.65h   10.1TiB   99.9%  10.
+1TiB
+ Create ODESys            1    17.3s    0.3%   17.3s   7.52GiB    0.1%  7.5
+2GiB
+ Parse Network            1    14.6s    0.2%   14.6s   3.20GiB    0.0%  3.2
+0GiB
  ──────────────────────────────────────────────────────────────────────────
 ────
 ```
@@ -137,7 +137,7 @@ given how fast evaluating `f` is:
 ```
 
 ```
-84.879 μs (43 allocations: 1.72 KiB)
+85.039 μs (43 allocations: 1.72 KiB)
 ```
 
 
@@ -166,8 +166,8 @@ test_sol  = TestSolution(sol)
 ```
 
 ```
-9.078978 seconds (2.81 M allocations: 900.674 MiB, 3.01% gc time, 7.62% c
-ompilation time)
+1.111946 seconds (946.10 k allocations: 152.592 MiB, 60.27% compilation t
+ime)
 retcode: Success
 Interpolation: 3rd order Hermite
 t: nothing
@@ -208,6 +208,35 @@ plot(wp)
 ![](figures/fceri_gamma2_9_1.png)
 
 
+
+## Non-Stiff Work-Precision Diagrams
+
+```julia
+abstols = 1.0 ./ 10.0 .^ (6:10)
+reltols = 1.0 ./ 10.0 .^ (6:10);
+setups = [
+          Dict(:alg=>lsoda()),
+          Dict(:alg=>CVODE_Adams()),
+          Dict(:alg=>Tsit5()),
+          Dict(:alg=>BS5()),
+          Dict(:alg=>VCABM()),
+          Dict(:alg=>Vern6()),
+          Dict(:alg=>Vern7()),
+          Dict(:alg=>Vern8()),
+          Dict(:alg=>Vern9()),
+          ];
+```
+
+
+```julia
+wp = WorkPrecisionSet(sparsejacprob,abstols,reltols,setups;error_estimate=:l2,
+                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=200)
+plot(wp)
+```
+
+![](figures/fceri_gamma2_11_1.png)
+
+
 ## Appendix
 
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
@@ -246,14 +275,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [479239e8] Catalyst v12.3.0
 ⌃ [2b5f629d] DiffEqBase v6.105.0
   [f3b72e0c] DiffEqDevTools v2.32.0
-  [033835bb] JLD2 v0.4.24
+⌃ [033835bb] JLD2 v0.4.24
   [7f56f5a3] LSODA v0.7.0
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
-  [961ee093] ModelingToolkit v8.26.1
+⌃ [961ee093] ModelingToolkit v8.26.1
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
   [1dea7af3] OrdinaryDiffEq v6.28.0
-  [91a5bcdd] Plots v1.35.2
+⌃ [91a5bcdd] Plots v1.35.2
   [b4db0fb7] ReactionNetworkImporters v0.13.4
   [31c91b34] SciMLBenchmarks v0.1.1
   [c3572dad] Sundials v4.10.1
@@ -363,7 +392,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [92d709cd] IrrationalConstants v0.1.1
   [42fd0dbc] IterativeSolvers v0.9.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [033835bb] JLD2 v0.4.24
+⌃ [033835bb] JLD2 v0.4.24
   [1019f520] JLFzf v0.1.5
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
@@ -389,11 +418,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e9d8d322] Metatheory v1.3.5
 ⌃ [128add7d] MicroCollections v0.1.2
   [e1d29d7a] Missings v1.0.2
-  [961ee093] ModelingToolkit v8.26.1
+⌃ [961ee093] ModelingToolkit v8.26.1
   [46d2c3a1] MuladdMacro v0.2.2
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
-  [d8a4904e] MutableArithmetics v1.0.4
+⌃ [d8a4904e] MutableArithmetics v1.0.4
   [d41bc354] NLSolversBase v7.8.2
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.1
@@ -411,7 +440,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.0.0
   [995b91a9] PlotUtils v1.3.1
-  [91a5bcdd] Plots v1.35.2
+⌃ [91a5bcdd] Plots v1.35.2
   [e409e4f3] PoissonRandom v0.4.1
 ⌃ [f517fe37] Polyester v0.6.15
   [1d0040c9] PolyesterWeave v0.1.10
