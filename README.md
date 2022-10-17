@@ -12,9 +12,9 @@
 SciMLBenchmarks.jl holds webpages, pdfs, and notebooks showing the benchmarks
 for the SciML Scientific Machine Learning Software ecosystem, including:
 
-- Benchmarks of equation solver implementations 
+- Benchmarks of equation solver implementations
 - Speed and robustness comparisons of methods for parameter estimation / inverse problems
-- Training universal differential equations (and subsets like neural ODEs) 
+- Training universal differential equations (and subsets like neural ODEs)
 - Training of physics-informed neural networks (PINNs)
 - Surrogate comparisons, including radial basis functions, neural operators (DeepONets, Fourier Neural Operators), and more
 
@@ -91,7 +91,7 @@ over the set of tested equations and some specific examples may differ.
 
 - In this category, the best methods are much more problem dependent.
 - For smaller problems:
-  - `Rosenbrock23`, `lsoda`, and `TRBDF2` tend to be the most efficient at high  
+  - `Rosenbrock23`, `lsoda`, and `TRBDF2` tend to be the most efficient at high
     tolerances.
   - `Rodas4` and `Rodas5` tend to be the most efficient at low tolerances.
 - For larger problems (Filament PDE):
@@ -169,39 +169,65 @@ over the set of tested equations and some specific examples may differ.
 
 ## Interactive Notebooks
 
-To run the tutorials interactively via Jupyter notebooks and benchmark on your
-own machine
-1. Run Weave for the file (or folder) you are interested in
-2. Activate the appropriate environment
-3. Open and run the notebook.
+To generate the interactive notebooks, first install the SciMLBenchmarks, instantiate the
+environment, and then run `SciMLBenchmarks.open_notebooks()`. This looks as follows:
 
-Note: Since notebooks default to looking for a Project.toml file at the same level or parent folder, you might need to move the notebook to the folder with the appropriate Project.toml.
-
-### Example (starting from the project root folder)
 ```julia
-]activate .
+]add SciMLBenchmarks#master
+]activate SciMLBenchmarks
 ]instantiate
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/Jumps", "Diffusion_CTRW.jmd", [:notebook])
-]activate benchmarks/Jumps
+SciMLBenchmarks.open_notebooks()
 ```
 
-Then move `Diffusion_CTRW.ipynb` to "benchmarks/Jumps" and open the notebook.
+The benchmarks will be generated at your `pwd()` in a folder called `generated_notebooks`.
+
+Note that when running the benchmarks, the packages are not automatically added. Thus you
+will need to add the packages manually or use the internal Project/Manifest tomls to
+instantiate the correct packages. This can be done by activating the folder of the benchmarks.
+For example,
+
+```julia
+using Pkg
+Pkg.activate(joinpath(pkgdir(SciMLBenchmarks),"benchmarks","NonStiffODE"))
+Pkg.instantiate()
+```
+
+will add all of the packages required to run any benchmark in the `NonStiffODE` folder.
 
 ## Contributing
+
+All of the files are generated from the Weave.jl files in the `benchmarks` folder. The generation process runs automatically,
+and thus one does not necessarily need to test the Weave process locally. Instead, simply open a PR that adds/updates a
+file in the "benchmarks" folder and the PR will generate the benchmark on demand. Its artifacts can then be inspected in the
+Buildkite as described below before merging. Note that it will use the Project.toml and Manifest.toml of the subfolder, so
+any changes to dependencies requires that those are updated.
+
+### Reporting Bugs and Issues
+
+Report any bugs or issues at [the SciMLBenchmarks repository](https://github.com/SciML/SciMLBenchmarks.jl).
+
+### Inspecting Benchmark Results
+
+To see benchmark results before merging, click into the BuildKite, click onto
+Artifacts, and then investigate the trained results.
+
+![](https://user-images.githubusercontent.com/1814174/118359358-02ddc980-b551-11eb-8a9b-24de947cefee.PNG)
+
+### Manually Generating Files
 
 All of the files are generated from the Weave.jl files in the `benchmarks` folder. To run the generation process, do for example:
 
 ```julia
 ]activate SciMLBenchmarks # Get all of the packages
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("NonStiffODE","linear_wpd.jmd")
+SciMLBenchmarks.weave_file(joinpath(pkgdir(SciMLBenchmarks),"benchmarks","NonStiffODE"),"linear_wpd.jmd")
 ```
 
 To generate all of the files in a folder, for example, run:
 
 ```julia
-SciMLBenchmarks.weave_folder("NonStiffODE")
+SciMLBenchmarks.weave_folder(joinpath(pkgdir(SciMLBenchmarks),"benchmarks","NonStiffODE"))
 ```
 
 To generate all of the notebooks, do:
@@ -216,10 +242,3 @@ compute clusters, the official benchmarks use a workstation with an
 AMD EPYC 7502 32-Core Processor @ 2.50GHz to match the performance characteristics of
 a standard node in a high performance computing (HPC) cluster or cloud computing
 setup.
-
-### Inspecting Benchmark Results
-
-To see benchmark results before merging, click into the BuildKite, click onto
-Artifacts, and then investigate the trained results.
-
-![](https://user-images.githubusercontent.com/1814174/118359358-02ddc980-b551-11eb-8a9b-24de947cefee.PNG)
