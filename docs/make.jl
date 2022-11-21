@@ -14,7 +14,7 @@ makedocs(
     clean=true, doctest=false,
     format=Documenter.HTML(#analytics = "UA-90474609-3",
         assets=["assets/favicon.ico"],
-        canonical="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/"),
+        canonical="https://benchmarks.sciml.ai/stable/"),
     pages=pages
 )
 
