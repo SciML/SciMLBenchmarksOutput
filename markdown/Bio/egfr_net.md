@@ -27,11 +27,16 @@ tf       = 10.0
 
 # generate ModelingToolkit ODEs
 @timeit to "Parse Network" prnbng = loadrxnetwork(BNGNetwork(), joinpath(@__DIR__, "Models/egfr_net.net"))
+show(to) 
 rn    = prnbng.rn
+obs = [eq.lhs for eq in observed(rn)]
+
 @timeit to "Create ODESys" osys = convert(ODESystem, rn)
+show(to) 
 
 tspan = (0.,tf)
 @timeit to "ODEProb No Jac" oprob = ODEProblem(osys, Float64[], tspan, Float64[])
+show(to);
 ```
 
 ```
@@ -42,29 +47,46 @@ Creating species...done
 Creating species and parameters for evaluating expressions...done
 Parsing and adding reactions...done
 Parsing groups...done
-ODEProblem with uType Vector{Float64} and tType Float64. In-place: true
-timespan: (0.0, 10.0)
-u0: 356-element Vector{Float64}:
-      1.2e6
- 100000.0
- 270000.0
-  13000.0
- 180000.0
-  49000.0
-      0.0
-      0.0
-      0.0
-      0.0
-      ⋮
-      0.0
-      0.0
-      0.0
-      0.0
-      0.0
-      0.0
-      0.0
-      0.0
-      0.0
+ ──────────────────────────────────────────────────────────────────────────
+                                  Time                    Allocations      
+                         ───────────────────────   ────────────────────────
+    Tot / % measured:         330ms /  99.6%           58.8MiB / 100.0%    
+
+ Section         ncalls     time    %tot     avg     alloc    %tot      avg
+ ──────────────────────────────────────────────────────────────────────────
+ Parse Network        1    328ms  100.0%   328ms   58.8MiB  100.0%  58.8MiB
+ ──────────────────────────────────────────────────────────────────────────
+ ──────────────────────────────────────────────────────────────────────────
+                                  Time                    Allocations      
+                         ───────────────────────   ────────────────────────
+    Tot / % measured:         891ms /  93.9%            266MiB /  99.0%    
+
+ Section         ncalls     time    %tot     avg     alloc    %tot      avg
+ ──────────────────────────────────────────────────────────────────────────
+ Create ODESys        1    509ms   60.8%   509ms    205MiB   77.7%   205MiB
+ Parse Network        1    328ms   39.2%   328ms   58.8MiB   22.3%  58.8MiB
+ ──────────────────────────────────────────────────────────────────────────
+ ──────────────────────────────────────────────────────────────────────────
+─
+                                   Time                    Allocations     
+ 
+                          ───────────────────────   ───────────────────────
+─
+     Tot / % measured:         2.14s /  97.4%            570MiB /  99.5%   
+ 
+
+ Section          ncalls     time    %tot     avg     alloc    %tot      av
+g
+ ──────────────────────────────────────────────────────────────────────────
+─
+ ODEProb No Jac        1    1.25s   59.9%   1.25s    303MiB   53.5%   303Mi
+B
+ Create ODESys         1    509ms   24.4%   509ms    205MiB   36.1%   205Mi
+B
+ Parse Network         1    328ms   15.7%   328ms   58.8MiB   10.4%  58.8Mi
+B
+ ──────────────────────────────────────────────────────────────────────────
+─
 ```
 
 
@@ -81,20 +103,20 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           50.2s /  99.9%           22.3GiB / 100.0%
+      Tot / % measured:           47.0s /  99.9%           22.3GiB / 100.0%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1    47.8s   95.4%   47.8s   21.8GiB   97.5%  21.
+ ODEProb SparseJac        1    44.9s   95.6%   44.9s   21.8GiB   97.5%  21.
 8GiB
- ODEProb No Jac           1    1.33s    2.7%   1.33s    303MiB    1.3%   30
+ ODEProb No Jac           1    1.25s    2.7%   1.25s    303MiB    1.3%   30
 3MiB
- Create ODESys            1    706ms    1.4%   706ms    205MiB    0.9%   20
+ Create ODESys            1    509ms    1.1%   509ms    205MiB    0.9%   20
 5MiB
- Parse Network            1    243ms    0.5%   243ms   58.8MiB    0.3%  58.
+ Parse Network            1    328ms    0.7%   328ms   58.8MiB    0.3%  58.
 8MiB
  ──────────────────────────────────────────────────────────────────────────
 ────
@@ -105,14 +127,13 @@ show(to)
 ```julia
 @show numspecies(rn) # Number of ODEs
 @show numreactions(rn) # Apprx. number of terms in the ODE
-@show length(parameters(rn)) # Number of Parameters
+@show length(parameters(rn)); # Number of Parameters
 ```
 
 ```
 numspecies(rn) = 356
 numreactions(rn) = 3749
 length(parameters(rn)) = 43
-43
 ```
 
 
@@ -142,7 +163,7 @@ given how fast evaluating `f` is:
 ```
 
 ```
-5.623 μs (3 allocations: 976 bytes)
+5.727 μs (3 allocations: 976 bytes)
 ```
 
 
@@ -153,7 +174,7 @@ given how fast evaluating `f` is:
 
 ```julia
 sol = solve(oprob, CVODE_BDF(), saveat=tf/1000., reltol=1e-5, abstol=1e-5)
-plot(sol, legend=false, fmt=:png)
+plot(sol; idxs=obs, legend=false, fmt=:png)
 ```
 
 ![](figures/egfr_net_6_1.png)
@@ -167,27 +188,105 @@ points.
 
 ```julia
 @time sol = solve(oprob, CVODE_BDF(), abstol=1/10^14, reltol=1/10^14)
-test_sol  = TestSolution(sol)
+test_sol  = TestSolution(sol);
 ```
 
 ```
-1.081906 seconds (152.71 k allocations: 30.719 MiB, 9.18% compilation tim
+1.093535 seconds (152.70 k allocations: 30.718 MiB, 8.96% compilation tim
 e)
-retcode: Success
-Interpolation: 3rd order Hermite
-t: nothing
-u: nothing
 ```
-
 
 
 
 
 ## Setups
 
+#### Sets plotting defaults
+
+```julia
+default(legendfontsize=7,framestyle=:box,gridalpha=0.3,gridlinewidth=2.5)
+```
+
+
+
+
+#### Declares a plotting helper function
+
+```julia
+function plot_settings(wp)
+    times = vcat(map(wp -> wp.times, wp.wps)...)
+    errors = vcat(map(wp -> wp.errors, wp.wps)...)
+    xlimit = 10 .^ (floor(log10(minimum(errors))), ceil(log10(maximum(errors))))
+    ylimit = 10 .^ (floor(log10(minimum(times))), ceil(log10(maximum(times))))
+    return xlimit,ylimit
+end
+```
+
+```
+plot_settings (generic function with 1 method)
+```
+
+
+
+
+
+#### Sets tolerances
+
 ```julia
 abstols = 1.0 ./ 10.0 .^ (6:10)
 reltols = 1.0 ./ 10.0 .^ (6:10);
+```
+
+
+
+
+## Implicit Work-Precision Diagrams
+
+Benchmarks for implicit solvers.
+
+#### Declare solvers (using default linear solver)
+
+We designate the solvers we wish to use.
+```julia
+setups = [
+          Dict(:alg=>lsoda()),
+          Dict(:alg=>CVODE_BDF()),
+          Dict(:alg=>CVODE_BDF(linear_solver=:LapackDense)),
+          Dict(:alg=>CVODE_Adams()),  
+          Dict(:alg=>TRBDF2()),
+          Dict(:alg=>QNDF()),
+          Dict(:alg=>FBDF()),
+          Dict(:alg=>KenCarp4()),
+          Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P())
+          ];
+```
+
+
+
+
+
+#### Plot Work-Precision Diagram (using default linear solver)
+
+Finally, we generate a work-precision diagram for the selection of solvers.
+```julia
+wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
+                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e9),numruns=100)
+
+names = ["lsoda" "CVODE_BDF" "CVODE_BDF (Lapack Dense)" "CVODE_Adams" "TRBDF2" "QNDF" "FBDF" "KenCarp4" "Rosenbrock23" "Rodas4" "Rodas5P"]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
+```
+
+![](figures/egfr_net_12_1.png)
+
+
+
+#### Declare solvers (using GMRES linear solver)
+
+We designate the solvers we wish to use.
+```julia
 setups = [
           Dict(:alg=>lsoda()),
           Dict(:alg=>CVODE_BDF(linear_solver=:GMRES)),
@@ -196,53 +295,119 @@ setups = [
           Dict(:alg=>FBDF(linsolve=KrylovJL_GMRES())),
           Dict(:alg=>KenCarp4(linsolve=KrylovJL_GMRES())),
           Dict(:alg=>Rosenbrock23(linsolve=KrylovJL_GMRES())),
+          Dict(:alg=>Rodas4(linsolve=KrylovJL_GMRES())),
+          Dict(:alg=>Rodas5P(linsolve=KrylovJL_GMRES()))
           ];
 ```
 
 
 
 
-## Work-Precision Diagram
+
+#### Plot Work-Precision Diagram (using GMRES linear solver)
 
 Finally, we generate a work-precision diagram for the selection of solvers.
 ```julia
 wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
-                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=100)
-plot(wp)
+                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e9),numruns=100)
+
+names = ["lsoda" "CVODE_BDF (GMRES)" "TRBDF2 (GMRES)" "QNDF (GMRES)" "FBDF (GMRES)" "KenCarp4 (GMRES)" "Rosenbrock23 (GMRES)" "Rodas4 (GMRES)" "Rodas5P (GMRES)"]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
 ```
 
-![](figures/egfr_net_9_1.png)
+![](figures/egfr_net_14_1.png)
 
 
 
-Implicit methods doing poorly suggests it's non-stiff.
+#### Declare solvers (using sparse jacobian)
 
-## Non-Stiff Work-Precision Diagrams
-
+We designate the solvers we wish to use.
 ```julia
-abstols = 1.0 ./ 10.0 .^ (6:10)
-reltols = 1.0 ./ 10.0 .^ (6:10);
 setups = [
-          Dict(:alg=>lsoda()),
-          Dict(:alg=>CVODE_Adams()),
-          Dict(:alg=>Tsit5()),
-          Dict(:alg=>BS5()),
-          Dict(:alg=>VCABM()),
-          Dict(:alg=>Vern6()),
-          Dict(:alg=>Vern7()),
-          Dict(:alg=>Vern8()),
-          Dict(:alg=>Vern9()),
+          Dict(:alg=>CVODE_BDF(linear_solver=:KLU)),
+          Dict(:alg=>TRBDF2(linsolve=KLUFactorization())),
+          Dict(:alg=>QNDF(linsolve=KLUFactorization())),
+          Dict(:alg=>FBDF(linsolve=KLUFactorization())),
+          Dict(:alg=>KenCarp4(linsolve=KLUFactorization())),
+          Dict(:alg=>Rosenbrock23(linsolve=KLUFactorization())),
+          Dict(:alg=>Rodas4(linsolve=KLUFactorization())),
+          Dict(:alg=>Rodas5P(linsolve=KLUFactorization()))
           ];
 ```
 
 
+
+
+
+#### Plot Work-Precision Diagram (using sparse jacobian)
+
+Finally, we generate a work-precision diagram for the selection of solvers.
 ```julia
-wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
-                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=200)
-plot(wp)
+wp = WorkPrecisionSet(sparsejacprob,abstols,reltols,setups;error_estimate=:l2,
+                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e9),numruns=100)
+
+names = ["CVODE_BDF (KLU, sparse jac)" "TRBDF2 (KLU, sparse jac)" "QNDF (KLU, sparse jac)" "FBDF (KLU, sparse jac)" "KenCarp4 (KLU, sparse jac)" "Rosenbrock23 (KLU, sparse jac)" "Rodas4 (KLU, sparse jac)" "Rodas5P (KLU, sparse jac)"]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
 ```
 
-![](figures/egfr_net_11_1.png)
+![](figures/egfr_net_16_1.png)
+
+
+
+## Explicit Work-Precision Diagram
+
+Benchmarks for explicit solvers.
+
+#### Declare solvers
+
+We designate the solvers we wish to use, this also includes lsoda and CVODE.
+```julia
+setups = [
+          Dict(:alg=>lsoda()), 
+          Dict(:alg=>CVODE_Adams()), 
+          Dict(:alg=>Tsit5()), 
+          Dict(:alg=>BS5()), 
+          Dict(:alg=>VCABM()),          
+          Dict(:alg=>Vern6()), 
+          Dict(:alg=>Vern7()), 
+          Dict(:alg=>Vern8()), 
+          Dict(:alg=>Vern9()),
+          Dict(:alg=>ROCK4())
+          ];
+```
+
+
+
+
+#### Plot Work-Precision Diagram
+
+```julia
+wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
+                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e9),numruns=200)
+
+names = ["lsoda" "CVODE_Adams" "Tsit5" "BS5" "VCABM" "Vern6" "Vern7" "Vern8" "Vern9" "ROCK4"]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
+```
+
+![](figures/egfr_net_18_1.png)
+
+
+
+#### Additional explicit solvers
+One additional explicit solver, `ROCK2`, performs noticeably worse as compared to the other ones.
+```julia
+setups = [Dict(:alg=>ROCK2())];
+wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
+                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e9),numruns=200)
+names = ["ROCK2"]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
+```
+
+![](figures/egfr_net_19_1.png)
 
 
 ## Appendix
@@ -259,8 +424,8 @@ SciMLBenchmarks.weave_file("benchmarks/Bio","egfr_net.jmd")
 Computer Information:
 
 ```
-Julia Version 1.8.2
-Commit 36034abf260 (2022-09-29 15:21 UTC)
+Julia Version 1.8.3
+Commit 0434deb161e (2022-11-14 20:14 UTC)
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
   CPU: 128 × AMD EPYC 7502 32-Core Processor
@@ -279,23 +444,25 @@ Package Information:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
-  [6e4b80f9] BenchmarkTools v1.3.1
-  [479239e8] Catalyst v12.3.0
+⌃ [6e4b80f9] BenchmarkTools v1.3.1
+⌃ [479239e8] Catalyst v12.3.0
 ⌃ [2b5f629d] DiffEqBase v6.105.0
-  [f3b72e0c] DiffEqDevTools v2.32.0
-  [033835bb] JLD2 v0.4.24
-  [7f56f5a3] LSODA v0.7.0
+⌃ [f3b72e0c] DiffEqDevTools v2.32.0
+⌃ [40713840] IncompleteLU v0.2.0
+⌃ [033835bb] JLD2 v0.4.24
+⌃ [7f56f5a3] LSODA v0.7.0
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
-  [961ee093] ModelingToolkit v8.26.1
+⌃ [961ee093] ModelingToolkit v8.26.1
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
-  [1dea7af3] OrdinaryDiffEq v6.28.0
-  [91a5bcdd] Plots v1.35.2
-  [b4db0fb7] ReactionNetworkImporters v0.13.4
+⌃ [1dea7af3] OrdinaryDiffEq v6.28.0
+⌃ [91a5bcdd] Plots v1.35.2
+⌃ [b4db0fb7] ReactionNetworkImporters v0.13.4
   [31c91b34] SciMLBenchmarks v0.1.1
-  [c3572dad] Sundials v4.10.1
-  [a759f4b9] TimerOutputs v0.5.21
+⌃ [c3572dad] Sundials v4.10.1
+⌃ [a759f4b9] TimerOutputs v0.5.21
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -303,94 +470,95 @@ And the full manifest:
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
 ⌃ [c3fe647b] AbstractAlgebra v0.27.4
-  [1520ce14] AbstractTrees v0.4.2
+⌃ [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.4.0
   [dce04be8] ArgCheck v2.3.0
   [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v6.0.23
-  [30b0a656] ArrayInterfaceCore v0.1.20
+⌃ [4fba245c] ArrayInterface v6.0.23
+⌃ [30b0a656] ArrayInterfaceCore v0.1.20
   [6ba088a2] ArrayInterfaceGPUArrays v0.2.2
-  [015c0d05] ArrayInterfaceOffsetArrays v0.1.6
-  [b0d46f97] ArrayInterfaceStaticArrays v0.1.4
-  [dd5226c6] ArrayInterfaceStaticArraysCore v0.1.0
+⌃ [015c0d05] ArrayInterfaceOffsetArrays v0.1.6
+⌃ [b0d46f97] ArrayInterfaceStaticArrays v0.1.4
+⌃ [dd5226c6] ArrayInterfaceStaticArraysCore v0.1.0
   [15f4f7f2] AutoHashEquals v0.2.0
   [198e06fe] BangBang v0.3.37
   [9718e550] Baselet v0.1.1
-  [6e4b80f9] BenchmarkTools v1.3.1
+⌃ [6e4b80f9] BenchmarkTools v1.3.1
   [e2ed5e7c] Bijections v0.1.4
   [9e28174c] BinDeps v1.0.2
-  [d1d4a3ce] BitFlags v0.1.5
-  [62783981] BitTwiddlingConvenienceFunctions v0.1.4
+⌃ [d1d4a3ce] BitFlags v0.1.5
+⌃ [62783981] BitTwiddlingConvenienceFunctions v0.1.4
   [fa961155] CEnum v0.4.2
-  [2a0fbf3d] CPUSummary v0.1.27
+⌃ [2a0fbf3d] CPUSummary v0.1.27
   [00ebfdb7] CSTParser v3.3.6
   [49dc2e85] Calculus v0.5.1
-  [479239e8] Catalyst v12.3.0
+⌃ [479239e8] Catalyst v12.3.0
   [d360d2e6] ChainRulesCore v1.15.6
   [9e997f8a] ChangesOfVariables v0.1.4
-  [fb6a15b2] CloseOpenIntervals v0.1.10
+⌃ [fb6a15b2] CloseOpenIntervals v0.1.10
   [944b1d66] CodecZlib v0.7.0
   [35d6a980] ColorSchemes v3.19.0
   [3da002f7] ColorTypes v0.11.4
   [c3611d14] ColorVectorSpace v0.9.9
   [5ae59095] Colors v0.12.8
   [861a8166] Combinatorics v1.0.2
-  [a80b9123] CommonMark v0.8.6
-  [38540f10] CommonSolve v0.2.1
+⌃ [a80b9123] CommonMark v0.8.6
+⌃ [38540f10] CommonSolve v0.2.1
   [bbf7d656] CommonSubexpressions v0.3.0
 ⌅ [34da2185] Compat v3.46.0
-  [b152e2b5] CompositeTypes v0.1.2
+⌃ [b152e2b5] CompositeTypes v0.1.2
   [a33af91c] CompositionsBase v0.1.1
   [8f4d0f93] Conda v1.7.0
   [187b0558] ConstructionBase v1.4.1
   [d38c429a] Contour v0.6.2
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
-  [9a962f9c] DataAPI v1.12.0
+⌃ [9a962f9c] DataAPI v1.12.0
   [864edb3b] DataStructures v0.18.13
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
   [b429d917] DensityInterface v0.4.0
 ⌃ [2b5f629d] DiffEqBase v6.105.0
-  [459566f4] DiffEqCallbacks v2.24.1
-  [f3b72e0c] DiffEqDevTools v2.32.0
-  [77a26b50] DiffEqNoiseProcess v5.13.0
+⌃ [459566f4] DiffEqCallbacks v2.24.1
+⌃ [f3b72e0c] DiffEqDevTools v2.32.0
+⌃ [77a26b50] DiffEqNoiseProcess v5.13.0
   [163ba53b] DiffResults v1.1.0
-  [b552c78f] DiffRules v1.11.1
+⌃ [b552c78f] DiffRules v1.11.1
   [b4f34e82] Distances v0.10.7
-  [31c24e10] Distributions v0.25.75
+⌃ [31c24e10] Distributions v0.25.75
 ⌅ [ffbed154] DocStringExtensions v0.8.6
-  [5b8099bc] DomainSets v0.5.13
+⌃ [5b8099bc] DomainSets v0.5.13
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.4.5
-  [d4d017d3] ExponentialUtilities v1.19.0
+⌃ [d4d017d3] ExponentialUtilities v1.19.0
   [e2ba6199] ExprTools v0.1.8
   [c87230d0] FFMPEG v0.4.1
-  [7034ab61] FastBroadcast v0.2.1
+⌃ [7034ab61] FastBroadcast v0.2.1
   [9aa1b823] FastClosures v0.3.2
   [29a986be] FastLapackInterface v1.2.7
-  [5789e2e9] FileIO v1.15.0
-  [1a297f60] FillArrays v0.13.4
-  [6a86dc24] FiniteDiff v2.15.0
+⌃ [5789e2e9] FileIO v1.15.0
+⌃ [1a297f60] FillArrays v0.13.4
+⌃ [6a86dc24] FiniteDiff v2.15.0
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
-  [f6369f11] ForwardDiff v0.10.32
+⌃ [f6369f11] ForwardDiff v0.10.32
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.1
   [46192b85] GPUArraysCore v0.1.2
-⌃ [28b8d3ca] GR v0.69.3
+⌅ [28b8d3ca] GR v0.69.3
   [c145ed77] GenericSchur v0.5.3
   [d7ba0133] Git v1.2.1
   [86223c79] Graphs v1.7.4
   [42e2da0e] Grisu v1.0.2
-  [0b43b601] Groebner v0.2.10
+⌃ [0b43b601] Groebner v0.2.10
   [d5909c97] GroupsCore v0.4.0
-  [cd3eb016] HTTP v1.4.0
+⌃ [cd3eb016] HTTP v1.4.0
 ⌅ [eafb193a] Highlights v0.4.5
-  [3e5b6fbb] HostCPUFeatures v0.1.8
+⌃ [3e5b6fbb] HostCPUFeatures v0.1.8
   [34004b35] HypergeometricFunctions v0.3.11
   [7073ff75] IJulia v1.23.3
   [615f187c] IfElse v0.1.1
+⌃ [40713840] IncompleteLU v0.2.0
   [d25df0c9] Inflate v0.1.3
   [83e8ac13] IniFile v0.5.1
   [22cec73e] InitialValues v0.3.1
@@ -400,70 +568,70 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [92d709cd] IrrationalConstants v0.1.1
   [42fd0dbc] IterativeSolvers v0.9.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [033835bb] JLD2 v0.4.24
+⌃ [033835bb] JLD2 v0.4.24
   [1019f520] JLFzf v0.1.5
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
-  [98e50ef6] JuliaFormatter v1.0.10
-  [ccbc3e58] JumpProcesses v9.2.0
+⌃ [98e50ef6] JuliaFormatter v1.0.10
+⌃ [ccbc3e58] JumpProcesses v9.2.0
 ⌅ [ef3ab10e] KLU v0.3.0
   [ba0b0d4f] Krylov v0.8.4
-  [0b1a1467] KrylovKit v0.5.4
-  [7f56f5a3] LSODA v0.7.0
+⌅ [0b1a1467] KrylovKit v0.5.4
+⌃ [7f56f5a3] LSODA v0.7.0
   [b964fa9f] LaTeXStrings v1.3.0
-  [2ee39098] LabelledArrays v1.12.0
+⌃ [2ee39098] LabelledArrays v1.12.0
   [23fbe1c1] Latexify v0.15.17
-  [10f19ff3] LayoutPointers v0.1.10
+⌃ [10f19ff3] LayoutPointers v0.1.10
   [d3d80556] LineSearches v7.2.0
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
   [2ab3a3ac] LogExpFunctions v0.3.18
-  [e6f89c97] LoggingExtras v0.4.9
-  [bdcacae8] LoopVectorization v0.12.132
+⌅ [e6f89c97] LoggingExtras v0.4.9
+⌃ [bdcacae8] LoopVectorization v0.12.132
   [1914dd2f] MacroTools v0.5.10
   [d125e4d3] ManualMemory v0.1.8
-  [739be429] MbedTLS v1.1.6
-  [442fdcdd] Measures v0.3.1
+⌃ [739be429] MbedTLS v1.1.6
+⌃ [442fdcdd] Measures v0.3.1
   [e9d8d322] Metatheory v1.3.5
 ⌃ [128add7d] MicroCollections v0.1.2
   [e1d29d7a] Missings v1.0.2
-  [961ee093] ModelingToolkit v8.26.1
-  [46d2c3a1] MuladdMacro v0.2.2
+⌃ [961ee093] ModelingToolkit v8.26.1
+⌃ [46d2c3a1] MuladdMacro v0.2.2
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
-  [d8a4904e] MutableArithmetics v1.0.4
+⌃ [d8a4904e] MutableArithmetics v1.0.4
   [d41bc354] NLSolversBase v7.8.2
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.1
   [8913a72c] NonlinearSolve v0.3.22
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
-  [6fe1bfb0] OffsetArrays v1.12.7
-  [4d8831e6] OpenSSL v1.2.1
+⌃ [6fe1bfb0] OffsetArrays v1.12.7
+⌃ [4d8831e6] OpenSSL v1.2.1
   [429524aa] Optim v1.7.3
   [bac558e1] OrderedCollections v1.4.1
-  [1dea7af3] OrdinaryDiffEq v6.28.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.28.0
   [90014a1f] PDMats v0.11.16
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.4.0
+⌃ [69de0a69] Parsers v2.4.0
   [b98c9c47] Pipe v1.3.0
-  [ccf2f8ad] PlotThemes v3.0.0
+⌃ [ccf2f8ad] PlotThemes v3.0.0
   [995b91a9] PlotUtils v1.3.1
-  [91a5bcdd] Plots v1.35.2
-  [e409e4f3] PoissonRandom v0.4.1
+⌃ [91a5bcdd] Plots v1.35.2
+⌃ [e409e4f3] PoissonRandom v0.4.1
 ⌃ [f517fe37] Polyester v0.6.15
-  [1d0040c9] PolyesterWeave v0.1.10
+⌃ [1d0040c9] PolyesterWeave v0.1.10
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.4
   [21216c6a] Preferences v1.3.0
   [27ebfcd6] Primes v0.5.3
-  [1fd47b50] QuadGK v2.5.0
+⌃ [1fd47b50] QuadGK v2.5.0
   [74087812] Random123 v1.6.0
   [fb686558] RandomExtensions v0.4.3
   [e6cf234a] RandomNumbers v1.5.3
-  [b4db0fb7] ReactionNetworkImporters v0.13.4
-  [3cdcf5f2] RecipesBase v1.3.0
-  [01d81517] RecipesPipeline v0.6.6
-  [731186ca] RecursiveArrayTools v2.32.0
+⌃ [b4db0fb7] ReactionNetworkImporters v0.13.4
+⌃ [3cdcf5f2] RecipesBase v1.3.0
+⌃ [01d81517] RecipesPipeline v0.6.6
+⌃ [731186ca] RecursiveArrayTools v2.32.0
   [f2c3362d] RecursiveFactorization v0.2.12
   [189a3867] Reexport v1.2.2
   [42d2dcc6] Referenceables v0.1.2
@@ -471,12 +639,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
   [79098fc4] Rmath v0.7.0
-  [47965b36] RootedTrees v2.15.0
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.3
+⌃ [47965b36] RootedTrees v2.15.0
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.3
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.36
-  [0bca4576] SciMLBase v1.59.4
+⌃ [476501e8] SLEEFPirates v0.6.36
+⌃ [0bca4576] SciMLBase v1.59.4
   [31c91b34] SciMLBenchmarks v0.1.1
   [6c6a2e73] Scratch v1.1.1
 ⌅ [efcf1570] Setfield v0.8.2
@@ -486,46 +654,46 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [47aef6b3] SimpleWeightedGraphs v1.2.1
   [66db9d55] SnoopPrecompile v1.0.1
   [b85f4697] SoftGlobalScope v1.1.0
-  [a2af1166] SortingAlgorithms v1.0.1
-  [47a9eef4] SparseDiffTools v1.26.2
+⌃ [a2af1166] SortingAlgorithms v1.0.1
+⌃ [47a9eef4] SparseDiffTools v1.26.2
   [276daf66] SpecialFunctions v2.1.7
 ⌃ [171d559e] SplittablesBase v0.1.14
-  [aedffcd0] Static v0.7.7
-  [90137ffa] StaticArrays v1.5.9
+⌅ [aedffcd0] Static v0.7.7
+⌃ [90137ffa] StaticArrays v1.5.9
   [1e83bf80] StaticArraysCore v1.4.0
   [82ae8749] StatsAPI v1.5.0
   [2913bbd2] StatsBase v0.33.21
   [4c63d2b9] StatsFuns v1.0.1
-  [7792a7ef] StrideArraysCore v0.3.15
+⌃ [7792a7ef] StrideArraysCore v0.3.15
   [69024149] StringEncodings v0.3.5
-  [c3572dad] Sundials v4.10.1
+⌃ [c3572dad] Sundials v4.10.1
   [d1185830] SymbolicUtils v0.19.11
 ⌃ [0c5d862f] Symbolics v4.10.4
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.9.0
+⌃ [bd369af6] Tables v1.9.0
   [62fd8b95] TensorCore v0.1.1
 ⌅ [8ea1fca8] TermInterface v0.2.3
   [8290d209] ThreadingUtilities v0.5.0
 ⌃ [ac1d9e8a] ThreadsX v0.1.10
-  [a759f4b9] TimerOutputs v0.5.21
+⌃ [a759f4b9] TimerOutputs v0.5.21
   [0796e94c] Tokenize v0.5.24
   [3bb67fe8] TranscodingStreams v0.9.9
   [28d57a85] Transducers v0.4.74
   [a2a6695c] TreeViews v0.3.0
-  [d5829a12] TriangularSolve v0.1.14
+⌃ [d5829a12] TriangularSolve v0.1.14
   [410a4b4d] Tricks v0.1.6
   [30578b45] URIParser v0.4.1
   [5c2747f8] URIs v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.12.0
+⌃ [1986cc42] Unitful v1.12.0
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.51
+⌃ [3d5dd08c] VectorizationBase v0.21.51
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
 ⌃ [44d3d7a6] Weave v0.10.9
-  [ddb6d928] YAML v0.4.7
-  [c2297ded] ZMQ v1.2.1
+⌃ [ddb6d928] YAML v0.4.7
+⌃ [c2297ded] ZMQ v1.2.1
   [700de1a5] ZygoteRules v0.2.2
   [6e34b625] Bzip2_jll v1.0.8+0
   [83423d85] Cairo_jll v1.16.1+1
@@ -535,7 +703,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d7e528f0] FreeType2_jll v2.10.4+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.69.1+0
+⌅ [d2c73de3] GR_jll v0.69.1+0
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.34.1+0
   [7746bdde] Glib_jll v2.74.0+1
@@ -546,7 +714,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [88015f11] LERC_jll v3.0.0+1
   [aae0fff6] LSODA_jll v0.1.1+0
   [dd4b983a] LZO_jll v2.10.1+0
-  [e9f186c6] Libffi_jll v3.2.2+1
+⌅ [e9f186c6] Libffi_jll v3.2.2+1
   [d4300ac3] Libgcrypt_jll v1.8.7+0
   [7e76a0d4] Libglvnd_jll v1.3.0+3
   [7add5ba3] Libgpg_error_jll v1.42.0+0
@@ -556,11 +724,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [38a345b3] Libuuid_jll v2.36.0+0
   [c771fb93] ODEInterface_jll v0.0.1+0
   [e7412a2a] Ogg_jll v1.3.5+1
-  [458c3c95] OpenSSL_jll v1.1.17+0
+⌃ [458c3c95] OpenSSL_jll v1.1.17+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
   [30392449] Pixman_jll v0.40.1+0
-  [ea2cea3b] Qt5Base_jll v5.15.3+1
+⌃ [ea2cea3b] Qt5Base_jll v5.15.3+1
   [f50d1b31] Rmath_jll v0.3.0+0
   [fb77eaff] Sundials_jll v5.2.1+0
   [a2964d1f] Wayland_jll v1.19.0+0
@@ -631,7 +799,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [10745b16] Statistics
   [4607b0f0] SuiteSparse
   [fa267f1f] TOML v1.0.0
-  [a4e569a6] Tar v1.10.0
+  [a4e569a6] Tar v1.10.1
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
@@ -649,5 +817,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

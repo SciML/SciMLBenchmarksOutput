@@ -16,8 +16,9 @@ Catalyst network model to ODEs.
 
 ```julia
 using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
-      Sundials, Plots, DiffEqDevTools, ODEInterface, ODEInterfaceDiffEq,
-      LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit, BenchmarkTools
+    Sundials, Plots, DiffEqDevTools, ODEInterface, ODEInterfaceDiffEq,
+    LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit, BenchmarkTools,
+    LinearSolve
 
 gr()
 datadir  = joinpath(dirname(pathof(ReactionNetworkImporters)),"../data/bcr")
@@ -26,11 +27,17 @@ tf       = 100000.0
 
 # generate ModelingToolkit ODEs
 @timeit to "Parse Network" prnbng = loadrxnetwork(BNGNetwork(), joinpath(datadir, "bcr.net"))
+show(to) 
 rn    = prnbng.rn
+obs = [eq.lhs for eq in observed(rn)]
+
 @timeit to "Create ODESys" osys = convert(ODESystem, rn)
+show(to) 
 
 tspan = (0.,tf)
 @timeit to "ODEProb No Jac" oprob = ODEProblem(osys, Float64[], tspan, Float64[])
+show(to) 
+oprob_sparse = ODEProblem(osys, Float64[], tspan, Float64[]; sparse=true);
 ```
 
 ```
@@ -41,29 +48,46 @@ Creating species...done
 Creating species and parameters for evaluating expressions...done
 Parsing and adding reactions...done
 Parsing groups...done
-ODEProblem with uType Vector{Float64} and tType Float64. In-place: true
-timespan: (0.0, 100000.0)
-u0: 1122-element Vector{Float64}:
- 299717.8348854
-  47149.15480798
-  46979.01102231
- 290771.2428252
- 299980.7396749
- 300000.0
-    141.3151575495
-      0.1256496403614
-      0.4048783555301
-    140.8052338618
-      ⋮
-      1.005585387399e-24
-      6.724953378237e-17
-      3.395560698281e-16
-      1.787990228838e-5
-      8.761844379939e-13
-      0.0002517949074779
-      0.0005539124513976
-      2.281251822741e-14
-      1.78232055967e-8
+ ──────────────────────────────────────────────────────────────────────────
+                                  Time                    Allocations      
+                         ───────────────────────   ────────────────────────
+    Tot / % measured:         12.0s /  92.8%           1.72GiB /  97.0%    
+
+ Section         ncalls     time    %tot     avg     alloc    %tot      avg
+ ──────────────────────────────────────────────────────────────────────────
+ Parse Network        1    11.2s  100.0%   11.2s   1.67GiB  100.0%  1.67GiB
+ ──────────────────────────────────────────────────────────────────────────
+ ──────────────────────────────────────────────────────────────────────────
+                                  Time                    Allocations      
+                         ───────────────────────   ────────────────────────
+    Tot / % measured:         25.8s /  95.8%           5.10GiB /  98.2%    
+
+ Section         ncalls     time    %tot     avg     alloc    %tot      avg
+ ──────────────────────────────────────────────────────────────────────────
+ Create ODESys        1    13.6s   54.8%   13.6s   3.34GiB   66.7%  3.34GiB
+ Parse Network        1    11.2s   45.2%   11.2s   1.67GiB   33.3%  1.67GiB
+ ──────────────────────────────────────────────────────────────────────────
+ ──────────────────────────────────────────────────────────────────────────
+─
+                                   Time                    Allocations     
+ 
+                          ───────────────────────   ───────────────────────
+─
+     Tot / % measured:         53.2s /  98.0%           9.95GiB /  99.1%   
+ 
+
+ Section          ncalls     time    %tot     avg     alloc    %tot      av
+g
+ ──────────────────────────────────────────────────────────────────────────
+─
+ ODEProb No Jac        1    27.4s   52.5%   27.4s   4.85GiB   49.2%  4.85Gi
+B
+ Create ODESys         1    13.6s   26.0%   13.6s   3.34GiB   33.9%  3.34Gi
+B
+ Parse Network         1    11.2s   21.5%   11.2s   1.67GiB   16.9%  1.67Gi
+B
+ ──────────────────────────────────────────────────────────────────────────
+─
 ```
 
 
@@ -80,20 +104,20 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:            414s /  99.5%            189GiB /  99.9%
+      Tot / % measured:            413s /  97.6%            190GiB /  99.2%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1     360s   87.3%    360s    179GiB   94.7%   17
+ ODEProb SparseJac        1     351s   87.1%    351s    179GiB   94.8%   17
 9GiB
- ODEProb No Jac           1    27.0s    6.5%   27.0s   4.88GiB    2.6%  4.8
-8GiB
- Create ODESys            1    14.1s    3.4%   14.1s   3.46GiB    1.8%  3.4
-6GiB
- Parse Network            1    11.4s    2.8%   11.4s   1.77GiB    0.9%  1.7
+ ODEProb No Jac           1    27.4s    6.8%   27.4s   4.85GiB    2.6%  4.8
+5GiB
+ Create ODESys            1    13.6s    3.4%   13.6s   3.34GiB    1.8%  3.3
+4GiB
+ Parse Network            1    11.2s    2.8%   11.2s   1.67GiB    0.9%  1.6
 7GiB
  ──────────────────────────────────────────────────────────────────────────
 ────
@@ -104,14 +128,13 @@ show(to)
 ```julia
 @show numspecies(rn) # Number of ODEs
 @show numreactions(rn) # Apprx. number of terms in the ODE
-@show length(parameters(rn)) # Number of Parameters
+@show length(parameters(rn)); # Number of Parameters
 ```
 
 ```
 numspecies(rn) = 1122
 numreactions(rn) = 24388
 length(parameters(rn)) = 128
-128
 ```
 
 
@@ -141,7 +164,7 @@ given how fast evaluating `f` is:
 ```
 
 ```
-41.770 μs (11 allocations: 1.08 KiB)
+39.959 μs (11 allocations: 1.08 KiB)
 ```
 
 
@@ -160,28 +183,28 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:            496s /  96.6%            199GiB /  99.7%
+      Tot / % measured:            495s /  95.1%            200GiB /  99.0%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1     360s   75.0%    360s    179GiB   90.1%   17
+ ODEProb SparseJac        1     351s   74.6%    351s    179GiB   90.2%   17
 9GiB
- SparseJac Eval1          1    40.5s    8.5%   40.5s   5.44GiB    2.7%  5.4
+ SparseJac Eval1          1    40.5s    8.6%   40.5s   5.44GiB    2.7%  5.4
 4GiB
- ODE rhs Eval1            1    27.2s    5.7%   27.2s   4.10GiB    2.1%  4.1
+ ODEProb No Jac           1    27.4s    5.8%   27.4s   4.85GiB    2.4%  4.8
+5GiB
+ ODE rhs Eval1            1    26.9s    5.7%   26.9s   4.10GiB    2.1%  4.1
 0GiB
- ODEProb No Jac           1    27.0s    5.6%   27.0s   4.88GiB    2.5%  4.8
-8GiB
- Create ODESys            1    14.1s    2.9%   14.1s   3.46GiB    1.7%  3.4
-6GiB
- Parse Network            1    11.4s    2.4%   11.4s   1.77GiB    0.9%  1.7
+ Create ODESys            1    13.6s    2.9%   13.6s   3.34GiB    1.7%  3.3
+4GiB
+ Parse Network            1    11.2s    2.4%   11.2s   1.67GiB    0.8%  1.6
 7GiB
- SparseJac Eval2          1    800μs    0.0%   800μs   11.9KiB    0.0%  11.
+ SparseJac Eval2          1    624μs    0.0%   624μs   11.9KiB    0.0%  11.
 9KiB
- ODE rhs Eval2            1    236μs    0.0%   236μs   1.30KiB    0.0%  1.3
+ ODE rhs Eval2            1    218μs    0.0%   218μs   1.30KiB    0.0%  1.3
 0KiB
  ──────────────────────────────────────────────────────────────────────────
 ────
@@ -195,31 +218,23 @@ show(to)
 
 ```julia
 sol = solve(oprob, CVODE_BDF(), saveat=tf/1000., reltol=1e-5, abstol=1e-5)
-plot(sol, legend=false, fmt=:png)
+plot(sol; idxs=obs, legend=false, fmt=:png)
 ```
 
 ![](figures/BCR_7_1.png)
 
 
 
-For these benchmarks we will be using the time-series error with these saving
-points since the final time point is not well-indicative of the solution
-behavior (capturing the oscillation is the key!).
-
 ## Generate Test Solution
 
 ```julia
 @time sol = solve(oprob, CVODE_BDF(), abstol=1/10^12, reltol=1/10^12)
-test_sol  = TestSolution(sol)
+test_sol  = TestSolution(sol);
 ```
 
 ```
-631.199560 seconds (4.50 M allocations: 2.109 GiB, 0.30% gc time, 0.11% com
+623.635529 seconds (4.50 M allocations: 2.109 GiB, 0.27% gc time, 0.11% com
 pilation time)
-retcode: Success
-Interpolation: 3rd order Hermite
-t: nothing
-u: nothing
 ```
 
 
@@ -228,72 +243,397 @@ u: nothing
 
 ## Setups
 
+#### Sets plotting defaults
+
+```julia
+default(legendfontsize=7,framestyle=:box,gridalpha=0.3,gridlinewidth=2.5)
+```
+
+
+
+
+#### Declares a plotting helper function
+
+```julia
+function plot_settings(wp)
+    times = vcat(map(wp -> wp.times, wp.wps)...)
+    errors = vcat(map(wp -> wp.errors, wp.wps)...)
+    xlimit = 10 .^ (floor(log10(minimum(errors))), ceil(log10(maximum(errors))))
+    ylimit = 10 .^ (floor(log10(minimum(times))), ceil(log10(maximum(times))))
+    return xlimit,ylimit
+end
+```
+
+```
+plot_settings (generic function with 1 method)
+```
+
+
+
+
+
+#### Declare pre-conditioners
+```julia
+using IncompleteLU, LinearAlgebra
+
+jaccache = sparsejacprob.f.jac(oprob.u0,oprob.p,0.0)
+W = I - 1.0*jaccache
+prectmp = ilu(W, τ = 50.0)
+preccache = Ref(prectmp)
+
+τ1 = 1e2
+function psetupilu(p, t, u, du, jok, jcurPtr, gamma)
+    if jok
+        sparsejacprob.f.jac(jaccache,u,p,t)
+        jcurPtr[] = true
+
+        # W = I - gamma*J
+        @. W = -gamma*jaccache
+        idxs = diagind(W)
+        @. @view(W[idxs]) = @view(W[idxs]) + 1
+
+        # Build preconditioner on W
+        preccache[] = ilu(W, τ = τ1)
+    end
+end
+function precilu(z,r,p,t,y,fy,gamma,delta,lr)
+    ldiv!(z,preccache[],r)
+end
+
+τ2 = 1e10
+function incompletelu(W,du,u,p,t,newW,Plprev,Prprev,solverdata)
+    if newW === nothing || newW
+        Pl = ilu(convert(AbstractMatrix,W), τ = τ2)
+    else
+        Pl = Plprev
+    end
+    Pl,nothing
+end;
+```
+
+
+
+
+#### Sets tolerances
+
 ```julia
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (5:8);
-setups = [
-          #Dict(:alg=>Rosenbrock23(autodiff=false)),
-          Dict(:alg=>TRBDF2(autodiff=false)),
-          Dict(:alg=>QNDF(autodiff=false)),
-          Dict(:alg=>FBDF(autodiff=false)),
-          Dict(:alg=>CVODE_BDF()),
-          Dict(:alg=>CVODE_BDF(linear_solver=:LapackDense)),
-          #Dict(:alg=>rodas()),
-          #Dict(:alg=>radau()),
-          #Dict(:alg=>Rodas4(autodiff=false)),
-          #Dict(:alg=>Rodas5(autodiff=false)),
-          Dict(:alg=>KenCarp4(autodiff=false)),
-          Dict(:alg=>KenCarp47(autodiff=false)),
-          #Dict(:alg=>RadauIIA5(autodiff=false)),
-          #Dict(:alg=>lsoda()),
-          ];
 ```
 
 
 
 
-## Automatic Jacobian Solves
+## Failures
 
-Due to the computational cost of the problem, we are only going to focus on the
-methods which demonstrated computational efficiency on the smaller biochemical
-benchmark problems. This excludes the exponential integrator, stabilized explicit,
-and extrapolation classes of methods.
+Before proceding to the results, we note the notable omissions. CVODE with KLU diverges in the solution, and
+thus it is omitted from the results:
 
-First we test using auto-generated Jacobians (finite difference)
+```julia
+solve(sparsejacprob,CVODE_BDF(linear_solver=:KLU), abstol=1e-5, reltol=1e-5)
+```
+
+```
+retcode: Unstable
+Interpolation: 3rd order Hermite
+t: 5726-element Vector{Float64}:
+     0.0
+     8.77683169370922e-8
+     0.0008777709376878589
+     0.0035549575423662882
+     0.006232144147044718
+     0.008909330751723147
+     0.013357243278680379
+     0.022416962688598108
+     0.03147668209851584
+     0.04053640150843357
+     ⋮
+ 57821.68840116891
+ 57890.99731540063
+ 57960.30622963235
+ 58029.615143864066
+ 58098.924058095785
+ 58168.2329723275
+ 58237.54188655922
+ 58306.85080079094
+ 58376.15971502266
+u: 5726-element Vector{Vector{Float64}}:
+ [299717.8348854, 47149.15480798, 46979.01102231, 290771.2428252, 299980.73
+96749, 300000.0, 141.3151575495, 0.1256496403614, 0.4048783555301, 140.8052
+338618  …  5.279974499715e-11, 1.005585387399e-24, 6.724953378237e-17, 3.39
+5560698281e-16, 1.787990228838e-5, 8.761844379939e-13, 0.0002517949074779, 
+0.0005539124513976, 2.281251822741e-14, 1.78232055967e-8]
+ [299717.8348800437, 47149.154807980005, 46979.011022309984, 290771.2428252
+, 299980.7396749, 300000.0, 141.3151575476059, 0.12564964036140167, 0.40487
+83555301015, 140.80523385991268  …  5.279974499714999e-11, 1.00558538739898
+82e-24, 6.72495337823684e-17, 3.3955606982809824e-16, 1.787990228838e-5, 8.
+761844379938997e-13, 0.00025179490747789996, 0.0005539124513975999, 2.28125
+18227409995e-14, 1.78232055967e-8]
+ [299717.7813635935, 47149.15477514749, 46979.010989389644, 290771.24282537
+2, 299980.7396749, 300000.0, 141.3151384585259, 0.12564980156915911, 0.4048
+7851596267965, 140.80521483909547  …  5.279974498980291e-11, 1.005585507981
+526e-24, 6.724954013868955e-17, 3.395561051660044e-16, 1.7879902288366204e-
+5, 8.761844379963702e-13, 0.0002517949074775996, 0.0005539124513969389, 2.2
+81251822742803e-14, 1.78232055966876e-8]
+ [299717.6184123793, 47149.154473497074, 46979.01068819851, 290771.24282882
+287, 299980.7396749, 300000.0, 141.31507933366183, 0.12565123397959216, 0.4
+048799416124324, 140.80515592569225  …  5.279974484626734e-11, 1.0055879471
+242576e-24, 6.72496128924376e-17, 3.3955682759450723e-16, 1.787990228832417
+8e-5, 8.761844380919727e-13, 0.0002517949074766831, 0.0005539124513949189, 
+2.281251822919136e-14, 1.7823205596721744e-8]
+ [299717.4558452556, 47149.15390635545, 46979.01012247438, 290771.242838571
+, 299980.7396749, 299999.99999999994, 141.31501903927045, 0.125653846019200
+43, 0.4048825417839249, 140.8050958469824  …  5.279974447662289e-11, 1.0055
+942417321254e-24, 6.724975616806569e-17, 3.395586660731682e-16, 1.787990228
+8282853e-5, 8.761844383463759e-13, 0.0002517949074757663, 0.000553912451392
+8846, 2.281251823576754e-14, 1.782320559693158e-8]
+ [299717.29369190073, 47149.153055713046, 46979.00927427272, 290771.2428581
+3095, 299980.7396749, 299999.9999999998, 141.31495751323527, 0.125657641855
+33607, 0.4048863215238679, 140.80503454107355  …  5.2799743817549104e-11, 1
+.0056053867838468e-24, 6.724996973606843e-17, 3.3956186810300794e-16, 1.787
+9902288243845e-5, 8.761844388138094e-13, 0.00025179490747484875, 0.00055391
+24513908173, 2.281251825199701e-14, 1.782320559740498e-8]
+ [299717.0252231849, 47149.15101095233, 46979.0072358465, 290771.2429234154
+4, 299980.7396749, 299999.9999999994, 141.314852613934, 0.12566631465389388
+, 0.40489496494012023, 140.8049300171617  …  5.279974202829506e-11, 1.00563
+49269727392e-24, 6.725045801517345e-17, 3.395701649019438e-16, 1.7879902288
+196147e-5, 8.761844402660152e-13, 0.0002517949074733213, 0.0005539124513871
+967, 2.2812518325512737e-14, 1.7823205598859857e-8]
+ [299716.4819605907, 47149.14449004399, 46979.00073634402, 290771.243238563
+3, 299980.7396748996, 299999.99999999715, 141.31462934298466, 0.12569130598
+674336, 0.4049199502267687, 140.8047075454941  …  5.27997358286412e-11, 1.0
+057309332413109e-24, 6.725182353638703e-17, 3.395962516992423e-16, 1.787990
+2288403765e-5, 8.761844481156392e-13, 0.0002517949074701813, 0.000553912451
+3778158, 2.2812518903300468e-14, 1.7823205604079975e-8]
+ [299715.9434100256, 47149.134913890055, 46978.991192620655, 290771.2438497
+921, 299980.7396748984, 299999.9999999924, 141.31439403902056, 0.1257242741
+278965, 0.40495307148559484, 140.80447308423703  …  5.2799726385000655e-11,
+ 1.0058670637508427e-24, 6.725354700296453e-17, 3.396321977357811e-16, 1.78
+79902289650543e-5, 8.761844663172306e-13, 0.00025179490746696914, 0.0005539
+124513636081, 2.281252043018447e-14, 1.782320561220987e-8]
+ [299715.4094721522, 47149.122421615, 46978.97874329432, 290771.2448178493,
+ 299980.73967489577, 299999.9999999842, 141.3141478131459, 0.12576294588299
+372, 0.4049921833379942, 140.80422774048324  …  5.2799713934805945e-11, 1.0
+060332742211042e-24, 6.725546329400144e-17, 3.396750314053061e-16, 1.787990
+229346983e-5, 8.761845012984174e-13, 0.0002517949074636176, 0.0005539124513
+408766, 2.281252351499531e-14, 1.782320562384929e-8]
+ ⋮
+ [299984.69633764523, 2000.3661582118302, 2000.6335782699164, 299317.331633
+2022, 299719.1177387134, 299999.99999547505, 6.001260388586738, 0.000226389
+18774164752, 0.0007359927591103719, 6.002062730395201  …  4.508528258999069
+e-15, 2.491889561742076e-32, 8.735377861214971e-23, 2.942420955857134e-22, 
+4.4910108257468465e-9, 3.0402472567008432e-18, 2.694460101694033e-8, 5.9378
+53859623801e-8, 2.7040926759681296e-19, 4.477456865989473e-12]
+ [299982.61814808915, 2260.066247311189, 2260.213404965735, 299314.39041410
+79, 299767.8790694357, 299999.9999941571, 6.780235040229235, 0.000289166134
+6601229, 0.0009403757585511697, 6.78067689483421  …  6.2068234373047466e-15
+, 9.178751510999514e-32, 1.4650208279983723e-22, 5.080292985885363e-22, 6.3
+94206708483966e-9, 4.934855127224456e-18, 3.8708690527381235e-8, 8.53032901
+8979647e-8, 4.353403746893372e-19, 6.3747834954847385e-12]
+ [299980.3246642142, 2543.248172952822, 2543.112566827125, 299298.315957477
+9, 299808.18513751833, 299999.9999925059, 7.629635194138528, 0.000366359236
+27796976, 0.001191693673158175, 7.629229069704318  …  8.500070316707796e-15
+, 2.4726086269776396e-32, 2.4277824229727916e-22, 8.65355189485088e-22, 8.9
+9810871740556e-9, 7.897039770683086e-18, 5.49732905098195e-8, 1.21144969857
+28825e-7, 6.902713430985238e-19, 8.970623417743945e-12]
+ [299977.8224823888, 2848.1311867324343, 2847.6226701872083, 299270.9270180
+6646, 299841.49709788617, 299999.99999046966, 8.544120063566309, 0.00045956
+33553857948, 0.0014952000652740105, 8.542595330449194  …  1.155599636884732
+4e-14, -1.9316990282640052e-31, 3.936280567142008e-22, 1.4436222700577494e-
+21, 1.2443199642699265e-8, 1.2359761041776451e-17, 7.685068349121899e-8, 1.
+6934454967054645e-7, 1.0689932055255268e-18, 1.2405019627930002e-11]
+ [299975.1394141348, 3170.3705674550133, 3169.5935956919548, 299234.2832794
+239, 299869.01902671775, 299999.99998801574, 9.510657931980992, 0.000569347
+9989597331, 0.0018527263458213866, 9.508327536319378  …  1.5522577267615543
+e-14, 1.2386981403277989e-30, 6.244124840545217e-22, 2.3387078411122014e-21
+, 1.6933892544593855e-8, 1.8921195537238696e-17, 1.055958785156778e-7, 2.32
+6711973154379e-7, 1.6196498530915315e-18, 1.688173253377088e-11]
+ [299972.31781623326, 3504.051923045487, 3503.3823749226017, 299190.5450664
+312, 299891.75335509854, 299999.99998513557, 10.511506479337006, 0.00069521
+24413998893, 0.0022627812108675645, 10.509497516716003  …  2.05657512158287
+74e-14, -8.373130283362522e-31, 9.65119750772979e-22, 3.7096399165653585e-2
+1, 2.246143132975879e-8, 2.8011554529528165e-17, 1.4179353409990193e-7, 3.1
+238558912007316e-7, 2.3694554152756637e-18, 2.2392041416496756e-11]
+ [299969.3928326303, 3844.402433093062, 3844.430932081971, 299141.477444274
+93, 299910.53335114475, 299999.9999818259, 11.532342575642327, 0.0008365150
+890463002, 0.0027235314721492225, 11.532426530393533  …  2.6659612957080922
+e-14, 1.3886555649092596e-30, 1.4252408985173547e-21, 5.5461988871786465e-2
+1, 2.9281688298738558e-8, 4.046669362343026e-17, 1.864485781124477e-7, 4.10
+73208777530617e-7, 3.3865449693301704e-18, 2.919098529072545e-11]
+ [299966.35913733375, 4191.579507495987, 4192.86244335435, 299087.739488217
+9, 299926.0475868834, 299999.9999780421, 12.573624780957445, 0.000994522157
+4677056, 0.0032391111869004775, 12.577470978439104  …  3.42923181939857e-14
+, 2.67222243213034e-30, 2.1119358504609505e-21, 8.449925826314186e-21, 3.72
+47438469443596e-8, 5.660659065254188e-17, 2.403173727517373e-7, 5.293447254
+507079e-7, 4.684195637132555e-18, 3.713182903015494e-11]
+ [299963.1409824087, 4553.704954319078, 4556.355085574393, 299028.322714165
+, 299938.8632739737, 299999.99997362896, 13.659695274170675, 0.001174871082
+022776, 0.0038276158555433457, 13.66764300767104  …  4.2995589845771097e-14
+, 2.3357368563742414e-30, 2.9192561125903006e-21, 1.1680799297916071e-20, 4
+.737236584327224e-8, 7.93449687003554e-17, 3.071480406882659e-7, 6.76573968
+6074248e-7, 6.483354166744714e-18, 4.722498006805378e-11]
+```
+
+
+
+
+
+## Work-Precision Diagrams (CVODE and lsoda solvers)
+
+#### Declare solvers.
+
+```julia
+setups = [
+        Dict(:alg=>lsoda(), :prob_choice => 1),
+        Dict(:alg=>CVODE_BDF(), :prob_choice => 1),
+        Dict(:alg=>CVODE_BDF(linear_solver=:LapackDense), :prob_choice => 1),
+        Dict(:alg=>CVODE_BDF(linear_solver=:GMRES), :prob_choice => 1),
+        Dict(:alg=>CVODE_BDF(linear_solver=:GMRES,prec=precilu,psetup=psetupilu,prec_side=1), :prob_choice => 2),
+        ];
+```
+
+
+
+
+
+#### Plot Work-Precision Diagram.
+
+```julia
+wp = WorkPrecisionSet([oprob,oprob_sparse,sparsejacprob],abstols,reltols,setups;error_estimate=:l2,
+                    saveat=tf/10000.,appxsol=[test_sol,test_sol,test_sol],maxiters=Int(1e6),numruns=1)
+
+names = ["lsoda" "CVODE_BDF" "CVODE_BDF (LapackDense)" "CVODE_BDF (GMRES)" "CVODE_BDF (GMRES, iLU)" "CVODE_BDF (KLU, sparse jac)"]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
+```
+
+![](figures/BCR_15_1.png)
+
+
+
+## Work-Precision Diagrams (various Julia solvers)
+
+#### Declare solvers (using default linear solver).
+
+```julia
+setups = [
+        Dict(:alg=>TRBDF2(autodiff=false)),
+        Dict(:alg=>QNDF(autodiff=false)),
+        Dict(:alg=>FBDF(autodiff=false)),
+        Dict(:alg=>KenCarp4(autodiff=false))
+        ];
+```
+
+
+
+
+#### Plot Work-Precision Diagram (using default linear solver).
+
 ```julia
 wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
-                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=1)
-plot(wp)
+                    saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e6),numruns=1)
+
+names = ["TRBDF2" "QNDF" "FBDF" "KenCarp4"]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
 ```
 
-![](figures/BCR_10_1.png)
+![](figures/BCR_17_1.png)
 
 
 
-## Sparse Jacobian
-Finally we test using the generated sparse analytic Jacobian function.
+#### Declare solvers (using GMRES linear solver).
+
 ```julia
 setups = [
-          #Dict(:alg=>Rosenbrock23(autodiff=false)),
-          Dict(:alg=>TRBDF2(autodiff=false)),
-          Dict(:alg=>QNDF(autodiff=false)),
-          Dict(:alg=>FBDF(autodiff=false)),
-          #Dict(:alg=>CVODE_BDF(linear_solver=:KLU)), # Fails!
-          #Dict(:alg=>rodas()),
-          #Dict(:alg=>radau()),
-          #Dict(:alg=>Rodas4(autodiff=false)),
-          #Dict(:alg=>Rodas5(autodiff=false)),
-          Dict(:alg=>KenCarp4(autodiff=false)),
-          Dict(:alg=>KenCarp47(autodiff=false)),
-          #Dict(:alg=>RadauIIA5(autodiff=false)),
-          #Dict(:alg=>lsoda()),
-          ];
-wp = WorkPrecisionSet(sparsejacprob,abstols,reltols,setups;error_estimate=:l2,
-                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e5),numruns=1)
-plot(wp)
+        Dict(:alg=>TRBDF2(linsolve=KrylovJL_GMRES(),autodiff=false)),
+        Dict(:alg=>QNDF(linsolve=KrylovJL_GMRES(),autodiff=false)),
+        Dict(:alg=>FBDF(linsolve=KrylovJL_GMRES(),autodiff=false)),
+        Dict(:alg=>KenCarp4(linsolve=KrylovJL_GMRES(),autodiff=false))
+        ];
 ```
 
-![](figures/BCR_11_1.png)
+
+
+
+#### Plot Work-Precision Diagram (using GMRES linear solver).
+
+```julia
+wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
+                    saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e6),numruns=1)
+
+names = ["TRBDF2 (GMRES)" "QNDF (GMRES)" "FBDF (GMRES)" "KenCarp4 (GMRES)"]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
+```
+
+![](figures/BCR_19_1.png)
+
+
+
+#### Declare solvers (using GMRES linear solver, with pre-conditioner).
+
+```julia
+setups = [
+        Dict(:alg=>TRBDF2(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu_fceri,concrete_jac=true)),
+        Dict(:alg=>QNDF(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu_fceri,concrete_jac=true)),
+        Dict(:alg=>FBDF(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu_fceri,concrete_jac=true)),
+        Dict(:alg=>KenCarp4(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu_fceri,concrete_jac=true))
+        ];
+```
+
+```
+Error: UndefVarError: incompletelu_fceri not defined
+```
+
+
+
+
+
+#### Plot Work-Precision Diagram (using GMRES linear solver, with pre-conditioner).
+
+```julia
+wp = WorkPrecisionSet(oprob_sparse,abstols,reltols,setups;error_estimate=:l2,
+                    saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e6),numruns=1)
+
+names = ["TRBDF2 (GMRES, iLU)" "QNDF (GMRES, iLU)" "FBDF (GMRES, iLU)" "KenCarp4 (GMRES, iLU)"]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
+```
+
+![](figures/BCR_21_1.png)
+
+
+
+#### Declare solvers (using sparse jacobian)
+
+We designate the solvers we wish to use.
+```julia
+setups = [
+        Dict(:alg=>TRBDF2(linsolve=KLUFactorization(),autodiff=false)),
+        Dict(:alg=>QNDF(linsolve=KLUFactorization(),autodiff=false)),
+        Dict(:alg=>FBDF(linsolve=KLUFactorization(),autodiff=false)),
+        Dict(:alg=>KenCarp4(linsolve=KLUFactorization(),autodiff=false))
+        ];
+```
+
+
+
+
+
+#### Plot Work-Precision Diagram (using sparse jacobian)
+
+Finally, we generate a work-precision diagram for the selection of solvers.
+```julia
+wp = WorkPrecisionSet(sparsejacprob,abstols,reltols,setups;error_estimate=:l2,
+                    saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e6),numruns=1)
+
+names = ["TRBDF2 (KLU, sparse jac)" "QNDF (KLU, sparse jac)" "FBDF (KLU, sparse jac)" "KenCarp4 (KLU, sparse jac)"]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
+```
+
+![](figures/BCR_23_1.png)
 
 
 ## Appendix
@@ -310,8 +650,8 @@ SciMLBenchmarks.weave_file("benchmarks/Bio","BCR.jmd")
 Computer Information:
 
 ```
-Julia Version 1.8.2
-Commit 36034abf260 (2022-09-29 15:21 UTC)
+Julia Version 1.8.3
+Commit 0434deb161e (2022-11-14 20:14 UTC)
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
   CPU: 128 × AMD EPYC 7502 32-Core Processor
@@ -330,23 +670,25 @@ Package Information:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
-  [6e4b80f9] BenchmarkTools v1.3.1
-  [479239e8] Catalyst v12.3.0
+⌃ [6e4b80f9] BenchmarkTools v1.3.1
+⌃ [479239e8] Catalyst v12.3.0
 ⌃ [2b5f629d] DiffEqBase v6.105.0
-  [f3b72e0c] DiffEqDevTools v2.32.0
-  [033835bb] JLD2 v0.4.24
-  [7f56f5a3] LSODA v0.7.0
+⌃ [f3b72e0c] DiffEqDevTools v2.32.0
+⌃ [40713840] IncompleteLU v0.2.0
+⌃ [033835bb] JLD2 v0.4.24
+⌃ [7f56f5a3] LSODA v0.7.0
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
-  [961ee093] ModelingToolkit v8.26.1
+⌃ [961ee093] ModelingToolkit v8.26.1
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
-  [1dea7af3] OrdinaryDiffEq v6.28.0
-  [91a5bcdd] Plots v1.35.2
-  [b4db0fb7] ReactionNetworkImporters v0.13.4
+⌃ [1dea7af3] OrdinaryDiffEq v6.28.0
+⌃ [91a5bcdd] Plots v1.35.2
+⌃ [b4db0fb7] ReactionNetworkImporters v0.13.4
   [31c91b34] SciMLBenchmarks v0.1.1
-  [c3572dad] Sundials v4.10.1
-  [a759f4b9] TimerOutputs v0.5.21
+⌃ [c3572dad] Sundials v4.10.1
+⌃ [a759f4b9] TimerOutputs v0.5.21
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -354,94 +696,95 @@ And the full manifest:
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
 ⌃ [c3fe647b] AbstractAlgebra v0.27.4
-  [1520ce14] AbstractTrees v0.4.2
+⌃ [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.4.0
   [dce04be8] ArgCheck v2.3.0
   [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v6.0.23
-  [30b0a656] ArrayInterfaceCore v0.1.20
+⌃ [4fba245c] ArrayInterface v6.0.23
+⌃ [30b0a656] ArrayInterfaceCore v0.1.20
   [6ba088a2] ArrayInterfaceGPUArrays v0.2.2
-  [015c0d05] ArrayInterfaceOffsetArrays v0.1.6
-  [b0d46f97] ArrayInterfaceStaticArrays v0.1.4
-  [dd5226c6] ArrayInterfaceStaticArraysCore v0.1.0
+⌃ [015c0d05] ArrayInterfaceOffsetArrays v0.1.6
+⌃ [b0d46f97] ArrayInterfaceStaticArrays v0.1.4
+⌃ [dd5226c6] ArrayInterfaceStaticArraysCore v0.1.0
   [15f4f7f2] AutoHashEquals v0.2.0
   [198e06fe] BangBang v0.3.37
   [9718e550] Baselet v0.1.1
-  [6e4b80f9] BenchmarkTools v1.3.1
+⌃ [6e4b80f9] BenchmarkTools v1.3.1
   [e2ed5e7c] Bijections v0.1.4
   [9e28174c] BinDeps v1.0.2
-  [d1d4a3ce] BitFlags v0.1.5
-  [62783981] BitTwiddlingConvenienceFunctions v0.1.4
+⌃ [d1d4a3ce] BitFlags v0.1.5
+⌃ [62783981] BitTwiddlingConvenienceFunctions v0.1.4
   [fa961155] CEnum v0.4.2
-  [2a0fbf3d] CPUSummary v0.1.27
+⌃ [2a0fbf3d] CPUSummary v0.1.27
   [00ebfdb7] CSTParser v3.3.6
   [49dc2e85] Calculus v0.5.1
-  [479239e8] Catalyst v12.3.0
+⌃ [479239e8] Catalyst v12.3.0
   [d360d2e6] ChainRulesCore v1.15.6
   [9e997f8a] ChangesOfVariables v0.1.4
-  [fb6a15b2] CloseOpenIntervals v0.1.10
+⌃ [fb6a15b2] CloseOpenIntervals v0.1.10
   [944b1d66] CodecZlib v0.7.0
   [35d6a980] ColorSchemes v3.19.0
   [3da002f7] ColorTypes v0.11.4
   [c3611d14] ColorVectorSpace v0.9.9
   [5ae59095] Colors v0.12.8
   [861a8166] Combinatorics v1.0.2
-  [a80b9123] CommonMark v0.8.6
-  [38540f10] CommonSolve v0.2.1
+⌃ [a80b9123] CommonMark v0.8.6
+⌃ [38540f10] CommonSolve v0.2.1
   [bbf7d656] CommonSubexpressions v0.3.0
 ⌅ [34da2185] Compat v3.46.0
-  [b152e2b5] CompositeTypes v0.1.2
+⌃ [b152e2b5] CompositeTypes v0.1.2
   [a33af91c] CompositionsBase v0.1.1
   [8f4d0f93] Conda v1.7.0
   [187b0558] ConstructionBase v1.4.1
   [d38c429a] Contour v0.6.2
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
-  [9a962f9c] DataAPI v1.12.0
+⌃ [9a962f9c] DataAPI v1.12.0
   [864edb3b] DataStructures v0.18.13
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
   [b429d917] DensityInterface v0.4.0
 ⌃ [2b5f629d] DiffEqBase v6.105.0
-  [459566f4] DiffEqCallbacks v2.24.1
-  [f3b72e0c] DiffEqDevTools v2.32.0
-  [77a26b50] DiffEqNoiseProcess v5.13.0
+⌃ [459566f4] DiffEqCallbacks v2.24.1
+⌃ [f3b72e0c] DiffEqDevTools v2.32.0
+⌃ [77a26b50] DiffEqNoiseProcess v5.13.0
   [163ba53b] DiffResults v1.1.0
-  [b552c78f] DiffRules v1.11.1
+⌃ [b552c78f] DiffRules v1.11.1
   [b4f34e82] Distances v0.10.7
-  [31c24e10] Distributions v0.25.75
+⌃ [31c24e10] Distributions v0.25.75
 ⌅ [ffbed154] DocStringExtensions v0.8.6
-  [5b8099bc] DomainSets v0.5.13
+⌃ [5b8099bc] DomainSets v0.5.13
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.4.5
-  [d4d017d3] ExponentialUtilities v1.19.0
+⌃ [d4d017d3] ExponentialUtilities v1.19.0
   [e2ba6199] ExprTools v0.1.8
   [c87230d0] FFMPEG v0.4.1
-  [7034ab61] FastBroadcast v0.2.1
+⌃ [7034ab61] FastBroadcast v0.2.1
   [9aa1b823] FastClosures v0.3.2
   [29a986be] FastLapackInterface v1.2.7
-  [5789e2e9] FileIO v1.15.0
-  [1a297f60] FillArrays v0.13.4
-  [6a86dc24] FiniteDiff v2.15.0
+⌃ [5789e2e9] FileIO v1.15.0
+⌃ [1a297f60] FillArrays v0.13.4
+⌃ [6a86dc24] FiniteDiff v2.15.0
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
-  [f6369f11] ForwardDiff v0.10.32
+⌃ [f6369f11] ForwardDiff v0.10.32
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.1
   [46192b85] GPUArraysCore v0.1.2
-⌃ [28b8d3ca] GR v0.69.3
+⌅ [28b8d3ca] GR v0.69.3
   [c145ed77] GenericSchur v0.5.3
   [d7ba0133] Git v1.2.1
   [86223c79] Graphs v1.7.4
   [42e2da0e] Grisu v1.0.2
-  [0b43b601] Groebner v0.2.10
+⌃ [0b43b601] Groebner v0.2.10
   [d5909c97] GroupsCore v0.4.0
-  [cd3eb016] HTTP v1.4.0
+⌃ [cd3eb016] HTTP v1.4.0
 ⌅ [eafb193a] Highlights v0.4.5
-  [3e5b6fbb] HostCPUFeatures v0.1.8
+⌃ [3e5b6fbb] HostCPUFeatures v0.1.8
   [34004b35] HypergeometricFunctions v0.3.11
   [7073ff75] IJulia v1.23.3
   [615f187c] IfElse v0.1.1
+⌃ [40713840] IncompleteLU v0.2.0
   [d25df0c9] Inflate v0.1.3
   [83e8ac13] IniFile v0.5.1
   [22cec73e] InitialValues v0.3.1
@@ -451,70 +794,70 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [92d709cd] IrrationalConstants v0.1.1
   [42fd0dbc] IterativeSolvers v0.9.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [033835bb] JLD2 v0.4.24
+⌃ [033835bb] JLD2 v0.4.24
   [1019f520] JLFzf v0.1.5
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
-  [98e50ef6] JuliaFormatter v1.0.10
-  [ccbc3e58] JumpProcesses v9.2.0
+⌃ [98e50ef6] JuliaFormatter v1.0.10
+⌃ [ccbc3e58] JumpProcesses v9.2.0
 ⌅ [ef3ab10e] KLU v0.3.0
   [ba0b0d4f] Krylov v0.8.4
-  [0b1a1467] KrylovKit v0.5.4
-  [7f56f5a3] LSODA v0.7.0
+⌅ [0b1a1467] KrylovKit v0.5.4
+⌃ [7f56f5a3] LSODA v0.7.0
   [b964fa9f] LaTeXStrings v1.3.0
-  [2ee39098] LabelledArrays v1.12.0
+⌃ [2ee39098] LabelledArrays v1.12.0
   [23fbe1c1] Latexify v0.15.17
-  [10f19ff3] LayoutPointers v0.1.10
+⌃ [10f19ff3] LayoutPointers v0.1.10
   [d3d80556] LineSearches v7.2.0
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
   [2ab3a3ac] LogExpFunctions v0.3.18
-  [e6f89c97] LoggingExtras v0.4.9
-  [bdcacae8] LoopVectorization v0.12.132
+⌅ [e6f89c97] LoggingExtras v0.4.9
+⌃ [bdcacae8] LoopVectorization v0.12.132
   [1914dd2f] MacroTools v0.5.10
   [d125e4d3] ManualMemory v0.1.8
-  [739be429] MbedTLS v1.1.6
-  [442fdcdd] Measures v0.3.1
+⌃ [739be429] MbedTLS v1.1.6
+⌃ [442fdcdd] Measures v0.3.1
   [e9d8d322] Metatheory v1.3.5
 ⌃ [128add7d] MicroCollections v0.1.2
   [e1d29d7a] Missings v1.0.2
-  [961ee093] ModelingToolkit v8.26.1
-  [46d2c3a1] MuladdMacro v0.2.2
+⌃ [961ee093] ModelingToolkit v8.26.1
+⌃ [46d2c3a1] MuladdMacro v0.2.2
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
-  [d8a4904e] MutableArithmetics v1.0.4
+⌃ [d8a4904e] MutableArithmetics v1.0.4
   [d41bc354] NLSolversBase v7.8.2
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.1
   [8913a72c] NonlinearSolve v0.3.22
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
-  [6fe1bfb0] OffsetArrays v1.12.7
-  [4d8831e6] OpenSSL v1.2.1
+⌃ [6fe1bfb0] OffsetArrays v1.12.7
+⌃ [4d8831e6] OpenSSL v1.2.1
   [429524aa] Optim v1.7.3
   [bac558e1] OrderedCollections v1.4.1
-  [1dea7af3] OrdinaryDiffEq v6.28.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.28.0
   [90014a1f] PDMats v0.11.16
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.4.0
+⌃ [69de0a69] Parsers v2.4.0
   [b98c9c47] Pipe v1.3.0
-  [ccf2f8ad] PlotThemes v3.0.0
+⌃ [ccf2f8ad] PlotThemes v3.0.0
   [995b91a9] PlotUtils v1.3.1
-  [91a5bcdd] Plots v1.35.2
-  [e409e4f3] PoissonRandom v0.4.1
+⌃ [91a5bcdd] Plots v1.35.2
+⌃ [e409e4f3] PoissonRandom v0.4.1
 ⌃ [f517fe37] Polyester v0.6.15
-  [1d0040c9] PolyesterWeave v0.1.10
+⌃ [1d0040c9] PolyesterWeave v0.1.10
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.4
   [21216c6a] Preferences v1.3.0
   [27ebfcd6] Primes v0.5.3
-  [1fd47b50] QuadGK v2.5.0
+⌃ [1fd47b50] QuadGK v2.5.0
   [74087812] Random123 v1.6.0
   [fb686558] RandomExtensions v0.4.3
   [e6cf234a] RandomNumbers v1.5.3
-  [b4db0fb7] ReactionNetworkImporters v0.13.4
-  [3cdcf5f2] RecipesBase v1.3.0
-  [01d81517] RecipesPipeline v0.6.6
-  [731186ca] RecursiveArrayTools v2.32.0
+⌃ [b4db0fb7] ReactionNetworkImporters v0.13.4
+⌃ [3cdcf5f2] RecipesBase v1.3.0
+⌃ [01d81517] RecipesPipeline v0.6.6
+⌃ [731186ca] RecursiveArrayTools v2.32.0
   [f2c3362d] RecursiveFactorization v0.2.12
   [189a3867] Reexport v1.2.2
   [42d2dcc6] Referenceables v0.1.2
@@ -522,12 +865,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
   [79098fc4] Rmath v0.7.0
-  [47965b36] RootedTrees v2.15.0
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.3
+⌃ [47965b36] RootedTrees v2.15.0
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.3
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.36
-  [0bca4576] SciMLBase v1.59.4
+⌃ [476501e8] SLEEFPirates v0.6.36
+⌃ [0bca4576] SciMLBase v1.59.4
   [31c91b34] SciMLBenchmarks v0.1.1
   [6c6a2e73] Scratch v1.1.1
 ⌅ [efcf1570] Setfield v0.8.2
@@ -537,46 +880,46 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [47aef6b3] SimpleWeightedGraphs v1.2.1
   [66db9d55] SnoopPrecompile v1.0.1
   [b85f4697] SoftGlobalScope v1.1.0
-  [a2af1166] SortingAlgorithms v1.0.1
-  [47a9eef4] SparseDiffTools v1.26.2
+⌃ [a2af1166] SortingAlgorithms v1.0.1
+⌃ [47a9eef4] SparseDiffTools v1.26.2
   [276daf66] SpecialFunctions v2.1.7
 ⌃ [171d559e] SplittablesBase v0.1.14
-  [aedffcd0] Static v0.7.7
-  [90137ffa] StaticArrays v1.5.9
+⌅ [aedffcd0] Static v0.7.7
+⌃ [90137ffa] StaticArrays v1.5.9
   [1e83bf80] StaticArraysCore v1.4.0
   [82ae8749] StatsAPI v1.5.0
   [2913bbd2] StatsBase v0.33.21
   [4c63d2b9] StatsFuns v1.0.1
-  [7792a7ef] StrideArraysCore v0.3.15
+⌃ [7792a7ef] StrideArraysCore v0.3.15
   [69024149] StringEncodings v0.3.5
-  [c3572dad] Sundials v4.10.1
+⌃ [c3572dad] Sundials v4.10.1
   [d1185830] SymbolicUtils v0.19.11
 ⌃ [0c5d862f] Symbolics v4.10.4
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.9.0
+⌃ [bd369af6] Tables v1.9.0
   [62fd8b95] TensorCore v0.1.1
 ⌅ [8ea1fca8] TermInterface v0.2.3
   [8290d209] ThreadingUtilities v0.5.0
 ⌃ [ac1d9e8a] ThreadsX v0.1.10
-  [a759f4b9] TimerOutputs v0.5.21
+⌃ [a759f4b9] TimerOutputs v0.5.21
   [0796e94c] Tokenize v0.5.24
   [3bb67fe8] TranscodingStreams v0.9.9
   [28d57a85] Transducers v0.4.74
   [a2a6695c] TreeViews v0.3.0
-  [d5829a12] TriangularSolve v0.1.14
+⌃ [d5829a12] TriangularSolve v0.1.14
   [410a4b4d] Tricks v0.1.6
   [30578b45] URIParser v0.4.1
   [5c2747f8] URIs v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.12.0
+⌃ [1986cc42] Unitful v1.12.0
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.51
+⌃ [3d5dd08c] VectorizationBase v0.21.51
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
 ⌃ [44d3d7a6] Weave v0.10.9
-  [ddb6d928] YAML v0.4.7
-  [c2297ded] ZMQ v1.2.1
+⌃ [ddb6d928] YAML v0.4.7
+⌃ [c2297ded] ZMQ v1.2.1
   [700de1a5] ZygoteRules v0.2.2
   [6e34b625] Bzip2_jll v1.0.8+0
   [83423d85] Cairo_jll v1.16.1+1
@@ -586,7 +929,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d7e528f0] FreeType2_jll v2.10.4+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.69.1+0
+⌅ [d2c73de3] GR_jll v0.69.1+0
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.34.1+0
   [7746bdde] Glib_jll v2.74.0+1
@@ -597,7 +940,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [88015f11] LERC_jll v3.0.0+1
   [aae0fff6] LSODA_jll v0.1.1+0
   [dd4b983a] LZO_jll v2.10.1+0
-  [e9f186c6] Libffi_jll v3.2.2+1
+⌅ [e9f186c6] Libffi_jll v3.2.2+1
   [d4300ac3] Libgcrypt_jll v1.8.7+0
   [7e76a0d4] Libglvnd_jll v1.3.0+3
   [7add5ba3] Libgpg_error_jll v1.42.0+0
@@ -607,11 +950,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [38a345b3] Libuuid_jll v2.36.0+0
   [c771fb93] ODEInterface_jll v0.0.1+0
   [e7412a2a] Ogg_jll v1.3.5+1
-  [458c3c95] OpenSSL_jll v1.1.17+0
+⌃ [458c3c95] OpenSSL_jll v1.1.17+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
   [30392449] Pixman_jll v0.40.1+0
-  [ea2cea3b] Qt5Base_jll v5.15.3+1
+⌃ [ea2cea3b] Qt5Base_jll v5.15.3+1
   [f50d1b31] Rmath_jll v0.3.0+0
   [fb77eaff] Sundials_jll v5.2.1+0
   [a2964d1f] Wayland_jll v1.19.0+0
@@ -682,7 +1025,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [10745b16] Statistics
   [4607b0f0] SuiteSparse
   [fa267f1f] TOML v1.0.0
-  [a4e569a6] Tar v1.10.0
+  [a4e569a6] Tar v1.10.1
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
@@ -700,5 +1043,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
