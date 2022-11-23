@@ -750,7 +750,7 @@ u0[109] = 0.0
 
 tspan = (0.0,100.0)
 
-prob = ODEProblem(sbml_model!, u0, tspan, par)
+prob = ODEProblem{true,SciMLBase.FullSpecialize}(sbml_model!, u0, tspan, par)
 
 sys = modelingtoolkitize(prob)
 
@@ -759,8 +759,8 @@ sys = structural_simplify(sys)
 
 const to = TimerOutput()
 
-@timeit to "ODEProb No Jac" oprob = ODEProblem(sys, Float64[], tspan, Float64[])
-@timeit to "ODEProb DenseJac" densejacprob = ODEProblem(sys, Float64[], tspan, Float64[], jac=true)
+@timeit to "ODEProb No Jac" oprob = ODEProblem{true,SciMLBase.FullSpecialize}(sys, Float64[], tspan, Float64[])
+@timeit to "ODEProb DenseJac" densejacprob = ODEProblem{true,SciMLBase.FullSpecialize}(sys, Float64[], tspan, Float64[], jac=true)
 ```
 
 ```
@@ -792,7 +792,7 @@ u0: 109-element Vector{Float64}:
 
 
 ```julia
-@timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem(sys, Float64[], tspan, Float64[], jac=true, sparse=true)
+@timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem{true,SciMLBase.FullSpecialize}(sys, Float64[], tspan, Float64[], jac=true, sparse=true)
 show(to)
 ```
 
@@ -803,19 +803,19 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           14.2s /  99.3%           1.60GiB /  99.5%
+      Tot / % measured:           39.9s /  96.3%           5.74GiB /  97.6%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb DenseJac         1    10.2s   72.6%   10.2s   1.20GiB   75.1%  1.2
-0GiB
- ODEProb No Jac           1    2.06s   14.7%   2.06s    233MiB   14.3%   23
-3MiB
- ODEProb SparseJac        1    1.79s   12.7%   1.79s    175MiB   10.7%   17
-5MiB
+ ODEProb No Jac           1    18.3s   47.6%   18.3s   2.93GiB   52.4%  2.9
+3GiB
+ ODEProb DenseJac         1    14.2s   37.1%   14.2s   1.95GiB   34.8%  1.9
+5GiB
+ ODEProb SparseJac        1    5.87s   15.3%   5.87s    736MiB   12.8%   73
+6MiB
  ──────────────────────────────────────────────────────────────────────────
 ────
 ```
@@ -863,8 +863,8 @@ test_sol  = TestSolution(sol)
 ```
 
 ```
-0.119121 seconds (108.06 k allocations: 8.883 MiB, 81.57% compilation tim
-e)
+0.218112 seconds (625.67 k allocations: 35.934 MiB, 90.59% compilation ti
+me)
 retcode: Success
 Interpolation: 3rd order Hermite
 t: nothing
@@ -936,11 +936,7 @@ plot(wp, title = "Implicit Methods: SBML Model",legend=:outertopleft,size = (100
      bottom_margin= 5Plots.mm)
 ```
 
-```
-"No matching function wrapper was found!"
-```
-
-
+![](figures/Bidkhori2012_8_1.png)
 
 
 
@@ -986,6 +982,8 @@ plot(wp, title = "Implicit Methods: SBML Model",legend=:outertopleft,size = (100
 ## Sparse Jacobian
 Finally we test using the generated sparse analytic Jacobian function.
 
+Note that the extrapolation methods currently do not support sparse Jacobians.
+
 ```julia
 setups = [
             #Dict(:alg=>CVODE_BDF()), #Fails!
@@ -995,16 +993,17 @@ setups = [
             #Dict(:alg=>lsoda()),
             #Dict(:alg=>radau()),
             #Dict(:alg=>seulex()),
-            Dict(:alg=>ImplicitEulerExtrapolation(autodiff = false,min_order = 8, init_order = 9,threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitEulerExtrapolation(autodiff = false,min_order = 8, init_order = 9,threading = false)),
-            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(autodiff = false,min_order = 7, init_order = 8,threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(autodiff = false,min_order = 7, init_order = 8,threading = false)),
-            Dict(:alg=>ImplicitHairerWannerExtrapolation(autodiff = false,init_order = 5,threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitHairerWannerExtrapolation(autodiff = false,init_order = 5, threading = false)),
+            #Dict(:alg=>ImplicitEulerExtrapolation(autodiff = false,min_order = 8, init_order = 9,threading = OrdinaryDiffEq.PolyesterThreads())),
+            #Dict(:alg=>ImplicitEulerExtrapolation(autodiff = false,min_order = 8, init_order = 9,threading = false)),
+            #Dict(:alg=>ImplicitEulerBarycentricExtrapolation(autodiff = false,min_order = 7, init_order = 8,threading = OrdinaryDiffEq.PolyesterThreads())),
+            #Dict(:alg=>ImplicitEulerBarycentricExtrapolation(autodiff = false,min_order = 7, init_order = 8,threading = false)),
+            #Dict(:alg=>ImplicitHairerWannerExtrapolation(autodiff = false,init_order = 5,threading = OrdinaryDiffEq.PolyesterThreads())),
+            #Dict(:alg=>ImplicitHairerWannerExtrapolation(autodiff = false,init_order = 5, threading = false)),
             ]
 
-solnames = ["KenCarp4","Rodas4","QNDF","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
-            "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
+solnames = ["KenCarp4","Rodas4","QNDF",#"ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
+            #"ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"
+            ]
 
 wp = WorkPrecisionSet(sparsejacprob ,abstols,reltols,setups;
                       names = solnames,appxsol=test_sol,save_everystep=false,maxiters=Int(1e5),numruns=10)
@@ -1015,29 +1014,7 @@ plot(wp, title = "Implicit Methods: SBML Model",legend=:outertopleft,size = (100
      bottom_margin= 5Plots.mm)
 ```
 
-```
-Error: MethodError: no method matching OrdinaryDiffEq.WOperator(::SciMLBase
-.ODEFunction{true, SciMLBase.FullSpecialize, ModelingToolkit.var"#f#462"{Ru
-ntimeGeneratedFunctions.RuntimeGeneratedFunction{(:ˍ₋arg1, :ˍ₋arg2, :t), Mo
-delingToolkit.var"#_RGF_ModTag", ModelingToolkit.var"#_RGF_ModTag", (0xe3b0
-0ccf, 0x8aadcfe4, 0x4e71a901, 0xab8fb55e, 0x0a41efc9)}, RuntimeGeneratedFun
-ctions.RuntimeGeneratedFunction{(:ˍ₋out, :ˍ₋arg1, :ˍ₋arg2, :t), ModelingToo
-lkit.var"#_RGF_ModTag", ModelingToolkit.var"#_RGF_ModTag", (0xe72c7916, 0x6
-b74e98f, 0x0dde803e, 0x1b675738, 0x5e15b059)}}, LinearAlgebra.UniformScalin
-g{Bool}, Nothing, Nothing, ModelingToolkit.var"#_jac#466"{RuntimeGeneratedF
-unctions.RuntimeGeneratedFunction{(:ˍ₋arg1, :ˍ₋arg2, :t), ModelingToolkit.v
-ar"#_RGF_ModTag", ModelingToolkit.var"#_RGF_ModTag", (0x195537d6, 0x0cf0f75
-0, 0x1b705c87, 0x16521c3f, 0x1d0feb38)}, RuntimeGeneratedFunctions.RuntimeG
-eneratedFunction{(:ˍ₋out, :ˍ₋arg1, :ˍ₋arg2, :t), ModelingToolkit.var"#_RGF_
-ModTag", ModelingToolkit.var"#_RGF_ModTag", (0x38f7dfcb, 0xed502c96, 0xf9c5
-b648, 0x175af9d5, 0xb55167c0)}}, Nothing, Nothing, SparseArrays.SparseMatri
-xCSC{Float64, Int64}, Nothing, Nothing, Nothing, Nothing, Vector{Symbol}, S
-ymbol, Vector{Symbol}, ModelingToolkit.var"#482#generated_observed#469"{Boo
-l, ModelingToolkit.ODESystem, Dict{Any, Any}}, Nothing, ModelingToolkit.ODE
-System}, ::Float64, ::Bool)
-```
-
-
+![](figures/Bidkhori2012_10_1.png)
 
 
 ## Appendix
@@ -1073,7 +1050,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
 ⌃ [6e4b80f9] BenchmarkTools v1.3.1
 ⌃ [479239e8] Catalyst v12.3.0
 ⌃ [2b5f629d] DiffEqBase v6.105.0
@@ -1098,7 +1075,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
 ⌃ [c3fe647b] AbstractAlgebra v0.27.4
 ⌃ [1520ce14] AbstractTrees v0.4.2
   [79e6a3ab] Adapt v3.4.0
@@ -1214,7 +1191,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [10f19ff3] LayoutPointers v0.1.10
   [d3d80556] LineSearches v7.2.0
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
-  [2ab3a3ac] LogExpFunctions v0.3.18
+⌃ [2ab3a3ac] LogExpFunctions v0.3.18
 ⌅ [e6f89c97] LoggingExtras v0.4.9
 ⌃ [bdcacae8] LoopVectorization v0.12.132
   [1914dd2f] MacroTools v0.5.10
@@ -1229,7 +1206,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
 ⌃ [d8a4904e] MutableArithmetics v1.0.4
-  [d41bc354] NLSolversBase v7.8.2
+⌃ [d41bc354] NLSolversBase v7.8.2
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.1
   [8913a72c] NonlinearSolve v0.3.22
@@ -1237,7 +1214,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [09606e27] ODEInterfaceDiffEq v3.11.0
 ⌃ [6fe1bfb0] OffsetArrays v1.12.7
 ⌃ [4d8831e6] OpenSSL v1.2.1
-  [429524aa] Optim v1.7.3
+⌃ [429524aa] Optim v1.7.3
   [bac558e1] OrderedCollections v1.4.1
 ⌃ [1dea7af3] OrdinaryDiffEq v6.28.0
   [90014a1f] PDMats v0.11.16
@@ -1294,7 +1271,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [82ae8749] StatsAPI v1.5.0
   [2913bbd2] StatsBase v0.33.21
   [4c63d2b9] StatsFuns v1.0.1
-⌃ [7792a7ef] StrideArraysCore v0.3.15
+⌅ [7792a7ef] StrideArraysCore v0.3.15
   [69024149] StringEncodings v0.3.5
 ⌃ [c3572dad] Sundials v4.10.1
   [d1185830] SymbolicUtils v0.19.11

@@ -687,7 +687,7 @@ u0[109] = 0.0
 
 tspan = (0.0,100.0)
 
-prob = ODEProblem(sbml_model!, u0, tspan, par)
+prob = ODEProblem{true,SciMLBase.FullSpecialize}(sbml_model!, u0, tspan, par)
 
 sys = modelingtoolkitize(prob)
 
@@ -696,11 +696,11 @@ sys = structural_simplify(sys)
 
 const to = TimerOutput()
 
-@timeit to "ODEProb No Jac" oprob = ODEProblem(sys, Float64[], tspan, Float64[])
-@timeit to "ODEProb DenseJac" densejacprob = ODEProblem(sys, Float64[], tspan, Float64[], jac=true)
+@timeit to "ODEProb No Jac" oprob = ODEProblem{true,SciMLBase.FullSpecialize}(sys, Float64[], tspan, Float64[])
+@timeit to "ODEProb DenseJac" densejacprob = ODEProblem{true,SciMLBase.FullSpecialize}(sys, Float64[], tspan, Float64[], jac=true)
 
 
-@timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem(sys, Float64[], tspan, Float64[], jac=true, sparse=true)
+@timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem{true,SciMLBase.FullSpecialize}(sys, Float64[], tspan, Float64[], jac=true, sparse=true)
 show(to)
 
 
@@ -786,16 +786,17 @@ setups = [
             #Dict(:alg=>lsoda()),
             #Dict(:alg=>radau()),
             #Dict(:alg=>seulex()),
-            Dict(:alg=>ImplicitEulerExtrapolation(autodiff = false,min_order = 8, init_order = 9,threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitEulerExtrapolation(autodiff = false,min_order = 8, init_order = 9,threading = false)),
-            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(autodiff = false,min_order = 7, init_order = 8,threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(autodiff = false,min_order = 7, init_order = 8,threading = false)),
-            Dict(:alg=>ImplicitHairerWannerExtrapolation(autodiff = false,init_order = 5,threading = OrdinaryDiffEq.PolyesterThreads())),
-            Dict(:alg=>ImplicitHairerWannerExtrapolation(autodiff = false,init_order = 5, threading = false)),
+            #Dict(:alg=>ImplicitEulerExtrapolation(autodiff = false,min_order = 8, init_order = 9,threading = OrdinaryDiffEq.PolyesterThreads())),
+            #Dict(:alg=>ImplicitEulerExtrapolation(autodiff = false,min_order = 8, init_order = 9,threading = false)),
+            #Dict(:alg=>ImplicitEulerBarycentricExtrapolation(autodiff = false,min_order = 7, init_order = 8,threading = OrdinaryDiffEq.PolyesterThreads())),
+            #Dict(:alg=>ImplicitEulerBarycentricExtrapolation(autodiff = false,min_order = 7, init_order = 8,threading = false)),
+            #Dict(:alg=>ImplicitHairerWannerExtrapolation(autodiff = false,init_order = 5,threading = OrdinaryDiffEq.PolyesterThreads())),
+            #Dict(:alg=>ImplicitHairerWannerExtrapolation(autodiff = false,init_order = 5, threading = false)),
             ]
 
-solnames = ["KenCarp4","Rodas4","QNDF","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
-            "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
+solnames = ["KenCarp4","Rodas4","QNDF",#"ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
+            #"ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"
+            ]
 
 wp = WorkPrecisionSet(sparsejacprob ,abstols,reltols,setups;
                       names = solnames,appxsol=test_sol,save_everystep=false,maxiters=Int(1e5),numruns=10)
