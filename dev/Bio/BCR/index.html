@@ -11,16 +11,16 @@ tf       = 100000.0
 
 # generate ModelingToolkit ODEs
 @timeit to &quot;Parse Network&quot; prnbng = loadrxnetwork(BNGNetwork(), joinpath(datadir, &quot;bcr.net&quot;))
-show(to) 
+show(to)
 rn    = prnbng.rn
 obs = [eq.lhs for eq in observed(rn)]
 
 @timeit to &quot;Create ODESys&quot; osys = convert(ODESystem, rn)
-show(to) 
+show(to)
 
 tspan = (0.,tf)
 @timeit to &quot;ODEProb No Jac&quot; oprob = ODEProblem(osys, Float64[], tspan, Float64[])
-show(to) 
+show(to)
 oprob_sparse = ODEProblem(osys, Float64[], tspan, Float64[]; sparse=true);</code></pre><pre><code class="nohighlight hljs">Parsing parameters...done
 Creating parameters...done
 Parsing species...done
@@ -31,21 +31,21 @@ Parsing groups...done
  ──────────────────────────────────────────────────────────────────────────
                                   Time                    Allocations      
                          ───────────────────────   ────────────────────────
-    Tot / % measured:         12.0s /  92.8%           1.72GiB /  97.0%    
+    Tot / % measured:         12.1s /  92.8%           1.72GiB /  97.0%    
 
  Section         ncalls     time    %tot     avg     alloc    %tot      avg
  ──────────────────────────────────────────────────────────────────────────
- Parse Network        1    11.2s  100.0%   11.2s   1.67GiB  100.0%  1.67GiB
+ Parse Network        1    11.3s  100.0%   11.3s   1.67GiB  100.0%  1.67GiB
  ──────────────────────────────────────────────────────────────────────────
  ──────────────────────────────────────────────────────────────────────────
                                   Time                    Allocations      
                          ───────────────────────   ────────────────────────
-    Tot / % measured:         25.8s /  95.8%           5.10GiB /  98.2%    
+    Tot / % measured:         26.0s /  95.8%           5.10GiB /  98.2%    
 
  Section         ncalls     time    %tot     avg     alloc    %tot      avg
  ──────────────────────────────────────────────────────────────────────────
- Create ODESys        1    13.6s   54.8%   13.6s   3.34GiB   66.7%  3.34GiB
- Parse Network        1    11.2s   45.2%   11.2s   1.67GiB   33.3%  1.67GiB
+ Create ODESys        1    13.6s   54.7%   13.6s   3.34GiB   66.7%  3.34GiB
+ Parse Network        1    11.3s   45.3%   11.3s   1.67GiB   33.3%  1.67GiB
  ──────────────────────────────────────────────────────────────────────────
  ──────────────────────────────────────────────────────────────────────────
 ─
@@ -53,18 +53,18 @@ Parsing groups...done
  
                           ───────────────────────   ───────────────────────
 ─
-     Tot / % measured:         53.2s /  98.0%           9.95GiB /  99.1%   
+     Tot / % measured:         53.4s /  98.0%           9.95GiB /  99.1%   
  
 
  Section          ncalls     time    %tot     avg     alloc    %tot      av
 g
  ──────────────────────────────────────────────────────────────────────────
 ─
- ODEProb No Jac        1    27.4s   52.5%   27.4s   4.85GiB   49.2%  4.85Gi
+ ODEProb No Jac        1    27.4s   52.4%   27.4s   4.85GiB   49.2%  4.85Gi
 B
- Create ODESys         1    13.6s   26.0%   13.6s   3.34GiB   33.9%  3.34Gi
+ Create ODESys         1    13.6s   26.1%   13.6s   3.34GiB   33.9%  3.34Gi
 B
- Parse Network         1    11.2s   21.5%   11.2s   1.67GiB   16.9%  1.67Gi
+ Parse Network         1    11.3s   21.5%   11.3s   1.67GiB   16.9%  1.67Gi
 B
  ──────────────────────────────────────────────────────────────────────────
 ─</code></pre><pre><code class="language-julia hljs">@timeit to &quot;ODEProb SparseJac&quot; sparsejacprob = ODEProblem(osys, Float64[], tspan, Float64[], jac=true, sparse=true)
@@ -74,20 +74,20 @@ show(to)</code></pre><pre><code class="nohighlight hljs">───────�
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:            413s /  97.6%            190GiB /  99.2%
+      Tot / % measured:            412s /  97.7%            190GiB /  99.2%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1     351s   87.1%    351s    179GiB   94.8%   17
+ ODEProb SparseJac        1     350s   87.0%    350s    179GiB   94.8%   17
 9GiB
  ODEProb No Jac           1    27.4s    6.8%   27.4s   4.85GiB    2.6%  4.8
 5GiB
  Create ODESys            1    13.6s    3.4%   13.6s   3.34GiB    1.8%  3.3
 4GiB
- Parse Network            1    11.2s    2.8%   11.2s   1.67GiB    0.9%  1.6
+ Parse Network            1    11.3s    2.8%   11.3s   1.67GiB    0.9%  1.6
 7GiB
  ──────────────────────────────────────────────────────────────────────────
 ────</code></pre><pre><code class="language-julia hljs">@show numspecies(rn) # Number of ODEs
@@ -99,7 +99,7 @@ du = copy(u)
 p  = ModelingToolkit.varmap_to_vars(nothing, parameters(rn); defaults=ModelingToolkit.defaults(rn))
 @timeit to &quot;ODE rhs Eval1&quot; oprob.f(du,u,p,0.)
 @timeit to &quot;ODE rhs Eval2&quot; oprob.f(du,u,p,0.)
-sparsejacprob.f(du,u,p,0.)</code></pre><p>We also time the ODE rhs function with BenchmarkTools as it is more accurate given how fast evaluating <code>f</code> is:</p><pre><code class="language-julia hljs">@btime oprob.f($du,$u,$p,0.)</code></pre><pre><code class="nohighlight hljs">39.959 μs (11 allocations: 1.08 KiB)</code></pre><pre><code class="language-julia hljs">Js = similar(sparsejacprob.f.jac_prototype)
+sparsejacprob.f(du,u,p,0.)</code></pre><p>We also time the ODE rhs function with BenchmarkTools as it is more accurate given how fast evaluating <code>f</code> is:</p><pre><code class="language-julia hljs">@btime oprob.f($du,$u,$p,0.)</code></pre><pre><code class="nohighlight hljs">39.890 μs (11 allocations: 1.08 KiB)</code></pre><pre><code class="language-julia hljs">Js = similar(sparsejacprob.f.jac_prototype)
 @timeit to &quot;SparseJac Eval1&quot; sparsejacprob.f.jac(Js,u,p,0.)
 @timeit to &quot;SparseJac Eval2&quot; sparsejacprob.f.jac(Js,u,p,0.)
 show(to)</code></pre><pre><code class="nohighlight hljs">──────────────────────────────────────────────────────────────────────────
@@ -108,33 +108,33 @@ show(to)</code></pre><pre><code class="nohighlight hljs">───────�
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:            495s /  95.1%            200GiB /  99.0%
+      Tot / % measured:            494s /  95.1%            200GiB /  99.0%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1     351s   74.6%    351s    179GiB   90.2%   17
+ ODEProb SparseJac        1     350s   74.5%    350s    179GiB   90.2%   17
 9GiB
- SparseJac Eval1          1    40.5s    8.6%   40.5s   5.44GiB    2.7%  5.4
+ SparseJac Eval1          1    40.3s    8.6%   40.3s   5.44GiB    2.7%  5.4
 4GiB
  ODEProb No Jac           1    27.4s    5.8%   27.4s   4.85GiB    2.4%  4.8
 5GiB
- ODE rhs Eval1            1    26.9s    5.7%   26.9s   4.10GiB    2.1%  4.1
+ ODE rhs Eval1            1    27.2s    5.8%   27.2s   4.10GiB    2.1%  4.1
 0GiB
  Create ODESys            1    13.6s    2.9%   13.6s   3.34GiB    1.7%  3.3
 4GiB
- Parse Network            1    11.2s    2.4%   11.2s   1.67GiB    0.8%  1.6
+ Parse Network            1    11.3s    2.4%   11.3s   1.67GiB    0.8%  1.6
 7GiB
- SparseJac Eval2          1    624μs    0.0%   624μs   11.9KiB    0.0%  11.
+ SparseJac Eval2          1    617μs    0.0%   617μs   11.9KiB    0.0%  11.
 9KiB
- ODE rhs Eval2            1    218μs    0.0%   218μs   1.30KiB    0.0%  1.3
+ ODE rhs Eval2            1    231μs    0.0%   231μs   1.30KiB    0.0%  1.3
 0KiB
  ──────────────────────────────────────────────────────────────────────────
 ────</code></pre><h2 id="Picture-of-the-solution"><a class="docs-heading-anchor" href="#Picture-of-the-solution">Picture of the solution</a><a id="Picture-of-the-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Picture-of-the-solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">sol = solve(oprob, CVODE_BDF(), saveat=tf/1000., reltol=1e-5, abstol=1e-5)
 plot(sol; idxs=obs, legend=false, fmt=:png)</code></pre><p><img src="../figures/BCR_7_1.png" alt/></p><h2 id="Generate-Test-Solution"><a class="docs-heading-anchor" href="#Generate-Test-Solution">Generate Test Solution</a><a id="Generate-Test-Solution-1"></a><a class="docs-heading-anchor-permalink" href="#Generate-Test-Solution" title="Permalink"></a></h2><pre><code class="language-julia hljs">@time sol = solve(oprob, CVODE_BDF(), abstol=1/10^12, reltol=1/10^12)
-test_sol  = TestSolution(sol);</code></pre><pre><code class="nohighlight hljs">623.635529 seconds (4.50 M allocations: 2.109 GiB, 0.27% gc time, 0.11% com
+test_sol  = TestSolution(sol);</code></pre><pre><code class="nohighlight hljs">627.120728 seconds (4.50 M allocations: 2.109 GiB, 0.26% gc time, 0.11% com
 pilation time)</code></pre><h2 id="Setups"><a class="docs-heading-anchor" href="#Setups">Setups</a><a id="Setups-1"></a><a class="docs-heading-anchor-permalink" href="#Setups" title="Permalink"></a></h2><h4 id="Sets-plotting-defaults"><a class="docs-heading-anchor" href="#Sets-plotting-defaults">Sets plotting defaults</a><a id="Sets-plotting-defaults-1"></a><a class="docs-heading-anchor-permalink" href="#Sets-plotting-defaults" title="Permalink"></a></h4><pre><code class="language-julia hljs">default(legendfontsize=7,framestyle=:box,gridalpha=0.3,gridlinewidth=2.5)</code></pre><h4 id="Declares-a-plotting-helper-function"><a class="docs-heading-anchor" href="#Declares-a-plotting-helper-function">Declares a plotting helper function</a><a id="Declares-a-plotting-helper-function-1"></a><a class="docs-heading-anchor-permalink" href="#Declares-a-plotting-helper-function" title="Permalink"></a></h4><pre><code class="language-julia hljs">function plot_settings(wp)
     times = vcat(map(wp -&gt; wp.times, wp.wps)...)
     errors = vcat(map(wp -&gt; wp.errors, wp.wps)...)
@@ -148,7 +148,7 @@ W = I - 1.0*jaccache
 prectmp = ilu(W, τ = 50.0)
 preccache = Ref(prectmp)
 
-τ1 = 1e2
+const τ1 = 1e2
 function psetupilu(p, t, u, du, jok, jcurPtr, gamma)
     if jok
         sparsejacprob.f.jac(jaccache,u,p,t)
@@ -167,7 +167,7 @@ function precilu(z,r,p,t,y,fy,gamma,delta,lr)
     ldiv!(z,preccache[],r)
 end
 
-τ2 = 1e10
+const τ2 = 1e2
 function incompletelu(W,du,u,p,t,newW,Plprev,Prprev,solverdata)
     if newW === nothing || newW
         Pl = ilu(convert(AbstractMatrix,W), τ = τ2)
@@ -176,144 +176,7 @@ function incompletelu(W,du,u,p,t,newW,Plprev,Prprev,solverdata)
     end
     Pl,nothing
 end;</code></pre><h4 id="Sets-tolerances"><a class="docs-heading-anchor" href="#Sets-tolerances">Sets tolerances</a><a id="Sets-tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#Sets-tolerances" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (5:8)
-reltols = 1.0 ./ 10.0 .^ (5:8);</code></pre><h2 id="Failures"><a class="docs-heading-anchor" href="#Failures">Failures</a><a id="Failures-1"></a><a class="docs-heading-anchor-permalink" href="#Failures" title="Permalink"></a></h2><p>Before proceding to the results, we note the notable omissions. CVODE with KLU diverges in the solution, and thus it is omitted from the results:</p><pre><code class="language-julia hljs">solve(sparsejacprob,CVODE_BDF(linear_solver=:KLU), abstol=1e-5, reltol=1e-5)</code></pre><pre><code class="nohighlight hljs">retcode: Unstable
-Interpolation: 3rd order Hermite
-t: 5726-element Vector{Float64}:
-     0.0
-     8.77683169370922e-8
-     0.0008777709376878589
-     0.0035549575423662882
-     0.006232144147044718
-     0.008909330751723147
-     0.013357243278680379
-     0.022416962688598108
-     0.03147668209851584
-     0.04053640150843357
-     ⋮
- 57821.68840116891
- 57890.99731540063
- 57960.30622963235
- 58029.615143864066
- 58098.924058095785
- 58168.2329723275
- 58237.54188655922
- 58306.85080079094
- 58376.15971502266
-u: 5726-element Vector{Vector{Float64}}:
- [299717.8348854, 47149.15480798, 46979.01102231, 290771.2428252, 299980.73
-96749, 300000.0, 141.3151575495, 0.1256496403614, 0.4048783555301, 140.8052
-338618  …  5.279974499715e-11, 1.005585387399e-24, 6.724953378237e-17, 3.39
-5560698281e-16, 1.787990228838e-5, 8.761844379939e-13, 0.0002517949074779, 
-0.0005539124513976, 2.281251822741e-14, 1.78232055967e-8]
- [299717.8348800437, 47149.154807980005, 46979.011022309984, 290771.2428252
-, 299980.7396749, 300000.0, 141.3151575476059, 0.12564964036140167, 0.40487
-83555301015, 140.80523385991268  …  5.279974499714999e-11, 1.00558538739898
-82e-24, 6.72495337823684e-17, 3.3955606982809824e-16, 1.787990228838e-5, 8.
-761844379938997e-13, 0.00025179490747789996, 0.0005539124513975999, 2.28125
-18227409995e-14, 1.78232055967e-8]
- [299717.7813635935, 47149.15477514749, 46979.010989389644, 290771.24282537
-2, 299980.7396749, 300000.0, 141.3151384585259, 0.12564980156915911, 0.4048
-7851596267965, 140.80521483909547  …  5.279974498980291e-11, 1.005585507981
-526e-24, 6.724954013868955e-17, 3.395561051660044e-16, 1.7879902288366204e-
-5, 8.761844379963702e-13, 0.0002517949074775996, 0.0005539124513969389, 2.2
-81251822742803e-14, 1.78232055966876e-8]
- [299717.6184123793, 47149.154473497074, 46979.01068819851, 290771.24282882
-287, 299980.7396749, 300000.0, 141.31507933366183, 0.12565123397959216, 0.4
-048799416124324, 140.80515592569225  …  5.279974484626734e-11, 1.0055879471
-242576e-24, 6.72496128924376e-17, 3.3955682759450723e-16, 1.787990228832417
-8e-5, 8.761844380919727e-13, 0.0002517949074766831, 0.0005539124513949189, 
-2.281251822919136e-14, 1.7823205596721744e-8]
- [299717.4558452556, 47149.15390635545, 46979.01012247438, 290771.242838571
-, 299980.7396749, 299999.99999999994, 141.31501903927045, 0.125653846019200
-43, 0.4048825417839249, 140.8050958469824  …  5.279974447662289e-11, 1.0055
-942417321254e-24, 6.724975616806569e-17, 3.395586660731682e-16, 1.787990228
-8282853e-5, 8.761844383463759e-13, 0.0002517949074757663, 0.000553912451392
-8846, 2.281251823576754e-14, 1.782320559693158e-8]
- [299717.29369190073, 47149.153055713046, 46979.00927427272, 290771.2428581
-3095, 299980.7396749, 299999.9999999998, 141.31495751323527, 0.125657641855
-33607, 0.4048863215238679, 140.80503454107355  …  5.2799743817549104e-11, 1
-.0056053867838468e-24, 6.724996973606843e-17, 3.3956186810300794e-16, 1.787
-9902288243845e-5, 8.761844388138094e-13, 0.00025179490747484875, 0.00055391
-24513908173, 2.281251825199701e-14, 1.782320559740498e-8]
- [299717.0252231849, 47149.15101095233, 46979.0072358465, 290771.2429234154
-4, 299980.7396749, 299999.9999999994, 141.314852613934, 0.12566631465389388
-, 0.40489496494012023, 140.8049300171617  …  5.279974202829506e-11, 1.00563
-49269727392e-24, 6.725045801517345e-17, 3.395701649019438e-16, 1.7879902288
-196147e-5, 8.761844402660152e-13, 0.0002517949074733213, 0.0005539124513871
-967, 2.2812518325512737e-14, 1.7823205598859857e-8]
- [299716.4819605907, 47149.14449004399, 46979.00073634402, 290771.243238563
-3, 299980.7396748996, 299999.99999999715, 141.31462934298466, 0.12569130598
-674336, 0.4049199502267687, 140.8047075454941  …  5.27997358286412e-11, 1.0
-057309332413109e-24, 6.725182353638703e-17, 3.395962516992423e-16, 1.787990
-2288403765e-5, 8.761844481156392e-13, 0.0002517949074701813, 0.000553912451
-3778158, 2.2812518903300468e-14, 1.7823205604079975e-8]
- [299715.9434100256, 47149.134913890055, 46978.991192620655, 290771.2438497
-921, 299980.7396748984, 299999.9999999924, 141.31439403902056, 0.1257242741
-278965, 0.40495307148559484, 140.80447308423703  …  5.2799726385000655e-11,
- 1.0058670637508427e-24, 6.725354700296453e-17, 3.396321977357811e-16, 1.78
-79902289650543e-5, 8.761844663172306e-13, 0.00025179490746696914, 0.0005539
-124513636081, 2.281252043018447e-14, 1.782320561220987e-8]
- [299715.4094721522, 47149.122421615, 46978.97874329432, 290771.2448178493,
- 299980.73967489577, 299999.9999999842, 141.3141478131459, 0.12576294588299
-372, 0.4049921833379942, 140.80422774048324  …  5.2799713934805945e-11, 1.0
-060332742211042e-24, 6.725546329400144e-17, 3.396750314053061e-16, 1.787990
-229346983e-5, 8.761845012984174e-13, 0.0002517949074636176, 0.0005539124513
-408766, 2.281252351499531e-14, 1.782320562384929e-8]
- ⋮
- [299984.69633764523, 2000.3661582118302, 2000.6335782699164, 299317.331633
-2022, 299719.1177387134, 299999.99999547505, 6.001260388586738, 0.000226389
-18774164752, 0.0007359927591103719, 6.002062730395201  …  4.508528258999069
-e-15, 2.491889561742076e-32, 8.735377861214971e-23, 2.942420955857134e-22, 
-4.4910108257468465e-9, 3.0402472567008432e-18, 2.694460101694033e-8, 5.9378
-53859623801e-8, 2.7040926759681296e-19, 4.477456865989473e-12]
- [299982.61814808915, 2260.066247311189, 2260.213404965735, 299314.39041410
-79, 299767.8790694357, 299999.9999941571, 6.780235040229235, 0.000289166134
-6601229, 0.0009403757585511697, 6.78067689483421  …  6.2068234373047466e-15
-, 9.178751510999514e-32, 1.4650208279983723e-22, 5.080292985885363e-22, 6.3
-94206708483966e-9, 4.934855127224456e-18, 3.8708690527381235e-8, 8.53032901
-8979647e-8, 4.353403746893372e-19, 6.3747834954847385e-12]
- [299980.3246642142, 2543.248172952822, 2543.112566827125, 299298.315957477
-9, 299808.18513751833, 299999.9999925059, 7.629635194138528, 0.000366359236
-27796976, 0.001191693673158175, 7.629229069704318  …  8.500070316707796e-15
-, 2.4726086269776396e-32, 2.4277824229727916e-22, 8.65355189485088e-22, 8.9
-9810871740556e-9, 7.897039770683086e-18, 5.49732905098195e-8, 1.21144969857
-28825e-7, 6.902713430985238e-19, 8.970623417743945e-12]
- [299977.8224823888, 2848.1311867324343, 2847.6226701872083, 299270.9270180
-6646, 299841.49709788617, 299999.99999046966, 8.544120063566309, 0.00045956
-33553857948, 0.0014952000652740105, 8.542595330449194  …  1.155599636884732
-4e-14, -1.9316990282640052e-31, 3.936280567142008e-22, 1.4436222700577494e-
-21, 1.2443199642699265e-8, 1.2359761041776451e-17, 7.685068349121899e-8, 1.
-6934454967054645e-7, 1.0689932055255268e-18, 1.2405019627930002e-11]
- [299975.1394141348, 3170.3705674550133, 3169.5935956919548, 299234.2832794
-239, 299869.01902671775, 299999.99998801574, 9.510657931980992, 0.000569347
-9989597331, 0.0018527263458213866, 9.508327536319378  …  1.5522577267615543
-e-14, 1.2386981403277989e-30, 6.244124840545217e-22, 2.3387078411122014e-21
-, 1.6933892544593855e-8, 1.8921195537238696e-17, 1.055958785156778e-7, 2.32
-6711973154379e-7, 1.6196498530915315e-18, 1.688173253377088e-11]
- [299972.31781623326, 3504.051923045487, 3503.3823749226017, 299190.5450664
-312, 299891.75335509854, 299999.99998513557, 10.511506479337006, 0.00069521
-24413998893, 0.0022627812108675645, 10.509497516716003  …  2.05657512158287
-74e-14, -8.373130283362522e-31, 9.65119750772979e-22, 3.7096399165653585e-2
-1, 2.246143132975879e-8, 2.8011554529528165e-17, 1.4179353409990193e-7, 3.1
-238558912007316e-7, 2.3694554152756637e-18, 2.2392041416496756e-11]
- [299969.3928326303, 3844.402433093062, 3844.430932081971, 299141.477444274
-93, 299910.53335114475, 299999.9999818259, 11.532342575642327, 0.0008365150
-890463002, 0.0027235314721492225, 11.532426530393533  …  2.6659612957080922
-e-14, 1.3886555649092596e-30, 1.4252408985173547e-21, 5.5461988871786465e-2
-1, 2.9281688298738558e-8, 4.046669362343026e-17, 1.864485781124477e-7, 4.10
-73208777530617e-7, 3.3865449693301704e-18, 2.919098529072545e-11]
- [299966.35913733375, 4191.579507495987, 4192.86244335435, 299087.739488217
-9, 299926.0475868834, 299999.9999780421, 12.573624780957445, 0.000994522157
-4677056, 0.0032391111869004775, 12.577470978439104  …  3.42923181939857e-14
-, 2.67222243213034e-30, 2.1119358504609505e-21, 8.449925826314186e-21, 3.72
-47438469443596e-8, 5.660659065254188e-17, 2.403173727517373e-7, 5.293447254
-507079e-7, 4.684195637132555e-18, 3.713182903015494e-11]
- [299963.1409824087, 4553.704954319078, 4556.355085574393, 299028.322714165
-, 299938.8632739737, 299999.99997362896, 13.659695274170675, 0.001174871082
-022776, 0.0038276158555433457, 13.66764300767104  …  4.2995589845771097e-14
-, 2.3357368563742414e-30, 2.9192561125903006e-21, 1.1680799297916071e-20, 4
-.737236584327224e-8, 7.93449687003554e-17, 3.071480406882659e-7, 6.76573968
-6074248e-7, 6.483354166744714e-18, 4.722498006805378e-11]</code></pre><h2 id="Work-Precision-Diagrams-(CVODE-and-lsoda-solvers)"><a class="docs-heading-anchor" href="#Work-Precision-Diagrams-(CVODE-and-lsoda-solvers)">Work-Precision Diagrams (CVODE and lsoda solvers)</a><a id="Work-Precision-Diagrams-(CVODE-and-lsoda-solvers)-1"></a><a class="docs-heading-anchor-permalink" href="#Work-Precision-Diagrams-(CVODE-and-lsoda-solvers)" title="Permalink"></a></h2><h4 id="Declare-solvers."><a class="docs-heading-anchor" href="#Declare-solvers.">Declare solvers.</a><a id="Declare-solvers.-1"></a><a class="docs-heading-anchor-permalink" href="#Declare-solvers." title="Permalink"></a></h4><pre><code class="language-julia hljs">setups = [
+reltols = 1.0 ./ 10.0 .^ (5:8);</code></pre><h2 id="Failures"><a class="docs-heading-anchor" href="#Failures">Failures</a><a id="Failures-1"></a><a class="docs-heading-anchor-permalink" href="#Failures" title="Permalink"></a></h2><p>Before proceding to the results, we note the notable omissions. CVODE with KLU diverges in the solution, and thus it is omitted from the results:</p><pre><code class="language-julia hljs">solve(sparsejacprob,CVODE_BDF(linear_solver=:KLU), abstol=1e-8, reltol=1e-8);</code></pre><h2 id="Work-Precision-Diagrams-(CVODE-and-lsoda-solvers)"><a class="docs-heading-anchor" href="#Work-Precision-Diagrams-(CVODE-and-lsoda-solvers)">Work-Precision Diagrams (CVODE and lsoda solvers)</a><a id="Work-Precision-Diagrams-(CVODE-and-lsoda-solvers)-1"></a><a class="docs-heading-anchor-permalink" href="#Work-Precision-Diagrams-(CVODE-and-lsoda-solvers)" title="Permalink"></a></h2><h4 id="Declare-solvers."><a class="docs-heading-anchor" href="#Declare-solvers.">Declare solvers.</a><a id="Declare-solvers.-1"></a><a class="docs-heading-anchor-permalink" href="#Declare-solvers." title="Permalink"></a></h4><pre><code class="language-julia hljs">setups = [
         Dict(:alg=&gt;lsoda(), :prob_choice =&gt; 1),
         Dict(:alg=&gt;CVODE_BDF(), :prob_choice =&gt; 1),
         Dict(:alg=&gt;CVODE_BDF(linear_solver=:LapackDense), :prob_choice =&gt; 1),
@@ -345,11 +208,11 @@ plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)</code></pre><p><img src="../fig
 names = [&quot;TRBDF2 (GMRES)&quot; &quot;QNDF (GMRES)&quot; &quot;FBDF (GMRES)&quot; &quot;KenCarp4 (GMRES)&quot;]
 xlimit,ylimit = plot_settings(wp)
 plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)</code></pre><p><img src="../figures/BCR_19_1.png" alt/></p><h4 id="Declare-solvers-(using-GMRES-linear-solver,-with-pre-conditioner)."><a class="docs-heading-anchor" href="#Declare-solvers-(using-GMRES-linear-solver,-with-pre-conditioner).">Declare solvers (using GMRES linear solver, with pre-conditioner).</a><a id="Declare-solvers-(using-GMRES-linear-solver,-with-pre-conditioner).-1"></a><a class="docs-heading-anchor-permalink" href="#Declare-solvers-(using-GMRES-linear-solver,-with-pre-conditioner)." title="Permalink"></a></h4><pre><code class="language-julia hljs">setups = [
-        Dict(:alg=&gt;TRBDF2(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu_fceri,concrete_jac=true)),
-        Dict(:alg=&gt;QNDF(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu_fceri,concrete_jac=true)),
-        Dict(:alg=&gt;FBDF(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu_fceri,concrete_jac=true)),
-        Dict(:alg=&gt;KenCarp4(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu_fceri,concrete_jac=true))
-        ];</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: incompletelu_fceri not defined</code></pre><h4 id="Plot-Work-Precision-Diagram-(using-GMRES-linear-solver,-with-pre-conditioner)."><a class="docs-heading-anchor" href="#Plot-Work-Precision-Diagram-(using-GMRES-linear-solver,-with-pre-conditioner).">Plot Work-Precision Diagram (using GMRES linear solver, with pre-conditioner).</a><a id="Plot-Work-Precision-Diagram-(using-GMRES-linear-solver,-with-pre-conditioner).-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-Work-Precision-Diagram-(using-GMRES-linear-solver,-with-pre-conditioner)." title="Permalink"></a></h4><pre><code class="language-julia hljs">wp = WorkPrecisionSet(oprob_sparse,abstols,reltols,setups;error_estimate=:l2,
+        Dict(:alg=&gt;TRBDF2(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu,concrete_jac=true)),
+        Dict(:alg=&gt;QNDF(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu,concrete_jac=true)),
+        Dict(:alg=&gt;FBDF(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu,concrete_jac=true)),
+        Dict(:alg=&gt;KenCarp4(linsolve=KrylovJL_GMRES(),autodiff=false,precs=incompletelu,concrete_jac=true))
+        ];</code></pre><h4 id="Plot-Work-Precision-Diagram-(using-GMRES-linear-solver,-with-pre-conditioner)."><a class="docs-heading-anchor" href="#Plot-Work-Precision-Diagram-(using-GMRES-linear-solver,-with-pre-conditioner).">Plot Work-Precision Diagram (using GMRES linear solver, with pre-conditioner).</a><a id="Plot-Work-Precision-Diagram-(using-GMRES-linear-solver,-with-pre-conditioner).-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-Work-Precision-Diagram-(using-GMRES-linear-solver,-with-pre-conditioner)." title="Permalink"></a></h4><pre><code class="language-julia hljs">wp = WorkPrecisionSet(oprob_sparse,abstols,reltols,setups;error_estimate=:l2,
                     saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e6),numruns=1)
 
 names = [&quot;TRBDF2 (GMRES, iLU)&quot; &quot;QNDF (GMRES, iLU)&quot; &quot;FBDF (GMRES, iLU)&quot; &quot;KenCarp4 (GMRES, iLU)&quot;]
@@ -513,7 +376,7 @@ Warning The project dependencies or compat requirements have changed since the m
 ⌃ [10f19ff3] LayoutPointers v0.1.10
   [d3d80556] LineSearches v7.2.0
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
-  [2ab3a3ac] LogExpFunctions v0.3.18
+⌃ [2ab3a3ac] LogExpFunctions v0.3.18
 ⌅ [e6f89c97] LoggingExtras v0.4.9
 ⌃ [bdcacae8] LoopVectorization v0.12.132
   [1914dd2f] MacroTools v0.5.10
@@ -528,7 +391,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
 ⌃ [d8a4904e] MutableArithmetics v1.0.4
-  [d41bc354] NLSolversBase v7.8.2
+⌃ [d41bc354] NLSolversBase v7.8.2
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.1
   [8913a72c] NonlinearSolve v0.3.22
@@ -536,7 +399,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [09606e27] ODEInterfaceDiffEq v3.11.0
 ⌃ [6fe1bfb0] OffsetArrays v1.12.7
 ⌃ [4d8831e6] OpenSSL v1.2.1
-  [429524aa] Optim v1.7.3
+⌃ [429524aa] Optim v1.7.3
   [bac558e1] OrderedCollections v1.4.1
 ⌃ [1dea7af3] OrdinaryDiffEq v6.28.0
   [90014a1f] PDMats v0.11.16
@@ -593,7 +456,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [82ae8749] StatsAPI v1.5.0
   [2913bbd2] StatsBase v0.33.21
   [4c63d2b9] StatsFuns v1.0.1
-⌃ [7792a7ef] StrideArraysCore v0.3.15
+⌅ [7792a7ef] StrideArraysCore v0.3.15
   [69024149] StringEncodings v0.3.5
 ⌃ [c3572dad] Sundials v4.10.1
   [d1185830] SymbolicUtils v0.19.11
@@ -746,4 +609,4 @@ Warning The project dependencies or compat requirements have changed since the m
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../StiffODE/VanDerPol/">« VanDerPol Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Wednesday 23 November 2022 20:54">Wednesday 23 November 2022</span>. Using Julia version 1.8.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../StiffODE/VanDerPol/">« VanDerPol Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.23 on <span class="colophon-date" title="Friday 25 November 2022 07:47">Friday 25 November 2022</span>. Using Julia version 1.8.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
