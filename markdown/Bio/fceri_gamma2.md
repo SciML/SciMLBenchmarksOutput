@@ -52,21 +52,21 @@ Parsing groups...done
  ──────────────────────────────────────────────────────────────────────────
                                   Time                    Allocations      
                          ───────────────────────   ────────────────────────
-    Tot / % measured:         4.32s / 100.0%           1.67GiB / 100.0%    
+    Tot / % measured:         15.5s /  94.3%           3.15GiB /  98.4%    
 
  Section         ncalls     time    %tot     avg     alloc    %tot      avg
  ──────────────────────────────────────────────────────────────────────────
- Parse Network        1    4.32s  100.0%   4.32s   1.67GiB  100.0%  1.67GiB
+ Parse Network        1    14.7s  100.0%   14.7s   3.10GiB  100.0%  3.10GiB
  ──────────────────────────────────────────────────────────────────────────
  ──────────────────────────────────────────────────────────────────────────
                                   Time                    Allocations      
                          ───────────────────────   ────────────────────────
-    Tot / % measured:         13.6s /  99.6%           7.35GiB / 100.0%    
+    Tot / % measured:         32.8s /  96.7%           10.6GiB /  99.2%    
 
  Section         ncalls     time    %tot     avg     alloc    %tot      avg
  ──────────────────────────────────────────────────────────────────────────
- Create ODESys        1    9.21s   68.1%   9.21s   5.68GiB   77.3%  5.68GiB
- Parse Network        1    4.32s   31.9%   4.32s   1.67GiB   22.7%  1.67GiB
+ Create ODESys        1    17.1s   53.8%   17.1s   7.41GiB   70.5%  7.41GiB
+ Parse Network        1    14.7s   46.2%   14.7s   3.10GiB   29.5%  3.10GiB
  ──────────────────────────────────────────────────────────────────────────
  ──────────────────────────────────────────────────────────────────────────
 ────
@@ -74,19 +74,19 @@ Parsing groups...done
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           1.92h / 100.0%           10.1TiB / 100.0%
+      Tot / % measured:           1.62h / 100.0%           10.1TiB / 100.0%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1    1.92h   99.8%   1.92h   10.0TiB   99.9%  10.
-0TiB
- Create ODESys            1    9.21s    0.1%   9.21s   5.68GiB    0.1%  5.6
-8GiB
- Parse Network            1    4.32s    0.1%   4.32s   1.67GiB    0.0%  1.6
-7GiB
+ ODEProb SparseJac        1    1.61h   99.5%   1.61h   10.1TiB   99.9%  10.
+1TiB
+ Create ODESys            1    17.1s    0.3%   17.1s   7.41GiB    0.1%  7.4
+1GiB
+ Parse Network            1    14.7s    0.3%   14.7s   3.10GiB    0.0%  3.1
+0GiB
  ──────────────────────────────────────────────────────────────────────────
 ──── ──────────────────────────────────────────────────────────────────────
 ────────
@@ -94,21 +94,21 @@ Parsing groups...done
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           1.92h / 100.0%           10.1TiB / 100.0%
+      Tot / % measured:           1.62h / 100.0%           10.1TiB / 100.0%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1    1.92h   99.7%   1.92h   10.0TiB   99.9%  10.
-0TiB
- Create ODESys            1    9.21s    0.1%   9.21s   5.68GiB    0.1%  5.6
-8GiB
- ODEProb No Jac           1    7.55s    0.1%   7.55s   1.39GiB    0.0%  1.3
-9GiB
- Parse Network            1    4.32s    0.1%   4.32s   1.67GiB    0.0%  1.6
-7GiB
+ ODEProb SparseJac        1    1.61h   99.3%   1.61h   10.1TiB   99.9%  10.
+1TiB
+ Create ODESys            1    17.1s    0.3%   17.1s   7.41GiB    0.1%  7.4
+1GiB
+ Parse Network            1    14.7s    0.3%   14.7s   3.10GiB    0.0%  3.1
+0GiB
+ ODEProb No Jac           1    8.43s    0.1%   8.43s   1.53GiB    0.0%  1.5
+3GiB
  ──────────────────────────────────────────────────────────────────────────
 ────
 ```
@@ -153,7 +153,7 @@ given how fast evaluating `f` is:
 ```
 
 ```
-82.900 μs (43 allocations: 1.72 KiB)
+82.689 μs (43 allocations: 1.72 KiB)
 ```
 
 
@@ -182,8 +182,8 @@ test_sol  = TestSolution(sol);
 ```
 
 ```
-7.396191 seconds (3.38 M allocations: 806.047 MiB, 0.88% gc time, 14.15% 
-compilation time)
+7.280931 seconds (3.55 M allocations: 813.423 MiB, 12.90% compilation tim
+e)
 ```
 
 
@@ -232,7 +232,7 @@ preccache = Ref(prectmp)
 
 τ1 = 5
 function psetupilu(p, t, u, du, jok, jcurPtr, gamma)
-    if jok
+    if !jok
         sparsejacprob.f.jac(jaccache,u,p,t)
         jcurPtr[] = true
 
@@ -436,13 +436,13 @@ Benchmarks for explicit solvers.
 We designate the solvers we wish to use, this also includes lsoda and CVODE.
 ```julia
 setups = [
-        Dict(:alg=>CVODE_Adams()),  
-        Dict(:alg=>Tsit5()), 
-        Dict(:alg=>BS5()), 
-        Dict(:alg=>VCABM()),          
-        Dict(:alg=>Vern6()), 
-        Dict(:alg=>Vern7()), 
-        Dict(:alg=>Vern8()), 
+        Dict(:alg=>CVODE_Adams()),
+        Dict(:alg=>Tsit5()),
+        Dict(:alg=>BS5()),
+        Dict(:alg=>VCABM()),
+        Dict(:alg=>Vern6()),
+        Dict(:alg=>Vern7()),
+        Dict(:alg=>Vern8()),
         Dict(:alg=>Vern9())
         ];
 ```
@@ -557,7 +557,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9e997f8a] ChangesOfVariables v0.1.4
 ⌃ [fb6a15b2] CloseOpenIntervals v0.1.10
   [944b1d66] CodecZlib v0.7.0
-  [35d6a980] ColorSchemes v3.19.0
+⌃ [35d6a980] ColorSchemes v3.19.0
   [3da002f7] ColorTypes v0.11.4
   [c3611d14] ColorVectorSpace v0.9.9
   [5ae59095] Colors v0.12.8
@@ -635,7 +635,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [98e50ef6] JuliaFormatter v1.0.10
 ⌃ [ccbc3e58] JumpProcesses v9.2.0
 ⌅ [ef3ab10e] KLU v0.3.0
-  [ba0b0d4f] Krylov v0.8.4
+⌅ [ba0b0d4f] Krylov v0.8.4
 ⌅ [0b1a1467] KrylovKit v0.5.4
 ⌃ [7f56f5a3] LSODA v0.7.0
   [b964fa9f] LaTeXStrings v1.3.0
@@ -644,7 +644,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [10f19ff3] LayoutPointers v0.1.10
   [d3d80556] LineSearches v7.2.0
 ⌃ [7ed4a6bd] LinearSolve v1.26.0
-  [2ab3a3ac] LogExpFunctions v0.3.18
+⌃ [2ab3a3ac] LogExpFunctions v0.3.18
 ⌅ [e6f89c97] LoggingExtras v0.4.9
 ⌃ [bdcacae8] LoopVectorization v0.12.132
   [1914dd2f] MacroTools v0.5.10
@@ -659,15 +659,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
 ⌃ [d8a4904e] MutableArithmetics v1.0.4
-  [d41bc354] NLSolversBase v7.8.2
+⌃ [d41bc354] NLSolversBase v7.8.2
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.1
-  [8913a72c] NonlinearSolve v0.3.22
+⌅ [8913a72c] NonlinearSolve v0.3.22
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.11.0
 ⌃ [6fe1bfb0] OffsetArrays v1.12.7
 ⌃ [4d8831e6] OpenSSL v1.2.1
-  [429524aa] Optim v1.7.3
+⌃ [429524aa] Optim v1.7.3
   [bac558e1] OrderedCollections v1.4.1
 ⌃ [1dea7af3] OrdinaryDiffEq v6.28.0
   [90014a1f] PDMats v0.11.16
@@ -724,7 +724,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [82ae8749] StatsAPI v1.5.0
   [2913bbd2] StatsBase v0.33.21
   [4c63d2b9] StatsFuns v1.0.1
-⌃ [7792a7ef] StrideArraysCore v0.3.15
+⌅ [7792a7ef] StrideArraysCore v0.3.15
   [69024149] StringEncodings v0.3.5
 ⌃ [c3572dad] Sundials v4.10.1
   [d1185830] SymbolicUtils v0.19.11
@@ -738,12 +738,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [a759f4b9] TimerOutputs v0.5.21
   [0796e94c] Tokenize v0.5.24
   [3bb67fe8] TranscodingStreams v0.9.9
-  [28d57a85] Transducers v0.4.74
+⌃ [28d57a85] Transducers v0.4.74
   [a2a6695c] TreeViews v0.3.0
 ⌃ [d5829a12] TriangularSolve v0.1.14
   [410a4b4d] Tricks v0.1.6
   [30578b45] URIParser v0.4.1
-  [5c2747f8] URIs v1.4.0
+⌃ [5c2747f8] URIs v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
 ⌃ [1986cc42] Unitful v1.12.0
@@ -776,7 +776,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [dd4b983a] LZO_jll v2.10.1+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
   [d4300ac3] Libgcrypt_jll v1.8.7+0
-  [7e76a0d4] Libglvnd_jll v1.3.0+3
+⌃ [7e76a0d4] Libglvnd_jll v1.3.0+3
   [7add5ba3] Libgpg_error_jll v1.42.0+0
   [94ce4f54] Libiconv_jll v1.16.1+1
   [4b2f31a3] Libmount_jll v2.35.0+0

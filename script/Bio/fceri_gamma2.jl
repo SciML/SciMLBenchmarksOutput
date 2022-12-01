@@ -69,7 +69,7 @@ preccache = Ref(prectmp)
 
 τ1 = 5
 function psetupilu(p, t, u, du, jok, jcurPtr, gamma)
-    if jok
+    if !jok
         sparsejacprob.f.jac(jaccache,u,p,t)
         jcurPtr[] = true
 
@@ -184,13 +184,13 @@ plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
 
 
 setups = [
-        Dict(:alg=>CVODE_Adams()),  
-        Dict(:alg=>Tsit5()), 
-        Dict(:alg=>BS5()), 
-        Dict(:alg=>VCABM()),          
-        Dict(:alg=>Vern6()), 
-        Dict(:alg=>Vern7()), 
-        Dict(:alg=>Vern8()), 
+        Dict(:alg=>CVODE_Adams()),
+        Dict(:alg=>Tsit5()),
+        Dict(:alg=>BS5()),
+        Dict(:alg=>VCABM()),
+        Dict(:alg=>Vern6()),
+        Dict(:alg=>Vern7()),
+        Dict(:alg=>Vern8()),
         Dict(:alg=>Vern9())
         ];
 
