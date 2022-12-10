@@ -1,6 +1,6 @@
 ---
 author: "HAO HAO"
-title: "Burgers Pseudospectral Methods Work-Precision Diagrams"
+title: "KS FDM Work-Precision Diagrams"
 ---
 ```julia
 using ApproxFun, OrdinaryDiffEq, Sundials
@@ -17,66 +17,110 @@ Plots.GRBackend()
 
 
 
-Here is the Burgers equation using Fourier spectral methods.
+Here is the KS equation using FDM.
 
 ```julia
-S = Fourier()
-n = 512
-x = points(S, n)
-D2 = Derivative(S,2)[1:n,1:n]
-D  = (Derivative(S) → S)[1:n,1:n]
-T = ApproxFun.plan_transform(S, n)
-Ti = ApproxFun.plan_itransform(S, n)
+# Define the linear and nonlinear terms
+function lin_term(N)
+    #which is -(D2+D4)
+    dx = 1/(N + 1)
+    d2 = (-2) * ones(N) # main diagonal
+    du2 = ones(N - 1) # off diagonal
 
-û₀ = T*cos.(cos.(x.-0.1))
-A = 0.03*D2
-tmp = similar(û₀)
-p = (D,D2,T,Ti,tmp,similar(tmp))
-function burgers_nl(dû,û,p,t)
-    D,D2,T,Ti,u,tmp = p
-    mul!(tmp, D, û)
-    mul!(u, Ti, tmp)
-    mul!(tmp, Ti, û)
-    @. tmp = tmp*u
-    mul!(u, T, tmp)
-    @. dû = - u
+    d4 = 6 * ones(N) # main diagonal
+    du4 = (-4) * ones(N - 1) # off diagonal
+    duu4 = ones(N - 2)
+    DiffEqArrayOperator(-0.0004*((1/dx^2) * diagm(-1 => du2, 0 => d2, 1 => du2)
+                        +(1/dx^4) * diagm(-2 => duu4, -1 => du4, 0 => d4, 1 => du4, 2 => duu4)))
 end
-```
 
-```
-burgers_nl (generic function with 1 method)
-```
+function nl_term(N)
+    dx = 1/(N + 1)
+    du = ones(N - 1) # super diagonal
+    dl = -ones(N - 1) # lower diagonal
+    D = (-0.2/(4*dx)) * diagm(-1 => dl, 1 => du)
 
-
-
-
-
-Reference solution using Rodas5 is below:
-
-```julia
-prob = SplitODEProblem(DiffEqArrayOperator(Diagonal(A)), burgers_nl, û₀, (0.0,5.0), p)
-sol  = solve(prob, Rodas5(autodiff=false); reltol=1e-12,abstol=1e-12)
-test_sol = TestSolution(sol)
-
-tslices=[0.0 1.0 2.0 3.0 5.0]
-ys=hcat((Ti*sol(t) for t in tslices)...)
-labels=["t=$t" for t in tslices]
-plot(x,ys,label=labels)
-```
-
-![](figures/burgers_spectral_wpd_3_1.png)
-
-
-
-## High tolerances
-
-```julia
-diag_linsolve=LinSolveFactorize(W->let tmp = tmp
-    for i in 1:size(W, 1)
-        tmp[i] = W[i, i]
+    tmp = zeros(N)
+    function (du,u,p,t)
+        @. tmp = u^2
+        mul!(du, D, tmp)
     end
-    Diagonal(tmp)
-end)
+end
+
+# Construct the problem
+function ks(N)
+    f1 = lin_term(N)
+    f2 = nl_term(N)
+    dx = 1 / (N + 1)
+    xs = (1:N) * dx
+
+    μ0 = 0.3; σ0 = 0.05
+    f0 = x -> 0.6*exp(-(x - μ0)^2 / (2 * σ0^2))
+    u0 = f0.(xs)
+    prob = SplitODEProblem(f1, f2, u0, (0.0, 1.0))
+    xs, prob
+end;
+```
+
+
+
+
+Reference solution using RadauIIA5 is below:
+
+```julia
+xs, prob = ks(200)
+sol = solve(prob, RadauIIA5(autodiff=false); abstol=1e-14, reltol=1e-14)
+test_sol = TestSolution(sol);
+
+tslices = [0.0 0.25 0.50 0.75 1.]
+ys = hcat((sol(t) for t in tslices)...)
+labels = ["t = $t" for t in tslices]
+plot(xs, ys, label=labels)
+```
+
+```
+Error: MethodError: no method matching similar(::SparseDiffTools.JacVec{Sci
+MLBase.UJacobianWrapper{SciMLBase.SplitFunction{true, SciMLBase.FullSpecial
+ize, SciMLBase.ODEFunction{true, SciMLBase.FullSpecialize, SciMLBase.DiffEq
+ArrayOperator{Float64, Matrix{Float64}, typeof(SciMLBase.DEFAULT_UPDATE_FUN
+C)}, LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing
+, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
+othing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing}, SciMLBase.OD
+EFunction{true, SciMLBase.FullSpecialize, Main.var"##WeaveSandBox#3382".var
+"#1#2"{Vector{Float64}, Matrix{Float64}}, LinearAlgebra.UniformScaling{Bool
+}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSER
+VED), Nothing, Nothing}, LinearAlgebra.UniformScaling{Bool}, Vector{Float64
+}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSER
+VED), Nothing, Nothing}, Float64, SciMLBase.NullParameters}, Vector{Float64
+}, Vector{Float64}, Vector{Float64}}, ::Type{ComplexF64})
+Closest candidates are:
+  similar(!Matched::Union{LinearAlgebra.Adjoint{T, var"#s885"}, LinearAlgeb
+ra.Transpose{T, var"#s885"}} where {T, var"#s885"<:(AbstractVector)}, ::Typ
+e{T}) where T at /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64
+/1.8/julia-1.8-latest-linux-x86_64/share/julia/stdlib/v1.8/LinearAlgebra/sr
+c/adjtrans.jl:207
+  similar(!Matched::Union{LinearAlgebra.Adjoint{T, S}, LinearAlgebra.Transp
+ose{T, S}} where {T, S}, ::Type{T}) where T at /cache/julia-buildkite-plugi
+n/julia_installs/bin/linux/x64/1.8/julia-1.8-latest-linux-x86_64/share/juli
+a/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:211
+  similar(!Matched::Union{LinearAlgebra.Adjoint{T, S}, LinearAlgebra.Transp
+ose{T, S}} where {T, S}, ::Type{T}, !Matched::Tuple{Vararg{Int64, N}}) wher
+e {T, N} at /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.8/
+julia-1.8-latest-linux-x86_64/share/julia/stdlib/v1.8/LinearAlgebra/src/adj
+trans.jl:212
+  ...
+```
+
+
+
+
+
+Linear solvers
+
+```julia
+const LS_Dense = LinSolveFactorize(lu)
 ```
 
 ```
@@ -87,29 +131,58 @@ Error: UndefVarError: LinSolveFactorize not defined
 
 
 
+## High tolerances
+
 ## In-family comparisons
 
-1.IMEX methods (diagonal linear solver)
+1.IMEX methods (dense linear solver)
 
 ```julia
-abstols = 0.1 .^ (5:8)
+abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
 reltols = 0.1 .^ (1:4)
-multipliers =  0.5 .^ (0:3)
-setups = [Dict(:alg => IMEXEuler(linsolve=diag_linsolve), :dts => 1e-3 * multipliers),
-          Dict(:alg => CNAB2(linsolve=diag_linsolve), :dts => 5e-3 * multipliers),
-          Dict(:alg => CNLF2(linsolve=diag_linsolve), :dts => 5e-3 * multipliers),
-          Dict(:alg => SBDF2(linsolve=diag_linsolve), :dts => 1e-3 * multipliers)]
+multipliers = 0.5 .^ (0:3)
+setups = [Dict(:alg => IMEXEuler(), :dts => 1e-3 * multipliers),
+          Dict(:alg => CNAB2(), :dts => 1e-4 * multipliers),
+          Dict(:alg => CNLF2(), :dts => 1e-4 * multipliers),
+          Dict(:alg => SBDF2(), :dts => 1e-3 * multipliers)]
 labels = ["IMEXEuler" "CNAB2" "CNLF2" "SBDF2"]
-@time wp1 = WorkPrecisionSet(prob,abstols,reltols,setups;
-                            print_names=true,names=labels,
-                            numruns=5,seconds=5,
-                            save_everystop=false,appxsol=test_sol,maxiters=Int(1e5));
+@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+                            print_names=true, names=labels,
+                            numruns=5, error_estimate=:l2,
+                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp1,label=labels,markershape=:auto,title="IMEX methods, diagonal linsolve, low order")
+plot(wp, label=labels, markershape=:auto, title="IMEX methods, dense linsolve, low order")
 ```
 
 ```
-Error: UndefVarError: diag_linsolve not defined
+Error: UndefVarError: test_sol not defined
+```
+
+
+
+
+
+1.IMEX methods (Krylov linear solver)
+
+```julia
+abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
+reltols = 0.1 .^ (1:4)
+multipliers = 0.5 .^ (0:3)
+setups = [Dict(:alg => IMEXEuler(linsolve=LinSolveGMRES()), :dts => 1e-9 * multipliers),
+          Dict(:alg => CNAB2(linsolve=LinSolveGMRES()), :dts => 1e-9 * multipliers),
+          Dict(:alg => CNLF2(linsolve=LinSolveGMRES()), :dts => 1e-9 * multipliers),
+          Dict(:alg => SBDF2(linsolve=LinSolveGMRES()), :dts => 1e-9 * multipliers)]
+labels = ["IMEXEuler" "CNAB2" "CNLF2" "SBDF2"]
+@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+                            print_names=true, names=labels,
+                            numruns=5, error_estimate=:l2,
+                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
+
+plot(wp, label=labels, markershape=:auto, title="IMEX methods, Krylov linsolve, low order")
+```
+
+```
+Error: UndefVarError: LinSolveGMRES not defined
 ```
 
 
@@ -123,26 +196,27 @@ abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
 reltols = 0.1 .^ (1:4)
 multipliers = 0.5 .^ (0:3)
 setups = [Dict(:alg => NorsettEuler(), :dts => 1e-3 * multipliers),
-          Dict(:alg => ETDRK2(), :dts => 1e-2 * multipliers)]
-labels = hcat("NorsettEuler",
-              "ETDRK2 (caching)")
-@time wp2 = WorkPrecisionSet(prob,abstols,reltols,setups;
+          Dict(:alg => NorsettEuler(krylov=true, m=5), :dts => 1e-3 * multipliers),
+          Dict(:alg => NorsettEuler(krylov=true, m=20), :dts => 1e-3 * multipliers),
+          Dict(:alg => ETDRK2(), :dts => 1e-3 * multipliers),
+          Dict(:alg => ETDRK2(krylov=true, m=20), :dts => 1e-2 * multipliers),
+          Dict(:alg => ETDRK2(krylov=true, m=20), :dts => 1e-2 * multipliers)]
+labels = hcat("NorsettEuler (caching)", "NorsettEuler (m=5)", "NorsettEuler (m=20)",
+              "ETDRK2 (caching)", "ETDRK2 (m=5)", "ETDRK2 (m=20)")
+@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                             print_names=true, names=labels,
-                            numruns=5,
+                            numruns=5, error_estimate=:l2,
                             save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp2, label=labels, markershape=:auto, title="ExpRK methods, low order")
+plot(wp, label=labels, markershape=:auto, title="ExpRK methods, low order")
 ```
 
 ```
-NorsettEuler
-ETDRK2 (caching)
-4619.146019 seconds (150.91 M allocations: 11.562 GiB, 0.17% gc time, 0.38%
- compilation time)
+Error: UndefVarError: test_sol not defined
 ```
 
 
-![](figures/burgers_spectral_wpd_6_1.png)
+
 
 
 ## Between family comparisons
@@ -151,19 +225,20 @@ ETDRK2 (caching)
 abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
 reltols = 0.1 .^ (1:4)
 multipliers = 0.5 .^ (0:3)
-setups = [Dict(:alg => CNAB2(linsolve=diag_linsolve), :dts => 5e-3 * multipliers),
-          Dict(:alg => ETDRK2(), :dts => 1e-2 * multipliers)]
-labels = ["CNAB2 (diagonal linsolve)" "ETDRK2"]
-@time wp3 = WorkPrecisionSet(prob,abstols,reltols,setups;
+setups = [Dict(:alg => CNAB2(), :dts => 1e-4 * multipliers),
+          Dict(:alg => CNAB2(linsolve=LinSolveGMRES()), :dts => 1e-9 * multipliers),
+          Dict(:alg => ETDRK2(), :dts => 1e-3 * multipliers)]
+labels = ["CNAB2 (dense linsolve)" "CNAB2 (Krylov linsolve)" "ETDRK2 (m=5)"]
+@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                             print_names=true, names=labels,
                             numruns=5, error_estimate=:l2,
                             save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp3, label=labels, markershape=:auto, title="Between family, low orders")
+plot(wp, label=labels, markershape=:auto, title="Between family, low orders")
 ```
 
 ```
-Error: UndefVarError: diag_linsolve not defined
+Error: UndefVarError: LinSolveGMRES not defined
 ```
 
 
@@ -174,33 +249,59 @@ Error: UndefVarError: diag_linsolve not defined
 
 ## In-family comparisons
 
-1.IMEX methods (band linear solver)
+1.IMEX methods (dense linear solver)
 
 ```julia
 abstols = 0.1 .^ (7:13)
 reltols = 0.1 .^ (4:10)
-setups = [Dict(:alg => ARKODE(Sundials.Implicit(), order=3, linear_solver=:Band, jac_upper=1, jac_lower=1)),
-          Dict(:alg => ARKODE(Sundials.Implicit(), order=4, linear_solver=:Band, jac_upper=1, jac_lower=1)),
-          Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:Band, jac_upper=1, jac_lower=1))]
-labels = hcat("ARKODE3", "ARKODE4", "ARKODE5")
-@time wp4 = WorkPrecisionSet(prob,abstols,reltols,setups;
+setups = [Dict(:alg => KenCarp3()),
+          Dict(:alg => KenCarp4()),
+          Dict(:alg => KenCarp5()),
+          Dict(:alg => ARKODE(Sundials.Implicit(), order=3, linear_solver=:Dense)),
+          Dict(:alg => ARKODE(Sundials.Implicit(), order=4, linear_solver=:Dense)),
+          Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:Dense))]
+labels = hcat("KenCarp3", "KenCarp4", "KenCarp5", "ARKODE3", "ARKODE4", "ARKODE5")
+@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                             print_names=true, names=labels,
                             numruns=5, error_estimate=:l2,
                             save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp4, label=labels, markershape=:auto, title="IMEX methods, band linsolve, medium order")
+plot(wp, label=labels, markershape=:auto, title="IMEX methods, dense linsolve, medium order")
 ```
 
 ```
-ARKODE3
-ARKODE4
-ARKODE5
-7563.962340 seconds (221.04 M allocations: 21.958 GiB, 0.20% gc time, 0.25%
- compilation time)
+Error: UndefVarError: test_sol not defined
 ```
 
 
-![](figures/burgers_spectral_wpd_8_1.png)
+
+
+
+1.IMEX methods (Krylov linear solver)
+
+```julia
+abstols = 0.1 .^ (7:13)
+reltols = 0.1 .^ (4:10)
+setups = [Dict(:alg => KenCarp3(linsolve=LinSolveGMRES())),
+          Dict(:alg => KenCarp4(linsolve=LinSolveGMRES())),
+          Dict(:alg => KenCarp5(linsolve=LinSolveGMRES())),
+          Dict(:alg => ARKODE(Sundials.Implicit(), order=3, linear_solver=:GMRES)),
+          Dict(:alg => ARKODE(Sundials.Implicit(), order=4, linear_solver=:GMRES)),
+          Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:GMRES))]
+labels = ["KenCarp3" "KenCarp4" "KenCarp5" "ARKODE3" "ARKODE4" "ARKODE5"]
+@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+                            print_names=true, names=labels,
+                            numruns=5, error_estimate=:l2,
+                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
+
+plot(wp, label=labels, markershape=:auto, title="IMEX methods, medium order")
+```
+
+```
+Error: UndefVarError: LinSolveGMRES not defined
+```
+
+
 
 
 
@@ -211,28 +312,26 @@ abstols = 0.1 .^ (7:11) # all fixed dt methods so these don't matter much
 reltols = 0.1 .^ (4:8)
 multipliers = 0.5 .^ (0:4)
 setups = [Dict(:alg => ETDRK3(), :dts => 1e-2 * multipliers),
+          Dict(:alg => ETDRK3(krylov=true, m=5), :dts => 1e-2 * multipliers),
           Dict(:alg => ETDRK4(), :dts => 1e-2 * multipliers),
-          Dict(:alg => HochOst4(), :dts => 1e-2 * multipliers)]
-labels = hcat("ETDRK3 (caching)", "ETDRK4 (caching)",
-              "HochOst4 (caching)")
-@time wp5 = WorkPrecisionSet(prob,abstols,reltols,setups;
+          Dict(:alg => ETDRK4(krylov=true, m=5), :dts => 1e-2 * multipliers),
+          Dict(:alg => HochOst4(), :dts => 1e-2 * multipliers),
+          Dict(:alg => HochOst4(krylov=true, m=5), :dts => 1e-2 * multipliers)]
+labels = hcat("ETDRK3 (caching)", "ETDRK3 (m=5)", "ETDRK4 (caching)",
+              "ETDRK4 (m=5)", "HochOst4 (caching)", "HochOst4 (m=5)")
+@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                             print_names=true, names=labels,
                             numruns=5, error_estimate=:l2,
                             save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp5, label=labels, markershape=:auto, title="ExpRK methods, medium order")
+plot(wp, label=labels, markershape=:auto, title="ExpRK methods, medium order")
 ```
 
 ```
-ETDRK3 (caching)
-ETDRK4 (caching)
-HochOst4 (caching)
-8855.684296 seconds (250.74 M allocations: 18.340 GiB, 0.15% gc time, 0.21%
- compilation time)
+Error: UndefVarError: test_sol not defined
 ```
 
 
-![](figures/burgers_spectral_wpd_9_1.png)
 
 
 
@@ -243,29 +342,27 @@ HochOst4 (caching)
 abstols = 0.1 .^ (7:11)
 reltols = 0.1 .^ (4:8)
 multipliers = 0.5 .^ (0:4)
-setups = [Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:Band, jac_upper=1, jac_lower=1)),
-          Dict(:alg => ETDRK3(), :dts => 1e-2 * multipliers),
-          Dict(:alg => ETDRK4(), :dts => 1e-2 * multipliers)]
-labels = hcat("ARKODE (nondiagonal linsolve)", "ETDRK3 ()", "ETDRK4 ()")
-                        #"ARKODE (Krylov linsolve)")
-@time wp6 = WorkPrecisionSet(prob,abstols,reltols,setups;
+setups = [Dict(:alg => KenCarp5()),
+          Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:Dense)),
+          Dict(:alg => KenCarp5(linsolve=LinSolveGMRES())),
+          Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:GMRES)),
+          Dict(:alg => ETDRK3(krylov=true, m=5), :dts => 1e-2 * multipliers),
+          Dict(:alg => ETDRK4(krylov=true, m=5), :dts => 1e-2 * multipliers)]
+labels = hcat("KenCarp5 (dense linsolve)", "ARKODE (dense linsolve)", "KenCarp5 (Krylov linsolve)",
+              "ARKODE (Krylov linsolve)", "ETDRK3 (m=5)", "ETDRK4 (m=5)")
+@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                             print_names=true, names=labels,
                             numruns=5, error_estimate=:l2,
                             save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp6, label=labels, markershape=:auto, title="Between family, medium order")
+plot(wp, label=labels, markershape=:auto, title="Between family, medium order")
 ```
 
 ```
-ARKODE (nondiagonal linsolve)
-ETDRK3 ()
-ETDRK4 ()
-5680.896439 seconds (142.75 M allocations: 10.252 GiB, 0.14% gc time, 0.00%
- compilation time)
+Error: UndefVarError: LinSolveGMRES not defined
 ```
 
 
-![](figures/burgers_spectral_wpd_10_1.png)
 
 
 ## Appendix
@@ -276,7 +373,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/MOLPDE","burgers_spectral_wpd.jmd")
+SciMLBenchmarks.weave_file("benchmarks/MOLPDE","ks_fdm_wpd.jmd")
 ```
 
 Computer Information:

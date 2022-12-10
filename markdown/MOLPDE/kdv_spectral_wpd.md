@@ -1,6 +1,6 @@
 ---
 author: "HAO HAO"
-title: "Burgers Pseudospectral Methods Work-Precision Diagrams"
+title: "KdV Pseudospectral Methods Work-Precision Diagrams"
 ---
 ```julia
 using ApproxFun, OrdinaryDiffEq, Sundials
@@ -28,34 +28,35 @@ D  = (Derivative(S) → S)[1:n,1:n]
 T = ApproxFun.plan_transform(S, n)
 Ti = ApproxFun.plan_itransform(S, n)
 
-û₀ = T*cos.(cos.(x.-0.1))
-A = 0.03*D2
+D3  = (Derivative(S,3) → S)[1:n,1:n]
+û₀ = T*cos.(x)
+δ=0.022
 tmp = similar(û₀)
-p = (D,D2,T,Ti,tmp,similar(tmp))
-function burgers_nl(dû,û,p,t)
-    D,D2,T,Ti,u,tmp = p
-    mul!(tmp, D, û)
-    mul!(u, Ti, tmp)
-    mul!(tmp, Ti, û)
-    @. tmp = tmp*u
-    mul!(u, T, tmp)
-    @. dû = - u
+p = (D,T,Ti,similar(tmp),tmp)
+function kdv(dû,û,p,t)
+    D,T,Ti,u,tmp = p
+    mul!(u,D,û)
+    mul!(tmp,Ti,u)
+    mul!(u,Ti,û)
+    @. tmp=u*tmp
+    mul!(u,T,tmp)
+    @.dû = 6*u
 end
 ```
 
 ```
-burgers_nl (generic function with 1 method)
+kdv (generic function with 1 method)
 ```
 
 
 
 
 
-Reference solution using Rodas5 is below:
+Reference solution using RadauIIA5 is below:
 
 ```julia
-prob = SplitODEProblem(DiffEqArrayOperator(Diagonal(A)), burgers_nl, û₀, (0.0,5.0), p)
-sol  = solve(prob, Rodas5(autodiff=false); reltol=1e-12,abstol=1e-12)
+prob = SplitODEProblem(DiffEqArrayOperator(-D3), kdv, û₀, (0.0,5.0), p)
+sol  = solve(prob, RadauIIA5(autodiff=false); reltol=1e-14,abstol=1e-14)
 test_sol = TestSolution(sol)
 
 tslices=[0.0 1.0 2.0 3.0 5.0]
@@ -64,28 +65,65 @@ labels=["t=$t" for t in tslices]
 plot(x,ys,label=labels)
 ```
 
-![](figures/burgers_spectral_wpd_3_1.png)
+```
+Error: MethodError: no method matching similar(::SparseDiffTools.JacVec{Sci
+MLBase.UJacobianWrapper{SciMLBase.SplitFunction{true, SciMLBase.FullSpecial
+ize, SciMLBase.ODEFunction{true, SciMLBase.FullSpecialize, SciMLBase.DiffEq
+ArrayOperator{Float64, BandedMatrices.BandedMatrix{Float64, Matrix{Float64}
+, Base.OneTo{Int64}}, typeof(SciMLBase.DEFAULT_UPDATE_FUNC)}, LinearAlgebra
+.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing
+, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(Sci
+MLBase.DEFAULT_OBSERVED), Nothing, Nothing}, SciMLBase.ODEFunction{true, Sc
+iMLBase.FullSpecialize, typeof(Main.var"##WeaveSandBox#3381".kdv), LinearAl
+gebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeo
+f(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing}, LinearAlgebra.UniformScal
+ing{Bool}, Vector{Float64}, Nothing, Nothing, Nothing, Nothing, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeo
+f(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing}, Float64, Tuple{BandedMatr
+ices.BandedMatrix{Float64, Matrix{Float64}, Base.OneTo{Int64}}, ApproxFunBa
+se.TransformPlan{Float64, ApproxFunBase.SumSpace{Tuple{ApproxFunFourier.Cos
+Space{ApproxFunFourier.PeriodicSegment{Float64}, Float64}, ApproxFunFourier
+.SinSpace{ApproxFunFourier.PeriodicSegment{Float64}, Float64}}, ApproxFunFo
+urier.PeriodicSegment{Float64}, Float64}, false, ApproxFunBase.TransformPla
+n{Float64, ApproxFunBase.SumSpace{Tuple{ApproxFunFourier.CosSpace{ApproxFun
+Fourier.PeriodicSegment{Float64}, Float64}, ApproxFunFourier.SinSpace{Appro
+xFunFourier.PeriodicSegment{Float64}, Float64}}, ApproxFunFourier.PeriodicS
+egment{Float64}, Float64}, true, FFTW.r2rFFTWPlan{Float64, (0,), true, 1, U
+nitRange{Int64}}}}, ApproxFunBase.ITransformPlan{Float64, ApproxFunBase.Sum
+Space{Tuple{ApproxFunFourier.CosSpace{ApproxFunFourier.PeriodicSegment{Floa
+t64}, Float64}, ApproxFunFourier.SinSpace{ApproxFunFourier.PeriodicSegment{
+Float64}, Float64}}, ApproxFunFourier.PeriodicSegment{Float64}, Float64}, f
+alse, ApproxFunFourier.IFourierTransformPlan{Float64, ApproxFunBase.SumSpac
+e{Tuple{ApproxFunFourier.CosSpace{ApproxFunFourier.PeriodicSegment{Float64}
+, Float64}, ApproxFunFourier.SinSpace{ApproxFunFourier.PeriodicSegment{Floa
+t64}, Float64}}, ApproxFunFourier.PeriodicSegment{Float64}, Float64}, FFTW.
+r2rFFTWPlan{Float64, (1,), true, 1, UnitRange{Int64}}}}, Vector{Float64}, V
+ector{Float64}}}, Vector{Float64}, Vector{Float64}, Vector{Float64}}, ::Typ
+e{ComplexF64})
+Closest candidates are:
+  similar(!Matched::Union{LinearAlgebra.Adjoint{T, var"#s885"}, LinearAlgeb
+ra.Transpose{T, var"#s885"}} where {T, var"#s885"<:(AbstractVector)}, ::Typ
+e{T}) where T at /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64
+/1.8/julia-1.8-latest-linux-x86_64/share/julia/stdlib/v1.8/LinearAlgebra/sr
+c/adjtrans.jl:207
+  similar(!Matched::Union{LinearAlgebra.Adjoint{T, S}, LinearAlgebra.Transp
+ose{T, S}} where {T, S}, ::Type{T}) where T at /cache/julia-buildkite-plugi
+n/julia_installs/bin/linux/x64/1.8/julia-1.8-latest-linux-x86_64/share/juli
+a/stdlib/v1.8/LinearAlgebra/src/adjtrans.jl:211
+  similar(!Matched::Union{LinearAlgebra.Adjoint{T, S}, LinearAlgebra.Transp
+ose{T, S}} where {T, S}, ::Type{T}, !Matched::Tuple{Vararg{Int64, N}}) wher
+e {T, N} at /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.8/
+julia-1.8-latest-linux-x86_64/share/julia/stdlib/v1.8/LinearAlgebra/src/adj
+trans.jl:212
+  ...
+```
+
+
 
 
 
 ## High tolerances
-
-```julia
-diag_linsolve=LinSolveFactorize(W->let tmp = tmp
-    for i in 1:size(W, 1)
-        tmp[i] = W[i, i]
-    end
-    Diagonal(tmp)
-end)
-```
-
-```
-Error: UndefVarError: LinSolveFactorize not defined
-```
-
-
-
-
 
 ## In-family comparisons
 
@@ -95,10 +133,10 @@ Error: UndefVarError: LinSolveFactorize not defined
 abstols = 0.1 .^ (5:8)
 reltols = 0.1 .^ (1:4)
 multipliers =  0.5 .^ (0:3)
-setups = [Dict(:alg => IMEXEuler(linsolve=diag_linsolve), :dts => 1e-3 * multipliers),
-          Dict(:alg => CNAB2(linsolve=diag_linsolve), :dts => 5e-3 * multipliers),
-          Dict(:alg => CNLF2(linsolve=diag_linsolve), :dts => 5e-3 * multipliers),
-          Dict(:alg => SBDF2(linsolve=diag_linsolve), :dts => 1e-3 * multipliers)]
+setups = [Dict(:alg => IMEXEuler(linsolve=diag_linsolve), :dts => 1e-5 * multipliers),
+          Dict(:alg => CNAB2(linsolve=diag_linsolve), :dts => 5e-7 * multipliers),
+          Dict(:alg => CNLF2(linsolve=diag_linsolve), :dts => 5e-7 * multipliers),
+          Dict(:alg => SBDF2(linsolve=diag_linsolve), :dts => 1e-5 * multipliers)]
 labels = ["IMEXEuler" "CNAB2" "CNLF2" "SBDF2"]
 @time wp1 = WorkPrecisionSet(prob,abstols,reltols,setups;
                             print_names=true,names=labels,
@@ -135,14 +173,11 @@ plot(wp2, label=labels, markershape=:auto, title="ExpRK methods, low order")
 ```
 
 ```
-NorsettEuler
-ETDRK2 (caching)
-4619.146019 seconds (150.91 M allocations: 11.562 GiB, 0.17% gc time, 0.38%
- compilation time)
+Error: UndefVarError: test_sol not defined
 ```
 
 
-![](figures/burgers_spectral_wpd_6_1.png)
+
 
 
 ## Between family comparisons
@@ -151,7 +186,7 @@ ETDRK2 (caching)
 abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
 reltols = 0.1 .^ (1:4)
 multipliers = 0.5 .^ (0:3)
-setups = [Dict(:alg => CNAB2(linsolve=diag_linsolve), :dts => 5e-3 * multipliers),
+setups = [Dict(:alg => CNAB2(linsolve=diag_linsolve), :dts => 5e-5 * multipliers),
           Dict(:alg => ETDRK2(), :dts => 1e-2 * multipliers)]
 labels = ["CNAB2 (diagonal linsolve)" "ETDRK2"]
 @time wp3 = WorkPrecisionSet(prob,abstols,reltols,setups;
@@ -192,15 +227,10 @@ plot(wp4, label=labels, markershape=:auto, title="IMEX methods, band linsolve, m
 ```
 
 ```
-ARKODE3
-ARKODE4
-ARKODE5
-7563.962340 seconds (221.04 M allocations: 21.958 GiB, 0.20% gc time, 0.25%
- compilation time)
+Error: UndefVarError: test_sol not defined
 ```
 
 
-![](figures/burgers_spectral_wpd_8_1.png)
 
 
 
@@ -214,7 +244,7 @@ setups = [Dict(:alg => ETDRK3(), :dts => 1e-2 * multipliers),
           Dict(:alg => ETDRK4(), :dts => 1e-2 * multipliers),
           Dict(:alg => HochOst4(), :dts => 1e-2 * multipliers)]
 labels = hcat("ETDRK3 (caching)", "ETDRK4 (caching)",
-              "HochOst4 (caching)")
+              "HochOst4 (caching)")#,"ETDRK4 (m=5)" "ETDRK3 (m=5)" "HochOst4 (m=5)")
 @time wp5 = WorkPrecisionSet(prob,abstols,reltols,setups;
                             print_names=true, names=labels,
                             numruns=5, error_estimate=:l2,
@@ -224,20 +254,14 @@ plot(wp5, label=labels, markershape=:auto, title="ExpRK methods, medium order")
 ```
 
 ```
-ETDRK3 (caching)
-ETDRK4 (caching)
-HochOst4 (caching)
-8855.684296 seconds (250.74 M allocations: 18.340 GiB, 0.15% gc time, 0.21%
- compilation time)
+Error: UndefVarError: test_sol not defined
 ```
 
 
-![](figures/burgers_spectral_wpd_9_1.png)
 
 
 
 ## Between family comparisons
-
 
 ```julia
 abstols = 0.1 .^ (7:11)
@@ -247,7 +271,6 @@ setups = [Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:Band,
           Dict(:alg => ETDRK3(), :dts => 1e-2 * multipliers),
           Dict(:alg => ETDRK4(), :dts => 1e-2 * multipliers)]
 labels = hcat("ARKODE (nondiagonal linsolve)", "ETDRK3 ()", "ETDRK4 ()")
-                        #"ARKODE (Krylov linsolve)")
 @time wp6 = WorkPrecisionSet(prob,abstols,reltols,setups;
                             print_names=true, names=labels,
                             numruns=5, error_estimate=:l2,
@@ -257,15 +280,10 @@ plot(wp6, label=labels, markershape=:auto, title="Between family, medium order")
 ```
 
 ```
-ARKODE (nondiagonal linsolve)
-ETDRK3 ()
-ETDRK4 ()
-5680.896439 seconds (142.75 M allocations: 10.252 GiB, 0.14% gc time, 0.00%
- compilation time)
+Error: UndefVarError: test_sol not defined
 ```
 
 
-![](figures/burgers_spectral_wpd_10_1.png)
 
 
 ## Appendix
@@ -276,7 +294,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/MOLPDE","burgers_spectral_wpd.jmd")
+SciMLBenchmarks.weave_file("benchmarks/MOLPDE","kdv_spectral_wpd.jmd")
 ```
 
 Computer Information:
