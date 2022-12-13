@@ -40,7 +40,7 @@ end
 # The result is in alphabetical order, change to the wanted order
 
 permute!(pages,
-    [1, 10, 13, 19, 4, 5, 9, 6, 11, 14, 20, 12, 18, 7, 15, 3, 8, 16, 17, 2]
+    [1, 10, 13, 19, 4, 5, 9, 6, 11, 14, 20, 12, 18, 7, 17, 3, 8, 16, 15, 2]
 )
 
 names = [
