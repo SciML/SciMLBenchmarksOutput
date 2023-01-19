@@ -8,7 +8,7 @@ rn = prob_jump_dnarepressor.network
 reactions(rn)
 
 
-methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR())
+methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR(), Coevolve())
 shortlabels = [string(leg)[15:end-2] for leg in methods]
 prob    = prob_jump_dnarepressor.discrete_prob
 tf      = prob_jump_dnarepressor.tstop

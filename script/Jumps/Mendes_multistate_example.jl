@@ -8,7 +8,7 @@ rn  = jprob.network
 reactions(rn)
 
 
-methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR())
+methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR(), Coevolve())
 shortlabels = [string(leg)[15:end-2] for leg in methods]
 tf      = 10.0 * jprob.tstop
 prob    = DiscreteProblem(rn, jprob.u0, (0.0, tf), jprob.rates)
@@ -41,7 +41,7 @@ for (i,method) in enumerate(methods)
     end
 end
 push!(p, plot((1:4)', framestyle = :none, legend=:inside, labels=varlegs))
-plot(p..., layout=(4,2), format=fmt)
+plot(p..., layout=(5,2), format=fmt)
 
 
 function run_benchmark!(t, jump_prob, stepper)
