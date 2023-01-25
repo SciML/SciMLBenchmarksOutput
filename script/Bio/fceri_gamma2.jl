@@ -67,7 +67,7 @@ W = I - 1.0*jaccache
 prectmp = ilu(W, τ = 50.0)
 preccache = Ref(prectmp)
 
-τ1 = 5
+const τ1 = 5
 function psetupilu(p, t, u, du, jok, jcurPtr, gamma)
     if !jok
         sparsejacprob.f.jac(jaccache,u,p,t)
@@ -86,7 +86,7 @@ function precilu(z,r,p,t,y,fy,gamma,delta,lr)
     ldiv!(z,preccache[],r)
 end
 
-τ2 = 1e12
+const τ2 = 5
 function incompletelu(W,du,u,p,t,newW,Plprev,Prprev,solverdata)
     if newW === nothing || newW
         Pl = ilu(convert(AbstractMatrix,W), τ = τ2)
@@ -159,7 +159,7 @@ setups = [
         ];
 
 
-wp = WorkPrecisionSet(oprob_sparse,abstols,reltols,setups;error_estimate=:l2,
+wp = WorkPrecisionSet(sparsejacprob,abstols,reltols,setups;error_estimate=:l2,
                     saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e12),dtmin=1e-18,numruns=10)
 
 names = ["TRBDF2 (GMRES, iLU)" "QNDF (GMRES, iLU)" "FBDF (GMRES, iLU)" "KenCarp4 (GMRES, iLU)"]
