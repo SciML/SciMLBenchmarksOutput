@@ -35,9 +35,9 @@ obs = [eq.lhs for eq in observed(rn)]
 show(to)
 
 tspan = (0.,tf)
-@timeit to "ODEProb No Jac" oprob = ODEProblem(osys, Float64[], tspan, Float64[])
+@timeit to "ODEProb No Jac" oprob = ODEProblem{true, SciMLBase.FullSpecialize}(osys, Float64[], tspan, Float64[])
 show(to)
-oprob_sparse = ODEProblem(osys, Float64[], tspan, Float64[]; sparse=true);
+oprob_sparse = ODEProblem{true, SciMLBase.FullSpecialize}(osys, Float64[], tspan, Float64[]; sparse=true);
 ```
 
 ```
@@ -51,21 +51,21 @@ Parsing groups...done
  ──────────────────────────────────────────────────────────────────────────
                                   Time                    Allocations      
                          ───────────────────────   ────────────────────────
-    Tot / % measured:         16.1s /  92.7%           1.48GiB /  96.7%    
+    Tot / % measured:         12.3s /  92.9%           1.48GiB /  96.7%    
 
  Section         ncalls     time    %tot     avg     alloc    %tot      avg
  ──────────────────────────────────────────────────────────────────────────
- Parse Network        1    14.9s  100.0%   14.9s   1.43GiB  100.0%  1.43GiB
+ Parse Network        1    11.5s  100.0%   11.5s   1.43GiB  100.0%  1.43GiB
  ──────────────────────────────────────────────────────────────────────────
  ──────────────────────────────────────────────────────────────────────────
                                   Time                    Allocations      
                          ───────────────────────   ────────────────────────
-    Tot / % measured:         33.8s /  95.7%           4.30GiB /  97.9%    
+    Tot / % measured:         25.7s /  95.7%           4.30GiB /  97.9%    
 
  Section         ncalls     time    %tot     avg     alloc    %tot      avg
  ──────────────────────────────────────────────────────────────────────────
- Create ODESys        1    17.4s   53.9%   17.4s   2.78GiB   66.0%  2.78GiB
- Parse Network        1    14.9s   46.1%   14.9s   1.43GiB   34.0%  1.43GiB
+ Create ODESys        1    13.2s   53.4%   13.2s   2.78GiB   66.0%  2.78GiB
+ Parse Network        1    11.5s   46.6%   11.5s   1.43GiB   34.0%  1.43GiB
  ──────────────────────────────────────────────────────────────────────────
  ──────────────────────────────────────────────────────────────────────────
 ─
@@ -73,18 +73,18 @@ Parsing groups...done
  
                           ───────────────────────   ───────────────────────
 ─
-     Tot / % measured:         70.6s /  97.9%           9.44GiB /  99.1%   
+     Tot / % measured:         53.1s /  97.9%           9.15GiB /  99.0%   
  
 
  Section          ncalls     time    %tot     avg     alloc    %tot      av
 g
  ──────────────────────────────────────────────────────────────────────────
 ─
- ODEProb No Jac        1    36.8s   53.3%   36.8s   5.15GiB   55.0%  5.15Gi
+ ODEProb No Jac        1    27.4s   52.7%   27.4s   4.85GiB   53.5%  4.85Gi
 B
- Create ODESys         1    17.4s   25.2%   17.4s   2.78GiB   29.7%  2.78Gi
+ Create ODESys         1    13.2s   25.3%   13.2s   2.78GiB   30.7%  2.78Gi
 B
- Parse Network         1    14.9s   21.6%   14.9s   1.43GiB   15.3%  1.43Gi
+ Parse Network         1    11.5s   22.0%   11.5s   1.43GiB   15.8%  1.43Gi
 B
  ──────────────────────────────────────────────────────────────────────────
 ─
@@ -93,7 +93,7 @@ B
 
 
 ```julia
-@timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem(osys, Float64[], tspan, Float64[], jac=true, sparse=true)
+@timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem{true, SciMLBase.FullSpecialize}(osys, Float64[], tspan, Float64[], jac=true, sparse=true)
 show(to)
 ```
 
@@ -104,20 +104,20 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:            545s /  97.4%            192GiB /  98.9%
+      Tot / % measured:            417s /  97.4%            192GiB /  98.9%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1     462s   87.0%    462s    180GiB   95.1%   18
+ ODEProb SparseJac        1     354s   87.2%    354s    180GiB   95.2%   18
 0GiB
- ODEProb No Jac           1    36.8s    6.9%   36.8s   5.15GiB    2.7%  5.1
+ ODEProb No Jac           1    27.4s    6.8%   27.4s   4.85GiB    2.6%  4.8
 5GiB
- Create ODESys            1    17.4s    3.3%   17.4s   2.78GiB    1.5%  2.7
+ Create ODESys            1    13.2s    3.2%   13.2s   2.78GiB    1.5%  2.7
 8GiB
- Parse Network            1    14.9s    2.8%   14.9s   1.43GiB    0.8%  1.4
+ Parse Network            1    11.5s    2.8%   11.5s   1.43GiB    0.8%  1.4
 3GiB
  ──────────────────────────────────────────────────────────────────────────
 ────
@@ -164,7 +164,7 @@ given how fast evaluating `f` is:
 ```
 
 ```
-54.990 μs (3 allocations: 1.12 KiB)
+38.290 μs (3 allocations: 1.12 KiB)
 ```
 
 
@@ -183,28 +183,28 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           1.18h /  99.3%            202GiB /  98.8%
+      Tot / % measured:           1.08h /  99.3%            201GiB /  98.8%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- SparseJac Eval1          1    1.01h   86.5%   1.01h   5.44GiB    2.7%  5.4
+ SparseJac Eval1          1    3409s   88.6%   3409s   5.44GiB    2.7%  5.4
 4GiB
- ODEProb SparseJac        1     462s   10.9%    462s    180GiB   90.5%   18
+ ODEProb SparseJac        1     354s    9.2%    354s    180GiB   90.7%   18
 0GiB
- ODE rhs Eval1            1    41.3s    1.0%   41.3s   4.07GiB    2.0%  4.0
+ ODE rhs Eval1            1    33.7s    0.9%   33.7s   4.07GiB    2.0%  4.0
 7GiB
- ODEProb No Jac           1    36.8s    0.9%   36.8s   5.15GiB    2.6%  5.1
+ ODEProb No Jac           1    27.4s    0.7%   27.4s   4.85GiB    2.4%  4.8
 5GiB
- Create ODESys            1    17.4s    0.4%   17.4s   2.78GiB    1.4%  2.7
+ Create ODESys            1    13.2s    0.3%   13.2s   2.78GiB    1.4%  2.7
 8GiB
- Parse Network            1    14.9s    0.4%   14.9s   1.43GiB    0.7%  1.4
+ Parse Network            1    11.5s    0.3%   11.5s   1.43GiB    0.7%  1.4
 3GiB
- SparseJac Eval2          1    131μs    0.0%   131μs   1.47KiB    0.0%  1.4
+ SparseJac Eval2          1    127μs    0.0%   127μs   1.47KiB    0.0%  1.4
 7KiB
- ODE rhs Eval2            1   90.6μs    0.0%  90.6μs   1.34KiB    0.0%  1.3
+ ODE rhs Eval2            1   77.3μs    0.0%  77.3μs   1.34KiB    0.0%  1.3
 4KiB
  ──────────────────────────────────────────────────────────────────────────
 ────
@@ -233,7 +233,7 @@ test_sol  = TestSolution(sol);
 ```
 
 ```
-634.735578 seconds (4.50 M allocations: 2.111 GiB, 0.18% gc time, 0.12% com
+626.027664 seconds (4.49 M allocations: 2.111 GiB, 0.14% gc time, 0.12% com
 pilation time)
 ```
 
@@ -524,17 +524,17 @@ Package Information:
 ```
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
-  [479239e8] Catalyst v12.3.1
+⌃ [479239e8] Catalyst v12.3.1
 ⌃ [2b5f629d] DiffEqBase v6.114.0
   [f3b72e0c] DiffEqDevTools v2.33.0
   [40713840] IncompleteLU v0.2.1
-  [033835bb] JLD2 v0.4.29
+⌃ [033835bb] JLD2 v0.4.29
   [7f56f5a3] LSODA v0.7.3
-  [7ed4a6bd] LinearSolve v1.33.0
+⌃ [7ed4a6bd] LinearSolve v1.33.0
 ⌃ [961ee093] ModelingToolkit v8.41.0
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.12.0
-  [1dea7af3] OrdinaryDiffEq v6.38.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.38.0
 ⌃ [91a5bcdd] Plots v1.32.0
   [b4db0fb7] ReactionNetworkImporters v0.13.5
   [31c91b34] SciMLBenchmarks v0.1.1
@@ -552,8 +552,8 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [79e6a3ab] Adapt v3.4.0
   [dce04be8] ArgCheck v2.3.0
   [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v6.0.24
-  [30b0a656] ArrayInterfaceCore v0.1.28
+⌃ [4fba245c] ArrayInterface v6.0.24
+⌃ [30b0a656] ArrayInterfaceCore v0.1.28
   [6ba088a2] ArrayInterfaceGPUArrays v0.2.2
   [015c0d05] ArrayInterfaceOffsetArrays v0.1.7
   [b0d46f97] ArrayInterfaceStaticArrays v0.1.5
@@ -566,20 +566,20 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d1d4a3ce] BitFlags v0.1.7
   [62783981] BitTwiddlingConvenienceFunctions v0.1.5
   [fa961155] CEnum v0.4.2
-  [2a0fbf3d] CPUSummary v0.2.1
+⌃ [2a0fbf3d] CPUSummary v0.2.1
   [00ebfdb7] CSTParser v3.3.6
   [49dc2e85] Calculus v0.5.1
-  [479239e8] Catalyst v12.3.1
+⌃ [479239e8] Catalyst v12.3.1
   [d360d2e6] ChainRulesCore v1.15.7
-  [9e997f8a] ChangesOfVariables v0.1.4
+⌃ [9e997f8a] ChangesOfVariables v0.1.4
   [fb6a15b2] CloseOpenIntervals v0.1.11
-  [944b1d66] CodecZlib v0.7.0
+⌃ [944b1d66] CodecZlib v0.7.0
   [35d6a980] ColorSchemes v3.20.0
   [3da002f7] ColorTypes v0.11.4
   [c3611d14] ColorVectorSpace v0.9.10
   [5ae59095] Colors v0.12.10
   [861a8166] Combinatorics v1.0.2
-  [a80b9123] CommonMark v0.8.9
+⌃ [a80b9123] CommonMark v0.8.9
   [38540f10] CommonSolve v0.2.3
   [bbf7d656] CommonSubexpressions v0.3.0
   [34da2185] Compat v4.5.0
@@ -616,7 +616,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9aa1b823] FastClosures v0.3.2
   [29a986be] FastLapackInterface v1.2.8
   [5789e2e9] FileIO v1.16.0
-  [1a297f60] FillArrays v0.13.6
+⌃ [1a297f60] FillArrays v0.13.6
   [6a86dc24] FiniteDiff v2.17.0
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
@@ -626,7 +626,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [46192b85] GPUArraysCore v0.1.3
 ⌅ [28b8d3ca] GR v0.66.2
   [c145ed77] GenericSchur v0.5.3
-  [cf35fbd7] GeoInterface v1.1.0
+⌃ [cf35fbd7] GeoInterface v1.1.0
   [5c1252a2] GeometryBasics v0.4.5
   [d7ba0133] Git v1.2.1
   [c27321d9] Glob v1.3.0
@@ -634,9 +634,9 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [42e2da0e] Grisu v1.0.2
   [0b43b601] Groebner v0.2.11
   [d5909c97] GroupsCore v0.4.0
-  [cd3eb016] HTTP v1.7.3
+⌃ [cd3eb016] HTTP v1.7.3
   [eafb193a] Highlights v0.5.2
-  [3e5b6fbb] HostCPUFeatures v0.1.13
+⌃ [3e5b6fbb] HostCPUFeatures v0.1.13
   [34004b35] HypergeometricFunctions v0.3.11
   [7073ff75] IJulia v1.24.0
   [615f187c] IfElse v0.1.1
@@ -651,25 +651,25 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c8e1da08] IterTools v1.4.0
   [42fd0dbc] IterativeSolvers v0.9.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [033835bb] JLD2 v0.4.29
+⌃ [033835bb] JLD2 v0.4.29
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
-  [98e50ef6] JuliaFormatter v1.0.19
+⌃ [98e50ef6] JuliaFormatter v1.0.19
   [ccbc3e58] JumpProcesses v9.3.1
   [ef3ab10e] KLU v0.4.0
   [ba0b0d4f] Krylov v0.9.0
   [0b1a1467] KrylovKit v0.6.0
   [7f56f5a3] LSODA v0.7.3
   [b964fa9f] LaTeXStrings v1.3.0
-  [2ee39098] LabelledArrays v1.12.5
-  [984bce1d] LambertW v0.4.5
+⌃ [2ee39098] LabelledArrays v1.12.5
+⌃ [984bce1d] LambertW v0.4.5
   [23fbe1c1] Latexify v0.15.18
-  [10f19ff3] LayoutPointers v0.1.12
+⌃ [10f19ff3] LayoutPointers v0.1.12
   [d3d80556] LineSearches v7.2.0
-  [7ed4a6bd] LinearSolve v1.33.0
-  [2ab3a3ac] LogExpFunctions v0.3.19
+⌃ [7ed4a6bd] LinearSolve v1.33.0
+⌃ [2ab3a3ac] LogExpFunctions v0.3.19
   [e6f89c97] LoggingExtras v1.0.0
-  [bdcacae8] LoopVectorization v0.12.147
+⌃ [bdcacae8] LoopVectorization v0.12.147
   [1914dd2f] MacroTools v0.5.10
   [d125e4d3] ManualMemory v0.1.8
   [739be429] MbedTLS v1.1.7
@@ -685,23 +685,23 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.1
-  [8913a72c] NonlinearSolve v1.1.1
+⌃ [8913a72c] NonlinearSolve v1.1.1
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.12.0
   [6fe1bfb0] OffsetArrays v1.12.8
   [4d8831e6] OpenSSL v1.3.3
   [429524aa] Optim v1.7.4
   [bac558e1] OrderedCollections v1.4.1
-  [1dea7af3] OrdinaryDiffEq v6.38.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.38.0
   [90014a1f] PDMats v0.11.16
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.5.3
   [ccf2f8ad] PlotThemes v3.1.0
-  [995b91a9] PlotUtils v1.3.2
+⌃ [995b91a9] PlotUtils v1.3.2
 ⌃ [91a5bcdd] Plots v1.32.0
   [e409e4f3] PoissonRandom v0.4.3
-  [f517fe37] Polyester v0.7.1
-  [1d0040c9] PolyesterWeave v0.2.0
+⌃ [f517fe37] Polyester v0.7.1
+⌃ [1d0040c9] PolyesterWeave v0.2.0
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.8
   [21216c6a] Preferences v1.3.0
@@ -713,20 +713,20 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b4db0fb7] ReactionNetworkImporters v0.13.5
   [3cdcf5f2] RecipesBase v1.3.3
   [01d81517] RecipesPipeline v0.6.11
-  [731186ca] RecursiveArrayTools v2.35.0
+⌃ [731186ca] RecursiveArrayTools v2.35.0
 ⌃ [f2c3362d] RecursiveFactorization v0.2.16
   [189a3867] Reexport v1.2.2
   [42d2dcc6] Referenceables v0.1.2
 ⌅ [05181044] RelocatableFolders v0.1.3
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
-  [79098fc4] Rmath v0.7.0
+⌃ [79098fc4] Rmath v0.7.0
   [47965b36] RootedTrees v2.15.2
   [7e49a35a] RuntimeGeneratedFunctions v0.5.5
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.37
-  [0bca4576] SciMLBase v1.81.0
+⌃ [476501e8] SLEEFPirates v0.6.37
+⌃ [0bca4576] SciMLBase v1.81.0
   [31c91b34] SciMLBenchmarks v0.1.1
   [e9a6253c] SciMLNLSolve v0.1.3
   [6c6a2e73] Scratch v1.1.1
@@ -748,8 +748,8 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [82ae8749] StatsAPI v1.5.0
   [2913bbd2] StatsBase v0.33.21
   [4c63d2b9] StatsFuns v1.1.1
-  [7792a7ef] StrideArraysCore v0.4.5
-  [69024149] StringEncodings v0.3.5
+⌃ [7792a7ef] StrideArraysCore v0.4.5
+⌃ [69024149] StringEncodings v0.3.5
   [09ab397b] StructArrays v0.6.14
   [c3572dad] Sundials v4.12.0
   [2efcf032] SymbolicIndexingInterface v0.2.1
@@ -759,21 +759,21 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [bd369af6] Tables v1.10.0
   [62fd8b95] TensorCore v0.1.1
 ⌅ [8ea1fca8] TermInterface v0.2.3
-  [8290d209] ThreadingUtilities v0.5.0
+⌃ [8290d209] ThreadingUtilities v0.5.0
   [ac1d9e8a] ThreadsX v0.1.11
   [a759f4b9] TimerOutputs v0.5.22
   [0796e94c] Tokenize v0.5.25
   [3bb67fe8] TranscodingStreams v0.9.11
   [28d57a85] Transducers v0.4.75
   [a2a6695c] TreeViews v0.3.0
-  [d5829a12] TriangularSolve v0.1.17
+⌃ [d5829a12] TriangularSolve v0.1.17
   [410a4b4d] Tricks v0.1.6
   [5c2747f8] URIs v1.4.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
   [1986cc42] Unitful v1.12.2
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.57
+⌃ [3d5dd08c] VectorizationBase v0.21.57
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
   [44d3d7a6] Weave v0.10.11
@@ -815,7 +815,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [91d4177d] Opus_jll v1.3.2+0
   [30392449] Pixman_jll v0.40.1+0
   [ea2cea3b] Qt5Base_jll v5.15.3+2
-  [f50d1b31] Rmath_jll v0.3.0+0
+⌅ [f50d1b31] Rmath_jll v0.3.0+0
   [fb77eaff] Sundials_jll v5.2.1+0
   [a2964d1f] Wayland_jll v1.21.0+0
   [2381bf8a] Wayland_protocols_jll v1.25.0+0
