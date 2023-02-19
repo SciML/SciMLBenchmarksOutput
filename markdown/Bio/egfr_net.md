@@ -50,21 +50,21 @@ Parsing groups...done
  ──────────────────────────────────────────────────────────────────────────
                                   Time                    Allocations      
                          ───────────────────────   ────────────────────────
-    Tot / % measured:         11.2s /  92.3%           1.36GiB /  96.4%    
+    Tot / % measured:         11.3s /  91.9%           1.36GiB /  96.3%    
 
  Section         ncalls     time    %tot     avg     alloc    %tot      avg
  ──────────────────────────────────────────────────────────────────────────
- Parse Network        1    10.4s  100.0%   10.4s   1.31GiB  100.0%  1.31GiB
+ Parse Network        1    10.3s  100.0%   10.3s   1.31GiB  100.0%  1.31GiB
  ──────────────────────────────────────────────────────────────────────────
  ──────────────────────────────────────────────────────────────────────────
                                   Time                    Allocations      
                          ───────────────────────   ────────────────────────
-    Tot / % measured:         21.6s /  95.0%           2.99GiB /  97.0%    
+    Tot / % measured:         21.5s /  94.8%           2.97GiB /  97.0%    
 
  Section         ncalls     time    %tot     avg     alloc    %tot      avg
  ──────────────────────────────────────────────────────────────────────────
- Parse Network        1    10.4s   50.6%   10.4s   1.31GiB   45.2%  1.31GiB
- Create ODESys        1    10.1s   49.4%   10.1s   1.59GiB   54.8%  1.59GiB
+ Parse Network        1    10.3s   50.8%   10.3s   1.31GiB   45.4%  1.31GiB
+ Create ODESys        1    10.0s   49.2%   10.0s   1.57GiB   54.6%  1.57GiB
  ──────────────────────────────────────────────────────────────────────────
  ──────────────────────────────────────────────────────────────────────────
 ─
@@ -72,18 +72,18 @@ Parsing groups...done
  
                           ───────────────────────   ───────────────────────
 ─
-     Tot / % measured:         43.5s /  97.5%           6.39GiB /  98.6%   
+     Tot / % measured:         43.1s /  97.4%           6.33GiB /  98.6%   
  
 
  Section          ncalls     time    %tot     avg     alloc    %tot      av
 g
  ──────────────────────────────────────────────────────────────────────────
 ─
- ODEProb No Jac        1    21.9s   51.7%   21.9s   3.39GiB   53.9%  3.39Gi
+ ODEProb No Jac        1    21.6s   51.5%   21.6s   3.36GiB   53.8%  3.36Gi
 B
- Parse Network         1    10.4s   24.5%   10.4s   1.31GiB   20.9%  1.31Gi
+ Parse Network         1    10.3s   24.6%   10.3s   1.31GiB   21.0%  1.31Gi
 B
- Create ODESys         1    10.1s   23.9%   10.1s   1.59GiB   25.3%  1.59Gi
+ Create ODESys         1    10.0s   23.8%   10.0s   1.57GiB   25.2%  1.57Gi
 B
  ──────────────────────────────────────────────────────────────────────────
 ─
@@ -103,21 +103,21 @@ show(to)
     
                              ───────────────────────   ────────────────────
 ────
-      Tot / % measured:           97.1s /  98.2%           30.2GiB /  99.4%
+      Tot / % measured:           96.4s /  98.0%           30.1GiB /  99.4%
     
 
  Section             ncalls     time    %tot     avg     alloc    %tot     
  avg
  ──────────────────────────────────────────────────────────────────────────
 ────
- ODEProb SparseJac        1    52.9s   55.5%   52.9s   23.7GiB   79.0%  23.
+ ODEProb SparseJac        1    52.5s   55.5%   52.5s   23.7GiB   79.1%  23.
 7GiB
- ODEProb No Jac           1    21.9s   23.0%   21.9s   3.39GiB   11.3%  3.3
-9GiB
- Parse Network            1    10.4s   10.9%   10.4s   1.31GiB    4.4%  1.3
+ ODEProb No Jac           1    21.6s   22.9%   21.6s   3.36GiB   11.2%  3.3
+6GiB
+ Parse Network            1    10.3s   11.0%   10.3s   1.31GiB    4.4%  1.3
 1GiB
- Create ODESys            1    10.1s   10.6%   10.1s   1.59GiB    5.3%  1.5
-9GiB
+ Create ODESys            1    10.0s   10.6%   10.0s   1.57GiB    5.3%  1.5
+7GiB
  ──────────────────────────────────────────────────────────────────────────
 ────
 ```
@@ -163,7 +163,7 @@ given how fast evaluating `f` is:
 ```
 
 ```
-5.572 μs (3 allocations: 1.12 KiB)
+5.555 μs (3 allocations: 1.12 KiB)
 ```
 
 
@@ -192,7 +192,7 @@ test_sol  = TestSolution(sol);
 ```
 
 ```
-1.638885 seconds (884.64 k allocations: 71.095 MiB, 39.79% compilation ti
+1.647170 seconds (884.63 k allocations: 71.075 MiB, 39.84% compilation ti
 me)
 ```
 
@@ -410,6 +410,45 @@ plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
 ![](figures/egfr_net_19_1.png)
 
 
+
+## Summary of results
+Finally, we compute a single diagram comparing the various solvers used.
+
+#### Declare solvers
+We designate the solvers we wish to compare.
+```julia
+setups = [
+          Dict(:alg=>lsoda(), :prob_choice => 1),
+          Dict(:alg=>CVODE_BDF(linear_solver=:GMRES), :prob_choice => 1),
+          Dict(:alg=>QNDF(linsolve=KrylovJL_GMRES()), :prob_choice => 2),
+
+          Dict(:alg=>QNDF(linsolve=KLUFactorization()), :prob_choice => 2),
+          Dict(:alg=>BS5(), :prob_choice => 1),     
+          Dict(:alg=>Vern6(), :prob_choice => 1), 
+          Dict(:alg=>ROCK4(), :prob_choice => 1)
+          ];
+```
+
+
+
+
+#### Plot Work-Precision Diagram
+
+For these, we generate a work-precision diagram for the selection of solvers.
+```julia
+wp = WorkPrecisionSet([oprob,sparsejacprob],abstols,reltols,setups;error_estimate=:l2,
+                      saveat=tf/10000.,appxsol=[test_sol,test_sol],maxiters=Int(1e9),numruns=200)
+
+names = ["lsoda" "CVODE_BDF (GMRES)" "QNDF (GMRES)" "BS5" "Vern6" "ROCK4"]
+colors = [:seagreen1 :darkgreen :deepskyblue1 :thistle2 :lightslateblue :purple4]
+markershapes = [:star4, :rect, :hexagon, :star8, :rtriangle, :square]
+xlimit,ylimit = plot_settings(wp)
+plot(wp;label=names,xlimit=xlimit,ylimit=ylimit,xticks=[1e-10,1e-9,1e-8,1e-7,1e-6,1e-5,1e-4,1e-3],yticks=[],color=colors,markershape=markershapes,legendfontsize=15,tickfontsize=15,guidefontsize=15, legend=:topright, lw=20, la=0.8, markersize=20,markerstrokealpha=1.0, markerstrokewidth=1.5, gridalpha=0.3, gridlinewidth=7.5,size=(1100,1000))
+```
+
+![](figures/egfr_net_21_1.png)
+
+
 ## Appendix
 
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
@@ -446,7 +485,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [6e4b80f9] BenchmarkTools v1.3.2
 ⌃ [479239e8] Catalyst v12.3.1
 ⌃ [2b5f629d] DiffEqBase v6.114.0
-  [f3b72e0c] DiffEqDevTools v2.33.0
+⌃ [f3b72e0c] DiffEqDevTools v2.33.0
   [40713840] IncompleteLU v0.2.1
 ⌃ [033835bb] JLD2 v0.4.29
   [7f56f5a3] LSODA v0.7.3
@@ -458,7 +497,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [91a5bcdd] Plots v1.32.0
   [b4db0fb7] ReactionNetworkImporters v0.13.5
   [31c91b34] SciMLBenchmarks v0.1.1
-  [c3572dad] Sundials v4.12.0
+⌃ [c3572dad] Sundials v4.12.0
   [a759f4b9] TimerOutputs v0.5.22
 Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
@@ -467,12 +506,12 @@ And the full manifest:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
-  [c3fe647b] AbstractAlgebra v0.27.8
+⌃ [c3fe647b] AbstractAlgebra v0.27.8
   [1520ce14] AbstractTrees v0.4.4
 ⌃ [79e6a3ab] Adapt v3.4.0
   [dce04be8] ArgCheck v2.3.0
   [ec485272] ArnoldiMethod v0.2.0
-⌃ [4fba245c] ArrayInterface v6.0.24
+⌅ [4fba245c] ArrayInterface v6.0.24
 ⌃ [30b0a656] ArrayInterfaceCore v0.1.28
   [6ba088a2] ArrayInterfaceGPUArrays v0.2.2
   [015c0d05] ArrayInterfaceOffsetArrays v0.1.7
@@ -502,10 +541,10 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [a80b9123] CommonMark v0.8.9
   [38540f10] CommonSolve v0.2.3
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v4.5.0
+⌃ [34da2185] Compat v4.5.0
   [b152e2b5] CompositeTypes v0.1.3
   [a33af91c] CompositionsBase v0.1.1
-  [8f4d0f93] Conda v1.7.0
+⌃ [8f4d0f93] Conda v1.7.0
   [187b0558] ConstructionBase v1.4.1
   [d38c429a] Contour v0.6.2
   [adafc99b] CpuId v0.3.1
@@ -516,9 +555,9 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [244e2a9f] DefineSingletons v0.1.2
   [b429d917] DensityInterface v0.4.0
 ⌃ [2b5f629d] DiffEqBase v6.114.0
-  [459566f4] DiffEqCallbacks v2.24.3
-  [f3b72e0c] DiffEqDevTools v2.33.0
-  [77a26b50] DiffEqNoiseProcess v5.15.2
+⌃ [459566f4] DiffEqCallbacks v2.24.3
+⌃ [f3b72e0c] DiffEqDevTools v2.33.0
+⌃ [77a26b50] DiffEqNoiseProcess v5.15.2
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.12.2
   [b4f34e82] Distances v0.10.7
@@ -526,33 +565,33 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ffbed154] DocStringExtensions v0.9.3
 ⌅ [5b8099bc] DomainSets v0.5.15
   [fa6b7ba4] DualNumbers v0.6.8
-  [7c1d4256] DynamicPolynomials v0.4.5
+⌃ [7c1d4256] DynamicPolynomials v0.4.5
   [4e289a0a] EnumX v1.0.4
-  [d4d017d3] ExponentialUtilities v1.22.0
+⌃ [d4d017d3] ExponentialUtilities v1.22.0
   [e2ba6199] ExprTools v0.1.8
   [411431e0] Extents v0.1.1
   [c87230d0] FFMPEG v0.4.1
   [7034ab61] FastBroadcast v0.2.4
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v1.2.8
+⌃ [29a986be] FastLapackInterface v1.2.8
   [5789e2e9] FileIO v1.16.0
 ⌃ [1a297f60] FillArrays v0.13.6
-  [6a86dc24] FiniteDiff v2.17.0
+⌃ [6a86dc24] FiniteDiff v2.17.0
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
   [f6369f11] ForwardDiff v0.10.34
   [069b7b12] FunctionWrappers v1.1.3
-  [77dc65aa] FunctionWrappersWrappers v0.1.1
-  [46192b85] GPUArraysCore v0.1.3
+⌃ [77dc65aa] FunctionWrappersWrappers v0.1.1
+⌃ [46192b85] GPUArraysCore v0.1.3
 ⌅ [28b8d3ca] GR v0.66.2
   [c145ed77] GenericSchur v0.5.3
 ⌃ [cf35fbd7] GeoInterface v1.1.0
   [5c1252a2] GeometryBasics v0.4.5
   [d7ba0133] Git v1.2.1
   [c27321d9] Glob v1.3.0
-  [86223c79] Graphs v1.7.4
+⌃ [86223c79] Graphs v1.7.4
   [42e2da0e] Grisu v1.0.2
-  [0b43b601] Groebner v0.2.11
+⌅ [0b43b601] Groebner v0.2.11
   [d5909c97] GroupsCore v0.4.0
 ⌃ [cd3eb016] HTTP v1.7.3
   [eafb193a] Highlights v0.5.2
@@ -575,7 +614,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [692b3bcd] JLLWrappers v1.4.1
   [682c06a0] JSON v0.21.3
 ⌃ [98e50ef6] JuliaFormatter v1.0.19
-  [ccbc3e58] JumpProcesses v9.3.1
+⌃ [ccbc3e58] JumpProcesses v9.3.1
   [ef3ab10e] KLU v0.4.0
   [ba0b0d4f] Krylov v0.9.0
   [0b1a1467] KrylovKit v0.6.0
@@ -594,17 +633,17 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d125e4d3] ManualMemory v0.1.8
   [739be429] MbedTLS v1.1.7
   [442fdcdd] Measures v0.3.2
-  [e9d8d322] Metatheory v1.3.5
+⌅ [e9d8d322] Metatheory v1.3.5
   [128add7d] MicroCollections v0.1.3
   [e1d29d7a] Missings v1.1.0
 ⌃ [961ee093] ModelingToolkit v8.41.0
   [46d2c3a1] MuladdMacro v0.2.4
-  [102ac46a] MultivariatePolynomials v0.4.6
+⌃ [102ac46a] MultivariatePolynomials v0.4.6
   [ffc61752] Mustache v1.0.14
-  [d8a4904e] MutableArithmetics v1.1.0
+⌃ [d8a4904e] MutableArithmetics v1.1.0
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
-  [77ba4419] NaNMath v1.0.1
+⌃ [77ba4419] NaNMath v1.0.1
 ⌃ [8913a72c] NonlinearSolve v1.1.1
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.12.0
@@ -615,7 +654,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [1dea7af3] OrdinaryDiffEq v6.38.0
   [90014a1f] PDMats v0.11.16
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.5.3
+⌃ [69de0a69] Parsers v2.5.3
   [ccf2f8ad] PlotThemes v3.1.0
 ⌃ [995b91a9] PlotUtils v1.3.2
 ⌃ [91a5bcdd] Plots v1.32.0
@@ -623,10 +662,10 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [f517fe37] Polyester v0.7.1
 ⌃ [1d0040c9] PolyesterWeave v0.2.0
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.8
+⌃ [d236fae5] PreallocationTools v0.4.8
   [21216c6a] Preferences v1.3.0
   [27ebfcd6] Primes v0.5.3
-  [1fd47b50] QuadGK v2.7.0
+⌃ [1fd47b50] QuadGK v2.7.0
   [74087812] Random123 v1.6.0
   [fb686558] RandomExtensions v0.4.3
   [e6cf234a] RandomNumbers v1.5.3
@@ -641,7 +680,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
 ⌃ [79098fc4] Rmath v0.7.0
-  [47965b36] RootedTrees v2.15.2
+⌃ [47965b36] RootedTrees v2.15.2
   [7e49a35a] RuntimeGeneratedFunctions v0.5.5
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
@@ -658,12 +697,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [66db9d55] SnoopPrecompile v1.0.3
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.1.0
-  [47a9eef4] SparseDiffTools v1.30.0
+⌃ [47a9eef4] SparseDiffTools v1.30.0
 ⌃ [e56a9233] Sparspak v0.3.4
   [276daf66] SpecialFunctions v2.1.7
   [171d559e] SplittablesBase v0.1.15
   [aedffcd0] Static v0.8.3
-  [90137ffa] StaticArrays v1.5.12
+⌃ [90137ffa] StaticArrays v1.5.12
   [1e83bf80] StaticArraysCore v1.4.0
   [82ae8749] StatsAPI v1.5.0
   [2913bbd2] StatsBase v0.33.21
@@ -671,7 +710,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [7792a7ef] StrideArraysCore v0.4.5
 ⌃ [69024149] StringEncodings v0.3.5
   [09ab397b] StructArrays v0.6.14
-  [c3572dad] Sundials v4.12.0
+⌃ [c3572dad] Sundials v4.12.0
   [2efcf032] SymbolicIndexingInterface v0.2.1
 ⌅ [d1185830] SymbolicUtils v0.19.11
 ⌅ [0c5d862f] Symbolics v4.14.0
@@ -688,15 +727,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [a2a6695c] TreeViews v0.3.0
 ⌃ [d5829a12] TriangularSolve v0.1.17
   [410a4b4d] Tricks v0.1.6
-  [5c2747f8] URIs v1.4.1
+⌃ [5c2747f8] URIs v1.4.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.12.2
+⌃ [1986cc42] Unitful v1.12.2
   [41fe7b60] Unzip v0.2.0
 ⌃ [3d5dd08c] VectorizationBase v0.21.57
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
-  [44d3d7a6] Weave v0.10.11
+⌃ [44d3d7a6] Weave v0.10.11
   [ddb6d928] YAML v0.4.8
   [c2297ded] ZMQ v1.2.2
   [700de1a5] ZygoteRules v0.2.2
@@ -711,11 +750,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [0656b61e] GLFW_jll v3.3.8+0
 ⌅ [d2c73de3] GR_jll v0.69.1+0
   [78b55507] Gettext_jll v0.21.0+0
-  [f8c6e375] Git_jll v2.34.1+0
+⌃ [f8c6e375] Git_jll v2.34.1+0
   [7746bdde] Glib_jll v2.74.0+2
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
-  [aacddb02] JpegTurbo_jll v2.1.2+0
+⌃ [aacddb02] JpegTurbo_jll v2.1.2+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [88015f11] LERC_jll v3.0.0+1
   [aae0fff6] LSODA_jll v0.1.1+0
@@ -730,7 +769,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [38a345b3] Libuuid_jll v2.36.0+0
   [c771fb93] ODEInterface_jll v0.0.1+0
   [e7412a2a] Ogg_jll v1.3.5+1
-  [458c3c95] OpenSSL_jll v1.1.19+0
+⌃ [458c3c95] OpenSSL_jll v1.1.19+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
   [30392449] Pixman_jll v0.40.1+0
@@ -763,7 +802,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [33bec58e] Xorg_xkeyboard_config_jll v2.27.0+4
   [c5fb5394] Xorg_xtrans_jll v1.4.0+3
   [8f1865be] ZeroMQ_jll v4.3.4+0
-  [3161d3a3] Zstd_jll v1.5.2+0
+⌃ [3161d3a3] Zstd_jll v1.5.2+0
   [a4ae2306] libaom_jll v3.4.0+0
   [0ac62f75] libass_jll v0.15.1+0
   [f638f0a6] libfdk_aac_jll v2.0.2+0
