@@ -17,11 +17,11 @@ obs = [eq.lhs for eq in observed(rn)]
 show(to) 
 
 tspan = (0.,tf)
-@timeit to "ODEProb No Jac" oprob = ODEProblem(osys, Float64[], tspan, Float64[])
+@timeit to "ODEProb No Jac" oprob = ODEProblem{true, SciMLBase.FullSpecialize}(osys, Float64[], tspan, Float64[])
 show(to);
 
 
-@timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem(osys, Float64[], tspan, Float64[], jac=true, sparse=true)
+@timeit to "ODEProb SparseJac" sparsejacprob = ODEProblem{true, SciMLBase.FullSpecialize}(osys, Float64[], tspan, Float64[], jac=true, sparse=true)
 show(to)
 
 
@@ -127,6 +127,30 @@ wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
 names = ["CVODE_Adams" "ROCK2"]
 xlimit,ylimit = plot_settings(wp)
 plot(wp;label=names,xlimit=xlimit,ylimit=ylimit)
+
+
+setups = [
+          Dict(:alg=>lsoda()),
+          Dict(:alg=>CVODE_BDF()),
+          Dict(:alg=>QNDF()),
+          Dict(:alg=>KenCarp4()),
+          Dict(:alg=>Rodas5P()),
+          Dict(:alg=>Tsit5()), 
+          Dict(:alg=>BS5()), 
+          Dict(:alg=>VCABM()),   
+          Dict(:alg=>Vern7())
+          ];
+
+
+wp = WorkPrecisionSet(oprob,abstols,reltols,setups;error_estimate=:l2,
+                      saveat=tf/10000.,appxsol=test_sol,maxiters=Int(1e9),numruns=200)
+
+names = ["lsoda" "CVODE_BDF" "QNDF" "KenCarp4" "Rodas5P" "Tsit5" "BS5" "VCABM" "Vern7"]
+colors = [:seagreen1 :chartreuse1 :deepskyblue1 :lightskyblue :blue :orchid2 :thistle2 :lightsteelblue2 :mediumpurple1]
+markershapes = [:star4 :circle :hexagon :star5 :heptagon :ltriangle :star8 :heptagon :star6]
+xlimit,ylimit = plot_settings(wp)
+xlimit = xlimit .* [0.95,1/0.95]; ylimit = ylimit .* [0.95,1/0.95]; 
+plot(wp;label=names,left_margin=10Plots.mm,right_margin=10Plots.mm,xlimit=xlimit,ylimit=ylimit,xticks=[1e-12,1e-11,1e-10,1e-9,1e-8,1e-7,1e-6,1e-5,1e-4,1e-3,1e-2],yticks=[1e-3,1e-2],color=colors,markershape=markershapes,legendfontsize=15,tickfontsize=15,guidefontsize=15, legend=:topright, lw=20, la=0.8, markersize=20,markerstrokealpha=1.0, markerstrokewidth=1.5, gridalpha=0.3, gridlinewidth=7.5,size=(1100,1000))
 
 
 using SciMLBenchmarks
