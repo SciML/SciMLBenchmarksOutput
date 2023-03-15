@@ -351,309 +351,54 @@ push!(algorithms, (PDMPCHV(), CHV(Tsit5()), true, "PDMPCHV"));
 The Python `Tick` library can be accessed with the `PyCall.jl`. We install the required Python dependencies with `Conda.jl` and define a factory for the Multivariate Hawkes `PyTick` problem.
 
 ```julia
-const REBUILD_PYCALL = true
-if REBUILD_PYCALL
-  using Pkg, Conda
-
-  # rebuild PyCall to ensure it links to the python provided by Conda.jl
-  ENV["PYTHON"] = ""
-  Pkg.build("PyCall")
-
-  # PyCall only works with Conda.ROOTENV
-  # tick requires python=3.8
-  Conda.add("python=3.8", Conda.ROOTENV)
-  Conda.add("numpy", Conda.ROOTENV)
-  Conda.pip_interop(true, Conda.ROOTENV)
-  Conda.pip("install", "tick", Conda.ROOTENV)
-end
-
-using PyCall
+const BENCHMARK_PYTHON = false
+const REBUILD_PYCALL = false
 
 struct PyTick end
 
-function hawkes_problem(
-    p,
-    agg::PyTick;
-    u = [0.0],
-    tspan = (0.0, 50.0),
-    save_positions = (false, true),
-    g = [[1]],
-    use_recursion = true,
-)
-    λ, α, β = p
-    SimuHawkesSumExpKernels = pyimport("tick.hawkes")[:SimuHawkesSumExpKernels]
-    jprob = SimuHawkesSumExpKernels(
-        baseline = fill(λ, length(u)),
-        adjacency = [i in j ? α / β : 0.0 for j in g, i = 1:length(u), u = 1:1],
-        decays = [β],
-        end_time = tspan[2],
-        verbose = false,
-        force_simulation = true,
-    )
-    return jprob
+if BENCHMARK_PYTHON
+  if REBUILD_PYCALL
+    using Pkg, Conda
+
+    # rebuild PyCall to ensure it links to the python provided by Conda.jl
+    ENV["PYTHON"] = ""
+    Pkg.build("PyCall")
+
+    # PyCall only works with Conda.ROOTENV
+    # tick requires python=3.8
+    Conda.add("python=3.8", Conda.ROOTENV)
+    Conda.add("numpy", Conda.ROOTENV)
+    Conda.pip_interop(true, Conda.ROOTENV)
+    Conda.pip("install", "tick", Conda.ROOTENV)
+  end
+
+  using PyCall
+
+  function hawkes_problem(
+      p,
+      agg::PyTick;
+      u = [0.0],
+      tspan = (0.0, 50.0),
+      save_positions = (false, true),
+      g = [[1]],
+      use_recursion = true,
+  )
+      λ, α, β = p
+      SimuHawkesSumExpKernels = pyimport("tick.hawkes")[:SimuHawkesSumExpKernels]
+      jprob = SimuHawkesSumExpKernels(
+          baseline = fill(λ, length(u)),
+          adjacency = [i in j ? α / β : 0.0 for j in g, i = 1:length(u), u = 1:1],
+          decays = [β],
+          end_time = tspan[2],
+          verbose = false,
+          force_simulation = true,
+      )
+      return jprob
+  end
+
+  push!(algorithms, (PyTick(), nothing, true, "PyTick"));
 end
-
-push!(algorithms, (PyTick(), nothing, true, "PyTick"));
 ```
-
-```
-Collecting package metadata (current_repodata.json): ...working... done
-Solving environment: ...working... done
-
-## Package Plan ##
-
-  environment location: /cache/julia-buildkite-plugin/depots/5b300254-1738-
-4989-ae0a-f4d2d937f953/conda/3/x86_64
-
-  added / updated specs:
-    - python=3.8
-
-
-The following packages will be downloaded:
-
-    package                    |            build
-    ---------------------------|-----------------
-    brotlipy-0.7.0             |py38h0a891b7_1005         342 KB  conda-for
-ge
-    cffi-1.15.1                |   py38h4a40e3a_3         230 KB  conda-for
-ge
-    conda-23.1.0               |   py38h578d9bd_0         907 KB  conda-for
-ge
-    cryptography-39.0.2        |   py38h3d167d9_0         1.4 MB  conda-for
-ge
-    numpy-1.24.2               |   py38h10c12cc_0         6.3 MB  conda-for
-ge
-    pycosat-0.6.4              |   py38h0a891b7_1         108 KB  conda-for
-ge
-    python-3.8.16              |he550d4f_1_cpython        21.8 MB  conda-fo
-rge
-    python_abi-3.8             |           3_cp38           6 KB  conda-for
-ge
-    ruamel.yaml-0.17.21        |   py38h1de0b5d_3         183 KB  conda-for
-ge
-    ruamel.yaml.clib-0.2.7     |   py38h1de0b5d_1         143 KB  conda-for
-ge
-    zstandard-0.19.0           |   py38h5945529_1         374 KB  conda-for
-ge
-    ------------------------------------------------------------
-                                           Total:        31.7 MB
-
-The following packages will be UPDATED:
-
-  cryptography                       39.0.1-py310h34c0648_0 --> 39.0.2-py38
-h3d167d9_0 
-  ruamel.yaml                       0.17.21-py310h5764c6d_2 --> 0.17.21-py3
-8h1de0b5d_3 
-
-The following packages will be DOWNGRADED:
-
-  brotlipy                         0.7.0-py310h5764c6d_1005 --> 0.7.0-py38h
-0a891b7_1005 
-  cffi                               1.15.1-py310h255011f_3 --> 1.15.1-py38
-h4a40e3a_3 
-  conda                              23.1.0-py310hff52083_0 --> 23.1.0-py38
-h578d9bd_0 
-  numpy                              1.24.2-py310h8deb116_0 --> 1.24.2-py38
-h10c12cc_0 
-  pycosat                             0.6.4-py310h5764c6d_1 --> 0.6.4-py38h
-0a891b7_1 
-  python                          3.10.9-he550d4f_0_cpython --> 3.8.16-he55
-0d4f_1_cpython 
-  python_abi                                   3.10-3_cp310 --> 3.8-3_cp38 
-  ruamel.yaml.clib                    0.2.7-py310h1fa729e_1 --> 0.2.7-py38h
-1de0b5d_1 
-  zstandard                          0.19.0-py310hdeb6495_1 --> 0.19.0-py38
-h5945529_1 
-
-
-Preparing transaction: ...working... done
-Verifying transaction: ...working... done
-Executing transaction: ...working... done
-Collecting package metadata (current_repodata.json): ...working... done
-Solving environment: ...working... done
-
-# All requested packages already installed.
-
-Collecting tick
-  Downloading tick-0.7.0.1-cp38-cp38-manylinux2014_x86_64.whl (10.8 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 10.8 MB/s eta 0:
-00:00
-Collecting scipy
-  Downloading scipy-1.10.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x8
-6_64.whl (34.5 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.5/34.5 MB 34.6 MB/s eta 0:
-00:00
-Collecting scikit-learn
-  Downloading scikit_learn-1.2.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2
-014_x86_64.whl (9.8 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.8/9.8 MB 40.4 MB/s eta 0:00
-:00
-Collecting matplotlib
-  Downloading matplotlib-3.7.1-cp38-cp38-manylinux_2_12_x86_64.manylinux201
-0_x86_64.whl (9.2 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 49.6 MB/s eta 0:00
-:00
-Requirement already satisfied: numpy in /cache/julia-buildkite-plugin/depot
-s/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3.8/site-pa
-ckages (from tick) (1.24.2)
-Collecting numpydoc
-  Downloading numpydoc-1.5.0-py3-none-any.whl (52 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 52.4/52.4 kB 27.5 MB/s eta 0:
-00:00
-Collecting pandas
-  Downloading pandas-1.5.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x8
-6_64.whl (12.2 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.2/12.2 MB 47.0 MB/s eta 0:
-00:00
-Collecting dill
-  Downloading dill-0.3.6-py3-none-any.whl (110 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 110.5/110.5 kB 61.0 MB/s eta 0:
-00:00
-Collecting sphinx
-  Downloading sphinx-6.1.3-py3-none-any.whl (3.0 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.0/3.0 MB 52.9 MB/s eta 0:00
-:00
-Collecting contourpy>=1.0.1
-  Downloading contourpy-1.0.7-cp38-cp38-manylinux_2_17_x86_64.manylinux2014
-_x86_64.whl (300 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 300.0/300.0 kB 71.6 MB/s eta 0:
-00:00
-Collecting python-dateutil>=2.7
-  Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 kB 45.1 MB/s eta 0:
-00:00
-Collecting fonttools>=4.22.0
-  Downloading fonttools-4.39.0-py3-none-any.whl (1.0 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.0/1.0 MB 51.9 MB/s eta 0:00
-:00
-Collecting importlib-resources>=3.2.0
-  Downloading importlib_resources-5.12.0-py3-none-any.whl (36 kB)
-Collecting pillow>=6.2.0
-  Downloading Pillow-9.4.0-cp38-cp38-manylinux_2_28_x86_64.whl (3.4 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 48.2 MB/s eta 0:00
-:00
-Collecting packaging>=20.0
-  Downloading packaging-23.0-py3-none-any.whl (42 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 42.7/42.7 kB 21.7 MB/s eta 0:
-00:00
-Collecting kiwisolver>=1.0.1
-  Downloading kiwisolver-1.4.4-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x8
-6_64.whl (1.2 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 57.2 MB/s eta 0:00
-:00
-Collecting cycler>=0.10
-  Downloading cycler-0.11.0-py3-none-any.whl (6.4 kB)
-Collecting pyparsing>=2.3.1
-  Downloading pyparsing-3.0.9-py3-none-any.whl (98 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 98.3/98.3 kB 62.8 MB/s eta 0:
-00:00
-Collecting Jinja2>=2.10
-  Downloading Jinja2-3.1.2-py3-none-any.whl (133 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.1/133.1 kB 42.8 MB/s eta 0:
-00:00
-Collecting sphinxcontrib-jsmath
-  Downloading sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl (5.1 kB)
-Collecting docutils<0.20,>=0.18
-  Downloading docutils-0.19-py3-none-any.whl (570 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 570.5/570.5 kB 56.0 MB/s eta 0:
-00:00
-Collecting imagesize>=1.3
-  Downloading imagesize-1.4.1-py2.py3-none-any.whl (8.8 kB)
-Collecting sphinxcontrib-applehelp
-  Downloading sphinxcontrib_applehelp-1.0.4-py3-none-any.whl (120 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 120.6/120.6 kB 63.1 MB/s eta 0:
-00:00
-Collecting sphinxcontrib-htmlhelp>=2.0.0
-  Downloading sphinxcontrib_htmlhelp-2.0.1-py3-none-any.whl (99 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 99.8/99.8 kB 33.8 MB/s eta 0:
-00:00
-Collecting Pygments>=2.13
-  Downloading Pygments-2.14.0-py3-none-any.whl (1.1 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.1/1.1 MB 55.8 MB/s eta 0:00
-:00
-Collecting babel>=2.9
-  Downloading Babel-2.12.1-py3-none-any.whl (10.1 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.1/10.1 MB 59.9 MB/s eta 0:
-00:00
-Requirement already satisfied: requests>=2.25.0 in /cache/julia-buildkite-p
-lugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python
-3.8/site-packages (from sphinx->tick) (2.28.2)
-Collecting sphinxcontrib-serializinghtml>=1.1.5
-  Downloading sphinxcontrib_serializinghtml-1.1.5-py2.py3-none-any.whl (94 
-kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 94.0/94.0 kB 34.2 MB/s eta 0:
-00:00
-Collecting alabaster<0.8,>=0.7
-  Downloading alabaster-0.7.13-py3-none-any.whl (13 kB)
-Collecting sphinxcontrib-qthelp
-  Downloading sphinxcontrib_qthelp-1.0.3-py2.py3-none-any.whl (90 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.6/90.6 kB 60.1 MB/s eta 0:
-00:00
-Collecting snowballstemmer>=2.0
-  Downloading snowballstemmer-2.2.0-py2.py3-none-any.whl (93 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 93.0/93.0 kB 62.9 MB/s eta 0:
-00:00
-Collecting importlib-metadata>=4.8
-  Downloading importlib_metadata-6.0.0-py3-none-any.whl (21 kB)
-Collecting sphinxcontrib-devhelp
-  Downloading sphinxcontrib_devhelp-1.0.2-py2.py3-none-any.whl (84 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.7/84.7 kB 32.4 MB/s eta 0:
-00:00
-Collecting pytz>=2020.1
-  Downloading pytz-2022.7.1-py2.py3-none-any.whl (499 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 499.4/499.4 kB 59.9 MB/s eta 0:
-00:00
-Collecting joblib>=1.1.1
-  Downloading joblib-1.2.0-py3-none-any.whl (297 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 298.0/298.0 kB 58.0 MB/s eta 0:
-00:00
-Collecting threadpoolctl>=2.0.0
-  Downloading threadpoolctl-3.1.0-py3-none-any.whl (14 kB)
-Collecting zipp>=0.5
-  Downloading zipp-3.15.0-py3-none-any.whl (6.8 kB)
-Collecting MarkupSafe>=2.0
-  Downloading MarkupSafe-2.1.2-cp38-cp38-manylinux_2_17_x86_64.manylinux201
-4_x86_64.whl (25 kB)
-Collecting six>=1.5
-  Downloading six-1.16.0-py2.py3-none-any.whl (11 kB)
-Requirement already satisfied: charset-normalizer<4,>=2 in /cache/julia-bui
-ldkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/li
-b/python3.8/site-packages (from requests>=2.25.0->sphinx->tick) (2.1.1)
-Requirement already satisfied: idna<4,>=2.5 in /cache/julia-buildkite-plugi
-n/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3.8/
-site-packages (from requests>=2.25.0->sphinx->tick) (3.4)
-Requirement already satisfied: urllib3<1.27,>=1.21.1 in /cache/julia-buildk
-ite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/p
-ython3.8/site-packages (from requests>=2.25.0->sphinx->tick) (1.26.14)
-Requirement already satisfied: certifi>=2017.4.17 in /cache/julia-buildkite
--plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/pyth
-on3.8/site-packages (from requests>=2.25.0->sphinx->tick) (2022.12.7)
-Installing collected packages: snowballstemmer, pytz, zipp, threadpoolctl, 
-sphinxcontrib-serializinghtml, sphinxcontrib-qthelp, sphinxcontrib-jsmath, 
-sphinxcontrib-htmlhelp, sphinxcontrib-devhelp, sphinxcontrib-applehelp, six
-, scipy, pyparsing, Pygments, pillow, packaging, MarkupSafe, kiwisolver, jo
-blib, imagesize, fonttools, docutils, dill, cycler, contourpy, babel, alaba
-ster, scikit-learn, python-dateutil, Jinja2, importlib-resources, importlib
--metadata, sphinx, pandas, matplotlib, numpydoc, tick
-Successfully installed Jinja2-3.1.2 MarkupSafe-2.1.2 Pygments-2.14.0 alabas
-ter-0.7.13 babel-2.12.1 contourpy-1.0.7 cycler-0.11.0 dill-0.3.6 docutils-0
-.19 fonttools-4.39.0 imagesize-1.4.1 importlib-metadata-6.0.0 importlib-res
-ources-5.12.0 joblib-1.2.0 kiwisolver-1.4.4 matplotlib-3.7.1 numpydoc-1.5.0
- packaging-23.0 pandas-1.5.3 pillow-9.4.0 pyparsing-3.0.9 python-dateutil-2
-.8.2 pytz-2022.7.1 scikit-learn-1.2.2 scipy-1.10.1 six-1.16.0 snowballstemm
-er-2.2.0 sphinx-6.1.3 sphinxcontrib-applehelp-1.0.4 sphinxcontrib-devhelp-1
-.0.2 sphinxcontrib-htmlhelp-2.0.1 sphinxcontrib-jsmath-1.0.1 sphinxcontrib-
-qthelp-1.0.3 sphinxcontrib-serializinghtml-1.1.5 threadpoolctl-3.1.0 tick-0
-.7.0.1 zipp-3.15.0
-Error: InitError: could not load library "/cache/julia-buildkite-plugin/dep
-ots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/libpython3.10.s
-o.1.0"
-/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/c
-onda/3/x86_64/lib/libpython3.10.so.1.0: cannot open shared object file: No 
-such file or directory
-during initialization of module PyCall
-```
-
 
 
 
@@ -662,7 +407,7 @@ Now, we instantiate the problems, find their solutions and plot the results.
 
 ```julia
 let fig = []
-  for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms[5:6])
+  for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms[5:end])
     if typeof(algo) <: PyTick
         _p = (p[1], p[2], p[3])
         jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
@@ -682,17 +427,7 @@ let fig = []
 end
 ```
 
-```
-Error: BoundsError: attempt to access 5-element Vector{Tuple{Any, Any, Bool
-, String}} at index [5:6]
-
-Some of the types have been truncated in the stacktrace for improved readin
-g. To emit complete information
-in the stack trace, evaluate `TruncatedStacktraces.VERBOSE[] = true` and re
--run the code.
-```
-
-
+![](figures/MultivariateHawkes_13_1.png)
 
 
 # Correctness: QQ-Plots
@@ -730,27 +465,27 @@ end
 ```
 
 ```
-10-element Vector{Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vec
+10-element Vector{Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vec
 tor{Int64}}, Tuple{Float64, Float64, Float64}}}:
- (::Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#338".var"#Λ#27"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
 ```
 
@@ -985,12 +720,11 @@ end
 ```
 
 ```
-Error: UndefVarError: PyTick not defined
-
-Some of the types have been truncated in the stacktrace for improved readin
-g. To emit complete information
-in the stack trace, evaluate `TruncatedStacktraces.VERBOSE[] = true` and re
--run the code.
+Error: AssertionError: Could not compute next jump time 228.
+Return code = DtLessThanMin
+ 43.18594188133531 < 43.18594188133531,
+ solver = Tsit5(stage_limiter! = trivial_limiter!, step_limiter! = trivial_
+limiter!, thread = static(false)). dt = 0.0
 ```
 
 
@@ -1092,12 +826,56 @@ end
 ```
 
 ```
-Error: UndefVarError: PyTick not defined
-
-Some of the types have been truncated in the stacktrace for improved readin
-g. To emit complete information
-in the stack trace, evaluate `TruncatedStacktraces.VERBOSE[] = true` and re
--run the code.
+algo=Direct (brute-force), V = 1, length = 50, median time = 116.604 μs
+algo=Direct (brute-force), V = 10, length = 50, median time = 17.712 ms
+algo=Direct (brute-force), V = 20, length = 50, median time = 127.391 ms
+algo=Direct (brute-force), V = 30, length = 26, median time = 388.634 ms
+algo=Direct (brute-force), V = 40, length = 5, median time = 2.037 s
+algo=Direct (brute-force), V = 50, length = 3, median time = 4.419 s
+algo=Direct (brute-force), V = 60, length = 2, median time = 7.581 s
+algo=Direct (brute-force), V = 70, length = 1, median time = 11.634 s
+algo=Direct (brute-force), V = 80, length = 1, median time = 17.756 s
+algo=Direct (brute-force), V = 90, length = 1, median time = 28.876 s
+algo=Coevolve (brute-force), V = 1, length = 50, median time = 3.325 μs
+algo=Coevolve (brute-force), V = 10, length = 50, median time = 428.372 μs
+algo=Coevolve (brute-force), V = 20, length = 50, median time = 3.144 ms
+algo=Coevolve (brute-force), V = 30, length = 50, median time = 7.230 ms
+algo=Coevolve (brute-force), V = 40, length = 50, median time = 17.517 ms
+algo=Coevolve (brute-force), V = 50, length = 50, median time = 32.724 ms
+algo=Coevolve (brute-force), V = 60, length = 50, median time = 54.236 ms
+algo=Coevolve (brute-force), V = 70, length = 50, median time = 82.702 ms
+algo=Coevolve (brute-force), V = 80, length = 50, median time = 117.505 ms
+algo=Coevolve (brute-force), V = 90, length = 50, median time = 172.617 ms
+algo=Direct (recursive), V = 1, length = 50, median time = 114.704 μs
+algo=Direct (recursive), V = 10, length = 50, median time = 11.598 ms
+algo=Direct (recursive), V = 20, length = 50, median time = 59.821 ms
+algo=Direct (recursive), V = 30, length = 50, median time = 196.233 ms
+algo=Direct (recursive), V = 40, length = 7, median time = 1.489 s
+algo=Direct (recursive), V = 50, length = 4, median time = 2.721 s
+algo=Direct (recursive), V = 60, length = 2, median time = 5.593 s
+algo=Direct (recursive), V = 70, length = 2, median time = 8.856 s
+algo=Direct (recursive), V = 80, length = 1, median time = 13.663 s
+algo=Direct (recursive), V = 90, length = 1, median time = 20.801 s
+algo=Coevolve (recursive), V = 1, length = 50, median time = 3.820 μs
+algo=Coevolve (recursive), V = 10, length = 50, median time = 107.305 μs
+algo=Coevolve (recursive), V = 20, length = 50, median time = 420.697 μs
+algo=Coevolve (recursive), V = 30, length = 50, median time = 758.510 μs
+algo=Coevolve (recursive), V = 40, length = 50, median time = 1.357 ms
+algo=Coevolve (recursive), V = 50, length = 50, median time = 2.074 ms
+algo=Coevolve (recursive), V = 60, length = 50, median time = 2.890 ms
+algo=Coevolve (recursive), V = 70, length = 50, median time = 3.836 ms
+algo=Coevolve (recursive), V = 80, length = 50, median time = 4.821 ms
+algo=Coevolve (recursive), V = 90, length = 50, median time = 6.048 ms
+algo=PDMPCHV, V = 1, length = 50, median time = 195.999 μs
+algo=PDMPCHV, V = 10, length = 50, median time = 589.406 μs
+algo=PDMPCHV, V = 20, length = 50, median time = 889.409 μs
+algo=PDMPCHV, V = 30, length = 50, median time = 1.294 ms
+algo=PDMPCHV, V = 40, length = 50, median time = 1.558 ms
+algo=PDMPCHV, V = 50, length = 50, median time = 1.929 ms
+algo=PDMPCHV, V = 60, length = 50, median time = 2.511 ms
+algo=PDMPCHV, V = 70, length = 50, median time = 3.013 ms
+algo=PDMPCHV, V = 80, length = 50, median time = 3.555 ms
+algo=PDMPCHV, V = 90, length = 50, median time = 4.504 ms
 ```
 
 
@@ -1123,17 +901,7 @@ let fig = plot(
 end
 ```
 
-```
-Error: BoundsError: attempt to access 1-element Vector{Vector{BenchmarkTool
-s.Trial}} at index [2]
-
-Some of the types have been truncated in the stacktrace for improved readin
-g. To emit complete information
-in the stack trace, evaluate `TruncatedStacktraces.VERBOSE[] = true` and re
--run the code.
-```
-
-
+![](figures/MultivariateHawkes_20_1.png)
 
 
 
