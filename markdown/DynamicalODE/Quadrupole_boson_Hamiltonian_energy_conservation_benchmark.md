@@ -148,18 +148,18 @@ compare(tmax=1e2)
 ```
 
 ```
-73.035071 seconds (47.78 M allocations: 1.993 GiB, 0.47% gc time, 99.90% c
-ompilation time: 1% of which was recompilation)
-  2.057598 seconds (5.26 M allocations: 274.745 MiB, 99.61% compilation tim
+68.819458 seconds (113.68 M allocations: 6.829 GiB, 3.57% gc time, 99.91% 
+compilation time: 2% of which was recompilation)
+  1.716124 seconds (2.73 M allocations: 176.020 MiB, 99.54% compilation tim
 e)
-  2.493430 seconds (5.60 M allocations: 294.479 MiB, 99.56% compilation tim
+  2.173060 seconds (2.95 M allocations: 186.984 MiB, 99.49% compilation tim
 e)
- 45.639884 seconds (13.96 M allocations: 555.026 MiB, 0.21% gc time, 99.96%
- compilation time)
-  4.148262 seconds (6.05 M allocations: 324.700 MiB, 99.91% compilation tim
+ 40.608482 seconds (52.18 M allocations: 3.152 GiB, 2.82% gc time, 99.96% c
+ompilation time)
+  3.606012 seconds (3.43 M allocations: 210.628 MiB, 99.90% compilation tim
 e)
-  2.538430 seconds (5.82 M allocations: 551.646 MiB, 2.34% gc time, 90.43% 
-compilation time: 4% of which was recompilation)
+  1.347402 seconds (2.46 M allocations: 312.242 MiB, 85.67% compilation tim
+e)
 Vern9 + ManifoldProjection max energy error:	1.7053025658242404e-13	in	9733
 	steps.
 KahanLi8 max energy error:			5.5706550483591855e-12	in	10001	steps.
@@ -177,12 +177,12 @@ compare(tmax=1e3)
 ```
 
 ```
-0.759171 seconds (5.34 M allocations: 363.883 MiB)
-  0.073247 seconds (700.10 k allocations: 61.899 MiB)
-  0.109556 seconds (700.10 k allocations: 61.901 MiB)
-  0.183959 seconds (1.70 M allocations: 106.017 MiB)
-  0.032669 seconds (415.76 k allocations: 18.250 MiB)
-  1.958042 seconds (8.15 M allocations: 2.035 GiB, 8.70% gc time)
+0.664765 seconds (5.34 M allocations: 363.117 MiB, 14.96% gc time)
+  0.081122 seconds (700.10 k allocations: 61.899 MiB)
+  0.123311 seconds (700.10 k allocations: 61.901 MiB)
+  0.177481 seconds (1.70 M allocations: 105.993 MiB)
+  0.033091 seconds (415.76 k allocations: 18.250 MiB)
+  1.889070 seconds (7.90 M allocations: 1.972 GiB, 11.70% gc time)
 Vern9 + ManifoldProjection max energy error:	1.7053025658242404e-13	in	9724
 1	steps.
 KahanLi8 max energy error:			1.0530243343964685e-11	in	100002	steps.
@@ -200,12 +200,12 @@ compare(tmax=1e4)
 ```
 
 ```
-10.417877 seconds (53.42 M allocations: 3.530 GiB, 23.06% gc time)
-  0.806830 seconds (7.00 M allocations: 579.841 MiB)
-  1.143781 seconds (7.00 M allocations: 579.843 MiB)
-  1.810474 seconds (17.02 M allocations: 1.020 GiB)
-  2.955553 seconds (4.15 M allocations: 178.278 MiB, 88.79% gc time)
- 18.840321 seconds (81.51 M allocations: 20.348 GiB, 23.81% gc time)
+8.060884 seconds (53.42 M allocations: 3.515 GiB, 25.29% gc time)
+  0.841127 seconds (7.00 M allocations: 579.841 MiB)
+  1.198436 seconds (7.00 M allocations: 579.843 MiB)
+  2.531760 seconds (17.02 M allocations: 1.020 GiB, 30.26% gc time)
+  0.334868 seconds (4.15 M allocations: 178.278 MiB)
+ 20.418407 seconds (78.97 M allocations: 19.713 GiB, 9.26% gc time)
 Vern9 + ManifoldProjection max energy error:	2.1316282072803006e-13	in	9723
 77	steps.
 KahanLi8 max energy error:			4.3968384488835e-11	in	1000001	steps.
@@ -223,12 +223,12 @@ compare(tmax=2e4)
 ```
 
 ```
-24.017485 seconds (106.81 M allocations: 7.055 GiB, 34.10% gc time)
-  3.964685 seconds (14.00 M allocations: 1.171 GiB, 58.84% gc time)
-  5.092489 seconds (14.00 M allocations: 1.171 GiB, 54.78% gc time)
- 10.223808 seconds (34.03 M allocations: 2.037 GiB, 64.53% gc time)
-  5.033237 seconds (8.31 M allocations: 354.210 MiB, 87.03% gc time)
- 43.632824 seconds (163.01 M allocations: 40.697 GiB, 33.68% gc time)
+16.498163 seconds (106.81 M allocations: 7.024 GiB, 26.95% gc time)
+  1.688319 seconds (14.00 M allocations: 1.171 GiB)
+  2.409050 seconds (14.00 M allocations: 1.171 GiB)
+  4.814327 seconds (34.03 M allocations: 2.037 GiB, 28.14% gc time)
+  0.653838 seconds (8.31 M allocations: 354.210 MiB)
+ 40.691501 seconds (157.93 M allocations: 39.426 GiB, 9.69% gc time)
 Vern9 + ManifoldProjection max energy error:	2.2737367544323206e-13	in	1944
 731	steps.
 KahanLi8 max energy error:			1.0363976343796821e-10	in	2000002	steps.
@@ -272,12 +272,12 @@ in_vs_out(all=true, tmax=1e3)
 
 ```
 In place versions:
-  0.836833 seconds (5.34 M allocations: 363.883 MiB, 10.14% gc time)
-  0.074819 seconds (700.10 k allocations: 61.899 MiB)
-  0.117403 seconds (700.10 k allocations: 61.901 MiB)
-  0.186390 seconds (1.70 M allocations: 106.017 MiB)
-  0.032513 seconds (415.76 k allocations: 18.250 MiB)
-  1.996703 seconds (8.15 M allocations: 2.035 GiB, 9.63% gc time)
+  0.651684 seconds (5.34 M allocations: 363.117 MiB, 9.65% gc time)
+  0.079376 seconds (700.10 k allocations: 61.899 MiB)
+  0.122741 seconds (700.10 k allocations: 61.901 MiB)
+  0.178829 seconds (1.70 M allocations: 105.993 MiB)
+  0.033615 seconds (415.76 k allocations: 18.250 MiB)
+  1.961943 seconds (7.90 M allocations: 1.972 GiB, 11.44% gc time)
 Vern9 + ManifoldProjection max energy error:	1.7053025658242404e-13	in	9724
 1	steps.
 KahanLi8 max energy error:			1.0530243343964685e-11	in	100002	steps.
@@ -287,14 +287,14 @@ DPRKN12 max energy error:			1.2789769243681803e-12	in	21872	steps.
 TaylorMethod max energy error:			1.6342482922482304e-12	in	5082	steps.
 
 Out of place versions:
-  0.811400 seconds (1.95 M allocations: 117.788 MiB, 96.43% compilation tim
+  0.713084 seconds (1.21 M allocations: 91.429 MiB, 95.44% compilation time
+)
+  0.753483 seconds (1.23 M allocations: 90.849 MiB, 93.80% compilation time
+)
+  1.383869 seconds (2.82 M allocations: 164.595 MiB, 98.07% compilation tim
 e)
-  0.934248 seconds (2.00 M allocations: 118.198 MiB, 95.23% compilation tim
-e)
-  4.602568 seconds (4.63 M allocations: 235.127 MiB, 99.37% compilation tim
-e)
-  1.439600 seconds (2.03 M allocations: 109.766 MiB, 99.25% compilation tim
-e)
+  1.014337 seconds (1.23 M allocations: 79.147 MiB, 98.82% compilation time
+)
 KahanLi8 max energy error:			1.0530243343964685e-11	in	100002	steps.
 SofSpa10 max energy error:			1.5077716852829326e-11	in	100002	steps.
 Vern9 max energy error:				9.450218385609332e-12	in	48622	steps.
@@ -314,20 +314,20 @@ in_vs_out(tmax=1e2)
 
 ```
 In place versions:
-  0.007927 seconds (70.09 k allocations: 5.806 MiB)
-  0.010149 seconds (70.09 k allocations: 5.808 MiB)
-  0.015981 seconds (170.49 k allocations: 10.882 MiB)
-  0.003117 seconds (41.89 k allocations: 1.907 MiB)
+  0.008108 seconds (70.09 k allocations: 5.806 MiB)
+  0.010438 seconds (70.09 k allocations: 5.808 MiB)
+  0.015078 seconds (170.49 k allocations: 10.858 MiB)
+  0.003193 seconds (41.89 k allocations: 1.907 MiB)
 KahanLi8 max energy error:			5.5706550483591855e-12	in	10001	steps.
 SofSpa10 max energy error:			3.836930773104541e-12	in	10001	steps.
 Vern9 max energy error:				8.384404281969182e-13	in	4866	steps.
 DPRKN12 max energy error:			4.689582056016661e-13	in	2195	steps.
 
 Out of place versions:
-  0.002640 seconds (10.02 k allocations: 1.682 MiB)
-  0.004467 seconds (10.02 k allocations: 1.682 MiB)
-  0.002586 seconds (4.90 k allocations: 2.770 MiB)
-  0.001186 seconds (2.23 k allocations: 604.531 KiB)
+  0.002926 seconds (10.02 k allocations: 1.682 MiB)
+  0.004520 seconds (10.02 k allocations: 1.682 MiB)
+  0.002320 seconds (4.90 k allocations: 2.760 MiB)
+  0.001404 seconds (2.23 k allocations: 604.531 KiB)
 KahanLi8 max energy error:			5.5706550483591855e-12	in	10001	steps.
 SofSpa10 max energy error:			3.836930773104541e-12	in	10001	steps.
 Vern9 max energy error:				5.542233338928781e-13	in	4864	steps.
@@ -343,20 +343,20 @@ in_vs_out(tmax=1e3)
 
 ```
 In place versions:
-  0.069889 seconds (700.10 k allocations: 61.899 MiB)
-  0.106692 seconds (700.10 k allocations: 61.901 MiB)
-  0.188602 seconds (1.70 M allocations: 106.017 MiB)
-  0.033490 seconds (415.76 k allocations: 18.250 MiB)
+  0.072695 seconds (700.10 k allocations: 61.899 MiB)
+  0.108870 seconds (700.10 k allocations: 61.901 MiB)
+  0.176306 seconds (1.70 M allocations: 105.993 MiB)
+  0.033471 seconds (415.76 k allocations: 18.250 MiB)
 KahanLi8 max energy error:			1.0530243343964685e-11	in	100002	steps.
 SofSpa10 max energy error:			1.5077716852829326e-11	in	100002	steps.
 Vern9 max energy error:				4.050093593832571e-12	in	48622	steps.
 DPRKN12 max energy error:			1.2789769243681803e-12	in	21872	steps.
 
 Out of place versions:
-  0.029829 seconds (100.03 k allocations: 21.886 MiB)
-  0.044572 seconds (100.03 k allocations: 21.887 MiB)
-  0.028801 seconds (48.66 k allocations: 23.958 MiB)
-  0.010766 seconds (21.91 k allocations: 4.989 MiB)
+  0.031754 seconds (100.03 k allocations: 21.886 MiB)
+  0.047150 seconds (100.03 k allocations: 21.887 MiB)
+  0.026442 seconds (48.66 k allocations: 23.949 MiB)
+  0.012164 seconds (21.91 k allocations: 4.989 MiB)
 KahanLi8 max energy error:			1.0530243343964685e-11	in	100002	steps.
 SofSpa10 max energy error:			1.5077716852829326e-11	in	100002	steps.
 Vern9 max energy error:				9.450218385609332e-12	in	48622	steps.
@@ -372,20 +372,20 @@ in_vs_out(tmax=1e4)
 
 ```
 In place versions:
-  1.101390 seconds (7.00 M allocations: 579.841 MiB, 25.62% gc time)
-  1.478988 seconds (7.00 M allocations: 579.843 MiB, 22.48% gc time)
-  2.082431 seconds (17.02 M allocations: 1.020 GiB, 12.22% gc time)
-  0.331571 seconds (4.15 M allocations: 178.278 MiB)
+  1.188501 seconds (7.00 M allocations: 579.841 MiB, 28.26% gc time)
+  1.388139 seconds (7.00 M allocations: 579.843 MiB, 12.75% gc time)
+  2.001769 seconds (17.02 M allocations: 1.020 GiB, 13.07% gc time)
+  0.336599 seconds (4.15 M allocations: 178.278 MiB)
 KahanLi8 max energy error:			4.3968384488835e-11	in	1000001	steps.
 SofSpa10 max energy error:			6.492939519375795e-11	in	1000001	steps.
 Vern9 max energy error:				6.355094228638336e-11	in	486179	steps.
 DPRKN12 max energy error:			2.2154722500999924e-11	in	218670	steps.
 
 Out of place versions:
-  0.301669 seconds (1.00 M allocations: 167.850 MiB)
-  0.437866 seconds (1.00 M allocations: 167.850 MiB)
-  0.282256 seconds (486.25 k allocations: 215.765 MiB)
-  0.104981 seconds (218.72 k allocations: 43.322 MiB)
+  0.357590 seconds (1.00 M allocations: 167.850 MiB, 9.49% gc time)
+  0.471227 seconds (1.00 M allocations: 167.850 MiB)
+  0.353095 seconds (486.25 k allocations: 215.756 MiB, 23.61% gc time)
+  0.117954 seconds (218.72 k allocations: 43.322 MiB)
 KahanLi8 max energy error:			4.3968384488835e-11	in	1000001	steps.
 SofSpa10 max energy error:			6.492939519375795e-11	in	1000001	steps.
 Vern9 max energy error:				5.697131655324483e-11	in	486200	steps.
@@ -401,20 +401,20 @@ in_vs_out(tmax=2e4)
 
 ```
 In place versions:
-  2.380425 seconds (14.00 M allocations: 1.171 GiB, 30.51% gc time)
-  3.493146 seconds (14.00 M allocations: 1.171 GiB, 34.41% gc time)
-  5.198220 seconds (34.03 M allocations: 2.037 GiB, 30.30% gc time)
-  3.268708 seconds (8.31 M allocations: 354.210 MiB, 79.77% gc time)
+  2.177032 seconds (14.00 M allocations: 1.162 GiB, 20.39% gc time)
+  3.648194 seconds (14.00 M allocations: 1.171 GiB, 34.45% gc time)
+  4.429977 seconds (34.03 M allocations: 2.037 GiB, 21.37% gc time)
+  0.651140 seconds (8.31 M allocations: 354.210 MiB)
 KahanLi8 max energy error:			1.0363976343796821e-10	in	2000002	steps.
 SofSpa10 max energy error:			9.750067420100095e-11	in	2000002	steps.
 Vern9 max energy error:				1.3086776107229525e-10	in	972353	steps.
 DPRKN12 max energy error:			4.675371201301459e-11	in	437331	steps.
 
 Out of place versions:
-  0.673551 seconds (2.00 M allocations: 395.141 MiB, 6.24% gc time)
-  0.892949 seconds (2.00 M allocations: 395.141 MiB)
-  0.552750 seconds (972.44 k allocations: 428.598 MiB)
-  0.208169 seconds (437.38 k allocations: 83.674 MiB)
+  0.759931 seconds (2.00 M allocations: 395.141 MiB, 9.87% gc time)
+  0.985422 seconds (2.00 M allocations: 395.141 MiB, 5.13% gc time)
+  0.521499 seconds (972.44 k allocations: 428.589 MiB)
+  0.234661 seconds (437.38 k allocations: 83.674 MiB)
 KahanLi8 max energy error:			1.0363976343796821e-10	in	2000002	steps.
 SofSpa10 max energy error:			9.750067420100095e-11	in	2000002	steps.
 Vern9 max energy error:				1.2643397440115223e-10	in	972386	steps.
@@ -445,18 +445,19 @@ SciMLBenchmarks.weave_file("benchmarks/DynamicalODE","Quadrupole_boson_Hamiltoni
 Computer Information:
 
 ```
-Julia Version 1.8.3
-Commit 0434deb161e (2022-11-14 20:14 UTC)
+Julia Version 1.9.2
+Commit e4ee485e909 (2023-07-05 09:39 UTC)
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
   CPU: 128 × AMD EPYC 7502 32-Core Processor
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-13.0.1 (ORCJIT, znver2)
+  LLVM: libLLVM-14.0.6 (ORCJIT, znver2)
   Threads: 128 on 128 virtual cores
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+  JULIA_IMAGE_THREADS = 1
 
 ```
 
@@ -464,302 +465,302 @@ Package Information:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DynamicalODE/Project.toml`
-  [459566f4] DiffEqCallbacks v2.24.3
-  [055956cb] DiffEqPhysics v3.10.0
+  [459566f4] DiffEqCallbacks v2.27.0
+  [055956cb] DiffEqPhysics v3.11.0
   [b305315f] Elliptic v1.0.1
-⌃ [1dea7af3] OrdinaryDiffEq v6.33.3
+  [1dea7af3] OrdinaryDiffEq v6.53.4
   [65888b18] ParameterizedFunctions v5.15.0
-  [91a5bcdd] Plots v1.37.2
-  [d330b81b] PyPlot v2.11.0
-  [31c91b34] SciMLBenchmarks v0.1.1
-  [90137ffa] StaticArrays v1.5.11
-  [92b13dbe] TaylorIntegration v0.10.0
+  [91a5bcdd] Plots v1.38.17
+  [d330b81b] PyPlot v2.11.1
+  [31c91b34] SciMLBenchmarks v0.1.3
+  [90137ffa] StaticArrays v1.6.2
+  [92b13dbe] TaylorIntegration v0.14.2
   [37e2e46d] LinearAlgebra
   [de0858da] Printf
-  [10745b16] Statistics
-Info Packages marked with ⌃ have new versions available and may be upgradable.
+  [10745b16] Statistics v1.9.0
 ```
 
 And the full manifest:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DynamicalODE/Manifest.toml`
-  [c3fe647b] AbstractAlgebra v0.27.7
-  [1520ce14] AbstractTrees v0.4.3
-  [79e6a3ab] Adapt v3.4.0
-  [dce04be8] ArgCheck v2.3.0
+  [47edcb42] ADTypes v0.1.6
+  [c3fe647b] AbstractAlgebra v0.31.0
+  [1520ce14] AbstractTrees v0.4.4
+  [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v6.0.24
-  [30b0a656] ArrayInterfaceCore v0.1.26
-  [6ba088a2] ArrayInterfaceGPUArrays v0.2.2
-  [015c0d05] ArrayInterfaceOffsetArrays v0.1.7
-  [b0d46f97] ArrayInterfaceStaticArrays v0.1.5
-  [dd5226c6] ArrayInterfaceStaticArraysCore v0.1.3
-  [15f4f7f2] AutoHashEquals v0.2.0
-  [198e06fe] BangBang v0.3.37
-  [9718e550] Baselet v0.1.1
+  [4fba245c] ArrayInterface v7.4.11
+  [30b0a656] ArrayInterfaceCore v0.1.29
+  [6e4b80f9] BenchmarkTools v1.3.2
   [e2ed5e7c] Bijections v0.1.4
   [d1d4a3ce] BitFlags v0.1.7
   [62783981] BitTwiddlingConvenienceFunctions v0.1.5
-  [2a0fbf3d] CPUSummary v0.1.30
+  [2a0fbf3d] CPUSummary v0.2.3
   [00ebfdb7] CSTParser v3.3.6
   [49dc2e85] Calculus v0.5.1
-  [d360d2e6] ChainRulesCore v1.15.6
-  [9e997f8a] ChangesOfVariables v0.1.4
-  [fb6a15b2] CloseOpenIntervals v0.1.11
-  [944b1d66] CodecZlib v0.7.0
-  [35d6a980] ColorSchemes v3.20.0
+  [d360d2e6] ChainRulesCore v1.16.0
+  [fb6a15b2] CloseOpenIntervals v0.1.12
+  [944b1d66] CodecZlib v0.7.2
+  [35d6a980] ColorSchemes v3.22.0
   [3da002f7] ColorTypes v0.11.4
-  [c3611d14] ColorVectorSpace v0.9.9
-  [5ae59095] Colors v0.12.8
+  [c3611d14] ColorVectorSpace v0.10.0
+  [5ae59095] Colors v0.12.10
   [861a8166] Combinatorics v1.0.2
-  [a80b9123] CommonMark v0.8.7
-  [38540f10] CommonSolve v0.2.3
+  [a80b9123] CommonMark v0.8.12
+  [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v4.5.0
+  [34da2185] Compat v4.8.0
   [b152e2b5] CompositeTypes v0.1.3
-  [a33af91c] CompositionsBase v0.1.1
-  [8f4d0f93] Conda v1.7.0
-  [187b0558] ConstructionBase v1.4.1
+  [f0e56b4a] ConcurrentUtilities v2.2.1
+  [8f4d0f93] Conda v1.9.1
+  [187b0558] ConstructionBase v1.5.3
   [d38c429a] Contour v0.6.2
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
-  [9a962f9c] DataAPI v1.13.0
-  [864edb3b] DataStructures v0.18.13
+  [9a962f9c] DataAPI v1.15.0
+  [864edb3b] DataStructures v0.18.14
   [e2d170a0] DataValueInterfaces v1.0.0
-  [244e2a9f] DefineSingletons v0.1.2
-  [b429d917] DensityInterface v0.4.0
-⌃ [2b5f629d] DiffEqBase v6.108.0
-  [459566f4] DiffEqCallbacks v2.24.3
-  [055956cb] DiffEqPhysics v3.10.0
+  [8bb1440f] DelimitedFiles v1.9.1
+  [2b5f629d] DiffEqBase v6.127.0
+  [459566f4] DiffEqCallbacks v2.27.0
+  [055956cb] DiffEqPhysics v3.11.0
   [163ba53b] DiffResults v1.1.0
-  [b552c78f] DiffRules v1.12.2
-  [b4f34e82] Distances v0.10.7
-  [31c24e10] Distributions v0.25.79
-⌅ [ffbed154] DocStringExtensions v0.8.6
-⌅ [5b8099bc] DomainSets v0.5.15
+  [b552c78f] DiffRules v1.15.1
+  [b4f34e82] Distances v0.10.9
+  [31c24e10] Distributions v0.25.98
+  [ffbed154] DocStringExtensions v0.9.3
+  [5b8099bc] DomainSets v0.6.7
   [fa6b7ba4] DualNumbers v0.6.8
-  [7c1d4256] DynamicPolynomials v0.4.5
+  [7c1d4256] DynamicPolynomials v0.5.2
   [b305315f] Elliptic v1.0.1
   [4e289a0a] EnumX v1.0.4
   [6912e4f1] Espresso v0.6.1
-  [d4d017d3] ExponentialUtilities v1.22.0
-  [e2ba6199] ExprTools v0.1.8
+  [460bff9d] ExceptionUnwrapping v0.1.9
+  [d4d017d3] ExponentialUtilities v1.24.0
+  [e2ba6199] ExprTools v0.1.10
   [c87230d0] FFMPEG v0.4.1
-  [7034ab61] FastBroadcast v0.2.3
+  [7034ab61] FastBroadcast v0.2.6
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v1.2.8
-  [1a297f60] FillArrays v0.13.6
-  [6a86dc24] FiniteDiff v2.17.0
+  [29a986be] FastLapackInterface v2.0.0
+  [1a297f60] FillArrays v1.5.0
+  [6a86dc24] FiniteDiff v2.21.1
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
-  [f6369f11] ForwardDiff v0.10.32
+  [f6369f11] ForwardDiff v0.10.35
   [069b7b12] FunctionWrappers v1.1.3
-  [77dc65aa] FunctionWrappersWrappers v0.1.1
-  [46192b85] GPUArraysCore v0.1.2
-  [28b8d3ca] GR v0.71.1
+  [77dc65aa] FunctionWrappersWrappers v0.1.3
+  [46192b85] GPUArraysCore v0.1.5
+  [28b8d3ca] GR v0.72.9
   [c145ed77] GenericSchur v0.5.3
-  [d7ba0133] Git v1.2.1
-  [c27321d9] Glob v1.3.0
-  [86223c79] Graphs v1.7.4
+  [d7ba0133] Git v1.3.0
+  [c27321d9] Glob v1.3.1
+  [86223c79] Graphs v1.8.0
   [42e2da0e] Grisu v1.0.2
-  [0b43b601] Groebner v0.2.11
+  [0b43b601] Groebner v0.4.2
   [d5909c97] GroupsCore v0.4.0
-  [cd3eb016] HTTP v1.5.5
-⌅ [eafb193a] Highlights v0.4.5
-  [3e5b6fbb] HostCPUFeatures v0.1.13
-  [34004b35] HypergeometricFunctions v0.3.11
-  [7073ff75] IJulia v1.23.3
+  [cd3eb016] HTTP v1.9.14
+  [eafb193a] Highlights v0.5.2
+  [3e5b6fbb] HostCPUFeatures v0.1.15
+  [34004b35] HypergeometricFunctions v0.3.23
+  [7073ff75] IJulia v1.24.2
   [615f187c] IfElse v0.1.1
   [d25df0c9] Inflate v0.1.3
-  [83e8ac13] IniFile v0.5.1
-  [22cec73e] InitialValues v0.3.1
-  [18e54dd8] IntegerMathUtils v0.1.0
-⌅ [8197267c] IntervalSets v0.7.3
-  [3587e190] InverseFunctions v0.1.8
-  [92d709cd] IrrationalConstants v0.1.1
-  [42fd0dbc] IterativeSolvers v0.9.2
+  [18e54dd8] IntegerMathUtils v0.1.2
+  [8197267c] IntervalSets v0.7.7
+  [92d709cd] IrrationalConstants v0.2.2
   [82899510] IteratorInterfaceExtensions v1.0.0
   [1019f520] JLFzf v0.1.5
   [692b3bcd] JLLWrappers v1.4.1
-  [682c06a0] JSON v0.21.3
-  [98e50ef6] JuliaFormatter v1.0.16
-  [ccbc3e58] JumpProcesses v9.2.3
+  [682c06a0] JSON v0.21.4
+  [98e50ef6] JuliaFormatter v1.0.34
+  [ccbc3e58] JumpProcesses v9.7.2
   [ef3ab10e] KLU v0.4.0
-  [ba0b0d4f] Krylov v0.9.0
-  [0b1a1467] KrylovKit v0.6.0
+  [ba0b0d4f] Krylov v0.9.2
   [b964fa9f] LaTeXStrings v1.3.0
-  [2ee39098] LabelledArrays v1.12.5
-  [984bce1d] LambertW v0.4.5
-  [23fbe1c1] Latexify v0.15.17
-  [10f19ff3] LayoutPointers v0.1.12
+  [2ee39098] LabelledArrays v1.14.0
+  [984bce1d] LambertW v0.4.6
+⌅ [23fbe1c1] Latexify v0.15.21
+  [10f19ff3] LayoutPointers v0.1.14
+  [50d2b5c4] Lazy v0.15.1
+  [1d6d02ad] LeftChildRightSiblingTrees v0.2.0
   [d3d80556] LineSearches v7.2.0
-  [7ed4a6bd] LinearSolve v1.31.0
-  [2ab3a3ac] LogExpFunctions v0.3.19
+  [7ed4a6bd] LinearSolve v2.4.2
+  [2ab3a3ac] LogExpFunctions v0.3.24
   [e6f89c97] LoggingExtras v1.0.0
-  [bdcacae8] LoopVectorization v0.12.141
+  [bdcacae8] LoopVectorization v0.12.165
+  [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.10
   [d125e4d3] ManualMemory v0.1.8
   [739be429] MbedTLS v1.1.7
   [442fdcdd] Measures v0.3.2
-  [e9d8d322] Metatheory v1.3.5
-  [128add7d] MicroCollections v0.1.3
-  [e1d29d7a] Missings v1.0.2
-  [961ee093] ModelingToolkit v8.36.0
+  [e1d29d7a] Missings v1.1.0
+  [961ee093] ModelingToolkit v8.64.0
   [46d2c3a1] MuladdMacro v0.2.4
-  [102ac46a] MultivariatePolynomials v0.4.6
-  [ffc61752] Mustache v1.0.14
-  [d8a4904e] MutableArithmetics v1.1.0
+  [102ac46a] MultivariatePolynomials v0.5.1
+  [ffc61752] Mustache v1.0.17
+  [d8a4904e] MutableArithmetics v1.3.0
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
-  [77ba4419] NaNMath v1.0.1
-  [6fe1bfb0] OffsetArrays v1.12.8
-  [4d8831e6] OpenSSL v1.3.2
-  [bac558e1] OrderedCollections v1.4.1
-⌃ [1dea7af3] OrdinaryDiffEq v6.33.3
-  [90014a1f] PDMats v0.11.16
+  [77ba4419] NaNMath v1.0.2
+  [8913a72c] NonlinearSolve v1.9.0
+  [6fe1bfb0] OffsetArrays v1.12.10
+  [4d8831e6] OpenSSL v1.4.1
+  [bac558e1] OrderedCollections v1.6.2
+  [1dea7af3] OrdinaryDiffEq v6.53.4
+  [90014a1f] PDMats v0.11.17
+  [65ce6f38] PackageExtensionCompat v1.0.0
   [65888b18] ParameterizedFunctions v5.15.0
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.5.1
+  [69de0a69] Parsers v2.7.2
   [b98c9c47] Pipe v1.3.0
+  [32113eaa] PkgBenchmark v0.2.12
   [ccf2f8ad] PlotThemes v3.1.0
-  [995b91a9] PlotUtils v1.3.2
-  [91a5bcdd] Plots v1.37.2
-  [e409e4f3] PoissonRandom v0.4.3
-  [f517fe37] Polyester v0.6.18
-  [1d0040c9] PolyesterWeave v0.1.11
-  [d236fae5] PreallocationTools v0.4.6
-  [21216c6a] Preferences v1.3.0
-  [27ebfcd6] Primes v0.5.3
-  [438e738f] PyCall v1.94.1
-  [d330b81b] PyPlot v2.11.0
-  [1fd47b50] QuadGK v2.6.0
+  [995b91a9] PlotUtils v1.3.5
+  [91a5bcdd] Plots v1.38.17
+  [e409e4f3] PoissonRandom v0.4.4
+  [f517fe37] Polyester v0.7.5
+  [1d0040c9] PolyesterWeave v0.2.1
+  [d236fae5] PreallocationTools v0.4.12
+  [aea7be01] PrecompileTools v1.1.2
+  [21216c6a] Preferences v1.4.0
+  [27ebfcd6] Primes v0.5.4
+  [33c8b6b6] ProgressLogging v0.1.4
+  [438e738f] PyCall v1.96.1
+  [d330b81b] PyPlot v2.11.1
+  [1fd47b50] QuadGK v2.8.2
   [fb686558] RandomExtensions v0.4.3
   [e6cf234a] RandomNumbers v1.5.3
-  [3cdcf5f2] RecipesBase v1.3.2
-  [01d81517] RecipesPipeline v0.6.11
-  [731186ca] RecursiveArrayTools v2.32.3
-  [f2c3362d] RecursiveFactorization v0.2.13
+  [3cdcf5f2] RecipesBase v1.3.4
+  [01d81517] RecipesPipeline v0.6.12
+  [731186ca] RecursiveArrayTools v2.38.7
+  [f2c3362d] RecursiveFactorization v0.2.18
   [189a3867] Reexport v1.2.2
-  [42d2dcc6] Referenceables v0.1.2
   [05181044] RelocatableFolders v1.0.0
   [ae029012] Requires v1.3.0
-  [79098fc4] Rmath v0.7.0
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.5
-  [3cdde19b] SIMDDualNumbers v0.1.1
+  [79098fc4] Rmath v0.7.1
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.11
+  [fdea26ae] SIMD v3.4.5
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.37
-  [0bca4576] SciMLBase v1.77.1
-  [31c91b34] SciMLBenchmarks v0.1.1
-  [6c6a2e73] Scratch v1.1.1
+  [476501e8] SLEEFPirates v0.6.39
+  [0bca4576] SciMLBase v1.94.0
+  [31c91b34] SciMLBenchmarks v0.1.3
+  [e9a6253c] SciMLNLSolve v0.1.8
+  [c0aeaf25] SciMLOperators v0.3.6
+  [6c6a2e73] Scratch v1.2.0
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
-  [727e6d20] SimpleNonlinearSolve v0.1.3
+  [727e6d20] SimpleNonlinearSolve v0.1.19
   [699a6c99] SimpleTraits v0.9.4
-  [66db9d55] SnoopPrecompile v1.0.1
+  [ce78b400] SimpleUnPack v1.1.0
+  [66db9d55] SnoopPrecompile v1.0.3
   [b85f4697] SoftGlobalScope v1.1.0
-  [a2af1166] SortingAlgorithms v1.1.0
-  [47a9eef4] SparseDiffTools v1.30.0
-  [276daf66] SpecialFunctions v2.1.7
-  [171d559e] SplittablesBase v0.1.15
-  [aedffcd0] Static v0.8.3
-  [90137ffa] StaticArrays v1.5.11
-  [1e83bf80] StaticArraysCore v1.4.0
-  [82ae8749] StatsAPI v1.5.0
-  [2913bbd2] StatsBase v0.33.21
-  [4c63d2b9] StatsFuns v1.1.1
-  [7792a7ef] StrideArraysCore v0.4.4
-  [69024149] StringEncodings v0.3.5
-  [d1185830] SymbolicUtils v0.19.11
-  [0c5d862f] Symbolics v4.13.0
+  [a2af1166] SortingAlgorithms v1.1.1
+  [47a9eef4] SparseDiffTools v2.4.1
+  [e56a9233] Sparspak v0.3.9
+  [276daf66] SpecialFunctions v2.3.0
+  [aedffcd0] Static v0.8.8
+  [0d7ed370] StaticArrayInterface v1.4.0
+  [90137ffa] StaticArrays v1.6.2
+  [1e83bf80] StaticArraysCore v1.4.2
+  [82ae8749] StatsAPI v1.6.0
+  [2913bbd2] StatsBase v0.34.0
+  [4c63d2b9] StatsFuns v1.3.0
+  [7792a7ef] StrideArraysCore v0.4.17
+  [69024149] StringEncodings v0.3.7
+  [2efcf032] SymbolicIndexingInterface v0.2.2
+  [d1185830] SymbolicUtils v1.2.0
+  [0c5d862f] Symbolics v5.5.1
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.10.0
-  [92b13dbe] TaylorIntegration v0.10.0
-  [6aa5eb33] TaylorSeries v0.12.2
+  [bd369af6] Tables v1.10.1
+  [92b13dbe] TaylorIntegration v0.14.2
+  [6aa5eb33] TaylorSeries v0.15.2
   [62fd8b95] TensorCore v0.1.1
-⌅ [8ea1fca8] TermInterface v0.2.3
-  [8290d209] ThreadingUtilities v0.5.0
-  [ac1d9e8a] ThreadsX v0.1.11
-  [a759f4b9] TimerOutputs v0.5.22
-  [0796e94c] Tokenize v0.5.24
-  [3bb67fe8] TranscodingStreams v0.9.10
-  [28d57a85] Transducers v0.4.75
+  [5d786b92] TerminalLoggers v0.1.7
+  [8290d209] ThreadingUtilities v0.5.2
+  [a759f4b9] TimerOutputs v0.5.23
+  [0796e94c] Tokenize v0.5.25
+  [3bb67fe8] TranscodingStreams v0.9.13
   [a2a6695c] TreeViews v0.3.0
-  [d5829a12] TriangularSolve v0.1.15
-  [410a4b4d] Tricks v0.1.6
-  [5c2747f8] URIs v1.4.1
+  [d5829a12] TriangularSolve v0.1.19
+  [410a4b4d] Tricks v0.1.7
+  [781d530d] TruncatedStacktraces v1.4.0
+  [5c2747f8] URIs v1.4.2
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.12.2
+  [1986cc42] Unitful v1.16.0
+  [45397f5d] UnitfulLatexify v1.6.3
+  [a7c27f48] Unityper v0.1.5
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.56
+  [3d5dd08c] VectorizationBase v0.21.64
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
-⌃ [44d3d7a6] Weave v0.10.9
-  [ddb6d928] YAML v0.4.8
+  [44d3d7a6] Weave v0.10.12
+  [ddb6d928] YAML v0.4.9
   [c2297ded] ZMQ v1.2.2
-  [700de1a5] ZygoteRules v0.2.2
+  [700de1a5] ZygoteRules v0.2.3
   [6e34b625] Bzip2_jll v1.0.8+0
   [83423d85] Cairo_jll v1.16.1+1
-  [2e619515] Expat_jll v2.4.8+0
-  [b22a6f82] FFMPEG_jll v4.4.2+2
+  [2e619515] Expat_jll v2.5.0+0
+⌃ [b22a6f82] FFMPEG_jll v4.4.2+2
   [a3f928ae] Fontconfig_jll v2.13.93+0
-  [d7e528f0] FreeType2_jll v2.10.4+0
+  [d7e528f0] FreeType2_jll v2.13.1+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.71.1+0
+  [d2c73de3] GR_jll v0.72.9+0
   [78b55507] Gettext_jll v0.21.0+0
-  [f8c6e375] Git_jll v2.34.1+0
-  [7746bdde] Glib_jll v2.74.0+1
+  [f8c6e375] Git_jll v2.36.1+2
+  [7746bdde] Glib_jll v2.74.0+2
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
-  [aacddb02] JpegTurbo_jll v2.1.2+0
+  [aacddb02] JpegTurbo_jll v2.1.91+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [88015f11] LERC_jll v3.0.0+1
+  [1d63c593] LLVMOpenMP_jll v15.0.4+0
   [dd4b983a] LZO_jll v2.10.1+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
   [d4300ac3] Libgcrypt_jll v1.8.7+0
   [7e76a0d4] Libglvnd_jll v1.6.0+0
   [7add5ba3] Libgpg_error_jll v1.42.0+0
-  [94ce4f54] Libiconv_jll v1.16.1+1
+  [94ce4f54] Libiconv_jll v1.16.1+2
   [4b2f31a3] Libmount_jll v2.35.0+0
-  [89763e89] Libtiff_jll v4.4.0+0
+  [89763e89] Libtiff_jll v4.5.1+1
   [38a345b3] Libuuid_jll v2.36.0+0
   [e7412a2a] Ogg_jll v1.3.5+1
-  [458c3c95] OpenSSL_jll v1.1.19+0
+⌅ [458c3c95] OpenSSL_jll v1.1.21+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
-  [30392449] Pixman_jll v0.40.1+0
-  [ea2cea3b] Qt5Base_jll v5.15.3+2
-  [f50d1b31] Rmath_jll v0.3.0+0
-  [a2964d1f] Wayland_jll v1.19.0+0
+  [30392449] Pixman_jll v0.42.2+0
+  [c0090381] Qt6Base_jll v6.4.2+3
+  [f50d1b31] Rmath_jll v0.4.0+0
+  [a2964d1f] Wayland_jll v1.21.0+0
   [2381bf8a] Wayland_protocols_jll v1.25.0+0
-  [02c8fc9c] XML2_jll v2.9.14+0
+  [02c8fc9c] XML2_jll v2.10.3+0
   [aed1982a] XSLT_jll v1.1.34+0
-  [4f6342f7] Xorg_libX11_jll v1.6.9+4
-  [0c0b7dd1] Xorg_libXau_jll v1.0.9+4
+  [ffd25f8a] XZ_jll v5.4.3+1
+  [4f6342f7] Xorg_libX11_jll v1.8.6+0
+  [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
   [935fb764] Xorg_libXcursor_jll v1.2.0+4
-  [a3789734] Xorg_libXdmcp_jll v1.1.3+4
+  [a3789734] Xorg_libXdmcp_jll v1.1.4+0
   [1082639a] Xorg_libXext_jll v1.3.4+4
   [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
   [a51aa0fd] Xorg_libXi_jll v1.7.10+4
   [d1454406] Xorg_libXinerama_jll v1.1.4+4
   [ec84b674] Xorg_libXrandr_jll v1.5.2+4
   [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
-  [14d82f49] Xorg_libpthread_stubs_jll v0.1.0+3
-  [c7cfdc94] Xorg_libxcb_jll v1.13.0+3
-  [cc61e674] Xorg_libxkbfile_jll v1.1.0+4
+  [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
+  [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
+  [cc61e674] Xorg_libxkbfile_jll v1.1.2+0
   [12413925] Xorg_xcb_util_image_jll v0.4.0+1
   [2def613f] Xorg_xcb_util_jll v0.4.0+1
   [975044d2] Xorg_xcb_util_keysyms_jll v0.4.0+1
   [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.9+1
   [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.1+1
-  [35661453] Xorg_xkbcomp_jll v1.4.2+4
-  [33bec58e] Xorg_xkeyboard_config_jll v2.27.0+4
-  [c5fb5394] Xorg_xtrans_jll v1.4.0+3
+  [35661453] Xorg_xkbcomp_jll v1.4.6+0
+  [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
+  [c5fb5394] Xorg_xtrans_jll v1.5.0+0
   [8f1865be] ZeroMQ_jll v4.3.4+0
-  [3161d3a3] Zstd_jll v1.5.2+0
+  [3161d3a3] Zstd_jll v1.5.5+0
 ⌅ [214eeab7] fzf_jll v0.29.0+0
   [a4ae2306] libaom_jll v3.4.0+0
   [0ac62f75] libass_jll v0.15.1+0
@@ -774,7 +775,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [56f22d72] Artifacts
   [2a0f44e3] Base64
   [ade2ca70] Dates
-  [8bb1440f] DelimitedFiles
   [8ba89e20] Distributed
   [f43a241f] Downloads v1.6.0
   [7b1f6079] FileWatching
@@ -788,8 +788,9 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d6f4376e] Markdown
   [a63ad114] Mmap
   [ca575930] NetworkOptions v1.2.0
-  [44cfe95a] Pkg v1.8.0
+  [44cfe95a] Pkg v1.9.0
   [de0858da] Printf
+  [9abbd945] Profile
   [3fa0cd96] REPL
   [9a3f8284] Random
   [ea8e919c] SHA v0.7.0
@@ -797,24 +798,24 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [1a1011a3] SharedArrays
   [6462fe0b] Sockets
   [2f01184e] SparseArrays
-  [10745b16] Statistics
+  [10745b16] Statistics v1.9.0
   [4607b0f0] SuiteSparse
-  [fa267f1f] TOML v1.0.0
-  [a4e569a6] Tar v1.10.1
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v0.5.2+0
+  [e66e0078] CompilerSupportLibraries_jll v1.0.2+0
   [deac9b47] LibCURL_jll v7.84.0+0
   [29816b5a] LibSSH2_jll v1.10.2+0
-  [c8ffd9c3] MbedTLS_jll v2.28.0+0
-  [14a3606d] MozillaCACerts_jll v2022.2.1
-  [4536629a] OpenBLAS_jll v0.3.20+0
+  [c8ffd9c3] MbedTLS_jll v2.28.2+0
+  [14a3606d] MozillaCACerts_jll v2022.10.11
+  [4536629a] OpenBLAS_jll v0.3.21+4
   [05823500] OpenLibm_jll v0.8.1+0
-  [efcefdf7] PCRE2_jll v10.40.0+0
-  [bea87d4a] SuiteSparse_jll v5.10.1+0
-  [83775a58] Zlib_jll v1.2.12+3
-  [8e850b90] libblastrampoline_jll v5.1.1+0
+  [efcefdf7] PCRE2_jll v10.42.0+0
+  [bea87d4a] SuiteSparse_jll v5.10.1+6
+  [83775a58] Zlib_jll v1.2.13+0
+  [8e850b90] libblastrampoline_jll v5.8.0+0
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
