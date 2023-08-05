@@ -7,7 +7,7 @@ Threads.nthreads()
 
 
 using Plots
-plot(rand(10,10))
+plot(rand(20,20))
 
 
 using SciMLBenchmarks
