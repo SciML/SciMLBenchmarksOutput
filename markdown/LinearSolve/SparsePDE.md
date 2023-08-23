@@ -40,6 +40,7 @@ end
 algs = [
     UMFPACKFactorization(),
     KLUFactorization(),
+    MKLPardisoFactorize(),
     SparspakFactorization(),
 ]
 cols = [:red, :blue, :green, :magenta, :turqoise] # one color per alg
