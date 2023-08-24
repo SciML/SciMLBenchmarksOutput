@@ -99,3 +99,7 @@ run_and_plot(2)
 
 run_and_plot(3)
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+
