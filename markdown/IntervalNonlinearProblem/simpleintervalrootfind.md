@@ -29,7 +29,7 @@ end
 ```
 
 ```
-262.663 ms (998979 allocations: 30.50 MiB)
+261.186 ms (998979 allocations: 30.50 MiB)
 ```
 
 
@@ -64,9 +64,9 @@ end
 ```
 
 ```
-99.377 ms (798979 allocations: 24.40 MiB)
-  152.771 ms (798979 allocations: 22.87 MiB)
-  51.863 ms (898979 allocations: 25.92 MiB)
+100.216 ms (798979 allocations: 24.40 MiB)
+  152.507 ms (798979 allocations: 22.87 MiB)
+  52.576 ms (898979 allocations: 25.92 MiB)
 ```
 
 
