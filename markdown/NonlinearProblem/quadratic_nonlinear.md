@@ -36,7 +36,7 @@ u0: 2-element Vector{Float64}:
 ```
 
 ```
-127.204 ns (3 allocations: 288 bytes)
+130.360 ns (3 allocations: 288 bytes)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135623746899
  1.4142135623746899
@@ -49,7 +49,7 @@ u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
 ```
 
 ```
-1.025 μs (30 allocations: 1.53 KiB)
+1.001 μs (30 allocations: 1.53 KiB)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135625402792
  1.4142135625402792
@@ -63,7 +63,7 @@ using SimpleNonlinearSolve
 ```
 
 ```
-119.394 ns (1 allocation: 80 bytes)
+121.579 ns (1 allocation: 80 bytes)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135623730951
  1.4142135623730951
@@ -76,7 +76,7 @@ u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
 ```
 
 ```
-42.479 μs (171 allocations: 7.84 KiB)
+43.109 μs (171 allocations: 7.84 KiB)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135623730951
  1.4142135623730951
@@ -89,7 +89,7 @@ u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
 ```
 
 ```
-1.059 μs (22 allocations: 1.28 KiB)
+995.000 ns (22 allocations: 1.28 KiB)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.41421356237305
  1.41421356237305
@@ -102,7 +102,7 @@ u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
 ```
 
 ```
-308.070 ns (1 allocation: 144 bytes)
+310.693 ns (1 allocation: 144 bytes)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135623730951
  1.4142135623730951
@@ -115,7 +115,7 @@ u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
 ```
 
 ```
-37.609 μs (285 allocations: 8.27 KiB)
+37.589 μs (285 allocations: 8.27 KiB)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135620573204
  1.4142135620573204
@@ -128,7 +128,7 @@ u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
 ```
 
 ```
-734.445 ns (28 allocations: 800 bytes)
+856.017 ns (28 allocations: 800 bytes)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135620573204
  1.4142135620573204
@@ -141,7 +141,7 @@ u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
 ```
 
 ```
-6.980 μs (156 allocations: 9.83 KiB)
+7.293 μs (156 allocations: 9.83 KiB)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135623414493
  1.4142135623414493
@@ -158,7 +158,7 @@ u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
 ```
 
 ```
-4.927 μs (58 allocations: 3.94 KiB)
+4.992 μs (58 allocations: 3.94 KiB)
 u: 2-element Vector{Float64}:
  1.4142135623746899
  1.4142135623746899
@@ -171,7 +171,7 @@ u: 2-element Vector{Float64}:
 ```
 
 ```
-8.377 μs (104 allocations: 7.78 KiB)
+8.380 μs (104 allocations: 7.78 KiB)
 u: 2-element Vector{Float64}:
  1.4142135625402792
  1.4142135625402792
@@ -185,32 +185,10 @@ using NonlinearSolveMINPACK
 ```
 
 ```
-Error: MethodError: kwcall(::NamedTuple{(:reltol,), Tuple{Float64}}, ::type
-of(CommonSolve.solve), ::SciMLBase.NonlinearProblem{Vector{Float64}, true, 
-Float64, SciMLBase.NonlinearFunction{true, SciMLBase.FullSpecialize, typeof
-(Main.var"##WeaveSandBox#292".iip_f), LinearAlgebra.UniformScaling{Bool}, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
-ing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME),
- Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tup
-le{}}}, SciMLBase.StandardNonlinearProblem}, ::NonlinearSolveMINPACK.CMINPA
-CK) is ambiguous.
-
-Candidates:
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.AbstractNonlin
-earProblem{uType, isinplace}, alg::NonlinearSolveMINPACK.CMINPACK) where {u
-Type, isinplace}
-    @ NonlinearSolveMINPACK /cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/packages/NonlinearSolveMINPACK/CVwEo/src/solve.j
-l:1
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.NonlinearProbl
-em, args...)
-    @ DiffEqBase /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae
-0a-f4d2d937f953/packages/DiffEqBase/rVTlI/src/solve.jl:929
-
-Possible fix, define
-  kwcall(::Any, ::typeof(CommonSolve.solve), ::SciMLBase.NonlinearProblem{u
-Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
-}
+9.980 μs (77 allocations: 3.67 KiB)
+u: 2-element Vector{Float64}:
+ 1.4142135623730947
+ 1.4142135623730947
 ```
 
 
@@ -220,32 +198,10 @@ Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
 ```
 
 ```
-Error: MethodError: kwcall(::NamedTuple{(:reltol,), Tuple{Float64}}, ::type
-of(CommonSolve.solve), ::SciMLBase.NonlinearProblem{Vector{Float64}, true, 
-Float64, SciMLBase.NonlinearFunction{true, SciMLBase.FullSpecialize, typeof
-(Main.var"##WeaveSandBox#292".iip_f), LinearAlgebra.UniformScaling{Bool}, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
-ing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME),
- Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tup
-le{}}}, SciMLBase.StandardNonlinearProblem}, ::NonlinearSolveMINPACK.CMINPA
-CK) is ambiguous.
-
-Candidates:
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.AbstractNonlin
-earProblem{uType, isinplace}, alg::NonlinearSolveMINPACK.CMINPACK) where {u
-Type, isinplace}
-    @ NonlinearSolveMINPACK /cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/packages/NonlinearSolveMINPACK/CVwEo/src/solve.j
-l:1
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.NonlinearProbl
-em, args...)
-    @ DiffEqBase /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae
-0a-f4d2d937f953/packages/DiffEqBase/rVTlI/src/solve.jl:929
-
-Possible fix, define
-  kwcall(::Any, ::typeof(CommonSolve.solve), ::SciMLBase.NonlinearProblem{u
-Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
-}
+12.590 μs (107 allocations: 4.91 KiB)
+u: 2-element Vector{Float64}:
+ 6.95271920909776e-310
+ 6.9297154521806e-310
 ```
 
 
@@ -255,32 +211,22 @@ Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
 ```
 
 ```
-Error: MethodError: kwcall(::NamedTuple{(:reltol,), Tuple{Float64}}, ::type
-of(CommonSolve.solve), ::SciMLBase.NonlinearProblem{Vector{Float64}, true, 
-Float64, SciMLBase.NonlinearFunction{true, SciMLBase.FullSpecialize, typeof
-(Main.var"##WeaveSandBox#292".iip_f), LinearAlgebra.UniformScaling{Bool}, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
-ing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME),
- Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tup
-le{}}}, SciMLBase.StandardNonlinearProblem}, ::NonlinearSolveMINPACK.CMINPA
-CK) is ambiguous.
+Error: MethodError: no method matching lmdif(::NonlinearSolveMINPACK.var"#6
+#16"{SciMLBase.NonlinearProblem{Vector{Float64}, true, Float64, SciMLBase.N
+onlinearFunction{true, SciMLBase.FullSpecialize, typeof(Main.var"##WeaveSan
+dBox#292".iip_f), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
+g, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing}, 
+Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.St
+andardNonlinearProblem}, Float64}, ::Vector{Float64}, ::Int64, ::Float64, :
+:Bool, ::Bool, ::Int64; io::Base.PipeEndpoint, reltol::Float64)
 
-Candidates:
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.AbstractNonlin
-earProblem{uType, isinplace}, alg::NonlinearSolveMINPACK.CMINPACK) where {u
-Type, isinplace}
-    @ NonlinearSolveMINPACK /cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/packages/NonlinearSolveMINPACK/CVwEo/src/solve.j
-l:1
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.NonlinearProbl
-em, args...)
-    @ DiffEqBase /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae
-0a-f4d2d937f953/packages/DiffEqBase/rVTlI/src/solve.jl:929
-
-Possible fix, define
-  kwcall(::Any, ::typeof(CommonSolve.solve), ::SciMLBase.NonlinearProblem{u
-Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
-}
+Closest candidates are:
+  lmdif(::Function, ::Vector{Float64}, ::Int64, ::Float64, ::Bool, ::Bool, 
+::Int64; _n, gtol, ftol, xtol, epsfcn, mode, nprint, maxfev, factor, ldfjac
+) got unsupported keyword arguments "io", "reltol"
+   @ MINPACK /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f
+4d2d937f953/packages/MINPACK/8wsGn/src/wrappers.jl:346
 ```
 
 
@@ -290,32 +236,7 @@ Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
 ```
 
 ```
-Error: MethodError: kwcall(::NamedTuple{(:reltol,), Tuple{Float64}}, ::type
-of(CommonSolve.solve), ::SciMLBase.NonlinearProblem{Vector{Float64}, true, 
-Float64, SciMLBase.NonlinearFunction{true, SciMLBase.FullSpecialize, typeof
-(Main.var"##WeaveSandBox#292".iip_f), LinearAlgebra.UniformScaling{Bool}, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
-ing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME),
- Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tup
-le{}}}, SciMLBase.StandardNonlinearProblem}, ::NonlinearSolveMINPACK.CMINPA
-CK) is ambiguous.
-
-Candidates:
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.AbstractNonlin
-earProblem{uType, isinplace}, alg::NonlinearSolveMINPACK.CMINPACK) where {u
-Type, isinplace}
-    @ NonlinearSolveMINPACK /cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/packages/NonlinearSolveMINPACK/CVwEo/src/solve.j
-l:1
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.NonlinearProbl
-em, args...)
-    @ DiffEqBase /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae
-0a-f4d2d937f953/packages/DiffEqBase/rVTlI/src/solve.jl:929
-
-Possible fix, define
-  kwcall(::Any, ::typeof(CommonSolve.solve), ::SciMLBase.NonlinearProblem{u
-Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
-}
+Error: unknown method hybrid
 ```
 
 
@@ -326,7 +247,7 @@ using SciMLNLSolve
 ```
 
 ```
-4.901 μs (66 allocations: 5.06 KiB)
+4.824 μs (66 allocations: 5.06 KiB)
 u: 2-element Vector{Float64}:
  1.4142135623746899
  1.4142135623746899
@@ -339,7 +260,7 @@ u: 2-element Vector{Float64}:
 ```
 
 ```
-3.777 μs (59 allocations: 4.34 KiB)
+3.967 μs (59 allocations: 4.34 KiB)
 u: 2-element Vector{Float64}:
  1.4142135623746899
  1.4142135623746899
@@ -353,7 +274,7 @@ using Sundials
 ```
 
 ```
-6.586 μs (86 allocations: 3.25 KiB)
+6.584 μs (86 allocations: 3.25 KiB)
 u: 2-element Vector{Float64}:
  1.4142135627530885
  1.4142135627530885
@@ -394,28 +315,30 @@ Platform Info:
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+  JULIA_IMAGE_THREADS = 1
 
 ```
 
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
   [8913a72c] NonlinearSolve v1.9.0
-  [c100e077] NonlinearSolveMINPACK v0.1.2
+  [c100e077] NonlinearSolveMINPACK v0.1.3
   [91a5bcdd] Plots v1.38.17
   [31c91b34] SciMLBenchmarks v0.1.3 `../..`
   [e9a6253c] SciMLNLSolve v0.1.8
   [727e6d20] SimpleNonlinearSolve v0.1.19
   [90137ffa] StaticArrays v1.6.2
   [c3572dad] Sundials v4.19.3
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
 ⌅ [47edcb42] ADTypes v0.1.6
   [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
@@ -501,7 +424,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
   [8913a72c] NonlinearSolve v1.9.0
-  [c100e077] NonlinearSolveMINPACK v0.1.2
+  [c100e077] NonlinearSolveMINPACK v0.1.3
   [6fe1bfb0] OffsetArrays v1.12.10
   [4d8831e6] OpenSSL v1.4.1
   [bac558e1] OrderedCollections v1.6.2
@@ -694,5 +617,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
