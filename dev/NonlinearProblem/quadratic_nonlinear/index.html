@@ -10,150 +10,71 @@ iip_f(du, u, p) = (du .= u .* u .- p)
 prob = NonlinearProblem(iip_f, Vector(u0), p)</code></pre><pre><code class="nohighlight hljs">NonlinearProblem with uType Vector{Float64}. In-place: true
 u0: 2-element Vector{Float64}:
  1.0
- 1.0</code></pre><h2 id="Static-Array-Versions"><a class="docs-heading-anchor" href="#Static-Array-Versions">Static Array Versions</a><a id="Static-Array-Versions-1"></a><a class="docs-heading-anchor-permalink" href="#Static-Array-Versions" title="Permalink"></a></h2><pre><code class="language-julia hljs">@btime sol = solve(static_prob, NewtonRaphson(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">127.204 ns (3 allocations: 288 bytes)
+ 1.0</code></pre><h2 id="Static-Array-Versions"><a class="docs-heading-anchor" href="#Static-Array-Versions">Static Array Versions</a><a id="Static-Array-Versions-1"></a><a class="docs-heading-anchor-permalink" href="#Static-Array-Versions" title="Permalink"></a></h2><pre><code class="language-julia hljs">@btime sol = solve(static_prob, NewtonRaphson(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">130.360 ns (3 allocations: 288 bytes)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135623746899
- 1.4142135623746899</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, TrustRegion(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">1.025 μs (30 allocations: 1.53 KiB)
+ 1.4142135623746899</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, TrustRegion(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">1.001 μs (30 allocations: 1.53 KiB)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135625402792
  1.4142135625402792</code></pre><pre><code class="language-julia hljs">using SimpleNonlinearSolve
-@btime sol = solve(static_prob, SimpleNewtonRaphson(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">119.394 ns (1 allocation: 80 bytes)
+@btime sol = solve(static_prob, SimpleNewtonRaphson(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">121.579 ns (1 allocation: 80 bytes)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135623730951
- 1.4142135623730951</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, Halley(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">42.479 μs (171 allocations: 7.84 KiB)
+ 1.4142135623730951</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, Halley(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">43.109 μs (171 allocations: 7.84 KiB)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135623730951
- 1.4142135623730951</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, Klement(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">1.059 μs (22 allocations: 1.28 KiB)
+ 1.4142135623730951</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, Klement(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">995.000 ns (22 allocations: 1.28 KiB)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.41421356237305
- 1.41421356237305</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, SimpleTrustRegion(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">308.070 ns (1 allocation: 144 bytes)
+ 1.41421356237305</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, SimpleTrustRegion(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">310.693 ns (1 allocation: 144 bytes)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135623730951
- 1.4142135623730951</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, SimpleDFSane(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">37.609 μs (285 allocations: 8.27 KiB)
+ 1.4142135623730951</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, SimpleDFSane(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">37.589 μs (285 allocations: 8.27 KiB)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135620573204
- 1.4142135620573204</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, Broyden(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">734.445 ns (28 allocations: 800 bytes)
+ 1.4142135620573204</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, Broyden(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">856.017 ns (28 allocations: 800 bytes)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135620573204
- 1.4142135620573204</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, LBroyden(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">6.980 μs (156 allocations: 9.83 KiB)
+ 1.4142135620573204</code></pre><pre><code class="language-julia hljs">@btime sol = solve(static_prob, LBroyden(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">7.293 μs (156 allocations: 9.83 KiB)
 u: 2-element StaticArraysCore.SVector{2, Float64} with indices SOneTo(2):
  1.4142135623414493
- 1.4142135623414493</code></pre><h2 id="Standard-Array-In-Place-Versions"><a class="docs-heading-anchor" href="#Standard-Array-In-Place-Versions">Standard Array In-Place Versions</a><a id="Standard-Array-In-Place-Versions-1"></a><a class="docs-heading-anchor-permalink" href="#Standard-Array-In-Place-Versions" title="Permalink"></a></h2><pre><code class="language-julia hljs">@btime sol = solve(prob, NewtonRaphson(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">4.927 μs (58 allocations: 3.94 KiB)
+ 1.4142135623414493</code></pre><h2 id="Standard-Array-In-Place-Versions"><a class="docs-heading-anchor" href="#Standard-Array-In-Place-Versions">Standard Array In-Place Versions</a><a id="Standard-Array-In-Place-Versions-1"></a><a class="docs-heading-anchor-permalink" href="#Standard-Array-In-Place-Versions" title="Permalink"></a></h2><pre><code class="language-julia hljs">@btime sol = solve(prob, NewtonRaphson(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">4.992 μs (58 allocations: 3.94 KiB)
 u: 2-element Vector{Float64}:
  1.4142135623746899
- 1.4142135623746899</code></pre><pre><code class="language-julia hljs">@btime sol = solve(prob, TrustRegion(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">8.377 μs (104 allocations: 7.78 KiB)
+ 1.4142135623746899</code></pre><pre><code class="language-julia hljs">@btime sol = solve(prob, TrustRegion(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">8.380 μs (104 allocations: 7.78 KiB)
 u: 2-element Vector{Float64}:
  1.4142135625402792
  1.4142135625402792</code></pre><pre><code class="language-julia hljs">using NonlinearSolveMINPACK
-@btime sol = solve(prob, CMINPACK(method=:hybr), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">Error: MethodError: kwcall(::NamedTuple{(:reltol,), Tuple{Float64}}, ::type
-of(CommonSolve.solve), ::SciMLBase.NonlinearProblem{Vector{Float64}, true, 
-Float64, SciMLBase.NonlinearFunction{true, SciMLBase.FullSpecialize, typeof
-(Main.var&quot;##WeaveSandBox#292&quot;.iip_f), LinearAlgebra.UniformScaling{Bool}, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
-ing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME),
- Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tup
-le{}}}, SciMLBase.StandardNonlinearProblem}, ::NonlinearSolveMINPACK.CMINPA
-CK) is ambiguous.
+@btime sol = solve(prob, CMINPACK(method=:hybr), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">9.980 μs (77 allocations: 3.67 KiB)
+u: 2-element Vector{Float64}:
+ 1.4142135623730947
+ 1.4142135623730947</code></pre><pre><code class="language-julia hljs">@btime sol = solve(prob, CMINPACK(method=:lm), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">12.590 μs (107 allocations: 4.91 KiB)
+u: 2-element Vector{Float64}:
+ 6.95271920909776e-310
+ 6.9297154521806e-310</code></pre><pre><code class="language-julia hljs">@btime sol = solve(prob, CMINPACK(method=:lmdif), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">Error: MethodError: no method matching lmdif(::NonlinearSolveMINPACK.var&quot;#6
+#16&quot;{SciMLBase.NonlinearProblem{Vector{Float64}, true, Float64, SciMLBase.N
+onlinearFunction{true, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSan
+dBox#292&quot;.iip_f), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
+g, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing}, 
+Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.St
+andardNonlinearProblem}, Float64}, ::Vector{Float64}, ::Int64, ::Float64, :
+:Bool, ::Bool, ::Int64; io::Base.PipeEndpoint, reltol::Float64)
 
-Candidates:
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.AbstractNonlin
-earProblem{uType, isinplace}, alg::NonlinearSolveMINPACK.CMINPACK) where {u
-Type, isinplace}
-    @ NonlinearSolveMINPACK /cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/packages/NonlinearSolveMINPACK/CVwEo/src/solve.j
-l:1
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.NonlinearProbl
-em, args...)
-    @ DiffEqBase /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae
-0a-f4d2d937f953/packages/DiffEqBase/rVTlI/src/solve.jl:929
-
-Possible fix, define
-  kwcall(::Any, ::typeof(CommonSolve.solve), ::SciMLBase.NonlinearProblem{u
-Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
-}</code></pre><pre><code class="language-julia hljs">@btime sol = solve(prob, CMINPACK(method=:lm), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">Error: MethodError: kwcall(::NamedTuple{(:reltol,), Tuple{Float64}}, ::type
-of(CommonSolve.solve), ::SciMLBase.NonlinearProblem{Vector{Float64}, true, 
-Float64, SciMLBase.NonlinearFunction{true, SciMLBase.FullSpecialize, typeof
-(Main.var&quot;##WeaveSandBox#292&quot;.iip_f), LinearAlgebra.UniformScaling{Bool}, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
-ing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME),
- Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tup
-le{}}}, SciMLBase.StandardNonlinearProblem}, ::NonlinearSolveMINPACK.CMINPA
-CK) is ambiguous.
-
-Candidates:
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.AbstractNonlin
-earProblem{uType, isinplace}, alg::NonlinearSolveMINPACK.CMINPACK) where {u
-Type, isinplace}
-    @ NonlinearSolveMINPACK /cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/packages/NonlinearSolveMINPACK/CVwEo/src/solve.j
-l:1
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.NonlinearProbl
-em, args...)
-    @ DiffEqBase /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae
-0a-f4d2d937f953/packages/DiffEqBase/rVTlI/src/solve.jl:929
-
-Possible fix, define
-  kwcall(::Any, ::typeof(CommonSolve.solve), ::SciMLBase.NonlinearProblem{u
-Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
-}</code></pre><pre><code class="language-julia hljs">@btime sol = solve(prob, CMINPACK(method=:lmdif), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">Error: MethodError: kwcall(::NamedTuple{(:reltol,), Tuple{Float64}}, ::type
-of(CommonSolve.solve), ::SciMLBase.NonlinearProblem{Vector{Float64}, true, 
-Float64, SciMLBase.NonlinearFunction{true, SciMLBase.FullSpecialize, typeof
-(Main.var&quot;##WeaveSandBox#292&quot;.iip_f), LinearAlgebra.UniformScaling{Bool}, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
-ing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME),
- Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tup
-le{}}}, SciMLBase.StandardNonlinearProblem}, ::NonlinearSolveMINPACK.CMINPA
-CK) is ambiguous.
-
-Candidates:
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.AbstractNonlin
-earProblem{uType, isinplace}, alg::NonlinearSolveMINPACK.CMINPACK) where {u
-Type, isinplace}
-    @ NonlinearSolveMINPACK /cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/packages/NonlinearSolveMINPACK/CVwEo/src/solve.j
-l:1
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.NonlinearProbl
-em, args...)
-    @ DiffEqBase /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae
-0a-f4d2d937f953/packages/DiffEqBase/rVTlI/src/solve.jl:929
-
-Possible fix, define
-  kwcall(::Any, ::typeof(CommonSolve.solve), ::SciMLBase.NonlinearProblem{u
-Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
-}</code></pre><pre><code class="language-julia hljs">@btime sol = solve(prob, CMINPACK(method=:hybrid), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">Error: MethodError: kwcall(::NamedTuple{(:reltol,), Tuple{Float64}}, ::type
-of(CommonSolve.solve), ::SciMLBase.NonlinearProblem{Vector{Float64}, true, 
-Float64, SciMLBase.NonlinearFunction{true, SciMLBase.FullSpecialize, typeof
-(Main.var&quot;##WeaveSandBox#292&quot;.iip_f), LinearAlgebra.UniformScaling{Bool}, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
-ing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME),
- Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tup
-le{}}}, SciMLBase.StandardNonlinearProblem}, ::NonlinearSolveMINPACK.CMINPA
-CK) is ambiguous.
-
-Candidates:
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.AbstractNonlin
-earProblem{uType, isinplace}, alg::NonlinearSolveMINPACK.CMINPACK) where {u
-Type, isinplace}
-    @ NonlinearSolveMINPACK /cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/packages/NonlinearSolveMINPACK/CVwEo/src/solve.j
-l:1
-  kwcall(::Any, ::typeof(CommonSolve.solve), prob::SciMLBase.NonlinearProbl
-em, args...)
-    @ DiffEqBase /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae
-0a-f4d2d937f953/packages/DiffEqBase/rVTlI/src/solve.jl:929
-
-Possible fix, define
-  kwcall(::Any, ::typeof(CommonSolve.solve), ::SciMLBase.NonlinearProblem{u
-Type, isinplace}, ::NonlinearSolveMINPACK.CMINPACK) where {uType, isinplace
-}</code></pre><pre><code class="language-julia hljs">using SciMLNLSolve
-@btime sol = solve(prob, NLSolveJL(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">4.901 μs (66 allocations: 5.06 KiB)
+Closest candidates are:
+  lmdif(::Function, ::Vector{Float64}, ::Int64, ::Float64, ::Bool, ::Bool, 
+::Int64; _n, gtol, ftol, xtol, epsfcn, mode, nprint, maxfev, factor, ldfjac
+) got unsupported keyword arguments &quot;io&quot;, &quot;reltol&quot;
+   @ MINPACK /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f
+4d2d937f953/packages/MINPACK/8wsGn/src/wrappers.jl:346</code></pre><pre><code class="language-julia hljs">@btime sol = solve(prob, CMINPACK(method=:hybrid), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">Error: unknown method hybrid</code></pre><pre><code class="language-julia hljs">using SciMLNLSolve
+@btime sol = solve(prob, NLSolveJL(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">4.824 μs (66 allocations: 5.06 KiB)
 u: 2-element Vector{Float64}:
  1.4142135623746899
- 1.4142135623746899</code></pre><pre><code class="language-julia hljs">@btime sol = solve(prob, NLSolveJL(method=:newton), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">3.777 μs (59 allocations: 4.34 KiB)
+ 1.4142135623746899</code></pre><pre><code class="language-julia hljs">@btime sol = solve(prob, NLSolveJL(method=:newton), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">3.967 μs (59 allocations: 4.34 KiB)
 u: 2-element Vector{Float64}:
  1.4142135623746899
  1.4142135623746899</code></pre><pre><code class="language-julia hljs">using Sundials
-@btime sol = solve(prob, KINSOL(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">6.586 μs (86 allocations: 3.25 KiB)
+@btime sol = solve(prob, KINSOL(), reltol = 1e-9)</code></pre><pre><code class="nohighlight hljs">6.584 μs (86 allocations: 3.25 KiB)
 u: 2-element Vector{Float64}:
  1.4142135627530885
  1.4142135627530885</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
@@ -171,16 +92,18 @@ Platform Info:
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+  JULIA_IMAGE_THREADS = 1
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
   [8913a72c] NonlinearSolve v1.9.0
-  [c100e077] NonlinearSolveMINPACK v0.1.2
+  [c100e077] NonlinearSolveMINPACK v0.1.3
   [91a5bcdd] Plots v1.38.17
   [31c91b34] SciMLBenchmarks v0.1.3 `../..`
   [e9a6253c] SciMLNLSolve v0.1.8
   [727e6d20] SimpleNonlinearSolve v0.1.19
   [90137ffa] StaticArrays v1.6.2
-  [c3572dad] Sundials v4.19.3</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+  [c3572dad] Sundials v4.19.3
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
 ⌅ [47edcb42] ADTypes v0.1.6
   [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
@@ -266,7 +189,7 @@ Environment:
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
   [8913a72c] NonlinearSolve v1.9.0
-  [c100e077] NonlinearSolveMINPACK v0.1.2
+  [c100e077] NonlinearSolveMINPACK v0.1.3
   [6fe1bfb0] OffsetArrays v1.12.10
   [4d8831e6] OpenSSL v1.4.1
   [bac558e1] OrderedCollections v1.6.2
@@ -458,4 +381,5 @@ Environment:
   [8e850b90] libblastrampoline_jll v5.8.0+0
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">« Wheldon, Kirk, and Finlay Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 25 August 2023 14:05">Friday 25 August 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">« Wheldon, Kirk, and Finlay Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 25 August 2023 14:57">Friday 25 August 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
