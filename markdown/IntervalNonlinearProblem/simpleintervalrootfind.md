@@ -29,7 +29,7 @@ end
 ```
 
 ```
-258.596 ms (998979 allocations: 30.50 MiB)
+262.663 ms (998979 allocations: 30.50 MiB)
 ```
 
 
@@ -64,9 +64,9 @@ end
 ```
 
 ```
-96.692 ms (798979 allocations: 24.40 MiB)
-  151.105 ms (798979 allocations: 22.87 MiB)
-  52.773 ms (898979 allocations: 25.92 MiB)
+99.377 ms (798979 allocations: 24.40 MiB)
+  152.771 ms (798979 allocations: 22.87 MiB)
+  51.863 ms (898979 allocations: 25.92 MiB)
 ```
 
 
@@ -92,8 +92,10 @@ SciMLBenchmarks.weave_file("benchmarks/IntervalNonlinearProblem","simpleinterval
 Computer Information:
 
 ```
-Julia Version 1.9.2
-Commit e4ee485e909 (2023-07-05 09:39 UTC)
+Julia Version 1.9.3
+Commit bed2cd540a1 (2023-08-24 14:43 UTC)
+Build Info:
+  Official https://julialang.org/ release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
   CPU: 128 × AMD EPYC 7502 32-Core Processor
@@ -111,18 +113,19 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/IntervalNonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/IntervalNonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
   [8913a72c] NonlinearSolve v1.9.0
   [91a5bcdd] Plots v1.38.17
   [f2b01f46] Roots v2.0.19
   [31c91b34] SciMLBenchmarks v0.1.3 `../..`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/IntervalNonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/IntervalNonlinearProblem/Manifest.toml`
 ⌅ [47edcb42] ADTypes v0.1.6
   [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
@@ -392,5 +395,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
