@@ -29,7 +29,7 @@ end
 ```
 
 ```
-261.186 ms (998979 allocations: 30.50 MiB)
+260.527 ms (998979 allocations: 30.50 MiB)
 ```
 
 
@@ -64,9 +64,9 @@ end
 ```
 
 ```
-100.216 ms (798979 allocations: 24.40 MiB)
-  152.507 ms (798979 allocations: 22.87 MiB)
-  52.576 ms (898979 allocations: 25.92 MiB)
+97.386 ms (798979 allocations: 24.40 MiB)
+  151.777 ms (798979 allocations: 22.87 MiB)
+  51.624 ms (898979 allocations: 25.92 MiB)
 ```
 
 
@@ -113,7 +113,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/IntervalNonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/IntervalNonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
   [8913a72c] NonlinearSolve v1.9.0
   [91a5bcdd] Plots v1.38.17
@@ -125,7 +125,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/IntervalNonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/IntervalNonlinearProblem/Manifest.toml`
 ⌅ [47edcb42] ADTypes v0.1.6
   [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
