@@ -41,7 +41,7 @@ for (i,method) in enumerate(methods)
     end
 end
 push!(p, plot((1:4)', framestyle = :none, legend=:inside, labels=varlegs))
-plot(p..., layout=(5,2), format=fmt)
+plot(p..., layout=(6,2), format=fmt)
 
 
 function run_benchmark!(t, jump_prob, stepper)

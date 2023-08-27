@@ -7,6 +7,7 @@ micromolar_to_invcubicmicrometer(concen) = (6.02214076e2) * concen
 
 
 rn = @reaction_network begin
+    @parameters k₁ ka kd k₄
     k₁, EA --> EA + A
     k₁, EB --> EB + B
     (ka,kd), EA + B <--> EAB
@@ -15,7 +16,7 @@ rn = @reaction_network begin
     (ka,kd), EBA + A <--> EBA₂
     k₄, A --> ∅
     k₄, B --> ∅
-end k₁ ka kd k₄
+end
 
 
 # domain_len is the physical length of each side of the cubic domain

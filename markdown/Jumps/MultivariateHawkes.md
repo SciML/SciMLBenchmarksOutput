@@ -14,27 +14,27 @@ width_px, height_px = default(:size);
 
 # Model and example solutions
 
-Let a graph with $V$ nodes, then the multivariate Hawkes process is characterized by $V$ point processes such that the conditional intensity rate of node $i$ connected to a set of nodes $E_i$ in the graph is given by:
-$$
+Let a graph with ``V`` nodes, then the multivariate Hawkes process is characterized by ``V`` point processes such that the conditional intensity rate of node ``i`` connected to a set of nodes ``E_i`` in the graph is given by:
+```math
   \lambda_i^\ast (t) = \lambda + \sum_{j \in E_i} \sum_{t_{n_j} < t} \alpha \exp \left[-\beta (t - t_{n_j}) \right]
-$$
-This process is known as self-exciting, because the occurence of an event $ j $ at $t_{n_j}$ will increase the conditional intensity of all the processes connected to it by $\alpha$. The excited intensity then decreases at a rate proportional to $\beta$.
+```
+This process is known as self-exciting, because the occurence of an event `` at ``t_{n_j}`` will increase the conditional intensity of all the processes connected to it by ``\alpha``. The excited intensity then decreases at a rate proportional to ``\beta``.
 
-The conditional intensity of this process has a recursive formulation which can significantly speed the simulation. The recursive formulation for the univariate case is derived in Laub et al. [2]. We derive the compound case here. Let $t_{N_i} = \max \{ t_{n_j} < t \mid j \in E_i \}$ and
-$$
+The conditional intensity of this process has a recursive formulation which can significantly speed the simulation. The recursive formulation for the univariate case is derived in Laub et al. [2]. We derive the compound case here. Let ``t_{N_i} = \max \{ t_{n_j} < t \mid j \in E_i \}`` and
+```math
 \begin{split}
   \phi_i^\ast (t)
     &= \sum_{j \in E_i} \sum_{t_{n_j} < t} \alpha \exp \left[-\beta (t - t_{N_i} + t_{N_i} - t_{n_j}) \right] \\
     &= \exp \left[ -\beta (t - t_{N_i}) \right] \sum_{j \in E_i} \sum_{t_{n_j} \leq t_{N_i}} \alpha \exp \left[-\beta (t_{N_i} - t_{n_j}) \right] \\
     &= \exp \left[ -\beta (t - t_{N_i}) \right] \left( \alpha + \phi^\ast (t_{N_i}) \right)
 \end{split}
-$$
-Then the conditional intensity can be re-written in terms of $\phi_i^\ast (t_{N_i})$
-$$
+```
+Then the conditional intensity can be re-written in terms of ``\phi_i^\ast (t_{N_i})``
+```math
   \lambda_i^\ast (t) = \lambda + \phi_i^\ast (t) = \lambda + \exp \left[ -\beta (t - t_{N_i}) \right] \left( \alpha + \phi_i^\ast (t_{N_i}) \right)
-$$
+```
 
-In Julia, we define a factory for the conditional intensity $\lambda_i$ which returns the brute-force or recursive versions of the intensity given node $i$ and network $g$.
+In Julia, we define a factory for the conditional intensity ``\lambda_i`` which returns the brute-force or recursive versions of the intensity given node ``i`` and network ``g``.
 
 ```julia
 function hawkes_rate(i::Int, g; use_recursion = false)
@@ -84,7 +84,7 @@ Given the rate factory, we can create a jump factory which will create all the j
 function hawkes_jump(i::Int, g; use_recursion = false)
     rate = hawkes_rate(i, g; use_recursion)
     urate = rate
-    @inbounds rateinterval(u, p, t) = p[5][i] == p[1] ? typemax(t) : 1 / (2*p[5][i])
+    @inbounds rateinterval(u, p, t) = p[5][i] == p[1] ? typemax(t) : 2 / p[5][i]
     @inbounds lrate(u, p, t) = p[1]
     @inbounds function affect_recursion!(integrator)
         λ, α, β, h, _, ϕ  = integrator.p
@@ -182,7 +182,7 @@ hawkes_problem (generic function with 2 methods)
 
 
 
-Lets solve the problems defined so far. We sample a random graph sampled from the Erdős-Rényi model. This model assumes that the probability of an edge between two nodes is independent of other edges, which we fix at $0.2$. For illustration purposes, we fix $V = 10$.
+Lets solve the problems defined so far. We sample a random graph sampled from the Erdős-Rényi model. This model assumes that the probability of an edge between two nodes is independent of other edges, which we fix at ``0.2``. For illustration purposes, we fix ``V = 10``.
 
 ```julia
 V = 10
@@ -208,7 +208,7 @@ g = [neighbors(G, i) for i = 1:nv(G)]
 
 
 
-We fix the Hawkes parameters at $\lambda = 0.5 , \alpha = 0.1 , \beta = 2.0$ which ensures the process does not explode.
+We fix the Hawkes parameters at ``\lambda = 0.5 , \alpha = 0.1 , \beta = 2.0`` which ensures the process does not explode.
 
 ```julia
 tspan = (0.0, 50.0)
@@ -237,6 +237,7 @@ algorithms = Tuple{Any, Any, Bool, String}[
 
 let fig = []
   for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms)
+    @info label
     if use_recursion
         h = zeros(eltype(tspan), nv(G))
         urate = zeros(eltype(tspan), nv(G))
@@ -251,7 +252,7 @@ let fig = []
     sol = solve(jump_prob, stepper)
     push!(fig, plot(sol.t, sol[1:V, :]', title=label, legend=false, format=fmt))
   end
-  fig = plot(fig..., layout=(2,2), format=fmt)
+  fig = plot(fig..., layout=(2,2), format=fmt, size=(width_px, 2*height_px/2))
 end
 ```
 
@@ -263,17 +264,128 @@ end
 
 We benchmark `JumpProcesses.jl` against `PiecewiseDeterministicMarkovProcesses.jl` and Python `Tick` library. 
 
-In order to compare with the `PiecewiseDeterministicMarkovProcesses.jl`, we need to reformulate our jump problem as a Piecewise Deterministic Markov Process (PDMP). In this setting, we need to describe how the conditional intensity changes with time which we derive below:
-$$
+In order to compare with the `PiecewiseDeterministicMarkovProcesses.jl`, we need to reformulate our jump problem as a Piecewise Deterministic Markov Process (PDMP). In this setting, we have two options. 
+
+The simple version only requires the conditional intensity. Like above, we define a brute-force and recursive approach. Following the library's specification we define the following functions.
+
+```julia
+function hawkes_rate_simple_recursion(rate, xc, xd, p, t, issum::Bool)
+  λ, _, β, h, ϕ, g = p
+  for i in 1:length(g)
+    rate[i] = λ + exp(-β * (t - h[i])) * ϕ[i]
+  end
+  if issum
+    return sum(rate)
+  end
+  return 0.0
+end
+
+function hawkes_rate_simple_brute(rate, xc, xd, p, t, issum::Bool)
+  λ, α, β, h, g = p
+  for i in 1:length(g)
+    x = zero(typeof(t))
+    for j in g[i]
+        for _t in reverse(h[j])
+            ϕij = α * exp(-β * (t - _t))
+            if ϕij ≈ 0
+                break
+            end
+            x += ϕij
+        end
+    end
+    rate[i] = λ + x
+  end
+  if issum
+    return sum(rate)
+  end
+  return 0.0
+end
+
+function hawkes_affect_simple_recursion!(xc, xd, p, t, i::Int64)
+  _, α, β, h, ϕ, g = p
+  for j in g[i]
+      ϕ[j] *= exp(-β * (t - h[j]))
+      ϕ[j] += α
+      h[j] = t
+  end
+end
+
+function hawkes_affect_simple_brute!(xc, xd, p, t, i::Int64)
+  push!(p[4][i], t)
+end
+```
+
+```
+hawkes_affect_simple_brute! (generic function with 1 method)
+```
+
+
+
+
+
+Since this is a library for PDMP, we also need to define the ODE problem. In the simple version, we simply set it to zero.
+
+```julia
+function hawkes_drate_simple(dxc, xc, xd, p, t)
+    dxc .= 0
+end
+```
+
+```
+hawkes_drate_simple (generic function with 1 method)
+```
+
+
+
+
+
+Next, we create a factory for the Multivariate Hawkes `PDMPCHVSimple` problem.
+
+```julia
+import LinearAlgebra: I
+using PiecewiseDeterministicMarkovProcesses
+const PDMP = PiecewiseDeterministicMarkovProcesses
+
+struct PDMPCHVSimple end
+
+function hawkes_problem(p,
+                        agg::PDMPCHVSimple;
+                        u = [0.0],
+                        tspan = (0.0, 50.0),
+                        save_positions = (false, true),
+                        g = [[1]],
+                        use_recursion = true)
+    xd0 = Array{Int}(u)
+    xc0 = copy(u)
+    nu = one(eltype(xd0)) * I(length(xd0))
+    if use_recursion
+      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_recursion, 
+          hawkes_affect_simple_recursion!, nu, xc0, xd0, p, tspan)
+    else
+      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_brute, 
+          hawkes_affect_simple_brute!, nu, xc0, xd0, p, tspan)
+    end
+    return jprob
+end
+
+push!(algorithms, (PDMPCHVSimple(), CHV(Tsit5()), false, "PDMPCHVSimple (brute-force)"));
+push!(algorithms, (PDMPCHVSimple(), CHV(Tsit5()), true, "PDMPCHVSimple (recursive)"));
+```
+
+
+
+
+The full version requires that we describe how the conditional intensity changes with time which we derive below:
+```math
 \begin{split}
   \frac{d \lambda_i^\ast (t)}{d t}
     &= -\beta \sum_{j \in E_i} \sum_{t_{n_j} < t} \alpha \exp \left[-\beta (t - t_{n_j}) \right] \\
     &= -\beta \left( \lambda_i^\ast (t) - \lambda \right)
 \end{split}
-$$
+```
 
 ```julia
-function hawkes_drate(dxc, xc, xd, p, t)
+function hawkes_drate_full(dxc, xc, xd, p, t)
     λ, α, β, _, _, g = p
     for i = 1:length(g)
         dxc[i] = -β * (xc[i] - λ)
@@ -282,7 +394,7 @@ end
 ```
 
 ```
-hawkes_drate (generic function with 1 method)
+hawkes_drate_full (generic function with 1 method)
 ```
 
 
@@ -292,7 +404,7 @@ hawkes_drate (generic function with 1 method)
 Next, we need to define the intensity rate and the jumps according to library's specification.
 
 ```julia
-function hawkes_rate(rate, xc, xd, p, t, issum::Bool)
+function hawkes_rate_full(rate, xc, xd, p, t, issum::Bool)
     λ, α, β, _, _, g = p
     if issum
         return sum(@view(xc[1:length(g)]))
@@ -301,7 +413,7 @@ function hawkes_rate(rate, xc, xd, p, t, issum::Bool)
     return 0.0
 end
 
-function hawkes_affect!(xc, xd, p, t, i::Int64)
+function hawkes_affect_full!(xc, xd, p, t, i::Int64)
     λ, α, β, _, _, g = p
     for j in g[i]
         xc[i] += α
@@ -310,25 +422,21 @@ end
 ```
 
 ```
-hawkes_affect! (generic function with 1 method)
+hawkes_affect_full! (generic function with 1 method)
 ```
 
 
 
 
 
-Finally, we create a factory for the Multivariate Hawkes `PDMPCHV` problem.
+Finally, we create a factory for the Multivariate Hawkes `PDMPCHVFull` problem.
 
 ```julia
-import LinearAlgebra: I
-using PiecewiseDeterministicMarkovProcesses
-const PDMP = PiecewiseDeterministicMarkovProcesses
-
-struct PDMPCHV end
+struct PDMPCHVFull end
 
 function hawkes_problem(
     p,
-    agg::PDMPCHV;
+    agg::PDMPCHVFull;
     u = [0.0],
     tspan = (0.0, 50.0),
     save_positions = (false, true),
@@ -338,11 +446,11 @@ function hawkes_problem(
     xd0 = Array{Int}(u)
     xc0 = [p[1] for i = 1:length(u)]
     nu = one(eltype(xd0)) * I(length(xd0))
-    jprob = PDMPProblem(hawkes_drate, hawkes_rate, hawkes_affect!, nu, xc0, xd0, p, tspan)
+    jprob = PDMPProblem(hawkes_drate_full, hawkes_rate_full, hawkes_affect_full!, nu, xc0, xd0, p, tspan)
     return jprob
 end
 
-push!(algorithms, (PDMPCHV(), CHV(Tsit5()), true, "PDMPCHV"));
+push!(algorithms, (PDMPCHVFull(), CHV(Tsit5()), true, "PDMPCHVFull"));
 ```
 
 
@@ -351,8 +459,8 @@ push!(algorithms, (PDMPCHV(), CHV(Tsit5()), true, "PDMPCHV"));
 The Python `Tick` library can be accessed with the `PyCall.jl`. We install the required Python dependencies with `Conda.jl` and define a factory for the Multivariate Hawkes `PyTick` problem.
 
 ```julia
-const BENCHMARK_PYTHON = false
-const REBUILD_PYCALL = false
+const BENCHMARK_PYTHON::Bool = tryparse(Bool, get(ENV, "SCIMLBENCHMARK_PYTHON", "true"))
+const REBUILD_PYCALL::Bool = tryparse(Bool, get(ENV, "SCIMLBENCHMARK_REBUILD_PYCALL", "true"))
 
 struct PyTick end
 
@@ -360,19 +468,21 @@ if BENCHMARK_PYTHON
   if REBUILD_PYCALL
     using Pkg, Conda
 
-    # rebuild PyCall to ensure it links to the python provided by Conda.jl
-    ENV["PYTHON"] = ""
-    Pkg.build("PyCall")
-
     # PyCall only works with Conda.ROOTENV
     # tick requires python=3.8
     Conda.add("python=3.8", Conda.ROOTENV)
     Conda.add("numpy", Conda.ROOTENV)
     Conda.pip_interop(true, Conda.ROOTENV)
     Conda.pip("install", "tick", Conda.ROOTENV)
+
+    # rebuild PyCall to ensure it links to the python provided by Conda.jl
+    ENV["PYTHON"] = ""
+    Pkg.build("PyCall")
   end
 
+  ENV["PYTHON"] = ""
   using PyCall
+  @info "PyCall" PyCall.libpython PyCall.pyversion PyCall.conda
 
   function hawkes_problem(
       p,
@@ -400,6 +510,390 @@ if BENCHMARK_PYTHON
 end
 ```
 
+```
+Collecting package metadata (current_repodata.json): ...working... done
+Solving environment: ...working... failed with initial frozen solve. Retryi
+ng with flexible solve.
+Solving environment: ...working... failed with repodata from current_repoda
+ta.json, will retry with next repodata source.
+Collecting package metadata (repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /cache/julia-buildkite-plugin/depots/5b300254-1738-
+4989-ae0a-f4d2d937f953/conda/3/x86_64
+
+  added / updated specs:
+    - python=3.8
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    brotli-python-1.0.9        |   py38hfa26641_9         319 KB  conda-for
+ge
+    cffi-1.15.1                |   py38h4a40e3a_3         230 KB  conda-for
+ge
+    conda-23.3.1               |   py38h578d9bd_0         932 KB  conda-for
+ge
+    cryptography-41.0.3        |   py38hcdda232_0         1.8 MB  conda-for
+ge
+    libmambapy-1.4.2           |   py38h7fa060d_0         261 KB  conda-for
+ge
+    mamba-1.4.2                |   py38haad2881_0          49 KB  conda-for
+ge
+    numpy-1.24.4               |   py38h59b608b_0         6.4 MB  conda-for
+ge
+    pycosat-0.6.4              |   py38h0a891b7_1         108 KB  conda-for
+ge
+    python-3.8.17              |he550d4f_0_cpython        23.4 MB  conda-fo
+rge
+    python_abi-3.8             |           3_cp38           6 KB  conda-for
+ge
+    ruamel-1.0                 |   py38h578d9bd_7           5 KB  conda-for
+ge
+    ruamel.yaml-0.16.0         |   py38h516909a_1         172 KB  conda-for
+ge
+    zstandard-0.19.0           |   py38ha98ab4e_2         384 KB  conda-for
+ge
+    ------------------------------------------------------------
+                                           Total:        34.0 MB
+
+The following NEW packages will be INSTALLED:
+
+  ruamel             conda-forge/linux-64::ruamel-1.0-py38h578d9bd_7 
+
+The following packages will be REMOVED:
+
+  ruamel.yaml.clib-0.2.7-py310h1fa729e_1
+
+The following packages will be DOWNGRADED:
+
+  brotli-python                       1.0.9-py310hd8f1fbe_9 --> 1.0.9-py38h
+fa26641_9 
+  cffi                               1.15.1-py310h255011f_3 --> 1.15.1-py38
+h4a40e3a_3 
+  conda                              23.3.1-py310hff52083_0 --> 23.3.1-py38
+h578d9bd_0 
+  cryptography                       41.0.3-py310h75e40e8_0 --> 41.0.3-py38
+hcdda232_0 
+  libmambapy                          1.4.2-py310h1428755_0 --> 1.4.2-py38h
+7fa060d_0 
+  mamba                               1.4.2-py310h51d5547_0 --> 1.4.2-py38h
+aad2881_0 
+  numpy                              1.25.2-py310ha4c1d20_0 --> 1.24.4-py38
+h59b608b_0 
+  pycosat                             0.6.4-py310h5764c6d_1 --> 0.6.4-py38h
+0a891b7_1 
+  python                         3.10.12-hd12c33a_0_cpython --> 3.8.17-he55
+0d4f_0_cpython 
+  python_abi                                   3.10-3_cp310 --> 3.8-3_cp38 
+  ruamel.yaml                       0.17.32-py310h2372a71_0 --> 0.16.0-py38
+h516909a_1 
+  zstandard                          0.19.0-py310h1275a96_2 --> 0.19.0-py38
+ha98ab4e_2 
+
+
+Preparing transaction: ...working... done
+Verifying transaction: ...working... done
+Executing transaction: ...working... done
+Collecting package metadata (current_repodata.json): ...working... done
+Solving environment: ...working... done
+
+# All requested packages already installed.
+
+Collecting tick
+  Downloading tick-0.7.0.1-cp38-cp38-manylinux2014_x86_64.whl (10.8 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 34.3 MB/s eta 0:
+00:00
+Requirement already satisfied: numpy in /cache/julia-buildkite-plugin/depot
+s/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3.8/site-pa
+ckages (from tick) (1.24.4)
+Collecting scipy (from tick)
+  Downloading scipy-1.10.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x8
+6_64.whl (34.5 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.5/34.5 MB 86.8 MB/s eta 0:
+00:00
+Collecting numpydoc (from tick)
+  Downloading numpydoc-1.5.0-py3-none-any.whl (52 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 52.4/52.4 kB 31.2 MB/s eta 0:
+00:00
+Collecting matplotlib (from tick)
+  Obtaining dependency information for matplotlib from https://files.python
+hosted.org/packages/b4/c2/f74e0deb26379aead0956a6ecf9acd4587debba0c7abe4bd8
+fe53fe04ec2/matplotlib-3.7.2-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_
+x86_64.whl.metadata
+  Downloading matplotlib-3.7.2-cp38-cp38-manylinux_2_12_x86_64.manylinux201
+0_x86_64.whl.metadata (5.6 kB)
+Collecting sphinx (from tick)
+  Obtaining dependency information for sphinx from https://files.pythonhost
+ed.org/packages/48/17/325cf6a257d84751a48ae90752b3d8fe0be8f9535b6253add61c4
+9d0d9bc/sphinx-7.1.2-py3-none-any.whl.metadata
+  Downloading sphinx-7.1.2-py3-none-any.whl.metadata (5.8 kB)
+Collecting pandas (from tick)
+  Obtaining dependency information for pandas from https://files.pythonhost
+ed.org/packages/f8/7f/5b047effafbdd34e52c9e2d7e44f729a0655efafb22198c45cf69
+2cdc157/pandas-2.0.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.w
+hl.metadata
+  Downloading pandas-2.0.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x8
+6_64.whl.metadata (18 kB)
+Collecting dill (from tick)
+  Obtaining dependency information for dill from https://files.pythonhosted
+.org/packages/f5/3a/74a29b11cf2cdfcd6ba89c0cecd70b37cd1ba7b77978ce611eb7a14
+6a832/dill-0.3.7-py3-none-any.whl.metadata
+  Downloading dill-0.3.7-py3-none-any.whl.metadata (9.9 kB)
+Collecting scikit-learn (from tick)
+  Obtaining dependency information for scikit-learn from https://files.pyth
+onhosted.org/packages/bf/15/d1b649fc7685d11b806b4546a5438191fb2ad761de70da9
+5ff676189dcec/scikit_learn-1.3.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2
+014_x86_64.whl.metadata
+  Downloading scikit_learn-1.3.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2
+014_x86_64.whl.metadata (11 kB)
+Collecting contourpy>=1.0.1 (from matplotlib->tick)
+  Obtaining dependency information for contourpy>=1.0.1 from https://files.
+pythonhosted.org/packages/32/c8/aa9e87941002150b1a8e7087e48da1c76290268b9fd
+fa3034a98a5806198/contourpy-1.1.0-cp38-cp38-manylinux_2_17_x86_64.manylinux
+2014_x86_64.whl.metadata
+  Downloading contourpy-1.1.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014
+_x86_64.whl.metadata (5.7 kB)
+Collecting cycler>=0.10 (from matplotlib->tick)
+  Downloading cycler-0.11.0-py3-none-any.whl (6.4 kB)
+Collecting fonttools>=4.22.0 (from matplotlib->tick)
+  Obtaining dependency information for fonttools>=4.22.0 from https://files
+.pythonhosted.org/packages/91/f1/2379b341206a6e7e12f9d7c406ea03f0e0386eafa7
+913a47d8cc931cacf4/fonttools-4.42.1-cp38-cp38-manylinux_2_17_x86_64.manylin
+ux2014_x86_64.whl.metadata
+  Downloading fonttools-4.42.1-cp38-cp38-manylinux_2_17_x86_64.manylinux201
+4_x86_64.whl.metadata (150 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 151.0/151.0 kB 75.0 MB/s eta 0:
+00:00
+Collecting kiwisolver>=1.0.1 (from matplotlib->tick)
+  Obtaining dependency information for kiwisolver>=1.0.1 from https://files
+.pythonhosted.org/packages/d2/55/7021ffcc8cb26a520bb051aa0a3d08daf200cde945
+e5863d5768161e2d3d/kiwisolver-1.4.5-cp38-cp38-manylinux_2_5_x86_64.manylinu
+x1_x86_64.whl.metadata
+  Downloading kiwisolver-1.4.5-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x8
+6_64.whl.metadata (6.4 kB)
+Requirement already satisfied: packaging>=20.0 in /cache/julia-buildkite-pl
+ugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3
+.8/site-packages (from matplotlib->tick) (23.1)
+Collecting pillow>=6.2.0 (from matplotlib->tick)
+  Obtaining dependency information for pillow>=6.2.0 from https://files.pyt
+honhosted.org/packages/ff/8c/5927a58c43ebc16e508eef325fdc6473b569e2474d3b4b
+e49798aa371007/Pillow-10.0.0-cp38-cp38-manylinux_2_28_x86_64.whl.metadata
+  Downloading Pillow-10.0.0-cp38-cp38-manylinux_2_28_x86_64.whl.metadata (9
+.5 kB)
+Collecting pyparsing<3.1,>=2.3.1 (from matplotlib->tick)
+  Downloading pyparsing-3.0.9-py3-none-any.whl (98 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 98.3/98.3 kB 58.8 MB/s eta 0:
+00:00
+Collecting python-dateutil>=2.7 (from matplotlib->tick)
+  Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 kB 99.7 MB/s eta 0:
+00:00
+Collecting importlib-resources>=3.2.0 (from matplotlib->tick)
+  Obtaining dependency information for importlib-resources>=3.2.0 from http
+s://files.pythonhosted.org/packages/25/d4/592f53ce2f8dde8be5720851bd0ab71cc
+2e76c55978e4163ef1ab7e389bb/importlib_resources-6.0.1-py3-none-any.whl.meta
+data
+  Downloading importlib_resources-6.0.1-py3-none-any.whl.metadata (4.0 kB)
+Collecting Jinja2>=2.10 (from numpydoc->tick)
+  Downloading Jinja2-3.1.2-py3-none-any.whl (133 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.1/133.1 kB 72.6 MB/s eta 0:
+00:00
+Collecting sphinxcontrib-applehelp (from sphinx->tick)
+  Downloading sphinxcontrib_applehelp-1.0.4-py3-none-any.whl (120 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 120.6/120.6 kB 68.7 MB/s eta 0:
+00:00
+Collecting sphinxcontrib-devhelp (from sphinx->tick)
+  Downloading sphinxcontrib_devhelp-1.0.2-py2.py3-none-any.whl (84 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.7/84.7 kB 30.6 MB/s eta 0:
+00:00
+Collecting sphinxcontrib-jsmath (from sphinx->tick)
+  Downloading sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl (5.1 kB)
+Collecting sphinxcontrib-htmlhelp>=2.0.0 (from sphinx->tick)
+  Downloading sphinxcontrib_htmlhelp-2.0.1-py3-none-any.whl (99 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 99.8/99.8 kB 43.3 MB/s eta 0:
+00:00
+Collecting sphinxcontrib-serializinghtml>=1.1.5 (from sphinx->tick)
+  Downloading sphinxcontrib_serializinghtml-1.1.5-py2.py3-none-any.whl (94 
+kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 94.0/94.0 kB 43.5 MB/s eta 0:
+00:00
+Collecting sphinxcontrib-qthelp (from sphinx->tick)
+  Downloading sphinxcontrib_qthelp-1.0.3-py2.py3-none-any.whl (90 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.6/90.6 kB 40.9 MB/s eta 0:
+00:00
+Collecting Pygments>=2.13 (from sphinx->tick)
+  Obtaining dependency information for Pygments>=2.13 from https://files.py
+thonhosted.org/packages/43/88/29adf0b44ba6ac85045e63734ae0997d3c58d8b1a91c9
+14d240828d0d73d/Pygments-2.16.1-py3-none-any.whl.metadata
+  Downloading Pygments-2.16.1-py3-none-any.whl.metadata (2.5 kB)
+Collecting docutils<0.21,>=0.18.1 (from sphinx->tick)
+  Obtaining dependency information for docutils<0.21,>=0.18.1 from https://
+files.pythonhosted.org/packages/26/87/f238c0670b94533ac0353a4e2a1a771a0cc73
+277b88bff23d3ae35a256c1/docutils-0.20.1-py3-none-any.whl.metadata
+  Downloading docutils-0.20.1-py3-none-any.whl.metadata (2.8 kB)
+Collecting snowballstemmer>=2.0 (from sphinx->tick)
+  Downloading snowballstemmer-2.2.0-py2.py3-none-any.whl (93 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 93.0/93.0 kB 41.0 MB/s eta 0:
+00:00
+Collecting babel>=2.9 (from sphinx->tick)
+  Downloading Babel-2.12.1-py3-none-any.whl (10.1 MB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.1/10.1 MB 115.2 MB/s eta 0:
+00:00
+Collecting alabaster<0.8,>=0.7 (from sphinx->tick)
+  Downloading alabaster-0.7.13-py3-none-any.whl (13 kB)
+Collecting imagesize>=1.3 (from sphinx->tick)
+  Downloading imagesize-1.4.1-py2.py3-none-any.whl (8.8 kB)
+Requirement already satisfied: requests>=2.25.0 in /cache/julia-buildkite-p
+lugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python
+3.8/site-packages (from sphinx->tick) (2.31.0)
+Collecting importlib-metadata>=4.8 (from sphinx->tick)
+  Obtaining dependency information for importlib-metadata>=4.8 from https:/
+/files.pythonhosted.org/packages/cc/37/db7ba97e676af155f5fcb1a35466f446eadc
+9104e25b83366e8088c9c926/importlib_metadata-6.8.0-py3-none-any.whl.metadata
+  Downloading importlib_metadata-6.8.0-py3-none-any.whl.metadata (5.1 kB)
+Collecting pytz>=2020.1 (from pandas->tick)
+  Downloading pytz-2023.3-py2.py3-none-any.whl (502 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 502.3/502.3 kB 127.6 MB/s eta 0:
+00:00
+Collecting tzdata>=2022.1 (from pandas->tick)
+  Downloading tzdata-2023.3-py2.py3-none-any.whl (341 kB)
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 341.8/341.8 kB 117.1 MB/s eta 0:
+00:00
+Collecting joblib>=1.1.1 (from scikit-learn->tick)
+  Obtaining dependency information for joblib>=1.1.1 from https://files.pyt
+honhosted.org/packages/10/40/d551139c85db202f1f384ba8bcf96aca2f329440a844f9
+24c8a0040b6d02/joblib-1.3.2-py3-none-any.whl.metadata
+  Downloading joblib-1.3.2-py3-none-any.whl.metadata (5.4 kB)
+Collecting threadpoolctl>=2.0.0 (from scikit-learn->tick)
+  Obtaining dependency information for threadpoolctl>=2.0.0 from https://fi
+les.pythonhosted.org/packages/81/12/fd4dea011af9d69e1cad05c75f3f7202cdcbeac
+9b712eea58ca779a72865/threadpoolctl-3.2.0-py3-none-any.whl.metadata
+  Downloading threadpoolctl-3.2.0-py3-none-any.whl.metadata (10.0 kB)
+Collecting zipp>=0.5 (from importlib-metadata>=4.8->sphinx->tick)
+  Obtaining dependency information for zipp>=0.5 from https://files.pythonh
+osted.org/packages/8c/08/d3006317aefe25ea79d3b76c9650afabaf6d63d1c8443b236e
+7405447503/zipp-3.16.2-py3-none-any.whl.metadata
+  Downloading zipp-3.16.2-py3-none-any.whl.metadata (3.7 kB)
+Collecting MarkupSafe>=2.0 (from Jinja2>=2.10->numpydoc->tick)
+  Obtaining dependency information for MarkupSafe>=2.0 from https://files.p
+ythonhosted.org/packages/de/e2/32c14301bb023986dff527a49325b6259cab4ebb4633
+f69de54af312fc45/MarkupSafe-2.1.3-cp38-cp38-manylinux_2_17_x86_64.manylinux
+2014_x86_64.whl.metadata
+  Downloading MarkupSafe-2.1.3-cp38-cp38-manylinux_2_17_x86_64.manylinux201
+4_x86_64.whl.metadata (3.0 kB)
+Collecting six>=1.5 (from python-dateutil>=2.7->matplotlib->tick)
+  Downloading six-1.16.0-py2.py3-none-any.whl (11 kB)
+Requirement already satisfied: charset-normalizer<4,>=2 in /cache/julia-bui
+ldkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/li
+b/python3.8/site-packages (from requests>=2.25.0->sphinx->tick) (3.2.0)
+Requirement already satisfied: idna<4,>=2.5 in /cache/julia-buildkite-plugi
+n/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3.8/
+site-packages (from requests>=2.25.0->sphinx->tick) (3.4)
+Requirement already satisfied: urllib3<3,>=1.21.1 in /cache/julia-buildkite
+-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/pyth
+on3.8/site-packages (from requests>=2.25.0->sphinx->tick) (2.0.4)
+Requirement already satisfied: certifi>=2017.4.17 in /cache/julia-buildkite
+-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/pyth
+on3.8/site-packages (from requests>=2.25.0->sphinx->tick) (2023.7.22)
+Downloading dill-0.3.7-py3-none-any.whl (115 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 115.3/115.3 kB 60.7 MB/s eta 0:
+00:00
+Downloading matplotlib-3.7.2-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_
+x86_64.whl (9.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 125.2 MB/s eta 0:00:
+00
+Downloading sphinx-7.1.2-py3-none-any.whl (3.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 105.9 MB/s eta 0:00:
+00
+Downloading pandas-2.0.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_
+64.whl (12.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 136.6 MB/s eta 0:0
+0:00
+Downloading scikit_learn-1.3.0-cp38-cp38-manylinux_2_17_x86_64.manylinux201
+4_x86_64.whl (11.1 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.1/11.1 MB 144.8 MB/s eta 0:0
+0:00
+Downloading contourpy-1.1.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x
+86_64.whl (300 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 300.4/300.4 kB 109.0 MB/s eta 0:
+00:00
+Downloading docutils-0.20.1-py3-none-any.whl (572 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 572.7/572.7 kB 141.4 MB/s eta 0:
+00:00
+Downloading fonttools-4.42.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_
+x86_64.whl (4.6 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.6/4.6 MB 134.5 MB/s eta 0:00:
+00
+Downloading importlib_metadata-6.8.0-py3-none-any.whl (22 kB)
+Downloading importlib_resources-6.0.1-py3-none-any.whl (34 kB)
+Downloading joblib-1.3.2-py3-none-any.whl (302 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 302.2/302.2 kB 112.5 MB/s eta 0:
+00:00
+Downloading kiwisolver-1.4.5-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_
+64.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 140.7 MB/s eta 0:00:
+00
+Downloading Pillow-10.0.0-cp38-cp38-manylinux_2_28_x86_64.whl (3.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 140.4 MB/s eta 0:00:
+00
+Downloading Pygments-2.16.1-py3-none-any.whl (1.2 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 144.0 MB/s eta 0:00:
+00
+Downloading threadpoolctl-3.2.0-py3-none-any.whl (15 kB)
+Downloading MarkupSafe-2.1.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_
+x86_64.whl (25 kB)
+Downloading zipp-3.16.2-py3-none-any.whl (7.2 kB)
+Installing collected packages: snowballstemmer, pytz, zipp, tzdata, threadp
+oolctl, sphinxcontrib-serializinghtml, sphinxcontrib-qthelp, sphinxcontrib-
+jsmath, sphinxcontrib-htmlhelp, sphinxcontrib-devhelp, sphinxcontrib-appleh
+elp, six, scipy, pyparsing, Pygments, pillow, MarkupSafe, kiwisolver, jobli
+b, imagesize, fonttools, docutils, dill, cycler, contourpy, babel, alabaste
+r, scikit-learn, python-dateutil, Jinja2, importlib-resources, importlib-me
+tadata, sphinx, pandas, matplotlib, numpydoc, tick
+Successfully installed Jinja2-3.1.2 MarkupSafe-2.1.3 Pygments-2.16.1 alabas
+ter-0.7.13 babel-2.12.1 contourpy-1.1.0 cycler-0.11.0 dill-0.3.7 docutils-0
+.20.1 fonttools-4.42.1 imagesize-1.4.1 importlib-metadata-6.8.0 importlib-r
+esources-6.0.1 joblib-1.3.2 kiwisolver-1.4.5 matplotlib-3.7.2 numpydoc-1.5.
+0 pandas-2.0.3 pillow-10.0.0 pyparsing-3.0.9 python-dateutil-2.8.2 pytz-202
+3.3 scikit-learn-1.3.0 scipy-1.10.1 six-1.16.0 snowballstemmer-2.2.0 sphinx
+-7.1.2 sphinxcontrib-applehelp-1.0.4 sphinxcontrib-devhelp-1.0.2 sphinxcont
+rib-htmlhelp-2.0.1 sphinxcontrib-jsmath-1.0.1 sphinxcontrib-qthelp-1.0.3 sp
+hinxcontrib-serializinghtml-1.1.5 threadpoolctl-3.2.0 tick-0.7.0.1 tzdata-2
+023.3 zipp-3.16.2
+8-element Vector{Tuple{Any, Any, Bool, String}}:
+ (JumpProcesses.Direct(), Tsit5(stage_limiter! = trivial_limiter!, step_lim
+iter! = trivial_limiter!, thread = static(false)), 0, "Direct (brute-force)
+")
+ (JumpProcesses.Coevolve(), JumpProcesses.SSAStepper(), 0, "Coevolve (brute
+-force)")
+ (JumpProcesses.Direct(), Tsit5(stage_limiter! = trivial_limiter!, step_lim
+iter! = trivial_limiter!, thread = static(false)), 1, "Direct (recursive)")
+ (JumpProcesses.Coevolve(), JumpProcesses.SSAStepper(), 1, "Coevolve (recur
+sive)")
+ (Main.var"##WeaveSandBox#319".PDMPCHVSimple(), PiecewiseDeterministicMarko
+vProcesses.CHV{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_limiter!)
+, typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}}(Tsit5(stage_limit
+er! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static(f
+alse))), 0, "PDMPCHVSimple (brute-force)")
+ (Main.var"##WeaveSandBox#319".PDMPCHVSimple(), PiecewiseDeterministicMarko
+vProcesses.CHV{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_limiter!)
+, typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}}(Tsit5(stage_limit
+er! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static(f
+alse))), 1, "PDMPCHVSimple (recursive)")
+ (Main.var"##WeaveSandBox#319".PDMPCHVFull(), PiecewiseDeterministicMarkovP
+rocesses.CHV{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_limiter!), 
+typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}}(Tsit5(stage_limiter
+! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static(fal
+se))), 1, "PDMPCHVFull")
+ (Main.var"##WeaveSandBox#319".PyTick(), nothing, 1, "PyTick")
+```
+
+
 
 
 
@@ -408,6 +902,7 @@ Now, we instantiate the problems, find their solutions and plot the results.
 ```julia
 let fig = []
   for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms[5:end])
+    @info label
     if typeof(algo) <: PyTick
         _p = (p[1], p[2], p[3])
         jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
@@ -416,28 +911,41 @@ let fig = []
         t = tspan[1]:0.1:tspan[2]
         N = [[sum(jumps .< _t) for _t in t] for jumps in jump_prob.timestamps]
         push!(fig, plot(t, N, title=label, legend=false, format=fmt))
-    elseif typeof(algo) <: PDMPCHV
+    elseif typeof(algo) <: PDMPCHVSimple
+        if use_recursion
+          h = zeros(eltype(tspan), nv(G))
+          ϕ = zeros(eltype(tspan), nv(G))
+          _p = (p[1], p[2], p[3], h, ϕ, g)
+        else
+          h = [eltype(tspan)[] for _ in 1:nv(G)]
+          _p = (p[1], p[2], p[3], h, g)
+        end
+        jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
+        sol = solve(jump_prob, stepper)
+        push!(fig, plot(sol.time, sol.xd[1:V, :]', title=label, legend=false, format=fmt))
+    elseif typeof(algo) <: PDMPCHVFull
         _p = (p[1], p[2], p[3], nothing, nothing, g)
         jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
         sol = solve(jump_prob, stepper)
         push!(fig, plot(sol.time, sol.xd[1:V, :]', title=label, legend=false, format=fmt))
     end
   end
-  fig = plot(fig..., layout=(1,2), format=fmt, size=(width_px, height_px/2))
+  fig = plot(fig..., layout=(2,2), format=fmt, size=(width_px, 2*height_px/2))
 end
 ```
 
-![](figures/MultivariateHawkes_13_1.png)
+![](figures/MultivariateHawkes_16_1.png)
+
 
 
 # Correctness: QQ-Plots
 
 We check that the algorithms produce correct simulation by inspecting their QQ-plots. Point process theory says that transforming the simulated points using the compensator should produce points whose inter-arrival duration is distributed according to the exponential distribution (see Section 7.4 [1]).
 
-The compensator of any point process is the integral of the conditional intensity $\Lambda_i^\ast(t) = \int_0^t \lambda_i^\ast(u) du$. The compensator for the Multivariate Hawkes process is defined below.
-$$
+The compensator of any point process is the integral of the conditional intensity ``\Lambda_i^\ast(t) = \int_0^t \lambda_i^\ast(u) du``. The compensator for the Multivariate Hawkes process is defined below.
+```math
     \Lambda_i^\ast(t) = \lambda t + \frac{\alpha}{\beta} \sum_{j \in E_i} \sum_{t_{n_j} < t} ( 1 - \exp \left[-\beta (t - t_{n_j}) \right])
-$$
+```
 
 ```julia
 function hawkes_Λ(i::Int, g, p)
@@ -465,27 +973,27 @@ end
 ```
 
 ```
-10-element Vector{Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vec
+10-element Vector{Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vec
 tor{Int64}}, Tuple{Float64, Float64, Float64}}}:
- (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#312".var"#Λ#30"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#319".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
 ```
 
@@ -671,14 +1179,24 @@ end
 
 
 
-Now, we simulate all of the algorithms we defined in the previous Section $250$ times to produce their QQ-plots.
+Now, we simulate all of the algorithms we defined in the previous Section ``250`` times to produce their QQ-plots.
 
 ```julia
 let fig = []
     for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms)
+        @info label
         if typeof(algo) <: PyTick
             _p = (p[1], p[2], p[3])
-        elseif typeof(algo) <: PDMPCHV
+        elseif typeof(algo) <: PDMPCHVSimple
+            if use_recursion
+                h = zeros(eltype(tspan), nv(G))
+                ϕ = zeros(eltype(tspan), nv(G))
+                _p = (p[1], p[2], p[3], h, ϕ, g)
+            else
+                h = [eltype(tspan)[] for _ in 1:nv(G)]
+                _p = (p[1], p[2], p[3], h, g)
+            end
+        elseif typeof(algo) <: PDMPCHVFull
             _p = (p[1], p[2], p[3], nothing, nothing, g)
         else
             if use_recursion
@@ -700,14 +1218,16 @@ let fig = []
                 jump_prob.simulate()
                 runs[n] = jump_prob.timestamps
             else
-                if ~(typeof(algo) <: PDMPCHV)
+                if ~(typeof(algo) <: PDMPCHVFull)
                     if use_recursion
                         h .= 0
                         ϕ .= 0
                     else
                         for _h in h empty!(_h) end
                     end
-                    urate .= 0
+                    if ~(typeof(algo) <: PDMPCHVSimple)
+                        urate .= 0
+                    end
                 end
                 runs[n] = histories(solve(jump_prob, stepper))
             end
@@ -715,19 +1235,11 @@ let fig = []
         qqs = qq(runs, Λ)
         push!(fig, qqplot(qqs..., legend = false, aspect_ratio = :equal, title=label, fmt=fmt))
     end
-    fig = plot(fig..., layout = (3, 2), fmt=fmt, size=(width_px, 3*height_px/2))
+    fig = plot(fig..., layout = (4, 2), fmt=fmt, size=(width_px, 4*height_px/2))
 end
 ```
 
-```
-Error: AssertionError: Could not compute next jump time 228.
-Return code = DtLessThanMin
- 43.18594188133531 < 43.18594188133531,
- solver = Tsit5(stage_limiter! = trivial_limiter!, step_limiter! = trivial_
-limiter!, thread = static(false)). dt = 0.0
-```
-
-
+![](figures/MultivariateHawkes_21_1.png)
 
 
 
@@ -735,9 +1247,9 @@ limiter!, thread = static(false)). dt = 0.0
 
 In this Section we benchmark all the algorithms introduced in the first Section.
 
-We generate networks in the range from $1$ to $95$ nodes and simulate the Multivariate Hawkes process $25$ units of time. 
+We generate networks in the range from ``1`` to ``95`` nodes and simulate the Multivariate Hawkes process ``25`` units of time. 
 
- and simulate models in the range from $1$ to $95$ nodes for $25$ units of time. We fix the Hawkes parameters at $\lambda = 0.5 , \alpha = 0.1 , \beta = 5.0$ which ensures the process does not explode. We simulate $50$ trajectories with a limit of ten seconds to complete execution for each configuration.
+ and simulate models in the range from ``1`` to ``95`` nodes for ``25`` units of time. We fix the Hawkes parameters at ``\lambda = 0.5 , \alpha = 0.1 , \beta = 5.0`` which ensures the process does not explode. We simulate ``50`` trajectories with a limit of ten seconds to complete execution for each configuration.
 
 ```julia
 tspan = (0.0, 25.0)
@@ -748,6 +1260,7 @@ Gs = [erdos_renyi(V, 0.2, seed = 6221) for V in Vs]
 bs = Vector{Vector{BenchmarkTools.Trial}}()
 
 for (algo, stepper, use_recursion, label) in algorithms
+    @info label
     global _stepper = stepper
     push!(bs, Vector{BenchmarkTools.Trial}())
     _bs = bs[end]
@@ -756,7 +1269,16 @@ for (algo, stepper, use_recursion, label) in algorithms
         local u = [0.0 for i = 1:nv(G)]
         if typeof(algo) <: PyTick
             _p = (p[1], p[2], p[3])
-        elseif typeof(algo) <: PDMPCHV
+        elseif typeof(algo) <: PDMPCHVSimple
+            if use_recursion
+              global h = zeros(eltype(tspan), nv(G))
+              global ϕ = zeros(eltype(tspan), nv(G))
+              _p = (p[1], p[2], p[3], h, ϕ, g)
+            else
+              global h = [eltype(tspan)[] for _ in 1:nv(G)]
+              _p = (p[1], p[2], p[3], h, g)
+            end
+        elseif typeof(algo) <: PDMPCHVFull
             _p = (p[1], p[2], p[3], nothing, nothing, g)
         else
             if use_recursion
@@ -781,7 +1303,7 @@ for (algo, stepper, use_recursion, label) in algorithms
                     seconds = 10,
                 )
             else
-                if typeof(algo) <: PDMPCHV
+                if typeof(algo) <: PDMPCHVFull
                     @benchmark(
                         solve(jump_prob, _stepper),
                         setup = (),
@@ -789,6 +1311,20 @@ for (algo, stepper, use_recursion, label) in algorithms
                         evals = 1,
                         seconds = 10,
                     )
+                elseif typeof(algo) <: PDMPCHVSimple
+                    if use_recursion
+                        @benchmark(solve(jump_prob, _stepper),
+                                   setup=(h .= 0; ϕ .= 0),
+                                   samples=50,
+                                   evals=1,
+                                   seconds=10,)
+                    else
+                        @benchmark(solve(jump_prob, _stepper),
+                                   setup=([empty!(_h) for _h in h]),
+                                   samples=50,
+                                   evals=1,
+                                   seconds=10,)
+                    end
                 else
                     if use_recursion
                         @benchmark(
@@ -826,56 +1362,96 @@ end
 ```
 
 ```
-algo=Direct (brute-force), V = 1, length = 50, median time = 116.604 μs
-algo=Direct (brute-force), V = 10, length = 50, median time = 17.712 ms
-algo=Direct (brute-force), V = 20, length = 50, median time = 127.391 ms
-algo=Direct (brute-force), V = 30, length = 26, median time = 388.634 ms
-algo=Direct (brute-force), V = 40, length = 5, median time = 2.037 s
-algo=Direct (brute-force), V = 50, length = 3, median time = 4.419 s
-algo=Direct (brute-force), V = 60, length = 2, median time = 7.581 s
-algo=Direct (brute-force), V = 70, length = 1, median time = 11.634 s
-algo=Direct (brute-force), V = 80, length = 1, median time = 17.756 s
-algo=Direct (brute-force), V = 90, length = 1, median time = 28.876 s
-algo=Coevolve (brute-force), V = 1, length = 50, median time = 3.325 μs
-algo=Coevolve (brute-force), V = 10, length = 50, median time = 428.372 μs
-algo=Coevolve (brute-force), V = 20, length = 50, median time = 3.144 ms
-algo=Coevolve (brute-force), V = 30, length = 50, median time = 7.230 ms
-algo=Coevolve (brute-force), V = 40, length = 50, median time = 17.517 ms
-algo=Coevolve (brute-force), V = 50, length = 50, median time = 32.724 ms
-algo=Coevolve (brute-force), V = 60, length = 50, median time = 54.236 ms
-algo=Coevolve (brute-force), V = 70, length = 50, median time = 82.702 ms
-algo=Coevolve (brute-force), V = 80, length = 50, median time = 117.505 ms
-algo=Coevolve (brute-force), V = 90, length = 50, median time = 172.617 ms
-algo=Direct (recursive), V = 1, length = 50, median time = 114.704 μs
-algo=Direct (recursive), V = 10, length = 50, median time = 11.598 ms
-algo=Direct (recursive), V = 20, length = 50, median time = 59.821 ms
-algo=Direct (recursive), V = 30, length = 50, median time = 196.233 ms
-algo=Direct (recursive), V = 40, length = 7, median time = 1.489 s
-algo=Direct (recursive), V = 50, length = 4, median time = 2.721 s
-algo=Direct (recursive), V = 60, length = 2, median time = 5.593 s
-algo=Direct (recursive), V = 70, length = 2, median time = 8.856 s
-algo=Direct (recursive), V = 80, length = 1, median time = 13.663 s
-algo=Direct (recursive), V = 90, length = 1, median time = 20.801 s
-algo=Coevolve (recursive), V = 1, length = 50, median time = 3.820 μs
-algo=Coevolve (recursive), V = 10, length = 50, median time = 107.305 μs
-algo=Coevolve (recursive), V = 20, length = 50, median time = 420.697 μs
-algo=Coevolve (recursive), V = 30, length = 50, median time = 758.510 μs
-algo=Coevolve (recursive), V = 40, length = 50, median time = 1.357 ms
-algo=Coevolve (recursive), V = 50, length = 50, median time = 2.074 ms
-algo=Coevolve (recursive), V = 60, length = 50, median time = 2.890 ms
-algo=Coevolve (recursive), V = 70, length = 50, median time = 3.836 ms
-algo=Coevolve (recursive), V = 80, length = 50, median time = 4.821 ms
-algo=Coevolve (recursive), V = 90, length = 50, median time = 6.048 ms
-algo=PDMPCHV, V = 1, length = 50, median time = 195.999 μs
-algo=PDMPCHV, V = 10, length = 50, median time = 589.406 μs
-algo=PDMPCHV, V = 20, length = 50, median time = 889.409 μs
-algo=PDMPCHV, V = 30, length = 50, median time = 1.294 ms
-algo=PDMPCHV, V = 40, length = 50, median time = 1.558 ms
-algo=PDMPCHV, V = 50, length = 50, median time = 1.929 ms
-algo=PDMPCHV, V = 60, length = 50, median time = 2.511 ms
-algo=PDMPCHV, V = 70, length = 50, median time = 3.013 ms
-algo=PDMPCHV, V = 80, length = 50, median time = 3.555 ms
-algo=PDMPCHV, V = 90, length = 50, median time = 4.504 ms
+algo=Direct (brute-force), V = 1, length = 50, median time = 117.649 μs
+algo=Direct (brute-force), V = 10, length = 50, median time = 16.983 ms
+algo=Direct (brute-force), V = 20, length = 50, median time = 137.579 ms
+algo=Direct (brute-force), V = 30, length = 23, median time = 437.210 ms
+algo=Direct (brute-force), V = 40, length = 5, median time = 2.382 s
+algo=Direct (brute-force), V = 50, length = 3, median time = 4.743 s
+algo=Direct (brute-force), V = 60, length = 2, median time = 9.555 s
+algo=Direct (brute-force), V = 70, length = 1, median time = 17.146 s
+algo=Direct (brute-force), V = 80, length = 1, median time = 22.588 s
+algo=Direct (brute-force), V = 90, length = 1, median time = 27.950 s
+algo=Coevolve (brute-force), V = 1, length = 50, median time = 4.620 μs
+algo=Coevolve (brute-force), V = 10, length = 50, median time = 221.428 μs
+algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.440 ms
+algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.371 ms
+algo=Coevolve (brute-force), V = 40, length = 50, median time = 8.478 ms
+algo=Coevolve (brute-force), V = 50, length = 50, median time = 17.369 ms
+algo=Coevolve (brute-force), V = 60, length = 50, median time = 39.339 ms
+algo=Coevolve (brute-force), V = 70, length = 50, median time = 62.970 ms
+algo=Coevolve (brute-force), V = 80, length = 50, median time = 89.746 ms
+algo=Coevolve (brute-force), V = 90, length = 50, median time = 149.630 ms
+algo=Direct (recursive), V = 1, length = 50, median time = 115.644 μs
+algo=Direct (recursive), V = 10, length = 50, median time = 11.421 ms
+algo=Direct (recursive), V = 20, length = 50, median time = 58.646 ms
+algo=Direct (recursive), V = 30, length = 50, median time = 202.335 ms
+algo=Direct (recursive), V = 40, length = 6, median time = 1.740 s
+algo=Direct (recursive), V = 50, length = 3, median time = 3.303 s
+algo=Direct (recursive), V = 60, length = 2, median time = 7.072 s
+algo=Direct (recursive), V = 70, length = 1, median time = 10.754 s
+algo=Direct (recursive), V = 80, length = 1, median time = 17.169 s
+algo=Direct (recursive), V = 90, length = 1, median time = 20.679 s
+algo=Coevolve (recursive), V = 1, length = 50, median time = 5.064 μs
+algo=Coevolve (recursive), V = 10, length = 50, median time = 75.635 μs
+algo=Coevolve (recursive), V = 20, length = 50, median time = 270.327 μs
+algo=Coevolve (recursive), V = 30, length = 50, median time = 495.050 μs
+algo=Coevolve (recursive), V = 40, length = 50, median time = 932.572 μs
+algo=Coevolve (recursive), V = 50, length = 50, median time = 1.489 ms
+algo=Coevolve (recursive), V = 60, length = 50, median time = 2.185 ms
+algo=Coevolve (recursive), V = 70, length = 50, median time = 3.026 ms
+algo=Coevolve (recursive), V = 80, length = 50, median time = 3.946 ms
+algo=Coevolve (recursive), V = 90, length = 50, median time = 5.201 ms
+algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 179.083
+ μs
+algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 4.903 
+ms
+algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 53.487
+ ms
+algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 138.68
+3 ms
+algo=PDMPCHVSimple (brute-force), V = 40, length = 29, median time = 355.36
+6 ms
+algo=PDMPCHVSimple (brute-force), V = 50, length = 14, median time = 719.80
+8 ms
+algo=PDMPCHVSimple (brute-force), V = 60, length = 8, median time = 1.271 s
+algo=PDMPCHVSimple (brute-force), V = 70, length = 5, median time = 2.152 s
+algo=PDMPCHVSimple (brute-force), V = 80, length = 3, median time = 3.592 s
+algo=PDMPCHVSimple (brute-force), V = 90, length = 2, median time = 5.692 s
+algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 181.043 μ
+s
+algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 448.376 
+μs
+algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 940.676 
+μs
+algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.652 ms
+algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.551 ms
+algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.666 ms
+algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 5.119 ms
+algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 6.799 ms
+algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 8.987 ms
+algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 11.724 m
+s
+algo=PDMPCHVFull, V = 1, length = 50, median time = 178.138 μs
+algo=PDMPCHVFull, V = 10, length = 50, median time = 599.604 μs
+algo=PDMPCHVFull, V = 20, length = 50, median time = 901.702 μs
+algo=PDMPCHVFull, V = 30, length = 50, median time = 1.316 ms
+algo=PDMPCHVFull, V = 40, length = 50, median time = 1.619 ms
+algo=PDMPCHVFull, V = 50, length = 50, median time = 1.974 ms
+algo=PDMPCHVFull, V = 60, length = 50, median time = 2.533 ms
+algo=PDMPCHVFull, V = 70, length = 50, median time = 2.884 ms
+algo=PDMPCHVFull, V = 80, length = 50, median time = 3.281 ms
+algo=PDMPCHVFull, V = 90, length = 50, median time = 3.879 ms
+algo=PyTick, V = 1, length = 50, median time = 31.220 μs
+algo=PyTick, V = 10, length = 50, median time = 177.578 μs
+algo=PyTick, V = 20, length = 50, median time = 1.224 ms
+algo=PyTick, V = 30, length = 50, median time = 3.672 ms
+algo=PyTick, V = 40, length = 50, median time = 9.212 ms
+algo=PyTick, V = 50, length = 50, median time = 21.683 ms
+algo=PyTick, V = 60, length = 50, median time = 47.535 ms
+algo=PyTick, V = 70, length = 50, median time = 90.945 ms
+algo=PyTick, V = 80, length = 50, median time = 142.506 ms
+algo=PyTick, V = 90, length = 43, median time = 237.369 ms
 ```
 
 
@@ -901,7 +1477,7 @@ let fig = plot(
 end
 ```
 
-![](figures/MultivariateHawkes_20_1.png)
+![](figures/MultivariateHawkes_23_1.png)
 
 
 

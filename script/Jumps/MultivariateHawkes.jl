@@ -41,7 +41,7 @@ end
 function hawkes_jump(i::Int, g; use_recursion = false)
     rate = hawkes_rate(i, g; use_recursion)
     urate = rate
-    @inbounds rateinterval(u, p, t) = p[5][i] == p[1] ? typemax(t) : 1 / (2*p[5][i])
+    @inbounds rateinterval(u, p, t) = p[5][i] == p[1] ? typemax(t) : 2 / p[5][i]
     @inbounds lrate(u, p, t) = p[1]
     @inbounds function affect_recursion!(integrator)
         λ, α, β, h, _, ϕ  = integrator.p
@@ -127,6 +127,7 @@ algorithms = Tuple{Any, Any, Bool, String}[
 
 let fig = []
   for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms)
+    @info label
     if use_recursion
         h = zeros(eltype(tspan), nv(G))
         urate = zeros(eltype(tspan), nv(G))
@@ -141,11 +142,92 @@ let fig = []
     sol = solve(jump_prob, stepper)
     push!(fig, plot(sol.t, sol[1:V, :]', title=label, legend=false, format=fmt))
   end
-  fig = plot(fig..., layout=(2,2), format=fmt)
+  fig = plot(fig..., layout=(2,2), format=fmt, size=(width_px, 2*height_px/2))
 end
 
 
-function hawkes_drate(dxc, xc, xd, p, t)
+function hawkes_rate_simple_recursion(rate, xc, xd, p, t, issum::Bool)
+  λ, _, β, h, ϕ, g = p
+  for i in 1:length(g)
+    rate[i] = λ + exp(-β * (t - h[i])) * ϕ[i]
+  end
+  if issum
+    return sum(rate)
+  end
+  return 0.0
+end
+
+function hawkes_rate_simple_brute(rate, xc, xd, p, t, issum::Bool)
+  λ, α, β, h, g = p
+  for i in 1:length(g)
+    x = zero(typeof(t))
+    for j in g[i]
+        for _t in reverse(h[j])
+            ϕij = α * exp(-β * (t - _t))
+            if ϕij ≈ 0
+                break
+            end
+            x += ϕij
+        end
+    end
+    rate[i] = λ + x
+  end
+  if issum
+    return sum(rate)
+  end
+  return 0.0
+end
+
+function hawkes_affect_simple_recursion!(xc, xd, p, t, i::Int64)
+  _, α, β, h, ϕ, g = p
+  for j in g[i]
+      ϕ[j] *= exp(-β * (t - h[j]))
+      ϕ[j] += α
+      h[j] = t
+  end
+end
+
+function hawkes_affect_simple_brute!(xc, xd, p, t, i::Int64)
+  push!(p[4][i], t)
+end
+
+
+function hawkes_drate_simple(dxc, xc, xd, p, t)
+    dxc .= 0
+end
+
+
+import LinearAlgebra: I
+using PiecewiseDeterministicMarkovProcesses
+const PDMP = PiecewiseDeterministicMarkovProcesses
+
+struct PDMPCHVSimple end
+
+function hawkes_problem(p,
+                        agg::PDMPCHVSimple;
+                        u = [0.0],
+                        tspan = (0.0, 50.0),
+                        save_positions = (false, true),
+                        g = [[1]],
+                        use_recursion = true)
+    xd0 = Array{Int}(u)
+    xc0 = copy(u)
+    nu = one(eltype(xd0)) * I(length(xd0))
+    if use_recursion
+      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_recursion, 
+          hawkes_affect_simple_recursion!, nu, xc0, xd0, p, tspan)
+    else
+      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_brute, 
+          hawkes_affect_simple_brute!, nu, xc0, xd0, p, tspan)
+    end
+    return jprob
+end
+
+push!(algorithms, (PDMPCHVSimple(), CHV(Tsit5()), false, "PDMPCHVSimple (brute-force)"));
+push!(algorithms, (PDMPCHVSimple(), CHV(Tsit5()), true, "PDMPCHVSimple (recursive)"));
+
+
+function hawkes_drate_full(dxc, xc, xd, p, t)
     λ, α, β, _, _, g = p
     for i = 1:length(g)
         dxc[i] = -β * (xc[i] - λ)
@@ -153,7 +235,7 @@ function hawkes_drate(dxc, xc, xd, p, t)
 end
 
 
-function hawkes_rate(rate, xc, xd, p, t, issum::Bool)
+function hawkes_rate_full(rate, xc, xd, p, t, issum::Bool)
     λ, α, β, _, _, g = p
     if issum
         return sum(@view(xc[1:length(g)]))
@@ -162,7 +244,7 @@ function hawkes_rate(rate, xc, xd, p, t, issum::Bool)
     return 0.0
 end
 
-function hawkes_affect!(xc, xd, p, t, i::Int64)
+function hawkes_affect_full!(xc, xd, p, t, i::Int64)
     λ, α, β, _, _, g = p
     for j in g[i]
         xc[i] += α
@@ -170,15 +252,11 @@ function hawkes_affect!(xc, xd, p, t, i::Int64)
 end
 
 
-import LinearAlgebra: I
-using PiecewiseDeterministicMarkovProcesses
-const PDMP = PiecewiseDeterministicMarkovProcesses
-
-struct PDMPCHV end
+struct PDMPCHVFull end
 
 function hawkes_problem(
     p,
-    agg::PDMPCHV;
+    agg::PDMPCHVFull;
     u = [0.0],
     tspan = (0.0, 50.0),
     save_positions = (false, true),
@@ -188,15 +266,15 @@ function hawkes_problem(
     xd0 = Array{Int}(u)
     xc0 = [p[1] for i = 1:length(u)]
     nu = one(eltype(xd0)) * I(length(xd0))
-    jprob = PDMPProblem(hawkes_drate, hawkes_rate, hawkes_affect!, nu, xc0, xd0, p, tspan)
+    jprob = PDMPProblem(hawkes_drate_full, hawkes_rate_full, hawkes_affect_full!, nu, xc0, xd0, p, tspan)
     return jprob
 end
 
-push!(algorithms, (PDMPCHV(), CHV(Tsit5()), true, "PDMPCHV"));
+push!(algorithms, (PDMPCHVFull(), CHV(Tsit5()), true, "PDMPCHVFull"));
 
 
-const BENCHMARK_PYTHON = false
-const REBUILD_PYCALL = false
+const BENCHMARK_PYTHON::Bool = tryparse(Bool, get(ENV, "SCIMLBENCHMARK_PYTHON", "true"))
+const REBUILD_PYCALL::Bool = tryparse(Bool, get(ENV, "SCIMLBENCHMARK_REBUILD_PYCALL", "true"))
 
 struct PyTick end
 
@@ -204,19 +282,21 @@ if BENCHMARK_PYTHON
   if REBUILD_PYCALL
     using Pkg, Conda
 
-    # rebuild PyCall to ensure it links to the python provided by Conda.jl
-    ENV["PYTHON"] = ""
-    Pkg.build("PyCall")
-
     # PyCall only works with Conda.ROOTENV
     # tick requires python=3.8
     Conda.add("python=3.8", Conda.ROOTENV)
     Conda.add("numpy", Conda.ROOTENV)
     Conda.pip_interop(true, Conda.ROOTENV)
     Conda.pip("install", "tick", Conda.ROOTENV)
+
+    # rebuild PyCall to ensure it links to the python provided by Conda.jl
+    ENV["PYTHON"] = ""
+    Pkg.build("PyCall")
   end
 
+  ENV["PYTHON"] = ""
   using PyCall
+  @info "PyCall" PyCall.libpython PyCall.pyversion PyCall.conda
 
   function hawkes_problem(
       p,
@@ -246,6 +326,7 @@ end
 
 let fig = []
   for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms[5:end])
+    @info label
     if typeof(algo) <: PyTick
         _p = (p[1], p[2], p[3])
         jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
@@ -254,14 +335,26 @@ let fig = []
         t = tspan[1]:0.1:tspan[2]
         N = [[sum(jumps .< _t) for _t in t] for jumps in jump_prob.timestamps]
         push!(fig, plot(t, N, title=label, legend=false, format=fmt))
-    elseif typeof(algo) <: PDMPCHV
+    elseif typeof(algo) <: PDMPCHVSimple
+        if use_recursion
+          h = zeros(eltype(tspan), nv(G))
+          ϕ = zeros(eltype(tspan), nv(G))
+          _p = (p[1], p[2], p[3], h, ϕ, g)
+        else
+          h = [eltype(tspan)[] for _ in 1:nv(G)]
+          _p = (p[1], p[2], p[3], h, g)
+        end
+        jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
+        sol = solve(jump_prob, stepper)
+        push!(fig, plot(sol.time, sol.xd[1:V, :]', title=label, legend=false, format=fmt))
+    elseif typeof(algo) <: PDMPCHVFull
         _p = (p[1], p[2], p[3], nothing, nothing, g)
         jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
         sol = solve(jump_prob, stepper)
         push!(fig, plot(sol.time, sol.xd[1:V, :]', title=label, legend=false, format=fmt))
     end
   end
-  fig = plot(fig..., layout=(1,2), format=fmt, size=(width_px, height_px/2))
+  fig = plot(fig..., layout=(2,2), format=fmt, size=(width_px, 2*height_px/2))
 end
 
 
@@ -441,9 +534,19 @@ end
 
 let fig = []
     for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms)
+        @info label
         if typeof(algo) <: PyTick
             _p = (p[1], p[2], p[3])
-        elseif typeof(algo) <: PDMPCHV
+        elseif typeof(algo) <: PDMPCHVSimple
+            if use_recursion
+                h = zeros(eltype(tspan), nv(G))
+                ϕ = zeros(eltype(tspan), nv(G))
+                _p = (p[1], p[2], p[3], h, ϕ, g)
+            else
+                h = [eltype(tspan)[] for _ in 1:nv(G)]
+                _p = (p[1], p[2], p[3], h, g)
+            end
+        elseif typeof(algo) <: PDMPCHVFull
             _p = (p[1], p[2], p[3], nothing, nothing, g)
         else
             if use_recursion
@@ -465,14 +568,16 @@ let fig = []
                 jump_prob.simulate()
                 runs[n] = jump_prob.timestamps
             else
-                if ~(typeof(algo) <: PDMPCHV)
+                if ~(typeof(algo) <: PDMPCHVFull)
                     if use_recursion
                         h .= 0
                         ϕ .= 0
                     else
                         for _h in h empty!(_h) end
                     end
-                    urate .= 0
+                    if ~(typeof(algo) <: PDMPCHVSimple)
+                        urate .= 0
+                    end
                 end
                 runs[n] = histories(solve(jump_prob, stepper))
             end
@@ -480,7 +585,7 @@ let fig = []
         qqs = qq(runs, Λ)
         push!(fig, qqplot(qqs..., legend = false, aspect_ratio = :equal, title=label, fmt=fmt))
     end
-    fig = plot(fig..., layout = (3, 2), fmt=fmt, size=(width_px, 3*height_px/2))
+    fig = plot(fig..., layout = (4, 2), fmt=fmt, size=(width_px, 4*height_px/2))
 end
 
 
@@ -492,6 +597,7 @@ Gs = [erdos_renyi(V, 0.2, seed = 6221) for V in Vs]
 bs = Vector{Vector{BenchmarkTools.Trial}}()
 
 for (algo, stepper, use_recursion, label) in algorithms
+    @info label
     global _stepper = stepper
     push!(bs, Vector{BenchmarkTools.Trial}())
     _bs = bs[end]
@@ -500,7 +606,16 @@ for (algo, stepper, use_recursion, label) in algorithms
         local u = [0.0 for i = 1:nv(G)]
         if typeof(algo) <: PyTick
             _p = (p[1], p[2], p[3])
-        elseif typeof(algo) <: PDMPCHV
+        elseif typeof(algo) <: PDMPCHVSimple
+            if use_recursion
+              global h = zeros(eltype(tspan), nv(G))
+              global ϕ = zeros(eltype(tspan), nv(G))
+              _p = (p[1], p[2], p[3], h, ϕ, g)
+            else
+              global h = [eltype(tspan)[] for _ in 1:nv(G)]
+              _p = (p[1], p[2], p[3], h, g)
+            end
+        elseif typeof(algo) <: PDMPCHVFull
             _p = (p[1], p[2], p[3], nothing, nothing, g)
         else
             if use_recursion
@@ -525,7 +640,7 @@ for (algo, stepper, use_recursion, label) in algorithms
                     seconds = 10,
                 )
             else
-                if typeof(algo) <: PDMPCHV
+                if typeof(algo) <: PDMPCHVFull
                     @benchmark(
                         solve(jump_prob, _stepper),
                         setup = (),
@@ -533,6 +648,20 @@ for (algo, stepper, use_recursion, label) in algorithms
                         evals = 1,
                         seconds = 10,
                     )
+                elseif typeof(algo) <: PDMPCHVSimple
+                    if use_recursion
+                        @benchmark(solve(jump_prob, _stepper),
+                                   setup=(h .= 0; ϕ .= 0),
+                                   samples=50,
+                                   evals=1,
+                                   seconds=10,)
+                    else
+                        @benchmark(solve(jump_prob, _stepper),
+                                   setup=([empty!(_h) for _h in h]),
+                                   samples=50,
+                                   evals=1,
+                                   seconds=10,)
+                    end
                 else
                     if use_recursion
                         @benchmark(
