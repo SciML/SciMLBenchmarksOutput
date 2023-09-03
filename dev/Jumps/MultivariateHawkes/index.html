@@ -2,7 +2,7 @@
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Multivariate Hawkes Model · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/Jumps/MultivariateHawkes/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Method of Lines Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../MOLPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../MOLPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../Mendes_multistate_example/">Mendes Multistate Model</a></li><li class="is-active"><a class="tocitem" href>Multivariate Hawkes Model</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Model-and-example-solutions"><span>Model and example solutions</span></a></li><li><a class="tocitem" href="#Alternative-libraries"><span>Alternative libraries</span></a></li><li class="toplevel"><a class="tocitem" href="#Correctness:-QQ-Plots"><span>Correctness: QQ-Plots</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmarking-performance"><span>Benchmarking performance</span></a></li><li class="toplevel"><a class="tocitem" href="#References"><span>References</span></a></li></ul></li><li><a class="tocitem" href="../NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li><li><a class="tocitem" href="../Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Jump Process Equations (Gillespie Benchmarks)</a></li><li class="is-active"><a href>Multivariate Hawkes Model</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Multivariate Hawkes Model</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/Jumps/MultivariateHawkes.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Multivariate-Hawkes-Model"><a class="docs-heading-anchor" href="#Multivariate-Hawkes-Model">Multivariate Hawkes Model</a><a id="Multivariate-Hawkes-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Multivariate-Hawkes-Model" title="Permalink"></a></h1><pre><code class="language-julia hljs">using JumpProcesses, Graphs, Statistics, BenchmarkTools, Plots
 using OrdinaryDiffEq: Tsit5
 fmt = :png
-width_px, height_px = default(:size);</code></pre><h1 id="Model-and-example-solutions"><a class="docs-heading-anchor" href="#Model-and-example-solutions">Model and example solutions</a><a id="Model-and-example-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Model-and-example-solutions" title="Permalink"></a></h1><p>Let a graph with <span>$V$</span> nodes, then the multivariate Hawkes process is characterized by <span>$V$</span> point processes such that the conditional intensity rate of node <span>$i$</span> connected to a set of nodes <span>$E_i$</span> in the graph is given by:</p><p class="math-container">\[  \lambda_i^\ast (t) = \lambda + \sum_{j \in E_i} \sum_{t_{n_j} &lt; t} \alpha \exp \left[-\beta (t - t_{n_j}) \right]\]</p><p>This process is known as self-exciting, because the occurence of an event <span>$at$</span>t<em>{n</em>j}<span>$will increase the conditional intensity of all the processes connected to it by$</span>\alpha<span>$. The excited intensity then decreases at a rate proportional to$</span>\beta``.</p><p>The conditional intensity of this process has a recursive formulation which can significantly speed the simulation. The recursive formulation for the univariate case is derived in Laub et al. [2]. We derive the compound case here. Let <span>$t_{N_i} = \max \{ t_{n_j} &lt; t \mid j \in E_i \}$</span> and</p><p class="math-container">\[\begin{split}
+width_px, height_px = default(:size);</code></pre><h1 id="Model-and-example-solutions"><a class="docs-heading-anchor" href="#Model-and-example-solutions">Model and example solutions</a><a id="Model-and-example-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Model-and-example-solutions" title="Permalink"></a></h1><p>Let a graph with <span>$V$</span> nodes, then the multivariate Hawkes process is characterized by <span>$V$</span> point processes such that the conditional intensity rate of node <span>$i$</span> connected to a set of nodes <span>$E_i$</span> in the graph is given by:</p><p class="math-container">\[  \lambda_i^\ast (t) = \lambda + \sum_{j \in E_i} \sum_{t_{n_j} &lt; t} \alpha \exp \left[-\beta (t - t_{n_j}) \right]\]</p><p>This process is known as self-exciting, because the occurrence of an event <span>$j$</span> at <span>$t_{n_j}$</span> will increase the conditional intensity of all the processes connected to it by <span>$\alpha$</span>. The excited intensity then decreases at a rate proportional to <span>$\beta$</span>.</p><p>The conditional intensity of this process has a recursive formulation which can significantly speed the simulation. The recursive formulation for the univariate case is derived in Laub et al. [2]. We derive the compound case here. Let <span>$t_{N_i} = \max \{ t_{n_j} &lt; t \mid j \in E_i \}$</span> and</p><p class="math-container">\[\begin{split}
   \phi_i^\ast (t)
     &amp;= \sum_{j \in E_i} \sum_{t_{n_j} &lt; t} \alpha \exp \left[-\beta (t - t_{N_i} + t_{N_i} - t_{n_j}) \right] \\
     &amp;= \exp \left[ -\beta (t - t_{N_i}) \right] \sum_{j \in E_i} \sum_{t_{n_j} \leq t_{N_i}} \alpha \exp \left[-\beta (t_{N_i} - t_{n_j}) \right] \\
@@ -137,7 +137,7 @@ let fig = []
     push!(fig, plot(sol.t, sol[1:V, :]&#39;, title=label, legend=false, format=fmt))
   end
   fig = plot(fig..., layout=(2,2), format=fmt, size=(width_px, 2*height_px/2))
-end</code></pre><p><img src="../figures/MultivariateHawkes_8_1.png" alt/></p><h2 id="Alternative-libraries"><a class="docs-heading-anchor" href="#Alternative-libraries">Alternative libraries</a><a id="Alternative-libraries-1"></a><a class="docs-heading-anchor-permalink" href="#Alternative-libraries" title="Permalink"></a></h2><p>We benchmark <code>JumpProcesses.jl</code> against <code>PiecewiseDeterministicMarkovProcesses.jl</code> and Python <code>Tick</code> library. </p><p>In order to compare with the <code>PiecewiseDeterministicMarkovProcesses.jl</code>, we need to reformulate our jump problem as a Piecewise Deterministic Markov Process (PDMP). In this setting, we have two options. </p><p>The simple version only requires the conditional intensity. Like above, we define a brute-force and recursive approach. Following the library&#39;s specification we define the following functions.</p><pre><code class="language-julia hljs">function hawkes_rate_simple_recursion(rate, xc, xd, p, t, issum::Bool)
+end</code></pre><p><img src="../figures/MultivariateHawkes_8_1.png" alt/></p><h2 id="Alternative-libraries"><a class="docs-heading-anchor" href="#Alternative-libraries">Alternative libraries</a><a id="Alternative-libraries-1"></a><a class="docs-heading-anchor-permalink" href="#Alternative-libraries" title="Permalink"></a></h2><p>We benchmark <code>JumpProcesses.jl</code> against <code>PiecewiseDeterministicMarkovProcesses.jl</code> and Python <code>Tick</code> library.</p><p>In order to compare with the <code>PiecewiseDeterministicMarkovProcesses.jl</code>, we need to reformulate our jump problem as a Piecewise Deterministic Markov Process (PDMP). In this setting, we have two options.</p><p>The simple version only requires the conditional intensity. Like above, we define a brute-force and recursive approach. Following the library&#39;s specification we define the following functions.</p><pre><code class="language-julia hljs">function hawkes_rate_simple_recursion(rate, xc, xd, p, t, issum::Bool)
   λ, _, β, h, ϕ, g = p
   for i in 1:length(g)
     rate[i] = λ + exp(-β * (t - h[i])) * ϕ[i]
@@ -199,17 +199,20 @@ function hawkes_problem(p,
     xc0 = copy(u)
     nu = one(eltype(xd0)) * I(length(xd0))
     if use_recursion
-      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_recursion, 
+      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_recursion,
           hawkes_affect_simple_recursion!, nu, xc0, xd0, p, tspan)
     else
-      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_brute, 
+      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_brute,
           hawkes_affect_simple_brute!, nu, xc0, xd0, p, tspan)
     end
     return jprob
 end
 
 push!(algorithms, (PDMPCHVSimple(), CHV(Tsit5()), false, &quot;PDMPCHVSimple (brute-force)&quot;));
-push!(algorithms, (PDMPCHVSimple(), CHV(Tsit5()), true, &quot;PDMPCHVSimple (recursive)&quot;));</code></pre><p>The full version requires that we describe how the conditional intensity changes with time which we derive below:</p><p class="math-container">\[\begin{split}
+push!(algorithms, (PDMPCHVSimple(), CHV(Tsit5()), true, &quot;PDMPCHVSimple (recursive)&quot;));</code></pre><pre><code class="nohighlight hljs">Error: Failed to precompile PiecewiseDeterministicMarkovProcesses [86206cdf
+-4603-54e0-bd58-22a2dcbf57aa] to &quot;/cache/julia-buildkite-plugin/depots/5b30
+0254-1738-4989-ae0a-f4d2d937f953/compiled/v1.9/PiecewiseDeterministicMarkov
+Processes/jl_Yer1rM&quot;.</code></pre><p>The full version requires that we describe how the conditional intensity changes with time which we derive below:</p><p class="math-container">\[\begin{split}
   \frac{d \lambda_i^\ast (t)}{d t}
     &amp;= -\beta \sum_{j \in E_i} \sum_{t_{n_j} &lt; t} \alpha \exp \left[-\beta (t - t_{n_j}) \right] \\
     &amp;= -\beta \left( \lambda_i^\ast (t) - \lambda \right)
@@ -250,7 +253,7 @@ function hawkes_problem(
     return jprob
 end
 
-push!(algorithms, (PDMPCHVFull(), CHV(Tsit5()), true, &quot;PDMPCHVFull&quot;));</code></pre><p>The Python <code>Tick</code> library can be accessed with the <code>PyCall.jl</code>. We install the required Python dependencies with <code>Conda.jl</code> and define a factory for the Multivariate Hawkes <code>PyTick</code> problem.</p><pre><code class="language-julia hljs">const BENCHMARK_PYTHON::Bool = tryparse(Bool, get(ENV, &quot;SCIMLBENCHMARK_PYTHON&quot;, &quot;true&quot;))
+push!(algorithms, (PDMPCHVFull(), CHV(Tsit5()), true, &quot;PDMPCHVFull&quot;));</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `CHV` not defined</code></pre><p>The Python <code>Tick</code> library can be accessed with the <code>PyCall.jl</code>. We install the required Python dependencies with <code>Conda.jl</code> and define a factory for the Multivariate Hawkes <code>PyTick</code> problem.</p><pre><code class="language-julia hljs">const BENCHMARK_PYTHON::Bool = tryparse(Bool, get(ENV, &quot;SCIMLBENCHMARK_PYTHON&quot;, &quot;true&quot;))
 const REBUILD_PYCALL::Bool = tryparse(Bool, get(ENV, &quot;SCIMLBENCHMARK_REBUILD_PYCALL&quot;, &quot;true&quot;))
 
 struct PyTick end
@@ -319,7 +322,7 @@ The following packages will be downloaded:
 
     package                    |            build
     ---------------------------|-----------------
-    brotli-python-1.0.9        |   py38hfa26641_9         319 KB  conda-for
+    brotli-python-1.1.0        |   py38h17151c0_0         342 KB  conda-for
 ge
     cffi-1.15.1                |   py38h4a40e3a_3         230 KB  conda-for
 ge
@@ -343,10 +346,10 @@ ge
 ge
     ruamel.yaml-0.16.0         |   py38h516909a_1         172 KB  conda-for
 ge
-    zstandard-0.19.0           |   py38ha98ab4e_2         384 KB  conda-for
+    zstandard-0.19.0           |   py38h0a891b7_0         671 KB  conda-for
 ge
     ------------------------------------------------------------
-                                           Total:        34.0 MB
+                                           Total:        34.3 MB
 
 The following NEW packages will be INSTALLED:
 
@@ -358,8 +361,8 @@ The following packages will be REMOVED:
 
 The following packages will be DOWNGRADED:
 
-  brotli-python                       1.0.9-py310hd8f1fbe_9 --&gt; 1.0.9-py38h
-fa26641_9 
+  brotli-python                       1.1.0-py310hc6cd4ac_0 --&gt; 1.1.0-py38h
+17151c0_0 
   cffi                               1.15.1-py310h255011f_3 --&gt; 1.15.1-py38
 h4a40e3a_3 
   conda                              23.3.1-py310hff52083_0 --&gt; 23.3.1-py38
@@ -379,8 +382,8 @@ h59b608b_0
   python_abi                                   3.10-3_cp310 --&gt; 3.8-3_cp38 
   ruamel.yaml                       0.17.32-py310h2372a71_0 --&gt; 0.16.0-py38
 h516909a_1 
-  zstandard                          0.19.0-py310h1275a96_2 --&gt; 0.19.0-py38
-ha98ab4e_2 
+  zstandard                          0.19.0-py310h5764c6d_0 --&gt; 0.19.0-py38
+h0a891b7_0 
 
 
 Preparing transaction: ...working... done
@@ -393,7 +396,7 @@ Solving environment: ...working... done
 
 Collecting tick
   Downloading tick-0.7.0.1-cp38-cp38-manylinux2014_x86_64.whl (10.8 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 34.3 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 50.9 MB/s eta 0:
 00:00
 Requirement already satisfied: numpy in /cache/julia-buildkite-plugin/depot
 s/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3.8/site-pa
@@ -401,11 +404,11 @@ ckages (from tick) (1.24.4)
 Collecting scipy (from tick)
   Downloading scipy-1.10.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x8
 6_64.whl (34.5 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.5/34.5 MB 86.8 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.5/34.5 MB 82.9 MB/s eta 0:
 00:00
 Collecting numpydoc (from tick)
   Downloading numpydoc-1.5.0-py3-none-any.whl (52 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 52.4/52.4 kB 31.2 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 52.4/52.4 kB 34.8 MB/s eta 0:
 00:00
 Collecting matplotlib (from tick)
   Obtaining dependency information for matplotlib from https://files.python
@@ -454,7 +457,7 @@ Collecting fonttools&gt;=4.22.0 (from matplotlib-&gt;tick)
 ux2014_x86_64.whl.metadata
   Downloading fonttools-4.42.1-cp38-cp38-manylinux_2_17_x86_64.manylinux201
 4_x86_64.whl.metadata (150 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 151.0/151.0 kB 75.0 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 151.0/151.0 kB 74.7 MB/s eta 0:
 00:00
 Collecting kiwisolver&gt;=1.0.1 (from matplotlib-&gt;tick)
   Obtaining dependency information for kiwisolver&gt;=1.0.1 from https://files
@@ -474,11 +477,11 @@ e49798aa371007/Pillow-10.0.0-cp38-cp38-manylinux_2_28_x86_64.whl.metadata
 .5 kB)
 Collecting pyparsing&lt;3.1,&gt;=2.3.1 (from matplotlib-&gt;tick)
   Downloading pyparsing-3.0.9-py3-none-any.whl (98 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 98.3/98.3 kB 58.8 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 98.3/98.3 kB 57.4 MB/s eta 0:
 00:00
 Collecting python-dateutil&gt;=2.7 (from matplotlib-&gt;tick)
   Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 kB 99.7 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 kB 99.6 MB/s eta 0:
 00:00
 Collecting importlib-resources&gt;=3.2.0 (from matplotlib-&gt;tick)
   Obtaining dependency information for importlib-resources&gt;=3.2.0 from http
@@ -488,30 +491,30 @@ data
   Downloading importlib_resources-6.0.1-py3-none-any.whl.metadata (4.0 kB)
 Collecting Jinja2&gt;=2.10 (from numpydoc-&gt;tick)
   Downloading Jinja2-3.1.2-py3-none-any.whl (133 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.1/133.1 kB 72.6 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.1/133.1 kB 71.8 MB/s eta 0:
 00:00
 Collecting sphinxcontrib-applehelp (from sphinx-&gt;tick)
   Downloading sphinxcontrib_applehelp-1.0.4-py3-none-any.whl (120 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 120.6/120.6 kB 68.7 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 120.6/120.6 kB 66.6 MB/s eta 0:
 00:00
 Collecting sphinxcontrib-devhelp (from sphinx-&gt;tick)
   Downloading sphinxcontrib_devhelp-1.0.2-py2.py3-none-any.whl (84 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.7/84.7 kB 30.6 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.7/84.7 kB 51.8 MB/s eta 0:
 00:00
 Collecting sphinxcontrib-jsmath (from sphinx-&gt;tick)
   Downloading sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl (5.1 kB)
 Collecting sphinxcontrib-htmlhelp&gt;=2.0.0 (from sphinx-&gt;tick)
   Downloading sphinxcontrib_htmlhelp-2.0.1-py3-none-any.whl (99 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 99.8/99.8 kB 43.3 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 99.8/99.8 kB 57.4 MB/s eta 0:
 00:00
 Collecting sphinxcontrib-serializinghtml&gt;=1.1.5 (from sphinx-&gt;tick)
   Downloading sphinxcontrib_serializinghtml-1.1.5-py2.py3-none-any.whl (94 
 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 94.0/94.0 kB 43.5 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 94.0/94.0 kB 59.1 MB/s eta 0:
 00:00
 Collecting sphinxcontrib-qthelp (from sphinx-&gt;tick)
   Downloading sphinxcontrib_qthelp-1.0.3-py2.py3-none-any.whl (90 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.6/90.6 kB 40.9 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.6/90.6 kB 54.2 MB/s eta 0:
 00:00
 Collecting Pygments&gt;=2.13 (from sphinx-&gt;tick)
   Obtaining dependency information for Pygments&gt;=2.13 from https://files.py
@@ -525,11 +528,11 @@ files.pythonhosted.org/packages/26/87/f238c0670b94533ac0353a4e2a1a771a0cc73
   Downloading docutils-0.20.1-py3-none-any.whl.metadata (2.8 kB)
 Collecting snowballstemmer&gt;=2.0 (from sphinx-&gt;tick)
   Downloading snowballstemmer-2.2.0-py2.py3-none-any.whl (93 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 93.0/93.0 kB 41.0 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 93.0/93.0 kB 55.5 MB/s eta 0:
 00:00
 Collecting babel&gt;=2.9 (from sphinx-&gt;tick)
   Downloading Babel-2.12.1-py3-none-any.whl (10.1 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.1/10.1 MB 115.2 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.1/10.1 MB 107.1 MB/s eta 0:
 00:00
 Collecting alabaster&lt;0.8,&gt;=0.7 (from sphinx-&gt;tick)
   Downloading alabaster-0.7.13-py3-none-any.whl (13 kB)
@@ -545,11 +548,11 @@ Collecting importlib-metadata&gt;=4.8 (from sphinx-&gt;tick)
   Downloading importlib_metadata-6.8.0-py3-none-any.whl.metadata (5.1 kB)
 Collecting pytz&gt;=2020.1 (from pandas-&gt;tick)
   Downloading pytz-2023.3-py2.py3-none-any.whl (502 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 502.3/502.3 kB 127.6 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 502.3/502.3 kB 129.1 MB/s eta 0:
 00:00
 Collecting tzdata&gt;=2022.1 (from pandas-&gt;tick)
   Downloading tzdata-2023.3-py2.py3-none-any.whl (341 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 341.8/341.8 kB 117.1 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 341.8/341.8 kB 118.2 MB/s eta 0:
 00:00
 Collecting joblib&gt;=1.1.1 (from scikit-learn-&gt;tick)
   Obtaining dependency information for joblib&gt;=1.1.1 from https://files.pyt
@@ -588,48 +591,48 @@ Requirement already satisfied: certifi&gt;=2017.4.17 in /cache/julia-buildkite
 -plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/pyth
 on3.8/site-packages (from requests&gt;=2.25.0-&gt;sphinx-&gt;tick) (2023.7.22)
 Downloading dill-0.3.7-py3-none-any.whl (115 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 115.3/115.3 kB 60.7 MB/s eta 0:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 115.3/115.3 kB 56.3 MB/s eta 0:
 00:00
 Downloading matplotlib-3.7.2-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_
 x86_64.whl (9.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 125.2 MB/s eta 0:00:
-00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 72.8 MB/s eta 0:00:0
+0
 Downloading sphinx-7.1.2-py3-none-any.whl (3.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 105.9 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 148.8 MB/s eta 0:00:
 00
 Downloading pandas-2.0.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_
 64.whl (12.4 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 136.6 MB/s eta 0:0
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 137.2 MB/s eta 0:0
 0:00
 Downloading scikit_learn-1.3.0-cp38-cp38-manylinux_2_17_x86_64.manylinux201
 4_x86_64.whl (11.1 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.1/11.1 MB 144.8 MB/s eta 0:0
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.1/11.1 MB 141.0 MB/s eta 0:0
 0:00
 Downloading contourpy-1.1.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x
 86_64.whl (300 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 300.4/300.4 kB 109.0 MB/s eta 0:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 300.4/300.4 kB 106.0 MB/s eta 0:
 00:00
 Downloading docutils-0.20.1-py3-none-any.whl (572 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 572.7/572.7 kB 141.4 MB/s eta 0:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 572.7/572.7 kB 142.2 MB/s eta 0:
 00:00
 Downloading fonttools-4.42.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_
 x86_64.whl (4.6 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.6/4.6 MB 134.5 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.6/4.6 MB 151.0 MB/s eta 0:00:
 00
 Downloading importlib_metadata-6.8.0-py3-none-any.whl (22 kB)
 Downloading importlib_resources-6.0.1-py3-none-any.whl (34 kB)
 Downloading joblib-1.3.2-py3-none-any.whl (302 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 302.2/302.2 kB 112.5 MB/s eta 0:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 302.2/302.2 kB 114.0 MB/s eta 0:
 00:00
 Downloading kiwisolver-1.4.5-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_
 64.whl (1.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 140.7 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 152.3 MB/s eta 0:00:
 00
 Downloading Pillow-10.0.0-cp38-cp38-manylinux_2_28_x86_64.whl (3.4 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 140.4 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.4/3.4 MB 154.9 MB/s eta 0:00:
 00
 Downloading Pygments-2.16.1-py3-none-any.whl (1.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 144.0 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 151.6 MB/s eta 0:00:
 00
 Downloading threadpoolctl-3.2.0-py3-none-any.whl (15 kB)
 Downloading MarkupSafe-2.1.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_
@@ -652,32 +655,18 @@ esources-6.0.1 joblib-1.3.2 kiwisolver-1.4.5 matplotlib-3.7.2 numpydoc-1.5.
 rib-htmlhelp-2.0.1 sphinxcontrib-jsmath-1.0.1 sphinxcontrib-qthelp-1.0.3 sp
 hinxcontrib-serializinghtml-1.1.5 threadpoolctl-3.2.0 tick-0.7.0.1 tzdata-2
 023.3 zipp-3.16.2
-8-element Vector{Tuple{Any, Any, Bool, String}}:
- (JumpProcesses.Direct(), Tsit5(stage_limiter! = trivial_limiter!, step_lim
-iter! = trivial_limiter!, thread = static(false)), 0, &quot;Direct (brute-force)
-&quot;)
+5-element Vector{Tuple{Any, Any, Bool, String}}:
+ (JumpProcesses.Direct(), Tsit5(; stage_limiter! = trivial_limiter!, step_l
+imiter! = trivial_limiter!, thread = static(false),), 0, &quot;Direct (brute-for
+ce)&quot;)
  (JumpProcesses.Coevolve(), JumpProcesses.SSAStepper(), 0, &quot;Coevolve (brute
 -force)&quot;)
- (JumpProcesses.Direct(), Tsit5(stage_limiter! = trivial_limiter!, step_lim
-iter! = trivial_limiter!, thread = static(false)), 1, &quot;Direct (recursive)&quot;)
+ (JumpProcesses.Direct(), Tsit5(; stage_limiter! = trivial_limiter!, step_l
+imiter! = trivial_limiter!, thread = static(false),), 1, &quot;Direct (recursive
+)&quot;)
  (JumpProcesses.Coevolve(), JumpProcesses.SSAStepper(), 1, &quot;Coevolve (recur
 sive)&quot;)
- (Main.var&quot;##WeaveSandBox#319&quot;.PDMPCHVSimple(), PiecewiseDeterministicMarko
-vProcesses.CHV{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_limiter!)
-, typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}}(Tsit5(stage_limit
-er! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static(f
-alse))), 0, &quot;PDMPCHVSimple (brute-force)&quot;)
- (Main.var&quot;##WeaveSandBox#319&quot;.PDMPCHVSimple(), PiecewiseDeterministicMarko
-vProcesses.CHV{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_limiter!)
-, typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}}(Tsit5(stage_limit
-er! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static(f
-alse))), 1, &quot;PDMPCHVSimple (recursive)&quot;)
- (Main.var&quot;##WeaveSandBox#319&quot;.PDMPCHVFull(), PiecewiseDeterministicMarkovP
-rocesses.CHV{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_limiter!), 
-typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}}(Tsit5(stage_limiter
-! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static(fal
-se))), 1, &quot;PDMPCHVFull&quot;)
- (Main.var&quot;##WeaveSandBox#319&quot;.PyTick(), nothing, 1, &quot;PyTick&quot;)</code></pre><p>Now, we instantiate the problems, find their solutions and plot the results.</p><pre><code class="language-julia hljs">let fig = []
+ (Main.var&quot;##WeaveSandBox#348&quot;.PyTick(), nothing, 1, &quot;PyTick&quot;)</code></pre><p>Now, we instantiate the problems, find their solutions and plot the results.</p><pre><code class="language-julia hljs">let fig = []
   for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms[5:end])
     @info label
     if typeof(algo) &lt;: PyTick
@@ -729,27 +718,27 @@ function hawkes_Λ(g, p)
     return [hawkes_Λ(i, g, p) for i = 1:length(g)]
 end
 
-Λ = hawkes_Λ(g, p)</code></pre><pre><code class="nohighlight hljs">10-element Vector{Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vec
+Λ = hawkes_Λ(g, p)</code></pre><pre><code class="nohighlight hljs">10-element Vector{Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vec
 tor{Int64}}, Tuple{Float64, Float64, Float64}}}:
- (::Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vector{Int64}}, T
+ (::Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vector{Int64}}, T
+ (::Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vector{Int64}}, T
+ (::Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vector{Int64}}, T
+ (::Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vector{Int64}}, T
+ (::Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vector{Int64}}, T
+ (::Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vector{Int64}}, T
+ (::Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vector{Int64}}, T
+ (::Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vector{Int64}}, T
+ (::Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var&quot;##WeaveSandBox#319&quot;.var&quot;#Λ#33&quot;{Int64, Vector{Vector{Int64}}, T
+ (::Main.var&quot;##WeaveSandBox#348&quot;.var&quot;#Λ#32&quot;{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)</code></pre><p>We need a method for extracting the history from a simulation run. Below, we define such functions for each type of algorithm.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
 Given an ODE solution `sol`, recover the timestamp in which events occurred. It
 returns a vector with the history of each process in `sol`.
@@ -788,7 +777,7 @@ end
 
 function histories(sols)
     map(histories, sols)
-end</code></pre><pre><code class="nohighlight hljs">histories (generic function with 4 methods)</code></pre><p>We also need to compute the quantiles of the empirical distribution given a history of events <code>hs</code>, the compensator <code>Λ</code> and the target quantiles <code>quant</code>.</p><pre><code class="language-julia hljs">import Distributions: Exponential
+end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `PDMP` not defined</code></pre><p>We also need to compute the quantiles of the empirical distribution given a history of events <code>hs</code>, the compensator <code>Λ</code> and the target quantiles <code>quant</code>.</p><pre><code class="language-julia hljs">import Distributions: Exponential
 
 &quot;&quot;&quot;
 Computes the empirical and expected quantiles given a history of events `hs`,
@@ -945,7 +934,7 @@ end</code></pre><p>Now, we simulate all of the algorithms we defined in the prev
         push!(fig, qqplot(qqs..., legend = false, aspect_ratio = :equal, title=label, fmt=fmt))
     end
     fig = plot(fig..., layout = (4, 2), fmt=fmt, size=(width_px, 4*height_px/2))
-end</code></pre><p><img src="../figures/MultivariateHawkes_21_1.png" alt/></p><h1 id="Benchmarking-performance"><a class="docs-heading-anchor" href="#Benchmarking-performance">Benchmarking performance</a><a id="Benchmarking-performance-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarking-performance" title="Permalink"></a></h1><p>In this Section we benchmark all the algorithms introduced in the first Section.</p><p>We generate networks in the range from <span>$1$</span> to <span>$95$</span> nodes and simulate the Multivariate Hawkes process <span>$25$</span> units of time. </p><p>and simulate models in the range from <span>$1$</span> to <span>$95$</span> nodes for <span>$25$</span> units of time. We fix the Hawkes parameters at <span>$\lambda = 0.5 , \alpha = 0.1 , \beta = 5.0$</span> which ensures the process does not explode. We simulate <span>$50$</span> trajectories with a limit of ten seconds to complete execution for each configuration.</p><pre><code class="language-julia hljs">tspan = (0.0, 25.0)
+end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `PDMPCHVSimple` not defined</code></pre><h1 id="Benchmarking-performance"><a class="docs-heading-anchor" href="#Benchmarking-performance">Benchmarking performance</a><a id="Benchmarking-performance-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarking-performance" title="Permalink"></a></h1><p>In this Section we benchmark all the algorithms introduced in the first Section.</p><p>We generate networks in the range from <span>$1$</span> to <span>$95$</span> nodes and simulate the Multivariate Hawkes process <span>$25$</span> units of time.</p><p>and simulate models in the range from <span>$1$</span> to <span>$95$</span> nodes for <span>$25$</span> units of time. We fix the Hawkes parameters at <span>$\lambda = 0.5 , \alpha = 0.1 , \beta = 5.0$</span> which ensures the process does not explode. We simulate <span>$50$</span> trajectories with a limit of ten seconds to complete execution for each configuration.</p><pre><code class="language-julia hljs">tspan = (0.0, 25.0)
 p = (0.5, 0.1, 5.0)
 Vs = append!([1], 5:5:95)
 Gs = [erdos_renyi(V, 0.2, seed = 6221) for V in Vs]
@@ -1051,96 +1040,7 @@ for (algo, stepper, use_recursion, label) in algorithms
             println(&quot;algo=$(label), V = $(nv(G)), length = $(length(trial.times)), median time = $median_time&quot;)
         end
     end
-end</code></pre><pre><code class="nohighlight hljs">algo=Direct (brute-force), V = 1, length = 50, median time = 117.649 μs
-algo=Direct (brute-force), V = 10, length = 50, median time = 16.983 ms
-algo=Direct (brute-force), V = 20, length = 50, median time = 137.579 ms
-algo=Direct (brute-force), V = 30, length = 23, median time = 437.210 ms
-algo=Direct (brute-force), V = 40, length = 5, median time = 2.382 s
-algo=Direct (brute-force), V = 50, length = 3, median time = 4.743 s
-algo=Direct (brute-force), V = 60, length = 2, median time = 9.555 s
-algo=Direct (brute-force), V = 70, length = 1, median time = 17.146 s
-algo=Direct (brute-force), V = 80, length = 1, median time = 22.588 s
-algo=Direct (brute-force), V = 90, length = 1, median time = 27.950 s
-algo=Coevolve (brute-force), V = 1, length = 50, median time = 4.620 μs
-algo=Coevolve (brute-force), V = 10, length = 50, median time = 221.428 μs
-algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.440 ms
-algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.371 ms
-algo=Coevolve (brute-force), V = 40, length = 50, median time = 8.478 ms
-algo=Coevolve (brute-force), V = 50, length = 50, median time = 17.369 ms
-algo=Coevolve (brute-force), V = 60, length = 50, median time = 39.339 ms
-algo=Coevolve (brute-force), V = 70, length = 50, median time = 62.970 ms
-algo=Coevolve (brute-force), V = 80, length = 50, median time = 89.746 ms
-algo=Coevolve (brute-force), V = 90, length = 50, median time = 149.630 ms
-algo=Direct (recursive), V = 1, length = 50, median time = 115.644 μs
-algo=Direct (recursive), V = 10, length = 50, median time = 11.421 ms
-algo=Direct (recursive), V = 20, length = 50, median time = 58.646 ms
-algo=Direct (recursive), V = 30, length = 50, median time = 202.335 ms
-algo=Direct (recursive), V = 40, length = 6, median time = 1.740 s
-algo=Direct (recursive), V = 50, length = 3, median time = 3.303 s
-algo=Direct (recursive), V = 60, length = 2, median time = 7.072 s
-algo=Direct (recursive), V = 70, length = 1, median time = 10.754 s
-algo=Direct (recursive), V = 80, length = 1, median time = 17.169 s
-algo=Direct (recursive), V = 90, length = 1, median time = 20.679 s
-algo=Coevolve (recursive), V = 1, length = 50, median time = 5.064 μs
-algo=Coevolve (recursive), V = 10, length = 50, median time = 75.635 μs
-algo=Coevolve (recursive), V = 20, length = 50, median time = 270.327 μs
-algo=Coevolve (recursive), V = 30, length = 50, median time = 495.050 μs
-algo=Coevolve (recursive), V = 40, length = 50, median time = 932.572 μs
-algo=Coevolve (recursive), V = 50, length = 50, median time = 1.489 ms
-algo=Coevolve (recursive), V = 60, length = 50, median time = 2.185 ms
-algo=Coevolve (recursive), V = 70, length = 50, median time = 3.026 ms
-algo=Coevolve (recursive), V = 80, length = 50, median time = 3.946 ms
-algo=Coevolve (recursive), V = 90, length = 50, median time = 5.201 ms
-algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 179.083
- μs
-algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 4.903 
-ms
-algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 53.487
- ms
-algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 138.68
-3 ms
-algo=PDMPCHVSimple (brute-force), V = 40, length = 29, median time = 355.36
-6 ms
-algo=PDMPCHVSimple (brute-force), V = 50, length = 14, median time = 719.80
-8 ms
-algo=PDMPCHVSimple (brute-force), V = 60, length = 8, median time = 1.271 s
-algo=PDMPCHVSimple (brute-force), V = 70, length = 5, median time = 2.152 s
-algo=PDMPCHVSimple (brute-force), V = 80, length = 3, median time = 3.592 s
-algo=PDMPCHVSimple (brute-force), V = 90, length = 2, median time = 5.692 s
-algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 181.043 μ
-s
-algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 448.376 
-μs
-algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 940.676 
-μs
-algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.652 ms
-algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.551 ms
-algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.666 ms
-algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 5.119 ms
-algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 6.799 ms
-algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 8.987 ms
-algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 11.724 m
-s
-algo=PDMPCHVFull, V = 1, length = 50, median time = 178.138 μs
-algo=PDMPCHVFull, V = 10, length = 50, median time = 599.604 μs
-algo=PDMPCHVFull, V = 20, length = 50, median time = 901.702 μs
-algo=PDMPCHVFull, V = 30, length = 50, median time = 1.316 ms
-algo=PDMPCHVFull, V = 40, length = 50, median time = 1.619 ms
-algo=PDMPCHVFull, V = 50, length = 50, median time = 1.974 ms
-algo=PDMPCHVFull, V = 60, length = 50, median time = 2.533 ms
-algo=PDMPCHVFull, V = 70, length = 50, median time = 2.884 ms
-algo=PDMPCHVFull, V = 80, length = 50, median time = 3.281 ms
-algo=PDMPCHVFull, V = 90, length = 50, median time = 3.879 ms
-algo=PyTick, V = 1, length = 50, median time = 31.220 μs
-algo=PyTick, V = 10, length = 50, median time = 177.578 μs
-algo=PyTick, V = 20, length = 50, median time = 1.224 ms
-algo=PyTick, V = 30, length = 50, median time = 3.672 ms
-algo=PyTick, V = 40, length = 50, median time = 9.212 ms
-algo=PyTick, V = 50, length = 50, median time = 21.683 ms
-algo=PyTick, V = 60, length = 50, median time = 47.535 ms
-algo=PyTick, V = 70, length = 50, median time = 90.945 ms
-algo=PyTick, V = 80, length = 50, median time = 142.506 ms
-algo=PyTick, V = 90, length = 43, median time = 237.369 ms</code></pre><pre><code class="language-julia hljs">let fig = plot(
+end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `PDMPCHVSimple` not defined</code></pre><pre><code class="language-julia hljs">let fig = plot(
         yscale = :log10,
         xlabel = &quot;V&quot;,
         ylabel = &quot;Time (ns)&quot;,
@@ -1157,4 +1057,5 @@ algo=PyTick, V = 90, length = 43, median time = 237.369 ms</code></pre><pre><cod
         plot!(_Vs, _bs, label=label)
     end
     title!(&quot;Simulations, 50 samples: nodes × time&quot;)
-end</code></pre><p><img src="../figures/MultivariateHawkes_23_1.png" alt/></p><h1 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h1><p>[1] D. J. Daley and D. Vere-Jones. An Introduction to the Theory of Point Processes: Volume I: Elementary Theory and Methods. Probability and Its Applications, An Introduction to the Theory of Point Processes. Springer-Verlag, 2 edition. doi:10.1007/b97277.</p><p>[2] Patrick J. Laub, Young Lee, and Thomas Taimre. The Elements of Hawkes Processes. Springer International Publishing. doi:10.1007/978-3-030-84639-8.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Mendes_multistate_example/">« Mendes Multistate Model</a><a class="docs-footer-nextpage" href="../NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Sunday 3 September 2023 20:07">Sunday 3 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre><pre><code class="nohighlight hljs">Error: BoundsError: attempt to access 1-element Vector{Vector{BenchmarkTool
+s.Trial}} at index [2]</code></pre><h1 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h1><p>[1] D. J. Daley and D. Vere-Jones. An Introduction to the Theory of Point Processes: Volume I: Elementary Theory and Methods. Probability and Its Applications, An Introduction to the Theory of Point Processes. Springer-Verlag, 2 edition. doi:10.1007/b97277.</p><p>[2] Patrick J. Laub, Young Lee, and Thomas Taimre. The Elements of Hawkes Processes. Springer International Publishing. doi:10.1007/978-3-030-84639-8.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Mendes_multistate_example/">« Mendes Multistate Model</a><a class="docs-footer-nextpage" href="../NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Sunday 3 September 2023 20:08">Sunday 3 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
