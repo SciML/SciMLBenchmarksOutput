@@ -214,10 +214,10 @@ function hawkes_problem(p,
     xc0 = copy(u)
     nu = one(eltype(xd0)) * I(length(xd0))
     if use_recursion
-      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_recursion, 
+      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_recursion,
           hawkes_affect_simple_recursion!, nu, xc0, xd0, p, tspan)
     else
-      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_brute, 
+      jprob = PDMPProblem(hawkes_drate_simple, hawkes_rate_simple_brute,
           hawkes_affect_simple_brute!, nu, xc0, xd0, p, tspan)
     end
     return jprob
