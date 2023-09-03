@@ -70,10 +70,7 @@ end
 
 model = fitlv(data, sprob)
 
-@time chain = sample(model, NUTS(0.65), 10000; progress=false)
-
-
-@time chain = sample(model, NUTS(0.65), 10000; progress=false)
+@time chain = sample(model, Turing.NUTS(0.65), 10000; progress=false)
 
 
 @btime bayesian_result_turing = turing_inference(prob, Tsit5(), t, data, priors, num_samples=10_000)

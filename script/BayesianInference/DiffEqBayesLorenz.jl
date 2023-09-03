@@ -89,10 +89,7 @@ end
 
 model = fitlv(data, sprob)
 
-@time chain = sample(model, NUTS(0.65), 10000; progress=false)
-
-
-@time chain = sample(model, NUTS(0.65), 10000; progress=false)
+@time chain = sample(model, Turing.NUTS(0.65), 10000; progress=false)
 
 
 @time bayesian_result_turing = turing_inference(prob, Vern9(), t, data, priors; reltol=1e-8, abstol=1e-8, likelihood=(u, p, t, σ) -> MvNormal(u, Diagonal((σ) .^ 2 .* ones(length(u)))), likelihood_dist_priors=[InverseGamma(2, 3), InverseGamma(2, 3), InverseGamma(2, 3)])
