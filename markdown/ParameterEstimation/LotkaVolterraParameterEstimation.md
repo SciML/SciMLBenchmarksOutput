@@ -192,12 +192,12 @@ optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub =
 ```
 
 ```
-1.026 s (2766489 allocations: 390.80 MiB)
+1.032 s (2762858 allocations: 390.28 MiB)
 u: 4-element Vector{Float64}:
- 1.500477481901868
- 1.0005612724446045
- 2.998976840282345
- 0.9993235452283873
+ 1.500687946588001
+ 0.9997468475517203
+ 2.99631918063932
+ 0.999055938484203
 ```
 
 
@@ -210,12 +210,12 @@ optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub =
 ```
 
 ```
-1.038 s (2763222 allocations: 390.34 MiB)
+1.033 s (2758813 allocations: 389.72 MiB)
 u: 4-element Vector{Float64}:
- 1.500588070446876
- 0.9997526120278513
- 2.9947291914871257
- 0.9984221712465421
+ 1.499806309458307
+ 0.9999652297789237
+ 3.000916290625066
+ 1.0002900852275367
 ```
 
 
@@ -228,12 +228,12 @@ optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub =
 ```
 
 ```
-1.423 s (2801377 allocations: 398.61 MiB)
+1.296 s (2800486 allocations: 398.50 MiB)
 u: 4-element Vector{Float64}:
- 1.500524714493777
- 1.0002055360462672
- 2.9974719755085375
- 0.9991048823133102
+ 1.500444780187404
+ 1.00065812329896
+ 2.9981559716980475
+ 0.9994922232817108
 ```
 
 
@@ -266,7 +266,7 @@ opt = Opt(:GN_ORIG_DIRECT_L, 4)
 ```
 
 ```
-749.200 ms (1433251 allocations: 242.18 MiB)
+682.132 ms (1433251 allocations: 242.18 MiB)
 u: 4-element Vector{Float64}:
  1.7283950617224937
  2.22222222222419
@@ -282,12 +282,12 @@ opt = Opt(:GN_CRS2_LM, 4)
 ```
 
 ```
-1.420 s (2668794 allocations: 450.94 MiB)
+1.297 s (2694473 allocations: 455.23 MiB)
 u: 4-element Vector{Float64}:
- 1.500000000069837
- 1.000000000085636
- 2.999999999508825
- 0.9999999999260177
+ 1.5000000000663032
+ 1.0000000000815237
+ 2.9999999995188813
+ 0.9999999999306401
 ```
 
 
@@ -298,12 +298,12 @@ opt = Opt(:GN_ISRES, 4)
 ```
 
 ```
-1.946 s (3670116 allocations: 620.05 MiB)
+1.763 s (3670116 allocations: 620.05 MiB)
 u: 4-element Vector{Float64}:
- 1.2687955419886594
- 1.1646083807005831
- 5.179541456140339
- 1.7566936002225417
+ 1.5356895229979317
+ 1.0016879185554783
+ 2.8301682656247302
+ 0.9509159623461817
 ```
 
 
@@ -314,12 +314,12 @@ opt = Opt(:GN_ESCH, 4)
 ```
 
 ```
-1.927 s (3670116 allocations: 620.05 MiB)
+1.746 s (3670116 allocations: 620.05 MiB)
 u: 4-element Vector{Float64}:
- 5.0
- 5.968541677977914
- 1.0526805615213177
- 0.3439758935552413
+ 1.614414098261899
+ 1.0803916081840974
+ 2.6183925309530016
+ 0.8609081356295782
 ```
 
 
@@ -349,7 +349,7 @@ opt = Opt(:LN_BOBYQA, 4)
 ```
 
 ```
-55.535 ms (111317 allocations: 18.87 MiB)
+49.966 ms (111317 allocations: 18.87 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000702955
  1.0000000000848333
@@ -365,7 +365,7 @@ opt = Opt(:LN_NELDERMEAD, 4)
 ```
 
 ```
-89.381 ms (181047 allocations: 30.65 MiB)
+80.779 ms (181047 allocations: 30.65 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000705307
  1.000000000085224
@@ -381,7 +381,7 @@ opt = Opt(:LD_SLSQP, 4)
 ```
 
 ```
-14.323 ms (24820 allocations: 4.68 MiB)
+13.570 ms (24820 allocations: 4.68 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000702354
  1.000000000084916
@@ -397,7 +397,7 @@ opt = Opt(:LN_COBYLA, 4)
 ```
 
 ```
-1.948 s (3670116 allocations: 620.05 MiB)
+1.766 s (3670116 allocations: 620.05 MiB)
 u: 4-element Vector{Float64}:
  1.499998585072833
  0.9999995756417143
@@ -413,7 +413,7 @@ opt = Opt(:LN_NEWUOA_BOUND, 4)
 ```
 
 ```
-648.476 ms (333352 allocations: 56.38 MiB)
+627.651 ms (333352 allocations: 56.38 MiB)
 u: 4-element Vector{Float64}:
  1.500000738607671
  1.0000013474277258
@@ -429,12 +429,12 @@ opt = Opt(:LN_PRAXIS, 4)
 ```
 
 ```
-39.048 ms (79021 allocations: 13.41 MiB)
+35.204 ms (79021 allocations: 13.41 MiB)
 u: 4-element Vector{Float64}:
- 1.5000000000488078
- 1.0000000000995453
- 2.9999999996811346
- 0.9999999999736998
+ 1.5000000000544165
+ 1.0000000000849754
+ 2.9999999996095705
+ 0.9999999999546978
 ```
 
 
@@ -445,7 +445,7 @@ opt = Opt(:LN_SBPLX, 4)
 ```
 
 ```
-1.942 s (3670116 allocations: 620.05 MiB)
+1.754 s (3670116 allocations: 620.05 MiB)
 u: 4-element Vector{Float64}:
  1.4999999301104459
  0.9999999814386067
@@ -461,7 +461,7 @@ opt = Opt(:LD_MMA, 4)
 ```
 
 ```
-1.144 s (1817691 allocations: 345.13 MiB)
+1.095 s (1817691 allocations: 345.13 MiB)
 u: 4-element Vector{Float64}:
  1.4999999999592728
  1.0000000000448461
@@ -477,7 +477,7 @@ opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 4)
 ```
 
 ```
-16.877 ms (28391 allocations: 5.45 MiB)
+16.155 ms (28391 allocations: 5.45 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000702258
  1.0000000000849023
@@ -536,7 +536,7 @@ opt = Opt(:GN_ORIG_DIRECT_L, 4)
 ```
 
 ```
-3.945 s (6427692 allocations: 858.47 MiB)
+3.568 s (6427692 allocations: 858.47 MiB)
 u: 4-element Vector{Float64}:
  8.271604938277504
  7.42112482850273
@@ -552,12 +552,12 @@ opt = Opt(:GN_CRS2_LM, 4)
 ```
 
 ```
-21.617 s (35141237 allocations: 4.60 GiB)
+34.207 s (61403205 allocations: 8.01 GiB)
 u: 4-element Vector{Float64}:
- 1.4999999994854123
- 1.0000000002331326
- 3.000000001774768
- 1.000000000756316
+ 10.0
+  9.111020078734462
+  6.09462964532878
+  2.9508145682155584
 ```
 
 
@@ -568,12 +568,12 @@ opt = Opt(:GN_ISRES, 4)
 ```
 
 ```
-94.422 s (153550089 allocations: 20.03 GiB)
+85.606 s (153550089 allocations: 20.03 GiB)
 u: 4-element Vector{Float64}:
- 3.25376058921747
- 2.209876716552662
- 1.2326082098598121
- 0.44633205153963607
+ 7.800047719004314
+ 8.184562461319647
+ 4.262541015374019
+ 2.039799546651204
 ```
 
 
@@ -584,12 +584,12 @@ opt = Opt(:GN_ESCH, 4)
 ```
 
 ```
-37.721 s (61420089 allocations: 8.01 GiB)
+34.227 s (61420089 allocations: 8.01 GiB)
 u: 4-element Vector{Float64}:
- 7.856955088002183
- 9.227524715347272
- 0.5252687816352758
- 0.18810428081397404
+ 5.007376754848485
+ 5.579414649328614
+ 0.8015182621473613
+ 0.259388496021193
 ```
 
 
@@ -620,7 +620,7 @@ opt = Opt(:LN_BOBYQA, 4)
 ```
 
 ```
-55.746 ms (111317 allocations: 18.87 MiB)
+50.319 ms (111317 allocations: 18.87 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000702955
  1.0000000000848333
@@ -636,7 +636,7 @@ opt = Opt(:LN_NELDERMEAD, 4)
 ```
 
 ```
-89.969 ms (181047 allocations: 30.65 MiB)
+80.930 ms (181047 allocations: 30.65 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000705307
  1.000000000085224
@@ -652,7 +652,7 @@ opt = Opt(:LD_SLSQP, 4)
 ```
 
 ```
-14.351 ms (24820 allocations: 4.68 MiB)
+13.595 ms (24820 allocations: 4.68 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000702354
  1.000000000084916
@@ -705,7 +705,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ParameterEstimation/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ParameterEstimation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
   [a134a8b2] BlackBoxOptim v0.6.2
   [1130ab10] DiffEqParamEstim v2.0.1
@@ -721,12 +721,13 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [731186ca] RecursiveArrayTools v2.38.7
   [31c91b34] SciMLBenchmarks v0.1.3
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ParameterEstimation/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ParameterEstimation/Manifest.toml`
   [47edcb42] ADTypes v0.2.1
   [c3fe647b] AbstractAlgebra v0.31.1
   [1520ce14] AbstractTrees v0.4.4
@@ -1071,5 +1072,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
