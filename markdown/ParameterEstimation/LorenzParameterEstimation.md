@@ -197,11 +197,11 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-1.029 s (2757863 allocations: 389.76 MiB)
+1.028 s (2755326 allocations: 389.39 MiB)
 u: 3-element Vector{Float64}:
-  9.999999716396644
- 28.00000014058379
-  2.65999995519537
+  9.999999468360066
+ 28.000000167614246
+  2.6599999199632967
 ```
 
 
@@ -214,11 +214,11 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-1.494 s (2752978 allocations: 389.08 MiB)
+1.481 s (2760951 allocations: 390.22 MiB)
 u: 3-element Vector{Float64}:
-  9.999999958848772
- 28.000000028313
-  2.660000005810361
+ 10.000000072280024
+ 28.000000034027796
+  2.6599999974354374
 ```
 
 
@@ -233,11 +233,11 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-1.316 s (2788455 allocations: 396.96 MiB)
+1.293 s (2788054 allocations: 396.91 MiB)
 u: 3-element Vector{Float64}:
-  9.999999868551289
- 28.00000004677581
-  2.660000017113605
+ 10.00000017927713
+ 27.99999996160421
+  2.659999992858642
 ```
 
 
@@ -282,7 +282,7 @@ optprob = OptimizationProblem(obj_short, GloIniPar, lb = first.(LooserBounds), u
 ```
 
 ```
-693.405 ms (1428847 allocations: 234.06 MiB)
+680.289 ms (1428847 allocations: 234.06 MiB)
 u: 3-element Vector{Float64}:
  10.000000000174282
  28.000000000007077
@@ -297,11 +297,11 @@ opt = Opt(:GN_CRS2_LM, 3)
 ```
 
 ```
-530.794 ms (1087537 allocations: 178.16 MiB)
+540.527 ms (1130843 allocations: 185.25 MiB)
 u: 3-element Vector{Float64}:
- 10.000000000079266
- 28.000000000015262
-  2.660000000007289
+  9.99999999993868
+ 27.99999999997224
+  2.6599999999952866
 ```
 
 
@@ -312,11 +312,11 @@ opt = Opt(:GN_ISRES, 3)
 ```
 
 ```
-1.798 s (3670116 allocations: 601.12 MiB)
+1.763 s (3670116 allocations: 601.12 MiB)
 u: 3-element Vector{Float64}:
-  9.997858475507002
- 28.001559761222737
-  2.6598338941002764
+ 10.003001870582601
+ 27.998405783879644
+  2.660020518236371
 ```
 
 
@@ -327,11 +327,11 @@ opt = Opt(:GN_ESCH, 3)
 ```
 
 ```
-1.782 s (3670116 allocations: 601.12 MiB)
+1.749 s (3670116 allocations: 601.12 MiB)
 u: 3-element Vector{Float64}:
-  9.817614167053957
- 28.15974658596536
-  2.628000411950504
+ 10.592551589309164
+ 27.79519346484551
+  2.6540862268260526
 ```
 
 
@@ -347,7 +347,7 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-18.439 ms (40486 allocations: 6.68 MiB)
+18.197 ms (40486 allocations: 6.68 MiB)
 u: 3-element Vector{Float64}:
  10.000000000050505
  28.000000000023256
@@ -362,7 +362,7 @@ opt = Opt(:LN_NELDERMEAD, 3)
 ```
 
 ```
-52.774 ms (115721 allocations: 19.00 MiB)
+51.740 ms (115721 allocations: 19.00 MiB)
 u: 3-element Vector{Float64}:
  10.00000000005633
  28.00000000003226
@@ -377,7 +377,7 @@ opt = Opt(:LD_SLSQP, 3)
 ```
 
 ```
-12.158 ms (46215 allocations: 3.97 MiB)
+12.081 ms (46215 allocations: 3.97 MiB)
 u: 3-element Vector{Float64}:
  10.000000000051957
  28.000000000022848
@@ -392,7 +392,7 @@ opt = Opt(:LN_COBYLA, 3)
 ```
 
 ```
-396.250 ms (803479 allocations: 131.64 MiB)
+386.664 ms (803479 allocations: 131.64 MiB)
 u: 3-element Vector{Float64}:
  10.000000000035833
  28.00000000002392
@@ -407,7 +407,7 @@ opt = Opt(:LN_NEWUOA_BOUND, 3)
 ```
 
 ```
-61.119 ms (68378 allocations: 11.25 MiB)
+60.462 ms (68378 allocations: 11.25 MiB)
 u: 3-element Vector{Float64}:
  10.000001737489647
  28.000001355370276
@@ -422,11 +422,11 @@ opt = Opt(:LN_PRAXIS, 3)
 ```
 
 ```
-13.050 ms (30442 allocations: 5.22 MiB)
+12.872 ms (30442 allocations: 5.22 MiB)
 u: 3-element Vector{Float64}:
- 10.000000000051928
- 28.000000000022883
-  2.6600000000079866
+ 10.000000000055712
+ 28.00000000002117
+  2.6600000000080373
 ```
 
 
@@ -437,7 +437,7 @@ opt = Opt(:LN_SBPLX, 3)
 ```
 
 ```
-133.796 ms (274632 allocations: 45.03 MiB)
+131.696 ms (274632 allocations: 45.03 MiB)
 u: 3-element Vector{Float64}:
  10.000000000058924
  28.000000000020663
@@ -452,7 +452,7 @@ opt = Opt(:LD_MMA, 3)
 ```
 
 ```
-60.453 ms (237532 allocations: 19.36 MiB)
+60.106 ms (237532 allocations: 19.36 MiB)
 u: 3-element Vector{Float64}:
   9.999999999995449
  28.00000000005174
@@ -467,7 +467,7 @@ opt = Opt(:LD_LBFGS, 3)
 ```
 
 ```
-9.272 ms (36332 allocations: 3.01 MiB)
+9.205 ms (36332 allocations: 3.01 MiB)
 u: 3-element Vector{Float64}:
  10.000000000052934
  28.000000000022638
@@ -482,7 +482,7 @@ opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 3)
 ```
 
 ```
-11.821 ms (46392 allocations: 3.83 MiB)
+11.753 ms (46392 allocations: 3.83 MiB)
 u: 3-element Vector{Float64}:
  10.000000000051458
  28.00000000002282
@@ -512,11 +512,11 @@ optprob = OptimizationProblem(obj, GloIniPar, lb = first.(LooserBounds), ub = la
 ```
 
 ```
-7.279 s (12730237 allocations: 1.66 GiB)
+7.162 s (12794779 allocations: 1.67 GiB)
 u: 3-element Vector{Float64}:
-  9.229657177838957
- 25.630389822730056
-  2.33218928432886
+ 10.830855118265625
+ 26.244563409318836
+  2.5670798087963544
 ```
 
 
@@ -534,7 +534,7 @@ opt = Opt(:GN_ORIG_DIRECT_L, 3)
 ```
 
 ```
-3.759 s (6562816 allocations: 876.52 MiB)
+3.664 s (6562816 allocations: 876.52 MiB)
 u: 3-element Vector{Float64}:
   7.04665993025209
  23.666102233396032
@@ -549,11 +549,11 @@ opt = Opt(:GN_CRS2_LM, 3)
 ```
 
 ```
-35.240 s (61420089 allocations: 8.01 GiB)
+34.338 s (61420089 allocations: 8.01 GiB)
 u: 3-element Vector{Float64}:
- 19.161151663464025
- 24.94719815947521
-  2.3947856865516446
+  9.6221846663057
+ 26.870691787069664
+  2.4438953441429563
 ```
 
 
@@ -564,11 +564,11 @@ opt = Opt(:GN_ISRES, 3)
 ```
 
 ```
-88.211 s (153550089 allocations: 20.03 GiB)
+85.771 s (153550089 allocations: 20.03 GiB)
 u: 3-element Vector{Float64}:
- 13.495207973948402
- 25.371790944451565
-  2.5226938168035744
+  8.588689857392675
+ 26.425157480511206
+  2.1277666827991335
 ```
 
 
@@ -579,11 +579,11 @@ opt = Opt(:GN_ESCH, 3)
 ```
 
 ```
-34.998 s (61420089 allocations: 8.01 GiB)
+34.354 s (61420089 allocations: 8.01 GiB)
 u: 3-element Vector{Float64}:
-  7.164152258570257
- 23.518585027755535
-  1.857705826136825
+  2.605442927588383
+ 25.538482476324766
+  1.0537028585919002
 ```
 
 
@@ -599,7 +599,7 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-18.580 ms (40486 allocations: 6.68 MiB)
+18.197 ms (40486 allocations: 6.68 MiB)
 u: 3-element Vector{Float64}:
  10.000000000050505
  28.000000000023256
@@ -614,7 +614,7 @@ opt = Opt(:LN_NELDERMEAD, 3)
 ```
 
 ```
-53.026 ms (115721 allocations: 19.00 MiB)
+51.726 ms (115721 allocations: 19.00 MiB)
 u: 3-element Vector{Float64}:
  10.00000000005633
  28.00000000003226
@@ -629,7 +629,7 @@ opt = Opt(:LD_SLSQP, 3)
 ```
 
 ```
-12.153 ms (46215 allocations: 3.97 MiB)
+12.067 ms (46215 allocations: 3.97 MiB)
 u: 3-element Vector{Float64}:
  10.000000000051957
  28.000000000022848
