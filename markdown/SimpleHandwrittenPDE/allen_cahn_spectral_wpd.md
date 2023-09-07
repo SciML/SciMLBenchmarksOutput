@@ -340,26 +340,28 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/SimpleHandwrittenPDE/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/SimpleHandwrittenPDE/Project.toml`
   [28f2ccd6] ApproxFun v0.13.23
   [f3b72e0c] DiffEqDevTools v2.35.0
   [5b8099bc] DomainSets v0.6.7
   [7f56f5a3] LSODA v0.7.4
   [7ed4a6bd] LinearSolve v2.5.1
   [94925ecb] MethodOfLines v0.9.5
-  [961ee093] ModelingToolkit v8.66.0
+⌃ [961ee093] ModelingToolkit v8.66.0
   [09606e27] ODEInterfaceDiffEq v3.13.2
   [1dea7af3] OrdinaryDiffEq v6.55.0
   [91a5bcdd] Plots v1.39.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c3572dad] Sundials v4.19.3
   [37e2e46d] LinearAlgebra
+Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/SimpleHandwrittenPDE/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/SimpleHandwrittenPDE/Manifest.toml`
   [47edcb42] ADTypes v0.2.1
   [c3fe647b] AbstractAlgebra v0.31.1
   [621f4979] AbstractFFTs v1.5.0
@@ -494,11 +496,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [442fdcdd] Measures v0.3.2
   [94925ecb] MethodOfLines v0.9.5
   [e1d29d7a] Missings v1.1.0
-  [961ee093] ModelingToolkit v8.66.0
+⌃ [961ee093] ModelingToolkit v8.66.0
   [46d2c3a1] MuladdMacro v0.2.4
-  [102ac46a] MultivariatePolynomials v0.5.1
+⌃ [102ac46a] MultivariatePolynomials v0.5.1
   [ffc61752] Mustache v1.0.17
-  [d8a4904e] MutableArithmetics v1.3.1
+⌃ [d8a4904e] MutableArithmetics v1.3.1
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
@@ -548,7 +550,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [fdea26ae] SIMD v3.4.5
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.39
-  [0bca4576] SciMLBase v1.95.0
+⌃ [0bca4576] SciMLBase v1.95.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [e9a6253c] SciMLNLSolve v0.1.8
   [c0aeaf25] SciMLOperators v0.3.6
@@ -735,5 +737,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

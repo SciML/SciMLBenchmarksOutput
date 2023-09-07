@@ -103,7 +103,7 @@ IMEXEuler
 CNAB2
 CNLF2
 SBDF2
-1234.062533 seconds (164.55 M allocations: 9.906 GiB, 0.68% gc time, 0.93% 
+1227.565700 seconds (164.63 M allocations: 9.914 GiB, 0.92% gc time, 0.96% 
 compilation time)
 ```
 
@@ -136,7 +136,7 @@ IMEXEuler
 CNAB2
 CNLF2
 SBDF2
-1229.918316 seconds (151.25 M allocations: 9.016 GiB, 0.62% gc time, 0.26% 
+1223.616236 seconds (151.26 M allocations: 9.016 GiB, 0.87% gc time, 0.27% 
 compilation time)
 ```
 
@@ -172,7 +172,7 @@ NorsettEuler (caching)
 NorsettEuler (m=5)
 NorsettEuler (m=20)
 ETDRK2 (caching)
-507.664282 seconds (11.24 M allocations: 126.550 GiB, 1.33% gc time, 1.36% 
+515.828176 seconds (11.44 M allocations: 126.821 GiB, 1.13% gc time, 1.28% 
 compilation time)
 ```
 
@@ -203,7 +203,7 @@ plot(wp, label=labels, markershape=:auto, title="Between family, low orders")
 CNAB2 (dense linsolve)
 CNAB2 (Krylov linsolve)
 ETDRK2 (m=5)
-1139.103746 seconds (127.68 M allocations: 68.076 GiB, 0.64% gc time)
+1162.177035 seconds (127.68 M allocations: 68.076 GiB, 0.93% gc time)
 ```
 
 
@@ -242,7 +242,7 @@ KenCarp5
 ARKODE3
 ARKODE4
 ARKODE5
-15202.291088 seconds (965.84 M allocations: 61.074 GiB, 0.45% gc time, 0.08
+14507.086587 seconds (965.89 M allocations: 61.079 GiB, 0.30% gc time, 0.09
 % compilation time)
 ```
 
@@ -278,7 +278,7 @@ KenCarp5
 ARKODE3
 ARKODE4
 ARKODE5
-14732.628623 seconds (968.67 M allocations: 60.821 GiB, 0.42% gc time, 0.04
+14523.073814 seconds (967.23 M allocations: 60.779 GiB, 0.29% gc time, 0.04
 % compilation time)
 ```
 
@@ -316,7 +316,7 @@ ETDRK4 (caching)
 ETDRK4 (m=5)
 HochOst4 (caching)
 HochOst4 (m=5)
-1653.110105 seconds (20.90 M allocations: 465.685 GiB, 1.32% gc time, 0.76%
+1758.111377 seconds (20.96 M allocations: 465.691 GiB, 1.31% gc time, 0.72%
  compilation time)
 ```
 
@@ -355,7 +355,7 @@ KenCarp4 (Krylov linsolve)
 ARKODE (Krylov linsolve)
 ETDRK3 (m=5)
 ETDRK4 (m=5)
-4456.874744 seconds (266.98 M allocations: 24.498 GiB, 0.45% gc time, 0.00%
+4425.036799 seconds (266.98 M allocations: 24.498 GiB, 0.35% gc time, 0.00%
  compilation time)
 ```
 
@@ -397,26 +397,28 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/SimpleHandwrittenPDE/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/SimpleHandwrittenPDE/Project.toml`
   [28f2ccd6] ApproxFun v0.13.23
   [f3b72e0c] DiffEqDevTools v2.35.0
   [5b8099bc] DomainSets v0.6.7
   [7f56f5a3] LSODA v0.7.4
   [7ed4a6bd] LinearSolve v2.5.1
   [94925ecb] MethodOfLines v0.9.5
-  [961ee093] ModelingToolkit v8.66.0
+⌃ [961ee093] ModelingToolkit v8.66.0
   [09606e27] ODEInterfaceDiffEq v3.13.2
   [1dea7af3] OrdinaryDiffEq v6.55.0
   [91a5bcdd] Plots v1.39.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c3572dad] Sundials v4.19.3
   [37e2e46d] LinearAlgebra
+Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/SimpleHandwrittenPDE/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/SimpleHandwrittenPDE/Manifest.toml`
   [47edcb42] ADTypes v0.2.1
   [c3fe647b] AbstractAlgebra v0.31.1
   [621f4979] AbstractFFTs v1.5.0
@@ -551,11 +553,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [442fdcdd] Measures v0.3.2
   [94925ecb] MethodOfLines v0.9.5
   [e1d29d7a] Missings v1.1.0
-  [961ee093] ModelingToolkit v8.66.0
+⌃ [961ee093] ModelingToolkit v8.66.0
   [46d2c3a1] MuladdMacro v0.2.4
-  [102ac46a] MultivariatePolynomials v0.5.1
+⌃ [102ac46a] MultivariatePolynomials v0.5.1
   [ffc61752] Mustache v1.0.17
-  [d8a4904e] MutableArithmetics v1.3.1
+⌃ [d8a4904e] MutableArithmetics v1.3.1
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
@@ -605,7 +607,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [fdea26ae] SIMD v3.4.5
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.39
-  [0bca4576] SciMLBase v1.95.0
+⌃ [0bca4576] SciMLBase v1.95.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [e9a6253c] SciMLNLSolve v0.1.8
   [c0aeaf25] SciMLOperators v0.3.6
@@ -792,5 +794,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
