@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Filament Work-Precision Diagrams · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/ComplicatedPDE/Filament/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li class="is-active"><a class="tocitem" href>Filament Work-Precision Diagrams</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Filament-Benchmark"><span>Filament Benchmark</span></a></li><li><a class="tocitem" href="#Model-Implementation"><span>Model Implementation</span></a></li><li class="toplevel"><a class="tocitem" href="#Investigating-the-model"><span>Investigating the model</span></a></li><li class="toplevel"><a class="tocitem" href="#Work-Precision-Diagrams"><span>Work-Precision Diagrams</span></a></li><li><a class="tocitem" href="#Omissions"><span>Omissions</span></a></li><li><a class="tocitem" href="#High-Tolerance-(Low-Accuracy)"><span>High Tolerance (Low Accuracy)</span></a></li><li><a class="tocitem" href="#Low-Tolerance-(High-Accuracy)"><span>Low Tolerance (High Accuracy)</span></a></li><li class="toplevel"><a class="tocitem" href="#No-Jacobian-Work-Precision-Diagrams"><span>No Jacobian Work-Precision Diagrams</span></a></li><li><a class="tocitem" href="#High-Tolerance-(Low-Accuracy)-2"><span>High Tolerance (Low Accuracy)</span></a></li><li><a class="tocitem" href="#Low-Tolerance-(High-Accuracy)-2"><span>Low Tolerance (High Accuracy)</span></a></li><li><a class="tocitem" href="#Conclusion"><span>Conclusion</span></a></li></ul></li><li><a class="tocitem" href="../SpringBlockNonLinearResistance/">Implementation of the PDE of the spring-block model with non-linear resistance + setup of the simulations to be used for the Work-precision Diagram</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li><li><a class="tocitem" href="../../Jumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Complicated Partial Differential Equations (PDEs)</a></li><li class="is-active"><a href>Filament Work-Precision Diagrams</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Filament Work-Precision Diagrams</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/ComplicatedPDE/Filament.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Filament-Work-Precision-Diagrams"><a class="docs-heading-anchor" href="#Filament-Work-Precision-Diagrams">Filament Work-Precision Diagrams</a><a id="Filament-Work-Precision-Diagrams-1"></a><a class="docs-heading-anchor-permalink" href="#Filament-Work-Precision-Diagrams" title="Permalink"></a></h1><h1 id="Filament-Benchmark"><a class="docs-heading-anchor" href="#Filament-Benchmark">Filament Benchmark</a><a id="Filament-Benchmark-1"></a><a class="docs-heading-anchor-permalink" href="#Filament-Benchmark" title="Permalink"></a></h1><p>In this notebook we will benchmark a real-world biological model from a paper entitled <a href="https://doi.org/10.1103/PhysRevE.85.041502">Magnetic dipole with a flexible tail as a self-propelling microdevice</a>. This is a system of PDEs representing a Kirchhoff model of an elastic rod, where the equations of motion are given by the Rouse approximation with free boundary conditions.</p><h2 id="Model-Implementation"><a class="docs-heading-anchor" href="#Model-Implementation">Model Implementation</a><a id="Model-Implementation-1"></a><a class="docs-heading-anchor-permalink" href="#Model-Implementation" title="Permalink"></a></h2><p>First we will show the full model implementation. It is not necessary to understand the full model specification in order to understand the benchmark results, but it&#39;s all contained here for completeness. The model is highly optimized, with all internal vectors pre-cached, loops unrolled for efficiency (along with <code>@simd</code> annotations), a pre-defined Jacobian, matrix multiplications are all in-place, etc. Thus this model is a good stand-in for other optimized PDE solving cases.</p><p>The model is thus defined as follows:</p><pre><code class="language-julia hljs">using OrdinaryDiffEq, ODEInterfaceDiffEq, Sundials, DiffEqDevTools, LSODA, LinearSolve
+using LinearAlgebra
+using Plots
+gr()</code></pre><pre><code class="nohighlight hljs">Plots.GRBackend()</code></pre><pre><code class="language-julia hljs">const T = Float64
+abstract type AbstractFilamentCache end
+abstract type AbstractMagneticForce end
+abstract type AbstractInextensibilityCache end
+abstract type AbstractSolver end
+abstract type AbstractSolverCache end</code></pre><pre><code class="language-julia hljs">struct FerromagneticContinuous &lt;: AbstractMagneticForce
+    ω :: T
+    F :: Vector{T}
+end
+
+mutable struct FilamentCache{
+        MagneticForce        &lt;: AbstractMagneticForce,
+        InextensibilityCache &lt;: AbstractInextensibilityCache,
+        SolverCache          &lt;: AbstractSolverCache
+            } &lt;: AbstractFilamentCache
+    N  :: Int
+    μ  :: T
+    Cm :: T
+    x  :: SubArray{T,1,Vector{T},Tuple{StepRange{Int,Int}},true}
+    y  :: SubArray{T,1,Vector{T},Tuple{StepRange{Int,Int}},true}
+    z  :: SubArray{T,1,Vector{T},Tuple{StepRange{Int,Int}},true}
+    A  :: Matrix{T}
+    P  :: InextensibilityCache
+    F  :: MagneticForce
+    Sc :: SolverCache
+end</code></pre><pre><code class="language-julia hljs">struct NoHydroProjectionCache &lt;: AbstractInextensibilityCache
+    J         :: Matrix{T}
+    P         :: Matrix{T}
+    J_JT      :: Matrix{T}
+    J_JT_LDLT :: LinearAlgebra.LDLt{T, SymTridiagonal{T}}
+    P0        :: Matrix{T}
+
+    NoHydroProjectionCache(N::Int) = new(
+        zeros(N, 3*(N+1)),          # J
+        zeros(3*(N+1), 3*(N+1)),    # P
+        zeros(N,N),                 # J_JT
+        LinearAlgebra.LDLt{T,SymTridiagonal{T}}(SymTridiagonal(zeros(N), zeros(N-1))),
+        zeros(N, 3*(N+1))
+    )
+end</code></pre><pre><code class="language-julia hljs">struct DiffEqSolverCache &lt;: AbstractSolverCache
+    S1 :: Vector{T}
+    S2 :: Vector{T}
+
+    DiffEqSolverCache(N::Integer) = new(zeros(T,3*(N+1)), zeros(T,3*(N+1)))
+end</code></pre><pre><code class="language-julia hljs">function FilamentCache(N=20; Cm=32, ω=200, Solver=SolverDiffEq)
+    InextensibilityCache = NoHydroProjectionCache
+    SolverCache = DiffEqSolverCache
+    tmp = zeros(3*(N+1))
+    FilamentCache{FerromagneticContinuous, InextensibilityCache, SolverCache}(
+        N, N+1, Cm, view(tmp,1:3:3*(N+1)), view(tmp,2:3:3*(N+1)), view(tmp,3:3:3*(N+1)),
+        zeros(3*(N+1), 3*(N+1)), # A
+        InextensibilityCache(N), # P
+        FerromagneticContinuous(ω, zeros(3*(N+1))),
+        SolverCache(N)
+    )
+end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#292&quot;.FilamentCache</code></pre><pre><code class="language-julia hljs">function stiffness_matrix!(f::AbstractFilamentCache)
+    N, μ, A = f.N, f.μ, f.A
+    @inbounds for j in axes(A, 2), i in axes(A, 1)
+      A[i, j] = j == i ? 1 : 0
+    end
+    @inbounds for i in 1 : 3
+        A[i,i] =    1
+        A[i,3+i] = -2
+        A[i,6+i] =  1
+
+        A[3+i,i]   = -2
+        A[3+i,3+i] =  5
+        A[3+i,6+i] = -4
+        A[3+i,9+i] =  1
+
+        A[3*(N-1)+i,3*(N-3)+i] =  1
+        A[3*(N-1)+i,3*(N-2)+i] = -4
+        A[3*(N-1)+i,3*(N-1)+i] =  5
+        A[3*(N-1)+i,3*N+i]     = -2
+
+        A[3*N+i,3*(N-2)+i]     =  1
+        A[3*N+i,3*(N-1)+i]     = -2
+        A[3*N+i,3*N+i]         =  1
+
+        for j in 2 : N-2
+            A[3*j+i,3*j+i]     =  6
+            A[3*j+i,3*(j-1)+i] = -4
+            A[3*j+i,3*(j+1)+i] = -4
+            A[3*j+i,3*(j-2)+i] =  1
+            A[3*j+i,3*(j+2)+i] =  1
+        end
+    end
+    rmul!(A, -μ^4)
+    nothing
+end</code></pre><pre><code class="nohighlight hljs">stiffness_matrix! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function update_separate_coordinates!(f::AbstractFilamentCache, r)
+    N, x, y, z = f.N, f.x, f.y, f.z
+    @inbounds for i in 1 : length(x)
+        x[i] = r[3*i-2]
+        y[i] = r[3*i-1]
+        z[i] = r[3*i]
+    end
+    nothing
+end
+
+function update_united_coordinates!(f::AbstractFilamentCache, r)
+    N, x, y, z = f.N, f.x, f.y, f.z
+    @inbounds for i in 1 : length(x)
+        r[3*i-2] = x[i]
+        r[3*i-1] = y[i]
+        r[3*i]   = z[i]
+    end
+    nothing
+end
+
+function update_united_coordinates(f::AbstractFilamentCache)
+    r = zeros(T, 3*length(f.x))
+    update_united_coordinates!(f, r)
+    r
+end</code></pre><pre><code class="nohighlight hljs">update_united_coordinates (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function initialize!(initial_conf_type::Symbol, f::AbstractFilamentCache)
+    N, x, y, z = f.N, f.x, f.y, f.z
+    if initial_conf_type == :StraightX
+        x .= range(0, stop=1, length=N+1)
+        y .= 0
+        z .= 0
+    else
+        error(&quot;Unknown initial configuration requested.&quot;)
+    end
+    update_united_coordinates(f)
+end</code></pre><pre><code class="nohighlight hljs">initialize! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function magnetic_force!(::FerromagneticContinuous, f::AbstractFilamentCache, t)
+    # TODO: generalize this for different magnetic fields as well
+    N, μ, Cm, ω, F = f.N, f.μ, f.Cm, f.F.ω, f.F.F
+    F[1]         = -μ * Cm * cos(ω*t)
+    F[2]         = -μ * Cm * sin(ω*t)
+    F[3*(N+1)-2] =  μ * Cm * cos(ω*t)
+    F[3*(N+1)-1] =  μ * Cm * sin(ω*t)
+    nothing
+end</code></pre><pre><code class="nohighlight hljs">magnetic_force! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">struct SolverDiffEq &lt;: AbstractSolver end
+
+function (f::FilamentCache)(dr, r, p, t)
+    @views f.x, f.y, f.z = r[1:3:end], r[2:3:end], r[3:3:end]
+    jacobian!(f)
+    projection!(f)
+    magnetic_force!(f.F, f, t)
+    A, P, F, S1, S2 = f.A, f.P.P, f.F.F, f.Sc.S1, f.Sc.S2
+
+    # implement dr = P * (A*r + F) in an optimized way to avoid temporaries
+    mul!(S1, A, r)
+    S1 .+= F
+    mul!(S2, P, S1)
+    copyto!(dr, S2)
+    return dr
+end</code></pre><pre><code class="language-julia hljs">function jacobian!(f::FilamentCache)
+    N, x, y, z, J = f.N, f.x, f.y, f.z, f.P.J
+    @inbounds for i in 1 : N
+        J[i, 3*i-2]     = -2 * (x[i+1]-x[i])
+        J[i, 3*i-1]     = -2 * (y[i+1]-y[i])
+        J[i, 3*i]       = -2 * (z[i+1]-z[i])
+        J[i, 3*(i+1)-2] =  2 * (x[i+1]-x[i])
+        J[i, 3*(i+1)-1] =  2 * (y[i+1]-y[i])
+        J[i, 3*(i+1)]   =  2 * (z[i+1]-z[i])
+    end
+    nothing
+end</code></pre><pre><code class="nohighlight hljs">jacobian! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function projection!(f::FilamentCache)
+    # implement P[:] = I - J&#39;/(J*J&#39;)*J in an optimized way to avoid temporaries
+    J, P, J_JT, J_JT_LDLT, P0 = f.P.J, f.P.P, f.P.J_JT, f.P.J_JT_LDLT, f.P.P0
+    mul!(J_JT, J, J&#39;)
+    LDLt_inplace!(J_JT_LDLT, J_JT)
+    ldiv!(P0, J_JT_LDLT, J)
+    mul!(P, P0&#39;, J)
+    subtract_from_identity!(P)
+    nothing
+end</code></pre><pre><code class="nohighlight hljs">projection! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function subtract_from_identity!(A)
+    lmul!(-1, A)
+    @inbounds for i in 1 : size(A,1)
+        A[i,i] += 1
+    end
+    nothing
+end</code></pre><pre><code class="nohighlight hljs">subtract_from_identity! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">function LDLt_inplace!(L::LinearAlgebra.LDLt{T,SymTridiagonal{T}}, A::Matrix{T}) where {T&lt;:Real}
+    n = size(A,1)
+    dv, ev = L.data.dv, L.data.ev
+    @inbounds for (i,d) in enumerate(diagind(A))
+        dv[i] = A[d]
+    end
+    @inbounds for (i,d) in enumerate(diagind(A,-1))
+        ev[i] = A[d]
+    end
+    @inbounds @simd for i in 1 : n-1
+        ev[i]   /= dv[i]
+        dv[i+1] -= abs2(ev[i]) * dv[i]
+    end
+    L
+end</code></pre><pre><code class="nohighlight hljs">LDLt_inplace! (generic function with 1 method)</code></pre><h1 id="Investigating-the-model"><a class="docs-heading-anchor" href="#Investigating-the-model">Investigating the model</a><a id="Investigating-the-model-1"></a><a class="docs-heading-anchor-permalink" href="#Investigating-the-model" title="Permalink"></a></h1><p>Let&#39;s take a look at what results of the model look like:</p><pre><code class="language-julia hljs">function run(::SolverDiffEq; N=20, Cm=32, ω=200, time_end=1., solver=TRBDF2(autodiff=false), reltol=1e-6, abstol=1e-6)
+    f = FilamentCache(N, Solver=SolverDiffEq, Cm=Cm, ω=ω)
+    r0 = initialize!(:StraightX, f)
+    stiffness_matrix!(f)
+    prob = ODEProblem(ODEFunction(f, jac=(J, u, p, t)-&gt;(mul!(J, f.P.P, f.A); nothing)), r0, (0., time_end))
+    sol = solve(prob, solver, dense=false, reltol=reltol, abstol=abstol)
+end</code></pre><pre><code class="nohighlight hljs">run (generic function with 1 method)</code></pre><p>This method runs the model with the <code>TRBDF2</code> method and the default parameters.</p><pre><code class="language-julia hljs">sol = run(SolverDiffEq())
+plot(sol,vars = (0,25))</code></pre><p><img src="../figures/Filament_17_1.png" alt/></p><p>The model quickly falls into a highly oscillatory mode which then dominates throughout the rest of the solution.</p><h1 id="Work-Precision-Diagrams"><a class="docs-heading-anchor" href="#Work-Precision-Diagrams">Work-Precision Diagrams</a><a id="Work-Precision-Diagrams-1"></a><a class="docs-heading-anchor-permalink" href="#Work-Precision-Diagrams" title="Permalink"></a></h1><p>Now let&#39;s build the problem and solve it once at high accuracy to get a reference solution:</p><pre><code class="language-julia hljs">N=20
+f = FilamentCache(N, Solver=SolverDiffEq)
+r0 = initialize!(:StraightX, f)
+stiffness_matrix!(f)
+prob = ODEProblem(f, r0, (0., 0.01))
+
+sol = solve(prob, Vern9(), reltol=1e-14, abstol=1e-14)
+test_sol = TestSolution(sol);</code></pre><h2 id="Omissions"><a class="docs-heading-anchor" href="#Omissions">Omissions</a><a id="Omissions-1"></a><a class="docs-heading-anchor-permalink" href="#Omissions" title="Permalink"></a></h2><pre><code class="language-julia hljs">abstols=1 ./10 .^(3:8)
+reltols=1 ./10 .^(3:8)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; Rosenbrock23(autodiff=false)),
+    Dict(:alg =&gt; Rodas4(autodiff=false)),
+    Dict(:alg =&gt; radau()),
+    Dict(:alg=&gt;Exprb43(autodiff=false)),
+    Dict(:alg=&gt;Exprb32(autodiff=false)),
+    Dict(:alg=&gt;ImplicitEulerExtrapolation(autodiff=false)),
+    Dict(:alg=&gt;ImplicitDeuflhardExtrapolation(autodiff=false)),
+    Dict(:alg=&gt;ImplicitHairerWannerExtrapolation(autodiff=false)),
+    ];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p>Rosenbrock23, Rodas4, Exprb32, Exprb43, extrapolation methods, and Rodas5 do not perform well at all and are thus dropped from future tests. For reference, they are in the 10^(2.5) range in for their most accurate run (with ImplicitEulerExtrapolation takes over a day to run, and had to be prematurely stopped), so about 500x slower than CVODE_BDF and thus make the benchmarks take forever. It looks like <code>radau</code> fails on this problem with high tolerance so its values should be ignored since it exits early. It is thus removed from the next sections.</p><p>The EPIRK methods currently do not work on this problem</p><pre><code class="language-julia hljs">sol = solve(prob, EPIRK4s3B(autodiff=false), dt=2^-3)</code></pre><pre><code class="nohighlight hljs">Error: First call to automatic differentiation for the Jacobian
+failed. This means that the user `f` function is not compatible
+with automatic differentiation. Methods to fix this include:
+
+1. Turn off automatic differentiation (e.g. Rosenbrock23() becomes
+   Rosenbrock23(autodiff=false)). More details can befound at
+   https://docs.sciml.ai/DiffEqDocs/stable/features/performance_overloads/
+2. Improving the compatibility of `f` with ForwardDiff.jl automatic 
+   differentiation (using tools like PreallocationTools.jl). More details
+   can be found at https://docs.sciml.ai/DiffEqDocs/stable/basics/faq/#Auto
+differentiation-and-Dual-Numbers
+3. Defining analytical Jacobians. More details can be
+   found at https://docs.sciml.ai/DiffEqDocs/stable/types/ode_types/#SciMLB
+ase.ODEFunction
+
+Note: turning off automatic differentiation tends to have a very minimal
+performance impact (for this use case, because it&#39;s forward mode for a
+square Jacobian. This is different from optimization gradient scenarios).
+However, one should be careful as some methods are more sensitive to
+accurate gradients than others. Specifically, Rodas methods like `Rodas4`
+and `Rodas5P` require accurate Jacobians in order to have good convergence,
+while many other methods like BDF (`QNDF`, `FBDF`), SDIRK (`KenCarp4`),
+and Rosenbrock-W (`Rosenbrock23`) do not. Thus if using an algorithm which
+is sensitive to autodiff and solving at a low tolerance, please change the
+algorithm as well.
+
+MethodError: Cannot `convert` an object of type 
+  SubArray{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, F
+loat64}, Float64, 1},1,Array{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.Or
+dinaryDiffEqTag, Float64}, Float64, 1},1},Tuple{StepRange{Int64{},Int64{}}}
+,true} to an object of type 
+  SubArray{Float64,1,Array{Float64,1},Tuple{StepRange{Int64{},Int64{}}},tru
+e}
+
+Closest candidates are:
+  convert(::Type{T}, !Matched::LinearAlgebra.Factorization) where T&lt;:Abstra
+ctArray
+   @ LinearAlgebra /cache/julia-buildkite-plugin/julia_installs/bin/linux/x
+64/1.9/julia-1.9-latest-linux-x86_64/share/julia/stdlib/v1.9/LinearAlgebra/
+src/factorization.jl:59
+  convert(::Type{T}, !Matched::T) where T&lt;:AbstractArray
+   @ Base abstractarray.jl:16
+  convert(::Type{T}, !Matched::T) where T
+   @ Base Base.jl:64
+  ...</code></pre><p>but would be called like:</p><pre><code class="language-julia hljs">abstols=1 ./10 .^(3:5)
+reltols=1 ./10 .^(3:5)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; HochOst4(),:dts=&gt;2.0.^(-3:-1:-5)),
+    Dict(:alg =&gt; EPIRK4s3B(),:dts=&gt;2.0.^(-3:-1:-5)),
+    Dict(:alg =&gt; EXPRB53s3(),:dts=&gt;2.0.^(-3:-1:-5)),
+    ];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><h2 id="High-Tolerance-(Low-Accuracy)"><a class="docs-heading-anchor" href="#High-Tolerance-(Low-Accuracy)">High Tolerance (Low Accuracy)</a><a id="High-Tolerance-(Low-Accuracy)-1"></a><a class="docs-heading-anchor-permalink" href="#High-Tolerance-(Low-Accuracy)" title="Permalink"></a></h2><h3 id="Endpoint-Error"><a class="docs-heading-anchor" href="#Endpoint-Error">Endpoint Error</a><a id="Endpoint-Error-1"></a><a class="docs-heading-anchor-permalink" href="#Endpoint-Error" title="Permalink"></a></h3><pre><code class="language-julia hljs">abstols=1 ./10 .^(3:8)
+reltols=1 ./10 .^(3:8)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; BS3()),
+    Dict(:alg =&gt; Tsit5()),
+    Dict(:alg =&gt; ImplicitEuler(autodiff=false)),
+    Dict(:alg =&gt; Trapezoid(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; rodas()),
+    Dict(:alg =&gt; dop853()),
+    Dict(:alg =&gt; lsoda()),
+    Dict(:alg =&gt; ROCK2()),
+    Dict(:alg =&gt; ROCK4()),
+    Dict(:alg =&gt; ESERK5())
+    ];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p><img src="../figures/Filament_22_1.png" alt/></p><pre><code class="language-julia hljs">abstols=1 ./10 .^(3:8)
+reltols=1 ./10 .^(3:8)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; ImplicitEuler(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; KenCarp3(autodiff=false)),
+    Dict(:alg =&gt; KenCarp4(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno3(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno4(autodiff=false)),
+    Dict(:alg =&gt; ABDF2(autodiff=false)),
+    Dict(:alg =&gt; QNDF(autodiff=false)),
+    Dict(:alg =&gt; RadauIIA5(autodiff=false)),
+];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p><img src="../figures/Filament_23_1.png" alt/></p><pre><code class="language-julia hljs">abstols=1 ./10 .^(3:8)
+reltols=1 ./10 .^(3:8)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; CVODE_BDF(linear_solver=:GMRES)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false,linsolve=KrylovJL_GMRES())),
+    Dict(:alg =&gt; KenCarp4(autodiff=false)),
+    Dict(:alg =&gt; KenCarp4(autodiff=false,linsolve=KrylovJL_GMRES())),
+];
+
+names = [
+    &quot;CVODE-BDF&quot;,
+    &quot;CVODE-BDF (GMRES)&quot;,
+    &quot;TRBDF2&quot;,
+    &quot;TRBDF2 (GMRES)&quot;,
+    &quot;KenCarp4&quot;,
+    &quot;KenCarp4 (GMRES)&quot;,
+];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; names=names, appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p><img src="../figures/Filament_24_1.png" alt/></p><h3 id="Timeseries-Error"><a class="docs-heading-anchor" href="#Timeseries-Error">Timeseries Error</a><a id="Timeseries-Error-1"></a><a class="docs-heading-anchor-permalink" href="#Timeseries-Error" title="Permalink"></a></h3><pre><code class="language-julia hljs">abstols=1 ./10 .^(3:8)
+reltols=1 ./10 .^(3:8)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; Trapezoid(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; rodas()),
+    Dict(:alg =&gt; lsoda()),
+    Dict(:alg =&gt; KenCarp3(autodiff=false)),
+    Dict(:alg =&gt; KenCarp4(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno3(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno4(autodiff=false)),
+    Dict(:alg =&gt; ROCK2()),
+    Dict(:alg =&gt; ROCK4()),
+    Dict(:alg =&gt; ESERK5())
+];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p><img src="../figures/Filament_25_1.png" alt/></p><p>Timeseries errors seem to match final point errors very closely in this problem, so these are turned off in future benchmarks.</p><p>(Confirmed in the other cases)</p><h3 id="Dense-Error"><a class="docs-heading-anchor" href="#Dense-Error">Dense Error</a><a id="Dense-Error-1"></a><a class="docs-heading-anchor-permalink" href="#Dense-Error" title="Permalink"></a></h3><pre><code class="language-julia hljs">abstols=1 ./10 .^(3:8)
+reltols=1 ./10 .^(3:8)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; KenCarp3(autodiff=false)),
+    Dict(:alg =&gt; KenCarp4(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno3(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno4(autodiff=false)),
+    Dict(:alg =&gt; ROCK2()),
+    Dict(:alg =&gt; ROCK4()),
+    Dict(:alg =&gt; ESERK5())
+];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false, dense_errors = true, error_estimate=:L2)
+plot(wp)</code></pre><p><img src="../figures/Filament_26_1.png" alt/></p><p>Dense errors seem to match timeseries errors very closely in this problem, so these are turned off in future benchmarks.</p><p>(Confirmed in the other cases)</p><h2 id="Low-Tolerance-(High-Accuracy)"><a class="docs-heading-anchor" href="#Low-Tolerance-(High-Accuracy)">Low Tolerance (High Accuracy)</a><a id="Low-Tolerance-(High-Accuracy)-1"></a><a class="docs-heading-anchor-permalink" href="#Low-Tolerance-(High-Accuracy)" title="Permalink"></a></h2><pre><code class="language-julia hljs">abstols=1 ./10 .^(6:12)
+reltols=1 ./10 .^(6:12)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; Vern7()),
+    Dict(:alg =&gt; Vern9()),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; dop853()),
+    Dict(:alg =&gt; ROCK4())
+];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p><img src="../figures/Filament_27_1.png" alt/></p><pre><code class="language-julia hljs">abstols=1 ./10 .^(6:12)
+reltols=1 ./10 .^(6:12)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; radau()),
+    Dict(:alg =&gt; RadauIIA5(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno3(autodiff=false)),
+    Dict(:alg =&gt; KenCarp3(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno4(autodiff=false)),
+    Dict(:alg =&gt; KenCarp4(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno5(autodiff=false)),
+    Dict(:alg =&gt; KenCarp5(autodiff=false)),
+    Dict(:alg =&gt; lsoda()),
+];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                                    maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p><img src="../figures/Filament_28_1.png" alt/></p><h3 id="Timeseries-Error-2"><a class="docs-heading-anchor" href="#Timeseries-Error-2">Timeseries Error</a><a class="docs-heading-anchor-permalink" href="#Timeseries-Error-2" title="Permalink"></a></h3><pre><code class="language-julia hljs">abstols=1 ./10 .^(6:12)
+reltols=1 ./10 .^(6:12)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; radau()),
+    Dict(:alg =&gt; RadauIIA5(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno3(autodiff=false)),
+    Dict(:alg =&gt; KenCarp3(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno4(autodiff=false)),
+    Dict(:alg =&gt; KenCarp4(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno5(autodiff=false)),
+    Dict(:alg =&gt; KenCarp5(autodiff=false)),
+    Dict(:alg =&gt; lsoda()),
+];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false, error_estimate = :l2)
+plot(wp)</code></pre><h3 id="Dense-Error-2"><a class="docs-heading-anchor" href="#Dense-Error-2">Dense Error</a><a class="docs-heading-anchor-permalink" href="#Dense-Error-2" title="Permalink"></a></h3><pre><code class="language-julia hljs">abstols=1 ./10 .^(6:12)
+reltols=1 ./10 .^(6:12)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; radau()),
+    Dict(:alg =&gt; RadauIIA5(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno3(autodiff=false)),
+    Dict(:alg =&gt; KenCarp3(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno4(autodiff=false)),
+    Dict(:alg =&gt; KenCarp4(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno5(autodiff=false)),
+    Dict(:alg =&gt; KenCarp5(autodiff=false)),
+    Dict(:alg =&gt; lsoda()),
+];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false, dense_errors=true, error_estimate = :L2)
+plot(wp)</code></pre><h1 id="No-Jacobian-Work-Precision-Diagrams"><a class="docs-heading-anchor" href="#No-Jacobian-Work-Precision-Diagrams">No Jacobian Work-Precision Diagrams</a><a id="No-Jacobian-Work-Precision-Diagrams-1"></a><a class="docs-heading-anchor-permalink" href="#No-Jacobian-Work-Precision-Diagrams" title="Permalink"></a></h1><p>In the previous cases the analytical Jacobian is given and is used by the solvers. Now we will solve the same problem without the analytical Jacobian.</p><p>Note that the pre-caching means that the model is not compatible with autodifferentiation by ForwardDiff. Thus all of the native Julia solvers are set to <code>autodiff=false</code> to use DiffEqDiffTools.jl&#39;s numerical differentiation backend. We&#39;ll only benchmark the methods that did well before.</p><pre><code class="language-julia hljs">N=20
+f = FilamentCache(N, Solver=SolverDiffEq)
+r0 = initialize!(:StraightX, f)
+stiffness_matrix!(f)
+prob = ODEProblem(ODEFunction(f, jac=nothing), r0, (0., 0.01))
+
+sol = solve(prob, Vern9(), reltol=1e-14, abstol=1e-14)
+test_sol = TestSolution(sol.t, sol.u);</code></pre><h2 id="High-Tolerance-(Low-Accuracy)-2"><a class="docs-heading-anchor" href="#High-Tolerance-(Low-Accuracy)-2">High Tolerance (Low Accuracy)</a><a class="docs-heading-anchor-permalink" href="#High-Tolerance-(Low-Accuracy)-2" title="Permalink"></a></h2><pre><code class="language-julia hljs">abstols=1 ./10 .^(3:8)
+reltols=1 ./10 .^(3:8)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; BS3()),
+    Dict(:alg =&gt; Tsit5()),
+    Dict(:alg =&gt; ImplicitEuler(autodiff=false)),
+    Dict(:alg =&gt; Trapezoid(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; rodas()),
+    Dict(:alg =&gt; dop853()),
+    Dict(:alg =&gt; lsoda())
+    ];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p><img src="../figures/Filament_32_1.png" alt/></p><pre><code class="language-julia hljs">abstols=1 ./10 .^(3:8)
+reltols=1 ./10 .^(3:8)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; BS3()),
+    Dict(:alg =&gt; Tsit5()),
+    Dict(:alg =&gt; ImplicitEuler(autodiff=false)),
+    Dict(:alg =&gt; Trapezoid(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; rodas()),
+    Dict(:alg =&gt; dop853()),
+    Dict(:alg =&gt; lsoda()),
+    Dict(:alg =&gt; ROCK2()),
+    Dict(:alg =&gt; ROCK4()),
+    Dict(:alg =&gt; ESERK5())
+    ];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p><img src="../figures/Filament_33_1.png" alt/></p><pre><code class="language-julia hljs">abstols=1 ./10 .^(3:8)
+reltols=1 ./10 .^(3:8)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; CVODE_BDF(linear_solver=:GMRES)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false,linsolve=KrylovJL_GMRES())),
+    Dict(:alg =&gt; KenCarp4(autodiff=false)),
+    Dict(:alg =&gt; KenCarp4(autodiff=false,linsolve=KrylovJL_GMRES())),
+];
+
+names = [
+    &quot;CVODE-BDF&quot;,
+    &quot;CVODE-BDF (GMRES)&quot;,
+    &quot;TRBDF2&quot;,
+    &quot;TRBDF2 (GMRES)&quot;,
+    &quot;KenCarp4&quot;,
+    &quot;KenCarp4 (GMRES)&quot;,
+];
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; names=names, appxsol=test_sol,
+                      maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p><img src="../figures/Filament_34_1.png" alt/></p><h2 id="Low-Tolerance-(High-Accuracy)-2"><a class="docs-heading-anchor" href="#Low-Tolerance-(High-Accuracy)-2">Low Tolerance (High Accuracy)</a><a class="docs-heading-anchor-permalink" href="#Low-Tolerance-(High-Accuracy)-2" title="Permalink"></a></h2><pre><code class="language-julia hljs">abstols=1 ./10 .^(6:12)
+reltols=1 ./10 .^(6:12)
+setups = [
+    Dict(:alg =&gt; CVODE_BDF()),
+    Dict(:alg =&gt; radau()),
+    Dict(:alg =&gt; RadauIIA5(autodiff=false)),
+    Dict(:alg =&gt; TRBDF2(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno3(autodiff=false)),
+    Dict(:alg =&gt; KenCarp3(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno4(autodiff=false)),
+    Dict(:alg =&gt; KenCarp4(autodiff=false)),
+    Dict(:alg =&gt; Kvaerno5(autodiff=false)),
+    Dict(:alg =&gt; KenCarp5(autodiff=false)),
+    Dict(:alg =&gt; lsoda()),
+];
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol,
+                                    maxiters=Int(1e6), verbose = false)
+plot(wp)</code></pre><p><img src="../figures/Filament_35_1.png" alt/></p><h2 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h2><p>Sundials&#39; <code>CVODE_BDF</code> does the best in this test. When the Jacobian is given, the ESDIRK methods <code>TRBDF2</code> and <code>KenCarp3</code> are able to do almost as well as it until <code>&lt;1e-6</code> error is needed. When Jacobians are not given, Sundials is the fastest without competition.</p><pre><code class="nohighlight hljs">Error: ArgumentError: Package SciMLBenchmarks not found in current path, ma
+ybe you meant `import/using ..SciMLBenchmarks`.
+- Otherwise, run `import Pkg; Pkg.add(&quot;SciMLBenchmarks&quot;)` to install the Sc
+iMLBenchmarks package.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">« KS Pseudospectral Methods Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../SpringBlockNonLinearResistance/">Implementation of the PDE of the spring-block model with non-linear resistance + setup of the simulations to be used for the Work-precision Diagram »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Sunday 10 September 2023 04:40">Sunday 10 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
