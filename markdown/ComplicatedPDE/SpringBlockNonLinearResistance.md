@@ -1,6 +1,6 @@
 ---
 author: "Luis Munoz Heinen"
-title: "Implementation of the PDE of the spring-block model with non-linear resistance + setup of the simulations to be used for the Work-precision Diagram"
+title: "Spring-Block PDE Work-Precision Diagrams"
 ---
 
 see https://discourse.julialang.org/t/boundserror-on-odeproblem-accelerated-with-modelingtoolkit-jl
