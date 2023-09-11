@@ -95,6 +95,8 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;appxsol=test_sol,dense=true,m
 plot(wp)
 
 
+abstols = 1.0 ./ 10.0 .^ (8:13)
+reltols = 1.0 ./ 10.0 .^ (8:13)
 setups = [Dict(:alg=>Tsit5())
           Dict(:alg=>Vern9())
           Dict(:alg=>VCABM())
