@@ -2,7 +2,6 @@
 import PowerModels
 import ConcreteStructs
 using BenchmarkTools
-using Memento
 
 ConcreteStructs.@concrete struct DataRepresentation
     data
