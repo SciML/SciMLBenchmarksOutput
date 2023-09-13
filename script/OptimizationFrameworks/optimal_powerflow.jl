@@ -1788,7 +1788,7 @@ res
 
 using DataFrames, PrettyTables
 
-function multidata_multisolver_benchmark(dataset_files; sizelimit = 300)
+function multidata_multisolver_benchmark(dataset_files; sizelimit = 100)
 
     cases = String[]
     vars = Int[]
@@ -1895,5 +1895,5 @@ benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)
 timing_data = multidata_multisolver_benchmark(benchmark_datasets)
 
 
-pretty_table(timing_data)
+pretty_table(timing_data; backend = Val(:html))
 
