@@ -1900,5 +1900,5 @@ println(io, "```@raw html")
 pretty_table(io, timing_data; backend = Val(:html))
 # show(io, "text/html", pretty_table(timing_data; backend = Val(:html)))
 println(io, "```")
-String(take!(io))
+Text(String(take!(io)))
 
