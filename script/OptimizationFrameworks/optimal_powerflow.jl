@@ -1693,7 +1693,7 @@ end
 function solve_opf_optim(dataset)
     model_build_time = @elapsed df, dfc, var_init, con_lbs, con_ubs = build_opf_optim_prob(dataset)
 
-    options = Optim.Options(show_trace=PRINT_LEVEL == 0,time_limit=MAX_CPU_TIME)
+    options = Optim.Options(show_trace=PRINT_LEVEL != 0,time_limit=MAX_CPU_TIME)
     solve_time_with_compilation = @elapsed res = Optim.optimize(df, dfc, var_init, Optim.IPNewton(), options)
     solve_time_without_compilation = @elapsed res = Optim.optimize(df, dfc, var_init, Optim.IPNewton(), options)
 
@@ -1895,5 +1895,10 @@ benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)
 timing_data = multidata_multisolver_benchmark(benchmark_datasets)
 
 
-pretty_table(timing_data; backend = Val(:html))
+io = IOBuffer()
+println(io, "```@raw html")
+pretty_table(io, timing_data; backend = Val(:html))
+# show(io, "text/html", pretty_table(timing_data; backend = Val(:html)))
+println(io, "```")
+String(take!(io))
 
