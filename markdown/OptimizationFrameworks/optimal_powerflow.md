@@ -20,11 +20,11 @@ MAX_CPU_TIME = 100.0
 # Anything with more variables is rejected and not run
 # This is for testing. 100 is a good size for running a test of changes
 # Should be set to typemax(Int) to run the whole benchmark
-SIZE_LIMIT = 300
+SIZE_LIMIT = 1000
 ```
 
 ```
-300
+1000
 ```
 
 
@@ -2226,9 +2226,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.000179768
-  "time_solve_compilation" => 44.7174
-  "time_solve"             => 0.66605
+  "time_build"             => 0.000178909
+  "time_solve_compilation" => 44.562
+  "time_solve"             => 0.658771
   "feasible"               => true
 ```
 
@@ -2246,9 +2246,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 2.86934
-  "time_solve_compilation" => 0.907912
-  "time_solve"             => 0.0178064
+  "time_build"             => 2.85848
+  "time_solve_compilation" => 0.900878
+  "time_solve"             => 0.0177928
   "feasible"               => true
 ```
 
@@ -2266,9 +2266,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 1.02047
-  "time_solve_compilation" => 3.38367
-  "time_solve"             => 0.0386271
+  "time_build"             => 1.01485
+  "time_solve_compilation" => 3.35646
+  "time_solve"             => 0.0762315
   "feasible"               => true
 ```
 
@@ -2286,9 +2286,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 59
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.130168
-  "time_solve_compilation" => 112.825
-  "time_solve"             => 1.3488
+  "time_build"             => 0.0900261
+  "time_solve_compilation" => 112.878
+  "time_solve"             => 1.41001
   "feasible"               => true
 ```
 
@@ -2306,9 +2306,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.000667894
-  "time_solve_compilation" => 29.5257
-  "time_solve"             => 19.6918
+  "time_build"             => 0.000509166
+  "time_solve_compilation" => 27.1418
+  "time_solve"             => 17.6413
   "feasible"               => false
 ```
 
@@ -2332,9 +2332,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 7.8499e-5
-  "time_solve_compilation" => 4.98925
-  "time_solve"             => 0.184863
+  "time_build"             => 0.000104029
+  "time_solve_compilation" => 4.96095
+  "time_solve"             => 0.149826
   "feasible"               => true
 ```
 
@@ -2352,9 +2352,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.00169699
-  "time_solve_compilation" => 0.00942459
-  "time_solve"             => 0.00874941
+  "time_build"             => 0.00167957
+  "time_solve_compilation" => 0.0094012
+  "time_solve"             => 0.00865213
   "feasible"               => true
 ```
 
@@ -2372,9 +2372,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.013902
-  "time_solve_compilation" => 0.0194235
-  "time_solve"             => 0.0189887
+  "time_build"             => 0.0139118
+  "time_solve_compilation" => 0.0188024
+  "time_solve"             => 0.0187503
   "feasible"               => true
 ```
 
@@ -2392,9 +2392,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 31
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0205197
-  "time_solve_compilation" => 3.91306
-  "time_solve"             => 0.67602
+  "time_build"             => 0.0508052
+  "time_solve_compilation" => 3.83238
+  "time_solve"             => 0.688512
   "feasible"               => true
 ```
 
@@ -2412,9 +2412,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0575034
-  "time_solve_compilation" => 2.3647
-  "time_solve"             => 2.3001
+  "time_build"             => 0.0573511
+  "time_solve_compilation" => 2.1101
+  "time_solve"             => 2.08331
   "feasible"               => false
 ```
 
@@ -2532,8 +2532,8 @@ file = "../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case5_pjm.m"
  Row │ case                    vars   cons   optimization  optimization_modelb ⋯
      │ String                  Int64  Int64  Float64       Float64             ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ pglib_opf_case3_lmbd.m     24     28      0.141455                5.273 ⋯
-   2 │ pglib_opf_case3_lmbd.m     44     53      0.665889                5.017
+   1 │ pglib_opf_case3_lmbd.m     24     28      0.146385                5.271 ⋯
+   2 │ pglib_opf_case3_lmbd.m     44     53      0.672457                5.481
                                                               19 columns omitted
 ```
 
@@ -2607,50 +2607,50 @@ Text(String(take!(io)))
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">24</td>
       <td style = "text-align: right;">28</td>
-      <td style = "text-align: right;">0.141455</td>
-      <td style = "text-align: right;">5.2739e-5</td>
-      <td style = "text-align: right;">0.435204</td>
+      <td style = "text-align: right;">0.146385</td>
+      <td style = "text-align: right;">5.2719e-5</td>
+      <td style = "text-align: right;">0.401341</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.00870592</td>
-      <td style = "text-align: right;">0.00154045</td>
-      <td style = "text-align: right;">0.00934822</td>
+      <td style = "text-align: right;">0.00865364</td>
+      <td style = "text-align: right;">0.00145087</td>
+      <td style = "text-align: right;">0.00926085</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0439796</td>
-      <td style = "text-align: right;">4.74329</td>
-      <td style = "text-align: right;">0.486629</td>
+      <td style = "text-align: right;">0.0186764</td>
+      <td style = "text-align: right;">4.69208</td>
+      <td style = "text-align: right;">0.505823</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.678745</td>
-      <td style = "text-align: right;">3.07749</td>
-      <td style = "text-align: right;">2.78589</td>
+      <td style = "text-align: right;">0.710783</td>
+      <td style = "text-align: right;">3.0394</td>
+      <td style = "text-align: right;">2.79024</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">2.28583</td>
-      <td style = "text-align: right;">0.000545895</td>
-      <td style = "text-align: right;">8.67825</td>
+      <td style = "text-align: right;">2.15588</td>
+      <td style = "text-align: right;">0.000564586</td>
+      <td style = "text-align: right;">8.42665</td>
       <td style = "text-align: right;">6273.63</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">44</td>
       <td style = "text-align: right;">53</td>
-      <td style = "text-align: right;">0.665889</td>
-      <td style = "text-align: right;">5.0179e-5</td>
-      <td style = "text-align: right;">0.670404</td>
+      <td style = "text-align: right;">0.672457</td>
+      <td style = "text-align: right;">5.4819e-5</td>
+      <td style = "text-align: right;">0.674433</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0177661</td>
-      <td style = "text-align: right;">0.00168267</td>
-      <td style = "text-align: right;">0.0183808</td>
+      <td style = "text-align: right;">0.0174593</td>
+      <td style = "text-align: right;">0.00174969</td>
+      <td style = "text-align: right;">0.0180046</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.039725</td>
-      <td style = "text-align: right;">0.0241874</td>
-      <td style = "text-align: right;">0.0394854</td>
+      <td style = "text-align: right;">0.0615987</td>
+      <td style = "text-align: right;">0.0240139</td>
+      <td style = "text-align: right;">0.0413193</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">1.31298</td>
-      <td style = "text-align: right;">0.112824</td>
-      <td style = "text-align: right;">4.14963</td>
+      <td style = "text-align: right;">1.36717</td>
+      <td style = "text-align: right;">0.0877888</td>
+      <td style = "text-align: right;">4.13441</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">19.5266</td>
-      <td style = "text-align: right;">0.000451557</td>
-      <td style = "text-align: right;">19.7466</td>
+      <td style = "text-align: right;">18.8458</td>
+      <td style = "text-align: right;">0.000377846</td>
+      <td style = "text-align: right;">18.8638</td>
       <td style = "text-align: right;">77.9548</td>
     </tr>
   </tbody>
@@ -2674,26 +2674,26 @@ benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)
 
 ```
 66-element Vector{String}:
- "/tmp/jl_LrTs5W/pglib_opf_case10000_goc.m"
- "/tmp/jl_LrTs5W/pglib_opf_case10192_epigrids.m"
- "/tmp/jl_LrTs5W/pglib_opf_case10480_goc.m"
- "/tmp/jl_LrTs5W/pglib_opf_case118_ieee.m"
- "/tmp/jl_LrTs5W/pglib_opf_case1354_pegase.m"
- "/tmp/jl_LrTs5W/pglib_opf_case13659_pegase.m"
- "/tmp/jl_LrTs5W/pglib_opf_case14_ieee.m"
- "/tmp/jl_LrTs5W/pglib_opf_case162_ieee_dtc.m"
- "/tmp/jl_LrTs5W/pglib_opf_case179_goc.m"
- "/tmp/jl_LrTs5W/pglib_opf_case1803_snem.m"
+ "/tmp/jl_TsnONV/pglib_opf_case10000_goc.m"
+ "/tmp/jl_TsnONV/pglib_opf_case10192_epigrids.m"
+ "/tmp/jl_TsnONV/pglib_opf_case10480_goc.m"
+ "/tmp/jl_TsnONV/pglib_opf_case118_ieee.m"
+ "/tmp/jl_TsnONV/pglib_opf_case1354_pegase.m"
+ "/tmp/jl_TsnONV/pglib_opf_case13659_pegase.m"
+ "/tmp/jl_TsnONV/pglib_opf_case14_ieee.m"
+ "/tmp/jl_TsnONV/pglib_opf_case162_ieee_dtc.m"
+ "/tmp/jl_TsnONV/pglib_opf_case179_goc.m"
+ "/tmp/jl_TsnONV/pglib_opf_case1803_snem.m"
  ⋮
- "/tmp/jl_LrTs5W/pglib_opf_case6515_rte.m"
- "/tmp/jl_LrTs5W/pglib_opf_case7336_epigrids.m"
- "/tmp/jl_LrTs5W/pglib_opf_case73_ieee_rts.m"
- "/tmp/jl_LrTs5W/pglib_opf_case78484_epigrids.m"
- "/tmp/jl_LrTs5W/pglib_opf_case793_goc.m"
- "/tmp/jl_LrTs5W/pglib_opf_case8387_pegase.m"
- "/tmp/jl_LrTs5W/pglib_opf_case89_pegase.m"
- "/tmp/jl_LrTs5W/pglib_opf_case9241_pegase.m"
- "/tmp/jl_LrTs5W/pglib_opf_case9591_goc.m"
+ "/tmp/jl_TsnONV/pglib_opf_case6515_rte.m"
+ "/tmp/jl_TsnONV/pglib_opf_case7336_epigrids.m"
+ "/tmp/jl_TsnONV/pglib_opf_case73_ieee_rts.m"
+ "/tmp/jl_TsnONV/pglib_opf_case78484_epigrids.m"
+ "/tmp/jl_TsnONV/pglib_opf_case793_goc.m"
+ "/tmp/jl_TsnONV/pglib_opf_case8387_pegase.m"
+ "/tmp/jl_TsnONV/pglib_opf_case89_pegase.m"
+ "/tmp/jl_TsnONV/pglib_opf_case9241_pegase.m"
+ "/tmp/jl_TsnONV/pglib_opf_case9591_goc.m"
 ```
 
 
@@ -2703,83 +2703,86 @@ timing_data = multidata_multisolver_benchmark(benchmark_datasets)
 ```
 
 ```
-file = "/tmp/jl_LrTs5W/pglib_opf_case10000_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case10192_epigrids.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case10480_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case118_ieee.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case1354_pegase.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case13659_pegase.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case14_ieee.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case162_ieee_dtc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case179_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case1803_snem.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case1888_rte.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case19402_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case1951_rte.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case197_snem.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2000_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case200_activ.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case20758_epigrids.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2312_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2383wp_k.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case240_pserc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case24464_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case24_ieee_rts.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2736sp_k.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2737sop_k.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2742_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2746wop_k.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2746wp_k.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2848_rte.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2853_sdet.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2868_rte.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case2869_pegase.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case30000_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case300_ieee.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case3012wp_k.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case3022_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case30_as.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case30_ieee.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case3120sp_k.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case3375wp_k.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case3970_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case39_epri.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case3_lmbd.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case4020_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case4601_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case4619_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case4661_sdet.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case4837_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case4917_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case500_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case5658_epigrids.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case57_ieee.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case588_sdet.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case5_pjm.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case60_c.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case6468_rte.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case6470_rte.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case6495_rte.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case6515_rte.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case7336_epigrids.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case73_ieee_rts.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case78484_epigrids.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case793_goc.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case8387_pegase.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case89_pegase.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case9241_pegase.m"
-file = "/tmp/jl_LrTs5W/pglib_opf_case9591_goc.m"
-7×23 DataFrame
+file = "/tmp/jl_TsnONV/pglib_opf_case10000_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case10192_epigrids.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case10480_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case118_ieee.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case1354_pegase.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case13659_pegase.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case14_ieee.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case162_ieee_dtc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case179_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case1803_snem.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case1888_rte.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case19402_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case1951_rte.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case197_snem.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2000_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case200_activ.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case20758_epigrids.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2312_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2383wp_k.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case240_pserc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case24464_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case24_ieee_rts.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2736sp_k.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2737sop_k.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2742_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2746wop_k.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2746wp_k.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2848_rte.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2853_sdet.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2868_rte.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case2869_pegase.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case30000_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case300_ieee.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case3012wp_k.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case3022_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case30_as.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case30_ieee.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case3120sp_k.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case3375wp_k.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case3970_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case39_epri.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case3_lmbd.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case4020_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case4601_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case4619_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case4661_sdet.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case4837_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case4917_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case500_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case5658_epigrids.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case57_ieee.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case588_sdet.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case5_pjm.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case60_c.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case6468_rte.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case6470_rte.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case6495_rte.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case6515_rte.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case7336_epigrids.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case73_ieee_rts.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case78484_epigrids.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case793_goc.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case8387_pegase.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case89_pegase.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case9241_pegase.m"
+file = "/tmp/jl_TsnONV/pglib_opf_case9591_goc.m"
+10×23 DataFrame
  Row │ case                    vars   cons   optimization  optimization_modelb ⋯
      │ String                  Int64  Int64  Float64       Float64             ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ pglib_opf_case3_lmbd.m    118    169      6.32433               0.00010 ⋯
-   2 │ pglib_opf_case3_lmbd.m    266    315     51.7113                0.00015
-   3 │ pglib_opf_case3_lmbd.m    236    348     30.5108                0.00016
-   4 │ pglib_opf_case3_lmbd.m    236    348     48.1709                0.00016
-   5 │ pglib_opf_case3_lmbd.m    282    401     99.1081                0.00018 ⋯
-   6 │ pglib_opf_case3_lmbd.m     24     28      0.122345              6.6899e
-   7 │ pglib_opf_case3_lmbd.m     44     53      0.555493              6.108e-
+   1 │ pglib_opf_case3_lmbd.m    118    169      6.31618               8.3729e ⋯
+   2 │ pglib_opf_case3_lmbd.m    266    315     51.6384                0.00014
+   3 │ pglib_opf_case3_lmbd.m    236    348     30.1935                0.00019
+   4 │ pglib_opf_case3_lmbd.m    236    348     46.3772                0.00013
+   5 │ pglib_opf_case3_lmbd.m    282    401    100.448                 0.00017 ⋯
+   6 │ pglib_opf_case3_lmbd.m     24     28      0.124075              7.788e-
+   7 │ pglib_opf_case3_lmbd.m    448    675    133.365                 0.00027
+   8 │ pglib_opf_case3_lmbd.m     44     53      0.54299               4.69e-5
+   9 │ pglib_opf_case3_lmbd.m    518    737    141.996                 0.00029 ⋯
+  10 │ pglib_opf_case3_lmbd.m    824    987    183.063                 0.00033
                                                               19 columns omitted
 ```
 
@@ -2853,176 +2856,251 @@ Text(String(take!(io)))
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">118</td>
       <td style = "text-align: right;">169</td>
-      <td style = "text-align: right;">6.32433</td>
-      <td style = "text-align: right;">0.000100339</td>
-      <td style = "text-align: right;">11.1939</td>
+      <td style = "text-align: right;">6.31618</td>
+      <td style = "text-align: right;">8.3729e-5</td>
+      <td style = "text-align: right;">11.2183</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">0.0269834</td>
-      <td style = "text-align: right;">0.123008</td>
-      <td style = "text-align: right;">0.0635403</td>
+      <td style = "text-align: right;">0.0268911</td>
+      <td style = "text-align: right;">0.174718</td>
+      <td style = "text-align: right;">0.0628838</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">0.129772</td>
-      <td style = "text-align: right;">0.203466</td>
-      <td style = "text-align: right;">0.0765773</td>
+      <td style = "text-align: right;">0.0774453</td>
+      <td style = "text-align: right;">0.142859</td>
+      <td style = "text-align: right;">0.0797174</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">3.62865</td>
-      <td style = "text-align: right;">1.8147</td>
-      <td style = "text-align: right;">67.4663</td>
+      <td style = "text-align: right;">3.83296</td>
+      <td style = "text-align: right;">1.8581</td>
+      <td style = "text-align: right;">67.8341</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">118.784</td>
-      <td style = "text-align: right;">0.0784279</td>
-      <td style = "text-align: right;">117.959</td>
+      <td style = "text-align: right;">124.069</td>
+      <td style = "text-align: right;">0.0792728</td>
+      <td style = "text-align: right;">122.829</td>
       <td style = "text-align: right;">1658.7</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">266</td>
       <td style = "text-align: right;">315</td>
-      <td style = "text-align: right;">51.7113</td>
-      <td style = "text-align: right;">0.000158619</td>
-      <td style = "text-align: right;">56.7966</td>
+      <td style = "text-align: right;">51.6384</td>
+      <td style = "text-align: right;">0.000144799</td>
+      <td style = "text-align: right;">56.5599</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">0.0591904</td>
-      <td style = "text-align: right;">0.00532623</td>
-      <td style = "text-align: right;">0.0604997</td>
+      <td style = "text-align: right;">0.0592027</td>
+      <td style = "text-align: right;">0.00532367</td>
+      <td style = "text-align: right;">0.060333</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">0.297521</td>
-      <td style = "text-align: right;">0.169314</td>
-      <td style = "text-align: right;">0.208474</td>
+      <td style = "text-align: right;">0.198673</td>
+      <td style = "text-align: right;">0.17067</td>
+      <td style = "text-align: right;">0.302415</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">9.58389</td>
-      <td style = "text-align: right;">11.6843</td>
-      <td style = "text-align: right;">326.498</td>
+      <td style = "text-align: right;">11.6064</td>
+      <td style = "text-align: right;">11.4442</td>
+      <td style = "text-align: right;">328.15</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">340.354</td>
-      <td style = "text-align: right;">0.168328</td>
-      <td style = "text-align: right;">333.795</td>
+      <td style = "text-align: right;">347.123</td>
+      <td style = "text-align: right;">0.105102</td>
+      <td style = "text-align: right;">351.042</td>
       <td style = "text-align: right;">63741.2</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">236</td>
       <td style = "text-align: right;">348</td>
-      <td style = "text-align: right;">30.5108</td>
-      <td style = "text-align: right;">0.000163499</td>
-      <td style = "text-align: right;">30.2871</td>
+      <td style = "text-align: right;">30.1935</td>
+      <td style = "text-align: right;">0.000197079</td>
+      <td style = "text-align: right;">30.559</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.0412575</td>
-      <td style = "text-align: right;">0.0243074</td>
-      <td style = "text-align: right;">0.0422944</td>
+      <td style = "text-align: right;">0.0414425</td>
+      <td style = "text-align: right;">0.0410324</td>
+      <td style = "text-align: right;">0.0432966</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.274468</td>
-      <td style = "text-align: right;">0.159723</td>
-      <td style = "text-align: right;">0.135902</td>
+      <td style = "text-align: right;">0.136841</td>
+      <td style = "text-align: right;">0.164552</td>
+      <td style = "text-align: right;">0.13287</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">9.29268</td>
-      <td style = "text-align: right;">13.2184</td>
-      <td style = "text-align: right;">352.902</td>
+      <td style = "text-align: right;">9.04483</td>
+      <td style = "text-align: right;">13.2497</td>
+      <td style = "text-align: right;">349.889</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">271.569</td>
-      <td style = "text-align: right;">0.100526</td>
-      <td style = "text-align: right;">279.43</td>
+      <td style = "text-align: right;">264.878</td>
+      <td style = "text-align: right;">0.221323</td>
+      <td style = "text-align: right;">262.092</td>
       <td style = "text-align: right;">772.093</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">236</td>
       <td style = "text-align: right;">348</td>
-      <td style = "text-align: right;">48.1709</td>
-      <td style = "text-align: right;">0.000162379</td>
-      <td style = "text-align: right;">47.8481</td>
+      <td style = "text-align: right;">46.3772</td>
+      <td style = "text-align: right;">0.000137069</td>
+      <td style = "text-align: right;">48.1961</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">0.0601065</td>
-      <td style = "text-align: right;">0.00828348</td>
-      <td style = "text-align: right;">0.0624244</td>
+      <td style = "text-align: right;">0.0592151</td>
+      <td style = "text-align: right;">0.00615509</td>
+      <td style = "text-align: right;">0.0605658</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">0.22029</td>
-      <td style = "text-align: right;">0.169831</td>
-      <td style = "text-align: right;">0.217211</td>
+      <td style = "text-align: right;">0.216537</td>
+      <td style = "text-align: right;">0.168375</td>
+      <td style = "text-align: right;">0.216643</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">9.74939</td>
-      <td style = "text-align: right;">13.5743</td>
-      <td style = "text-align: right;">369.186</td>
+      <td style = "text-align: right;">9.42328</td>
+      <td style = "text-align: right;">13.0411</td>
+      <td style = "text-align: right;">372.971</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">270.724</td>
-      <td style = "text-align: right;">0.0121046</td>
-      <td style = "text-align: right;">280.712</td>
+      <td style = "text-align: right;">276.118</td>
+      <td style = "text-align: right;">0.029754</td>
+      <td style = "text-align: right;">269.995</td>
       <td style = "text-align: right;">4244.05</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">282</td>
       <td style = "text-align: right;">401</td>
-      <td style = "text-align: right;">99.1081</td>
-      <td style = "text-align: right;">0.000188719</td>
-      <td style = "text-align: right;">98.8042</td>
+      <td style = "text-align: right;">100.448</td>
+      <td style = "text-align: right;">0.000177498</td>
+      <td style = "text-align: right;">99.4264</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">0.105296</td>
-      <td style = "text-align: right;">0.00650325</td>
-      <td style = "text-align: right;">0.107031</td>
+      <td style = "text-align: right;">0.105613</td>
+      <td style = "text-align: right;">0.00650622</td>
+      <td style = "text-align: right;">0.107321</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">0.327304</td>
-      <td style = "text-align: right;">0.192177</td>
-      <td style = "text-align: right;">0.320011</td>
+      <td style = "text-align: right;">0.459336</td>
+      <td style = "text-align: right;">0.190562</td>
+      <td style = "text-align: right;">0.314926</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">13.6941</td>
-      <td style = "text-align: right;">20.3388</td>
-      <td style = "text-align: right;">542.766</td>
+      <td style = "text-align: right;">13.2593</td>
+      <td style = "text-align: right;">19.7774</td>
+      <td style = "text-align: right;">543.64</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">325.25</td>
-      <td style = "text-align: right;">0.0535641</td>
-      <td style = "text-align: right;">352.6</td>
+      <td style = "text-align: right;">326.958</td>
+      <td style = "text-align: right;">0.0515382</td>
+      <td style = "text-align: right;">326.436</td>
       <td style = "text-align: right;">72070.8</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">24</td>
       <td style = "text-align: right;">28</td>
-      <td style = "text-align: right;">0.122345</td>
-      <td style = "text-align: right;">6.6899e-5</td>
-      <td style = "text-align: right;">0.154676</td>
+      <td style = "text-align: right;">0.124075</td>
+      <td style = "text-align: right;">7.788e-5</td>
+      <td style = "text-align: right;">0.156987</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.00977957</td>
-      <td style = "text-align: right;">0.00284796</td>
-      <td style = "text-align: right;">0.0107911</td>
+      <td style = "text-align: right;">0.00996856</td>
+      <td style = "text-align: right;">0.00289494</td>
+      <td style = "text-align: right;">0.0107662</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.019211</td>
-      <td style = "text-align: right;">0.0159903</td>
-      <td style = "text-align: right;">0.0205579</td>
+      <td style = "text-align: right;">0.0193108</td>
+      <td style = "text-align: right;">0.0165946</td>
+      <td style = "text-align: right;">0.0204537</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.606055</td>
-      <td style = "text-align: right;">0.0209704</td>
-      <td style = "text-align: right;">0.591952</td>
+      <td style = "text-align: right;">0.598239</td>
+      <td style = "text-align: right;">0.0206534</td>
+      <td style = "text-align: right;">0.608038</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">1.79332</td>
-      <td style = "text-align: right;">0.000477126</td>
-      <td style = "text-align: right;">2.18212</td>
+      <td style = "text-align: right;">2.07386</td>
+      <td style = "text-align: right;">0.000439557</td>
+      <td style = "text-align: right;">1.97773</td>
       <td style = "text-align: right;">6273.63</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">448</td>
+      <td style = "text-align: right;">675</td>
+      <td style = "text-align: right;">133.365</td>
+      <td style = "text-align: right;">0.000270958</td>
+      <td style = "text-align: right;">138.008</td>
+      <td style = "text-align: right;">0.0</td>
+      <td style = "text-align: right;">0.0919788</td>
+      <td style = "text-align: right;">0.00896832</td>
+      <td style = "text-align: right;">0.0917075</td>
+      <td style = "text-align: right;">37589.3</td>
+      <td style = "text-align: right;">0.321288</td>
+      <td style = "text-align: right;">0.332999</td>
+      <td style = "text-align: right;">0.314811</td>
+      <td style = "text-align: right;">37589.3</td>
+      <td style = "text-align: right;">23.0893</td>
+      <td style = "text-align: right;">85.6263</td>
+      <td style = "text-align: right;">600.961</td>
+      <td style = "text-align: right;">37589.3</td>
+      <td style = "text-align: right;">1291.3</td>
+      <td style = "text-align: right;">0.437575</td>
+      <td style = "text-align: right;">1290.68</td>
+      <td style = "text-align: right;">27902.9</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">44</td>
       <td style = "text-align: right;">53</td>
-      <td style = "text-align: right;">0.555493</td>
-      <td style = "text-align: right;">6.108e-5</td>
-      <td style = "text-align: right;">0.549544</td>
+      <td style = "text-align: right;">0.54299</td>
+      <td style = "text-align: right;">4.69e-5</td>
+      <td style = "text-align: right;">0.543834</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0194898</td>
-      <td style = "text-align: right;">0.00181532</td>
-      <td style = "text-align: right;">0.0191905</td>
+      <td style = "text-align: right;">0.019456</td>
+      <td style = "text-align: right;">0.00318972</td>
+      <td style = "text-align: right;">0.0207924</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0392313</td>
-      <td style = "text-align: right;">0.0283191</td>
-      <td style = "text-align: right;">0.041794</td>
+      <td style = "text-align: right;">0.0386308</td>
+      <td style = "text-align: right;">0.176043</td>
+      <td style = "text-align: right;">0.0397213</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">1.42334</td>
-      <td style = "text-align: right;">0.0874475</td>
-      <td style = "text-align: right;">1.18292</td>
+      <td style = "text-align: right;">1.1911</td>
+      <td style = "text-align: right;">0.0855642</td>
+      <td style = "text-align: right;">1.19406</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">16.8143</td>
-      <td style = "text-align: right;">0.000458997</td>
-      <td style = "text-align: right;">17.1026</td>
+      <td style = "text-align: right;">16.64</td>
+      <td style = "text-align: right;">0.000698006</td>
+      <td style = "text-align: right;">16.9436</td>
       <td style = "text-align: right;">77.9548</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">518</td>
+      <td style = "text-align: right;">737</td>
+      <td style = "text-align: right;">141.996</td>
+      <td style = "text-align: right;">0.000299189</td>
+      <td style = "text-align: right;">147.638</td>
+      <td style = "text-align: right;">0.0</td>
+      <td style = "text-align: right;">0.176702</td>
+      <td style = "text-align: right;">0.00973952</td>
+      <td style = "text-align: right;">0.178803</td>
+      <td style = "text-align: right;">92693.7</td>
+      <td style = "text-align: right;">0.669468</td>
+      <td style = "text-align: right;">0.36016</td>
+      <td style = "text-align: right;">0.653197</td>
+      <td style = "text-align: right;">92693.7</td>
+      <td style = "text-align: right;">38.9343</td>
+      <td style = "text-align: right;">116.283</td>
+      <td style = "text-align: right;">1391.15</td>
+      <td style = "text-align: right;">92693.7</td>
+      <td style = "text-align: right;">1930.15</td>
+      <td style = "text-align: right;">0.382777</td>
+      <td style = "text-align: right;">1932.97</td>
+      <td style = "text-align: right;">1.48037e5</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">824</td>
+      <td style = "text-align: right;">987</td>
+      <td style = "text-align: right;">183.063</td>
+      <td style = "text-align: right;">0.000338727</td>
+      <td style = "text-align: right;">184.714</td>
+      <td style = "text-align: right;">0.0</td>
+      <td style = "text-align: right;">0.213905</td>
+      <td style = "text-align: right;">0.013037</td>
+      <td style = "text-align: right;">0.215826</td>
+      <td style = "text-align: right;">1.89764e5</td>
+      <td style = "text-align: right;">0.876021</td>
+      <td style = "text-align: right;">0.619089</td>
+      <td style = "text-align: right;">1.02895</td>
+      <td style = "text-align: right;">1.89764e5</td>
+      <td style = "text-align: right;">78.4867</td>
+      <td style = "text-align: right;">335.038</td>
+      <td style = "text-align: right;">2016.15</td>
+      <td style = "text-align: right;">1.89764e5</td>
+      <td style = "text-align: right;">6926.89</td>
+      <td style = "text-align: right;">1.13985</td>
+      <td style = "text-align: right;">6913.85</td>
+      <td style = "text-align: right;">191255.0</td>
     </tr>
   </tbody>
 </table>
