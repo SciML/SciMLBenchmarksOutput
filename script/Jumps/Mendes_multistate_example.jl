@@ -8,7 +8,7 @@ rn  = jprob.network
 reactions(rn)
 
 
-methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR(), Coevolve())
+methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR(), Coevolve(), RDirect())
 shortlabels = [string(leg)[15:end-2] for leg in methods]
 tf      = 10.0 * jprob.tstop
 prob    = DiscreteProblem(rn, jprob.u0, (0.0, tf), jprob.rates)
