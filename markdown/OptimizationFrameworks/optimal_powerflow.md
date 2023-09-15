@@ -20,11 +20,11 @@ MAX_CPU_TIME = 100.0
 # Anything with more variables is rejected and not run
 # This is for testing. 100 is a good size for running a test of changes
 # Should be set to typemax(Int) to run the whole benchmark
-SIZE_LIMIT = 100
+SIZE_LIMIT = 300
 ```
 
 ```
-100
+300
 ```
 
 
@@ -2226,9 +2226,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.000187438
-  "time_solve_compilation" => 44.9507
-  "time_solve"             => 0.639267
+  "time_build"             => 0.000179768
+  "time_solve_compilation" => 44.7174
+  "time_solve"             => 0.66605
   "feasible"               => true
 ```
 
@@ -2246,9 +2246,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 2.84678
-  "time_solve_compilation" => 0.951918
-  "time_solve"             => 0.0177662
+  "time_build"             => 2.86934
+  "time_solve_compilation" => 0.907912
+  "time_solve"             => 0.0178064
   "feasible"               => true
 ```
 
@@ -2266,9 +2266,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 1.0407
-  "time_solve_compilation" => 3.43059
-  "time_solve"             => 0.0377567
+  "time_build"             => 1.02047
+  "time_solve_compilation" => 3.38367
+  "time_solve"             => 0.0386271
   "feasible"               => true
 ```
 
@@ -2286,9 +2286,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 59
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.125761
-  "time_solve_compilation" => 112.765
-  "time_solve"             => 1.39434
+  "time_build"             => 0.130168
+  "time_solve_compilation" => 112.825
+  "time_solve"             => 1.3488
   "feasible"               => true
 ```
 
@@ -2306,9 +2306,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.000550854
-  "time_solve_compilation" => 29.7656
-  "time_solve"             => 19.9812
+  "time_build"             => 0.000667894
+  "time_solve_compilation" => 29.5257
+  "time_solve"             => 19.6918
   "feasible"               => false
 ```
 
@@ -2332,9 +2332,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 8.9039e-5
-  "time_solve_compilation" => 5.04368
-  "time_solve"             => 0.154151
+  "time_build"             => 7.8499e-5
+  "time_solve_compilation" => 4.98925
+  "time_solve"             => 0.184863
   "feasible"               => true
 ```
 
@@ -2352,9 +2352,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.00164244
-  "time_solve_compilation" => 0.00941061
-  "time_solve"             => 0.00866933
+  "time_build"             => 0.00169699
+  "time_solve_compilation" => 0.00942459
+  "time_solve"             => 0.00874941
   "feasible"               => true
 ```
 
@@ -2372,9 +2372,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0141086
-  "time_solve_compilation" => 0.019547
-  "time_solve"             => 0.0502959
+  "time_build"             => 0.013902
+  "time_solve_compilation" => 0.0194235
+  "time_solve"             => 0.0189887
   "feasible"               => true
 ```
 
@@ -2392,9 +2392,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 31
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0197707
-  "time_solve_compilation" => 3.90172
-  "time_solve"             => 0.697912
+  "time_build"             => 0.0205197
+  "time_solve_compilation" => 3.91306
+  "time_solve"             => 0.67602
   "feasible"               => true
 ```
 
@@ -2412,9 +2412,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0603496
-  "time_solve_compilation" => 2.33304
-  "time_solve"             => 2.30753
+  "time_build"             => 0.0575034
+  "time_solve_compilation" => 2.3647
+  "time_solve"             => 2.3001
   "feasible"               => false
 ```
 
@@ -2532,142 +2532,8 @@ file = "../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case5_pjm.m"
  Row │ case                    vars   cons   optimization  optimization_modelb ⋯
      │ String                  Int64  Int64  Float64       Float64             ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ pglib_opf_case3_lmbd.m     24     28      0.18046                 5.533 ⋯
-   2 │ pglib_opf_case3_lmbd.m     44     53      0.682561                5.399
-                                                              19 columns omitted
-```
-
-
-
-```julia
-pretty_table(timing_data)
-```
-
-┌────────────────────────┬───────┬───────┬──────────────┬─────────────────────────┬───────────────────────────┬───────────────────┬───────────┬─────────────────┬───────────────────┬───────────┬───────────┬──────────────────────┬────────────────────────┬────────────────┬───────────┬──────────────────────┬────────────────────────┬────────────────┬─────────┬──────────────────┬────────────────────┬────────────┐
-│                   case │  vars │  cons │ optimization │ optimization_modelbuild │ optimization_wcompilation │ optimization_cost │      jump │ jump_modelbuild │ jump_wcompilation │ jump_cost │ nlpmodels │ nlpmodels_modelbuild │ nlpmodels_wcompilation │ nlpmodels_cost │ nonconvex │ nonconvex_modelbuild │ nonconvex_wcompilation │ nonconvex_cost │   optim │ optim_modelbuild │ optim_wcompilation │ optim_cost │
-│                 String │ Int64 │ Int64 │      Float64 │                 Float64 │                   Float64 │           Float64 │   Float64 │         Float64 │           Float64 │   Float64 │   Float64 │              Float64 │                Float64 │        Float64 │   Float64 │              Float64 │                Float64 │        Float64 │ Float64 │          Float64 │            Float64 │    Float64 │
-├────────────────────────┼───────┼───────┼──────────────┼─────────────────────────┼───────────────────────────┼───────────────────┼───────────┼─────────────────┼───────────────────┼───────────┼───────────┼──────────────────────┼────────────────────────┼────────────────┼───────────┼──────────────────────┼────────────────────────┼────────────────┼─────────┼──────────────────┼────────────────────┼────────────┤
-│ pglib_opf_case3_lmbd.m │    24 │    28 │      0.18046 │               5.5339e-5 │                  0.439766 │           5812.64 │ 0.0088692 │      0.00139912 │        0.00948398 │   5812.64 │ 0.0185827 │              4.77339 │               0.518618 │        5812.64 │  0.702509 │              3.11961 │                2.82646 │        5812.64 │ 2.15859 │      0.000573744 │            8.53858 │    6273.63 │
-│ pglib_opf_case3_lmbd.m │    44 │    53 │     0.682561 │               5.3999e-5 │                  0.692781 │           17551.9 │  0.017493 │      0.00174585 │         0.0180525 │   17551.9 │ 0.0619055 │            0.0247746 │               0.039954 │        17551.9 │   1.36122 │            0.0891538 │                4.19305 │        17551.9 │ 19.2566 │      0.000501885 │             19.279 │    77.9548 │
-└────────────────────────┴───────┴───────┴──────────────┴─────────────────────────┴───────────────────────────┴───────────────────┴───────────┴─────────────────┴───────────────────┴───────────┴───────────┴──────────────────────┴────────────────────────┴────────────────┴───────────┴──────────────────────┴────────────────────────┴────────────────┴─────────┴──────────────────┴────────────────────┴────────────┘
-
-
-
-
-## Run the Full Benchmark
-
-```julia
-using LibGit2
-tmpdir = Base.Filesystem.mktempdir()
-LibGit2.clone("https://github.com/power-grid-lib/pglib-opf", tmpdir)
-benchmarkfiles = readdir(tmpdir)
-benchmarkfiles = benchmarkfiles[endswith(".m").(benchmarkfiles)]
-benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)
-```
-
-```
-66-element Vector{String}:
- "/tmp/jl_ESj5cg/pglib_opf_case10000_goc.m"
- "/tmp/jl_ESj5cg/pglib_opf_case10192_epigrids.m"
- "/tmp/jl_ESj5cg/pglib_opf_case10480_goc.m"
- "/tmp/jl_ESj5cg/pglib_opf_case118_ieee.m"
- "/tmp/jl_ESj5cg/pglib_opf_case1354_pegase.m"
- "/tmp/jl_ESj5cg/pglib_opf_case13659_pegase.m"
- "/tmp/jl_ESj5cg/pglib_opf_case14_ieee.m"
- "/tmp/jl_ESj5cg/pglib_opf_case162_ieee_dtc.m"
- "/tmp/jl_ESj5cg/pglib_opf_case179_goc.m"
- "/tmp/jl_ESj5cg/pglib_opf_case1803_snem.m"
- ⋮
- "/tmp/jl_ESj5cg/pglib_opf_case6515_rte.m"
- "/tmp/jl_ESj5cg/pglib_opf_case7336_epigrids.m"
- "/tmp/jl_ESj5cg/pglib_opf_case73_ieee_rts.m"
- "/tmp/jl_ESj5cg/pglib_opf_case78484_epigrids.m"
- "/tmp/jl_ESj5cg/pglib_opf_case793_goc.m"
- "/tmp/jl_ESj5cg/pglib_opf_case8387_pegase.m"
- "/tmp/jl_ESj5cg/pglib_opf_case89_pegase.m"
- "/tmp/jl_ESj5cg/pglib_opf_case9241_pegase.m"
- "/tmp/jl_ESj5cg/pglib_opf_case9591_goc.m"
-```
-
-
-
-```julia
-timing_data = multidata_multisolver_benchmark(benchmark_datasets)
-```
-
-```
-file = "/tmp/jl_ESj5cg/pglib_opf_case10000_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case10192_epigrids.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case10480_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case118_ieee.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case1354_pegase.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case13659_pegase.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case14_ieee.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case162_ieee_dtc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case179_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case1803_snem.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case1888_rte.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case19402_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case1951_rte.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case197_snem.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2000_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case200_activ.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case20758_epigrids.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2312_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2383wp_k.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case240_pserc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case24464_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case24_ieee_rts.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2736sp_k.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2737sop_k.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2742_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2746wop_k.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2746wp_k.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2848_rte.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2853_sdet.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2868_rte.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case2869_pegase.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case30000_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case300_ieee.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case3012wp_k.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case3022_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case30_as.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case30_ieee.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case3120sp_k.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case3375wp_k.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case3970_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case39_epri.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case3_lmbd.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case4020_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case4601_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case4619_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case4661_sdet.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case4837_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case4917_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case500_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case5658_epigrids.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case57_ieee.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case588_sdet.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case5_pjm.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case60_c.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case6468_rte.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case6470_rte.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case6495_rte.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case6515_rte.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case7336_epigrids.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case73_ieee_rts.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case78484_epigrids.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case793_goc.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case8387_pegase.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case89_pegase.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case9241_pegase.m"
-file = "/tmp/jl_ESj5cg/pglib_opf_case9591_goc.m"
-2×23 DataFrame
- Row │ case                    vars   cons   optimization  optimization_modelb ⋯
-     │ String                  Int64  Int64  Float64       Float64             ⋯
-─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ pglib_opf_case3_lmbd.m     24     28      0.196473                5.907 ⋯
-   2 │ pglib_opf_case3_lmbd.m     44     53      0.615998                6.385
+   1 │ pglib_opf_case3_lmbd.m     24     28      0.141455                5.273 ⋯
+   2 │ pglib_opf_case3_lmbd.m     44     53      0.665889                5.017
                                                               19 columns omitted
 ```
 
@@ -2741,50 +2607,421 @@ Text(String(take!(io)))
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">24</td>
       <td style = "text-align: right;">28</td>
-      <td style = "text-align: right;">0.196473</td>
-      <td style = "text-align: right;">5.907e-5</td>
-      <td style = "text-align: right;">0.126424</td>
+      <td style = "text-align: right;">0.141455</td>
+      <td style = "text-align: right;">5.2739e-5</td>
+      <td style = "text-align: right;">0.435204</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.00870634</td>
-      <td style = "text-align: right;">0.00164818</td>
-      <td style = "text-align: right;">0.00925862</td>
+      <td style = "text-align: right;">0.00870592</td>
+      <td style = "text-align: right;">0.00154045</td>
+      <td style = "text-align: right;">0.00934822</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0186836</td>
-      <td style = "text-align: right;">0.0142578</td>
-      <td style = "text-align: right;">0.018731</td>
+      <td style = "text-align: right;">0.0439796</td>
+      <td style = "text-align: right;">4.74329</td>
+      <td style = "text-align: right;">0.486629</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.660223</td>
-      <td style = "text-align: right;">0.021344</td>
-      <td style = "text-align: right;">0.605365</td>
+      <td style = "text-align: right;">0.678745</td>
+      <td style = "text-align: right;">3.07749</td>
+      <td style = "text-align: right;">2.78589</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">2.04468</td>
-      <td style = "text-align: right;">0.000305947</td>
-      <td style = "text-align: right;">1.98245</td>
+      <td style = "text-align: right;">2.28583</td>
+      <td style = "text-align: right;">0.000545895</td>
+      <td style = "text-align: right;">8.67825</td>
       <td style = "text-align: right;">6273.63</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">44</td>
       <td style = "text-align: right;">53</td>
-      <td style = "text-align: right;">0.615998</td>
-      <td style = "text-align: right;">6.3859e-5</td>
-      <td style = "text-align: right;">0.619407</td>
+      <td style = "text-align: right;">0.665889</td>
+      <td style = "text-align: right;">5.0179e-5</td>
+      <td style = "text-align: right;">0.670404</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0176393</td>
-      <td style = "text-align: right;">0.00164961</td>
-      <td style = "text-align: right;">0.0184222</td>
+      <td style = "text-align: right;">0.0177661</td>
+      <td style = "text-align: right;">0.00168267</td>
+      <td style = "text-align: right;">0.0183808</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0374729</td>
-      <td style = "text-align: right;">0.0248795</td>
-      <td style = "text-align: right;">0.0382641</td>
+      <td style = "text-align: right;">0.039725</td>
+      <td style = "text-align: right;">0.0241874</td>
+      <td style = "text-align: right;">0.0394854</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">1.27796</td>
-      <td style = "text-align: right;">0.0868622</td>
-      <td style = "text-align: right;">1.28042</td>
+      <td style = "text-align: right;">1.31298</td>
+      <td style = "text-align: right;">0.112824</td>
+      <td style = "text-align: right;">4.14963</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">17.6983</td>
-      <td style = "text-align: right;">0.000372246</td>
-      <td style = "text-align: right;">17.8579</td>
+      <td style = "text-align: right;">19.5266</td>
+      <td style = "text-align: right;">0.000451557</td>
+      <td style = "text-align: right;">19.7466</td>
+      <td style = "text-align: right;">77.9548</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+
+
+
+
+## Run the Full Benchmark
+
+```julia
+using LibGit2
+tmpdir = Base.Filesystem.mktempdir()
+LibGit2.clone("https://github.com/power-grid-lib/pglib-opf", tmpdir)
+benchmarkfiles = readdir(tmpdir)
+benchmarkfiles = benchmarkfiles[endswith(".m").(benchmarkfiles)]
+benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)
+```
+
+```
+66-element Vector{String}:
+ "/tmp/jl_LrTs5W/pglib_opf_case10000_goc.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case10192_epigrids.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case10480_goc.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case118_ieee.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case1354_pegase.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case13659_pegase.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case14_ieee.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case162_ieee_dtc.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case179_goc.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case1803_snem.m"
+ ⋮
+ "/tmp/jl_LrTs5W/pglib_opf_case6515_rte.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case7336_epigrids.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case73_ieee_rts.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case78484_epigrids.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case793_goc.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case8387_pegase.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case89_pegase.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case9241_pegase.m"
+ "/tmp/jl_LrTs5W/pglib_opf_case9591_goc.m"
+```
+
+
+
+```julia
+timing_data = multidata_multisolver_benchmark(benchmark_datasets)
+```
+
+```
+file = "/tmp/jl_LrTs5W/pglib_opf_case10000_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case10192_epigrids.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case10480_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case118_ieee.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case1354_pegase.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case13659_pegase.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case14_ieee.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case162_ieee_dtc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case179_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case1803_snem.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case1888_rte.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case19402_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case1951_rte.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case197_snem.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2000_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case200_activ.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case20758_epigrids.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2312_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2383wp_k.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case240_pserc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case24464_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case24_ieee_rts.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2736sp_k.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2737sop_k.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2742_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2746wop_k.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2746wp_k.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2848_rte.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2853_sdet.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2868_rte.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case2869_pegase.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case30000_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case300_ieee.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case3012wp_k.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case3022_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case30_as.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case30_ieee.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case3120sp_k.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case3375wp_k.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case3970_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case39_epri.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case3_lmbd.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case4020_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case4601_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case4619_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case4661_sdet.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case4837_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case4917_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case500_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case5658_epigrids.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case57_ieee.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case588_sdet.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case5_pjm.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case60_c.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case6468_rte.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case6470_rte.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case6495_rte.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case6515_rte.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case7336_epigrids.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case73_ieee_rts.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case78484_epigrids.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case793_goc.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case8387_pegase.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case89_pegase.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case9241_pegase.m"
+file = "/tmp/jl_LrTs5W/pglib_opf_case9591_goc.m"
+7×23 DataFrame
+ Row │ case                    vars   cons   optimization  optimization_modelb ⋯
+     │ String                  Int64  Int64  Float64       Float64             ⋯
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │ pglib_opf_case3_lmbd.m    118    169      6.32433               0.00010 ⋯
+   2 │ pglib_opf_case3_lmbd.m    266    315     51.7113                0.00015
+   3 │ pglib_opf_case3_lmbd.m    236    348     30.5108                0.00016
+   4 │ pglib_opf_case3_lmbd.m    236    348     48.1709                0.00016
+   5 │ pglib_opf_case3_lmbd.m    282    401     99.1081                0.00018 ⋯
+   6 │ pglib_opf_case3_lmbd.m     24     28      0.122345              6.6899e
+   7 │ pglib_opf_case3_lmbd.m     44     53      0.555493              6.108e-
+                                                              19 columns omitted
+```
+
+
+
+```julia
+io = IOBuffer()
+println(io, "```@raw html")
+pretty_table(io, timing_data; backend = Val(:html))
+# show(io, "text/html", pretty_table(timing_data; backend = Val(:html)))
+println(io, "```")
+Text(String(take!(io)))
+```
+
+```@raw html
+<table>
+  <thead>
+    <tr class = "header">
+      <th style = "text-align: right;">case</th>
+      <th style = "text-align: right;">vars</th>
+      <th style = "text-align: right;">cons</th>
+      <th style = "text-align: right;">optimization</th>
+      <th style = "text-align: right;">optimization_modelbuild</th>
+      <th style = "text-align: right;">optimization_wcompilation</th>
+      <th style = "text-align: right;">optimization_cost</th>
+      <th style = "text-align: right;">jump</th>
+      <th style = "text-align: right;">jump_modelbuild</th>
+      <th style = "text-align: right;">jump_wcompilation</th>
+      <th style = "text-align: right;">jump_cost</th>
+      <th style = "text-align: right;">nlpmodels</th>
+      <th style = "text-align: right;">nlpmodels_modelbuild</th>
+      <th style = "text-align: right;">nlpmodels_wcompilation</th>
+      <th style = "text-align: right;">nlpmodels_cost</th>
+      <th style = "text-align: right;">nonconvex</th>
+      <th style = "text-align: right;">nonconvex_modelbuild</th>
+      <th style = "text-align: right;">nonconvex_wcompilation</th>
+      <th style = "text-align: right;">nonconvex_cost</th>
+      <th style = "text-align: right;">optim</th>
+      <th style = "text-align: right;">optim_modelbuild</th>
+      <th style = "text-align: right;">optim_wcompilation</th>
+      <th style = "text-align: right;">optim_cost</th>
+    </tr>
+    <tr class = "subheader headerLastRow">
+      <th style = "text-align: right;">String</th>
+      <th style = "text-align: right;">Int64</th>
+      <th style = "text-align: right;">Int64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">118</td>
+      <td style = "text-align: right;">169</td>
+      <td style = "text-align: right;">6.32433</td>
+      <td style = "text-align: right;">0.000100339</td>
+      <td style = "text-align: right;">11.1939</td>
+      <td style = "text-align: right;">2178.08</td>
+      <td style = "text-align: right;">0.0269834</td>
+      <td style = "text-align: right;">0.123008</td>
+      <td style = "text-align: right;">0.0635403</td>
+      <td style = "text-align: right;">2178.08</td>
+      <td style = "text-align: right;">0.129772</td>
+      <td style = "text-align: right;">0.203466</td>
+      <td style = "text-align: right;">0.0765773</td>
+      <td style = "text-align: right;">2178.08</td>
+      <td style = "text-align: right;">3.62865</td>
+      <td style = "text-align: right;">1.8147</td>
+      <td style = "text-align: right;">67.4663</td>
+      <td style = "text-align: right;">2178.08</td>
+      <td style = "text-align: right;">118.784</td>
+      <td style = "text-align: right;">0.0784279</td>
+      <td style = "text-align: right;">117.959</td>
+      <td style = "text-align: right;">1658.7</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">266</td>
+      <td style = "text-align: right;">315</td>
+      <td style = "text-align: right;">51.7113</td>
+      <td style = "text-align: right;">0.000158619</td>
+      <td style = "text-align: right;">56.7966</td>
+      <td style = "text-align: right;">63352.2</td>
+      <td style = "text-align: right;">0.0591904</td>
+      <td style = "text-align: right;">0.00532623</td>
+      <td style = "text-align: right;">0.0604997</td>
+      <td style = "text-align: right;">63352.2</td>
+      <td style = "text-align: right;">0.297521</td>
+      <td style = "text-align: right;">0.169314</td>
+      <td style = "text-align: right;">0.208474</td>
+      <td style = "text-align: right;">63352.2</td>
+      <td style = "text-align: right;">9.58389</td>
+      <td style = "text-align: right;">11.6843</td>
+      <td style = "text-align: right;">326.498</td>
+      <td style = "text-align: right;">63352.2</td>
+      <td style = "text-align: right;">340.354</td>
+      <td style = "text-align: right;">0.168328</td>
+      <td style = "text-align: right;">333.795</td>
+      <td style = "text-align: right;">63741.2</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">236</td>
+      <td style = "text-align: right;">348</td>
+      <td style = "text-align: right;">30.5108</td>
+      <td style = "text-align: right;">0.000163499</td>
+      <td style = "text-align: right;">30.2871</td>
+      <td style = "text-align: right;">803.127</td>
+      <td style = "text-align: right;">0.0412575</td>
+      <td style = "text-align: right;">0.0243074</td>
+      <td style = "text-align: right;">0.0422944</td>
+      <td style = "text-align: right;">803.127</td>
+      <td style = "text-align: right;">0.274468</td>
+      <td style = "text-align: right;">0.159723</td>
+      <td style = "text-align: right;">0.135902</td>
+      <td style = "text-align: right;">803.127</td>
+      <td style = "text-align: right;">9.29268</td>
+      <td style = "text-align: right;">13.2184</td>
+      <td style = "text-align: right;">352.902</td>
+      <td style = "text-align: right;">803.127</td>
+      <td style = "text-align: right;">271.569</td>
+      <td style = "text-align: right;">0.100526</td>
+      <td style = "text-align: right;">279.43</td>
+      <td style = "text-align: right;">772.093</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">236</td>
+      <td style = "text-align: right;">348</td>
+      <td style = "text-align: right;">48.1709</td>
+      <td style = "text-align: right;">0.000162379</td>
+      <td style = "text-align: right;">47.8481</td>
+      <td style = "text-align: right;">8208.52</td>
+      <td style = "text-align: right;">0.0601065</td>
+      <td style = "text-align: right;">0.00828348</td>
+      <td style = "text-align: right;">0.0624244</td>
+      <td style = "text-align: right;">8208.52</td>
+      <td style = "text-align: right;">0.22029</td>
+      <td style = "text-align: right;">0.169831</td>
+      <td style = "text-align: right;">0.217211</td>
+      <td style = "text-align: right;">8208.52</td>
+      <td style = "text-align: right;">9.74939</td>
+      <td style = "text-align: right;">13.5743</td>
+      <td style = "text-align: right;">369.186</td>
+      <td style = "text-align: right;">8208.52</td>
+      <td style = "text-align: right;">270.724</td>
+      <td style = "text-align: right;">0.0121046</td>
+      <td style = "text-align: right;">280.712</td>
+      <td style = "text-align: right;">4244.05</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">282</td>
+      <td style = "text-align: right;">401</td>
+      <td style = "text-align: right;">99.1081</td>
+      <td style = "text-align: right;">0.000188719</td>
+      <td style = "text-align: right;">98.8042</td>
+      <td style = "text-align: right;">1.38416e5</td>
+      <td style = "text-align: right;">0.105296</td>
+      <td style = "text-align: right;">0.00650325</td>
+      <td style = "text-align: right;">0.107031</td>
+      <td style = "text-align: right;">1.38416e5</td>
+      <td style = "text-align: right;">0.327304</td>
+      <td style = "text-align: right;">0.192177</td>
+      <td style = "text-align: right;">0.320011</td>
+      <td style = "text-align: right;">1.38416e5</td>
+      <td style = "text-align: right;">13.6941</td>
+      <td style = "text-align: right;">20.3388</td>
+      <td style = "text-align: right;">542.766</td>
+      <td style = "text-align: right;">1.38416e5</td>
+      <td style = "text-align: right;">325.25</td>
+      <td style = "text-align: right;">0.0535641</td>
+      <td style = "text-align: right;">352.6</td>
+      <td style = "text-align: right;">72070.8</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">24</td>
+      <td style = "text-align: right;">28</td>
+      <td style = "text-align: right;">0.122345</td>
+      <td style = "text-align: right;">6.6899e-5</td>
+      <td style = "text-align: right;">0.154676</td>
+      <td style = "text-align: right;">5812.64</td>
+      <td style = "text-align: right;">0.00977957</td>
+      <td style = "text-align: right;">0.00284796</td>
+      <td style = "text-align: right;">0.0107911</td>
+      <td style = "text-align: right;">5812.64</td>
+      <td style = "text-align: right;">0.019211</td>
+      <td style = "text-align: right;">0.0159903</td>
+      <td style = "text-align: right;">0.0205579</td>
+      <td style = "text-align: right;">5812.64</td>
+      <td style = "text-align: right;">0.606055</td>
+      <td style = "text-align: right;">0.0209704</td>
+      <td style = "text-align: right;">0.591952</td>
+      <td style = "text-align: right;">5812.64</td>
+      <td style = "text-align: right;">1.79332</td>
+      <td style = "text-align: right;">0.000477126</td>
+      <td style = "text-align: right;">2.18212</td>
+      <td style = "text-align: right;">6273.63</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">44</td>
+      <td style = "text-align: right;">53</td>
+      <td style = "text-align: right;">0.555493</td>
+      <td style = "text-align: right;">6.108e-5</td>
+      <td style = "text-align: right;">0.549544</td>
+      <td style = "text-align: right;">17551.9</td>
+      <td style = "text-align: right;">0.0194898</td>
+      <td style = "text-align: right;">0.00181532</td>
+      <td style = "text-align: right;">0.0191905</td>
+      <td style = "text-align: right;">17551.9</td>
+      <td style = "text-align: right;">0.0392313</td>
+      <td style = "text-align: right;">0.0283191</td>
+      <td style = "text-align: right;">0.041794</td>
+      <td style = "text-align: right;">17551.9</td>
+      <td style = "text-align: right;">1.42334</td>
+      <td style = "text-align: right;">0.0874475</td>
+      <td style = "text-align: right;">1.18292</td>
+      <td style = "text-align: right;">17551.9</td>
+      <td style = "text-align: right;">16.8143</td>
+      <td style = "text-align: right;">0.000458997</td>
+      <td style = "text-align: right;">17.1026</td>
       <td style = "text-align: right;">77.9548</td>
     </tr>
   </tbody>

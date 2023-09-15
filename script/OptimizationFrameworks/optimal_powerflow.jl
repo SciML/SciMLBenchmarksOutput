@@ -9,7 +9,7 @@ MAX_CPU_TIME = 100.0
 # Anything with more variables is rejected and not run
 # This is for testing. 100 is a good size for running a test of changes
 # Should be set to typemax(Int) to run the whole benchmark
-SIZE_LIMIT = 100
+SIZE_LIMIT = 300
 
 
 import PowerModels
@@ -1890,7 +1890,12 @@ test_datasets = [
 timing_data = multidata_multisolver_benchmark(test_datasets)
 
 
-pretty_table(timing_data)
+io = IOBuffer()
+println(io, "```@raw html")
+pretty_table(io, timing_data; backend = Val(:html))
+# show(io, "text/html", pretty_table(timing_data; backend = Val(:html)))
+println(io, "```")
+Text(String(take!(io)))
 
 
 using LibGit2
