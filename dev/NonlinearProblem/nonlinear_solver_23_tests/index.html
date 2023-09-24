@@ -5,18 +5,34 @@ using BenchmarkTools, DiffEqDevTools, NonlinearProblemLibrary, Plots</code></pre
             Dict(:alg=&gt;LevenbergMarquardt()),
             Dict(:alg=&gt;CMINPACK(method=:hybr)),
             Dict(:alg=&gt;CMINPACK(method=:lm)),
-            Dict(:alg=&gt;NLSolveJL()),
-            Dict(:alg=&gt;KINSOL())]
+            Dict(:alg=&gt;NLSolveJL())]
 solvernames =  [&quot;Newton Raphson&quot;; 
                 &quot;Newton Trust Region&quot;; 
                 &quot;Levenberg-Marquardt&quot;; 
                 &quot;Modified Powell (CMINPACK)&quot;; 
                 &quot;Levenberg-Marquardt (CMINPACK)&quot;; 
-                &quot;Newton Trust Region (NLSolveJL)&quot;; 
-                &quot;KINSOL (Sundials)&quot;];</code></pre><p>Sets tolerances.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:12)
+                &quot;Newton Trust Region (NLSolveJL)&quot;];</code></pre><p>Sets tolerances.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:12)
 reltols = 1.0 ./ 10.0 .^ (4:12);</code></pre><p>Set plotting defaults.</p><pre><code class="language-julia hljs">default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=12, legendfontsize=9, lw=2)
 colors = [1 2 3 4 5 6 7]
-markershapes = [:circle :rect :heptagon :cross :xcross :utriangle :star5];</code></pre><p>Plotting formating helper function.</p><pre><code class="language-julia hljs"># Finds good x and y limits.
+markershapes = [:circle :rect :heptagon :cross :xcross :utriangle :star5];</code></pre><p>Function for determening which solvers can solve a given problem.</p><pre><code class="language-julia hljs"># Selects the solvers to be benchmakred on a given problem.
+function select_solvers(prob; solvers=solvers, solvernames=solvernames)
+    filter(s_idx -&gt; check_solver(prob, solvers[s_idx], solvernames[s_idx]), 1:length(solvers))
+end
+# Checks if a solver can sucessfully solve a given problem.
+function check_solver(prob, solver, solvername)
+    try
+        true_sol = solve(prob.prob, solver[:alg]; abstol=1e-18, reltol=1e-18, maxiters=10000000)
+        if !SciMLBase.successful_retcode(true_sol.retcode)
+            Base.printstyled(&quot;[Warn] Solver $solvername returned retcode $(true_sol.retcode).&quot;; color=:red)
+            return false
+        end
+        WorkPrecisionSet(prob.prob, [1e-4, 1e-12], [1e-4, 1e-12], [solver]; names=[solvername], numruns=20, appxsol=true_sol, error_estimate=:l2, maxiters=10000000)
+    catch e
+        Base.printstyled(&quot;[Warn] Solver $solvername threw an error: $e.&quot;; color=:red)    
+        return false
+    end
+    return true
+end</code></pre><pre><code class="nohighlight hljs">check_solver (generic function with 1 method)</code></pre><p>Plotting formating helper function.</p><pre><code class="language-julia hljs"># Finds good x and y limits.
 function xy_limits(wp)
     times = vcat(map(wp -&gt; wp.times, wp.wps)...)
     errors = vcat(map(wp -&gt; wp.errors, wp.wps)...)
@@ -55,83 +71,111 @@ function plot_wp(wp, selected_solvers; colors=permutedims(getindex(colors,select
     xticks = get_ticks(log10.(xlimit))
     yticks = get_ticks(log10.(ylimit))
     plot(wp; xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks, color=colors, markershape=markershapes, kwargs...)
-end;</code></pre><h1 id="Benchmarks"><a class="docs-heading-anchor" href="#Benchmarks">Benchmarks</a><a id="Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarks" title="Permalink"></a></h1><p>We here run benchmarks for each of the 23 models. </p><h3 id="Problem-1-(Generalized-Rosenbrock-function)"><a class="docs-heading-anchor" href="#Problem-1-(Generalized-Rosenbrock-function)">Problem 1 (Generalized Rosenbrock function)</a><a id="Problem-1-(Generalized-Rosenbrock-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-1-(Generalized-Rosenbrock-function)" title="Permalink"></a></h3><p>For this problem, the <code>NewtonRaphson()</code> and <code>KINSOL()</code> solvers fail, and are not benchmarked.</p><pre><code class="language-julia hljs">prob_1 = nlprob_23_testcases[&quot;Generalized Rosenbrock function&quot;]
-selected_solvers_1 = [2,3,4,5,6]
-wp_1 = WorkPrecisionSet(prob_1.prob, abstols, reltols, getindex(solvers,selected_solvers_1); names=getindex(solvernames,selected_solvers_1), numruns=100, appxsol=prob_1.true_sol, error_estimate=:l2)
-plot_wp(wp_1, selected_solvers_1; legend=:bottomright)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_6_1.png" alt/></p><h3 id="Problem-2-(Powell-singular-function)"><a class="docs-heading-anchor" href="#Problem-2-(Powell-singular-function)">Problem 2 (Powell singular function)</a><a id="Problem-2-(Powell-singular-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-2-(Powell-singular-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_2 = nlprob_23_testcases[&quot;Powell singular function&quot;]
-selected_solvers_2 = [1,2,3,4,5,6,7]
-wp_2 = WorkPrecisionSet(prob_2.prob, abstols, reltols, getindex(solvers,selected_solvers_2); names=getindex(solvernames,selected_solvers_2), numruns=100, appxsol=prob_2.true_sol, error_estimate=:l2)
-plot_wp(wp_2, selected_solvers_2)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_7_1.png" alt/></p><h3 id="Problem-3-(Powell-badly-scaled-function)"><a class="docs-heading-anchor" href="#Problem-3-(Powell-badly-scaled-function)">Problem 3 (Powell badly scaled function)</a><a id="Problem-3-(Powell-badly-scaled-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-3-(Powell-badly-scaled-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_3 = nlprob_23_testcases[&quot;Powell badly scaled function&quot;]
-selected_solvers_3 = [1,2,3,4,5,6,7]
-wp_3 = WorkPrecisionSet(prob_3.prob, abstols, reltols, getindex(solvers,selected_solvers_3); names=getindex(solvernames,selected_solvers_3), numruns=100, appxsol=prob_3.true_sol, error_estimate=:l2)
-plot_wp(wp_3, selected_solvers_3)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_8_1.png" alt/></p><h3 id="Problem-4-(Wood-function)"><a class="docs-heading-anchor" href="#Problem-4-(Wood-function)">Problem 4 (Wood function)</a><a id="Problem-4-(Wood-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-4-(Wood-function)" title="Permalink"></a></h3><p>For this problem, the <code>KINSOL()</code> solver fail, and is not benchmarked.</p><pre><code class="language-julia hljs">prob_4 = nlprob_23_testcases[&quot;Wood function&quot;]
-selected_solvers_4 = [1,2,3,4,5,6]
-wp_4 = WorkPrecisionSet(prob_4.prob, abstols, reltols, getindex(solvers,selected_solvers_4); names=getindex(solvernames,selected_solvers_4), numruns=100, appxsol=prob_4.true_sol, error_estimate=:l2)
-plot_wp(wp_4, selected_solvers_4; legend=:topright)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_9_1.png" alt/></p><h3 id="Problem-5-(Helical-valley-function)"><a class="docs-heading-anchor" href="#Problem-5-(Helical-valley-function)">Problem 5 (Helical valley function)</a><a id="Problem-5-(Helical-valley-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-5-(Helical-valley-function)" title="Permalink"></a></h3><p>For this problem, the <code>KINSOL()</code> solver fail, and is not benchmarked.</p><pre><code class="language-julia hljs">prob_5 = nlprob_23_testcases[&quot;Helical valley function&quot;]
-selected_solvers_5 = [1,2,3,4,5,6]
-wp_5 = WorkPrecisionSet(prob_5.prob, abstols, reltols, getindex(solvers,selected_solvers_5); names=getindex(solvernames,selected_solvers_5), numruns=100, appxsol=prob_5.true_sol, error_estimate=:l2)
-plot_wp(wp_5, selected_solvers_5)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_10_1.png" alt/></p><h3 id="Problem-6-(Watson-function)"><a class="docs-heading-anchor" href="#Problem-6-(Watson-function)">Problem 6 (Watson function)</a><a id="Problem-6-(Watson-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-6-(Watson-function)" title="Permalink"></a></h3><p>For this problem, the <code>NewtonRaphson()</code>, <code>TrustRegion()</code>, <code>LevenbergMarquardt()</code>, and <code>KINSOL()</code> solvers fail, and are not benchmarked.</p><pre><code class="language-julia hljs">prob_6 = nlprob_23_testcases[&quot;Watson function&quot;]
-selected_solvers_6 = [4,5,6]
-true_sol_6 = solve(prob_6.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_6 = WorkPrecisionSet(prob_6.prob, abstols, reltols, getindex(solvers,selected_solvers_6); names=getindex(solvernames,selected_solvers_6), numruns=100, appxsol=true_sol_6, error_estimate=:l2)
-plot_wp(wp_6, selected_solvers_6; legend=:topright)</code></pre><pre><code class="nohighlight hljs">Error: InexactError: trunc(Int64, NaN)</code></pre><h3 id="Problem-7-(Chebyquad-function)"><a class="docs-heading-anchor" href="#Problem-7-(Chebyquad-function)">Problem 7 (Chebyquad function)</a><a id="Problem-7-(Chebyquad-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-7-(Chebyquad-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_7 = nlprob_23_testcases[&quot;Chebyquad function&quot;]
-selected_solvers_7 = [1,2,3,4,5,6,7]
-wp_7 = WorkPrecisionSet(prob_7.prob, abstols, reltols, getindex(solvers,selected_solvers_7); names=getindex(solvernames,selected_solvers_7), numruns=100, appxsol=prob_7.true_sol, error_estimate=:l2)
-plot_wp(wp_7, selected_solvers_7; legend=:bottomright)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_12_1.png" alt/></p><h3 id="Problem-8-(Brown-almost-linear-function)"><a class="docs-heading-anchor" href="#Problem-8-(Brown-almost-linear-function)">Problem 8 (Brown almost linear function)</a><a id="Problem-8-(Brown-almost-linear-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-8-(Brown-almost-linear-function)" title="Permalink"></a></h3><p>For this problem, the <code>KINSOL()</code> solver fail, and is not benchmarked.</p><pre><code class="language-julia hljs">prob_8 = nlprob_23_testcases[&quot;Brown almost linear function&quot;]
-selected_solvers_8 = [1,2,3,4,5,6]
-wp_8 = WorkPrecisionSet(prob_8.prob, abstols, reltols, getindex(solvers,selected_solvers_8); names=getindex(solvernames,selected_solvers_8), numruns=100, appxsol=prob_8.true_sol, error_estimate=:l2)
-plot_wp(wp_8, selected_solvers_8)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_13_1.png" alt/></p><h3 id="Problem-9-(Discrete-boundary-value-function)"><a class="docs-heading-anchor" href="#Problem-9-(Discrete-boundary-value-function)">Problem 9 (Discrete boundary value function)</a><a id="Problem-9-(Discrete-boundary-value-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-9-(Discrete-boundary-value-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_9 = nlprob_23_testcases[&quot;Discrete boundary value function&quot;]
-selected_solvers_9 = [1,2,3,4,5,6,7]
-true_sol_9 = solve(prob_9.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_9 = WorkPrecisionSet(prob_9.prob, abstols, reltols, getindex(solvers,selected_solvers_9); names=getindex(solvernames,selected_solvers_9), numruns=100, appxsol=true_sol_9, error_estimate=:l2)
-plot_wp(wp_9, selected_solvers_9)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_14_1.png" alt/></p><h3 id="Problem-10-(Discrete-integral-equation-function)"><a class="docs-heading-anchor" href="#Problem-10-(Discrete-integral-equation-function)">Problem 10 (Discrete integral equation function)</a><a id="Problem-10-(Discrete-integral-equation-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-10-(Discrete-integral-equation-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_10 = nlprob_23_testcases[&quot;Discrete integral equation function&quot;]
-selected_solvers_10 = [1,2,3,4,5,6,7]
-true_sol_10 = solve(prob_10.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_10 = WorkPrecisionSet(prob_10.prob, abstols, reltols, getindex(solvers,selected_solvers_10); names=getindex(solvernames,selected_solvers_10), numruns=100, appxsol=true_sol_10, error_estimate=:l2)
-plot_wp(wp_10, selected_solvers_10; legend=:bottomleft)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_15_1.png" alt/></p><h3 id="Problem-11-(Trigonometric-function)"><a class="docs-heading-anchor" href="#Problem-11-(Trigonometric-function)">Problem 11 (Trigonometric function)</a><a id="Problem-11-(Trigonometric-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-11-(Trigonometric-function)" title="Permalink"></a></h3><p>For this problem, the <code>KINSOL()</code> solver fail, and is not benchmarked.</p><pre><code class="language-julia hljs">prob_11 = nlprob_23_testcases[&quot;Trigonometric function&quot;]
-selected_solvers_11 = [1,2,3,4,5,6]
-true_sol_11 = solve(prob_11.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_11 = WorkPrecisionSet(prob_11.prob, abstols, reltols, getindex(solvers,selected_solvers_11); names=getindex(solvernames,selected_solvers_11), numruns=100, appxsol=true_sol_11, error_estimate=:l2)
-plot_wp(wp_11, selected_solvers_11)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_16_1.png" alt/></p><h3 id="Problem-12-(Variably-dimensioned-function)"><a class="docs-heading-anchor" href="#Problem-12-(Variably-dimensioned-function)">Problem 12 (Variably dimensioned function)</a><a id="Problem-12-(Variably-dimensioned-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-12-(Variably-dimensioned-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_12 = nlprob_23_testcases[&quot;Variably dimensioned function&quot;]
-selected_solvers_12 = [1,2,3,4,5,6,7]
-wp_12 = WorkPrecisionSet(prob_12.prob, abstols, reltols, getindex(solvers,selected_solvers_12); names=getindex(solvernames,selected_solvers_12), numruns=100, appxsol=prob_12.true_sol, error_estimate=:l2)
-plot_wp(wp_12, selected_solvers_12; legend=:bottomright)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_17_1.png" alt/></p><h3 id="Problem-13-(Broyden-tridiagonal-function)"><a class="docs-heading-anchor" href="#Problem-13-(Broyden-tridiagonal-function)">Problem 13 (Broyden tridiagonal function)</a><a id="Problem-13-(Broyden-tridiagonal-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-13-(Broyden-tridiagonal-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_13 = nlprob_23_testcases[&quot;Broyden tridiagonal function&quot;]
-selected_solvers_13 = [1,2,3,4,5,6,7]
-true_sol_13 = solve(prob_13.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_13 = WorkPrecisionSet(prob_13.prob, abstols, reltols, getindex(solvers,selected_solvers_13); names=getindex(solvernames,selected_solvers_13), numruns=100, appxsol=true_sol_13, error_estimate=:l2)
-plot_wp(wp_13, selected_solvers_13; legend=:topleft, legendfontsize=6)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_18_1.png" alt/></p><h3 id="Problem-14-(Broyden-banded-function)"><a class="docs-heading-anchor" href="#Problem-14-(Broyden-banded-function)">Problem 14 (Broyden banded function)</a><a id="Problem-14-(Broyden-banded-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-14-(Broyden-banded-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_14 = nlprob_23_testcases[&quot;Broyden banded function&quot;]
-selected_solvers_14 = [1,2,3,4,5,6,7]
-true_sol_14 = solve(prob_14.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_14 = WorkPrecisionSet(prob_14.prob, abstols, reltols, getindex(solvers,selected_solvers_14); names=getindex(solvernames,selected_solvers_14), numruns=100, appxsol=true_sol_14, error_estimate=:l2)
-plot_wp(wp_14, selected_solvers_14)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_19_1.png" alt/></p><h3 id="Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)"><a class="docs-heading-anchor" href="#Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)">Problem 15 (Hammarling 2 by 2 matrix square root problem)</a><a id="Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_15 = nlprob_23_testcases[&quot;Hammarling 2 by 2 matrix square root problem&quot;]
-selected_solvers_15 = [1,2,3,4,5,6,7]
-wp_15 = WorkPrecisionSet(prob_15.prob, abstols, reltols, getindex(solvers,selected_solvers_15); names=getindex(solvernames,selected_solvers_15), numruns=100, appxsol=prob_15.true_sol, error_estimate=:l2)
-plot_wp(wp_15, selected_solvers_15)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_20_1.png" alt/></p><h3 id="Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)"><a class="docs-heading-anchor" href="#Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)">Problem 16 (Hammarling 3 by 3 matrix square root problem)</a><a id="Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_16 = nlprob_23_testcases[&quot;Hammarling 3 by 3 matrix square root problem&quot;]
-selected_solvers_16 = [1,2,3,4,5,6,7]
-wp_16 = WorkPrecisionSet(prob_16.prob, abstols, reltols, getindex(solvers,selected_solvers_16); names=getindex(solvernames,selected_solvers_16), numruns=100, appxsol=prob_16.true_sol, error_estimate=:l2)
-plot_wp(wp_16, selected_solvers_16)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_21_1.png" alt/></p><h3 id="Problem-17-(Dennis-and-Schnabel-2-by-2-example)"><a class="docs-heading-anchor" href="#Problem-17-(Dennis-and-Schnabel-2-by-2-example)">Problem 17 (Dennis and Schnabel 2 by 2 example)</a><a id="Problem-17-(Dennis-and-Schnabel-2-by-2-example)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-17-(Dennis-and-Schnabel-2-by-2-example)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_17 = nlprob_23_testcases[&quot;Dennis and Schnabel 2 by 2 example&quot;]
-selected_solvers_17 = [1,2,3,4,5,6,7]
-wp_17 = WorkPrecisionSet(prob_17.prob, abstols, reltols, getindex(solvers,selected_solvers_17); names=getindex(solvernames,selected_solvers_17), numruns=100, appxsol=prob_17.true_sol, error_estimate=:l2)
-plot_wp(wp_17, selected_solvers_17)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_22_1.png" alt/></p><h3 id="Problem-18-(Sample-problem-18)"><a class="docs-heading-anchor" href="#Problem-18-(Sample-problem-18)">Problem 18 (Sample problem 18)</a><a id="Problem-18-(Sample-problem-18)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-18-(Sample-problem-18)" title="Permalink"></a></h3><p>For this problem, the <code>KINSOL()</code> solver fail, and is not benchmarked.</p><pre><code class="language-julia hljs">prob_18 = nlprob_23_testcases[&quot;Sample problem 18&quot;]
-selected_solvers_18 = [1,2,3,4,5,6]
-wp_18 = WorkPrecisionSet(prob_18.prob, abstols, reltols, getindex(solvers,selected_solvers_18); names=getindex(solvernames,selected_solvers_18), numruns=100, appxsol=prob_18.true_sol, error_estimate=:l2)
-plot_wp(wp_18, selected_solvers_18)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_23_1.png" alt/></p><h3 id="Problem-19-(Sample-problem-19)"><a class="docs-heading-anchor" href="#Problem-19-(Sample-problem-19)">Problem 19 (Sample problem 19)</a><a id="Problem-19-(Sample-problem-19)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-19-(Sample-problem-19)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_19 = nlprob_23_testcases[&quot;Sample problem 19&quot;]
-selected_solvers_19 = [1,2,3,4,5,6,7]
-wp_19 = WorkPrecisionSet(prob_19.prob, abstols, reltols, getindex(solvers,selected_solvers_19); names=getindex(solvernames,selected_solvers_19), numruns=100, appxsol=prob_19.true_sol, error_estimate=:l2)
-plot_wp(wp_19, selected_solvers_19)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_24_1.png" alt/></p><h3 id="Problem-20-(Scalar-problem-f(x)-x(x-5)2)"><a class="docs-heading-anchor" href="#Problem-20-(Scalar-problem-f(x)-x(x-5)2)">Problem 20 (Scalar problem f(x) = x(x - 5)^2)</a><a id="Problem-20-(Scalar-problem-f(x)-x(x-5)2)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-20-(Scalar-problem-f(x)-x(x-5)2)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_20 = nlprob_23_testcases[&quot;Scalar problem f(x) = x(x - 5)^2&quot;]
-selected_solvers_20 = [1,2,3,4,5,6,7]
-wp_20 = WorkPrecisionSet(prob_20.prob, abstols, reltols, getindex(solvers,selected_solvers_20); names=getindex(solvernames,selected_solvers_20), numruns=100, appxsol=prob_20.true_sol, error_estimate=:l2)
-plot_wp(wp_20, selected_solvers_20)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_25_1.png" alt/></p><h3 id="Problem-21-(Freudenstein-Roth-function)"><a class="docs-heading-anchor" href="#Problem-21-(Freudenstein-Roth-function)">Problem 21 (Freudenstein-Roth function)</a><a id="Problem-21-(Freudenstein-Roth-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-21-(Freudenstein-Roth-function)" title="Permalink"></a></h3><p>For this problem, the <code>KINSOL()</code> solver fail, and is not benchmarked.</p><pre><code class="language-julia hljs">prob_21 = nlprob_23_testcases[&quot;Freudenstein-Roth function&quot;]
-selected_solvers_21 = [1,2,3,4,5,6]
-wp_21 = WorkPrecisionSet(prob_21.prob, abstols, reltols, getindex(solvers,selected_solvers_21); names=getindex(solvernames,selected_solvers_21), numruns=100, appxsol=prob_21.true_sol, error_estimate=:l2)
-plot_wp(wp_21, selected_solvers_21)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_26_1.png" alt/></p><h3 id="Problem-22-(Boggs-function)"><a class="docs-heading-anchor" href="#Problem-22-(Boggs-function)">Problem 22 (Boggs function)</a><a id="Problem-22-(Boggs-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-22-(Boggs-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_22 = nlprob_23_testcases[&quot;Boggs function&quot;]
-selected_solvers_22 = [1,2,3,4,5,6,7]
-wp_22 = WorkPrecisionSet(prob_22.prob, abstols, reltols, getindex(solvers,selected_solvers_22); names=getindex(solvernames,selected_solvers_22), numruns=100, appxsol=prob_22.true_sol, error_estimate=:l2)
-plot_wp(wp_22, selected_solvers_22)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_27_1.png" alt/></p><h3 id="Problem-23-(Chandrasekhar-function)"><a class="docs-heading-anchor" href="#Problem-23-(Chandrasekhar-function)">Problem 23 (Chandrasekhar function)</a><a id="Problem-23-(Chandrasekhar-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-23-(Chandrasekhar-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_23 = nlprob_23_testcases[&quot;Chandrasekhar function&quot;]
-selected_solvers_23 = [1,2,3,4,5,6,7]
-true_sol_23 = solve(prob_23.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_23 = WorkPrecisionSet(prob_23.prob, abstols, reltols, getindex(solvers,selected_solvers_23); names=getindex(solvernames,selected_solvers_23), numruns=100, appxsol=true_sol_23, error_estimate=:l2)
-plot_wp(wp_23, selected_solvers_23; legend=:topright, legendfontsize=7)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_28_1.png" alt/></p><h1 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h1><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+end;</code></pre><h1 id="Benchmarks"><a class="docs-heading-anchor" href="#Benchmarks">Benchmarks</a><a id="Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarks" title="Permalink"></a></h1><p>We here run benchmarks for each of the 23 models. </p><h3 id="Problem-1-(Generalized-Rosenbrock-function)"><a class="docs-heading-anchor" href="#Problem-1-(Generalized-Rosenbrock-function)">Problem 1 (Generalized Rosenbrock function)</a><a id="Problem-1-(Generalized-Rosenbrock-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-1-(Generalized-Rosenbrock-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_1 = nlprob_23_testcases[&quot;Generalized Rosenbrock function&quot;]
+selected_solvers_1 = select_solvers(prob_1)
+wp_1 = WorkPrecisionSet(prob_1.prob, abstols, reltols, getindex(solvers,selected_solvers_1); names=getindex(solvernames,selected_solvers_1), numruns=100, appxsol=prob_1.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_1, selected_solvers_1; legend=:bottomright)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Modified Powell (CMIN
+PACK) returned retcode Failure.[Warn] Solver Levenberg-Marquardt (CMINPACK)
+ returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_7_1.png" alt/></p><h3 id="Problem-2-(Powell-singular-function)"><a class="docs-heading-anchor" href="#Problem-2-(Powell-singular-function)">Problem 2 (Powell singular function)</a><a id="Problem-2-(Powell-singular-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-2-(Powell-singular-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_2 = nlprob_23_testcases[&quot;Powell singular function&quot;]
+selected_solvers_2 = select_solvers(prob_2)
+wp_2 = WorkPrecisionSet(prob_2.prob, abstols, reltols, getindex(solvers,selected_solvers_2); names=getindex(solvernames,selected_solvers_2), numruns=100, appxsol=prob_2.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_2, selected_solvers_2)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_8_1.png" alt/></p><h3 id="Problem-3-(Powell-badly-scaled-function)"><a class="docs-heading-anchor" href="#Problem-3-(Powell-badly-scaled-function)">Problem 3 (Powell badly scaled function)</a><a id="Problem-3-(Powell-badly-scaled-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-3-(Powell-badly-scaled-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_3 = nlprob_23_testcases[&quot;Powell badly scaled function&quot;]
+selected_solvers_3 = select_solvers(prob_3)
+wp_3 = WorkPrecisionSet(prob_3.prob, abstols, reltols, getindex(solvers,selected_solvers_3); names=getindex(solvernames,selected_solvers_3), numruns=100, appxsol=prob_3.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_3, selected_solvers_3)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Trust Region returned retcode MaxIters.[Warn] Solver L
+evenberg-Marquardt returned retcode MaxIters.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_9_1.png" alt/></p><h3 id="Problem-4-(Wood-function)"><a class="docs-heading-anchor" href="#Problem-4-(Wood-function)">Problem 4 (Wood function)</a><a id="Problem-4-(Wood-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-4-(Wood-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_4 = nlprob_23_testcases[&quot;Wood function&quot;]
+selected_solvers_4 = select_solvers(prob_4)
+wp_4 = WorkPrecisionSet(prob_4.prob, abstols, reltols, getindex(solvers,selected_solvers_4); names=getindex(solvernames,selected_solvers_4), numruns=100, appxsol=prob_4.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_4, selected_solvers_4; legend=:topright)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
+NLSolveJL) returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_10_1.png" alt/></p><h3 id="Problem-5-(Helical-valley-function)"><a class="docs-heading-anchor" href="#Problem-5-(Helical-valley-function)">Problem 5 (Helical valley function)</a><a id="Problem-5-(Helical-valley-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-5-(Helical-valley-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_5 = nlprob_23_testcases[&quot;Helical valley function&quot;]
+selected_solvers_5 = select_solvers(prob_5)
+wp_5 = WorkPrecisionSet(prob_5.prob, abstols, reltols, getindex(solvers,selected_solvers_5); names=getindex(solvernames,selected_solvers_5), numruns=100, appxsol=prob_5.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_5, selected_solvers_5)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_11_1.png" alt/></p><h3 id="Problem-6-(Watson-function)"><a class="docs-heading-anchor" href="#Problem-6-(Watson-function)">Problem 6 (Watson function)</a><a id="Problem-6-(Watson-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-6-(Watson-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_6 = nlprob_23_testcases[&quot;Watson function&quot;]
+selected_solvers_6 = select_solvers(prob_6)
+true_sol_6 = solve(prob_6.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_6 = WorkPrecisionSet(prob_6.prob, abstols, reltols, getindex(solvers,selected_solvers_6); names=getindex(solvernames,selected_solvers_6), numruns=100, appxsol=true_sol_6, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_6, selected_solvers_6; legend=:topright)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Modified Powell (CMIN
+PACK) returned retcode Failure.[Warn] Solver Newton Trust Region (NLSolveJL
+) threw an error: During the resolution of the non-linear system, the evalu
+ation of the following equation(s) resulted in a non-finite number: [1, 2].</code></pre><p><img src="../figures/nonlinear_solver_23_tests_12_1.png" alt/></p><h3 id="Problem-7-(Chebyquad-function)"><a class="docs-heading-anchor" href="#Problem-7-(Chebyquad-function)">Problem 7 (Chebyquad function)</a><a id="Problem-7-(Chebyquad-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-7-(Chebyquad-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_7 = nlprob_23_testcases[&quot;Chebyquad function&quot;]
+selected_solvers_7 = select_solvers(prob_7)
+wp_7 = WorkPrecisionSet(prob_7.prob, abstols, reltols, getindex(solvers,selected_solvers_7); names=getindex(solvernames,selected_solvers_7), numruns=100, appxsol=prob_7.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_7, selected_solvers_7; legend=:bottomright)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
+NLSolveJL) returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_13_1.png" alt/></p><h3 id="Problem-8-(Brown-almost-linear-function)"><a class="docs-heading-anchor" href="#Problem-8-(Brown-almost-linear-function)">Problem 8 (Brown almost linear function)</a><a id="Problem-8-(Brown-almost-linear-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-8-(Brown-almost-linear-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_8 = nlprob_23_testcases[&quot;Brown almost linear function&quot;]
+selected_solvers_8 = select_solvers(prob_8)
+wp_8 = WorkPrecisionSet(prob_8.prob, abstols, reltols, getindex(solvers,selected_solvers_8); names=getindex(solvernames,selected_solvers_8), numruns=100, appxsol=prob_8.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_8, selected_solvers_8)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_14_1.png" alt/></p><h3 id="Problem-9-(Discrete-boundary-value-function)"><a class="docs-heading-anchor" href="#Problem-9-(Discrete-boundary-value-function)">Problem 9 (Discrete boundary value function)</a><a id="Problem-9-(Discrete-boundary-value-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-9-(Discrete-boundary-value-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_9 = nlprob_23_testcases[&quot;Discrete boundary value function&quot;]
+selected_solvers_9 = select_solvers(prob_9)
+true_sol_9 = solve(prob_9.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_9 = WorkPrecisionSet(prob_9.prob, abstols, reltols, getindex(solvers,selected_solvers_9); names=getindex(solvernames,selected_solvers_9), numruns=100, appxsol=true_sol_9, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_9, selected_solvers_9)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
+NLSolveJL) returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_15_1.png" alt/></p><h3 id="Problem-10-(Discrete-integral-equation-function)"><a class="docs-heading-anchor" href="#Problem-10-(Discrete-integral-equation-function)">Problem 10 (Discrete integral equation function)</a><a id="Problem-10-(Discrete-integral-equation-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-10-(Discrete-integral-equation-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_10 = nlprob_23_testcases[&quot;Discrete integral equation function&quot;]
+selected_solvers_10 = select_solvers(prob_10)
+true_sol_10 = solve(prob_10.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_10 = WorkPrecisionSet(prob_10.prob, abstols, reltols, getindex(solvers,selected_solvers_10); names=getindex(solvernames,selected_solvers_10), numruns=100, appxsol=true_sol_10, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_10, selected_solvers_10; legend=:bottomleft)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_16_1.png" alt/></p><h3 id="Problem-11-(Trigonometric-function)"><a class="docs-heading-anchor" href="#Problem-11-(Trigonometric-function)">Problem 11 (Trigonometric function)</a><a id="Problem-11-(Trigonometric-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-11-(Trigonometric-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_11 = nlprob_23_testcases[&quot;Trigonometric function&quot;]
+selected_solvers_11 =  select_solvers(prob_11)
+true_sol_11 = solve(prob_11.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_11 = WorkPrecisionSet(prob_11.prob, abstols, reltols, getindex(solvers,selected_solvers_11); names=getindex(solvernames,selected_solvers_11), numruns=100, appxsol=true_sol_11, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_11, selected_solvers_11)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Modified Powell (CMIN
+PACK) returned retcode Failure.[Warn] Solver Newton Trust Region (NLSolveJL
+) returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_17_1.png" alt/></p><h3 id="Problem-12-(Variably-dimensioned-function)"><a class="docs-heading-anchor" href="#Problem-12-(Variably-dimensioned-function)">Problem 12 (Variably dimensioned function)</a><a id="Problem-12-(Variably-dimensioned-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-12-(Variably-dimensioned-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_12 = nlprob_23_testcases[&quot;Variably dimensioned function&quot;]
+selected_solvers_12 =  select_solvers(prob_12)
+wp_12 = WorkPrecisionSet(prob_12.prob, abstols, reltols, getindex(solvers,selected_solvers_12); names=getindex(solvernames,selected_solvers_12), numruns=100, appxsol=prob_12.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_12, selected_solvers_12; legend=:bottomright)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_18_1.png" alt/></p><h3 id="Problem-13-(Broyden-tridiagonal-function)"><a class="docs-heading-anchor" href="#Problem-13-(Broyden-tridiagonal-function)">Problem 13 (Broyden tridiagonal function)</a><a id="Problem-13-(Broyden-tridiagonal-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-13-(Broyden-tridiagonal-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_13 = nlprob_23_testcases[&quot;Broyden tridiagonal function&quot;]
+selected_solvers_13 =  select_solvers(prob_13)
+true_sol_13 = solve(prob_13.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_13 = WorkPrecisionSet(prob_13.prob, abstols, reltols, getindex(solvers,selected_solvers_13); names=getindex(solvernames,selected_solvers_13), numruns=100, appxsol=true_sol_13, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_13, selected_solvers_13; legend=:topleft, legendfontsize=6)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
+NLSolveJL) returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_19_1.png" alt/></p><h3 id="Problem-14-(Broyden-banded-function)"><a class="docs-heading-anchor" href="#Problem-14-(Broyden-banded-function)">Problem 14 (Broyden banded function)</a><a id="Problem-14-(Broyden-banded-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-14-(Broyden-banded-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_14 = nlprob_23_testcases[&quot;Broyden banded function&quot;]
+selected_solvers_14 =  select_solvers(prob_14)
+true_sol_14 = solve(prob_14.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_14 = WorkPrecisionSet(prob_14.prob, abstols, reltols, getindex(solvers,selected_solvers_14); names=getindex(solvernames,selected_solvers_14), numruns=100, appxsol=true_sol_14, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_14, selected_solvers_14)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
+NLSolveJL) returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_20_1.png" alt/></p><h3 id="Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)"><a class="docs-heading-anchor" href="#Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)">Problem 15 (Hammarling 2 by 2 matrix square root problem)</a><a id="Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_15 = nlprob_23_testcases[&quot;Hammarling 2 by 2 matrix square root problem&quot;]
+selected_solvers_15 =  select_solvers(prob_15)
+wp_15 = WorkPrecisionSet(prob_15.prob, abstols, reltols, getindex(solvers,selected_solvers_15); names=getindex(solvernames,selected_solvers_15), numruns=100, appxsol=prob_15.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_15, selected_solvers_15)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver M
+odified Powell (CMINPACK) returned retcode Failure.[Warn] Solver Levenberg-
+Marquardt (CMINPACK) returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_21_1.png" alt/></p><h3 id="Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)"><a class="docs-heading-anchor" href="#Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)">Problem 16 (Hammarling 3 by 3 matrix square root problem)</a><a id="Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_16 = nlprob_23_testcases[&quot;Hammarling 3 by 3 matrix square root problem&quot;]
+selected_solvers_16 =  select_solvers(prob_16)
+wp_16 = WorkPrecisionSet(prob_16.prob, abstols, reltols, getindex(solvers,selected_solvers_16); names=getindex(solvernames,selected_solvers_16), numruns=100, appxsol=prob_16.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_16, selected_solvers_16)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver M
+odified Powell (CMINPACK) returned retcode Failure.[Warn] Solver Levenberg-
+Marquardt (CMINPACK) returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_22_1.png" alt/></p><h3 id="Problem-17-(Dennis-and-Schnabel-2-by-2-example)"><a class="docs-heading-anchor" href="#Problem-17-(Dennis-and-Schnabel-2-by-2-example)">Problem 17 (Dennis and Schnabel 2 by 2 example)</a><a id="Problem-17-(Dennis-and-Schnabel-2-by-2-example)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-17-(Dennis-and-Schnabel-2-by-2-example)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_17 = nlprob_23_testcases[&quot;Dennis and Schnabel 2 by 2 example&quot;]
+selected_solvers_17 =  select_solvers(prob_17)
+wp_17 = WorkPrecisionSet(prob_17.prob, abstols, reltols, getindex(solvers,selected_solvers_17); names=getindex(solvernames,selected_solvers_17), numruns=100, appxsol=prob_17.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_17, selected_solvers_17)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_23_1.png" alt/></p><h3 id="Problem-18-(Sample-problem-18)"><a class="docs-heading-anchor" href="#Problem-18-(Sample-problem-18)">Problem 18 (Sample problem 18)</a><a id="Problem-18-(Sample-problem-18)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-18-(Sample-problem-18)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_18 = nlprob_23_testcases[&quot;Sample problem 18&quot;]
+selected_solvers_18 =  select_solvers(prob_18)
+wp_18 = WorkPrecisionSet(prob_18.prob, abstols, reltols, getindex(solvers,selected_solvers_18); names=getindex(solvernames,selected_solvers_18), numruns=100, appxsol=prob_18.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_18, selected_solvers_18)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_24_1.png" alt/></p><h3 id="Problem-19-(Sample-problem-19)"><a class="docs-heading-anchor" href="#Problem-19-(Sample-problem-19)">Problem 19 (Sample problem 19)</a><a id="Problem-19-(Sample-problem-19)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-19-(Sample-problem-19)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_19 = nlprob_23_testcases[&quot;Sample problem 19&quot;]
+selected_solvers_19 =  select_solvers(prob_19)
+wp_19 = WorkPrecisionSet(prob_19.prob, abstols, reltols, getindex(solvers,selected_solvers_19); names=getindex(solvernames,selected_solvers_19), numruns=100, appxsol=prob_19.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_19, selected_solvers_19)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_25_1.png" alt/></p><h3 id="Problem-20-(Scalar-problem-f(x)-x(x-5)2)"><a class="docs-heading-anchor" href="#Problem-20-(Scalar-problem-f(x)-x(x-5)2)">Problem 20 (Scalar problem f(x) = x(x - 5)^2)</a><a id="Problem-20-(Scalar-problem-f(x)-x(x-5)2)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-20-(Scalar-problem-f(x)-x(x-5)2)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_20 = nlprob_23_testcases[&quot;Scalar problem f(x) = x(x - 5)^2&quot;]
+selected_solvers_20 =  select_solvers(prob_20)
+wp_20 = WorkPrecisionSet(prob_20.prob, abstols, reltols, getindex(solvers,selected_solvers_20); names=getindex(solvernames,selected_solvers_20), numruns=100, appxsol=prob_20.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_20, selected_solvers_20)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_26_1.png" alt/></p><h3 id="Problem-21-(Freudenstein-Roth-function)"><a class="docs-heading-anchor" href="#Problem-21-(Freudenstein-Roth-function)">Problem 21 (Freudenstein-Roth function)</a><a id="Problem-21-(Freudenstein-Roth-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-21-(Freudenstein-Roth-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_21 = nlprob_23_testcases[&quot;Freudenstein-Roth function&quot;]
+selected_solvers_21 =  select_solvers(prob_21)
+wp_21 = WorkPrecisionSet(prob_21.prob, abstols, reltols, getindex(solvers,selected_solvers_21); names=getindex(solvernames,selected_solvers_21), numruns=100, appxsol=prob_21.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_21, selected_solvers_21)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver M
+odified Powell (CMINPACK) returned retcode Failure.[Warn] Solver Newton Tru
+st Region (NLSolveJL) returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_27_1.png" alt/></p><h3 id="Problem-22-(Boggs-function)"><a class="docs-heading-anchor" href="#Problem-22-(Boggs-function)">Problem 22 (Boggs function)</a><a id="Problem-22-(Boggs-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-22-(Boggs-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_22 = nlprob_23_testcases[&quot;Boggs function&quot;]
+selected_solvers_22 =  select_solvers(prob_22)
+wp_22 = WorkPrecisionSet(prob_22.prob, abstols, reltols, getindex(solvers,selected_solvers_22); names=getindex(solvernames,selected_solvers_22), numruns=100, appxsol=prob_22.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_22, selected_solvers_22)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_28_1.png" alt/></p><h3 id="Problem-23-(Chandrasekhar-function)"><a class="docs-heading-anchor" href="#Problem-23-(Chandrasekhar-function)">Problem 23 (Chandrasekhar function)</a><a id="Problem-23-(Chandrasekhar-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-23-(Chandrasekhar-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob_23 = nlprob_23_testcases[&quot;Chandrasekhar function&quot;]
+selected_solvers_23 =  select_solvers(prob_23)
+true_sol_23 = solve(prob_23.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_23 = WorkPrecisionSet(prob_23.prob, abstols, reltols, getindex(solvers,selected_solvers_23); names=getindex(solvernames,selected_solvers_23), numruns=100, appxsol=true_sol_23, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_23, selected_solvers_23; legend=:topright, legendfontsize=7)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver N
+ewton Trust Region (NLSolveJL) returned retcode Failure.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_29_1.png" alt/></p><h1 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h1><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/NonlinearProblem&quot;,&quot;nonlinear_solver_23_tests.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.9.3
 Commit bed2cd540a1 (2023-08-24 14:43 UTC)
 Build Info:
@@ -146,20 +190,21 @@ Platform Info:
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+  JULIA_IMAGE_THREADS = 1
 </code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
-  [f3b72e0c] DiffEqDevTools v2.36.0
+⌃ [f3b72e0c] DiffEqDevTools v2.36.0
   [b7050fa9] NonlinearProblemLibrary v0.1.0
-  [8913a72c] NonlinearSolve v1.10.0
+  [8913a72c] NonlinearSolve v2.0.0 `https://github.com/avik-pal/NonlinearSolve.jl#ap/cleanup`
   [c100e077] NonlinearSolveMINPACK v0.1.3
   [91a5bcdd] Plots v1.39.0
   [31c91b34] SciMLBenchmarks v0.1.3
-  [e9a6253c] SciMLNLSolve v0.1.8
-  [727e6d20] SimpleNonlinearSolve v0.1.19
-  [90137ffa] StaticArrays v1.6.3
-  [c3572dad] Sundials v4.19.4
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
-  [47edcb42] ADTypes v0.2.3
+⌃ [e9a6253c] SciMLNLSolve v0.1.8
+⌃ [727e6d20] SimpleNonlinearSolve v0.1.19
+⌃ [90137ffa] StaticArrays v1.6.3
+⌃ [c3572dad] Sundials v4.19.5
+Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+  [47edcb42] ADTypes v0.2.4
   [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
   [4fba245c] ArrayInterface v7.4.11
@@ -173,13 +218,14 @@ Warning The project dependencies or compat requirements have changed since the m
   [d360d2e6] ChainRulesCore v1.16.0
   [fb6a15b2] CloseOpenIntervals v0.1.12
   [944b1d66] CodecZlib v0.7.2
-  [35d6a980] ColorSchemes v3.23.0
+⌃ [35d6a980] ColorSchemes v3.23.0
   [3da002f7] ColorTypes v0.11.4
   [c3611d14] ColorVectorSpace v0.10.0
   [5ae59095] Colors v0.12.10
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
   [34da2185] Compat v4.9.0
+  [2569d6c7] ConcreteStructs v0.2.3
   [f0e56b4a] ConcurrentUtilities v2.2.1
   [8f4d0f93] Conda v1.9.1
   [187b0558] ConstructionBase v1.5.4
@@ -189,9 +235,9 @@ Warning The project dependencies or compat requirements have changed since the m
   [864edb3b] DataStructures v0.18.15
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.128.4
-  [f3b72e0c] DiffEqDevTools v2.36.0
-  [77a26b50] DiffEqNoiseProcess v5.18.0
+⌃ [2b5f629d] DiffEqBase v6.129.0
+⌃ [f3b72e0c] DiffEqDevTools v2.36.0
+⌃ [77a26b50] DiffEqNoiseProcess v5.18.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
 ⌅ [b4f34e82] Distances v0.9.2
@@ -212,11 +258,11 @@ Warning The project dependencies or compat requirements have changed since the m
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [46192b85] GPUArraysCore v0.1.5
-  [28b8d3ca] GR v0.72.9
+⌃ [28b8d3ca] GR v0.72.9
   [d7ba0133] Git v1.3.0
   [86223c79] Graphs v1.8.0
   [42e2da0e] Grisu v1.0.2
-  [cd3eb016] HTTP v1.9.15
+  [cd3eb016] HTTP v1.10.0
   [eafb193a] Highlights v0.5.2
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
@@ -235,7 +281,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [10f19ff3] LayoutPointers v0.1.14
   [50d2b5c4] Lazy v0.15.1
   [d3d80556] LineSearches v7.2.0
-  [7ed4a6bd] LinearSolve v2.5.1
+⌃ [7ed4a6bd] LinearSolve v2.5.1
   [2ab3a3ac] LogExpFunctions v0.3.26
   [e6f89c97] LoggingExtras v1.0.2
   [bdcacae8] LoopVectorization v0.12.165
@@ -251,14 +297,14 @@ Warning The project dependencies or compat requirements have changed since the m
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
   [b7050fa9] NonlinearProblemLibrary v0.1.0
-  [8913a72c] NonlinearSolve v1.10.0
+  [8913a72c] NonlinearSolve v2.0.0 `https://github.com/avik-pal/NonlinearSolve.jl#ap/cleanup`
   [c100e077] NonlinearSolveMINPACK v0.1.3
   [6fe1bfb0] OffsetArrays v1.12.10
   [4d8831e6] OpenSSL v1.4.1
   [429524aa] Optim v1.7.7
   [bac558e1] OrderedCollections v1.6.2
-  [90014a1f] PDMats v0.11.17
-  [65ce6f38] PackageExtensionCompat v1.0.1
+⌃ [90014a1f] PDMats v0.11.17
+⌃ [65ce6f38] PackageExtensionCompat v1.0.1
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.7.2
   [b98c9c47] Pipe v1.3.0
@@ -266,13 +312,13 @@ Warning The project dependencies or compat requirements have changed since the m
   [995b91a9] PlotUtils v1.3.5
   [91a5bcdd] Plots v1.39.0
   [e409e4f3] PoissonRandom v0.4.4
-  [f517fe37] Polyester v0.7.5
+  [f517fe37] Polyester v0.7.6
   [1d0040c9] PolyesterWeave v0.2.1
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.12
   [aea7be01] PrecompileTools v1.2.0
-  [21216c6a] Preferences v1.4.0
-  [1fd47b50] QuadGK v2.8.2
+⌃ [21216c6a] Preferences v1.4.0
+⌃ [1fd47b50] QuadGK v2.8.2
   [74087812] Random123 v1.6.1
   [e6cf234a] RandomNumbers v1.5.3
   [3cdcf5f2] RecipesBase v1.3.4
@@ -288,15 +334,15 @@ Warning The project dependencies or compat requirements have changed since the m
   [7e49a35a] RuntimeGeneratedFunctions v0.5.12
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.39
-  [0bca4576] SciMLBase v1.97.1
+⌅ [0bca4576] SciMLBase v1.98.0
   [31c91b34] SciMLBenchmarks v0.1.3
-  [e9a6253c] SciMLNLSolve v0.1.8
+⌃ [e9a6253c] SciMLNLSolve v0.1.8
   [c0aeaf25] SciMLOperators v0.3.6
   [6c6a2e73] Scratch v1.2.0
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
-  [727e6d20] SimpleNonlinearSolve v0.1.19
+⌃ [727e6d20] SimpleNonlinearSolve v0.1.19
   [699a6c99] SimpleTraits v0.9.4
   [66db9d55] SnoopPrecompile v1.0.3
   [b85f4697] SoftGlobalScope v1.1.0
@@ -306,17 +352,17 @@ Warning The project dependencies or compat requirements have changed since the m
   [276daf66] SpecialFunctions v2.3.1
   [aedffcd0] Static v0.8.8
   [0d7ed370] StaticArrayInterface v1.4.1
-  [90137ffa] StaticArrays v1.6.3
+⌃ [90137ffa] StaticArrays v1.6.3
   [1e83bf80] StaticArraysCore v1.4.2
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.0
   [4c63d2b9] StatsFuns v1.3.0
   [7792a7ef] StrideArraysCore v0.4.17
   [69024149] StringEncodings v0.3.7
-  [c3572dad] Sundials v4.19.4
+⌃ [c3572dad] Sundials v4.19.5
   [2efcf032] SymbolicIndexingInterface v0.2.2
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.10.1
+  [bd369af6] Tables v1.11.0
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.2
   [3bb67fe8] TranscodingStreams v0.9.13
@@ -338,13 +384,14 @@ Warning The project dependencies or compat requirements have changed since the m
   [700de1a5] ZygoteRules v0.2.3
   [6e34b625] Bzip2_jll v1.0.8+0
   [83423d85] Cairo_jll v1.16.1+1
+  [2702e6a9] EpollShim_jll v0.0.20230411+0
   [2e619515] Expat_jll v2.5.0+0
 ⌃ [b22a6f82] FFMPEG_jll v4.4.2+2
   [a3f928ae] Fontconfig_jll v2.13.93+0
   [d7e528f0] FreeType2_jll v2.13.1+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.72.9+1
+⌅ [d2c73de3] GR_jll v0.72.9+1
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.36.1+2
   [7746bdde] Glib_jll v2.76.5+0
@@ -368,10 +415,10 @@ Warning The project dependencies or compat requirements have changed since the m
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
   [30392449] Pixman_jll v0.42.2+0
-  [c0090381] Qt6Base_jll v6.4.2+3
+⌅ [c0090381] Qt6Base_jll v6.4.2+3
   [f50d1b31] Rmath_jll v0.4.0+0
 ⌅ [fb77eaff] Sundials_jll v5.2.1+0
-  [a2964d1f] Wayland_jll v1.21.0+0
+  [a2964d1f] Wayland_jll v1.21.0+1
   [2381bf8a] Wayland_protocols_jll v1.25.0+0
   [02c8fc9c] XML2_jll v2.10.4+0
   [aed1982a] XSLT_jll v1.1.34+0
@@ -408,7 +455,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [f27f6e37] libvorbis_jll v1.3.7+1
   [1270edf5] x264_jll v2021.5.5+0
   [dfaa095f] x265_jll v3.5.0+0
-  [d8fb68d0] xkbcommon_jll v1.4.1+0
+⌃ [d8fb68d0] xkbcommon_jll v1.4.1+0
   [0dad84c5] ArgTools v1.1.1
   [56f22d72] Artifacts
   [2a0f44e3] Base64
@@ -456,5 +503,4 @@ Warning The project dependencies or compat requirements have changed since the m
   [8e850b90] libblastrampoline_jll v5.8.0+0
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">« Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a><a class="docs-footer-nextpage" href="../quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 23 September 2023 05:25">Saturday 23 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">« Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a><a class="docs-footer-nextpage" href="../quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Sunday 24 September 2023 21:38">Sunday 24 September 2023</span>. Using Julia version 1.9.3.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
