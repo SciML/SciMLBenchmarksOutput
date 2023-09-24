@@ -29,15 +29,13 @@ solvers = [ Dict(:alg=>NewtonRaphson()),
             Dict(:alg=>LevenbergMarquardt()),
             Dict(:alg=>CMINPACK(method=:hybr)),
             Dict(:alg=>CMINPACK(method=:lm)),
-            Dict(:alg=>NLSolveJL()),
-            Dict(:alg=>KINSOL())]
+            Dict(:alg=>NLSolveJL())]
 solvernames =  ["Newton Raphson"; 
                 "Newton Trust Region"; 
                 "Levenberg-Marquardt"; 
                 "Modified Powell (CMINPACK)"; 
                 "Levenberg-Marquardt (CMINPACK)"; 
-                "Newton Trust Region (NLSolveJL)"; 
-                "KINSOL (Sundials)"];
+                "Newton Trust Region (NLSolveJL)"];
 ```
 
 
@@ -56,6 +54,36 @@ default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=12, legendfon
 colors = [1 2 3 4 5 6 7]
 markershapes = [:circle :rect :heptagon :cross :xcross :utriangle :star5];
 ```
+
+
+
+Function for determening which solvers can solve a given problem.
+```julia
+# Selects the solvers to be benchmakred on a given problem.
+function select_solvers(prob; solvers=solvers, solvernames=solvernames)
+    filter(s_idx -> check_solver(prob, solvers[s_idx], solvernames[s_idx]), 1:length(solvers))
+end
+# Checks if a solver can sucessfully solve a given problem.
+function check_solver(prob, solver, solvername)
+    try
+        true_sol = solve(prob.prob, solver[:alg]; abstol=1e-18, reltol=1e-18, maxiters=10000000)
+        if !SciMLBase.successful_retcode(true_sol.retcode)
+            Base.printstyled("[Warn] Solver $solvername returned retcode $(true_sol.retcode)."; color=:red)
+            return false
+        end
+        WorkPrecisionSet(prob.prob, [1e-4, 1e-12], [1e-4, 1e-12], [solver]; names=[solvername], numruns=20, appxsol=true_sol, error_estimate=:l2, maxiters=10000000)
+    catch e
+        Base.printstyled("[Warn] Solver $solvername threw an error: $e."; color=:red)    
+        return false
+    end
+    return true
+end
+```
+
+```
+check_solver (generic function with 1 method)
+```
+
 
 
 
@@ -110,297 +138,423 @@ end;
 We here run benchmarks for each of the 23 models. 
 
 ### Problem 1 (Generalized Rosenbrock function)
-For this problem, the `NewtonRaphson()` and `KINSOL()` solvers fail, and are not benchmarked.
 ```julia
 prob_1 = nlprob_23_testcases["Generalized Rosenbrock function"]
-selected_solvers_1 = [2,3,4,5,6]
-wp_1 = WorkPrecisionSet(prob_1.prob, abstols, reltols, getindex(solvers,selected_solvers_1); names=getindex(solvernames,selected_solvers_1), numruns=100, appxsol=prob_1.true_sol, error_estimate=:l2)
+selected_solvers_1 = select_solvers(prob_1)
+wp_1 = WorkPrecisionSet(prob_1.prob, abstols, reltols, getindex(solvers,selected_solvers_1); names=getindex(solvernames,selected_solvers_1), numruns=100, appxsol=prob_1.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_1, selected_solvers_1; legend=:bottomright)
 ```
 
-![](figures/nonlinear_solver_23_tests_6_1.png)
+```
+[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Modified Powell (CMIN
+PACK) returned retcode Failure.[Warn] Solver Levenberg-Marquardt (CMINPACK)
+ returned retcode Failure.
+```
+
+
+![](figures/nonlinear_solver_23_tests_7_1.png)
 
 
 
 ### Problem 2 (Powell singular function)
 ```julia
 prob_2 = nlprob_23_testcases["Powell singular function"]
-selected_solvers_2 = [1,2,3,4,5,6,7]
-wp_2 = WorkPrecisionSet(prob_2.prob, abstols, reltols, getindex(solvers,selected_solvers_2); names=getindex(solvernames,selected_solvers_2), numruns=100, appxsol=prob_2.true_sol, error_estimate=:l2)
+selected_solvers_2 = select_solvers(prob_2)
+wp_2 = WorkPrecisionSet(prob_2.prob, abstols, reltols, getindex(solvers,selected_solvers_2); names=getindex(solvernames,selected_solvers_2), numruns=100, appxsol=prob_2.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_2, selected_solvers_2)
 ```
 
-![](figures/nonlinear_solver_23_tests_7_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+```
+
+
+![](figures/nonlinear_solver_23_tests_8_1.png)
 
 
 
 ### Problem 3 (Powell badly scaled function)
 ```julia
 prob_3 = nlprob_23_testcases["Powell badly scaled function"]
-selected_solvers_3 = [1,2,3,4,5,6,7]
-wp_3 = WorkPrecisionSet(prob_3.prob, abstols, reltols, getindex(solvers,selected_solvers_3); names=getindex(solvernames,selected_solvers_3), numruns=100, appxsol=prob_3.true_sol, error_estimate=:l2)
+selected_solvers_3 = select_solvers(prob_3)
+wp_3 = WorkPrecisionSet(prob_3.prob, abstols, reltols, getindex(solvers,selected_solvers_3); names=getindex(solvernames,selected_solvers_3), numruns=100, appxsol=prob_3.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_3, selected_solvers_3)
 ```
 
-![](figures/nonlinear_solver_23_tests_8_1.png)
-
-
-
-### Problem 4 (Wood function)
-For this problem, the `KINSOL()` solver fail, and is not benchmarked.
-```julia
-prob_4 = nlprob_23_testcases["Wood function"]
-selected_solvers_4 = [1,2,3,4,5,6]
-wp_4 = WorkPrecisionSet(prob_4.prob, abstols, reltols, getindex(solvers,selected_solvers_4); names=getindex(solvernames,selected_solvers_4), numruns=100, appxsol=prob_4.true_sol, error_estimate=:l2)
-plot_wp(wp_4, selected_solvers_4; legend=:topright)
 ```
+[Warn] Solver Newton Trust Region returned retcode MaxIters.[Warn] Solver L
+evenberg-Marquardt returned retcode MaxIters.
+```
+
 
 ![](figures/nonlinear_solver_23_tests_9_1.png)
 
 
 
-### Problem 5 (Helical valley function)
-For this problem, the `KINSOL()` solver fail, and is not benchmarked.
+### Problem 4 (Wood function)
 ```julia
-prob_5 = nlprob_23_testcases["Helical valley function"]
-selected_solvers_5 = [1,2,3,4,5,6]
-wp_5 = WorkPrecisionSet(prob_5.prob, abstols, reltols, getindex(solvers,selected_solvers_5); names=getindex(solvernames,selected_solvers_5), numruns=100, appxsol=prob_5.true_sol, error_estimate=:l2)
-plot_wp(wp_5, selected_solvers_5)
+prob_4 = nlprob_23_testcases["Wood function"]
+selected_solvers_4 = select_solvers(prob_4)
+wp_4 = WorkPrecisionSet(prob_4.prob, abstols, reltols, getindex(solvers,selected_solvers_4); names=getindex(solvernames,selected_solvers_4), numruns=100, appxsol=prob_4.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_4, selected_solvers_4; legend=:topright)
 ```
+
+```
+[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
+NLSolveJL) returned retcode Failure.
+```
+
 
 ![](figures/nonlinear_solver_23_tests_10_1.png)
 
 
 
+### Problem 5 (Helical valley function)
+```julia
+prob_5 = nlprob_23_testcases["Helical valley function"]
+selected_solvers_5 = select_solvers(prob_5)
+wp_5 = WorkPrecisionSet(prob_5.prob, abstols, reltols, getindex(solvers,selected_solvers_5); names=getindex(solvernames,selected_solvers_5), numruns=100, appxsol=prob_5.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_5, selected_solvers_5)
+```
+
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+```
+
+
+![](figures/nonlinear_solver_23_tests_11_1.png)
+
+
+
 ### Problem 6 (Watson function)
-For this problem, the `NewtonRaphson()`, `TrustRegion()`, `LevenbergMarquardt()`, and `KINSOL()` solvers fail, and are not benchmarked.
 ```julia
 prob_6 = nlprob_23_testcases["Watson function"]
-selected_solvers_6 = [4,5,6]
-true_sol_6 = solve(prob_6.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_6 = WorkPrecisionSet(prob_6.prob, abstols, reltols, getindex(solvers,selected_solvers_6); names=getindex(solvernames,selected_solvers_6), numruns=100, appxsol=true_sol_6, error_estimate=:l2)
+selected_solvers_6 = select_solvers(prob_6)
+true_sol_6 = solve(prob_6.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_6 = WorkPrecisionSet(prob_6.prob, abstols, reltols, getindex(solvers,selected_solvers_6); names=getindex(solvernames,selected_solvers_6), numruns=100, appxsol=true_sol_6, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_6, selected_solvers_6; legend=:topright)
 ```
 
 ```
-Error: InexactError: trunc(Int64, NaN)
+[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Modified Powell (CMIN
+PACK) returned retcode Failure.[Warn] Solver Newton Trust Region (NLSolveJL
+) threw an error: During the resolution of the non-linear system, the evalu
+ation of the following equation(s) resulted in a non-finite number: [1, 2].
 ```
 
 
+![](figures/nonlinear_solver_23_tests_12_1.png)
 
 
 
 ### Problem 7 (Chebyquad function)
 ```julia
 prob_7 = nlprob_23_testcases["Chebyquad function"]
-selected_solvers_7 = [1,2,3,4,5,6,7]
-wp_7 = WorkPrecisionSet(prob_7.prob, abstols, reltols, getindex(solvers,selected_solvers_7); names=getindex(solvernames,selected_solvers_7), numruns=100, appxsol=prob_7.true_sol, error_estimate=:l2)
+selected_solvers_7 = select_solvers(prob_7)
+wp_7 = WorkPrecisionSet(prob_7.prob, abstols, reltols, getindex(solvers,selected_solvers_7); names=getindex(solvernames,selected_solvers_7), numruns=100, appxsol=prob_7.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_7, selected_solvers_7; legend=:bottomright)
 ```
 
-![](figures/nonlinear_solver_23_tests_12_1.png)
+```
+[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
+NLSolveJL) returned retcode Failure.
+```
+
+
+![](figures/nonlinear_solver_23_tests_13_1.png)
 
 
 
 ### Problem 8 (Brown almost linear function)
-For this problem, the `KINSOL()` solver fail, and is not benchmarked.
 ```julia
 prob_8 = nlprob_23_testcases["Brown almost linear function"]
-selected_solvers_8 = [1,2,3,4,5,6]
-wp_8 = WorkPrecisionSet(prob_8.prob, abstols, reltols, getindex(solvers,selected_solvers_8); names=getindex(solvernames,selected_solvers_8), numruns=100, appxsol=prob_8.true_sol, error_estimate=:l2)
+selected_solvers_8 = select_solvers(prob_8)
+wp_8 = WorkPrecisionSet(prob_8.prob, abstols, reltols, getindex(solvers,selected_solvers_8); names=getindex(solvernames,selected_solvers_8), numruns=100, appxsol=prob_8.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_8, selected_solvers_8)
 ```
 
-![](figures/nonlinear_solver_23_tests_13_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+```
+
+
+![](figures/nonlinear_solver_23_tests_14_1.png)
 
 
 
 ### Problem 9 (Discrete boundary value function)
 ```julia
 prob_9 = nlprob_23_testcases["Discrete boundary value function"]
-selected_solvers_9 = [1,2,3,4,5,6,7]
-true_sol_9 = solve(prob_9.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_9 = WorkPrecisionSet(prob_9.prob, abstols, reltols, getindex(solvers,selected_solvers_9); names=getindex(solvernames,selected_solvers_9), numruns=100, appxsol=true_sol_9, error_estimate=:l2)
+selected_solvers_9 = select_solvers(prob_9)
+true_sol_9 = solve(prob_9.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_9 = WorkPrecisionSet(prob_9.prob, abstols, reltols, getindex(solvers,selected_solvers_9); names=getindex(solvernames,selected_solvers_9), numruns=100, appxsol=true_sol_9, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_9, selected_solvers_9)
 ```
 
-![](figures/nonlinear_solver_23_tests_14_1.png)
+```
+[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
+NLSolveJL) returned retcode Failure.
+```
+
+
+![](figures/nonlinear_solver_23_tests_15_1.png)
 
 
 
 ### Problem 10 (Discrete integral equation function)
 ```julia
 prob_10 = nlprob_23_testcases["Discrete integral equation function"]
-selected_solvers_10 = [1,2,3,4,5,6,7]
-true_sol_10 = solve(prob_10.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_10 = WorkPrecisionSet(prob_10.prob, abstols, reltols, getindex(solvers,selected_solvers_10); names=getindex(solvernames,selected_solvers_10), numruns=100, appxsol=true_sol_10, error_estimate=:l2)
+selected_solvers_10 = select_solvers(prob_10)
+true_sol_10 = solve(prob_10.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_10 = WorkPrecisionSet(prob_10.prob, abstols, reltols, getindex(solvers,selected_solvers_10); names=getindex(solvernames,selected_solvers_10), numruns=100, appxsol=true_sol_10, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_10, selected_solvers_10; legend=:bottomleft)
 ```
 
-![](figures/nonlinear_solver_23_tests_15_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+```
+
+
+![](figures/nonlinear_solver_23_tests_16_1.png)
 
 
 
 ### Problem 11 (Trigonometric function)
-For this problem, the `KINSOL()` solver fail, and is not benchmarked.
 ```julia
 prob_11 = nlprob_23_testcases["Trigonometric function"]
-selected_solvers_11 = [1,2,3,4,5,6]
-true_sol_11 = solve(prob_11.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_11 = WorkPrecisionSet(prob_11.prob, abstols, reltols, getindex(solvers,selected_solvers_11); names=getindex(solvernames,selected_solvers_11), numruns=100, appxsol=true_sol_11, error_estimate=:l2)
+selected_solvers_11 =  select_solvers(prob_11)
+true_sol_11 = solve(prob_11.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_11 = WorkPrecisionSet(prob_11.prob, abstols, reltols, getindex(solvers,selected_solvers_11); names=getindex(solvernames,selected_solvers_11), numruns=100, appxsol=true_sol_11, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_11, selected_solvers_11)
 ```
 
-![](figures/nonlinear_solver_23_tests_16_1.png)
+```
+[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Modified Powell (CMIN
+PACK) returned retcode Failure.[Warn] Solver Newton Trust Region (NLSolveJL
+) returned retcode Failure.
+```
+
+
+![](figures/nonlinear_solver_23_tests_17_1.png)
 
 
 
 ### Problem 12 (Variably dimensioned function)
 ```julia
 prob_12 = nlprob_23_testcases["Variably dimensioned function"]
-selected_solvers_12 = [1,2,3,4,5,6,7]
-wp_12 = WorkPrecisionSet(prob_12.prob, abstols, reltols, getindex(solvers,selected_solvers_12); names=getindex(solvernames,selected_solvers_12), numruns=100, appxsol=prob_12.true_sol, error_estimate=:l2)
+selected_solvers_12 =  select_solvers(prob_12)
+wp_12 = WorkPrecisionSet(prob_12.prob, abstols, reltols, getindex(solvers,selected_solvers_12); names=getindex(solvernames,selected_solvers_12), numruns=100, appxsol=prob_12.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_12, selected_solvers_12; legend=:bottomright)
 ```
 
-![](figures/nonlinear_solver_23_tests_17_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+```
+
+
+![](figures/nonlinear_solver_23_tests_18_1.png)
 
 
 
 ### Problem 13 (Broyden tridiagonal function)
 ```julia
 prob_13 = nlprob_23_testcases["Broyden tridiagonal function"]
-selected_solvers_13 = [1,2,3,4,5,6,7]
-true_sol_13 = solve(prob_13.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_13 = WorkPrecisionSet(prob_13.prob, abstols, reltols, getindex(solvers,selected_solvers_13); names=getindex(solvernames,selected_solvers_13), numruns=100, appxsol=true_sol_13, error_estimate=:l2)
+selected_solvers_13 =  select_solvers(prob_13)
+true_sol_13 = solve(prob_13.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_13 = WorkPrecisionSet(prob_13.prob, abstols, reltols, getindex(solvers,selected_solvers_13); names=getindex(solvernames,selected_solvers_13), numruns=100, appxsol=true_sol_13, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_13, selected_solvers_13; legend=:topleft, legendfontsize=6)
 ```
 
-![](figures/nonlinear_solver_23_tests_18_1.png)
+```
+[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
+NLSolveJL) returned retcode Failure.
+```
+
+
+![](figures/nonlinear_solver_23_tests_19_1.png)
 
 
 
 ### Problem 14 (Broyden banded function)
 ```julia
 prob_14 = nlprob_23_testcases["Broyden banded function"]
-selected_solvers_14 = [1,2,3,4,5,6,7]
-true_sol_14 = solve(prob_14.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_14 = WorkPrecisionSet(prob_14.prob, abstols, reltols, getindex(solvers,selected_solvers_14); names=getindex(solvernames,selected_solvers_14), numruns=100, appxsol=true_sol_14, error_estimate=:l2)
+selected_solvers_14 =  select_solvers(prob_14)
+true_sol_14 = solve(prob_14.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_14 = WorkPrecisionSet(prob_14.prob, abstols, reltols, getindex(solvers,selected_solvers_14); names=getindex(solvernames,selected_solvers_14), numruns=100, appxsol=true_sol_14, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_14, selected_solvers_14)
 ```
 
-![](figures/nonlinear_solver_23_tests_19_1.png)
+```
+[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
+erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
+NLSolveJL) returned retcode Failure.
+```
+
+
+![](figures/nonlinear_solver_23_tests_20_1.png)
 
 
 
 ### Problem 15 (Hammarling 2 by 2 matrix square root problem)
 ```julia
 prob_15 = nlprob_23_testcases["Hammarling 2 by 2 matrix square root problem"]
-selected_solvers_15 = [1,2,3,4,5,6,7]
-wp_15 = WorkPrecisionSet(prob_15.prob, abstols, reltols, getindex(solvers,selected_solvers_15); names=getindex(solvernames,selected_solvers_15), numruns=100, appxsol=prob_15.true_sol, error_estimate=:l2)
+selected_solvers_15 =  select_solvers(prob_15)
+wp_15 = WorkPrecisionSet(prob_15.prob, abstols, reltols, getindex(solvers,selected_solvers_15); names=getindex(solvernames,selected_solvers_15), numruns=100, appxsol=prob_15.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_15, selected_solvers_15)
 ```
 
-![](figures/nonlinear_solver_23_tests_20_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver M
+odified Powell (CMINPACK) returned retcode Failure.[Warn] Solver Levenberg-
+Marquardt (CMINPACK) returned retcode Failure.
+```
+
+
+![](figures/nonlinear_solver_23_tests_21_1.png)
 
 
 
 ### Problem 16 (Hammarling 3 by 3 matrix square root problem)
 ```julia
 prob_16 = nlprob_23_testcases["Hammarling 3 by 3 matrix square root problem"]
-selected_solvers_16 = [1,2,3,4,5,6,7]
-wp_16 = WorkPrecisionSet(prob_16.prob, abstols, reltols, getindex(solvers,selected_solvers_16); names=getindex(solvernames,selected_solvers_16), numruns=100, appxsol=prob_16.true_sol, error_estimate=:l2)
+selected_solvers_16 =  select_solvers(prob_16)
+wp_16 = WorkPrecisionSet(prob_16.prob, abstols, reltols, getindex(solvers,selected_solvers_16); names=getindex(solvernames,selected_solvers_16), numruns=100, appxsol=prob_16.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_16, selected_solvers_16)
 ```
 
-![](figures/nonlinear_solver_23_tests_21_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver M
+odified Powell (CMINPACK) returned retcode Failure.[Warn] Solver Levenberg-
+Marquardt (CMINPACK) returned retcode Failure.
+```
+
+
+![](figures/nonlinear_solver_23_tests_22_1.png)
 
 
 
 ### Problem 17 (Dennis and Schnabel 2 by 2 example)
 ```julia
 prob_17 = nlprob_23_testcases["Dennis and Schnabel 2 by 2 example"]
-selected_solvers_17 = [1,2,3,4,5,6,7]
-wp_17 = WorkPrecisionSet(prob_17.prob, abstols, reltols, getindex(solvers,selected_solvers_17); names=getindex(solvernames,selected_solvers_17), numruns=100, appxsol=prob_17.true_sol, error_estimate=:l2)
+selected_solvers_17 =  select_solvers(prob_17)
+wp_17 = WorkPrecisionSet(prob_17.prob, abstols, reltols, getindex(solvers,selected_solvers_17); names=getindex(solvernames,selected_solvers_17), numruns=100, appxsol=prob_17.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_17, selected_solvers_17)
 ```
 
-![](figures/nonlinear_solver_23_tests_22_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+```
+
+
+![](figures/nonlinear_solver_23_tests_23_1.png)
 
 
 
 ### Problem 18 (Sample problem 18)
-For this problem, the `KINSOL()` solver fail, and is not benchmarked.
 ```julia
 prob_18 = nlprob_23_testcases["Sample problem 18"]
-selected_solvers_18 = [1,2,3,4,5,6]
-wp_18 = WorkPrecisionSet(prob_18.prob, abstols, reltols, getindex(solvers,selected_solvers_18); names=getindex(solvernames,selected_solvers_18), numruns=100, appxsol=prob_18.true_sol, error_estimate=:l2)
+selected_solvers_18 =  select_solvers(prob_18)
+wp_18 = WorkPrecisionSet(prob_18.prob, abstols, reltols, getindex(solvers,selected_solvers_18); names=getindex(solvernames,selected_solvers_18), numruns=100, appxsol=prob_18.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_18, selected_solvers_18)
 ```
 
-![](figures/nonlinear_solver_23_tests_23_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+```
+
+
+![](figures/nonlinear_solver_23_tests_24_1.png)
 
 
 
 ### Problem 19 (Sample problem 19)
 ```julia
 prob_19 = nlprob_23_testcases["Sample problem 19"]
-selected_solvers_19 = [1,2,3,4,5,6,7]
-wp_19 = WorkPrecisionSet(prob_19.prob, abstols, reltols, getindex(solvers,selected_solvers_19); names=getindex(solvernames,selected_solvers_19), numruns=100, appxsol=prob_19.true_sol, error_estimate=:l2)
+selected_solvers_19 =  select_solvers(prob_19)
+wp_19 = WorkPrecisionSet(prob_19.prob, abstols, reltols, getindex(solvers,selected_solvers_19); names=getindex(solvernames,selected_solvers_19), numruns=100, appxsol=prob_19.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_19, selected_solvers_19)
 ```
 
-![](figures/nonlinear_solver_23_tests_24_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+```
+
+
+![](figures/nonlinear_solver_23_tests_25_1.png)
 
 
 
 ### Problem 20 (Scalar problem f(x) = x(x - 5)^2)
 ```julia
 prob_20 = nlprob_23_testcases["Scalar problem f(x) = x(x - 5)^2"]
-selected_solvers_20 = [1,2,3,4,5,6,7]
-wp_20 = WorkPrecisionSet(prob_20.prob, abstols, reltols, getindex(solvers,selected_solvers_20); names=getindex(solvernames,selected_solvers_20), numruns=100, appxsol=prob_20.true_sol, error_estimate=:l2)
+selected_solvers_20 =  select_solvers(prob_20)
+wp_20 = WorkPrecisionSet(prob_20.prob, abstols, reltols, getindex(solvers,selected_solvers_20); names=getindex(solvernames,selected_solvers_20), numruns=100, appxsol=prob_20.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_20, selected_solvers_20)
-```
-
-![](figures/nonlinear_solver_23_tests_25_1.png)
-
-
-
-### Problem 21 (Freudenstein-Roth function)
-For this problem, the `KINSOL()` solver fail, and is not benchmarked.
-```julia
-prob_21 = nlprob_23_testcases["Freudenstein-Roth function"]
-selected_solvers_21 = [1,2,3,4,5,6]
-wp_21 = WorkPrecisionSet(prob_21.prob, abstols, reltols, getindex(solvers,selected_solvers_21); names=getindex(solvernames,selected_solvers_21), numruns=100, appxsol=prob_21.true_sol, error_estimate=:l2)
-plot_wp(wp_21, selected_solvers_21)
 ```
 
 ![](figures/nonlinear_solver_23_tests_26_1.png)
 
 
 
+### Problem 21 (Freudenstein-Roth function)
+```julia
+prob_21 = nlprob_23_testcases["Freudenstein-Roth function"]
+selected_solvers_21 =  select_solvers(prob_21)
+wp_21 = WorkPrecisionSet(prob_21.prob, abstols, reltols, getindex(solvers,selected_solvers_21); names=getindex(solvernames,selected_solvers_21), numruns=100, appxsol=prob_21.true_sol, error_estimate=:l2, maxiters=10000000)
+plot_wp(wp_21, selected_solvers_21)
+```
+
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver M
+odified Powell (CMINPACK) returned retcode Failure.[Warn] Solver Newton Tru
+st Region (NLSolveJL) returned retcode Failure.
+```
+
+
+![](figures/nonlinear_solver_23_tests_27_1.png)
+
+
+
 ### Problem 22 (Boggs function)
 ```julia
 prob_22 = nlprob_23_testcases["Boggs function"]
-selected_solvers_22 = [1,2,3,4,5,6,7]
-wp_22 = WorkPrecisionSet(prob_22.prob, abstols, reltols, getindex(solvers,selected_solvers_22); names=getindex(solvernames,selected_solvers_22), numruns=100, appxsol=prob_22.true_sol, error_estimate=:l2)
+selected_solvers_22 =  select_solvers(prob_22)
+wp_22 = WorkPrecisionSet(prob_22.prob, abstols, reltols, getindex(solvers,selected_solvers_22); names=getindex(solvernames,selected_solvers_22), numruns=100, appxsol=prob_22.true_sol, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_22, selected_solvers_22)
 ```
 
-![](figures/nonlinear_solver_23_tests_27_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+```
+
+
+![](figures/nonlinear_solver_23_tests_28_1.png)
 
 
 
 ### Problem 23 (Chandrasekhar function)
 ```julia
 prob_23 = nlprob_23_testcases["Chandrasekhar function"]
-selected_solvers_23 = [1,2,3,4,5,6,7]
-true_sol_23 = solve(prob_23.prob, NLSolveJL(); abstol=1e-18, reltol=1e-18)
-wp_23 = WorkPrecisionSet(prob_23.prob, abstols, reltols, getindex(solvers,selected_solvers_23); names=getindex(solvernames,selected_solvers_23), numruns=100, appxsol=true_sol_23, error_estimate=:l2)
+selected_solvers_23 =  select_solvers(prob_23)
+true_sol_23 = solve(prob_23.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
+wp_23 = WorkPrecisionSet(prob_23.prob, abstols, reltols, getindex(solvers,selected_solvers_23); names=getindex(solvernames,selected_solvers_23), numruns=100, appxsol=true_sol_23, error_estimate=:l2, maxiters=10000000)
 plot_wp(wp_23, selected_solvers_23; legend=:topright, legendfontsize=7)
 ```
 
-![](figures/nonlinear_solver_23_tests_28_1.png)
+```
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver N
+ewton Trust Region (NLSolveJL) returned retcode Failure.
+```
+
+
+![](figures/nonlinear_solver_23_tests_29_1.png)
 
 
 
@@ -434,6 +588,7 @@ Platform Info:
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+  JULIA_IMAGE_THREADS = 1
 
 ```
 
@@ -442,24 +597,24 @@ Package Information:
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
-  [f3b72e0c] DiffEqDevTools v2.36.0
+⌃ [f3b72e0c] DiffEqDevTools v2.36.0
   [b7050fa9] NonlinearProblemLibrary v0.1.0
-  [8913a72c] NonlinearSolve v1.10.0
+  [8913a72c] NonlinearSolve v2.0.0 `https://github.com/avik-pal/NonlinearSolve.jl#ap/cleanup`
   [c100e077] NonlinearSolveMINPACK v0.1.3
   [91a5bcdd] Plots v1.39.0
   [31c91b34] SciMLBenchmarks v0.1.3
-  [e9a6253c] SciMLNLSolve v0.1.8
-  [727e6d20] SimpleNonlinearSolve v0.1.19
-  [90137ffa] StaticArrays v1.6.3
-  [c3572dad] Sundials v4.19.4
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
+⌃ [e9a6253c] SciMLNLSolve v0.1.8
+⌃ [727e6d20] SimpleNonlinearSolve v0.1.19
+⌃ [90137ffa] StaticArrays v1.6.3
+⌃ [c3572dad] Sundials v4.19.5
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
-  [47edcb42] ADTypes v0.2.3
+  [47edcb42] ADTypes v0.2.4
   [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
   [4fba245c] ArrayInterface v7.4.11
@@ -473,13 +628,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d360d2e6] ChainRulesCore v1.16.0
   [fb6a15b2] CloseOpenIntervals v0.1.12
   [944b1d66] CodecZlib v0.7.2
-  [35d6a980] ColorSchemes v3.23.0
+⌃ [35d6a980] ColorSchemes v3.23.0
   [3da002f7] ColorTypes v0.11.4
   [c3611d14] ColorVectorSpace v0.10.0
   [5ae59095] Colors v0.12.10
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
   [34da2185] Compat v4.9.0
+  [2569d6c7] ConcreteStructs v0.2.3
   [f0e56b4a] ConcurrentUtilities v2.2.1
   [8f4d0f93] Conda v1.9.1
   [187b0558] ConstructionBase v1.5.4
@@ -489,9 +645,9 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [864edb3b] DataStructures v0.18.15
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.128.4
-  [f3b72e0c] DiffEqDevTools v2.36.0
-  [77a26b50] DiffEqNoiseProcess v5.18.0
+⌃ [2b5f629d] DiffEqBase v6.129.0
+⌃ [f3b72e0c] DiffEqDevTools v2.36.0
+⌃ [77a26b50] DiffEqNoiseProcess v5.18.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
 ⌅ [b4f34e82] Distances v0.9.2
@@ -512,11 +668,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [46192b85] GPUArraysCore v0.1.5
-  [28b8d3ca] GR v0.72.9
+⌃ [28b8d3ca] GR v0.72.9
   [d7ba0133] Git v1.3.0
   [86223c79] Graphs v1.8.0
   [42e2da0e] Grisu v1.0.2
-  [cd3eb016] HTTP v1.9.15
+  [cd3eb016] HTTP v1.10.0
   [eafb193a] Highlights v0.5.2
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
@@ -535,7 +691,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [10f19ff3] LayoutPointers v0.1.14
   [50d2b5c4] Lazy v0.15.1
   [d3d80556] LineSearches v7.2.0
-  [7ed4a6bd] LinearSolve v2.5.1
+⌃ [7ed4a6bd] LinearSolve v2.5.1
   [2ab3a3ac] LogExpFunctions v0.3.26
   [e6f89c97] LoggingExtras v1.0.2
   [bdcacae8] LoopVectorization v0.12.165
@@ -551,14 +707,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
   [b7050fa9] NonlinearProblemLibrary v0.1.0
-  [8913a72c] NonlinearSolve v1.10.0
+  [8913a72c] NonlinearSolve v2.0.0 `https://github.com/avik-pal/NonlinearSolve.jl#ap/cleanup`
   [c100e077] NonlinearSolveMINPACK v0.1.3
   [6fe1bfb0] OffsetArrays v1.12.10
   [4d8831e6] OpenSSL v1.4.1
   [429524aa] Optim v1.7.7
   [bac558e1] OrderedCollections v1.6.2
-  [90014a1f] PDMats v0.11.17
-  [65ce6f38] PackageExtensionCompat v1.0.1
+⌃ [90014a1f] PDMats v0.11.17
+⌃ [65ce6f38] PackageExtensionCompat v1.0.1
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.7.2
   [b98c9c47] Pipe v1.3.0
@@ -566,13 +722,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [995b91a9] PlotUtils v1.3.5
   [91a5bcdd] Plots v1.39.0
   [e409e4f3] PoissonRandom v0.4.4
-  [f517fe37] Polyester v0.7.5
+  [f517fe37] Polyester v0.7.6
   [1d0040c9] PolyesterWeave v0.2.1
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.12
   [aea7be01] PrecompileTools v1.2.0
-  [21216c6a] Preferences v1.4.0
-  [1fd47b50] QuadGK v2.8.2
+⌃ [21216c6a] Preferences v1.4.0
+⌃ [1fd47b50] QuadGK v2.8.2
   [74087812] Random123 v1.6.1
   [e6cf234a] RandomNumbers v1.5.3
   [3cdcf5f2] RecipesBase v1.3.4
@@ -588,15 +744,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7e49a35a] RuntimeGeneratedFunctions v0.5.12
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.39
-  [0bca4576] SciMLBase v1.97.1
+⌅ [0bca4576] SciMLBase v1.98.0
   [31c91b34] SciMLBenchmarks v0.1.3
-  [e9a6253c] SciMLNLSolve v0.1.8
+⌃ [e9a6253c] SciMLNLSolve v0.1.8
   [c0aeaf25] SciMLOperators v0.3.6
   [6c6a2e73] Scratch v1.2.0
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
-  [727e6d20] SimpleNonlinearSolve v0.1.19
+⌃ [727e6d20] SimpleNonlinearSolve v0.1.19
   [699a6c99] SimpleTraits v0.9.4
   [66db9d55] SnoopPrecompile v1.0.3
   [b85f4697] SoftGlobalScope v1.1.0
@@ -606,17 +762,17 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [276daf66] SpecialFunctions v2.3.1
   [aedffcd0] Static v0.8.8
   [0d7ed370] StaticArrayInterface v1.4.1
-  [90137ffa] StaticArrays v1.6.3
+⌃ [90137ffa] StaticArrays v1.6.3
   [1e83bf80] StaticArraysCore v1.4.2
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.0
   [4c63d2b9] StatsFuns v1.3.0
   [7792a7ef] StrideArraysCore v0.4.17
   [69024149] StringEncodings v0.3.7
-  [c3572dad] Sundials v4.19.4
+⌃ [c3572dad] Sundials v4.19.5
   [2efcf032] SymbolicIndexingInterface v0.2.2
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.10.1
+  [bd369af6] Tables v1.11.0
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.2
   [3bb67fe8] TranscodingStreams v0.9.13
@@ -638,13 +794,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [700de1a5] ZygoteRules v0.2.3
   [6e34b625] Bzip2_jll v1.0.8+0
   [83423d85] Cairo_jll v1.16.1+1
+  [2702e6a9] EpollShim_jll v0.0.20230411+0
   [2e619515] Expat_jll v2.5.0+0
 ⌃ [b22a6f82] FFMPEG_jll v4.4.2+2
   [a3f928ae] Fontconfig_jll v2.13.93+0
   [d7e528f0] FreeType2_jll v2.13.1+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.72.9+1
+⌅ [d2c73de3] GR_jll v0.72.9+1
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.36.1+2
   [7746bdde] Glib_jll v2.76.5+0
@@ -668,10 +825,10 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
   [30392449] Pixman_jll v0.42.2+0
-  [c0090381] Qt6Base_jll v6.4.2+3
+⌅ [c0090381] Qt6Base_jll v6.4.2+3
   [f50d1b31] Rmath_jll v0.4.0+0
 ⌅ [fb77eaff] Sundials_jll v5.2.1+0
-  [a2964d1f] Wayland_jll v1.21.0+0
+  [a2964d1f] Wayland_jll v1.21.0+1
   [2381bf8a] Wayland_protocols_jll v1.25.0+0
   [02c8fc9c] XML2_jll v2.10.4+0
   [aed1982a] XSLT_jll v1.1.34+0
@@ -708,7 +865,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [f27f6e37] libvorbis_jll v1.3.7+1
   [1270edf5] x264_jll v2021.5.5+0
   [dfaa095f] x265_jll v3.5.0+0
-  [d8fb68d0] xkbcommon_jll v1.4.1+0
+⌃ [d8fb68d0] xkbcommon_jll v1.4.1+0
   [0dad84c5] ArgTools v1.1.1
   [56f22d72] Artifacts
   [2a0f44e3] Base64
@@ -757,6 +914,5 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
