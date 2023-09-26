@@ -10,7 +10,9 @@ These benchmarks comapres the runtime and error for a range of nonlinear solvers
 - NonlinearSolve.jl's Levenberg-Marquardt method (`LevenbergMarquardt()`).
 - MINPACK's [Modified Powell](https://docs.sciml.ai/NonlinearSolve/stable/api/minpack/#NonlinearSolveMINPACK.CMINPACK) method (`CMINPACK(method=:hybr)`).
 - MINPACK's [Levenberg-Marquardt](https://docs.sciml.ai/NonlinearSolve/stable/api/minpack/#NonlinearSolveMINPACK.CMINPACK) method (`CMINPACK(method=:lm)`).
+- NLSolveJL's [Newton Raphson](https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API) (`NLSolveJL(method=:newton)`).
 - NLSolveJL's [Newton trust region](https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API) (`NLSolveJL()`).
+- NLSolveJL's [Anderson acceleration](https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API) (`NLSolveJL(method=:anderson)`).
 - Sundials's [Newton-Krylov](https://docs.sciml.ai/NonlinearSolve/stable/api/sundials/#Solver-API) method (`KINSOL()`).
 
 # Setup
@@ -29,13 +31,19 @@ solvers = [ Dict(:alg=>NewtonRaphson()),
             Dict(:alg=>LevenbergMarquardt()),
             Dict(:alg=>CMINPACK(method=:hybr)),
             Dict(:alg=>CMINPACK(method=:lm)),
-            Dict(:alg=>NLSolveJL())]
+            Dict(:alg=>NLSolveJL(method=:newton)),
+            Dict(:alg=>NLSolveJL()),
+            Dict(:alg=>NLSolveJL(method=:anderson)),
+            Dict(:alg=>KINSOL())]
 solvernames =  ["Newton Raphson"; 
                 "Newton Trust Region"; 
                 "Levenberg-Marquardt"; 
                 "Modified Powell (CMINPACK)"; 
                 "Levenberg-Marquardt (CMINPACK)"; 
-                "Newton Trust Region (NLSolveJL)"];
+                "Newton Raphson (NLSolveJL)"; 
+                "Newton Trust Region (NLSolveJL)"; 
+                "Anderson acceleration (NLSolveJL)"; 
+                "Newton-Krylov (Sundials)"];
 ```
 
 
@@ -51,8 +59,8 @@ reltols = 1.0 ./ 10.0 .^ (4:12);
 Set plotting defaults.
 ```julia
 default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=12, legendfontsize=9, lw=2)
-colors = [1 2 3 4 5 6 7]
-markershapes = [:circle :rect :heptagon :cross :xcross :utriangle :star5];
+markershapes = [:rect, :pentagon, :hexagon, :utriangle, :dtriangle, :star4, :star5, :star7, :circle]
+colors = [:darkslategray1, :royalblue1, :blue3, :coral2, :red3, :olivedrab1, :green2, :forestgreen, :darkgoldenrod1];
 ```
 
 
@@ -68,12 +76,12 @@ function check_solver(prob, solver, solvername)
     try
         true_sol = solve(prob.prob, solver[:alg]; abstol=1e-18, reltol=1e-18, maxiters=10000000)
         if !SciMLBase.successful_retcode(true_sol.retcode)
-            Base.printstyled("[Warn] Solver $solvername returned retcode $(true_sol.retcode)."; color=:red)
+            Base.printstyled("[Warn] Solver $solvername returned retcode $(true_sol.retcode).\n"; color=:red)
             return false
         end
         WorkPrecisionSet(prob.prob, [1e-4, 1e-12], [1e-4, 1e-12], [solver]; names=[solvername], numruns=20, appxsol=true_sol, error_estimate=:l2, maxiters=10000000)
     catch e
-        Base.printstyled("[Warn] Solver $solvername threw an error: $e."; color=:red)    
+        Base.printstyled("[Warn] Solver $solvername threw an error: $e.\n"; color=:red)    
         return false
     end
     return true
@@ -146,10 +154,14 @@ plot_wp(wp_1, selected_solvers_1; legend=:bottomright)
 ```
 
 ```
-[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
-erg-Marquardt returned retcode MaxIters.[Warn] Solver Modified Powell (CMIN
-PACK) returned retcode Failure.[Warn] Solver Levenberg-Marquardt (CMINPACK)
- returned retcode Failure.
+[Warn] Solver Newton Raphson returned retcode MaxIters.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
+[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [9].
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
 ```
 
 
@@ -167,6 +179,9 @@ plot_wp(wp_2, selected_solvers_2)
 
 ```
 [Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [4].
 ```
 
 
@@ -183,8 +198,8 @@ plot_wp(wp_3, selected_solvers_3)
 ```
 
 ```
-[Warn] Solver Newton Trust Region returned retcode MaxIters.[Warn] Solver L
-evenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Newton Trust Region returned retcode MaxIters.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
 ```
 
 
@@ -201,9 +216,14 @@ plot_wp(wp_4, selected_solvers_4; legend=:topright)
 ```
 
 ```
-[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
-erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
-NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton Raphson returned retcode MaxIters.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Newton Raphson (NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 3, 4].
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
 ```
 
 
@@ -221,6 +241,9 @@ plot_wp(wp_5, selected_solvers_5)
 
 ```
 [Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: LinearAlgeb
+ra.LAPACKException(1).
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
 ```
 
 
@@ -238,11 +261,17 @@ plot_wp(wp_6, selected_solvers_6; legend=:topright)
 ```
 
 ```
-[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
-erg-Marquardt returned retcode MaxIters.[Warn] Solver Modified Powell (CMIN
-PACK) returned retcode Failure.[Warn] Solver Newton Trust Region (NLSolveJL
-) threw an error: During the resolution of the non-linear system, the evalu
-ation of the following equation(s) resulted in a non-finite number: [1, 2].
+[Warn] Solver Newton Raphson returned retcode MaxIters.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
+[Warn] Solver Newton Raphson (NLSolveJL) threw an error: During the resolut
+ion of the non-linear system, the evaluation of the following equation(s) r
+esulted in a non-finite number: [1, 2].
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2].
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
 ```
 
 
@@ -259,9 +288,12 @@ plot_wp(wp_7, selected_solvers_7; legend=:bottomright)
 ```
 
 ```
-[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
-erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
-NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton Raphson returned retcode MaxIters.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [2].
 ```
 
 
@@ -279,6 +311,10 @@ plot_wp(wp_8, selected_solvers_8)
 
 ```
 [Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [10].
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
 ```
 
 
@@ -296,9 +332,13 @@ plot_wp(wp_9, selected_solvers_9)
 ```
 
 ```
-[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
-erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
-NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton Raphson returned retcode MaxIters.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Newton Raphson (NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [4, 5, 6].
 ```
 
 
@@ -317,6 +357,9 @@ plot_wp(wp_10, selected_solvers_10; legend=:bottomleft)
 
 ```
 [Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
 ```
 
 
@@ -334,10 +377,12 @@ plot_wp(wp_11, selected_solvers_11)
 ```
 
 ```
-[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
-erg-Marquardt returned retcode MaxIters.[Warn] Solver Modified Powell (CMIN
-PACK) returned retcode Failure.[Warn] Solver Newton Trust Region (NLSolveJL
-) returned retcode Failure.
+[Warn] Solver Newton Raphson returned retcode MaxIters.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
+[Warn] Solver Newton Raphson (NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
 ```
 
 
@@ -355,6 +400,9 @@ plot_wp(wp_12, selected_solvers_12; legend=:bottomright)
 
 ```
 [Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
 ```
 
 
@@ -372,9 +420,13 @@ plot_wp(wp_13, selected_solvers_13; legend=:topleft, legendfontsize=6)
 ```
 
 ```
-[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
-erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
-NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton Raphson returned retcode MaxIters.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Newton Raphson (NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [10].
 ```
 
 
@@ -392,9 +444,13 @@ plot_wp(wp_14, selected_solvers_14)
 ```
 
 ```
-[Warn] Solver Newton Raphson returned retcode MaxIters.[Warn] Solver Levenb
-erg-Marquardt returned retcode MaxIters.[Warn] Solver Newton Trust Region (
-NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton Raphson returned retcode MaxIters.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Newton Raphson (NLSolveJL) returned retcode Failure.
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
 ```
 
 
@@ -411,9 +467,12 @@ plot_wp(wp_15, selected_solvers_15)
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver M
-odified Powell (CMINPACK) returned retcode Failure.[Warn] Solver Levenberg-
-Marquardt (CMINPACK) returned retcode Failure.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
+[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 4].
 ```
 
 
@@ -430,9 +489,12 @@ plot_wp(wp_16, selected_solvers_16)
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver M
-odified Powell (CMINPACK) returned retcode Failure.[Warn] Solver Levenberg-
-Marquardt (CMINPACK) returned retcode Failure.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
+[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 5, 9].
 ```
 
 
@@ -450,6 +512,9 @@ plot_wp(wp_17, selected_solvers_17)
 
 ```
 [Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [2].
 ```
 
 
@@ -467,6 +532,7 @@ plot_wp(wp_18, selected_solvers_18)
 
 ```
 [Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
 ```
 
 
@@ -484,6 +550,9 @@ plot_wp(wp_19, selected_solvers_19)
 
 ```
 [Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2].
 ```
 
 
@@ -512,9 +581,13 @@ plot_wp(wp_21, selected_solvers_21)
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver M
-odified Powell (CMINPACK) returned retcode Failure.[Warn] Solver Newton Tru
-st Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2].
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
 ```
 
 
@@ -549,8 +622,11 @@ plot_wp(wp_23, selected_solvers_23; legend=:topright, legendfontsize=7)
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.[Warn] Solver N
-ewton Trust Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
 ```
 
 
@@ -595,7 +671,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
 ⌃ [f3b72e0c] DiffEqDevTools v2.36.0
   [b7050fa9] NonlinearProblemLibrary v0.1.0
@@ -613,7 +689,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
   [47edcb42] ADTypes v0.2.4
   [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
@@ -634,7 +710,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [5ae59095] Colors v0.12.10
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v4.9.0
+⌃ [34da2185] Compat v4.9.0
   [2569d6c7] ConcreteStructs v0.2.3
   [f0e56b4a] ConcurrentUtilities v2.2.1
   [8f4d0f93] Conda v1.9.1
