@@ -2230,78 +2230,6 @@ res
 ```
 
 ```
-Error: MethodError: no method matching (::OptimizationSparseDiffExt.var"#16
-8#196"{SparseDiffTools.ForwardColorJacCache{Vector{ForwardDiff.Dual{Forward
-Diff.Tag{OptimizationSparseDiffExt.var"#166#194"{SciMLBase.OptimizationFunc
-tion{true, ADTypes.AutoSparseReverseDiff, Main.var"##WeaveSandBox#292".var"
-#opf_objective#44"{Dict{Int64, Vector{Float64}}, Dict{Int64, Int64}, Vector
-{Int64}}, Nothing, Nothing, Nothing, Main.var"##WeaveSandBox#292".var"#opf_
-constraints#45"{Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Flo
-at64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Di
-ct{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64,
- Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}
-, Dict{Tuple{Int64, Int64, Int64}, Int64}, Dict{Tuple{Int64, Int64, Int64},
- Int64}, Vector{Tuple{Int64, Int64, Int64}}, Vector{Tuple{Int64, Int64, Int
-64}}, Dict{Int64, Vector{Tuple{Int64, Int64, Int64}}}, Dict{Int64, Vector{I
-nt64}}, Vector{Int64}, Vector{Int64}, Dict{Int64, Int64}, Dict{Int64, Int64
-}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, 
-Int64}}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing
-, Nothing, Nothing, Nothing, Nothing, Nothing}, Nothing}, Float64}, Float64
-, 8}}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{OptimizationSparseDiffExt.va
-r"#166#194"{SciMLBase.OptimizationFunction{true, ADTypes.AutoSparseReverseD
-iff, Main.var"##WeaveSandBox#292".var"#opf_objective#44"{Dict{Int64, Vector
-{Float64}}, Dict{Int64, Int64}, Vector{Int64}}, Nothing, Nothing, Nothing, 
-Main.var"##WeaveSandBox#292".var"#opf_constraints#45"{Dict{Int64, Float64},
- Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int
-64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float
-64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict
-{Int64, Float64}, Dict{Int64, Float64}, Dict{Tuple{Int64, Int64, Int64}, In
-t64}, Dict{Tuple{Int64, Int64, Int64}, Int64}, Vector{Tuple{Int64, Int64, I
-nt64}}, Vector{Tuple{Int64, Int64, Int64}}, Dict{Int64, Vector{Tuple{Int64,
- Int64, Int64}}}, Dict{Int64, Vector{Int64}}, Vector{Int64}, Vector{Int64},
- Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, In
-t64}, Dict{Int64, Int64}, Dict{Int64, Int64}}, Nothing, Nothing, Nothing, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAU
-LT_OBSERVED_NO_TIME), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing,
- Nothing}, Nothing}, Float64}, Float64, 8}}, Vector{Float64}, Vector{Vector
-{NTuple{8, Float64}}}, Vector{Int64}, SparseArrays.SparseMatrixCSC{Bool, In
-t64}}})(::SparseArrays.SparseMatrixCSC{Float64, Int64}, ::Vector{Float64}, 
-::SciMLBase.NullParameters)
-An arithmetic operation was performed on a NullParameters object. This mean
-s no parameters were passed
-into the AbstractSciMLProblem (e.x.: ODEProblem) but the parameters object 
-`p` was used in an arithmetic
-expression. Two common reasons for this issue are:
-
-1. Forgetting to pass parameters into the problem constructor. For example,
- `ODEProblem(f,u0,tspan)` should
-be `ODEProblem(f,u0,tspan,p)` in order to use parameters.
-
-2. Using the wrong function signature. For example, with `ODEProblem`s the 
-function signature is always
-`f(du,u,p,t)` for the in-place form or `f(u,p,t)` for the out-of-place form
-. Note that the `p` argument
-will always be in the function signature reguardless of if the problem is d
-efined with parameters!
-
-
-
-Closest candidates are:
-  (::OptimizationSparseDiffExt.var"#168#196")(::Any, ::Any)
-   @ OptimizationSparseDiffExt /cache/julia-buildkite-plugin/depots/5b30025
-4-1738-4989-ae0a-f4d2d937f953/packages/Optimization/pVBOc/ext/OptimizationS
-parseDiffExt.jl:572
-```
-
-
-
-```julia
-model, res = solve_opf_jump(dataset);
-res
-```
-
-```
 ***************************************************************************
 ***
 This program contains Ipopt, a library for large-scale nonlinear optimizati
@@ -2318,9 +2246,29 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 2.90041
-  "time_solve_compilation" => 0.899285
-  "time_solve"             => 0.0170655
+  "time_build"             => 20.4274
+  "time_solve_compilation" => 15.9915
+  "time_solve"             => 0.090443
+  "feasible"               => true
+```
+
+
+
+```julia
+model, res = solve_opf_jump(dataset);
+res
+```
+
+```
+Dict{String, Any} with 8 entries:
+  "cost"                   => 17551.9
+  "variables"              => 44
+  "constraints"            => 53
+  "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
+data…
+  "time_build"             => 2.84792
+  "time_solve_compilation" => 0.903513
+  "time_solve"             => 0.0179414
   "feasible"               => true
 ```
 
@@ -2338,9 +2286,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 1.01964
-  "time_solve_compilation" => 3.36562
-  "time_solve"             => 0.0763692
+  "time_build"             => 1.03312
+  "time_solve_compilation" => 3.41504
+  "time_solve"             => 0.0392802
   "feasible"               => true
 ```
 
@@ -2382,9 +2330,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.000755463
-  "time_solve_compilation" => 27.0116
-  "time_solve"             => 17.5012
+  "time_build"             => 0.000789113
+  "time_solve_compilation" => 29.0748
+  "time_solve"             => 19.4274
   "feasible"               => false
 ```
 
@@ -2402,68 +2350,16 @@ res
 ```
 
 ```
-Error: MethodError: no method matching (::OptimizationSparseDiffExt.var"#16
-8#196"{SparseDiffTools.ForwardColorJacCache{Vector{ForwardDiff.Dual{Forward
-Diff.Tag{OptimizationSparseDiffExt.var"#166#194"{SciMLBase.OptimizationFunc
-tion{true, ADTypes.AutoSparseReverseDiff, Main.var"##WeaveSandBox#292".var"
-#opf_objective#44"{Dict{Int64, Vector{Float64}}, Dict{Int64, Int64}, Vector
-{Int64}}, Nothing, Nothing, Nothing, Main.var"##WeaveSandBox#292".var"#opf_
-constraints#45"{Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Flo
-at64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Di
-ct{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64,
- Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}
-, Dict{Tuple{Int64, Int64, Int64}, Int64}, Dict{Tuple{Int64, Int64, Int64},
- Int64}, Vector{Tuple{Int64, Int64, Int64}}, Vector{Tuple{Int64, Int64, Int
-64}}, Dict{Int64, Vector{Tuple{Int64, Int64, Int64}}}, Dict{Int64, Vector{I
-nt64}}, Vector{Int64}, Vector{Int64}, Dict{Int64, Int64}, Dict{Int64, Int64
-}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, 
-Int64}}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing
-, Nothing, Nothing, Nothing, Nothing, Nothing}, Nothing}, Float64}, Float64
-, 7}}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{OptimizationSparseDiffExt.va
-r"#166#194"{SciMLBase.OptimizationFunction{true, ADTypes.AutoSparseReverseD
-iff, Main.var"##WeaveSandBox#292".var"#opf_objective#44"{Dict{Int64, Vector
-{Float64}}, Dict{Int64, Int64}, Vector{Int64}}, Nothing, Nothing, Nothing, 
-Main.var"##WeaveSandBox#292".var"#opf_constraints#45"{Dict{Int64, Float64},
- Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int
-64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float
-64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict
-{Int64, Float64}, Dict{Int64, Float64}, Dict{Tuple{Int64, Int64, Int64}, In
-t64}, Dict{Tuple{Int64, Int64, Int64}, Int64}, Vector{Tuple{Int64, Int64, I
-nt64}}, Vector{Tuple{Int64, Int64, Int64}}, Dict{Int64, Vector{Tuple{Int64,
- Int64, Int64}}}, Dict{Int64, Vector{Int64}}, Vector{Int64}, Vector{Int64},
- Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, In
-t64}, Dict{Int64, Int64}, Dict{Int64, Int64}}, Nothing, Nothing, Nothing, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAU
-LT_OBSERVED_NO_TIME), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing,
- Nothing}, Nothing}, Float64}, Float64, 7}}, Vector{Float64}, Vector{Vector
-{NTuple{7, Float64}}}, Vector{Int64}, SparseArrays.SparseMatrixCSC{Bool, In
-t64}}})(::SparseArrays.SparseMatrixCSC{Float64, Int64}, ::Vector{Float64}, 
-::SciMLBase.NullParameters)
-An arithmetic operation was performed on a NullParameters object. This mean
-s no parameters were passed
-into the AbstractSciMLProblem (e.x.: ODEProblem) but the parameters object 
-`p` was used in an arithmetic
-expression. Two common reasons for this issue are:
-
-1. Forgetting to pass parameters into the problem constructor. For example,
- `ODEProblem(f,u0,tspan)` should
-be `ODEProblem(f,u0,tspan,p)` in order to use parameters.
-
-2. Using the wrong function signature. For example, with `ODEProblem`s the 
-function signature is always
-`f(du,u,p,t)` for the in-place form or `f(u,p,t)` for the out-of-place form
-. Note that the `p` argument
-will always be in the function signature reguardless of if the problem is d
-efined with parameters!
-
-
-
-Closest candidates are:
-  (::OptimizationSparseDiffExt.var"#168#196")(::Any, ::Any)
-   @ OptimizationSparseDiffExt /cache/julia-buildkite-plugin/depots/5b30025
-4-1738-4989-ae0a-f4d2d937f953/packages/Optimization/pVBOc/ext/OptimizationS
-parseDiffExt.jl:572
+Dict{String, Any} with 8 entries:
+  "cost"                   => 5812.64
+  "variables"              => 24
+  "constraints"            => 28
+  "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
+data…
+  "time_build"             => 0.954679
+  "time_solve_compilation" => 12.3403
+  "time_solve"             => 0.0206002
+  "feasible"               => true
 ```
 
 
@@ -2480,9 +2376,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.00164993
-  "time_solve_compilation" => 0.00918483
-  "time_solve"             => 0.00856764
+  "time_build"             => 0.00153642
+  "time_solve_compilation" => 0.00942666
+  "time_solve"             => 0.00879199
   "feasible"               => true
 ```
 
@@ -2500,9 +2396,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0137387
-  "time_solve_compilation" => 0.0184758
-  "time_solve"             => 0.0183777
+  "time_build"             => 0.0135394
+  "time_solve_compilation" => 0.0188944
+  "time_solve"             => 0.0182708
   "feasible"               => true
 ```
 
@@ -2544,9 +2440,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0563848
-  "time_solve_compilation" => 2.16298
-  "time_solve"             => 2.09037
+  "time_build"             => 0.0575179
+  "time_solve_compilation" => 2.31549
+  "time_solve"             => 2.24378
   "feasible"               => false
 ```
 
@@ -2666,23 +2562,14 @@ timing_data = multidata_multisolver_benchmark(test_datasets)
 
 ```
 file = "../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case3_lmbd.m"
-Error: MethodError: no method matching (::OptimizationSparseDiffExt.var"#168#196"{SparseDiffTools.ForwardColorJacCache{Vector{ForwardDiff.Dual{ForwardDiff.Tag{OptimizationSparseDiffExt.var"#166#194"{SciMLBase.OptimizationFunction{true, ADTypes.AutoSparseReverseDiff, Main.var"##WeaveSandBox#292".var"#opf_objective#44"{Dict{Int64, Vector{Float64}}, Dict{Int64, Int64}, Vector{Int64}}, Nothing, Nothing, Nothing, Main.var"##WeaveSandBox#292".var"#opf_constraints#45"{Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Tuple{Int64, Int64, Int64}, Int64}, Dict{Tuple{Int64, Int64, Int64}, Int64}, Vector{Tuple{Int64, Int64, Int64}}, Vector{Tuple{Int64, Int64, Int64}}, Dict{Int64, Vector{Tuple{Int64, Int64, Int64}}}, Dict{Int64, Vector{Int64}}, Vector{Int64}, Vector{Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing}, Nothing}, Float64}, Float64, 7}}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{OptimizationSparseDiffExt.var"#166#194"{SciMLBase.OptimizationFunction{true, ADTypes.AutoSparseReverseDiff, Main.var"##WeaveSandBox#292".var"#opf_objective#44"{Dict{Int64, Vector{Float64}}, Dict{Int64, Int64}, Vector{Int64}}, Nothing, Nothing, Nothing, Main.var"##WeaveSandBox#292".var"#opf_constraints#45"{Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Tuple{Int64, Int64, Int64}, Int64}, Dict{Tuple{Int64, Int64, Int64}, Int64}, Vector{Tuple{Int64, Int64, Int64}}, Vector{Tuple{Int64, Int64, Int64}}, Dict{Int64, Vector{Tuple{Int64, Int64, Int64}}}, Dict{Int64, Vector{Int64}}, Vector{Int64}, Vector{Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing}, Nothing}, Float64}, Float64, 7}}, Vector{Float64}, Vector{Vector{NTuple{7, Float64}}}, Vector{Int64}, SparseArrays.SparseMatrixCSC{Bool, Int64}}})(::SparseArrays.SparseMatrixCSC{Float64, Int64}, ::Vector{Float64}, ::SciMLBase.NullParameters)
-An arithmetic operation was performed on a NullParameters object. This means no parameters were passed
-into the AbstractSciMLProblem (e.x.: ODEProblem) but the parameters object `p` was used in an arithmetic
-expression. Two common reasons for this issue are:
-
-1. Forgetting to pass parameters into the problem constructor. For example, `ODEProblem(f,u0,tspan)` should
-be `ODEProblem(f,u0,tspan,p)` in order to use parameters.
-
-2. Using the wrong function signature. For example, with `ODEProblem`s the function signature is always
-`f(du,u,p,t)` for the in-place form or `f(u,p,t)` for the out-of-place form. Note that the `p` argument
-will always be in the function signature reguardless of if the problem is defined with parameters!
-
-
-
-Closest candidates are:
-  (::OptimizationSparseDiffExt.var"#168#196")(::Any, ::Any)
-   @ OptimizationSparseDiffExt /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/Optimization/pVBOc/ext/OptimizationSparseDiffExt.jl:572
+file = "../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case5_pjm.m"
+2×19 DataFrame
+ Row │ case                    vars   cons   optimization  optimization_modelb ⋯
+     │ String                  Int64  Int64  Float64       Float64             ⋯
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │ pglib_opf_case3_lmbd.m     24     28     0.0198891                 0.38 ⋯
+   2 │ pglib_opf_case5_pjm.m      44     53     0.0829643                 0.17
+                                                              15 columns omitted
 ```
 
 
@@ -2696,7 +2583,99 @@ println(io, "```")
 Text(String(take!(io)))
 ```
 
-Error: UndefVarError: `timing_data` not defined
+```@raw html
+<table>
+  <thead>
+    <tr class = "header">
+      <th style = "text-align: right;">case</th>
+      <th style = "text-align: right;">vars</th>
+      <th style = "text-align: right;">cons</th>
+      <th style = "text-align: right;">optimization</th>
+      <th style = "text-align: right;">optimization_modelbuild</th>
+      <th style = "text-align: right;">optimization_wcompilation</th>
+      <th style = "text-align: right;">optimization_cost</th>
+      <th style = "text-align: right;">jump</th>
+      <th style = "text-align: right;">jump_modelbuild</th>
+      <th style = "text-align: right;">jump_wcompilation</th>
+      <th style = "text-align: right;">jump_cost</th>
+      <th style = "text-align: right;">nlpmodels</th>
+      <th style = "text-align: right;">nlpmodels_modelbuild</th>
+      <th style = "text-align: right;">nlpmodels_wcompilation</th>
+      <th style = "text-align: right;">nlpmodels_cost</th>
+      <th style = "text-align: right;">optim</th>
+      <th style = "text-align: right;">optim_modelbuild</th>
+      <th style = "text-align: right;">optim_wcompilation</th>
+      <th style = "text-align: right;">optim_cost</th>
+    </tr>
+    <tr class = "subheader headerLastRow">
+      <th style = "text-align: right;">String</th>
+      <th style = "text-align: right;">Int64</th>
+      <th style = "text-align: right;">Int64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">24</td>
+      <td style = "text-align: right;">28</td>
+      <td style = "text-align: right;">0.0198891</td>
+      <td style = "text-align: right;">0.388558</td>
+      <td style = "text-align: right;">0.020555</td>
+      <td style = "text-align: right;">5812.64</td>
+      <td style = "text-align: right;">0.00870077</td>
+      <td style = "text-align: right;">0.00151688</td>
+      <td style = "text-align: right;">0.00915835</td>
+      <td style = "text-align: right;">5812.64</td>
+      <td style = "text-align: right;">0.0186919</td>
+      <td style = "text-align: right;">4.72304</td>
+      <td style = "text-align: right;">0.506465</td>
+      <td style = "text-align: right;">5812.64</td>
+      <td style = "text-align: right;">2.31471</td>
+      <td style = "text-align: right;">0.000472736</td>
+      <td style = "text-align: right;">8.62545</td>
+      <td style = "text-align: right;">6273.63</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case5_pjm.m</td>
+      <td style = "text-align: right;">44</td>
+      <td style = "text-align: right;">53</td>
+      <td style = "text-align: right;">0.0829643</td>
+      <td style = "text-align: right;">0.173055</td>
+      <td style = "text-align: right;">0.0834306</td>
+      <td style = "text-align: right;">17551.9</td>
+      <td style = "text-align: right;">0.0176982</td>
+      <td style = "text-align: right;">0.00180199</td>
+      <td style = "text-align: right;">0.0182489</td>
+      <td style = "text-align: right;">17551.9</td>
+      <td style = "text-align: right;">0.03809</td>
+      <td style = "text-align: right;">0.0244013</td>
+      <td style = "text-align: right;">0.0672353</td>
+      <td style = "text-align: right;">17551.9</td>
+      <td style = "text-align: right;">19.9964</td>
+      <td style = "text-align: right;">0.000384287</td>
+      <td style = "text-align: right;">20.0601</td>
+      <td style = "text-align: right;">77.9548</td>
+    </tr>
+  </tbody>
+</table>
+```
+
 
 
 
@@ -2714,26 +2693,26 @@ benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)
 
 ```
 66-element Vector{String}:
- "/tmp/jl_Vw50L6/pglib_opf_case10000_goc.m"
- "/tmp/jl_Vw50L6/pglib_opf_case10192_epigrids.m"
- "/tmp/jl_Vw50L6/pglib_opf_case10480_goc.m"
- "/tmp/jl_Vw50L6/pglib_opf_case118_ieee.m"
- "/tmp/jl_Vw50L6/pglib_opf_case1354_pegase.m"
- "/tmp/jl_Vw50L6/pglib_opf_case13659_pegase.m"
- "/tmp/jl_Vw50L6/pglib_opf_case14_ieee.m"
- "/tmp/jl_Vw50L6/pglib_opf_case162_ieee_dtc.m"
- "/tmp/jl_Vw50L6/pglib_opf_case179_goc.m"
- "/tmp/jl_Vw50L6/pglib_opf_case1803_snem.m"
+ "/tmp/jl_1ypszv/pglib_opf_case10000_goc.m"
+ "/tmp/jl_1ypszv/pglib_opf_case10192_epigrids.m"
+ "/tmp/jl_1ypszv/pglib_opf_case10480_goc.m"
+ "/tmp/jl_1ypszv/pglib_opf_case118_ieee.m"
+ "/tmp/jl_1ypszv/pglib_opf_case1354_pegase.m"
+ "/tmp/jl_1ypszv/pglib_opf_case13659_pegase.m"
+ "/tmp/jl_1ypszv/pglib_opf_case14_ieee.m"
+ "/tmp/jl_1ypszv/pglib_opf_case162_ieee_dtc.m"
+ "/tmp/jl_1ypszv/pglib_opf_case179_goc.m"
+ "/tmp/jl_1ypszv/pglib_opf_case1803_snem.m"
  ⋮
- "/tmp/jl_Vw50L6/pglib_opf_case6515_rte.m"
- "/tmp/jl_Vw50L6/pglib_opf_case7336_epigrids.m"
- "/tmp/jl_Vw50L6/pglib_opf_case73_ieee_rts.m"
- "/tmp/jl_Vw50L6/pglib_opf_case78484_epigrids.m"
- "/tmp/jl_Vw50L6/pglib_opf_case793_goc.m"
- "/tmp/jl_Vw50L6/pglib_opf_case8387_pegase.m"
- "/tmp/jl_Vw50L6/pglib_opf_case89_pegase.m"
- "/tmp/jl_Vw50L6/pglib_opf_case9241_pegase.m"
- "/tmp/jl_Vw50L6/pglib_opf_case9591_goc.m"
+ "/tmp/jl_1ypszv/pglib_opf_case6515_rte.m"
+ "/tmp/jl_1ypszv/pglib_opf_case7336_epigrids.m"
+ "/tmp/jl_1ypszv/pglib_opf_case73_ieee_rts.m"
+ "/tmp/jl_1ypszv/pglib_opf_case78484_epigrids.m"
+ "/tmp/jl_1ypszv/pglib_opf_case793_goc.m"
+ "/tmp/jl_1ypszv/pglib_opf_case8387_pegase.m"
+ "/tmp/jl_1ypszv/pglib_opf_case89_pegase.m"
+ "/tmp/jl_1ypszv/pglib_opf_case9241_pegase.m"
+ "/tmp/jl_1ypszv/pglib_opf_case9591_goc.m"
 ```
 
 
@@ -2743,30 +2722,87 @@ timing_data = multidata_multisolver_benchmark(benchmark_datasets)
 ```
 
 ```
-file = "/tmp/jl_Vw50L6/pglib_opf_case10000_goc.m"
-file = "/tmp/jl_Vw50L6/pglib_opf_case10192_epigrids.m"
-file = "/tmp/jl_Vw50L6/pglib_opf_case10480_goc.m"
-file = "/tmp/jl_Vw50L6/pglib_opf_case118_ieee.m"
-file = "/tmp/jl_Vw50L6/pglib_opf_case1354_pegase.m"
-file = "/tmp/jl_Vw50L6/pglib_opf_case13659_pegase.m"
-file = "/tmp/jl_Vw50L6/pglib_opf_case14_ieee.m"
-Error: MethodError: no method matching (::OptimizationSparseDiffExt.var"#168#196"{SparseDiffTools.ForwardColorJacCache{Vector{ForwardDiff.Dual{ForwardDiff.Tag{OptimizationSparseDiffExt.var"#166#194"{SciMLBase.OptimizationFunction{true, ADTypes.AutoSparseReverseDiff, Main.var"##WeaveSandBox#292".var"#opf_objective#44"{Dict{Int64, Vector{Float64}}, Dict{Int64, Int64}, Vector{Int64}}, Nothing, Nothing, Nothing, Main.var"##WeaveSandBox#292".var"#opf_constraints#45"{Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Tuple{Int64, Int64, Int64}, Int64}, Dict{Tuple{Int64, Int64, Int64}, Int64}, Vector{Tuple{Int64, Int64, Int64}}, Vector{Tuple{Int64, Int64, Int64}}, Dict{Int64, Vector{Tuple{Int64, Int64, Int64}}}, Dict{Int64, Vector{Int64}}, Vector{Int64}, Vector{Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing}, Nothing}, Float64}, Float64, 9}}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{OptimizationSparseDiffExt.var"#166#194"{SciMLBase.OptimizationFunction{true, ADTypes.AutoSparseReverseDiff, Main.var"##WeaveSandBox#292".var"#opf_objective#44"{Dict{Int64, Vector{Float64}}, Dict{Int64, Int64}, Vector{Int64}}, Nothing, Nothing, Nothing, Main.var"##WeaveSandBox#292".var"#opf_constraints#45"{Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Int64, Float64}, Dict{Tuple{Int64, Int64, Int64}, Int64}, Dict{Tuple{Int64, Int64, Int64}, Int64}, Vector{Tuple{Int64, Int64, Int64}}, Vector{Tuple{Int64, Int64, Int64}}, Dict{Int64, Vector{Tuple{Int64, Int64, Int64}}}, Dict{Int64, Vector{Int64}}, Vector{Int64}, Vector{Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}, Dict{Int64, Int64}}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing}, Nothing}, Float64}, Float64, 9}}, Vector{Float64}, Vector{Vector{NTuple{9, Float64}}}, Vector{Int64}, SparseArrays.SparseMatrixCSC{Bool, Int64}}})(::SparseArrays.SparseMatrixCSC{Float64, Int64}, ::Vector{Float64}, ::SciMLBase.NullParameters)
-An arithmetic operation was performed on a NullParameters object. This means no parameters were passed
-into the AbstractSciMLProblem (e.x.: ODEProblem) but the parameters object `p` was used in an arithmetic
-expression. Two common reasons for this issue are:
-
-1. Forgetting to pass parameters into the problem constructor. For example, `ODEProblem(f,u0,tspan)` should
-be `ODEProblem(f,u0,tspan,p)` in order to use parameters.
-
-2. Using the wrong function signature. For example, with `ODEProblem`s the function signature is always
-`f(du,u,p,t)` for the in-place form or `f(u,p,t)` for the out-of-place form. Note that the `p` argument
-will always be in the function signature reguardless of if the problem is defined with parameters!
-
-
-
-Closest candidates are:
-  (::OptimizationSparseDiffExt.var"#168#196")(::Any, ::Any)
-   @ OptimizationSparseDiffExt /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/Optimization/pVBOc/ext/OptimizationSparseDiffExt.jl:572
+file = "/tmp/jl_1ypszv/pglib_opf_case10000_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case10192_epigrids.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case10480_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case118_ieee.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case1354_pegase.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case13659_pegase.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case14_ieee.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case162_ieee_dtc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case179_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case1803_snem.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case1888_rte.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case19402_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case1951_rte.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case197_snem.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2000_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case200_activ.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case20758_epigrids.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2312_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2383wp_k.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case240_pserc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case24464_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case24_ieee_rts.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2736sp_k.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2737sop_k.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2742_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2746wop_k.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2746wp_k.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2848_rte.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2853_sdet.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2868_rte.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case2869_pegase.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case30000_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case300_ieee.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case3012wp_k.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case3022_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case30_as.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case30_ieee.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case3120sp_k.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case3375wp_k.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case3970_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case39_epri.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case3_lmbd.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case4020_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case4601_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case4619_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case4661_sdet.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case4837_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case4917_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case500_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case5658_epigrids.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case57_ieee.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case588_sdet.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case5_pjm.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case60_c.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case6468_rte.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case6470_rte.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case6495_rte.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case6515_rte.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case7336_epigrids.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case73_ieee_rts.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case78484_epigrids.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case793_goc.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case8387_pegase.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case89_pegase.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case9241_pegase.m"
+file = "/tmp/jl_1ypszv/pglib_opf_case9591_goc.m"
+10×19 DataFrame
+ Row │ case                         vars   cons   optimization  optimization_m ⋯
+     │ String                       Int64  Int64  Float64       Float64        ⋯
+─────┼──────────────────────────────────────────────────────────────────────────
+   1 │ pglib_opf_case14_ieee.m        118    169     0.307314                  ⋯
+   2 │ pglib_opf_case24_ieee_rts.m    266    315     1.31412
+   3 │ pglib_opf_case30_as.m          236    348     0.964924
+   4 │ pglib_opf_case30_ieee.m        236    348     1.53988
+   5 │ pglib_opf_case39_epri.m        282    401     2.87222                   ⋯
+   6 │ pglib_opf_case3_lmbd.m          24     28     0.0239035
+   7 │ pglib_opf_case57_ieee.m        448    675     4.31085                 1
+   8 │ pglib_opf_case5_pjm.m           44     53     0.0645386
+   9 │ pglib_opf_case60_c.m           518    737    10.3831                  2 ⋯
+  10 │ pglib_opf_case73_ieee_rts.m    824    987    17.996                   4
+                                                              15 columns omitted
 ```
 
 
@@ -2780,5 +2816,265 @@ println(io, "```")
 Text(String(take!(io)))
 ```
 
-Error: UndefVarError: `timing_data` not defined
+```@raw html
+<table>
+  <thead>
+    <tr class = "header">
+      <th style = "text-align: right;">case</th>
+      <th style = "text-align: right;">vars</th>
+      <th style = "text-align: right;">cons</th>
+      <th style = "text-align: right;">optimization</th>
+      <th style = "text-align: right;">optimization_modelbuild</th>
+      <th style = "text-align: right;">optimization_wcompilation</th>
+      <th style = "text-align: right;">optimization_cost</th>
+      <th style = "text-align: right;">jump</th>
+      <th style = "text-align: right;">jump_modelbuild</th>
+      <th style = "text-align: right;">jump_wcompilation</th>
+      <th style = "text-align: right;">jump_cost</th>
+      <th style = "text-align: right;">nlpmodels</th>
+      <th style = "text-align: right;">nlpmodels_modelbuild</th>
+      <th style = "text-align: right;">nlpmodels_wcompilation</th>
+      <th style = "text-align: right;">nlpmodels_cost</th>
+      <th style = "text-align: right;">optim</th>
+      <th style = "text-align: right;">optim_modelbuild</th>
+      <th style = "text-align: right;">optim_wcompilation</th>
+      <th style = "text-align: right;">optim_cost</th>
+    </tr>
+    <tr class = "subheader headerLastRow">
+      <th style = "text-align: right;">String</th>
+      <th style = "text-align: right;">Int64</th>
+      <th style = "text-align: right;">Int64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+      <th style = "text-align: right;">Float64</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case14_ieee.m</td>
+      <td style = "text-align: right;">118</td>
+      <td style = "text-align: right;">169</td>
+      <td style = "text-align: right;">0.307314</td>
+      <td style = "text-align: right;">2.49199</td>
+      <td style = "text-align: right;">12.4701</td>
+      <td style = "text-align: right;">2178.08</td>
+      <td style = "text-align: right;">0.0267469</td>
+      <td style = "text-align: right;">0.330369</td>
+      <td style = "text-align: right;">0.0624789</td>
+      <td style = "text-align: right;">2178.08</td>
+      <td style = "text-align: right;">0.0799516</td>
+      <td style = "text-align: right;">0.144463</td>
+      <td style = "text-align: right;">0.0784655</td>
+      <td style = "text-align: right;">2178.08</td>
+      <td style = "text-align: right;">126.614</td>
+      <td style = "text-align: right;">0.077111</td>
+      <td style = "text-align: right;">126.221</td>
+      <td style = "text-align: right;">1658.7</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case24_ieee_rts.m</td>
+      <td style = "text-align: right;">266</td>
+      <td style = "text-align: right;">315</td>
+      <td style = "text-align: right;">1.31412</td>
+      <td style = "text-align: right;">6.0867</td>
+      <td style = "text-align: right;">13.3973</td>
+      <td style = "text-align: right;">63352.2</td>
+      <td style = "text-align: right;">0.058777</td>
+      <td style = "text-align: right;">0.0353817</td>
+      <td style = "text-align: right;">0.0599373</td>
+      <td style = "text-align: right;">63352.2</td>
+      <td style = "text-align: right;">0.213063</td>
+      <td style = "text-align: right;">0.243381</td>
+      <td style = "text-align: right;">0.22017</td>
+      <td style = "text-align: right;">63352.2</td>
+      <td style = "text-align: right;">337.485</td>
+      <td style = "text-align: right;">0.466081</td>
+      <td style = "text-align: right;">333.117</td>
+      <td style = "text-align: right;">63741.2</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case30_as.m</td>
+      <td style = "text-align: right;">236</td>
+      <td style = "text-align: right;">348</td>
+      <td style = "text-align: right;">0.964924</td>
+      <td style = "text-align: right;">5.93284</td>
+      <td style = "text-align: right;">0.964947</td>
+      <td style = "text-align: right;">803.127</td>
+      <td style = "text-align: right;">0.0402921</td>
+      <td style = "text-align: right;">0.0041809</td>
+      <td style = "text-align: right;">0.0408608</td>
+      <td style = "text-align: right;">803.127</td>
+      <td style = "text-align: right;">0.14492</td>
+      <td style = "text-align: right;">0.162443</td>
+      <td style = "text-align: right;">0.130556</td>
+      <td style = "text-align: right;">803.127</td>
+      <td style = "text-align: right;">249.366</td>
+      <td style = "text-align: right;">0.0403818</td>
+      <td style = "text-align: right;">249.889</td>
+      <td style = "text-align: right;">772.093</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case30_ieee.m</td>
+      <td style = "text-align: right;">236</td>
+      <td style = "text-align: right;">348</td>
+      <td style = "text-align: right;">1.53988</td>
+      <td style = "text-align: right;">5.31838</td>
+      <td style = "text-align: right;">1.5416</td>
+      <td style = "text-align: right;">8208.52</td>
+      <td style = "text-align: right;">0.0581954</td>
+      <td style = "text-align: right;">0.00455564</td>
+      <td style = "text-align: right;">0.0590827</td>
+      <td style = "text-align: right;">8208.52</td>
+      <td style = "text-align: right;">0.205978</td>
+      <td style = "text-align: right;">0.151248</td>
+      <td style = "text-align: right;">0.547255</td>
+      <td style = "text-align: right;">8208.52</td>
+      <td style = "text-align: right;">249.884</td>
+      <td style = "text-align: right;">0.0392288</td>
+      <td style = "text-align: right;">248.59</td>
+      <td style = "text-align: right;">4244.05</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case39_epri.m</td>
+      <td style = "text-align: right;">282</td>
+      <td style = "text-align: right;">401</td>
+      <td style = "text-align: right;">2.87222</td>
+      <td style = "text-align: right;">6.985</td>
+      <td style = "text-align: right;">2.87398</td>
+      <td style = "text-align: right;">1.38416e5</td>
+      <td style = "text-align: right;">0.105261</td>
+      <td style = "text-align: right;">0.00510087</td>
+      <td style = "text-align: right;">0.105402</td>
+      <td style = "text-align: right;">1.38416e5</td>
+      <td style = "text-align: right;">0.30741</td>
+      <td style = "text-align: right;">0.180897</td>
+      <td style = "text-align: right;">0.76267</td>
+      <td style = "text-align: right;">1.38416e5</td>
+      <td style = "text-align: right;">308.644</td>
+      <td style = "text-align: right;">0.0643791</td>
+      <td style = "text-align: right;">311.526</td>
+      <td style = "text-align: right;">72070.8</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
+      <td style = "text-align: right;">24</td>
+      <td style = "text-align: right;">28</td>
+      <td style = "text-align: right;">0.0239035</td>
+      <td style = "text-align: right;">0.0556345</td>
+      <td style = "text-align: right;">0.0273924</td>
+      <td style = "text-align: right;">5812.64</td>
+      <td style = "text-align: right;">0.0094761</td>
+      <td style = "text-align: right;">0.00197836</td>
+      <td style = "text-align: right;">0.00993656</td>
+      <td style = "text-align: right;">5812.64</td>
+      <td style = "text-align: right;">0.0187498</td>
+      <td style = "text-align: right;">0.0144319</td>
+      <td style = "text-align: right;">0.0192885</td>
+      <td style = "text-align: right;">5812.64</td>
+      <td style = "text-align: right;">1.8892</td>
+      <td style = "text-align: right;">0.000370748</td>
+      <td style = "text-align: right;">1.95488</td>
+      <td style = "text-align: right;">6273.63</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case57_ieee.m</td>
+      <td style = "text-align: right;">448</td>
+      <td style = "text-align: right;">675</td>
+      <td style = "text-align: right;">4.31085</td>
+      <td style = "text-align: right;">19.7141</td>
+      <td style = "text-align: right;">4.25609</td>
+      <td style = "text-align: right;">37589.3</td>
+      <td style = "text-align: right;">0.0881131</td>
+      <td style = "text-align: right;">0.00696394</td>
+      <td style = "text-align: right;">0.0889491</td>
+      <td style = "text-align: right;">37589.3</td>
+      <td style = "text-align: right;">0.365359</td>
+      <td style = "text-align: right;">1.54931</td>
+      <td style = "text-align: right;">0.367411</td>
+      <td style = "text-align: right;">37589.3</td>
+      <td style = "text-align: right;">1244.64</td>
+      <td style = "text-align: right;">0.256428</td>
+      <td style = "text-align: right;">1240.38</td>
+      <td style = "text-align: right;">27902.9</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case5_pjm.m</td>
+      <td style = "text-align: right;">44</td>
+      <td style = "text-align: right;">53</td>
+      <td style = "text-align: right;">0.0645386</td>
+      <td style = "text-align: right;">0.126124</td>
+      <td style = "text-align: right;">0.0664899</td>
+      <td style = "text-align: right;">17551.9</td>
+      <td style = "text-align: right;">0.0184996</td>
+      <td style = "text-align: right;">0.00230353</td>
+      <td style = "text-align: right;">0.0193081</td>
+      <td style = "text-align: right;">17551.9</td>
+      <td style = "text-align: right;">0.0375605</td>
+      <td style = "text-align: right;">0.0253854</td>
+      <td style = "text-align: right;">0.0386982</td>
+      <td style = "text-align: right;">17551.9</td>
+      <td style = "text-align: right;">17.1953</td>
+      <td style = "text-align: right;">0.000577976</td>
+      <td style = "text-align: right;">16.5895</td>
+      <td style = "text-align: right;">77.9548</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case60_c.m</td>
+      <td style = "text-align: right;">518</td>
+      <td style = "text-align: right;">737</td>
+      <td style = "text-align: right;">10.3831</td>
+      <td style = "text-align: right;">26.225</td>
+      <td style = "text-align: right;">23.916</td>
+      <td style = "text-align: right;">92693.7</td>
+      <td style = "text-align: right;">0.170831</td>
+      <td style = "text-align: right;">0.0329606</td>
+      <td style = "text-align: right;">0.171977</td>
+      <td style = "text-align: right;">92693.7</td>
+      <td style = "text-align: right;">0.656652</td>
+      <td style = "text-align: right;">0.358546</td>
+      <td style = "text-align: right;">0.661133</td>
+      <td style = "text-align: right;">92693.7</td>
+      <td style = "text-align: right;">1800.85</td>
+      <td style = "text-align: right;">2.49733</td>
+      <td style = "text-align: right;">1812.93</td>
+      <td style = "text-align: right;">1.48037e5</td>
+    </tr>
+    <tr>
+      <td style = "text-align: right;">pglib_opf_case73_ieee_rts.m</td>
+      <td style = "text-align: right;">824</td>
+      <td style = "text-align: right;">987</td>
+      <td style = "text-align: right;">17.996</td>
+      <td style = "text-align: right;">48.4456</td>
+      <td style = "text-align: right;">17.9921</td>
+      <td style = "text-align: right;">1.89764e5</td>
+      <td style = "text-align: right;">0.208326</td>
+      <td style = "text-align: right;">0.0125963</td>
+      <td style = "text-align: right;">0.210903</td>
+      <td style = "text-align: right;">1.89764e5</td>
+      <td style = "text-align: right;">0.852323</td>
+      <td style = "text-align: right;">0.615267</td>
+      <td style = "text-align: right;">0.856751</td>
+      <td style = "text-align: right;">1.89764e5</td>
+      <td style = "text-align: right;">6660.38</td>
+      <td style = "text-align: right;">4.62355</td>
+      <td style = "text-align: right;">6667.99</td>
+      <td style = "text-align: right;">191255.0</td>
+    </tr>
+  </tbody>
+</table>
+```
+
 
