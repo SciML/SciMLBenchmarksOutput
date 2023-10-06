@@ -4,7 +4,7 @@ title: "Nonlinear Solver 23 Test Problems"
 ---
 
 
-These benchmarks comapres the runtime and error for a range of nonlinear solvers. The problems are a standard set of problems as described [here](https://people.sc.fsu.edu/~jburkardt/m_src/test_nonlin/test_nonlin.html). The solvers are implemented in [NonlinearProblemLibrary.jl](https://github.com/SciML/DiffEqProblemLibrary.jl/blob/master/lib/NonlinearProblemLibrary/src/NonlinearProblemLibrary.jl), where you can find the problem function declarations. For each problem we test the following solvers:
+These benchmarks compares the runtime and error for a range of nonlinear solvers. The problems are a standard set of problems as described [here](https://people.sc.fsu.edu/~jburkardt/m_src/test_nonlin/test_nonlin.html). The solvers are implemented in [NonlinearProblemLibrary.jl](https://github.com/SciML/DiffEqProblemLibrary.jl/blob/master/lib/NonlinearProblemLibrary/src/NonlinearProblemLibrary.jl), where you can find the problem function declarations. For each problem we test the following solvers:
 - NonlinearSolve.jl's [Newton Raphson](https://docs.sciml.ai/NonlinearSolve/stable/api/nonlinearsolve/#NonlinearSolve.NewtonRaphson) method (`NewtonRaphson()`).
 - NonlinearSolve.jl's [Newton trust region](https://docs.sciml.ai/NonlinearSolve/stable/api/nonlinearsolve/#NonlinearSolve.TrustRegion) method (`TrustRegion()`).
 - NonlinearSolve.jl's Levenberg-Marquardt method (`LevenbergMarquardt()`).
@@ -15,53 +15,74 @@ These benchmarks comapres the runtime and error for a range of nonlinear solvers
 - NLSolveJL's [Anderson acceleration](https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API) (`NLSolveJL(method=:anderson)`).
 - Sundials's [Newton-Krylov](https://docs.sciml.ai/NonlinearSolve/stable/api/sundials/#Solver-API) method (`KINSOL()`).
 
+Furthermore, for NonlinearSolve.jl's Newton Raphson method we try the following line search options (in addition to the default):
+- `HagerZhang`
+- `MoreThuente`
+- `BackTracking`
+
+and for NonlinearSolve.jl's Newton trust region we try the following radius update schemes (in addition to the default):
+- `NLsolve` 
+- `NocedalWright` 
+- `Hei` 
+- `Yuan` 
+- `Bastin` 
+- `Fan` 
+and finally for NonlinearSolve.jl's Levenberg-Marquardt method why try using both the default `α_geodesic` value (`0.75`) and a modified value (`0.5`).
+
 # Setup
 Fetch required packages.
 ```julia
 using NonlinearSolve, NonlinearSolveMINPACK, SciMLNLSolve, SimpleNonlinearSolve, StaticArrays, Sundials
-using BenchmarkTools, DiffEqDevTools, NonlinearProblemLibrary, Plots
+using BenchmarkTools, LinearAlgebra, DiffEqDevTools, NonlinearProblemLibrary, Plots
+RUS = RadiusUpdateSchemes;
+```
+
+```
+Error: Failed to precompile Sundials [c3572dad-4567-51f8-b174-8c6c989267f4]
+ to "/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f
+953/compiled/v1.9/Sundials/jl_7ZGU1D".
 ```
 
 
 
-Declare the benchmakred solvers.
+
+Declare the benchmarked solvers (and their names and plotting options).
 ```julia
-solvers = [ Dict(:alg=>NewtonRaphson()),
-            Dict(:alg=>NewtonRaphson(linesearch=HagerZhang())),
-            Dict(:alg=>NewtonRaphson(linesearch=MoreThuente())),
-            Dict(:alg=>NewtonRaphson(linesearch=BackTracking())),
-            Dict(:alg=>NewtonRaphson(linesearch=Static())),
-            Dict(:alg=>TrustRegion()),
-            Dict(:alg=>LevenbergMarquardt()),
-            Dict(:alg=>CMINPACK(method=:hybr)),
-            Dict(:alg=>CMINPACK(method=:lm)),
-            Dict(:alg=>NLSolveJL(method=:newton)),
-            Dict(:alg=>NLSolveJL()),
-            Dict(:alg=>NLSolveJL(method=:anderson)),
-            Dict(:alg=>KINSOL())]
-solvernames =  ["Newton Raphson (No line search)";
-                "Newton Raphson (Hager & Zhang line search)";
-                "Newton Raphson (More & Thuente line search)";
-                "Newton Raphson (Nocedal & Wright line search)";
-                "Newton Raphson (Static line search)"; 
-                "Newton Trust Region"; 
-                "Levenberg-Marquardt"; 
-                "Modified Powell (CMINPACK)"; 
-                "Levenberg-Marquardt (CMINPACK)"; 
-                "Newton Raphson (NLSolveJL)"; 
-                "Newton Trust Region (NLSolveJL)"; 
-                "Anderson acceleration (NLSolveJL)"; 
-                "Newton-Krylov (Sundials)"]
-nothing # hide
+solvers_all = [ 
+    (type = :NR,      name = "Newton Raphson (No line search)",                    solver = Dict(:alg=>NewtonRaphson()),                                       color = :salmon1,         markershape = :star4),
+    (type = :NR,      name = "Newton Raphson (Hager & Zhang line search)",         solver = Dict(:alg=>NewtonRaphson(linesearch=HagerZhang())),                color = :tomato1,         markershape = :star5),
+    (type = :NR,      name = "Newton Raphson (More & Thuente line search)",        solver = Dict(:alg=>NewtonRaphson(linesearch=MoreThuente())),               color = :red3,            markershape = :star6),
+    (type = :NR,      name = "Newton Raphson (Nocedal & Wright line search)",      solver = Dict(:alg=>NewtonRaphson(linesearch=BackTracking())),              color = :firebrick,       markershape = :star7),
+    (type = :TR,      name = "Newton Trust Region",                                solver = Dict(:alg=>TrustRegion()),                                         color = :darkslategray1,  markershape = :circle),
+    (type = :TR,      name = "Newton Trust Region (NLsolve radius update)",        solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.NLsolve)),       color = :deepskyblue1,    markershape = :utriangle),
+    (type = :TR,      name = "Newton Trust Region (Nocedal Wright radius update)", solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.NocedalWright)), color = :cadetblue,       markershape = :rect),
+    (type = :TR,      name = "Newton Trust Region (Hei radius update)",            solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Hei)),           color = :lightslateblue,  markershape = :pentagon),
+    (type = :TR,      name = "Newton Trust Region (Yuan radius update)",           solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Yuan)),          color = :royalblue2,      markershape = :hexagon),
+    (type = :TR,      name = "Newton Trust Region (Bastin radius update)",         solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Bastin)),        color = :blue1,           markershape = :heptagon),
+    (type = :TR,      name = "Newton Trust Region (Fan radius update)",            solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Fan)),           color = :navy,            markershape = :octagon),
+    (type = :LM,      name = "Levenberg-Marquardt (default α_geodesic)",           solver = Dict(:alg=>LevenbergMarquardt()),                                  color = :orchid4,         markershape = :rect),
+    (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.5)",               solver = Dict(:alg=>LevenbergMarquardt(α_geodesic=0.5)),                    color = :purple4,         markershape = :diamond),
+    (type = :general, name = "Modified Powell (CMINPACK)",                         solver = Dict(:alg=>CMINPACK(method=:hybr)),                                color = :lightgoldenrod2, markershape = :+),
+    (type = :general, name = "Levenberg-Marquardt (CMINPACK)",                     solver = Dict(:alg=>CMINPACK(method=:lm)),                                  color = :gold1,           markershape = :x),
+    (type = :general, name = "Newton Raphson (NLSolveJL)",                         solver = Dict(:alg=>NLSolveJL(method=:newton)),                             color = :olivedrab1,      markershape = :dtriangle),
+    (type = :general, name = "Newton Trust Region (NLSolveJL)",                    solver = Dict(:alg=>NLSolveJL()),                                           color = :green2,          markershape = :rtriangle),
+    (type = :general, name = "Anderson acceleration (NLSolveJL)",                  solver = Dict(:alg=>NLSolveJL(method=:anderson)),                           color = :forestgreen,     markershape = :ltriangle),
+    (type = :general, name = "Newton-Krylov (Sundials)",                           solver = Dict(:alg=>KINSOL()),                                              color = :darkorange,      markershape = :diamond)
+]
+solver_tracker = [];
 ```
+
+```
+Error: UndefVarError: `RUS` not defined
+```
+
 
 
 
 Sets tolerances.
 ```julia
 abstols = 1.0 ./ 10.0 .^ (4:12)
-reltols = 1.0 ./ 10.0 .^ (4:12)
-nothing # hide
+reltols = 1.0 ./ 10.0 .^ (4:12);
 ```
 
 
@@ -69,49 +90,114 @@ nothing # hide
 Set plotting defaults.
 ```julia
 mm = Plots.Measures.mm
-default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=12, legendfontsize=9, lw=2, ms=6, left_margin=6mm, bottom_margin=6mm, right_margin=2mm)
-markershapes = [:utriangle, :rect, :pentagon, :heptagon, :octagon]
-colors = [:violet, :magenta1, :orchid4, :darkorchid2, :blueviolet]
-markershapes = [:hexagon, :hexagon, :hexagon, :hexagon, :diamond, :rect, :utriangle, :dtriangle, :star4, :star5, :star7, :circle]
-colors = [:lightslateblue, :lightslateblue, :lightslateblue, :lightslateblue, :dodgerblue3, :blue3, :coral2, :red3, :olivedrab1, :green2, :forestgreen, :aqua]
-nothing # hide
+default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=25, legendfontsize=16, lw=3, la=0.8, ms=10, ma=0.8, left_margin=20mm, bottom_margin=15mm, right_margin=0mm)
+```
+
+```
+Error: UndefVarError: `Plots` not defined
 ```
 
 
 
-Function for determening which solvers can solve a given problem.
+
+Prepares various helper functions for benchmarking a specific problem.
 ```julia
-# Selects the solvers to be benchmakred on a given problem.
-function select_solvers(prob; selected_NR=1, solvers=solvers, solvernames=solvernames)
-    selected_solvers_all = filter(s_idx -> check_solver(prob, solvers[s_idx], solvernames[s_idx]), 1:length(solvers))
-    selected_NR_solvers = filter(ss -> ss<=5, selected_solvers_all)
-    selected_solvers = filter(ss -> ss>5, selected_solvers_all)
-    (selected_NR in selected_NR_solvers) && (selected_solvers = [selected_NR; selected_solvers])
-    return selected_NR_solvers, selected_solvers
+# Benchmarks a specific problem, checks which solvers can solve it and their performance
+function benchmark_problem!(prob_name; solver_tracker=solver_tracker, selected_NR=nothing, selected_TR=nothing, selected_LM=nothing)
+    # Finds the problem and the true solution.
+    prob = nlprob_23_testcases[prob_name]
+
+    # Finds the solvers that can solve the problem
+    successful_solvers = filter(solver -> check_solver(prob, solver), solvers_all)
+    push!(solver_tracker, prob_name => successful_solvers)
+
+    # Handles the non-general cases.
+    solvers_NR = filter(s -> s.type==:NR, successful_solvers)
+    solvers_TR = filter(s -> s.type==:TR, successful_solvers)
+    solvers_LM = filter(s -> s.type==:LM, successful_solvers)
+    wp_NR = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_NR, :solver); names=getfield.(solvers_NR, :name), numruns=100, error_estimate=:l2, maxiters=1000000)
+    wp_TR = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_TR, :solver); names=getfield.(solvers_TR, :name), numruns=100, error_estimate=:l2, maxiters=1000000)
+    wp_LM = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_LM, :solver); names=getfield.(solvers_LM, :name), numruns=100, error_estimate=:l2, maxiters=1000000)
+
+    # Handles the general case
+    solvers_general = filter(s -> s.type==:general, successful_solvers)
+    add_solver!(solvers_general, selected_TR, solvers_TR, wp_TR)
+    add_solver!(solvers_general, selected_LM, solvers_LM, wp_LM)
+    add_solver!(solvers_general, selected_NR, solvers_NR, wp_NR)
+    wp_general = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_general, :solver); names=getfield.(solvers_general, :name), numruns=100, error_estimate=:l2, maxiters=1000000)
+    
+    xlimit, ylimit, xticks, yticks = get_limits_and_ticks(wp_general, wp_NR, wp_TR, wp_LM)
+    wp_plot_general = plot_wp(wp_general, solvers_general)
+    wp_plot_NR = plot_wp(wp_NR, solvers_NR; yguide="", xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
+    wp_plot_TR = plot_wp(wp_TR, solvers_TR; yguide="", xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
+    wp_plot_LM = plot_wp(wp_LM, solvers_LM; yguide="", xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
+    plot(wp_plot_general, wp_plot_NR, wp_plot_TR, wp_plot_LM, layout=(1,4), size=(3000,800), xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
 end
+
 # Checks if a solver can sucessfully solve a given problem.
-function check_solver(prob, solver, solvername)
+function check_solver(prob, solver)
     try
-        true_sol = solve(prob.prob, solver[:alg]; abstol=1e-18, reltol=1e-18, maxiters=10000000)
-        if !SciMLBase.successful_retcode(true_sol.retcode)
-            Base.printstyled("[Warn] Solver $solvername returned retcode $(true_sol.retcode).\n"; color=:red)
+        sol = solve(prob.prob, solver.solver[:alg]; abstol=1e-8, reltol=1e-8, maxiters=1000000)
+        if !SciMLBase.successful_retcode(sol.retcode)
+            Base.printstyled("\n[Warn] Solver $(solver.name) returned retcode $(sol.retcode) with an residual norm = $(norm(sol.resid)).\n"; color=:red)
+            return false
+        elseif norm(sol.resid) > 1e3
+            Base.printstyled("[Warn] Solver $(solver.name) had a very large residual (norm = $(norm(sol.resid))).\n"; color=:red)
             return false
         end
-        WorkPrecisionSet(prob.prob, [1e-4, 1e-12], [1e-4, 1e-12], [solver]; names=[solvername], numruns=20, appxsol=true_sol, error_estimate=:l2, maxiters=10000000)
+        WorkPrecisionSet(prob.prob, [1e-4, 1e-12], [1e-4, 1e-12], [solver.solver]; names=[solver.name], numruns=100, error_estimate=:l2, maxiters=1000000)
     catch e
-        Base.printstyled("[Warn] Solver $solvername threw an error: $e.\n"; color=:red)    
+        Base.printstyled("[Warn] Solver $(solver.name) threw an error: $e.\n"; color=:red)    
         return false
     end
     return true
 end
-nothing # hide
+
+# Adds an additional, selected, solver to the general solver set.
+# Adds an additional, selected, solver to the general solver set.
+function add_solver!(solvers_general, selected_solver_name, additional_solver_set, wp)
+    if isnothing(selected_solver_name)
+        isempty(wp.wps) && return
+        selected_idx = argmin(mean.(getfield.(wp.wps, :times))) 
+    else
+        selected_idx = findfirst(s -> s.name==selected_solver_name, additional_solver_set)
+        isnothing(selected_solver) && error("The $(selected_solver_name) was designated to be added to the general solver set, however, it seemed to fail on this problem.")
+    end
+    isnothing(selected_idx) || pushfirst!(solvers_general, additional_solver_set[selected_idx])   
+end;
 ```
 
 
 
-Plotting formating helper function.
+Plotting related helper functions.
 ```julia
-# Finds good x and y limits.
+# Plots a work-precision diagram.
+function plot_wp(wp, selected_solvers; kwargs...)
+    isempty(wp.wps) && (return plot(xaxis=:log10, yaxis=:log10 ;kwargs...))
+    color = reshape(getfield.(selected_solvers, :color),1,length(selected_solvers))
+    markershape = reshape(getfield.(selected_solvers, :markershape),1,length(selected_solvers))
+    plot(wp; color=color, markershape=markershape, legend=:outertop, kwargs...)
+end
+
+# For a set of wp diaggras, get ticks and limits.
+function get_limits_and_ticks(args...)
+    xlimit = [Inf, -Inf]
+    ylimit = [Inf, -Inf]
+    for wp in args
+        isempty(wp.wps) && continue
+        xlim, ylim = xy_limits(wp)
+        (xlimit[1] > xlim[1]) && (xlimit[1] = xlim[1])
+        (xlimit[2] < xlim[2]) && (xlimit[2] = xlim[2])
+        (ylimit[1] > ylim[1]) && (ylimit[1] = ylim[1])
+        (ylimit[2] < ylim[2]) && (ylimit[2] = ylim[2])
+    end
+    xlimit = Tuple(xlimit)
+    ylimit = Tuple(ylimit)
+    xticks = get_ticks(xlimit)
+    yticks = get_ticks(ylimit)
+    return xlimit, ylimit, xticks, yticks 
+end
+# Finds good x and y limits for a work precision diagram.
 function xy_limits(wp)
     times = vcat(map(wp -> wp.times, wp.wps)...)
     errors = vcat(map(wp -> wp.errors, wp.wps)...)
@@ -120,7 +206,7 @@ function xy_limits(wp)
     return xlimit, ylimit
 end
 
-# Find good x and y ticks.
+# Finds good x and y ticks for a work precision diagram.
 function arithmetic_sequences(v1, v2)
     sequences = []
     for n in 2:(v2-v1+1)
@@ -133,6 +219,8 @@ function arithmetic_sequences(v1, v2)
     return sequences
 end
 function get_ticks(limit)
+    (limit == (Inf, -Inf)) && (return [])
+    limit = log10.(limit)
     (limit[1]==-Inf) && return 10.0 .^[limit[1], limit[2]]
     sequences = arithmetic_sequences(limit...)
     selected_seq = findlast(length.(sequences) .< 5)
@@ -142,24 +230,8 @@ function get_ticks(limit)
         return 10 .^[limit[1];ticks;limit[2]]
     end
     return 10 .^sequences[selected_seq]
-end
-
-# Plots a work-precision diagram.
-function plot_wp(wp, selected_solvers; colors=permutedims(getindex(colors,selected_solvers)[:,:]), markershapes=permutedims(getindex(markershapes,selected_solvers)[:,:]), kwargs...)
-    xlimit, ylimit = xy_limits(wp)
-    xticks = get_ticks(log10.(xlimit))
-    yticks = get_ticks(log10.(ylimit))
-    plot(wp; xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks, color=colors, markershape=markershapes, kwargs...)
-end
-# Plots work precision diagrams for NonlinearSolve's NewtonRaphson solvers, and for a combiantion of all solvers.
-function plot_wps(wp_NR, wp, selected_NR_solvers, selected_solvers; kwargs...)
-    wp_dia_NR = plot_wp(wp_NR, selected_NR_solvers;  colors=permutedims(getindex(colors_NR,selected_NR_solvers)[:,:]), markershapes=permutedims(getindex(markershapes_NR,selected_NR_solvers)[:,:]), kwargs...)
-    wp_dia = plot_wp(wp, selected_solvers; yguide="", kwargs...)
-    plot(wp_dia_NR, wp_dia, size=(1100,400))
-end
-nothing # hide
+end;
 ```
-
 
 
 
@@ -168,25 +240,11 @@ We here run benchmarks for each of the 23 models.
 
 ### Problem 1 (Generalized Rosenbrock function)
 ```julia
-prob_1 = nlprob_23_testcases["Generalized Rosenbrock function"]
-selected_NR_solvers_1, selected_solvers_1 = select_solvers(prob_1)
-wp_1_NR = WorkPrecisionSet(prob_1.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_1); names=getindex(solvernames,selected_NR_solvers_1), numruns=100, appxsol=prob_1.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_1 = WorkPrecisionSet(prob_1.prob, abstols, reltols, getindex(solvers,selected_solvers_1); names=getindex(solvernames,selected_solvers_1), numruns=100, appxsol=prob_1.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_1_NR, wp_1, selected_NR_solvers_1, selected_solvers_1)
+benchmark_problem!("Generalized Rosenbrock function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (No line search) returned retcode MaxIters.
-[Warn] Solver Newton Raphson (Static line search) returned retcode MaxIters
-.
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [9].
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -195,19 +253,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 2 (Powell singular function)
 ```julia
-prob_2 = nlprob_23_testcases["Powell singular function"]
-selected_NR_solvers_2, selected_solvers_2 = select_solvers(prob_2)
-wp_2_NR = WorkPrecisionSet(prob_2.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_2); names=getindex(solvernames,selected_NR_solvers_2), numruns=100, appxsol=prob_2.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_2 = WorkPrecisionSet(prob_2.prob, abstols, reltols, getindex(solvers,selected_solvers_2); names=getindex(solvernames,selected_solvers_2), numruns=100, appxsol=prob_2.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_2_NR, wp_2, selected_NR_solvers_2, selected_solvers_2)
+benchmark_problem!("Powell singular function")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [4].
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -216,16 +266,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 3 (Powell badly scaled function)
 ```julia
-prob_3 = nlprob_23_testcases["Powell badly scaled function"]
-selected_NR_solvers_3, selected_solvers_3 = select_solvers(prob_3)
-wp_3_NR = WorkPrecisionSet(prob_3.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_3); names=getindex(solvernames,selected_NR_solvers_3), numruns=100, appxsol=prob_3.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_3 = WorkPrecisionSet(prob_3.prob, abstols, reltols, getindex(solvers,selected_solvers_3); names=getindex(solvernames,selected_solvers_3), numruns=100, appxsol=prob_3.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_3_NR, wp_3, selected_NR_solvers_3, selected_solvers_3)
+benchmark_problem!("Powell badly scaled function")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -234,31 +279,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 4 (Wood function)
 ```julia
-prob_4 = nlprob_23_testcases["Wood function"]
-selected_NR_solvers_4, selected_solvers_4 = select_solvers(prob_4)
-wp_4_NR = WorkPrecisionSet(prob_4.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_4); names=getindex(solvernames,selected_NR_solvers_4), numruns=100, appxsol=prob_4.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_4 = WorkPrecisionSet(prob_4.prob, abstols, reltols, getindex(solvers,selected_solvers_4); names=getindex(solvernames,selected_solvers_4), numruns=100, appxsol=prob_4.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_4_NR, wp_4, selected_NR_solvers_4, selected_solvers_4)
+benchmark_problem!("Wood function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (No line search) returned retcode MaxIters.
-[Warn] Solver Newton Raphson (Hager & Zhang line search) returned retcode M
-axIters.
-[Warn] Solver Newton Raphson (More & Thuente line search) returned retcode 
-MaxIters.
-[Warn] Solver Newton Raphson (Nocedal & Wright line search) returned retcod
-e MaxIters.
-[Warn] Solver Newton Raphson (Static line search) returned retcode MaxIters
-.
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Newton Raphson (NLSolveJL) returned retcode Failure.
-[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [1, 2, 3, 4].
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -267,19 +292,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 5 (Helical valley function)
 ```julia
-prob_5 = nlprob_23_testcases["Helical valley function"]
-selected_NR_solvers_5, selected_solvers_5 = select_solvers(prob_5)
-wp_5_NR = WorkPrecisionSet(prob_5.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_5); names=getindex(solvernames,selected_NR_solvers_5), numruns=100, appxsol=prob_5.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_5 = WorkPrecisionSet(prob_5.prob, abstols, reltols, getindex(solvers,selected_solvers_5); names=getindex(solvernames,selected_solvers_5), numruns=100, appxsol=prob_5.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_5_NR, wp_5, selected_NR_solvers_5, selected_solvers_5)
+benchmark_problem!("Helical valley function")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: LinearAlgeb
-ra.LAPACKException(1).
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -288,35 +305,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 6 (Watson function)
 ```julia
-prob_6 = nlprob_23_testcases["Watson function"]
-selected_NR_solvers_6, selected_solvers_6 = select_solvers(prob_6)
-true_sol_6 = solve(prob_6.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
-wp_6_NR = WorkPrecisionSet(prob_6.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_6); names=getindex(solvernames,selected_NR_solvers_6), numruns=100, appxsol=prob_6.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_6 = WorkPrecisionSet(prob_6.prob, abstols, reltols, getindex(solvers,selected_solvers_6); names=getindex(solvernames,selected_solvers_6), numruns=100, appxsol=true_sol_6, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_6_NR, wp_6, selected_NR_solvers_6, selected_solvers_6)
+benchmark_problem!("Watson function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (No line search) returned retcode MaxIters.
-[Warn] Solver Newton Raphson (Hager & Zhang line search) threw an error: As
-sertionError("isfinite(phi_d) && isfinite(gphi)").
-[Warn] Solver Newton Raphson (More & Thuente line search) returned retcode 
-MaxIters.
-[Warn] Solver Newton Raphson (Nocedal & Wright line search) returned retcod
-e MaxIters.
-[Warn] Solver Newton Raphson (Static line search) returned retcode MaxIters
-.
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
-[Warn] Solver Newton Raphson (NLSolveJL) threw an error: During the resolut
-ion of the non-linear system, the evaluation of the following equation(s) r
-esulted in a non-finite number: [1, 2].
-[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [1, 2].
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -325,29 +318,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 7 (Chebyquad function)
 ```julia
-prob_7 = nlprob_23_testcases["Chebyquad function"]
-selected_NR_solvers_7, selected_solvers_7 = select_solvers(prob_7)
-wp_7_NR = WorkPrecisionSet(prob_7.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_7); names=getindex(solvernames,selected_NR_solvers_7), numruns=100, appxsol=prob_7.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_7 = WorkPrecisionSet(prob_7.prob, abstols, reltols, getindex(solvers,selected_solvers_7); names=getindex(solvernames,selected_solvers_7), numruns=100, appxsol=prob_7.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_7_NR, wp_7, selected_NR_solvers_7, selected_solvers_7)
+benchmark_problem!("Chebyquad function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (No line search) returned retcode MaxIters.
-[Warn] Solver Newton Raphson (Hager & Zhang line search) returned retcode M
-axIters.
-[Warn] Solver Newton Raphson (More & Thuente line search) returned retcode 
-MaxIters.
-[Warn] Solver Newton Raphson (Nocedal & Wright line search) returned retcod
-e MaxIters.
-[Warn] Solver Newton Raphson (Static line search) returned retcode MaxIters
-.
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [2].
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -356,22 +331,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 8 (Brown almost linear function)
 ```julia
-prob_8 = nlprob_23_testcases["Brown almost linear function"]
-selected_NR_solvers_8, selected_solvers_8 = select_solvers(prob_8)
-wp_8_NR = WorkPrecisionSet(prob_.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_8); names=getindex(solvernames,selected_NR_solvers_8), numruns=100, appxsol=prob_8.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_8 = WorkPrecisionSet(prob_8.prob, abstols, reltols, getindex(solvers,selected_solvers_8); names=getindex(solvernames,selected_solvers_8), numruns=100, appxsol=prob_8.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_8_NR, wp_8, selected_NR_solvers_8, selected_solvers_8)
+benchmark_problem!("Brown almost linear function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (Nocedal & Wright line search) returned retcod
-e MaxIters.
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [10].
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
-Error: UndefVarError: `prob_` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -380,32 +344,11 @@ Error: UndefVarError: `prob_` not defined
 
 ### Problem 9 (Discrete boundary value function)
 ```julia
-prob_9 = nlprob_23_testcases["Discrete boundary value function"]
-selected_NR_solvers_9, selected_solvers_9 = select_solvers(prob_9)
-true_sol_9 = solve(prob_9.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
-wp_9_NR = WorkPrecisionSet(prob_9.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_9); names=getindex(solvernames,selected_NR_solvers_9), numruns=100, appxsol=prob_9.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_9 = WorkPrecisionSet(prob_9.prob, abstols, reltols, getindex(solvers,selected_solvers_9); names=getindex(solvernames,selected_solvers_9), numruns=100, appxsol=true_sol_9, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_9_NR, wp_9, selected_NR_solvers_9, selected_solvers_9)
+benchmark_problem!("Discrete boundary value function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (No line search) returned retcode MaxIters.
-[Warn] Solver Newton Raphson (Hager & Zhang line search) threw an error: Li
-neSearches.LineSearchException{Float64}("Linesearch failed to converge, rea
-ched maximum iterations 50.", 0.33718421368059986).
-[Warn] Solver Newton Raphson (More & Thuente line search) returned retcode 
-MaxIters.
-[Warn] Solver Newton Raphson (Nocedal & Wright line search) returned retcod
-e MaxIters.
-[Warn] Solver Newton Raphson (Static line search) returned retcode MaxIters
-.
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Newton Raphson (NLSolveJL) returned retcode Failure.
-[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [4, 5, 6].
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -414,20 +357,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 10 (Discrete integral equation function)
 ```julia
-prob_10 = nlprob_23_testcases["Discrete integral equation function"]
-selected_NR_solvers_10, selected_solvers_10 = select_solvers(prob_10)
-true_sol_10 = solve(prob_10.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
-wp_10_NR = WorkPrecisionSet(prob_10.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_10); names=getindex(solvernames,selected_NR_solvers_10), numruns=100, appxsol=prob_10.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_10 = WorkPrecisionSet(prob_10.prob, abstols, reltols, getindex(solvers,selected_solvers_10); names=getindex(solvernames,selected_solvers_10), numruns=100, appxsol=true_sol_10, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_10_NR, wp_10, selected_NR_solvers_10, selected_solvers_10)
+benchmark_problem!("Discrete integral equation function")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
-Error: Must provide the real value as the "appxsol" kwarg.
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -436,30 +370,11 @@ Error: Must provide the real value as the "appxsol" kwarg.
 
 ### Problem 11 (Trigonometric function)
 ```julia
-prob_11 = nlprob_23_testcases["Trigonometric function"]
-selected_NR_solvers_11, selected_solvers_11 = select_solvers(prob_11)
-true_sol_11 = solve(prob_11.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
-wp_11_NR = WorkPrecisionSet(prob_11.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_11); names=getindex(solvernames,selected_NR_solvers_11), numruns=100, appxsol=prob_11.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_11 = WorkPrecisionSet(prob_11.prob, abstols, reltols, getindex(solvers,selected_solvers_11); names=getindex(solvernames,selected_solvers_11), numruns=100, appxsol=true_sol_11, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_11_NR, wp_11, selected_NR_solvers_11, selected_solvers_11)
+benchmark_problem!("Trigonometric function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (No line search) returned retcode MaxIters.
-[Warn] Solver Newton Raphson (Hager & Zhang line search) returned retcode M
-axIters.
-[Warn] Solver Newton Raphson (More & Thuente line search) returned retcode 
-MaxIters.
-[Warn] Solver Newton Raphson (Nocedal & Wright line search) returned retcod
-e MaxIters.
-[Warn] Solver Newton Raphson (Static line search) returned retcode MaxIters
-.
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
-[Warn] Solver Newton Raphson (NLSolveJL) returned retcode Failure.
-[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -468,19 +383,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 12 (Variably dimensioned function)
 ```julia
-prob_12 = nlprob_23_testcases["Variably dimensioned function"]
-selected_NR_solvers_12, selected_solvers_12 = select_solvers(prob_12)
-wp_12_NR = WorkPrecisionSet(prob_12.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_12); names=getindex(solvernames,selected_NR_solvers_12), numruns=100, appxsol=prob_12.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_12 = WorkPrecisionSet(prob_12.prob, abstols, reltols, getindex(solvers,selected_solvers_12); names=getindex(solvernames,selected_solvers_12), numruns=100, appxsol=prob_12.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_12_NR, wp_12, selected_NR_solvers_12, selected_solvers_12)
+benchmark_problem!("Variably dimensioned function")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -489,31 +396,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 13 (Broyden tridiagonal function)
 ```julia
-prob_13 = nlprob_23_testcases["Broyden tridiagonal function"]
-selected_NR_solvers_13, selected_solvers_13 = select_solvers(prob_13)
-true_sol_13 = solve(prob_13.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
-wp_13_NR = WorkPrecisionSet(prob_13.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_13); names=getindex(solvernames,selected_NR_solvers_13), numruns=100, appxsol=prob_13.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_13 = WorkPrecisionSet(prob_13.prob, abstols, reltols, getindex(solvers,selected_solvers_13); names=getindex(solvernames,selected_solvers_13), numruns=100, appxsol=true_sol_13, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_13_NR, wp_13, selected_NR_solvers_13, selected_solvers_13)
+benchmark_problem!("Broyden tridiagonal function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (No line search) returned retcode MaxIters.
-[Warn] Solver Newton Raphson (Hager & Zhang line search) returned retcode M
-axIters.
-[Warn] Solver Newton Raphson (More & Thuente line search) returned retcode 
-MaxIters.
-[Warn] Solver Newton Raphson (Nocedal & Wright line search) returned retcod
-e MaxIters.
-[Warn] Solver Newton Raphson (Static line search) returned retcode MaxIters
-.
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Newton Raphson (NLSolveJL) returned retcode Failure.
-[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [10].
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -522,31 +409,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 14 (Broyden banded function)
 ```julia
-prob_14 = nlprob_23_testcases["Broyden banded function"]
-selected_NR_solvers_14, selected_solvers_14 = select_solvers(prob_14)
-true_sol_14 = solve(prob_14.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
-wp_14_NR = WorkPrecisionSet(prob_14.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_14); names=getindex(solvernames,selected_NR_solvers_14), numruns=100, appxsol=prob_14.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_14 = WorkPrecisionSet(prob_14.prob, abstols, reltols, getindex(solvers,selected_solvers_14); names=getindex(solvernames,selected_solvers_14), numruns=100, appxsol=true_sol_14, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_14_NR, wp_14, selected_NR_solvers_14, selected_solvers_14)
+benchmark_problem!("Broyden banded function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (No line search) returned retcode MaxIters.
-[Warn] Solver Newton Raphson (Hager & Zhang line search) returned retcode M
-axIters.
-[Warn] Solver Newton Raphson (More & Thuente line search) returned retcode 
-MaxIters.
-[Warn] Solver Newton Raphson (Nocedal & Wright line search) returned retcod
-e MaxIters.
-[Warn] Solver Newton Raphson (Static line search) returned retcode MaxIters
-.
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Newton Raphson (NLSolveJL) returned retcode Failure.
-[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -555,21 +422,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 15 (Hammarling 2 by 2 matrix square root problem)
 ```julia
-prob_15 = nlprob_23_testcases["Hammarling 2 by 2 matrix square root problem"]
-selected_NR_solvers_15, selected_solvers_15 = select_solvers(prob_15)
-wp_15_NR = WorkPrecisionSet(prob_15.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_15); names=getindex(solvernames,selected_NR_solvers_15), numruns=100, appxsol=prob_15.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_15 = WorkPrecisionSet(prob_15.prob, abstols, reltols, getindex(solvers,selected_solvers_15); names=getindex(solvernames,selected_solvers_15), numruns=100, appxsol=prob_15.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_15_NR, wp_15, selected_NR_solvers_15, selected_solvers_15)
+benchmark_problem!("Hammarling 2 by 2 matrix square root problem")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [1, 2, 4].
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -578,21 +435,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 16 (Hammarling 3 by 3 matrix square root problem)
 ```julia
-prob_16 = nlprob_23_testcases["Hammarling 3 by 3 matrix square root problem"]
-selected_NR_solvers_16, selected_solvers_16 = select_solvers(prob_16)
-wp_16_NR = WorkPrecisionSet(prob_16.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_16); names=getindex(solvernames,selected_NR_solvers_16), numruns=100, appxsol=prob_16.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_16 = WorkPrecisionSet(prob_16.prob, abstols, reltols, getindex(solvers,selected_solvers_16); names=getindex(solvernames,selected_solvers_16), numruns=100, appxsol=prob_16.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_16_NR, wp_16, selected_NR_solvers_16, selected_solvers_16)
+benchmark_problem!("Hammarling 3 by 3 matrix square root problem")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [1, 2, 5, 9].
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -601,19 +448,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 17 (Dennis and Schnabel 2 by 2 example)
 ```julia
-prob_17 = nlprob_23_testcases["Dennis and Schnabel 2 by 2 example"]
-selected_NR_solvers_17, selected_solvers_17 = select_solvers(prob_17)
-wp_17_NR = WorkPrecisionSet(prob_17.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_17); names=getindex(solvernames,selected_NR_solvers_17), numruns=100, appxsol=prob_17.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_17 = WorkPrecisionSet(prob_17.prob, abstols, reltols, getindex(solvers,selected_solvers_17); names=getindex(solvernames,selected_solvers_17), numruns=100, appxsol=prob_17.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_17_NR, wp_17, selected_NR_solvers_17, selected_solvers_17)
+benchmark_problem!("Dennis and Schnabel 2 by 2 example")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [2].
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -622,17 +461,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 18 (Sample problem 18)
 ```julia
-prob_18 = nlprob_23_testcases["Sample problem 18"]
-selected_NR_solvers_18, selected_solvers_18 = select_solvers(prob_18)
-wp_18_NR = WorkPrecisionSet(prob_18.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_18); names=getindex(solvernames,selected_NR_solvers_18), numruns=100, appxsol=prob_18.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_18 = WorkPrecisionSet(prob_18.prob, abstols, reltols, getindex(solvers,selected_solvers_18); names=getindex(solvernames,selected_solvers_18), numruns=100, appxsol=prob_18.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_18_NR, wp_18, selected_NR_solvers_18, selected_solvers_18)
+benchmark_problem!("Sample problem 18")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -641,19 +474,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 19 (Sample problem 19)
 ```julia
-prob_19 = nlprob_23_testcases["Sample problem 19"]
-selected_NR_solvers_19, selected_solvers_19 = select_solvers(prob_19)
-wp_19_NR = WorkPrecisionSet(prob_19.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_19); names=getindex(solvernames,selected_NR_solvers_19), numruns=100, appxsol=prob_19.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_19 = WorkPrecisionSet(prob_19.prob, abstols, reltols, getindex(solvers,selected_solvers_19); names=getindex(solvernames,selected_solvers_19), numruns=100, appxsol=prob_19.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_19_NR, wp_19, selected_NR_solvers_19, selected_solvers_19)
+benchmark_problem!("Sample problem 19")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [1, 2].
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -662,15 +487,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 20 (Scalar problem f(x) = x(x - 5)^2)
 ```julia
-prob_20 = nlprob_23_testcases["Scalar problem f(x) = x(x - 5)^2"]
-selected_NR_solvers_20, selected_solvers_20 = select_solvers(prob_20)
-wp_20_NR = WorkPrecisionSet(prob_20.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_20); names=getindex(solvernames,selected_NR_solvers_20), numruns=100, appxsol=prob_20.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_20 = WorkPrecisionSet(prob_20.prob, abstols, reltols, getindex(solvers,selected_solvers_20); names=getindex(solvernames,selected_solvers_20), numruns=100, appxsol=prob_20.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_20_NR, wp_20, selected_NR_solvers_20, selected_solvers_20)
+benchmark_problem!("Scalar problem f(x) = x(x - 5)^2")
 ```
 
 ```
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -679,25 +500,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 21 (Freudenstein-Roth function)
 ```julia
-prob_21 = nlprob_23_testcases["Freudenstein-Roth function"]
-selected_NR_solvers_21, selected_solvers_21 = select_solvers(prob_21)
-wp_21_NR = WorkPrecisionSet(prob_21.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_21); names=getindex(solvernames,selected_NR_solvers_21), numruns=100, appxsol=prob_21.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_21 = WorkPrecisionSet(prob_21.prob, abstols, reltols, getindex(solvers,selected_solvers_21); names=getindex(solvernames,selected_solvers_21), numruns=100, appxsol=prob_21.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_21_NR, wp_21, selected_NR_solvers_21, selected_solvers_21)
+benchmark_problem!("Freudenstein-Roth function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (Hager & Zhang line search) threw an error: Li
-neSearches.LineSearchException{Float64}("Linesearch failed to converge, rea
-ched maximum iterations 50.", 1.1390267098488867e-16).
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure.
-[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [1, 2].
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure.
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -706,16 +513,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 22 (Boggs function)
 ```julia
-prob_22 = nlprob_23_testcases["Boggs function"]
-selected_NR_solvers_22, selected_solvers_22 = select_solvers(prob_22)
-wp_22_NR = WorkPrecisionSet(prob_22.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_22); names=getindex(solvernames,selected_NR_solvers_22), numruns=100, appxsol=prob_22.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_22 = WorkPrecisionSet(prob_22.prob, abstols, reltols, getindex(solvers,selected_solvers_22); names=getindex(solvernames,selected_solvers_22), numruns=100, appxsol=prob_22.true_sol, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_22_NR, wp_22, selected_NR_solvers_22, selected_solvers_22)
+benchmark_problem!("Boggs function")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-Error: UndefVarError: `colors_NR` not defined
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -724,21 +526,11 @@ Error: UndefVarError: `colors_NR` not defined
 
 ### Problem 23 (Chandrasekhar function)
 ```julia
-prob_23 = nlprob_23_testcases["Chandrasekhar function"]
-selected_NR_solvers_23, selected_solvers_23 = select_solvers(prob_23)
-true_sol_23 = solve(prob_23.prob, CMINPACK(method=:lm); abstol=1e-18, reltol=1e-18)
-wp_23_NR = WorkPrecisionSet(prob_23.prob, abstols, reltols, getindex(solvers,selected_NR_solvers_23); names=getindex(solvernames,selected_NR_solvers_23), numruns=100, appxsol=prob_23.true_sol, error_estimate=:l2, maxiters=10000000)
-wp_23 = WorkPrecisionSet(prob_23.prob, abstols, reltols, getindex(solvers,selected_solvers_23); names=getindex(solvernames,selected_solvers_23), numruns=100, appxsol=true_sol_23, error_estimate=:l2, maxiters=10000000)
-plot_wps(wp_23_NR, wp_23, selected_NR_solvers_23, selected_solvers_23)
+benchmark_problem!("Chandrasekhar function")
 ```
 
 ```
-[Warn] Solver Levenberg-Marquardt returned retcode MaxIters.
-[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure.
-[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
-resolution of the non-linear system, the evaluation of the following equati
-on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
-Error: Must provide the real value as the "appxsol" kwarg.
+Error: UndefVarError: `solver_tracker` not defined
 ```
 
 
@@ -749,208 +541,26 @@ Error: Must provide the real value as the "appxsol" kwarg.
 Finally, we print a summar of which solvers sucesfully solved which problems.
 
 ```julia
-function assembly_row(solvers1,solvers2; n=length(solvers))
-    all_solvers = union(solvers1,solvers2)
-    return [(i in all_solvers) ? "O" : "X" for j in 1:1, i in 1:n]
-end
-nothing # hide
+using PrettyTables
+solver_sucesses = [(solver in prob[2]) ? "O" : "X" for prob in solver_tracker, solver in solvers_all];
 ```
 
-
-```julia
-sucessful_solvers = [
-assembly_row(selected_NR_solvers_1, selected_solvers_1; n=length(solvers));
-assembly_row(selected_NR_solvers_2, selected_solvers_2; n=length(solvers));
-assembly_row(selected_NR_solvers_3, selected_solvers_3; n=length(solvers));
-assembly_row(selected_NR_solvers_4, selected_solvers_4; n=length(solvers));
-assembly_row(selected_NR_solvers_5, selected_solvers_5; n=length(solvers));
-assembly_row(selected_NR_solvers_6, selected_solvers_6; n=length(solvers));
-assembly_row(selected_NR_solvers_7, selected_solvers_7; n=length(solvers));
-assembly_row(selected_NR_solvers_8, selected_solvers_8; n=length(solvers));
-assembly_row(selected_NR_solvers_9, selected_solvers_9; n=length(solvers));
-assembly_row(selected_NR_solvers_10, selected_solvers_10; n=length(solvers));
-assembly_row(selected_NR_solvers_12, selected_solvers_12; n=length(solvers));
-assembly_row(selected_NR_solvers_13, selected_solvers_13; n=length(solvers));
-assembly_row(selected_NR_solvers_14, selected_solvers_14; n=length(solvers));
-assembly_row(selected_NR_solvers_15, selected_solvers_15; n=length(solvers));
-assembly_row(selected_NR_solvers_16, selected_solvers_16; n=length(solvers));
-assembly_row(selected_NR_solvers_17, selected_solvers_17; n=length(solvers));
-assembly_row(selected_NR_solvers_18, selected_solvers_18; n=length(solvers));
-assembly_row(selected_NR_solvers_19, selected_solvers_19; n=length(solvers));
-assembly_row(selected_NR_solvers_20, selected_solvers_20; n=length(solvers));
-assembly_row(selected_NR_solvers_21, selected_solvers_21; n=length(solvers));
-assembly_row(selected_NR_solvers_22, selected_solvers_22; n=length(solvers));
-assembly_row(selected_NR_solvers_23, selected_solvers_23; n=length(solvers))
-]
-nothing #
 ```
+Error: UndefVarError: `solver_tracker` not defined
+```
+
 
 
 ```julia
 using PrettyTables
-pretty_table(sucessful_solvers; header=solvernames, alignment=:c)
+io = IOBuffer()
+println(io, "```@raw html")
+pretty_table(io, solver_sucesses; backend = Val(:html), header = getfield.(solvers_all, :name), row_names = first.(solver_tracker), alignment=:c)
+println(io, "```")
+Text(String(take!(io)))
 ```
 
-```
-┌─────────────────────────────────┬────────────────────────────────────────
-────┬─────────────────────────────────────────────┬────────────────────────
-───────────────────────┬─────────────────────────────────────┬─────────────
-────────┬─────────────────────┬────────────────────────────┬───────────────
-─────────────────┬────────────────────────────┬────────────────────────────
-─────┬───────────────────────────────────┬──────────────────────────┐
-│ Newton Raphson (No line search) │ Newton Raphson (Hager & Zhang line sear
-ch) │ Newton Raphson (More & Thuente line search) │ Newton Raphson (Nocedal
- & Wright line search) │ Newton Raphson (Static line search) │ Newton Trust
- Region │ Levenberg-Marquardt │ Modified Powell (CMINPACK) │ Levenberg-Marq
-uardt (CMINPACK) │ Newton Raphson (NLSolveJL) │ Newton Trust Region (NLSolv
-eJL) │ Anderson acceleration (NLSolveJL) │ Newton-Krylov (Sundials) │
-├─────────────────────────────────┼────────────────────────────────────────
-────┼─────────────────────────────────────────────┼────────────────────────
-───────────────────────┼─────────────────────────────────────┼─────────────
-────────┼─────────────────────┼────────────────────────────┼───────────────
-─────────────────┼────────────────────────────┼────────────────────────────
-─────┼───────────────────────────────────┼──────────────────────────┤
-│                X                │                     O                  
-    │                      O                      │                       O
-                       │                  X                  │          O  
-        │          X          │             X              │               
-X                │             O              │                O           
-     │                 X                 │            X             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                O           
-     │                 X                 │            O             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                O           
-     │                 O                 │            O             │
-│                X                │                     X                  
-    │                      X                      │                       X
-                       │                  X                  │          O  
-        │          X          │             O              │               
-O                │             X              │                X           
-     │                 X                 │            X             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                O           
-     │                 X                 │            X             │
-│                X                │                     X                  
-    │                      X                      │                       X
-                       │                  X                  │          O  
-        │          X          │             X              │               
-O                │             X              │                X           
-     │                 X                 │            X             │
-│                X                │                     X                  
-    │                      X                      │                       X
-                       │                  X                  │          O  
-        │          X          │             O              │               
-O                │             O              │                X           
-     │                 X                 │            O             │
-│                O                │                     O                  
-    │                      O                      │                       X
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                O           
-     │                 X                 │            X             │
-│                X                │                     X                  
-    │                      X                      │                       X
-                       │                  X                  │          O  
-        │          X          │             O              │               
-O                │             X              │                X           
-     │                 X                 │            O             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                O           
-     │                 X                 │            O             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                O           
-     │                 X                 │            O             │
-│                X                │                     X                  
-    │                      X                      │                       X
-                       │                  X                  │          O  
-        │          X          │             O              │               
-O                │             X              │                X           
-     │                 X                 │            O             │
-│                X                │                     X                  
-    │                      X                      │                       X
-                       │                  X                  │          O  
-        │          X          │             O              │               
-O                │             X              │                X           
-     │                 X                 │            O             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             X              │               
-X                │             O              │                O           
-     │                 X                 │            O             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             X              │               
-X                │             O              │                O           
-     │                 X                 │            O             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                O           
-     │                 X                 │            O             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                O           
-     │                 O                 │            X             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                O           
-     │                 X                 │            O             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          O          │             O              │               
-O                │             O              │                O           
-     │                 O                 │            O             │
-│                O                │                     X                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             X              │               
-O                │             O              │                X           
-     │                 X                 │            X             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                O           
-     │                 O                 │            O             │
-│                O                │                     O                  
-    │                      O                      │                       O
-                       │                  O                  │          O  
-        │          X          │             O              │               
-O                │             O              │                X           
-     │                 X                 │            O             │
-└─────────────────────────────────┴────────────────────────────────────────
-────┴─────────────────────────────────────────────┴────────────────────────
-───────────────────────┴─────────────────────────────────────┴─────────────
-────────┴─────────────────────┴────────────────────────────┴───────────────
-─────────────────┴────────────────────────────┴────────────────────────────
-─────┴───────────────────────────────────┴──────────────────────────┘
-```
-
-
+Error: UndefVarError: `solvers_all` not defined
 
 
 
@@ -985,7 +595,6 @@ Platform Info:
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-  JULIA_IMAGE_THREADS = 1
 
 ```
 
@@ -994,9 +603,9 @@ Package Information:
 ```
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
-  [f3b72e0c] DiffEqDevTools v2.38.1
-  [b7050fa9] NonlinearProblemLibrary v0.1.0
-  [8913a72c] NonlinearSolve v2.0.0
+  [f3b72e0c] DiffEqDevTools v2.38.1 `https://github.com/SciML/DiffEqDevTools.jl.git#master`
+⌃ [b7050fa9] NonlinearProblemLibrary v0.1.0
+  [8913a72c] NonlinearSolve v2.0.2 `https://github.com/avik-pal/NonlinearSolve.jl#ap/levenberg`
   [c100e077] NonlinearSolveMINPACK v0.1.3
   [91a5bcdd] Plots v1.39.0
   [08abe8d2] PrettyTables v2.2.7
@@ -1005,6 +614,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [727e6d20] SimpleNonlinearSolve v0.1.20
   [90137ffa] StaticArrays v1.6.5
   [c3572dad] Sundials v4.20.0
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
@@ -1020,7 +630,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [6e4b80f9] BenchmarkTools v1.3.2
   [d1d4a3ce] BitFlags v0.1.7
   [62783981] BitTwiddlingConvenienceFunctions v0.1.5
-  [fa961155] CEnum v0.4.2
+⌅ [fa961155] CEnum v0.4.2
   [2a0fbf3d] CPUSummary v0.2.4
   [49dc2e85] Calculus v0.5.1
   [d360d2e6] ChainRulesCore v1.16.0
@@ -1045,7 +655,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
 ⌃ [2b5f629d] DiffEqBase v6.130.0
-  [f3b72e0c] DiffEqDevTools v2.38.1
+  [f3b72e0c] DiffEqDevTools v2.38.1 `https://github.com/SciML/DiffEqDevTools.jl.git#master`
   [77a26b50] DiffEqNoiseProcess v5.19.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
@@ -1091,9 +701,9 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [10f19ff3] LayoutPointers v0.1.14
   [50d2b5c4] Lazy v0.15.1
   [d3d80556] LineSearches v7.2.0
-  [7ed4a6bd] LinearSolve v2.8.1
+⌃ [7ed4a6bd] LinearSolve v2.8.1
   [2ab3a3ac] LogExpFunctions v0.3.26
-  [e6f89c97] LoggingExtras v1.0.2
+⌃ [e6f89c97] LoggingExtras v1.0.2
   [bdcacae8] LoopVectorization v0.12.165
   [4854310b] MINPACK v1.1.1
   [1914dd2f] MacroTools v0.5.11
@@ -1106,14 +716,14 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
-  [b7050fa9] NonlinearProblemLibrary v0.1.0
-  [8913a72c] NonlinearSolve v2.0.0
+⌃ [b7050fa9] NonlinearProblemLibrary v0.1.0
+  [8913a72c] NonlinearSolve v2.0.2 `https://github.com/avik-pal/NonlinearSolve.jl#ap/levenberg`
   [c100e077] NonlinearSolveMINPACK v0.1.3
   [6fe1bfb0] OffsetArrays v1.12.10
   [4d8831e6] OpenSSL v1.4.1
   [429524aa] Optim v1.7.7
   [bac558e1] OrderedCollections v1.6.2
-  [90014a1f] PDMats v0.11.19
+⌃ [90014a1f] PDMats v0.11.19
   [65ce6f38] PackageExtensionCompat v1.0.2
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.7.2
@@ -1158,7 +768,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [66db9d55] SnoopPrecompile v1.0.3
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.1.1
-  [47a9eef4] SparseDiffTools v2.6.0
+⌃ [47a9eef4] SparseDiffTools v2.6.0
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.3.1
   [aedffcd0] Static v0.8.8
@@ -1229,11 +839,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [30392449] Pixman_jll v0.42.2+0
   [c0090381] Qt6Base_jll v6.5.2+2
   [f50d1b31] Rmath_jll v0.4.0+0
-⌅ [fb77eaff] Sundials_jll v5.2.1+0
+⌅ [fb77eaff] Sundials_jll v5.2.2+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.21.0+1
   [2381bf8a] Wayland_protocols_jll v1.25.0+0
-⌃ [02c8fc9c] XML2_jll v2.10.4+0
+  [02c8fc9c] XML2_jll v2.11.5+0
   [aed1982a] XSLT_jll v1.1.34+0
   [ffd25f8a] XZ_jll v5.4.4+0
   [f67eecfb] Xorg_libICE_jll v1.0.10+1
@@ -1286,7 +896,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7b1f6079] FileWatching
   [9fa8497b] Future
   [b77e0a4c] InteractiveUtils
-  [b27032c2] LibCURL v0.6.3
+  [b27032c2] LibCURL v0.6.4
   [76f85450] LibGit2
   [8f399da3] Libdl
   [37e2e46d] LinearAlgebra
@@ -1294,7 +904,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d6f4376e] Markdown
   [a63ad114] Mmap
   [ca575930] NetworkOptions v1.2.0
-  [44cfe95a] Pkg v1.9.2
+  [44cfe95a] Pkg v1.10.0
   [de0858da] Printf
   [9abbd945] Profile
   [3fa0cd96] REPL
@@ -1303,7 +913,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9e88b42a] Serialization
   [1a1011a3] SharedArrays
   [6462fe0b] Sockets
-  [2f01184e] SparseArrays
+  [2f01184e] SparseArrays v1.10.0
   [10745b16] Statistics v1.9.0
   [4607b0f0] SuiteSparse
   [fa267f1f] TOML v1.0.3
@@ -1311,19 +921,19 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v1.0.5+0
-  [deac9b47] LibCURL_jll v7.84.0+0
-  [29816b5a] LibSSH2_jll v1.10.2+0
-  [c8ffd9c3] MbedTLS_jll v2.28.2+0
-  [14a3606d] MozillaCACerts_jll v2022.10.11
-  [4536629a] OpenBLAS_jll v0.3.21+4
-  [05823500] OpenLibm_jll v0.8.1+0
-  [efcefdf7] PCRE2_jll v10.42.0+0
-  [bea87d4a] SuiteSparse_jll v5.10.1+6
-  [83775a58] Zlib_jll v1.2.13+0
-  [8e850b90] libblastrampoline_jll v5.8.0+0
-  [8e850ede] nghttp2_jll v1.48.0+0
-  [3f19e933] p7zip_jll v17.4.0+0
+  [e66e0078] CompilerSupportLibraries_jll v1.0.5+1
+  [deac9b47] LibCURL_jll v8.0.1+1
+  [29816b5a] LibSSH2_jll v1.11.0+1
+  [c8ffd9c3] MbedTLS_jll v2.28.2+1
+  [14a3606d] MozillaCACerts_jll v2023.1.10
+  [4536629a] OpenBLAS_jll v0.3.23+2
+  [05823500] OpenLibm_jll v0.8.1+2
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.2.0+1
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.8.0+1
+  [8e850ede] nghttp2_jll v1.52.0+1
+  [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
