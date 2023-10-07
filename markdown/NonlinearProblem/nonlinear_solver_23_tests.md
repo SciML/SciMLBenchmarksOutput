@@ -37,13 +37,6 @@ using BenchmarkTools, LinearAlgebra, DiffEqDevTools, NonlinearProblemLibrary, Pl
 RUS = RadiusUpdateSchemes;
 ```
 
-```
-Error: Failed to precompile Sundials [c3572dad-4567-51f8-b174-8c6c989267f4]
- to "/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f
-953/compiled/v1.9/Sundials/jl_7ZGU1D".
-```
-
-
 
 
 Declare the benchmarked solvers (and their names and plotting options).
@@ -72,11 +65,6 @@ solvers_all = [
 solver_tracker = [];
 ```
 
-```
-Error: UndefVarError: `RUS` not defined
-```
-
-
 
 
 Sets tolerances.
@@ -92,11 +80,6 @@ Set plotting defaults.
 mm = Plots.Measures.mm
 default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=25, legendfontsize=16, lw=3, la=0.8, ms=10, ma=0.8, left_margin=20mm, bottom_margin=15mm, right_margin=0mm)
 ```
-
-```
-Error: UndefVarError: `Plots` not defined
-```
-
 
 
 
@@ -244,10 +227,26 @@ benchmark_problem!("Generalized Rosenbrock function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Newton Raphson (No line search) returned retcode MaxIters wit
+h an residual norm = NaN.
+
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
+esidual norm = 27.743744232347563.
+
+[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
+an residual norm = 0.000869561489816352.
+[Warn] Solver Newton Raphson (NLSolveJL) had a very large residual (norm = 
+1.8134919010169324e72).
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [9].
+
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
+idual norm = 4.107334346313282e7.
 ```
 
 
+![](figures/nonlinear_solver_23_tests_7_1.png)
 
 
 
@@ -257,10 +256,13 @@ benchmark_problem!("Powell singular function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [4].
 ```
 
 
+![](figures/nonlinear_solver_23_tests_8_1.png)
 
 
 
@@ -269,11 +271,7 @@ Error: UndefVarError: `solver_tracker` not defined
 benchmark_problem!("Powell badly scaled function")
 ```
 
-```
-Error: UndefVarError: `solver_tracker` not defined
-```
-
-
+![](figures/nonlinear_solver_23_tests_9_1.png)
 
 
 
@@ -283,10 +281,16 @@ benchmark_problem!("Wood function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 3, 4].
+
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
+idual norm = 2.245655731895381e11.
 ```
 
 
+![](figures/nonlinear_solver_23_tests_10_1.png)
 
 
 
@@ -296,10 +300,15 @@ benchmark_problem!("Helical valley function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: LinearAlgeb
+ra.LAPACKException(1).
+
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
+idual norm = 43118.59202077484.
 ```
 
 
+![](figures/nonlinear_solver_23_tests_11_1.png)
 
 
 
@@ -309,10 +318,53 @@ benchmark_problem!("Watson function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Newton Raphson (No line search) returned retcode MaxIters wit
+h an residual norm = NaN.
+[Warn] Solver Newton Raphson (Hager & Zhang line search) threw an error: Li
+neSearches.LineSearchException{Float64}("Value and slope at step length = 0
+ must be finite.", 0.0).
+
+[Warn] Solver Newton Raphson (More & Thuente line search) returned retcode 
+MaxIters with an residual norm = NaN.
+
+[Warn] Solver Newton Raphson (Nocedal & Wright line search) returned retcod
+e MaxIters with an residual norm = NaN.
+
+[Warn] Solver Newton Trust Region (NLsolve radius update) returned retcode 
+MaxIters with an residual norm = 7.46760435550861e7.
+
+[Warn] Solver Newton Trust Region (Nocedal Wright radius update) returned r
+etcode MaxIters with an residual norm = 7.468088563096942e7.
+[Warn] Solver Newton Trust Region (Yuan radius update) had a very large res
+idual (norm = 9778.341180128236).
+
+[Warn] Solver Levenberg-Marquardt (default α_geodesic) returned retcode Max
+Iters with an residual norm = 129.15201656512428.
+
+[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode MaxIter
+s with an residual norm = 129.15201656512428.
+
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
+esidual norm = 1419.3259058415274.
+
+[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
+an residual norm = NaN.
+[Warn] Solver Newton Raphson (NLSolveJL) threw an error: During the resolut
+ion of the non-linear system, the evaluation of the following equation(s) r
+esulted in a non-finite number: [1, 2].
+
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure with
+ an residual norm = 258.30403313024857.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2].
+
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
+idual norm = 71.60227183421875.
 ```
 
 
+![](figures/nonlinear_solver_23_tests_12_1.png)
 
 
 
@@ -322,10 +374,13 @@ benchmark_problem!("Chebyquad function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [2].
 ```
 
 
+![](figures/nonlinear_solver_23_tests_13_1.png)
 
 
 
@@ -335,10 +390,16 @@ benchmark_problem!("Brown almost linear function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [10].
+
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
+idual norm = 6.150960132525852e29.
 ```
 
 
+![](figures/nonlinear_solver_23_tests_14_1.png)
 
 
 
@@ -347,11 +408,7 @@ Error: UndefVarError: `solver_tracker` not defined
 benchmark_problem!("Discrete boundary value function")
 ```
 
-```
-Error: UndefVarError: `solver_tracker` not defined
-```
-
-
+![](figures/nonlinear_solver_23_tests_15_1.png)
 
 
 
@@ -361,10 +418,13 @@ benchmark_problem!("Discrete integral equation function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
 ```
 
 
+![](figures/nonlinear_solver_23_tests_16_1.png)
 
 
 
@@ -374,10 +434,24 @@ benchmark_problem!("Trigonometric function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Newton Trust Region (Nocedal Wright radius update) returned r
+etcode MaxIters with an residual norm = 0.005286829032494289.
+
+[Warn] Solver Levenberg-Marquardt (default α_geodesic) returned retcode Max
+Iters with an residual norm = 0.005287459311565332.
+
+[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode MaxIter
+s with an residual norm = 0.005287221998768186.
+
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
+esidual norm = 0.005296613343276764.
+
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
+idual norm = 54.70641649171055.
 ```
 
 
+![](figures/nonlinear_solver_23_tests_17_1.png)
 
 
 
@@ -387,10 +461,15 @@ benchmark_problem!("Variably dimensioned function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Newton Trust Region (Hei radius update) had a very large resi
+dual (norm = 29710.853796116262).
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
 ```
 
 
+![](figures/nonlinear_solver_23_tests_18_1.png)
 
 
 
@@ -400,10 +479,12 @@ benchmark_problem!("Broyden tridiagonal function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Newton Raphson (Hager & Zhang line search) returned retcode M
+axIters with an residual norm = 1.5419913600416406.
 ```
 
 
+![](figures/nonlinear_solver_23_tests_19_1.png)
 
 
 
@@ -412,11 +493,7 @@ Error: UndefVarError: `solver_tracker` not defined
 benchmark_problem!("Broyden banded function")
 ```
 
-```
-Error: UndefVarError: `solver_tracker` not defined
-```
-
-
+![](figures/nonlinear_solver_23_tests_20_1.png)
 
 
 
@@ -426,10 +503,18 @@ benchmark_problem!("Hammarling 2 by 2 matrix square root problem")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
+esidual norm = 1.6807886678113873e-5.
+
+[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
+an residual norm = 2.43021260718148e-5.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 4].
 ```
 
 
+![](figures/nonlinear_solver_23_tests_21_1.png)
 
 
 
@@ -439,10 +524,21 @@ benchmark_problem!("Hammarling 3 by 3 matrix square root problem")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Newton Trust Region (Yuan radius update) returned retcode Max
+Iters with an residual norm = 2.295460324941442e-7.
+
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
+esidual norm = 5.836498246956155e-6.
+
+[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
+an residual norm = 2.3184902150984566e-5.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 5, 9].
 ```
 
 
+![](figures/nonlinear_solver_23_tests_22_1.png)
 
 
 
@@ -452,10 +548,15 @@ benchmark_problem!("Dennis and Schnabel 2 by 2 example")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Levenberg-Marquardt (default α_geodesic) returned retcode Max
+Iters with an residual norm = 13.1436585040032.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [2].
 ```
 
 
+![](figures/nonlinear_solver_23_tests_23_1.png)
 
 
 
@@ -465,10 +566,12 @@ benchmark_problem!("Sample problem 18")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
+idual norm = 21.24046883008426.
 ```
 
 
+![](figures/nonlinear_solver_23_tests_24_1.png)
 
 
 
@@ -478,10 +581,13 @@ benchmark_problem!("Sample problem 19")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2].
 ```
 
 
+![](figures/nonlinear_solver_23_tests_25_1.png)
 
 
 
@@ -490,11 +596,7 @@ Error: UndefVarError: `solver_tracker` not defined
 benchmark_problem!("Scalar problem f(x) = x(x - 5)^2")
 ```
 
-```
-Error: UndefVarError: `solver_tracker` not defined
-```
-
-
+![](figures/nonlinear_solver_23_tests_26_1.png)
 
 
 
@@ -504,10 +606,37 @@ benchmark_problem!("Freudenstein-Roth function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Newton Raphson (Hager & Zhang line search) threw an error: Li
+neSearches.LineSearchException{Float64}("Linesearch failed to converge, rea
+ched maximum iterations 50.", 1.1390267098488867e-16).
+
+[Warn] Solver Newton Trust Region (NLsolve radius update) returned retcode 
+MaxIters with an residual norm = 6.99887517242878.
+
+[Warn] Solver Newton Trust Region (Nocedal Wright radius update) returned r
+etcode MaxIters with an residual norm = 6.99887517242878.
+
+[Warn] Solver Levenberg-Marquardt (default α_geodesic) returned retcode Max
+Iters with an residual norm = 6.998875172428785.
+
+[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode MaxIter
+s with an residual norm = 6.998875172428785.
+
+[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
+esidual norm = 6.998961666702933.
+
+[Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure with
+ an residual norm = 6.99887517242878.
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2].
+
+[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
+idual norm = 8.789770825114247e10.
 ```
 
 
+![](figures/nonlinear_solver_23_tests_27_1.png)
 
 
 
@@ -516,11 +645,7 @@ Error: UndefVarError: `solver_tracker` not defined
 benchmark_problem!("Boggs function")
 ```
 
-```
-Error: UndefVarError: `solver_tracker` not defined
-```
-
-
+![](figures/nonlinear_solver_23_tests_28_1.png)
 
 
 
@@ -530,10 +655,13 @@ benchmark_problem!("Chandrasekhar function")
 ```
 
 ```
-Error: UndefVarError: `solver_tracker` not defined
+[Warn] Solver Anderson acceleration (NLSolveJL) threw an error: During the 
+resolution of the non-linear system, the evaluation of the following equati
+on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
 ```
 
 
+![](figures/nonlinear_solver_23_tests_29_1.png)
 
 
 
@@ -545,11 +673,6 @@ using PrettyTables
 solver_sucesses = [(solver in prob[2]) ? "O" : "X" for prob in solver_tracker, solver in solvers_all];
 ```
 
-```
-Error: UndefVarError: `solver_tracker` not defined
-```
-
-
 
 ```julia
 using PrettyTables
@@ -560,7 +683,543 @@ println(io, "```")
 Text(String(take!(io)))
 ```
 
-Error: UndefVarError: `solvers_all` not defined
+```@raw html
+<table>
+  <thead>
+    <tr class = "header headerLastRow">
+      <th class = "rowLabel" style = "font-weight: bold; text-align: right;"></th>
+      <th style = "text-align: center;">Newton Raphson (No line search)</th>
+      <th style = "text-align: center;">Newton Raphson (Hager &amp; Zhang line search)</th>
+      <th style = "text-align: center;">Newton Raphson (More &amp; Thuente line search)</th>
+      <th style = "text-align: center;">Newton Raphson (Nocedal &amp; Wright line search)</th>
+      <th style = "text-align: center;">Newton Trust Region</th>
+      <th style = "text-align: center;">Newton Trust Region (NLsolve radius update)</th>
+      <th style = "text-align: center;">Newton Trust Region (Nocedal Wright radius update)</th>
+      <th style = "text-align: center;">Newton Trust Region (Hei radius update)</th>
+      <th style = "text-align: center;">Newton Trust Region (Yuan radius update)</th>
+      <th style = "text-align: center;">Newton Trust Region (Bastin radius update)</th>
+      <th style = "text-align: center;">Newton Trust Region (Fan radius update)</th>
+      <th style = "text-align: center;">Levenberg-Marquardt (default α_geodesic)</th>
+      <th style = "text-align: center;">Levenberg-Marquardt (α_geodesic=0.5)</th>
+      <th style = "text-align: center;">Modified Powell (CMINPACK)</th>
+      <th style = "text-align: center;">Levenberg-Marquardt (CMINPACK)</th>
+      <th style = "text-align: center;">Newton Raphson (NLSolveJL)</th>
+      <th style = "text-align: center;">Newton Trust Region (NLSolveJL)</th>
+      <th style = "text-align: center;">Anderson acceleration (NLSolveJL)</th>
+      <th style = "text-align: center;">Newton-Krylov (Sundials)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Generalized Rosenbrock function</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Powell singular function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Powell badly scaled function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Wood function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Helical valley function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Watson function</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Chebyquad function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Brown almost linear function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Discrete boundary value function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Discrete integral equation function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Trigonometric function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Variably dimensioned function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Broyden tridiagonal function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Broyden banded function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Hammarling 2 by 2 matrix square root problem</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Hammarling 3 by 3 matrix square root problem</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Dennis and Schnabel 2 by 2 example</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Sample problem 18</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Sample problem 19</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Scalar problem f(x) = x(x - 5)^2</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Freudenstein-Roth function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Boggs function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Chandrasekhar function</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+  </tbody>
+</table>
+```
+
 
 
 
@@ -595,6 +1254,7 @@ Platform Info:
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+  JULIA_IMAGE_THREADS = 1
 
 ```
 
@@ -603,9 +1263,9 @@ Package Information:
 ```
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
-  [f3b72e0c] DiffEqDevTools v2.38.1 `https://github.com/SciML/DiffEqDevTools.jl.git#master`
-⌃ [b7050fa9] NonlinearProblemLibrary v0.1.0
-  [8913a72c] NonlinearSolve v2.0.2 `https://github.com/avik-pal/NonlinearSolve.jl#ap/levenberg`
+  [f3b72e0c] DiffEqDevTools v2.39.0
+  [b7050fa9] NonlinearProblemLibrary v0.1.1
+  [8913a72c] NonlinearSolve v2.1.0
   [c100e077] NonlinearSolveMINPACK v0.1.3
   [91a5bcdd] Plots v1.39.0
   [08abe8d2] PrettyTables v2.2.7
@@ -614,8 +1274,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [727e6d20] SimpleNonlinearSolve v0.1.20
   [90137ffa] StaticArrays v1.6.5
   [c3572dad] Sundials v4.20.0
-Info Packages marked with ⌃ have new versions available and may be upgradable.
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -655,7 +1313,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
 ⌃ [2b5f629d] DiffEqBase v6.130.0
-  [f3b72e0c] DiffEqDevTools v2.38.1 `https://github.com/SciML/DiffEqDevTools.jl.git#master`
+  [f3b72e0c] DiffEqDevTools v2.39.0
   [77a26b50] DiffEqNoiseProcess v5.19.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
@@ -701,9 +1359,9 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [10f19ff3] LayoutPointers v0.1.14
   [50d2b5c4] Lazy v0.15.1
   [d3d80556] LineSearches v7.2.0
-⌃ [7ed4a6bd] LinearSolve v2.8.1
+  [7ed4a6bd] LinearSolve v2.9.2
   [2ab3a3ac] LogExpFunctions v0.3.26
-⌃ [e6f89c97] LoggingExtras v1.0.2
+  [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.165
   [4854310b] MINPACK v1.1.1
   [1914dd2f] MacroTools v0.5.11
@@ -716,14 +1374,14 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
-⌃ [b7050fa9] NonlinearProblemLibrary v0.1.0
-  [8913a72c] NonlinearSolve v2.0.2 `https://github.com/avik-pal/NonlinearSolve.jl#ap/levenberg`
+  [b7050fa9] NonlinearProblemLibrary v0.1.1
+  [8913a72c] NonlinearSolve v2.1.0
   [c100e077] NonlinearSolveMINPACK v0.1.3
   [6fe1bfb0] OffsetArrays v1.12.10
   [4d8831e6] OpenSSL v1.4.1
   [429524aa] Optim v1.7.7
   [bac558e1] OrderedCollections v1.6.2
-⌃ [90014a1f] PDMats v0.11.19
+  [90014a1f] PDMats v0.11.25
   [65ce6f38] PackageExtensionCompat v1.0.2
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.7.2
@@ -768,7 +1426,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [66db9d55] SnoopPrecompile v1.0.3
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.1.1
-⌃ [47a9eef4] SparseDiffTools v2.6.0
+  [47a9eef4] SparseDiffTools v2.7.0
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.3.1
   [aedffcd0] Static v0.8.8
@@ -819,6 +1477,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7746bdde] Glib_jll v2.76.5+0
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
+  [1d5cc7b8] IntelOpenMP_jll v2023.2.0+0
   [aacddb02] JpegTurbo_jll v2.1.91+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [88015f11] LERC_jll v3.0.0+1
@@ -832,6 +1491,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [4b2f31a3] Libmount_jll v2.35.0+0
   [89763e89] Libtiff_jll v4.5.1+1
   [38a345b3] Libuuid_jll v2.36.0+0
+  [856f044c] MKL_jll v2023.2.0+0
   [e7412a2a] Ogg_jll v1.3.5+1
 ⌅ [458c3c95] OpenSSL_jll v1.1.23+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
@@ -839,7 +1499,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [30392449] Pixman_jll v0.42.2+0
   [c0090381] Qt6Base_jll v6.5.2+2
   [f50d1b31] Rmath_jll v0.4.0+0
-⌅ [fb77eaff] Sundials_jll v5.2.2+0
+⌅ [fb77eaff] Sundials_jll v5.2.1+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.21.0+1
   [2381bf8a] Wayland_protocols_jll v1.25.0+0
@@ -896,7 +1556,8 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7b1f6079] FileWatching
   [9fa8497b] Future
   [b77e0a4c] InteractiveUtils
-  [b27032c2] LibCURL v0.6.4
+  [4af54fe1] LazyArtifacts
+  [b27032c2] LibCURL v0.6.3
   [76f85450] LibGit2
   [8f399da3] Libdl
   [37e2e46d] LinearAlgebra
@@ -904,7 +1565,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d6f4376e] Markdown
   [a63ad114] Mmap
   [ca575930] NetworkOptions v1.2.0
-  [44cfe95a] Pkg v1.10.0
+  [44cfe95a] Pkg v1.9.2
   [de0858da] Printf
   [9abbd945] Profile
   [3fa0cd96] REPL
@@ -913,7 +1574,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9e88b42a] Serialization
   [1a1011a3] SharedArrays
   [6462fe0b] Sockets
-  [2f01184e] SparseArrays v1.10.0
+  [2f01184e] SparseArrays
   [10745b16] Statistics v1.9.0
   [4607b0f0] SuiteSparse
   [fa267f1f] TOML v1.0.3
@@ -921,20 +1582,19 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v1.0.5+1
-  [deac9b47] LibCURL_jll v8.0.1+1
-  [29816b5a] LibSSH2_jll v1.11.0+1
-  [c8ffd9c3] MbedTLS_jll v2.28.2+1
-  [14a3606d] MozillaCACerts_jll v2023.1.10
-  [4536629a] OpenBLAS_jll v0.3.23+2
-  [05823500] OpenLibm_jll v0.8.1+2
-  [efcefdf7] PCRE2_jll v10.42.0+1
-  [bea87d4a] SuiteSparse_jll v7.2.0+1
-  [83775a58] Zlib_jll v1.2.13+1
-  [8e850b90] libblastrampoline_jll v5.8.0+1
-  [8e850ede] nghttp2_jll v1.52.0+1
-  [3f19e933] p7zip_jll v17.4.0+2
+  [e66e0078] CompilerSupportLibraries_jll v1.0.5+0
+  [deac9b47] LibCURL_jll v7.84.0+0
+  [29816b5a] LibSSH2_jll v1.10.2+0
+  [c8ffd9c3] MbedTLS_jll v2.28.2+0
+  [14a3606d] MozillaCACerts_jll v2022.10.11
+  [4536629a] OpenBLAS_jll v0.3.21+4
+  [05823500] OpenLibm_jll v0.8.1+0
+  [efcefdf7] PCRE2_jll v10.42.0+0
+  [bea87d4a] SuiteSparse_jll v5.10.1+6
+  [83775a58] Zlib_jll v1.2.13+0
+  [8e850b90] libblastrampoline_jll v5.8.0+0
+  [8e850ede] nghttp2_jll v1.48.0+0
+  [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
