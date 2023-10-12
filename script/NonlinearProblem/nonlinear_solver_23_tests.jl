@@ -33,7 +33,7 @@ reltols = 1.0 ./ 10.0 .^ (4:12);
 
 
 mm = Plots.Measures.mm
-default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=25, legendfontsize=16, lw=3, la=0.8, ms=10, ma=0.8, left_margin=20mm, bottom_margin=15mm, right_margin=0mm)
+default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=25, tickfontsize=18, legendfontsize=16, lw=5, la=0.7, ms=12, ma=0.8)
 
 
 # Benchmarks a specific problem, checks which solvers can solve it and their performance
@@ -61,11 +61,11 @@ function benchmark_problem!(prob_name; solver_tracker=solver_tracker, selected_N
     wp_general = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_general, :solver); names=getfield.(solvers_general, :name), numruns=100, error_estimate=:l2, maxiters=1000000)
     
     xlimit, ylimit, xticks, yticks = get_limits_and_ticks(wp_general, wp_NR, wp_TR, wp_LM)
-    wp_plot_general = plot_wp(wp_general, solvers_general)
-    wp_plot_NR = plot_wp(wp_NR, solvers_NR; yguide="", xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
-    wp_plot_TR = plot_wp(wp_TR, solvers_TR; yguide="", xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
-    wp_plot_LM = plot_wp(wp_LM, solvers_LM; yguide="", xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
-    plot(wp_plot_general, wp_plot_NR, wp_plot_TR, wp_plot_LM, layout=(1,4), size=(3000,800), xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
+    wp_plot_general = plot_wp(wp_general, solvers_general, xguide="", xlimit, ylimit, true, xticks=(xticks, fill("", length(xticks))),yticks=yticks)
+    wp_plot_NR = plot_wp(wp_NR, solvers_NR, xlimit, ylimit, true; xguide="", yguide="", xticks=(xticks, fill("", length(xticks))), yticks=(yticks, fill("", length(yticks))), right_margin=7mm)
+    wp_plot_TR = plot_wp(wp_TR, solvers_TR, xlimit, ylimit, false; xticks=xticks, yticks=yticks)
+    wp_plot_LM = plot_wp(wp_LM, solvers_LM, xlimit, ylimit, false; yguide="", xticks=xticks, yticks=(yticks, fill("", length(yticks))), right_margin=7mm)
+    plot(wp_plot_general, wp_plot_NR, wp_plot_TR, wp_plot_LM, layout=(2,2), size=(1600,2000), left_margin=10mm)
 end
 
 # Checks if a solver can sucessfully solve a given problem.
@@ -102,11 +102,30 @@ end;
 
 
 # Plots a work-precision diagram.
-function plot_wp(wp, selected_solvers; kwargs...)
-    isempty(wp.wps) && (return plot(xaxis=:log10, yaxis=:log10 ;kwargs...))
+function plot_wp(wp, selected_solvers, xlimit, ylimit, top; kwargs...)
     color = reshape(getfield.(selected_solvers, :color),1,length(selected_solvers))
     markershape = reshape(getfield.(selected_solvers, :markershape),1,length(selected_solvers))
-    plot(wp; color=color, markershape=markershape, legend=:outertop, kwargs...)
+
+    if isempty(wp.wps)
+        (:xguide in keys(kwargs)) || (kwargs = (; xguide="Error", kwargs...))
+        (:yguide in keys(kwargs)) || (kwargs = (; yguide="Time (s)", kwargs...))
+        plt = plot(;xlimit=xlimit, ylimit=ylimit, legend=:none, xaxis=:log10, yaxis=:log10, kwargs...)
+        if top
+            plt_legend = plot(;xlimit=(1e6,1e6+1), ylimit=(0.01,0.011), legend=:outerbottom, axis=false, grid=false, framestyle=:none, margin=0mm, kwargs...)
+            return plot(plt_legend, plt, layout = grid(2, 1, heights=[0.25, 0.75]), top_margin=0mm, bottom_margin=0mm)
+        else
+            plt_legend = plot(;xlimit=(1e6,1e6+1), ylimit=(0.01,0.011), legend=:outertop, axis=false, grid=false, framestyle=:none, margin=0mm, kwargs...)
+            return plot(plt, plt_legend, layout = grid(2, 1, heights=[0.75, 0.25]), top_margin=0mm, bottom_margin=0mm)
+        end
+    end
+    plt = plot(wp; color=color, markershape=markershape, xlimit=xlimit, ylimit=ylimit, legend=:none, kwargs...)
+    if top
+        plt_legend = plot(wp; color=color, markershape=markershape, xlimit=(1e6,1e6+1), ylimit=(0.01,0.011), legend=:outerbottom, axis=false, grid=false, framestyle=:none, margin=0mm, kwargs...)
+        return plot(plt_legend, plt, layout = grid(2, 1, heights=[0.25, 0.75]), top_margin=0mm, bottom_margin=0mm)
+    else
+        plt_legend = plot(wp; color=color, markershape=markershape, xlimit=(1e6,1e6+1), ylimit=(0.01,0.011), legend=:outertop, axis=false, grid=false, framestyle=:none, margin=0mm, kwargs...)
+        return plot(plt, plt_legend, layout = grid(2, 1, heights=[0.75, 0.25]), top_margin=0mm, bottom_margin=0mm)
+    end
 end
 
 # For a set of wp diaggras, get ticks and limits.
@@ -232,14 +251,15 @@ benchmark_problem!("Boggs function")
 benchmark_problem!("Chandrasekhar function")
 
 
-using PrettyTables
 solver_sucesses = [(solver in prob[2]) ? "O" : "X" for prob in solver_tracker, solver in solvers_all];
+total_sucesses = [sum(solver_sucesses[:,i] .== "O") for i in 1:length(solvers_all)]
+solver_outcomes = vcat(total_sucesses', solver_sucesses)
 
 
 using PrettyTables
 io = IOBuffer()
 println(io, "```@raw html")
-pretty_table(io, solver_sucesses; backend = Val(:html), header = getfield.(solvers_all, :name), row_names = first.(solver_tracker), alignment=:c)
+pretty_table(io, solver_outcomes; backend = Val(:html), header = getfield.(solvers_all, :name), row_names = ["Total successes:"; first.(solver_tracker)], alignment=:c)
 println(io, "```")
 Text(String(take!(io)))
 

@@ -29,6 +29,8 @@ and for NonlinearSolve.jl's Newton trust region we try the following radius upda
 - `Fan` 
 and finally for NonlinearSolve.jl's Levenberg-Marquardt method why try using both the default `α_geodesic` value (`0.75`) and a modified value (`0.5`).
 
+For each benchmarked problem, the second, third, and fourth plots comapres the performance of NonlinearSolve's Newton Raphson, Newton trust region, and Levenberg-Marquardt methods, respectively. The first plot compares the best methods from each of these categories to the various methods avaiable from other packages. At the end of the benchmarks, we print a summary table of which solvers suceeded for which problems.
+
 # Setup
 Fetch required packages.
 ```julia
@@ -78,7 +80,7 @@ reltols = 1.0 ./ 10.0 .^ (4:12);
 Set plotting defaults.
 ```julia
 mm = Plots.Measures.mm
-default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=25, legendfontsize=16, lw=3, la=0.8, ms=10, ma=0.8, left_margin=20mm, bottom_margin=15mm, right_margin=0mm)
+default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=25, tickfontsize=18, legendfontsize=16, lw=5, la=0.7, ms=12, ma=0.8)
 ```
 
 
@@ -110,11 +112,11 @@ function benchmark_problem!(prob_name; solver_tracker=solver_tracker, selected_N
     wp_general = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_general, :solver); names=getfield.(solvers_general, :name), numruns=100, error_estimate=:l2, maxiters=1000000)
     
     xlimit, ylimit, xticks, yticks = get_limits_and_ticks(wp_general, wp_NR, wp_TR, wp_LM)
-    wp_plot_general = plot_wp(wp_general, solvers_general)
-    wp_plot_NR = plot_wp(wp_NR, solvers_NR; yguide="", xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
-    wp_plot_TR = plot_wp(wp_TR, solvers_TR; yguide="", xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
-    wp_plot_LM = plot_wp(wp_LM, solvers_LM; yguide="", xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
-    plot(wp_plot_general, wp_plot_NR, wp_plot_TR, wp_plot_LM, layout=(1,4), size=(3000,800), xlimit=xlimit, ylimit=ylimit, xticks=xticks, yticks=yticks)
+    wp_plot_general = plot_wp(wp_general, solvers_general, xguide="", xlimit, ylimit, true, xticks=(xticks, fill("", length(xticks))),yticks=yticks)
+    wp_plot_NR = plot_wp(wp_NR, solvers_NR, xlimit, ylimit, true; xguide="", yguide="", xticks=(xticks, fill("", length(xticks))), yticks=(yticks, fill("", length(yticks))), right_margin=7mm)
+    wp_plot_TR = plot_wp(wp_TR, solvers_TR, xlimit, ylimit, false; xticks=xticks, yticks=yticks)
+    wp_plot_LM = plot_wp(wp_LM, solvers_LM, xlimit, ylimit, false; yguide="", xticks=xticks, yticks=(yticks, fill("", length(yticks))), right_margin=7mm)
+    plot(wp_plot_general, wp_plot_NR, wp_plot_TR, wp_plot_LM, layout=(2,2), size=(1600,2000), left_margin=10mm)
 end
 
 # Checks if a solver can sucessfully solve a given problem.
@@ -155,11 +157,30 @@ end;
 Plotting related helper functions.
 ```julia
 # Plots a work-precision diagram.
-function plot_wp(wp, selected_solvers; kwargs...)
-    isempty(wp.wps) && (return plot(xaxis=:log10, yaxis=:log10 ;kwargs...))
+function plot_wp(wp, selected_solvers, xlimit, ylimit, top; kwargs...)
     color = reshape(getfield.(selected_solvers, :color),1,length(selected_solvers))
     markershape = reshape(getfield.(selected_solvers, :markershape),1,length(selected_solvers))
-    plot(wp; color=color, markershape=markershape, legend=:outertop, kwargs...)
+
+    if isempty(wp.wps)
+        (:xguide in keys(kwargs)) || (kwargs = (; xguide="Error", kwargs...))
+        (:yguide in keys(kwargs)) || (kwargs = (; yguide="Time (s)", kwargs...))
+        plt = plot(;xlimit=xlimit, ylimit=ylimit, legend=:none, xaxis=:log10, yaxis=:log10, kwargs...)
+        if top
+            plt_legend = plot(;xlimit=(1e6,1e6+1), ylimit=(0.01,0.011), legend=:outerbottom, axis=false, grid=false, framestyle=:none, margin=0mm, kwargs...)
+            return plot(plt_legend, plt, layout = grid(2, 1, heights=[0.25, 0.75]), top_margin=0mm, bottom_margin=0mm)
+        else
+            plt_legend = plot(;xlimit=(1e6,1e6+1), ylimit=(0.01,0.011), legend=:outertop, axis=false, grid=false, framestyle=:none, margin=0mm, kwargs...)
+            return plot(plt, plt_legend, layout = grid(2, 1, heights=[0.75, 0.25]), top_margin=0mm, bottom_margin=0mm)
+        end
+    end
+    plt = plot(wp; color=color, markershape=markershape, xlimit=xlimit, ylimit=ylimit, legend=:none, kwargs...)
+    if top
+        plt_legend = plot(wp; color=color, markershape=markershape, xlimit=(1e6,1e6+1), ylimit=(0.01,0.011), legend=:outerbottom, axis=false, grid=false, framestyle=:none, margin=0mm, kwargs...)
+        return plot(plt_legend, plt, layout = grid(2, 1, heights=[0.25, 0.75]), top_margin=0mm, bottom_margin=0mm)
+    else
+        plt_legend = plot(wp; color=color, markershape=markershape, xlimit=(1e6,1e6+1), ylimit=(0.01,0.011), legend=:outertop, axis=false, grid=false, framestyle=:none, margin=0mm, kwargs...)
+        return plot(plt, plt_legend, layout = grid(2, 1, heights=[0.75, 0.25]), top_margin=0mm, bottom_margin=0mm)
+    end
 end
 
 # For a set of wp diaggras, get ticks and limits.
@@ -320,9 +341,8 @@ benchmark_problem!("Watson function")
 ```
 [Warn] Solver Newton Raphson (No line search) returned retcode MaxIters wit
 h an residual norm = NaN.
-[Warn] Solver Newton Raphson (Hager & Zhang line search) threw an error: Li
-neSearches.LineSearchException{Float64}("Value and slope at step length = 0
- must be finite.", 0.0).
+[Warn] Solver Newton Raphson (Hager & Zhang line search) threw an error: As
+sertionError("isfinite(phi_d) && isfinite(gphi)").
 
 [Warn] Solver Newton Raphson (More & Thuente line search) returned retcode 
 MaxIters with an residual norm = NaN.
@@ -345,13 +365,9 @@ Iters with an residual norm = 129.15201656512428.
 s with an residual norm = 129.15201656512428.
 
 [Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
-esidual norm = 1419.3259058415274.
-
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
-an residual norm = NaN.
-[Warn] Solver Newton Raphson (NLSolveJL) threw an error: During the resolut
-ion of the non-linear system, the evaluation of the following equation(s) r
-esulted in a non-finite number: [1, 2].
+esidual norm = NaN.
+[Warn] Solver Newton Raphson (NLSolveJL) had a very large residual (norm = 
+5.136305692000745e159).
 
 [Warn] Solver Newton Trust Region (NLSolveJL) returned retcode Failure with
  an residual norm = 258.30403313024857.
@@ -360,7 +376,7 @@ resolution of the non-linear system, the evaluation of the following equati
 on(s) resulted in a non-finite number: [1, 2].
 
 [Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 71.60227183421875.
+idual norm = 137.1682676102725.
 ```
 
 
@@ -669,16 +685,42 @@ on(s) resulted in a non-finite number: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].
 Finally, we print a summar of which solvers sucesfully solved which problems.
 
 ```julia
-using PrettyTables
 solver_sucesses = [(solver in prob[2]) ? "O" : "X" for prob in solver_tracker, solver in solvers_all];
+total_sucesses = [sum(solver_sucesses[:,i] .== "O") for i in 1:length(solvers_all)]
+solver_outcomes = vcat(total_sucesses', solver_sucesses)
 ```
+
+```
+24×19 Matrix{Any}:
+ 21     20     22     22     23     …  20     21     21     8     15
+   "X"    "O"    "O"    "O"    "O"       "X"    "X"    "O"   "X"    "X"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "X"    "O"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "O"    "O"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "X"    "X"
+   "O"    "O"    "O"    "O"    "O"  …    "O"    "O"    "O"   "X"    "X"
+   "X"    "X"    "X"    "X"    "O"       "O"    "X"    "X"   "X"    "X"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "X"    "O"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "X"    "X"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "O"    "O"
+  ⋮                                 ⋱          ⋮                  
+   "O"    "O"    "O"    "O"    "O"  …    "X"    "O"    "O"   "X"    "O"
+   "O"    "O"    "O"    "O"    "O"       "X"    "O"    "O"   "X"    "O"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "X"    "O"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "O"    "X"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "X"    "O"
+   "O"    "O"    "O"    "O"    "O"  …    "O"    "O"    "O"   "O"    "O"
+   "O"    "X"    "O"    "O"    "O"       "O"    "O"    "X"   "X"    "X"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "O"    "O"
+   "O"    "O"    "O"    "O"    "O"       "O"    "O"    "O"   "X"    "O"
+```
+
 
 
 ```julia
 using PrettyTables
 io = IOBuffer()
 println(io, "```@raw html")
-pretty_table(io, solver_sucesses; backend = Val(:html), header = getfield.(solvers_all, :name), row_names = first.(solver_tracker), alignment=:c)
+pretty_table(io, solver_outcomes; backend = Val(:html), header = getfield.(solvers_all, :name), row_names = ["Total successes:"; first.(solver_tracker)], alignment=:c)
 println(io, "```")
 Text(String(take!(io)))
 ```
@@ -710,6 +752,28 @@ Text(String(take!(io)))
     </tr>
   </thead>
   <tbody>
+    <tr>
+      <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Total successes:</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">20</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">23</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">20</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">23</td>
+      <td style = "text-align: center;">23</td>
+      <td style = "text-align: center;">19</td>
+      <td style = "text-align: center;">20</td>
+      <td style = "text-align: center;">17</td>
+      <td style = "text-align: center;">20</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">8</td>
+      <td style = "text-align: center;">15</td>
+    </tr>
     <tr>
       <td class = "rowLabel" style = "font-weight: bold; text-align: right;">Generalized Rosenbrock function</td>
       <td style = "text-align: center;">X</td>
@@ -836,7 +900,7 @@ Text(String(take!(io)))
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
@@ -1261,12 +1325,12 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.3.2
   [f3b72e0c] DiffEqDevTools v2.39.0
   [b7050fa9] NonlinearProblemLibrary v0.1.1
-  [8913a72c] NonlinearSolve v2.1.0
-  [c100e077] NonlinearSolveMINPACK v0.1.3
+⌃ [8913a72c] NonlinearSolve v2.1.0
+⌃ [c100e077] NonlinearSolveMINPACK v0.1.3
   [91a5bcdd] Plots v1.39.0
   [08abe8d2] PrettyTables v2.2.7
   [31c91b34] SciMLBenchmarks v0.1.3
@@ -1274,12 +1338,13 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [727e6d20] SimpleNonlinearSolve v0.1.20
   [90137ffa] StaticArrays v1.6.5
   [c3572dad] Sundials v4.20.0
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
   [47edcb42] ADTypes v0.2.4
   [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
@@ -1326,7 +1391,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [460bff9d] ExceptionUnwrapping v0.1.9
   [e2ba6199] ExprTools v0.1.10
   [c87230d0] FFMPEG v0.4.1
-  [7034ab61] FastBroadcast v0.2.6
+⌃ [7034ab61] FastBroadcast v0.2.6
   [29a986be] FastLapackInterface v2.0.0
   [1a297f60] FillArrays v1.6.1
   [6a86dc24] FiniteDiff v2.21.1
@@ -1346,7 +1411,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [34004b35] HypergeometricFunctions v0.3.23
   [7073ff75] IJulia v1.24.2
   [615f187c] IfElse v0.1.1
-  [d25df0c9] Inflate v0.1.3
+⌃ [d25df0c9] Inflate v0.1.3
   [92d709cd] IrrationalConstants v0.2.2
   [82899510] IteratorInterfaceExtensions v1.0.0
   [1019f520] JLFzf v0.1.5
@@ -1375,11 +1440,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
   [b7050fa9] NonlinearProblemLibrary v0.1.1
-  [8913a72c] NonlinearSolve v2.1.0
-  [c100e077] NonlinearSolveMINPACK v0.1.3
+⌃ [8913a72c] NonlinearSolve v2.1.0
+⌃ [c100e077] NonlinearSolveMINPACK v0.1.3
   [6fe1bfb0] OffsetArrays v1.12.10
   [4d8831e6] OpenSSL v1.4.1
-  [429524aa] Optim v1.7.7
+⌃ [429524aa] Optim v1.7.7
   [bac558e1] OrderedCollections v1.6.2
   [90014a1f] PDMats v0.11.25
   [65ce6f38] PackageExtensionCompat v1.0.2
@@ -1390,7 +1455,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [995b91a9] PlotUtils v1.3.5
   [91a5bcdd] Plots v1.39.0
   [e409e4f3] PoissonRandom v0.4.4
-  [f517fe37] Polyester v0.7.7
+⌃ [f517fe37] Polyester v0.7.7
   [1d0040c9] PolyesterWeave v0.2.1
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.12
@@ -1402,10 +1467,10 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e6cf234a] RandomNumbers v1.5.3
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v2.38.10
+⌃ [731186ca] RecursiveArrayTools v2.38.10
   [f2c3362d] RecursiveFactorization v0.2.20
   [189a3867] Reexport v1.2.2
-  [05181044] RelocatableFolders v1.0.0
+⌃ [05181044] RelocatableFolders v1.0.0
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
   [79098fc4] Rmath v0.7.1
@@ -1426,7 +1491,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [66db9d55] SnoopPrecompile v1.0.3
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.1.1
-  [47a9eef4] SparseDiffTools v2.7.0
+⌃ [47a9eef4] SparseDiffTools v2.7.0
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.3.1
   [aedffcd0] Static v0.8.8
@@ -1436,7 +1501,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.2
   [4c63d2b9] StatsFuns v1.3.0
-  [7792a7ef] StrideArraysCore v0.4.17
+⌅ [7792a7ef] StrideArraysCore v0.4.17
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
   [c3572dad] Sundials v4.20.0
@@ -1447,7 +1512,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8290d209] ThreadingUtilities v0.5.2
   [3bb67fe8] TranscodingStreams v0.9.13
   [d5829a12] TriangularSolve v0.1.19
-  [410a4b4d] Tricks v0.1.7
+⌃ [410a4b4d] Tricks v0.1.7
   [781d530d] TruncatedStacktraces v1.4.0
   [5c2747f8] URIs v1.5.0
   [3a884ed6] UnPack v1.0.2
