@@ -1,204 +1,538 @@
 ---
-author: "Chris Rackauckas"
-title: "Orbital Dynamics BVP Benchmark"
+author: "Qingyu Qu"
+title: "Linear BVP Benchmarks"
 ---
 
 
-This is a benchmark of a small non-stiff BVP.
+This is a benchmark of MIRK methods and Shooting method on some linear boundary value problems. The testing BVPs are a set of standard BVP test problems as described [here](https://archimede.uniba.it/~bvpsolvers/testsetbvpsolvers/?page_id=29)
+
+# Setup
+
+Fetch required packages.
 
 ```julia
-using BoundaryValueDiffEq, OrdinaryDiffEq, BenchmarkTools
-
-y0 = [
-    -4.7763169762853989E+06,
-    -3.8386398704441520E+05,
-    -5.3500183933132319E+06,
-    -5528.612564911408,
-    1216.8442360202787,
-    4845.114446429901,
-]
-init_val = [
-    -4.7763169762853989E+06,
-    -3.8386398704441520E+05,
-    -5.3500183933132319E+06,
-    7.0526926403748598E+06,
-    -7.9650476230388973E+05,
-    -1.1911128863666430E+06,
-]
-J2 = 1.08262668E-3
-req = 6378137
-myu = 398600.4418E+9
-t0 = 86400 * 2.3577475462484435E+04
-t1 = 86400 * 2.3577522023524125E+04
-tspan = (t0, t1)
-
-# ODE solver
-function orbital(dy, y, p, t)
-    r2 = (y[1]^2 + y[2]^2 + y[3]^2)
-    r3 = r2^(3 / 2)
-    w = 1 + 1.5J2 * (req * req / r2) * (1 - 5y[3] * y[3] / r2)
-    w2 = 1 + 1.5J2 * (req * req / r2) * (3 - 5y[3] * y[3] / r2)
-    dy[1] = y[4]
-    dy[2] = y[5]
-    dy[3] = y[6]
-    dy[4] = -myu * y[1] * w / r3
-    dy[5] = -myu * y[2] * w / r3
-    dy[6] = -myu * y[3] * w2 / r3
-end
-
-function bc!_generator(resid, sol, init_val)
-    resid[1] = sol[1][1] - init_val[1]
-    resid[2] = sol[1][2] - init_val[2]
-    resid[3] = sol[1][3] - init_val[3]
-    resid[4] = sol[end][1] - init_val[4]
-    resid[5] = sol[end][2] - init_val[5]
-    resid[6] = sol[end][3] - init_val[6]
-end
-cur_bc! = (resid, sol, p, t) -> bc!_generator(resid, sol, init_val)
-resid_f = Array{Float64}(undef, 6)
-bvp = BVProblem(orbital, cur_bc!, y0, tspan)
-```
-
-```
-BVProblem with uType Vector{Float64} and tType Float64. In-place: true
-timespan: (2.037093879958655e9, 2.0370979028324845e9)
-u0: 6-element Vector{Float64}:
-      -4.776316976285399e6
- -383863.9870444152
-      -5.350018393313232e6
-   -5528.612564911408
-    1216.8442360202787
-    4845.114446429901
+using BoundaryValueDiffEq, OrdinaryDiffEq, ODEInterface, DiffEqDevTools, BenchmarkTools, BVProblemLibrary, Plots
 ```
 
 
+
+
+Set up the benchmarked solvers.
 
 ```julia
-@btime sol = solve(bvp, Shooting(DP5()), abstol = 1e-13, reltol = 1e-13)
-```
-
-```
-7.351 s (219423510 allocations: 7.86 GiB)
-retcode: Failure
-Interpolation: specialized 4th order "free" interpolation
-t: 597-element Vector{Float64}:
- 2.037093879958655e9
- 2.0370938799622977e9
- 2.0370938799987223e9
- 2.0370938803629692e9
- 2.0370938838112967e9
- 2.0370938888517034e9
- 2.0370938951506572e9
- 2.0370939021630316e9
- 2.0370939095951097e9
- 2.0370939172331755e9
- ⋮
- 2.0370978553040757e9
- 2.0370978618591146e9
- 2.0370978684877334e9
- 2.0370978751875277e9
- 2.0370978819562607e9
- 2.0370978887918732e9
- 2.0370978956924298e9
- 2.0370979026561356e9
- 2.0370979028324845e9
-u: 597-element Vector{Vector{Float64}}:
- [-4.776316976285399e6, -383863.9870444152, -5.350018393313232e6, -5528.612
-5622122145, 1216.844236167992, 4845.114448459668]
- [-4.776337114050968e6, -383859.55472433736, -5.35000074509611e6, -5528.593
-886526588, 1216.8457370873573, 4845.135420977298]
- [-4.776538487965187e6, -383815.23122288333, -5.349824258723393e6, -5528.40
-7125319422, 1216.860745329452, 4845.345142371176]
- [-4.778551852902378e6, -383371.96615359385, -5.348058974897434e6, -5526.53
-9078211655, 1217.01073259003, 4847.441978006195]
- [-4.797578630741703e6, -379172.8767506717, -5.331309222713494e6, -5508.815
-122106412, 1218.4220866888518, 4867.258601639212]
- [-4.825279751612244e6, -373026.3912303465, -5.3067034850080805e6, -5482.78
-10394784765, 1220.4571178755682, 4896.113007861168]
- [-4.859712526560272e6, -365330.8985919911, -5.275750008544815e6, -5450.035
-350222503, 1222.9535593560233, 4931.9849283936965]
- [-4.897801605815757e6, -356745.5226880856, -5.241025776014621e6, -5413.306
-557902342, 1225.6715664148016, 4971.673312868348]
- [-4.937888103347884e6, -347625.7480842805, -5.2039204791034255e6, -5374.06
-60612647725, 1228.4817277946254, 5013.451459743668]
- [-4.9787804990446195e6, -338231.73485878983, -5.165464412584783e6, -5333.4
-04299941326, 1231.2939796728765, 5056.078640132098]
- ⋮
- [7.107980200839257e6, -749300.8920872916, -845042.5085724423, -982.8633121
-241063, -1012.6376950564307, -7305.8371453347745]
- [7.101374072872074e6, -755921.4880935262, -892912.702730994, -1032.7167944
-025662, -1007.3566262313382, -7299.723998487989]
- [7.094361633692519e6, -762581.0412799193, -941278.3567550423, -1083.082076
-8190333, -1001.969106278419, -7293.199861707126]
- [7.086934818634861e6, -769275.6530585287, -990118.2314225868, -1133.936891
-5086666, -996.475794069306, -7286.256133008205]
- [7.079085774043644e6, -776001.6117864769, -1.0394122075538526e6, -1185.260
-1408438952, -990.877281032179, -7278.884443807615]
- [7.07080681448266e6, -782755.4007979486, -1.0891413643304259e6, -1237.0319
-786339858, -985.1740776110029, -7271.076616040891]
- [7.062090459180432e6, -789533.6418326901, -1.1392875819025896e6, -1289.233
-3960715303, -979.3666542879498, -7262.8246940113695]
- [7.052929387109405e6, -796333.1105197222, -1.1898336704995204e6, -1341.846
-3558859462, -973.4554231870354, -7254.120900041708]
- [7.052692636543989e6, -796504.7650798688, -1.1911129070555705e6, -1343.177
-8397664748, -973.3050690975731, -7253.895580643448]
+setups = [ Dict(:alg=>MIRK2(), :dts=>1.0 ./ 10.0 .^ (1:4)),
+            Dict(:alg=>MIRK3(), :dts=>1.0 ./ 10.0 .^ (1:4)),
+            Dict(:alg=>MIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4)),
+            Dict(:alg=>MIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4)),
+            Dict(:alg=>MIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4)),
+            Dict(:alg=>BVPM2(), :dts=>1.0 ./ 7.0 .^ (1:4)),
+            Dict(:alg=>Shooting(Tsit5())),
+            Dict(:alg=>Shooting(Vern7())),
+            Dict(:alg=>Shooting(DP5())),]
+labels = ["MIRK2";
+               "MIRK3";
+               "MIRK4";
+               "MIRK5";
+               "MIRK6";
+               "BVPM2";
+               "Shooting (Tsit5)";
+               "Shooting (Vern7)";
+               "Shooting (DP5)"];
 ```
 
 
+
+
+Sets tolerances.
 
 ```julia
-@btime sol = solve(bvp, MIRK2(), abstol = 1e-13, reltol = 1e-13)
-```
-
-```
-Error: ArgumentError: dt must be positive
+abstols = 1.0 ./ 10.0 .^ (1:3)
+reltols = 1.0 ./ 10.0 .^ (1:3);
 ```
 
 
+
+
+# Benchmarks
+
+We here run the BVP benchmarks for all the MIRK methods and single shooting method.
+
+## Linear boundary value problems
+
+### Linear BVP 1
 
 ```julia
-@btime sol = solve(bvp, MIRK3(), abstol = 1e-13, reltol = 1e-13)
+prob_1 = BVProblemLibrary.prob_bvp_linear_1
+sol_1 = solve(prob_1, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_1 = TestSolution(sol_1.t, sol_1.u)
+wp_1 = WorkPrecisionSet(prob_1, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_1, maxiters=Int(1e5))
+plot(wp_1)
 ```
 
 ```
-Error: ArgumentError: dt must be positive
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
 ```
 
 
+![](figures/linear_wpd_4_1.png)
+
+
+
+### Linear BVP 2
 
 ```julia
-@btime sol = solve(bvp, MIRK4(), abstol = 1e-13, reltol = 1e-13)
+prob_2 = BVProblemLibrary.prob_bvp_linear_2
+sol_2 = solve(prob_2, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_2 = TestSolution(sol_2.t, sol_2.u)
+wp_2 = WorkPrecisionSet(prob_2, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_2, maxiters=Int(1e5))
+plot(wp_2)
 ```
 
 ```
-Error: ArgumentError: dt must be positive
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
 ```
 
 
+![](figures/linear_wpd_5_1.png)
+
+
+
+### Linear BVP 3
 
 ```julia
-@btime sol = solve(bvp, MIRK5(), abstol = 1e-13, reltol = 1e-13)
+prob_3 = BVProblemLibrary.prob_bvp_linear_3
+sol_3 = solve(prob_3, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_3 = TestSolution(sol_3.t, sol_3.u)
+wp_3 = WorkPrecisionSet(prob_3, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_3, maxiters=Int(1e4))
+plot(wp_3)
 ```
 
 ```
-Error: ArgumentError: dt must be positive
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
 ```
 
 
+![](figures/linear_wpd_6_1.png)
+
+
+
+### Linear BVP 4
 
 ```julia
-@btime sol = solve(bvp, MIRK6(), abstol = 1e-13, reltol = 1e-13)
+prob_4 = BVProblemLibrary.prob_bvp_linear_4
+sol_4 = solve(prob_4, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_4 = TestSolution(sol_4.t, sol_4.u)
+wp_4 = WorkPrecisionSet(prob_4, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_4, maxiters=Int(1e4))
+plot(wp_4)
 ```
 
 ```
-Error: ArgumentError: dt must be positive
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_7_1.png)
+
+
+
+### Linear BVP 5
+
+```julia
+prob_5 = BVProblemLibrary.prob_bvp_linear_5
+sol_5 = solve(prob_5, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_5 = TestSolution(sol_5.t, sol_5.u)
+wp_5 = WorkPrecisionSet(prob_5, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_5, maxiters=Int(1e4))
+plot(wp_5)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_8_1.png)
+
+
+
+### Linear BVP 6
+
+```julia
+prob_6 = BVProblemLibrary.prob_bvp_linear_6
+sol_6 = solve(prob_6, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_6 = TestSolution(sol_6.t, sol_6.u)
+wp_6 = WorkPrecisionSet(prob_6, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_6, maxiters=Int(1e4))
+plot(wp_6)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_9_1.png)
+
+
+
+### Linear BVP 7
+
+```julia
+prob_7 = BVProblemLibrary.prob_bvp_linear_7
+sol_7 = solve(prob_7, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_7 = TestSolution(sol_7.t, sol_7.u)
+wp_7 = WorkPrecisionSet(prob_7, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_7, maxiters=Int(1e4))
+plot(wp_7)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_10_1.png)
+
+
+
+### Linear BVP 8
+
+```julia
+prob_8 = BVProblemLibrary.prob_bvp_linear_8
+sol_8 = solve(prob_8, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_8 = TestSolution(sol_8.t, sol_8.u)
+wp_8 = WorkPrecisionSet(prob_8, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_8, maxiters=Int(1e4))
+plot(wp_8)
+```
+
+```
+Error: UndefVarError: `res_a` not defined
 ```
 
 
 
 
 
-## Appendix
+### Linear BVP 9
+
+```julia
+prob_9 = BVProblemLibrary.prob_bvp_linear_9
+sol_9 = solve(prob_9, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_9 = TestSolution(sol_9.t, sol_9.u)
+wp_9 = WorkPrecisionSet(prob_9, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_9, maxiters=Int(1e4))
+plot(wp_9)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_12_1.png)
+
+
+
+### Linear BVP 10
+
+```julia
+prob_10 = BVProblemLibrary.prob_bvp_linear_10
+sol_10 = solve(prob_10, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_10 = TestSolution(sol_10.t, sol_10.u)
+wp_10 = WorkPrecisionSet(prob_10, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_10, maxiters=Int(1e4))
+plot(wp_10)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_13_1.png)
+
+
+
+### Linear BVP 11
+
+```julia
+prob_11 = BVProblemLibrary.prob_bvp_linear_11
+sol_11 = solve(prob_11, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_11 = TestSolution(sol_11.t, sol_11.u)
+wp_11 = WorkPrecisionSet(prob_11, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_11, maxiters=Int(1e4))
+plot(wp_11)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_14_1.png)
+
+
+
+### Linear BVP 12
+
+```julia
+prob_12 = BVProblemLibrary.prob_bvp_linear_12
+sol_12 = solve(prob_12, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_12 = TestSolution(sol_12.t, sol_12.u)
+wp_12 = WorkPrecisionSet(prob_12, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_12, maxiters=Int(1e4))
+plot(wp_12)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_15_1.png)
+
+
+
+### Linear BVP 13
+
+```julia
+prob_13 = BVProblemLibrary.prob_bvp_linear_13
+sol_13 = solve(prob_13, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_13 = TestSolution(sol_13.t, sol_13.u)
+wp_13 = WorkPrecisionSet(prob_13, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_13, maxiters=Int(1e4))
+plot(wp_13)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_16_1.png)
+
+
+
+### Linear BVP 14
+
+```julia
+prob_14 = BVProblemLibrary.prob_bvp_linear_14
+sol_14 = solve(prob_14, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_14 = TestSolution(sol_14.t, sol_14.u)
+wp_14 = WorkPrecisionSet(prob_14, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_14, maxiters=Int(1e4))
+plot(wp_14)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_17_1.png)
+
+
+
+### Linear BVP 15
+
+```julia
+prob_15 = BVProblemLibrary.prob_bvp_linear_15
+sol_15 = solve(prob_15, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_15 = TestSolution(sol_15.t, sol_15.u)
+wp_15 = WorkPrecisionSet(prob_15, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_15, maxiters=Int(1e4))
+plot(wp_15)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_18_1.png)
+
+
+
+### Linear BVP 16
+
+```julia
+prob_16 = BVProblemLibrary.prob_bvp_linear_16
+sol_16 = solve(prob_16, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_16 = TestSolution(sol_16.t, sol_16.u)
+wp_16 = WorkPrecisionSet(prob_16, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_16, maxiters=Int(1e4))
+plot(wp_16)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_19_1.png)
+
+
+
+### Linear BVP 17
+
+```julia
+prob_17 = BVProblemLibrary.prob_bvp_linear_17
+sol_17 = solve(prob_17, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_17 = TestSolution(sol_17.t, sol_17.u)
+wp_17 = WorkPrecisionSet(prob_17, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_17, maxiters=Int(1e4))
+plot(wp_17)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_20_1.png)
+
+
+
+### Linear BVP 18
+
+```julia
+prob_18 = BVProblemLibrary.prob_bvp_linear_18
+sol_18 = solve(prob_18, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+testsol_18 = TestSolution(sol_18.t, sol_18.u)
+wp_18 = WorkPrecisionSet(prob_18, abstols, reltols, setups; names = labels, print_names = true, appxsol = testsol_18, maxiters=Int(1e4))
+plot(wp_18)
+```
+
+```
+MIRK2
+MIRK3
+MIRK4
+MIRK5
+MIRK6
+BVPM2
+Shooting (Tsit5)
+Shooting (Vern7)
+Shooting (DP5)
+```
+
+
+![](figures/linear_wpd_21_1.png)
 
 
 ## Appendix
@@ -209,7 +543,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/NonStiffBVP","orbital.jmd")
+SciMLBenchmarks.weave_file("benchmarks/NonStiffBVP","linear_wpd.jmd")
 ```
 
 Computer Information:
