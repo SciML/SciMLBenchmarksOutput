@@ -373,16 +373,10 @@ push!(algorithms, (PDMPCHVSimple(), CHV(Tsit5()), true, "PDMPCHVSimple (recursiv
 ```
 
 ```
-Error: LoadError: InitError: could not load library "/cache/julia-buildkite
--plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/1e35a1caa2beb
-6ae8e54b88f719e5ae6891c4dcc/lib/libsundials_sunlinsolklu.so"
-libklu.so.2: cannot open shared object file: No such file or directory
-during initialization of module Sundials_jll
-in expression starting at /cache/julia-buildkite-plugin/depots/5b300254-173
-8-4989-ae0a-f4d2d937f953/packages/Sundials/pk5Ap/src/Sundials.jl:3
-in expression starting at /cache/julia-buildkite-plugin/depots/5b300254-173
-8-4989-ae0a-f4d2d937f953/packages/PiecewiseDeterministicMarkovProcesses/vDx
-0E/src/PiecewiseDeterministicMarkovProcesses.jl:1
+Error: Failed to precompile PiecewiseDeterministicMarkovProcesses [86206cdf
+-4603-54e0-bd58-22a2dcbf57aa] to "/cache/julia-buildkite-plugin/depots/5b30
+0254-1738-4989-ae0a-f4d2d937f953/compiled/v1.9/PiecewiseDeterministicMarkov
+Processes/jl_1OntQa".
 ```
 
 
@@ -577,7 +571,7 @@ ge
 ge
     ruamel.yaml-0.16.0         |   py38h516909a_1         172 KB  conda-for
 ge
-    zstandard-0.21.0           |   py38ha98ab4e_1         395 KB  conda-for
+    zstandard-0.22.0           |   py38ha98ab4e_0         393 KB  conda-for
 ge
     ------------------------------------------------------------
                                            Total:        34.0 MB
@@ -615,8 +609,8 @@ c33a_0_cpython
   python_abi                                   3.10-4_cp310 --> 3.8-4_cp38 
   ruamel.yaml                       0.17.40-py310h2372a71_0 --> 0.16.0-py38
 h516909a_1 
-  zstandard                          0.21.0-py310h1275a96_1 --> 0.21.0-py38
-ha98ab4e_1 
+  zstandard                          0.22.0-py310h1275a96_0 --> 0.22.0-py38
+ha98ab4e_0 
 
 
 Preparing transaction: ...working... done
@@ -629,15 +623,15 @@ Solving environment: ...working... done
 
 Collecting tick
   Downloading tick-0.7.0.1-cp38-cp38-manylinux2014_x86_64.whl (10.8 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 20.0 MB/s eta 0:
-00:00
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 8.2 MB/s eta 0:0
+0:00
 Requirement already satisfied: numpy in /cache/julia-buildkite-plugin/depot
 s/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3.8/site-pa
 ckages (from tick) (1.24.4)
 Collecting scipy (from tick)
   Downloading scipy-1.10.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x8
 6_64.whl (34.5 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.5/34.5 MB 55.7 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.5/34.5 MB 81.8 MB/s eta 0:
 00:00
 Collecting numpydoc (from tick)
   Obtaining dependency information for numpydoc from https://files.pythonho
@@ -694,7 +688,7 @@ d29da16f5bf035deab/fonttools-4.43.1-cp38-cp38-manylinux_2_17_x86_64.manylin
 ux2014_x86_64.whl.metadata
   Downloading fonttools-4.43.1-cp38-cp38-manylinux_2_17_x86_64.manylinux201
 4_x86_64.whl.metadata (152 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 152.4/152.4 kB 76.6 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 152.4/152.4 kB 74.9 MB/s eta 0:
 00:00
 Collecting kiwisolver>=1.0.1 (from matplotlib->tick)
   Obtaining dependency information for kiwisolver>=1.0.1 from https://files
@@ -719,7 +713,7 @@ pythonhosted.org/packages/39/92/8486ede85fcc088f1b3dba4ce92dd29d126fd96b000
   Downloading pyparsing-3.1.1-py3-none-any.whl.metadata (5.1 kB)
 Collecting python-dateutil>=2.7 (from matplotlib->tick)
   Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 kB 96.7 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 kB 102.8 MB/s eta 0:
 00:00
 Collecting importlib-resources>=3.2.0 (from matplotlib->tick)
   Obtaining dependency information for importlib-resources>=3.2.0 from http
@@ -729,7 +723,7 @@ data
   Downloading importlib_resources-6.1.0-py3-none-any.whl.metadata (4.1 kB)
 Collecting Jinja2>=2.10 (from numpydoc->tick)
   Downloading Jinja2-3.1.2-py3-none-any.whl (133 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.1/133.1 kB 73.0 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.1/133.1 kB 75.6 MB/s eta 0:
 00:00
 Collecting tabulate>=0.8.10 (from numpydoc->tick)
   Downloading tabulate-0.9.0-py3-none-any.whl (35 kB)
@@ -737,26 +731,26 @@ Collecting tomli>=1.1.0 (from numpydoc->tick)
   Downloading tomli-2.0.1-py3-none-any.whl (12 kB)
 Collecting sphinxcontrib-applehelp (from sphinx->tick)
   Downloading sphinxcontrib_applehelp-1.0.4-py3-none-any.whl (120 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 120.6/120.6 kB 67.1 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 120.6/120.6 kB 70.5 MB/s eta 0:
 00:00
 Collecting sphinxcontrib-devhelp (from sphinx->tick)
   Downloading sphinxcontrib_devhelp-1.0.2-py2.py3-none-any.whl (84 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.7/84.7 kB 52.1 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.7/84.7 kB 53.5 MB/s eta 0:
 00:00
 Collecting sphinxcontrib-jsmath (from sphinx->tick)
   Downloading sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl (5.1 kB)
 Collecting sphinxcontrib-htmlhelp>=2.0.0 (from sphinx->tick)
   Downloading sphinxcontrib_htmlhelp-2.0.1-py3-none-any.whl (99 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 99.8/99.8 kB 58.1 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 99.8/99.8 kB 61.2 MB/s eta 0:
 00:00
 Collecting sphinxcontrib-serializinghtml>=1.1.5 (from sphinx->tick)
   Downloading sphinxcontrib_serializinghtml-1.1.5-py2.py3-none-any.whl (94 
 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 94.0/94.0 kB 59.1 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 94.0/94.0 kB 61.8 MB/s eta 0:
 00:00
 Collecting sphinxcontrib-qthelp (from sphinx->tick)
   Downloading sphinxcontrib_qthelp-1.0.3-py2.py3-none-any.whl (90 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.6/90.6 kB 56.0 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.6/90.6 kB 59.4 MB/s eta 0:
 00:00
 Collecting Pygments>=2.13 (from sphinx->tick)
   Obtaining dependency information for Pygments>=2.13 from https://files.py
@@ -770,7 +764,7 @@ files.pythonhosted.org/packages/26/87/f238c0670b94533ac0353a4e2a1a771a0cc73
   Downloading docutils-0.20.1-py3-none-any.whl.metadata (2.8 kB)
 Collecting snowballstemmer>=2.0 (from sphinx->tick)
   Downloading snowballstemmer-2.2.0-py2.py3-none-any.whl (93 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 93.0/93.0 kB 56.8 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 93.0/93.0 kB 59.4 MB/s eta 0:
 00:00
 Collecting babel>=2.9 (from sphinx->tick)
   Obtaining dependency information for babel>=2.9 from https://files.python
@@ -796,7 +790,7 @@ onhosted.org/packages/32/4d/aaf7eff5deb402fd9a24a1449a8119f00d74ae9c2efa79f
   Downloading pytz-2023.3.post1-py2.py3-none-any.whl.metadata (22 kB)
 Collecting tzdata>=2022.1 (from pandas->tick)
   Downloading tzdata-2023.3-py2.py3-none-any.whl (341 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 341.8/341.8 kB 110.7 MB/s eta 0:
+     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 341.8/341.8 kB 119.2 MB/s eta 0:
 00:00
 Collecting joblib>=1.1.1 (from scikit-learn->tick)
   Obtaining dependency information for joblib>=1.1.1 from https://files.pyt
@@ -824,7 +818,7 @@ Collecting six>=1.5 (from python-dateutil>=2.7->matplotlib->tick)
   Downloading six-1.16.0-py2.py3-none-any.whl (11 kB)
 Requirement already satisfied: charset-normalizer<4,>=2 in /cache/julia-bui
 ldkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/li
-b/python3.8/site-packages (from requests>=2.25.0->sphinx->tick) (3.3.1)
+b/python3.8/site-packages (from requests>=2.25.0->sphinx->tick) (3.3.2)
 Requirement already satisfied: idna<4,>=2.5 in /cache/julia-buildkite-plugi
 n/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3.8/
 site-packages (from requests>=2.25.0->sphinx->tick) (3.4)
@@ -835,61 +829,61 @@ Requirement already satisfied: certifi>=2017.4.17 in /cache/julia-buildkite
 -plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/pyth
 on3.8/site-packages (from requests>=2.25.0->sphinx->tick) (2023.7.22)
 Downloading dill-0.3.7-py3-none-any.whl (115 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 115.3/115.3 kB 60.4 MB/s eta 0:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 115.3/115.3 kB 62.4 MB/s eta 0:
 00:00
 Downloading matplotlib-3.7.3-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_
 x86_64.whl (9.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 126.5 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 111.6 MB/s eta 0:00:
 00
 Downloading numpydoc-1.6.0-py3-none-any.whl (61 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.7/61.7 kB 38.6 MB/s eta 0:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.7/61.7 kB 40.9 MB/s eta 0:00
 :00
 Downloading sphinx-7.1.2-py3-none-any.whl (3.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 123.8 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 149.4 MB/s eta 0:00:
 00
 Downloading pandas-2.0.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_
 64.whl (12.4 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 64.6 MB/s eta 0:00
-:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 140.1 MB/s eta 0:0
+0:00
 Downloading scikit_learn-1.3.2-cp38-cp38-manylinux_2_17_x86_64.manylinux201
 4_x86_64.whl (11.1 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.1/11.1 MB 82.4 MB/s eta 0:00
-:00
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.1/11.1 MB 149.5 MB/s eta 0:0
+0:00
 Downloading Babel-2.13.1-py3-none-any.whl (10.1 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.1/10.1 MB 155.3 MB/s eta 0:0
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.1/10.1 MB 152.9 MB/s eta 0:0
 0:00
 Downloading contourpy-1.1.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x
 86_64.whl (301 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 301.1/301.1 kB 105.4 MB/s eta 0:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 301.1/301.1 kB 111.2 MB/s eta 0:
 00:00
 Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
 Downloading docutils-0.20.1-py3-none-any.whl (572 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 572.7/572.7 kB 135.6 MB/s eta 0:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 572.7/572.7 kB 144.2 MB/s eta 0:
 00:00
 Downloading fonttools-4.43.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_
 x86_64.whl (4.6 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.6/4.6 MB 125.8 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.6/4.6 MB 155.8 MB/s eta 0:00:
 00
 Downloading importlib_metadata-6.8.0-py3-none-any.whl (22 kB)
 Downloading importlib_resources-6.1.0-py3-none-any.whl (33 kB)
 Downloading joblib-1.3.2-py3-none-any.whl (302 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 302.2/302.2 kB 108.1 MB/s eta 0:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 302.2/302.2 kB 115.3 MB/s eta 0:
 00:00
 Downloading kiwisolver-1.4.5-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_
 64.whl (1.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 148.7 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 156.5 MB/s eta 0:00:
 00
 Downloading Pillow-10.1.0-cp38-cp38-manylinux_2_28_x86_64.whl (3.6 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.6/3.6 MB 140.1 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.6/3.6 MB 153.6 MB/s eta 0:00:
 00
 Downloading Pygments-2.16.1-py3-none-any.whl (1.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 139.1 MB/s eta 0:00:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 155.2 MB/s eta 0:00:
 00
 Downloading pyparsing-3.1.1-py3-none-any.whl (103 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 103.1/103.1 kB 63.3 MB/s eta 0:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 103.1/103.1 kB 65.7 MB/s eta 0:
 00:00
 Downloading pytz-2023.3.post1-py2.py3-none-any.whl (502 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 502.5/502.5 kB 130.6 MB/s eta 0:
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 502.5/502.5 kB 132.6 MB/s eta 0:
 00:00
 Downloading threadpoolctl-3.2.0-py3-none-any.whl (15 kB)
 Downloading MarkupSafe-2.1.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_
@@ -923,7 +917,7 @@ imiter! = trivial_limiter!, thread = static(false),), 1, "Direct (recursive
 )")
  (JumpProcesses.Coevolve(), JumpProcesses.SSAStepper(), 1, "Coevolve (recur
 sive)")
- (Main.var"##WeaveSandBox#349".PyTick(), nothing, 1, "PyTick")
+ (Main.var"##WeaveSandBox#292".PyTick(), nothing, 1, "PyTick")
 ```
 
 
@@ -936,7 +930,7 @@ Now, we instantiate the problems, find their solutions and plot the results.
 let fig = []
   for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms[5:end])
     @info label
-    if typeof(algo) <: PyTick
+    if algo isa PyTick
         _p = (p[1], p[2], p[3])
         jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
         jump_prob.reset()
@@ -944,7 +938,7 @@ let fig = []
         t = tspan[1]:0.1:tspan[2]
         N = [[sum(jumps .< _t) for _t in t] for jumps in jump_prob.timestamps]
         push!(fig, plot(t, N, title=label, legend=false, format=fmt))
-    elseif typeof(algo) <: PDMPCHVSimple
+    elseif algo isa PDMPCHVSimple
         if use_recursion
           h = zeros(eltype(tspan), nv(G))
           ϕ = zeros(eltype(tspan), nv(G))
@@ -956,7 +950,7 @@ let fig = []
         jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
         sol = solve(jump_prob, stepper)
         push!(fig, plot(sol.time, sol.xd[1:V, :]', title=label, legend=false, format=fmt))
-    elseif typeof(algo) <: PDMPCHVFull
+    elseif algo isa PDMPCHVFull
         _p = (p[1], p[2], p[3], nothing, nothing, g)
         jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
         sol = solve(jump_prob, stepper)
@@ -1006,27 +1000,27 @@ end
 ```
 
 ```
-10-element Vector{Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vec
+10-element Vector{Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vec
 tor{Int64}}, Tuple{Float64, Float64, Float64}}}:
- (::Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#292".var"#Λ#32"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
 ```
 
@@ -1061,7 +1055,7 @@ end
 
 function histories(sol::S) where {S<:ODESolution}
     # get u and permute the dimensions to get a matrix n x k with n obsevations and k processes.
-    if typeof(sol.u[1]) <: ExtendedJumpArray
+    if sol.u[1] isa ExtendedJumpArray
         u = map((u) -> u.u, sol.u)
     else
         u = sol.u
@@ -1218,9 +1212,9 @@ Now, we simulate all of the algorithms we defined in the previous Section ``250`
 let fig = []
     for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms)
         @info label
-        if typeof(algo) <: PyTick
+        if algo isa PyTick
             _p = (p[1], p[2], p[3])
-        elseif typeof(algo) <: PDMPCHVSimple
+        elseif algo isa PDMPCHVSimple
             if use_recursion
                 h = zeros(eltype(tspan), nv(G))
                 ϕ = zeros(eltype(tspan), nv(G))
@@ -1229,7 +1223,7 @@ let fig = []
                 h = [eltype(tspan)[] for _ in 1:nv(G)]
                 _p = (p[1], p[2], p[3], h, g)
             end
-        elseif typeof(algo) <: PDMPCHVFull
+        elseif algo isa PDMPCHVFull
             _p = (p[1], p[2], p[3], nothing, nothing, g)
         else
             if use_recursion
@@ -1246,19 +1240,19 @@ let fig = []
         jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
         runs = Vector{Vector{Vector{Number}}}(undef, 250)
         for n = 1:length(runs)
-            if typeof(algo) <: PyTick
+            if algo isa PyTick
                 jump_prob.reset()
                 jump_prob.simulate()
                 runs[n] = jump_prob.timestamps
             else
-                if ~(typeof(algo) <: PDMPCHVFull)
+                if ~(algo isa PDMPCHVFull)
                     if use_recursion
                         h .= 0
                         ϕ .= 0
                     else
                         for _h in h empty!(_h) end
                     end
-                    if ~(typeof(algo) <: PDMPCHVSimple)
+                    if ~(algo isa PDMPCHVSimple)
                         urate .= 0
                     end
                 end
@@ -1304,9 +1298,9 @@ for (algo, stepper, use_recursion, label) in algorithms
     for (i, G) in enumerate(Gs)
         local g = [neighbors(G, i) for i = 1:nv(G)]
         local u = [0.0 for i = 1:nv(G)]
-        if typeof(algo) <: PyTick
+        if algo isa PyTick
             _p = (p[1], p[2], p[3])
-        elseif typeof(algo) <: PDMPCHVSimple
+        elseif algo isa PDMPCHVSimple
             if use_recursion
               global h = zeros(eltype(tspan), nv(G))
               global ϕ = zeros(eltype(tspan), nv(G))
@@ -1315,7 +1309,7 @@ for (algo, stepper, use_recursion, label) in algorithms
               global h = [eltype(tspan)[] for _ in 1:nv(G)]
               _p = (p[1], p[2], p[3], h, g)
             end
-        elseif typeof(algo) <: PDMPCHVFull
+        elseif algo isa PDMPCHVFull
             _p = (p[1], p[2], p[3], nothing, nothing, g)
         else
             if use_recursion
@@ -1331,7 +1325,7 @@ for (algo, stepper, use_recursion, label) in algorithms
         end
         global jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
         trial = try
-            if typeof(algo) <: PyTick
+            if algo isa PyTick
                 @benchmark(
                     jump_prob.simulate(),
                     setup = (jump_prob.reset()),
@@ -1340,7 +1334,7 @@ for (algo, stepper, use_recursion, label) in algorithms
                     seconds = 10,
                 )
             else
-                if typeof(algo) <: PDMPCHVFull
+                if algo isa PDMPCHVFull
                     @benchmark(
                         solve(jump_prob, _stepper),
                         setup = (),
@@ -1348,7 +1342,7 @@ for (algo, stepper, use_recursion, label) in algorithms
                         evals = 1,
                         seconds = 10,
                     )
-                elseif typeof(algo) <: PDMPCHVSimple
+                elseif algo isa PDMPCHVSimple
                     if use_recursion
                         @benchmark(solve(jump_prob, _stepper),
                                    setup=(h .= 0; ϕ .= 0),
