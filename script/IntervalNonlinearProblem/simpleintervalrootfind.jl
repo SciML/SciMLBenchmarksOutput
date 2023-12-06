@@ -1,7 +1,7 @@
 
 using Roots, BenchmarkTools
 
-N = 100_000;
+const N = 100_000;
 levels = 1.5 .* rand(N);
 out = zeros(N);
 myfun(x, lv) = x * sin(x) - lv
