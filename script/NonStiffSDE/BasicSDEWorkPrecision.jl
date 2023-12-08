@@ -1,7 +1,6 @@
 
-using StochasticDiffEq, Plots, DiffEqDevTools, DiffEqProblemLibrary
-using DiffEqProblemLibrary.SDEProblemLibrary: importsdeproblems; importsdeproblems()
-import DiffEqProblemLibrary.SDEProblemLibrary: prob_sde_additivesystem,
+using StochasticDiffEq, Plots, DiffEqDevTools, SDEProblemLibrary
+import SDEProblemLibrary: prob_sde_additivesystem,
             prob_sde_additive, prob_sde_2Dlinear, prob_sde_linear, prob_sde_wave
 gr()
 const N = 1000
