@@ -43,11 +43,11 @@ end a b c d
 ```
 
 ```
-(::Main.var"##WeaveSandBox#15901".LotkaVolterraTest{Main.var"##WeaveSandBox
-#15901".var"###ParameterizedDiffEqFunction#15903", Main.var"##WeaveSandBox#
-15901".var"###ParameterizedTGradFunction#15904", Main.var"##WeaveSandBox#15
-901".var"###ParameterizedJacobianFunction#15905", Nothing, Nothing, Modelin
-gToolkit.ODESystem}) (generic function with 1 method)
+(::Main.var"##WeaveSandBox#292".LotkaVolterraTest{Main.var"##WeaveSandBox#2
+92".var"###ParameterizedDiffEqFunction#294", Main.var"##WeaveSandBox#292".v
+ar"###ParameterizedTGradFunction#295", Main.var"##WeaveSandBox#292".var"###
+ParameterizedJacobianFunction#296", Nothing, Nothing, ModelingToolkit.ODESy
+stem}) (generic function with 1 method)
 ```
 
 
@@ -192,12 +192,12 @@ optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub =
 ```
 
 ```
-1.022 s (2761138 allocations: 390.03 MiB)
+1.008 s (2757064 allocations: 389.46 MiB)
 u: 4-element Vector{Float64}:
- 1.4986402488783785
- 0.9987720304448329
- 3.0064940764923165
- 1.0018319242627163
+ 1.5003125297675504
+ 0.9998497574518792
+ 2.998082795803598
+ 0.999251355776384
 ```
 
 
@@ -210,12 +210,12 @@ optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub =
 ```
 
 ```
-1.022 s (2761326 allocations: 390.08 MiB)
+1.010 s (2779407 allocations: 392.62 MiB)
 u: 4-element Vector{Float64}:
- 1.5001954880344162
- 0.9998745637791494
- 2.9987382778078837
- 0.999532447825472
+ 1.4979847531866883
+ 0.9988287998842318
+ 3.008872017861591
+ 1.0031225708668257
 ```
 
 
@@ -228,12 +228,12 @@ optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub =
 ```
 
 ```
-1.294 s (2802617 allocations: 398.77 MiB)
+1.269 s (2800080 allocations: 398.39 MiB)
 u: 4-element Vector{Float64}:
- 1.498879980468874
- 0.9994073280033634
- 3.0047492315673447
- 1.001543143875658
+ 1.5014656936149118
+ 1.0001368581403127
+ 2.9911766380531732
+ 0.9968871175611669
 ```
 
 
@@ -266,7 +266,7 @@ opt = Opt(:GN_ORIG_DIRECT_L, 4)
 ```
 
 ```
-683.660 ms (1433251 allocations: 242.18 MiB)
+667.006 ms (1433251 allocations: 242.18 MiB)
 u: 4-element Vector{Float64}:
  1.7283950617224937
  2.22222222222419
@@ -282,12 +282,12 @@ opt = Opt(:GN_CRS2_LM, 4)
 ```
 
 ```
-1.289 s (2697321 allocations: 455.73 MiB)
+1.144 s (2437560 allocations: 411.83 MiB)
 u: 4-element Vector{Float64}:
- 1.50000000006887
- 1.0000000000831504
- 2.9999999995097744
- 0.9999999999267993
+ 1.5000000000585287
+ 1.0000000000809297
+ 2.999999999552036
+ 0.9999999999487853
 ```
 
 
@@ -298,12 +298,12 @@ opt = Opt(:GN_ISRES, 4)
 ```
 
 ```
-1.771 s (3670116 allocations: 620.05 MiB)
+1.730 s (3670116 allocations: 620.05 MiB)
 u: 4-element Vector{Float64}:
- 1.4966887519201648
- 1.0355712948888365
- 3.052138168286345
- 1.0190211406392238
+ 1.5462044343354446
+ 0.9781267949928908
+ 2.8834420156609
+ 0.9474517205680221
 ```
 
 
@@ -314,19 +314,19 @@ opt = Opt(:GN_ESCH, 4)
 ```
 
 ```
-1.748 s (3670116 allocations: 620.05 MiB)
+1.716 s (3670116 allocations: 620.05 MiB)
 u: 4-element Vector{Float64}:
- 1.22301288650362
- 1.9482552810044185
- 8.905850746708916
- 2.788428504686583
+ 1.0701089426633623
+ 0.886408434603868
+ 6.60072841619272
+ 2.3576679499531115
 ```
 
 
 
 
 
-Now local optimization algorithms are used to check the global ones, these use the local constraints, different intial values and time step
+Now local optimization algorithms are used to check the global ones, these use the local constraints, different initial values and time step
 
 ```julia
 optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
@@ -349,7 +349,7 @@ opt = Opt(:LN_BOBYQA, 4)
 ```
 
 ```
-50.206 ms (111317 allocations: 18.87 MiB)
+49.931 ms (111317 allocations: 18.87 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000702955
  1.0000000000848333
@@ -365,7 +365,7 @@ opt = Opt(:LN_NELDERMEAD, 4)
 ```
 
 ```
-80.505 ms (181047 allocations: 30.65 MiB)
+80.185 ms (181047 allocations: 30.65 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000705307
  1.000000000085224
@@ -381,7 +381,7 @@ opt = Opt(:LD_SLSQP, 4)
 ```
 
 ```
-13.611 ms (24820 allocations: 4.68 MiB)
+16.572 ms (60772 allocations: 5.34 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000702354
  1.000000000084916
@@ -397,7 +397,7 @@ opt = Opt(:LN_COBYLA, 4)
 ```
 
 ```
-1.765 s (3670116 allocations: 620.05 MiB)
+1.731 s (3670116 allocations: 620.05 MiB)
 u: 4-element Vector{Float64}:
  1.499998585072833
  0.9999995756417143
@@ -413,7 +413,7 @@ opt = Opt(:LN_NEWUOA_BOUND, 4)
 ```
 
 ```
-630.998 ms (333352 allocations: 56.38 MiB)
+626.183 ms (333352 allocations: 56.38 MiB)
 u: 4-element Vector{Float64}:
  1.500000738607671
  1.0000013474277258
@@ -429,12 +429,12 @@ opt = Opt(:LN_PRAXIS, 4)
 ```
 
 ```
-35.129 ms (79021 allocations: 13.41 MiB)
+35.003 ms (79021 allocations: 13.41 MiB)
 u: 4-element Vector{Float64}:
- 1.500000000049491
- 1.0000000001024394
- 2.999999999683906
- 0.9999999999741604
+ 1.5000000000640334
+ 1.0000000000834965
+ 2.9999999995446935
+ 0.9999999999360849
 ```
 
 
@@ -445,7 +445,7 @@ opt = Opt(:LN_SBPLX, 4)
 ```
 
 ```
-1.760 s (3670116 allocations: 620.05 MiB)
+1.722 s (3670116 allocations: 620.05 MiB)
 u: 4-element Vector{Float64}:
  1.4999999301104459
  0.9999999814386067
@@ -461,7 +461,7 @@ opt = Opt(:LD_MMA, 4)
 ```
 
 ```
-1.096 s (1817691 allocations: 345.13 MiB)
+1.353 s (5036679 allocations: 404.35 MiB)
 u: 4-element Vector{Float64}:
  1.4999999999592728
  1.0000000000448461
@@ -477,7 +477,7 @@ opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 4)
 ```
 
 ```
-16.131 ms (28391 allocations: 5.45 MiB)
+20.125 ms (78467 allocations: 6.37 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000702258
  1.0000000000849023
@@ -536,7 +536,7 @@ opt = Opt(:GN_ORIG_DIRECT_L, 4)
 ```
 
 ```
-3.601 s (6427692 allocations: 858.47 MiB)
+3.538 s (6427692 allocations: 858.47 MiB)
 u: 4-element Vector{Float64}:
  8.271604938277504
  7.42112482850273
@@ -552,12 +552,12 @@ opt = Opt(:GN_CRS2_LM, 4)
 ```
 
 ```
-20.218 s (36222399 allocations: 4.73 GiB)
+23.280 s (42072829 allocations: 5.49 GiB)
 u: 4-element Vector{Float64}:
- 1.4999999994894886
- 1.0000000002362446
- 3.000000001761813
- 1.0000000007536567
+ 1.4999999994904674
+ 1.0000000002376792
+ 3.0000000017587984
+ 1.0000000007527723
 ```
 
 
@@ -568,12 +568,12 @@ opt = Opt(:GN_ISRES, 4)
 ```
 
 ```
-86.134 s (153550089 allocations: 20.03 GiB)
+85.236 s (153550089 allocations: 20.03 GiB)
 u: 4-element Vector{Float64}:
- 0.9144427818973644
- 0.8006937174824271
- 6.232143240503298
- 2.435100422310003
+ 5.187492908257739
+ 5.780636815566282
+ 0.7448406411984245
+ 0.4022722755382424
 ```
 
 
@@ -584,12 +584,12 @@ opt = Opt(:GN_ESCH, 4)
 ```
 
 ```
-34.322 s (61420089 allocations: 8.01 GiB)
+33.982 s (61420089 allocations: 8.01 GiB)
 u: 4-element Vector{Float64}:
- 3.913787228406429
- 3.889778374777225
- 1.008518403638957
- 0.3335376612510868
+ 5.541833128299335
+ 5.395833344710313
+ 0.692308833655479
+ 0.23329538551190226
 ```
 
 
@@ -620,7 +620,7 @@ opt = Opt(:LN_BOBYQA, 4)
 ```
 
 ```
-50.356 ms (111317 allocations: 18.87 MiB)
+50.087 ms (111317 allocations: 18.87 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000702955
  1.0000000000848333
@@ -636,7 +636,7 @@ opt = Opt(:LN_NELDERMEAD, 4)
 ```
 
 ```
-80.746 ms (181047 allocations: 30.65 MiB)
+80.450 ms (181047 allocations: 30.65 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000705307
  1.000000000085224
@@ -652,7 +652,7 @@ opt = Opt(:LD_SLSQP, 4)
 ```
 
 ```
-13.618 ms (24820 allocations: 4.68 MiB)
+16.577 ms (60772 allocations: 5.34 MiB)
 u: 4-element Vector{Float64}:
  1.5000000000702354
  1.000000000084916
@@ -668,7 +668,7 @@ u: 4-element Vector{Float64}:
 
 # Conclusion
 
-In general we observe that lower tolerance lead to higher accuracy but too low tolerance could affect the convergance time drastically. Also fitting a shorter timespan seems to be easier in comparision (quite intutively). NLOpt methods seem to give great accuracy in the shorter problem with a lot of the algorithms giving 0 fitness, BBO performs very well on it with marginal change with `tol` values. In case of global optimization of the longer problem  there is some difference in the perfomance amongst the algorithms with `LD_SLSQP` `GN_ESCH` `GN_ISRES` `GN_ORIG_DIRECT_L` performing among the worse, BBO also gives a bit high fitness in comparison. QuadDIRECT gives accurate results in the case of the shorter problem but doesn't perform very well in the longer problem case.
+In general we observe that lower tolerance lead to higher accuracy but too low tolerance could affect the convergence time drastically. Also fitting a shorter timespan seems to be easier in comparison (quite intuitively). NLOpt methods seem to give great accuracy in the shorter problem with a lot of the algorithms giving 0 fitness, BBO performs very well on it with marginal change with `tol` values. In case of global optimization of the longer problem  there is some difference in the performance amongst the algorithms with `LD_SLSQP` `GN_ESCH` `GN_ISRES` `GN_ORIG_DIRECT_L` performing among the worse, BBO also gives a bit high fitness in comparison. QuadDIRECT gives accurate results in the case of the shorter problem but doesn't perform very well in the longer problem case.
 
 
 ## Appendix
@@ -685,8 +685,8 @@ SciMLBenchmarks.weave_file("benchmarks/ParameterEstimation","LotkaVolterraParame
 Computer Information:
 
 ```
-Julia Version 1.9.3
-Commit bed2cd540a1 (2023-08-24 14:43 UTC)
+Julia Version 1.9.4
+Commit 8e5136fa297 (2023-11-14 08:46 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -699,6 +699,7 @@ Platform Info:
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+  JULIA_IMAGE_THREADS = 1
 
 ```
 
@@ -706,21 +707,21 @@ Package Information:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ParameterEstimation/Project.toml`
-  [6e4b80f9] BenchmarkTools v1.3.2
+⌃ [6e4b80f9] BenchmarkTools v1.3.2
   [a134a8b2] BlackBoxOptim v0.6.2
-  [1130ab10] DiffEqParamEstim v2.0.1
-  [31c24e10] Distributions v0.25.100
+⌃ [1130ab10] DiffEqParamEstim v2.0.1
+⌃ [31c24e10] Distributions v0.25.100
   [f6369f11] ForwardDiff v0.10.36
 ⌅ [76087f3c] NLopt v0.6.5
-  [7f7a1694] Optimization v3.16.0
+⌃ [7f7a1694] Optimization v3.16.0
   [3e6eede4] OptimizationBBO v0.1.5
   [4e6fcdb7] OptimizationNLopt v0.1.8
-  [1dea7af3] OrdinaryDiffEq v6.55.0
-  [65888b18] ParameterizedFunctions v5.15.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.55.0
+⌃ [65888b18] ParameterizedFunctions v5.15.0
   [91a5bcdd] Plots v1.39.0
-  [731186ca] RecursiveArrayTools v2.38.7
+⌃ [731186ca] RecursiveArrayTools v2.38.7
   [31c91b34] SciMLBenchmarks v0.1.3
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
@@ -728,27 +729,27 @@ And the full manifest:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ParameterEstimation/Manifest.toml`
-  [47edcb42] ADTypes v0.2.1
-  [c3fe647b] AbstractAlgebra v0.31.1
+⌃ [47edcb42] ADTypes v0.2.1
+⌅ [c3fe647b] AbstractAlgebra v0.31.1
   [1520ce14] AbstractTrees v0.4.4
-  [79e6a3ab] Adapt v3.6.2
+⌃ [79e6a3ab] Adapt v3.6.2
   [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v7.4.11
+⌃ [4fba245c] ArrayInterface v7.4.11
   [30b0a656] ArrayInterfaceCore v0.1.29
-  [6e4b80f9] BenchmarkTools v1.3.2
-  [e2ed5e7c] Bijections v0.1.4
-  [d1d4a3ce] BitFlags v0.1.7
+⌃ [6e4b80f9] BenchmarkTools v1.3.2
+⌃ [e2ed5e7c] Bijections v0.1.4
+⌃ [d1d4a3ce] BitFlags v0.1.7
   [62783981] BitTwiddlingConvenienceFunctions v0.1.5
   [a134a8b2] BlackBoxOptim v0.6.2
-  [2a0fbf3d] CPUSummary v0.2.3
+⌃ [2a0fbf3d] CPUSummary v0.2.3
   [a9c8d775] CPUTime v1.0.0
   [00ebfdb7] CSTParser v3.3.6
   [49dc2e85] Calculus v0.5.1
-  [d360d2e6] ChainRulesCore v1.16.0
+⌃ [d360d2e6] ChainRulesCore v1.16.0
   [fb6a15b2] CloseOpenIntervals v0.1.12
 ⌅ [523fee87] CodecBzip2 v0.7.2
-  [944b1d66] CodecZlib v0.7.2
-  [35d6a980] ColorSchemes v3.23.0
+⌃ [944b1d66] CodecZlib v0.7.2
+⌃ [35d6a980] ColorSchemes v3.23.0
   [3da002f7] ColorTypes v0.11.4
   [c3611d14] ColorVectorSpace v0.10.0
   [5ae59095] Colors v0.12.10
@@ -756,12 +757,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [a80b9123] CommonMark v0.8.12
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v4.9.0
+⌃ [34da2185] Compat v4.9.0
   [b152e2b5] CompositeTypes v0.1.3
-  [f0e56b4a] ConcurrentUtilities v2.2.1
-  [8f4d0f93] Conda v1.9.1
+⌃ [f0e56b4a] ConcurrentUtilities v2.2.1
+⌃ [8f4d0f93] Conda v1.9.1
   [88cd18e8] ConsoleProgressMonitor v0.1.2
-  [187b0558] ConstructionBase v1.5.3
+⌃ [187b0558] ConstructionBase v1.5.3
   [d38c429a] Contour v0.6.2
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
@@ -770,26 +771,26 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
   [39dd38d3] Dierckx v0.5.3
-  [2b5f629d] DiffEqBase v6.128.2
-  [459566f4] DiffEqCallbacks v2.29.1
-  [1130ab10] DiffEqParamEstim v2.0.1
+⌃ [2b5f629d] DiffEqBase v6.128.2
+⌃ [459566f4] DiffEqCallbacks v2.29.1
+⌃ [1130ab10] DiffEqParamEstim v2.0.1
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
-  [b4f34e82] Distances v0.10.9
-  [31c24e10] Distributions v0.25.100
+⌃ [b4f34e82] Distances v0.10.9
+⌃ [31c24e10] Distributions v0.25.100
   [ffbed154] DocStringExtensions v0.9.3
-  [5b8099bc] DomainSets v0.6.7
+⌅ [5b8099bc] DomainSets v0.6.7
   [fa6b7ba4] DualNumbers v0.6.8
-  [7c1d4256] DynamicPolynomials v0.5.2
+⌃ [7c1d4256] DynamicPolynomials v0.5.2
   [4e289a0a] EnumX v1.0.4
   [460bff9d] ExceptionUnwrapping v0.1.9
-  [d4d017d3] ExponentialUtilities v1.24.0
+⌃ [d4d017d3] ExponentialUtilities v1.24.0
   [e2ba6199] ExprTools v0.1.10
   [c87230d0] FFMPEG v0.4.1
-  [7034ab61] FastBroadcast v0.2.6
+⌃ [7034ab61] FastBroadcast v0.2.6
   [9aa1b823] FastClosures v0.3.2
   [29a986be] FastLapackInterface v2.0.0
-  [1a297f60] FillArrays v1.6.1
+⌃ [1a297f60] FillArrays v1.6.1
   [6a86dc24] FiniteDiff v2.21.1
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
@@ -797,159 +798,159 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [46192b85] GPUArraysCore v0.1.5
-  [28b8d3ca] GR v0.72.9
+⌃ [28b8d3ca] GR v0.72.9
   [c145ed77] GenericSchur v0.5.3
   [d7ba0133] Git v1.3.0
   [c27321d9] Glob v1.3.1
-  [86223c79] Graphs v1.8.0
+⌃ [86223c79] Graphs v1.8.0
   [42e2da0e] Grisu v1.0.2
-  [0b43b601] Groebner v0.4.2
-  [d5909c97] GroupsCore v0.4.0
-  [cd3eb016] HTTP v1.9.14
+⌅ [0b43b601] Groebner v0.4.2
+⌃ [d5909c97] GroupsCore v0.4.0
+⌃ [cd3eb016] HTTP v1.9.14
   [eafb193a] Highlights v0.5.2
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
   [7073ff75] IJulia v1.24.2
   [615f187c] IfElse v0.1.1
-  [d25df0c9] Inflate v0.1.3
+⌃ [d25df0c9] Inflate v0.1.3
   [18e54dd8] IntegerMathUtils v0.1.2
-  [8197267c] IntervalSets v0.7.7
+⌃ [8197267c] IntervalSets v0.7.7
   [92d709cd] IrrationalConstants v0.2.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [1019f520] JLFzf v0.1.5
+⌃ [1019f520] JLFzf v0.1.5
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
-  [98e50ef6] JuliaFormatter v1.0.35
-  [ccbc3e58] JumpProcesses v9.7.3
-  [ef3ab10e] KLU v0.4.0
-  [ba0b0d4f] Krylov v0.9.4
-  [b964fa9f] LaTeXStrings v1.3.0
+⌃ [98e50ef6] JuliaFormatter v1.0.35
+⌃ [ccbc3e58] JumpProcesses v9.7.3
+⌃ [ef3ab10e] KLU v0.4.0
+⌃ [ba0b0d4f] Krylov v0.9.4
+⌃ [b964fa9f] LaTeXStrings v1.3.0
   [2ee39098] LabelledArrays v1.14.0
   [984bce1d] LambertW v0.4.6
 ⌅ [23fbe1c1] Latexify v0.15.21
-  [10f19ff3] LayoutPointers v0.1.14
+⌃ [10f19ff3] LayoutPointers v0.1.14
   [50d2b5c4] Lazy v0.15.1
   [1d6d02ad] LeftChildRightSiblingTrees v0.2.0
   [d3d80556] LineSearches v7.2.0
-  [7ed4a6bd] LinearSolve v2.5.1
+⌃ [7ed4a6bd] LinearSolve v2.5.1
   [2ab3a3ac] LogExpFunctions v0.3.26
-  [e6f89c97] LoggingExtras v1.0.2
-  [bdcacae8] LoopVectorization v0.12.165
+⌃ [e6f89c97] LoggingExtras v1.0.2
+⌃ [bdcacae8] LoopVectorization v0.12.165
   [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.11
   [d125e4d3] ManualMemory v0.1.8
-  [b8f27783] MathOptInterface v1.19.0
+⌃ [b8f27783] MathOptInterface v1.19.0
   [fdba3010] MathProgBase v0.7.8
-  [739be429] MbedTLS v1.1.7
+⌃ [739be429] MbedTLS v1.1.7
   [442fdcdd] Measures v0.3.2
   [e1d29d7a] Missings v1.1.0
-  [961ee093] ModelingToolkit v8.66.0
+⌃ [961ee093] ModelingToolkit v8.66.0
   [46d2c3a1] MuladdMacro v0.2.4
-  [102ac46a] MultivariatePolynomials v0.5.1
-  [ffc61752] Mustache v1.0.17
-  [d8a4904e] MutableArithmetics v1.3.1
+⌃ [102ac46a] MultivariatePolynomials v0.5.1
+⌃ [ffc61752] Mustache v1.0.17
+⌃ [d8a4904e] MutableArithmetics v1.3.1
   [d41bc354] NLSolversBase v7.8.3
 ⌅ [76087f3c] NLopt v0.6.5
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
-  [8913a72c] NonlinearSolve v1.10.0
+⌅ [8913a72c] NonlinearSolve v1.10.0
   [6fe1bfb0] OffsetArrays v1.12.10
   [4d8831e6] OpenSSL v1.4.1
-  [7f7a1694] Optimization v3.16.0
+⌃ [7f7a1694] Optimization v3.16.0
   [3e6eede4] OptimizationBBO v0.1.5
   [4e6fcdb7] OptimizationNLopt v0.1.8
-  [bac558e1] OrderedCollections v1.6.2
-  [1dea7af3] OrdinaryDiffEq v6.55.0
-  [90014a1f] PDMats v0.11.17
-  [65ce6f38] PackageExtensionCompat v1.0.1
-  [65888b18] ParameterizedFunctions v5.15.0
+⌃ [bac558e1] OrderedCollections v1.6.2
+⌃ [1dea7af3] OrdinaryDiffEq v6.55.0
+⌃ [90014a1f] PDMats v0.11.17
+⌃ [65ce6f38] PackageExtensionCompat v1.0.1
+⌃ [65888b18] ParameterizedFunctions v5.15.0
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.7.2
+⌃ [69de0a69] Parsers v2.7.2
   [06bb1623] PenaltyFunctions v0.3.0
   [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.1.0
   [995b91a9] PlotUtils v1.3.5
   [91a5bcdd] Plots v1.39.0
   [e409e4f3] PoissonRandom v0.4.4
-  [f517fe37] Polyester v0.7.5
+⌃ [f517fe37] Polyester v0.7.5
   [1d0040c9] PolyesterWeave v0.2.1
   [d236fae5] PreallocationTools v0.4.12
   [aea7be01] PrecompileTools v1.2.0
-  [21216c6a] Preferences v1.4.0
-  [27ebfcd6] Primes v0.5.4
+⌃ [21216c6a] Preferences v1.4.0
+⌃ [27ebfcd6] Primes v0.5.4
   [33c8b6b6] ProgressLogging v0.1.4
-  [92933f4c] ProgressMeter v1.8.0
-  [1fd47b50] QuadGK v2.8.2
-  [fb686558] RandomExtensions v0.4.3
+⌃ [92933f4c] ProgressMeter v1.8.0
+⌃ [1fd47b50] QuadGK v2.8.2
+⌃ [fb686558] RandomExtensions v0.4.3
   [e6cf234a] RandomNumbers v1.5.3
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v2.38.7
-  [f2c3362d] RecursiveFactorization v0.2.20
+⌃ [731186ca] RecursiveArrayTools v2.38.7
+⌃ [f2c3362d] RecursiveFactorization v0.2.20
   [189a3867] Reexport v1.2.2
-  [05181044] RelocatableFolders v1.0.0
+⌃ [05181044] RelocatableFolders v1.0.0
   [ae029012] Requires v1.3.0
   [79098fc4] Rmath v0.7.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.12
-  [fdea26ae] SIMD v3.4.5
+⌃ [fdea26ae] SIMD v3.4.5
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.39
-  [0bca4576] SciMLBase v1.95.0
+⌃ [476501e8] SLEEFPirates v0.6.39
+⌅ [0bca4576] SciMLBase v1.95.0
   [31c91b34] SciMLBenchmarks v0.1.3
-  [e9a6253c] SciMLNLSolve v0.1.8
-  [c0aeaf25] SciMLOperators v0.3.6
-  [6c6a2e73] Scratch v1.2.0
+⌃ [e9a6253c] SciMLNLSolve v0.1.8
+⌃ [c0aeaf25] SciMLOperators v0.3.6
+⌃ [6c6a2e73] Scratch v1.2.0
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
-  [727e6d20] SimpleNonlinearSolve v0.1.19
+⌅ [727e6d20] SimpleNonlinearSolve v0.1.19
   [699a6c99] SimpleTraits v0.9.4
   [ce78b400] SimpleUnPack v1.1.0
   [66db9d55] SnoopPrecompile v1.0.3
   [b85f4697] SoftGlobalScope v1.1.0
-  [a2af1166] SortingAlgorithms v1.1.1
-  [47a9eef4] SparseDiffTools v2.5.1
+⌃ [a2af1166] SortingAlgorithms v1.1.1
+⌃ [47a9eef4] SparseDiffTools v2.5.1
   [e56a9233] Sparspak v0.3.9
-  [d4ead438] SpatialIndexing v0.1.5
+⌃ [d4ead438] SpatialIndexing v0.1.5
   [276daf66] SpecialFunctions v2.3.1
   [aedffcd0] Static v0.8.8
   [0d7ed370] StaticArrayInterface v1.4.1
-  [90137ffa] StaticArrays v1.6.2
+⌃ [90137ffa] StaticArrays v1.6.2
   [1e83bf80] StaticArraysCore v1.4.2
-  [82ae8749] StatsAPI v1.6.0
+⌃ [82ae8749] StatsAPI v1.6.0
 ⌅ [2913bbd2] StatsBase v0.33.21
   [4c63d2b9] StatsFuns v1.3.0
-  [7792a7ef] StrideArraysCore v0.4.17
+⌅ [7792a7ef] StrideArraysCore v0.4.17
   [69024149] StringEncodings v0.3.7
   [2efcf032] SymbolicIndexingInterface v0.2.2
 ⌃ [d1185830] SymbolicUtils v1.2.0
-  [0c5d862f] Symbolics v5.5.1
+⌃ [0c5d862f] Symbolics v5.5.1
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.10.1
+⌃ [bd369af6] Tables v1.10.1
   [62fd8b95] TensorCore v0.1.1
   [5d786b92] TerminalLoggers v0.1.7
   [8290d209] ThreadingUtilities v0.5.2
   [a759f4b9] TimerOutputs v0.5.23
-  [0796e94c] Tokenize v0.5.25
-  [3bb67fe8] TranscodingStreams v0.9.13
+⌃ [0796e94c] Tokenize v0.5.25
+⌅ [3bb67fe8] TranscodingStreams v0.9.13
   [a2a6695c] TreeViews v0.3.0
-  [d5829a12] TriangularSolve v0.1.19
-  [410a4b4d] Tricks v0.1.7
+⌃ [d5829a12] TriangularSolve v0.1.19
+⌃ [410a4b4d] Tricks v0.1.7
   [781d530d] TruncatedStacktraces v1.4.0
-  [5c2747f8] URIs v1.5.0
+⌃ [5c2747f8] URIs v1.5.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.17.0
+⌃ [1986cc42] Unitful v1.17.0
   [45397f5d] UnitfulLatexify v1.6.3
   [a7c27f48] Unityper v0.1.5
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.64
+⌃ [3d5dd08c] VectorizationBase v0.21.64
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.9
   [c2297ded] ZMQ v1.2.2
-  [700de1a5] ZygoteRules v0.2.3
+⌃ [700de1a5] ZygoteRules v0.2.3
   [6e34b625] Bzip2_jll v1.0.8+0
   [83423d85] Cairo_jll v1.16.1+1
   [cd4c43a9] Dierckx_jll v0.1.0+0
@@ -959,13 +960,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d7e528f0] FreeType2_jll v2.13.1+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.72.9+1
+⌅ [d2c73de3] GR_jll v0.72.9+1
   [78b55507] Gettext_jll v0.21.0+0
-  [f8c6e375] Git_jll v2.36.1+2
-  [7746bdde] Glib_jll v2.74.0+2
+⌃ [f8c6e375] Git_jll v2.36.1+2
+⌃ [7746bdde] Glib_jll v2.74.0+2
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
-  [aacddb02] JpegTurbo_jll v2.1.91+0
+⌃ [aacddb02] JpegTurbo_jll v2.1.91+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [88015f11] LERC_jll v3.0.0+1
   [1d63c593] LLVMOpenMP_jll v15.0.4+0
@@ -984,13 +985,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
   [30392449] Pixman_jll v0.42.2+0
-  [c0090381] Qt6Base_jll v6.4.2+3
+⌅ [c0090381] Qt6Base_jll v6.4.2+3
   [f50d1b31] Rmath_jll v0.4.0+0
-  [a2964d1f] Wayland_jll v1.21.0+0
+⌃ [a2964d1f] Wayland_jll v1.21.0+0
   [2381bf8a] Wayland_protocols_jll v1.25.0+0
-  [02c8fc9c] XML2_jll v2.10.4+0
+⌃ [02c8fc9c] XML2_jll v2.10.4+0
   [aed1982a] XSLT_jll v1.1.34+0
-  [ffd25f8a] XZ_jll v5.4.4+0
+⌃ [ffd25f8a] XZ_jll v5.4.4+0
   [4f6342f7] Xorg_libX11_jll v1.8.6+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
   [935fb764] Xorg_libXcursor_jll v1.2.0+4
@@ -1018,12 +1019,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [a4ae2306] libaom_jll v3.4.0+0
   [0ac62f75] libass_jll v0.15.1+0
   [f638f0a6] libfdk_aac_jll v2.0.2+0
-  [b53b4c65] libpng_jll v1.6.38+0
+⌃ [b53b4c65] libpng_jll v1.6.38+0
   [a9144af2] libsodium_jll v1.0.20+0
   [f27f6e37] libvorbis_jll v1.3.7+1
   [1270edf5] x264_jll v2021.5.5+0
   [dfaa095f] x265_jll v3.5.0+0
-  [d8fb68d0] xkbcommon_jll v1.4.1+0
+⌃ [d8fb68d0] xkbcommon_jll v1.4.1+0
   [0dad84c5] ArgTools v1.1.1
   [56f22d72] Artifacts
   [2a0f44e3] Base64
@@ -1071,7 +1072,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850b90] libblastrampoline_jll v5.8.0+0
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
