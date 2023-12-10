@@ -11,7 +11,7 @@ function froots(out, levels, u0)
     end
 end
 
-@btime froots(out, levels, (0, 2))</code></pre><pre><code class="nohighlight hljs">218.182 ms (100000 allocations: 7.63 MiB)</code></pre><pre><code class="language-julia hljs">using NonlinearSolve, BenchmarkTools
+@btime froots(out, levels, (0, 2))</code></pre><pre><code class="nohighlight hljs">218.299 ms (100000 allocations: 7.63 MiB)</code></pre><pre><code class="language-julia hljs">using NonlinearSolve, BenchmarkTools
 
 function f(out, levels, u0)
     for i in 1:N
@@ -36,9 +36,9 @@ end
 
 @btime f(out, levels, (0.0, 2.0))
 @btime f2(out, levels, (0.0, 2.0))
-@btime f3(out, levels, 1.0)</code></pre><pre><code class="nohighlight hljs">60.165 ms (0 allocations: 0 bytes)
-  114.659 ms (0 allocations: 0 bytes)
-  14.047 ms (0 allocations: 0 bytes)</code></pre><p>MATLAB 2022a reportedly achieves 1.66s. Try this code yourself: we receive ~0.05 seconds, or a 33x speedup.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+@btime f3(out, levels, 1.0)</code></pre><pre><code class="nohighlight hljs">59.719 ms (0 allocations: 0 bytes)
+  114.389 ms (0 allocations: 0 bytes)
+  14.043 ms (0 allocations: 0 bytes)</code></pre><p>MATLAB 2022a reportedly achieves 1.66s. Try this code yourself: we receive ~0.05 seconds, or a 33x speedup.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/IntervalNonlinearProblem&quot;,&quot;simpleintervalrootfind.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.9.4
 Commit 8e5136fa297 (2023-11-14 08:46 UTC)
 Build Info:
@@ -226,7 +226,7 @@ Warning The project dependencies or compat requirements have changed since the m
 ⌃ [7746bdde] Glib_jll v2.74.0+2
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
-  [aacddb02] JpegTurbo_jll v2.1.91+0
+⌃ [aacddb02] JpegTurbo_jll v2.1.91+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [88015f11] LERC_jll v3.0.0+1
   [1d63c593] LLVMOpenMP_jll v15.0.4+0
@@ -331,4 +331,4 @@ Warning The project dependencies or compat requirements have changed since the m
   [8e850ede] nghttp2_jll v1.48.0+0
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../LinearSolve/SparsePDE/">« Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a><a class="docs-footer-nextpage" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Sunday 10 December 2023 07:30">Sunday 10 December 2023</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../LinearSolve/SparsePDE/">« Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a><a class="docs-footer-nextpage" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Sunday 10 December 2023 14:47">Sunday 10 December 2023</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
