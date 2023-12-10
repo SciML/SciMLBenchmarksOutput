@@ -29,7 +29,7 @@ end
 ```
 
 ```
-218.182 ms (100000 allocations: 7.63 MiB)
+218.299 ms (100000 allocations: 7.63 MiB)
 ```
 
 
@@ -64,9 +64,9 @@ end
 ```
 
 ```
-60.165 ms (0 allocations: 0 bytes)
-  114.659 ms (0 allocations: 0 bytes)
-  14.047 ms (0 allocations: 0 bytes)
+59.719 ms (0 allocations: 0 bytes)
+  114.389 ms (0 allocations: 0 bytes)
+  14.043 ms (0 allocations: 0 bytes)
 ```
 
 
@@ -291,7 +291,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [7746bdde] Glib_jll v2.74.0+2
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
-  [aacddb02] JpegTurbo_jll v2.1.91+0
+⌃ [aacddb02] JpegTurbo_jll v2.1.91+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [88015f11] LERC_jll v3.0.0+1
   [1d63c593] LLVMOpenMP_jll v15.0.4+0
