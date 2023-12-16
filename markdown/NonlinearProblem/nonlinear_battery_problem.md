@@ -50,27 +50,27 @@ Declare the benchmarked solvers (and their names and plotting options).
 
 ```julia
 solvers_all = [
-    (; name = "Newton Raphson (No Line Search)",                    solver = Dict(:alg => NewtonRaphson()),                                        color = :salmon1,         markershape = :star4),
-    (; name = "Newton Raphson (Hager & Zhang Line Search)",         solver = Dict(:alg => NewtonRaphson(linesearch = HagerZhang())),               color = :tomato1,         markershape = :pentagon),
-    (; name = "Newton Raphson (More & Thuente Line Search)",        solver = Dict(:alg => NewtonRaphson(linesearch = MoreThuente())),              color = :red3,            markershape = :star6),
-    (; name = "Newton Raphson (BackTracking Line Search)",          solver = Dict(:alg => NewtonRaphson(linesearch = BackTracking())),             color = :firebrick,       markershape = :heptagon),
-    (; name = "Newton Krylov with GMRES",                           solver = Dict(:alg => NewtonRaphson(; linsolve = KrylovJL_GMRES())),           color = :darkslategray1,  markershape = :utriangle),
-    (; name = "Newton Trust Region",                                solver = Dict(:alg => TrustRegion()),                                          color = :deepskyblue1,    markershape = :rect),
-    (; name = "Newton Trust Region (NLsolve Radius Update)",        solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.NLsolve)),        color = :cadetblue,       markershape = :diamond),
-    (; name = "Newton Trust Region (Nocedal Wright Radius Update)", solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.NocedalWright)),  color = :lightslateblue,  markershape = :hexagon),
-    (; name = "Newton Trust Region (Hei Radius Update)",            solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.Hei)),            color = :royalblue2,      markershape = :star1),
-    (; name = "Newton Trust Region (Yuan Radius Update)",           solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.Yuan)),           color = :blue1,           markershape = :octagon),
-    (; name = "Newton Trust Region (Bastin Radius Update)",         solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.Bastin)),         color = :navy,            markershape = :circle),
-    (; name = "Newton Trust Region (Fan Radius Update)",            solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.Fan)),            color = :blue3,           markershape = :rtriangle),
-    (; name = "Levenberg-Marquardt (α_geodesic=0.75)",              solver = Dict(:alg => LevenbergMarquardt()),                                   color = :fuchsia,         markershape = :ltriangle),
-    (; name = "Levenberg-Marquardt (α_geodesic, with Cholesky)",    solver = Dict(:alg => LevenbergMarquardt(linsolve = CholeskyFactorization())), color = :orchid4,         markershape = :+),
-    (; name = "Modified Powell (MINPACK)",                          solver = Dict(:alg => CMINPACK(method = :hybr)),                               color = :lightgoldenrod2, markershape = :x),
-    (; name = "Levenberg-Marquardt (MINPACK)",                      solver = Dict(:alg => CMINPACK(method = :lm)),                                 color = :gold1,           markershape = :dtriangle),
-    (; name = "Newton Raphson (NLsolve.jl)",                        solver = Dict(:alg => NLsolveJL(method = :newton)),                            color = :olivedrab1,      markershape = :rtriangle),
-    (; name = "Newton Trust Region (NLsolve.jl)",                   solver = Dict(:alg => NLsolveJL()),                                            color = :darkorange,      markershape = :circle),
-    (; name = "KINSOL (Sundials)",                                  solver = Dict(:alg => KINSOL()),                                               color = :darkorchid1,     markershape = :star5),
-    (; name = "Broyden (No Line Search)",                           solver = Dict(:alg => Broyden()),                                              color = :purple4,         markershape = :star8),
-    (; name = "Broyden (True Jacobian + No Line Search)",           solver = Dict(:alg => Broyden(; init_jacobian = Val(:true_jacobian))),         color = :purple2,         markershape = :star2),
+    (; name = "Newton Raphson (No Line Search)",                    solver = Dict(:alg => NewtonRaphson())),
+    (; name = "Newton Raphson (Hager & Zhang Line Search)",         solver = Dict(:alg => NewtonRaphson(linesearch = HagerZhang()))),
+    (; name = "Newton Raphson (More & Thuente Line Search)",        solver = Dict(:alg => NewtonRaphson(linesearch = MoreThuente()))),
+    (; name = "Newton Raphson (BackTracking Line Search)",          solver = Dict(:alg => NewtonRaphson(linesearch = BackTracking()))),
+    (; name = "Newton Krylov with GMRES",                           solver = Dict(:alg => NewtonRaphson(; linsolve = KrylovJL_GMRES()))),
+    (; name = "Newton Trust Region",                                solver = Dict(:alg => TrustRegion()),),
+    (; name = "Newton Trust Region (NLsolve Radius Update)",        solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.NLsolve))),
+    (; name = "Newton Trust Region (Nocedal Wright Radius Update)", solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.NocedalWright))),
+    (; name = "Newton Trust Region (Hei Radius Update)",            solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.Hei))),
+    (; name = "Newton Trust Region (Yuan Radius Update)",           solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.Yuan))),
+    (; name = "Newton Trust Region (Bastin Radius Update)",         solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.Bastin))),
+    (; name = "Newton Trust Region (Fan Radius Update)",            solver = Dict(:alg => TrustRegion(radius_update_scheme = RUS.Fan))),
+    (; name = "Levenberg-Marquardt (α_geodesic=0.75)",              solver = Dict(:alg => LevenbergMarquardt())),
+    (; name = "Levenberg-Marquardt (α_geodesic, with Cholesky)",    solver = Dict(:alg => LevenbergMarquardt(linsolve = CholeskyFactorization()))),
+    (; name = "Modified Powell (MINPACK)",                          solver = Dict(:alg => CMINPACK(method = :hybr))),
+    (; name = "Levenberg-Marquardt (MINPACK)",                      solver = Dict(:alg => CMINPACK(method = :lm))),
+    (; name = "Newton Raphson (NLsolve.jl)",                        solver = Dict(:alg => NLsolveJL(method = :newton))),
+    (; name = "Newton Trust Region (NLsolve.jl)",                   solver = Dict(:alg => NLsolveJL())),
+    (; name = "KINSOL (Sundials)",                                  solver = Dict(:alg => KINSOL())),
+    (; name = "Broyden (No Line Search)",                           solver = Dict(:alg => Broyden())),
+    (; name = "Broyden (True Jacobian + No Line Search)",           solver = Dict(:alg => Broyden(; init_jacobian = Val(:true_jacobian)))),
 ];
 ```
 
@@ -208,26 +208,28 @@ testcase = (; prob = NonlinearProblem(f!, dict["start"]), true_sol = dict["sol"]
 ameters, SciMLBase.NonlinearFunction{true, SciMLBase.FullSpecialize, typeof
 (Main.var"##WeaveSandBox#292".f!), LinearAlgebra.UniformScaling{Bool}, Noth
 ing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing
-, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), No
-thing, Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(
-), Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFuncti
-on{true, SciMLBase.FullSpecialize, typeof(Main.var"##WeaveSandBox#292".f!),
- LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, No
-thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeo
-f(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing, Nothing}(Main.var"
-##WeaveSandBox#292".f!, LinearAlgebra.UniformScaling{Bool}(true), nothing, 
-nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing, not
-hing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, nothin
-g, nothing), [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0, 0.6
-608489145760508, 0.6608489145760508, 0.6608489145760508, 3.3618450059739433
-, 3.3618450059739433, 3.3618450059739433, 0.0, 0.0, 0.0], SciMLBase.NullPar
-ameters(), SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}
-, Tuple{}, NamedTuple{(), Tuple{}}}()), true_sol = [-3.889310081682032e-13,
- -5.690845522092043e-13, -1.4900105367898274e-12, -2.1680981422696e-5, -3.2
-84624075480569e-5, -8.820027287447222e-5, 9.53999632159426e-5, 2.1138249693
-289567e-5, 1.1829446876191545e-5, 0.019709320908045884  …  -292.30007240361
-27, 0.5895178515117894, 0.5896685912243755, 0.5897784273806014, 3.837532182
-598256, 3.8376303660343676, 3.837750304468262, 0.0, 0.0, 0.0])
+, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicInd
+exingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs
+{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.StandardNonl
+inearProblem}(SciMLBase.NonlinearFunction{true, SciMLBase.FullSpecialize, t
+ypeof(Main.var"##WeaveSandBox#292".f!), LinearAlgebra.UniformScaling{Bool},
+ Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, No
+thing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Symbol
+icIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}(Main.v
+ar"##WeaveSandBox#292".f!, LinearAlgebra.UniformScaling{Bool}(true), nothin
+g, nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing, 
+nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, SymbolicIndexingInter
+face.SymbolCache{Nothing, Nothing, Nothing}(nothing, nothing, nothing), not
+hing), [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0, 0.6608489
+145760508, 0.6608489145760508, 0.6608489145760508, 3.3618450059739433, 3.36
+18450059739433, 3.3618450059739433, 0.0, 0.0, 0.0], SciMLBase.NullParameter
+s(), SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tupl
+e{}, NamedTuple{(), Tuple{}}}()), true_sol = [-3.889310081682032e-13, -5.69
+0845522092043e-13, -1.4900105367898274e-12, -2.1680981422696e-5, -3.2846240
+75480569e-5, -8.820027287447222e-5, 9.53999632159426e-5, 2.1138249693289567
+e-5, 1.1829446876191545e-5, 0.019709320908045884  …  -292.3000724036127, 0.
+5895178515117894, 0.5896685912243755, 0.5897784273806014, 3.837532182598256
+, 3.8376303660343676, 3.837750304468262, 0.0, 0.0, 0.0])
 ```
 
 
@@ -280,7 +282,7 @@ function generate_wpset(prob, solvers)
 
     return WorkPrecisionSet(prob.prob, abstols, reltols,
         getfield.(successful_solvers, :solver);
-        names = getfield.(successful_solvers, :name), numruns = 50, error_estimate = :l2,
+        names = getfield.(successful_solvers, :name), numruns = 50, error_estimate = :l∞,
         maxiters = 10000), successful_solvers
 end
 ```
@@ -346,51 +348,45 @@ sidual norm = 292.3000724036127.
 [Warn] Solver Broyden (True Jacobian + No Line Search) returned retcode Uns
 table with an residual norm = 292.3000724036127.
 (WorkPrecisionSet of 10 wps
-, NamedTuple{(:name, :solver, :color, :markershape)}[(name = "Newton Raphso
-n (No Line Search)", solver = Dict{Symbol, NonlinearSolve.NewtonRaphson{not
-hing, Nothing, Nothing, typeof(NonlinearSolve.DEFAULT_PRECS), NonlinearSolv
-e.LineSearch{Nothing, Nothing, Bool}}}(:alg => NewtonRaphson()), color = :s
-almon1, markershape = :star4), (name = "Newton Trust Region", solver = Dict
-{Symbol, NonlinearSolve.TrustRegion{nothing, Nothing, Rational{Int64}, Noth
-ing, typeof(NonlinearSolve.DEFAULT_PRECS), Rational{Int64}, Nothing}}(:alg 
-=> TrustRegion(radius_update_scheme = Simple)), color = :deepskyblue1, mark
-ershape = :rect), (name = "Newton Trust Region (NLsolve Radius Update)", so
-lver = Dict{Symbol, NonlinearSolve.TrustRegion{nothing, Nothing, Rational{I
-nt64}, Nothing, typeof(NonlinearSolve.DEFAULT_PRECS), Rational{Int64}, Noth
-ing}}(:alg => TrustRegion(radius_update_scheme = NLsolve)), color = :cadetb
-lue, markershape = :diamond), (name = "Newton Trust Region (Nocedal Wright 
+, NamedTuple{(:name, :solver)}[(name = "Newton Raphson (No Line Search)", s
+olver = Dict{Symbol, NonlinearSolve.NewtonRaphson{nothing, Nothing, Nothing
+, typeof(NonlinearSolve.DEFAULT_PRECS), NonlinearSolve.LineSearch{Nothing, 
+Nothing, Bool}}}(:alg => NewtonRaphson())), (name = "Newton Trust Region", 
+solver = Dict{Symbol, NonlinearSolve.TrustRegion{nothing, Nothing, Rational
+{Int64}, Nothing, typeof(NonlinearSolve.DEFAULT_PRECS), Rational{Int64}, No
+thing}}(:alg => TrustRegion(radius_update_scheme = Simple))), (name = "Newt
+on Trust Region (NLsolve Radius Update)", solver = Dict{Symbol, NonlinearSo
+lve.TrustRegion{nothing, Nothing, Rational{Int64}, Nothing, typeof(Nonlinea
+rSolve.DEFAULT_PRECS), Rational{Int64}, Nothing}}(:alg => TrustRegion(radiu
+s_update_scheme = NLsolve))), (name = "Newton Trust Region (Nocedal Wright 
 Radius Update)", solver = Dict{Symbol, NonlinearSolve.TrustRegion{nothing, 
 Nothing, Rational{Int64}, Nothing, typeof(NonlinearSolve.DEFAULT_PRECS), Ra
 tional{Int64}, Nothing}}(:alg => TrustRegion(radius_update_scheme = Nocedal
-Wright)), color = :lightslateblue, markershape = :hexagon), (name = "Newton
- Trust Region (Hei Radius Update)", solver = Dict{Symbol, NonlinearSolve.Tr
-ustRegion{nothing, Nothing, Rational{Int64}, Nothing, typeof(NonlinearSolve
-.DEFAULT_PRECS), Rational{Int64}, Nothing}}(:alg => TrustRegion(radius_upda
-te_scheme = Hei)), color = :royalblue2, markershape = :star1), (name = "New
-ton Trust Region (Yuan Radius Update)", solver = Dict{Symbol, NonlinearSolv
-e.TrustRegion{nothing, Nothing, Rational{Int64}, Nothing, typeof(NonlinearS
-olve.DEFAULT_PRECS), Rational{Int64}, Nothing}}(:alg => TrustRegion(radius_
-update_scheme = Yuan)), color = :blue1, markershape = :octagon), (name = "N
-ewton Trust Region (Bastin Radius Update)", solver = Dict{Symbol, Nonlinear
-Solve.TrustRegion{nothing, Nothing, Rational{Int64}, Nothing, typeof(Nonlin
-earSolve.DEFAULT_PRECS), Rational{Int64}, Nothing}}(:alg => TrustRegion(rad
-ius_update_scheme = Bastin)), color = :navy, markershape = :circle), (name 
-= "Newton Trust Region (Fan Radius Update)", solver = Dict{Symbol, Nonlinea
-rSolve.TrustRegion{nothing, Nothing, Rational{Int64}, Nothing, typeof(Nonli
-nearSolve.DEFAULT_PRECS), Rational{Int64}, Nothing}}(:alg => TrustRegion(ra
-dius_update_scheme = Fan)), color = :blue3, markershape = :rtriangle), (nam
-e = "Newton Raphson (NLsolve.jl)", solver = Dict{Symbol, NonlinearSolve.NLs
-olveJL{LineSearches.Static, NonlinearSolve.var"#22#24", Float64, Float64}}(
-:alg => NonlinearSolve.NLsolveJL{LineSearches.Static, NonlinearSolve.var"#2
-2#24", Float64, Float64}(:newton, :central, false, false, LineSearches.Stat
-ic(), NonlinearSolve.var"#22#24"(), 1.0, true, 10, 1.0, false)), color = :o
-livedrab1, markershape = :rtriangle), (name = "Newton Trust Region (NLsolve
-.jl)", solver = Dict{Symbol, NonlinearSolve.NLsolveJL{LineSearches.Static, 
-NonlinearSolve.var"#21#23", Float64, Float64}}(:alg => NonlinearSolve.NLsol
-veJL{LineSearches.Static, NonlinearSolve.var"#21#23", Float64, Float64}(:tr
-ust_region, :central, false, false, LineSearches.Static(), NonlinearSolve.v
-ar"#21#23"(), 1.0, true, 10, 1.0, false)), color = :darkorange, markershape
- = :circle)])
+Wright))), (name = "Newton Trust Region (Hei Radius Update)", solver = Dict
+{Symbol, NonlinearSolve.TrustRegion{nothing, Nothing, Rational{Int64}, Noth
+ing, typeof(NonlinearSolve.DEFAULT_PRECS), Rational{Int64}, Nothing}}(:alg 
+=> TrustRegion(radius_update_scheme = Hei))), (name = "Newton Trust Region 
+(Yuan Radius Update)", solver = Dict{Symbol, NonlinearSolve.TrustRegion{not
+hing, Nothing, Rational{Int64}, Nothing, typeof(NonlinearSolve.DEFAULT_PREC
+S), Rational{Int64}, Nothing}}(:alg => TrustRegion(radius_update_scheme = Y
+uan))), (name = "Newton Trust Region (Bastin Radius Update)", solver = Dict
+{Symbol, NonlinearSolve.TrustRegion{nothing, Nothing, Rational{Int64}, Noth
+ing, typeof(NonlinearSolve.DEFAULT_PRECS), Rational{Int64}, Nothing}}(:alg 
+=> TrustRegion(radius_update_scheme = Bastin))), (name = "Newton Trust Regi
+on (Fan Radius Update)", solver = Dict{Symbol, NonlinearSolve.TrustRegion{n
+othing, Nothing, Rational{Int64}, Nothing, typeof(NonlinearSolve.DEFAULT_PR
+ECS), Rational{Int64}, Nothing}}(:alg => TrustRegion(radius_update_scheme =
+ Fan))), (name = "Newton Raphson (NLsolve.jl)", solver = Dict{Symbol, Nonli
+nearSolve.NLsolveJL{LineSearches.Static, NonlinearSolve.var"#22#24", Float6
+4, Float64}}(:alg => NonlinearSolve.NLsolveJL{LineSearches.Static, Nonlinea
+rSolve.var"#22#24", Float64, Float64}(:newton, :central, false, false, Line
+Searches.Static(), NonlinearSolve.var"#22#24"(), 1.0, true, 10, 1.0, false)
+)), (name = "Newton Trust Region (NLsolve.jl)", solver = Dict{Symbol, Nonli
+nearSolve.NLsolveJL{LineSearches.Static, NonlinearSolve.var"#21#23", Float6
+4, Float64}}(:alg => NonlinearSolve.NLsolveJL{LineSearches.Static, Nonlinea
+rSolve.var"#21#23", Float64, Float64}(:trust_region, :central, false, false
+, LineSearches.Static(), NonlinearSolve.var"#21#23"(), 1.0, true, 10, 1.0, 
+false)))])
 ```
 
 
@@ -400,19 +396,22 @@ ar"#21#23"(), 1.0, true, 10, 1.0, false)), color = :darkorange, markershape
 ## Plot and Save the Plot
 
 ```julia
-fig = with_theme(theme_latexfonts(); fontsize = 32) do 
+cycle = Cycle([:color, :linestyle, :marker], covary = true)
+theme = merge(theme_latexfonts(), Theme(Lines = (cycle = cycle,),
+    Scatter = (cycle = cycle,)))
+
+fig = with_theme(theme; fontsize = 32) do 
     fig = Figure(; size = (1300, 1000))
-    ax = Axis(fig[1, 1], ylabel = L"Time ($s$)", xlabel = L"Error: $f(x^\ast)$ $L_2$-norm",
-        xscale = log10, yscale = log10, title = "Battery Problem")
+    ax = Axis(fig[1, 1], ylabel = L"Time ($s$)", title = "Battery Problem",
+        xlabel = L"Error: $f(x^\ast)$ $L_{\infty}$-norm", xscale = log10, yscale = log10)
 
     ls, scs = [], []
     
     for (wp, solver) in zip(wp_set.wps, successful_solvers)
         (; name, times, errors) = wp
-        errors = [err.l2 for err in errors]
-        l = lines!(ax, errors, times; label = name, linewidth = 3, color = solver.color)
-        sc = scatter!(ax, errors, times; label = name, markersize = 16,
-            marker = solver.markershape, color = solver.color, strokewidth = 2)
+        errors = [err.l∞ for err in errors]
+        l = lines!(ax, errors, times; label = name, linewidth = 3)
+        sc = scatter!(ax, errors, times; label = name, markersize = 16, strokewidth = 2)
         push!(ls, l)
         push!(scs, sc)
     end
@@ -557,28 +556,27 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.4.0
   [13f3f980] CairoMakie v0.11.3
-  [2b5f629d] DiffEqBase v6.142.0
-  [f3b72e0c] DiffEqDevTools v2.42.0
+  [2b5f629d] DiffEqBase v6.143.1 `https://github.com/SciML/DiffEqBase.jl.git#ap/infnorm`
+  [f3b72e0c] DiffEqDevTools v2.44.0 `https://github.com/SciML/DiffEqDevTools.jl.git#ap/infnorm`
   [b964fa9f] LaTeXStrings v1.3.1
-  [7ed4a6bd] LinearSolve v2.20.2
+  [7ed4a6bd] LinearSolve v2.21.0
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.1
-  [8913a72c] NonlinearSolve v3.0.1
+  [8913a72c] NonlinearSolve v3.1.0
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
-  [90137ffa] StaticArrays v1.7.0
-⌃ [c3572dad] Sundials v4.20.1
-Info Packages marked with ⌃ have new versions available and may be upgradable.
+  [90137ffa] StaticArrays v1.8.0
+  [c3572dad] Sundials v4.22.1
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
   [47edcb42] ADTypes v0.2.5
   [621f4979] AbstractFFTs v1.5.0
   [398f06c4] AbstractLattices v0.3.0
@@ -588,13 +586,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [27a7e980] Animations v0.4.1
   [ec485272] ArnoldiMethod v0.2.0
   [4fba245c] ArrayInterface v7.6.1
-  [4c555306] ArrayLayouts v1.4.3
+  [4c555306] ArrayLayouts v1.4.5
   [67c07d97] Automa v1.0.2
   [13072b0f] AxisAlgorithms v1.0.1
   [39de3d68] AxisArrays v0.4.7
   [6e4b80f9] BenchmarkTools v1.4.0
   [62783981] BitTwiddlingConvenienceFunctions v0.1.5
-⌅ [fa961155] CEnum v0.4.2
+  [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.4
   [96374032] CRlibm v1.0.1
   [159f3aea] Cairo v1.0.5
@@ -623,9 +621,9 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.11
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.142.0
-  [f3b72e0c] DiffEqDevTools v2.42.0
-  [77a26b50] DiffEqNoiseProcess v5.19.0
+  [2b5f629d] DiffEqBase v6.143.1 `https://github.com/SciML/DiffEqBase.jl.git#ap/infnorm`
+  [f3b72e0c] DiffEqDevTools v2.44.0 `https://github.com/SciML/DiffEqDevTools.jl.git#ap/infnorm`
+  [77a26b50] DiffEqNoiseProcess v5.20.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
   [b4f34e82] Distances v0.10.11
@@ -645,12 +643,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [5789e2e9] FileIO v1.16.1
   [8fc22ac5] FilePaths v0.8.3
   [48062228] FilePathsBase v0.9.21
-  [1a297f60] FillArrays v1.9.2
+  [1a297f60] FillArrays v1.9.3
   [6a86dc24] FiniteDiff v2.21.1
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
   [f6369f11] ForwardDiff v0.10.36
-  [b38be410] FreeType v4.1.0
+  [b38be410] FreeType v4.1.1
   [663a7486] FreeTypeAbstraction v0.10.0
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
@@ -675,8 +673,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9b13fd28] IndirectArrays v1.0.0
   [d25df0c9] Inflate v0.1.4
   [18e54dd8] IntegerMathUtils v0.1.2
-⌅ [a98d9a8b] Interpolations v0.14.7
-  [d1acc4aa] IntervalArithmetic v0.21.2
+  [a98d9a8b] Interpolations v0.15.0
+⌅ [d1acc4aa] IntervalArithmetic v0.21.2
   [8197267c] IntervalSets v0.7.8
   [3587e190] InverseFunctions v0.1.12
   [92d709cd] IrrationalConstants v0.2.2
@@ -685,21 +683,21 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [82899510] IteratorInterfaceExtensions v1.0.0
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
-  [b835a17e] JpegTurbo v0.1.4
+  [b835a17e] JpegTurbo v0.1.5
   [ef3ab10e] KLU v0.4.1
-  [5ab0869b] KernelDensity v0.6.7
+  [5ab0869b] KernelDensity v0.6.8
   [ba0b0d4f] Krylov v0.9.5
   [b964fa9f] LaTeXStrings v1.3.1
   [23fbe1c1] Latexify v0.16.1
   [73f95e8e] LatticeRules v0.0.1
   [10f19ff3] LayoutPointers v0.1.15
   [50d2b5c4] Lazy v0.15.1
-  [5078a376] LazyArrays v1.8.2
+  [5078a376] LazyArrays v1.8.3
   [8cdb02fc] LazyModules v0.3.1
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
   [9b3f67b0] LinearAlgebraX v0.2.5
-  [7ed4a6bd] LinearSolve v2.20.2
+  [7ed4a6bd] LinearSolve v2.21.0
   [2ab3a3ac] LogExpFunctions v0.3.26
   [bdcacae8] LoopVectorization v0.12.166
   [4854310b] MINPACK v1.2.0
@@ -723,7 +721,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
   [b7050fa9] NonlinearProblemLibrary v0.1.1
-  [8913a72c] NonlinearSolve v3.0.1
+  [8913a72c] NonlinearSolve v3.1.0
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.12.10
   [52e1d378] OpenEXR v0.3.2
@@ -745,7 +743,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [647866c9] PolygonOps v0.1.2
   [f27b6e38] Polynomials v4.0.6
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.12
+  [d236fae5] PreallocationTools v0.4.13
   [aea7be01] PrecompileTools v1.2.0
   [21216c6a] Preferences v1.4.1
   [08abe8d2] PrettyTables v2.3.1
@@ -759,7 +757,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
-  [731186ca] RecursiveArrayTools v2.38.10
+  [731186ca] RecursiveArrayTools v3.0.0
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
@@ -772,7 +770,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7e49a35a] RuntimeGeneratedFunctions v0.5.12
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
-  [0bca4576] SciMLBase v2.10.0
+  [0bca4576] SciMLBase v2.11.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
@@ -797,8 +795,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c5dd0088] StableHashTraits v1.1.3
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v0.8.8
-  [0d7ed370] StaticArrayInterface v1.4.1
-  [90137ffa] StaticArrays v1.7.0
+  [0d7ed370] StaticArrayInterface v1.5.0
+  [90137ffa] StaticArrays v1.8.0
   [1e83bf80] StaticArraysCore v1.4.2
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.2
@@ -807,8 +805,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
   [09ab397b] StructArrays v0.6.16
-⌃ [c3572dad] Sundials v4.20.1
-⌅ [2efcf032] SymbolicIndexingInterface v0.2.2
+  [c3572dad] Sundials v4.22.1
+  [2efcf032] SymbolicIndexingInterface v0.3.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
@@ -846,7 +844,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
   [905a6f67] Imath_jll v3.1.7+0
   [1d5cc7b8] IntelOpenMP_jll v2024.0.0+0
-⌅ [aacddb02] JpegTurbo_jll v2.1.91+0
+  [aacddb02] JpegTurbo_jll v3.0.1+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [1d63c593] LLVMOpenMP_jll v15.0.4+0
   [dd4b983a] LZO_jll v2.10.1+0
