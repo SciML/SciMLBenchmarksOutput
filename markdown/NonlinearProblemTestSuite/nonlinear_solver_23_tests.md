@@ -63,6 +63,7 @@ solvers_all = [
     (type = :LM,      name = "Levenberg-Marquardt (α_geodesic, with Cholesky)",     solver = Dict(:alg=>LevenbergMarquardt(linsolve = CholeskyFactorization())),                  color = :orchid4,         markershape = :rtriangle),
     (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.5)",                solver = Dict(:alg=>LevenbergMarquardt(α_geodesic=0.5)),                                      color = :darkorchid1,     markershape = :ltriangle),
     (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.5, with Cholesky)", solver = Dict(:alg=>LevenbergMarquardt(linsolve = CholeskyFactorization(), α_geodesic=0.5)),  color = :purple4,         markershape = :star8),
+    (type = :PT,      name = "PseudoTransient (alpha_initial=10.0)",                solver = Dict(:alg=>PseudoTransient(alpha_initial=10.0)),                                     color = :blue3,           markershape = :vline),
     (type = :general, name = "Modified Powell (CMINPACK)",                          solver = Dict(:alg=>CMINPACK(method=:hybr)),                                                  color = :lightgoldenrod2, markershape = :+),
     (type = :general, name = "Levenberg-Marquardt (CMINPACK)",                      solver = Dict(:alg=>CMINPACK(method=:lm)),                                                    color = :gold1,           markershape = :x),
     (type = :general, name = "Newton Raphson (NLsolveJL)",                          solver = Dict(:alg=>NLsolveJL(method=:newton)),                                               color = :olivedrab1,      markershape = :dtriangle),
@@ -267,6 +268,9 @@ benchmark_problem!("Generalized Rosenbrock function")
 [Warn] Solver Newton Raphson (No Line Search) returned retcode Unstable wit
 h an residual norm = 4.919349550499537.
 
+[Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode MaxIter
+s with an residual norm = 1.439019251316028e12.
+
 [Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
 esidual norm = 4.919349550499537.
 
@@ -350,31 +354,31 @@ benchmark_problem!("Watson function")
 
 ```
 [Warn] Solver Newton Raphson (No Line Search) returned retcode Unstable wit
-h an residual norm = 7.535419955640642e155.
+h an residual norm = 1.5907152238534665e154.
 [Warn] Solver Newton Raphson (Hager & Zhang Line Search) threw an error: Li
 neSearches.LineSearchException{Float64}("Search direction is not a directio
 n of descent.", 0.0).
 [Warn] Solver Newton Raphson (More & Thuente Line Search) threw an error: L
 ineSearches.LineSearchException{Int64}("Search direction is not a direction
  of descent.", 0).
-[Warn] Solver Newton Raphson (BackTracking Line Search) threw an error: Lin
-eSearches.LineSearchException{Float64}("Linesearch failed to converge, reac
-hed maximum iterations 1000.", 0.0).
 
-[Warn] Solver Newton Trust Region returned retcode ConvergenceFailure with 
-an residual norm = 74.67626757899569.
+[Warn] Solver Newton Raphson (BackTracking Line Search) returned retcode Un
+stable with an residual norm = NaN.
+
+[Warn] Solver Newton Trust Region returned retcode Unstable with an residua
+l norm = NaN.
 
 [Warn] Solver Newton Trust Region (NLsolve Radius Update) returned retcode 
-ConvergenceFailure with an residual norm = 74.6762583103603.
+ConvergenceFailure with an residual norm = 74.67626757899569.
 
 [Warn] Solver Newton Trust Region (Nocedal Wright Radius Update) returned r
-etcode ConvergenceFailure with an residual norm = 14.183339210482272.
+etcode ConvergenceFailure with an residual norm = 74.67626757899569.
 
 [Warn] Solver Newton Trust Region (Hei Radius Update) returned retcode Conv
-ergenceFailure with an residual norm = 58.53965941248832.
+ergenceFailure with an residual norm = 3.8623126463746735.
 
 [Warn] Solver Newton Trust Region (Yuan Radius Update) returned retcode Con
-vergenceFailure with an residual norm = 106.89496250525436.
+vergenceFailure with an residual norm = 74.67626757899569.
 
 [Warn] Solver Newton Trust Region (Bastin Radius Update) returned retcode C
 onvergenceFailure with an residual norm = 74.67626757899569.
@@ -383,7 +387,7 @@ onvergenceFailure with an residual norm = 74.67626757899569.
 ergenceFailure with an residual norm = 74.67626757899569.
 
 [Warn] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode MaxIte
-rs with an residual norm = 113.39205799915463.
+rs with an residual norm = NaN.
 
 [Warn] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
 ode MaxIters with an residual norm = NaN.
@@ -394,20 +398,23 @@ s with an residual norm = 129.15201656512428.
 [Warn] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
 retcode MaxIters with an residual norm = NaN.
 
+[Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode Unstabl
+e with an residual norm = NaN.
+
 [Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
-esidual norm = NaN.
+esidual norm = 127.80637043120277.
 
 [Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
-an residual norm = NaN.
+an residual norm = 109.95748343795873.
 [Warn] Solver Newton Raphson (NLsolveJL) threw an error: During the resolut
 ion of the non-linear system, the evaluation of the following equation(s) r
 esulted in a non-finite number: [1, 2].
-[Warn] Solver Newton Trust Region (NLsolveJL) threw an error: During the re
-solution of the non-linear system, the evaluation of the following equation
-(s) resulted in a non-finite number: [1, 2].
+
+[Warn] Solver Newton Trust Region (NLsolveJL) returned retcode Failure with
+ an residual norm = 258.30403313024857.
 
 [Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = NaN.
+idual norm = 129.15243428839898.
 ```
 
 
@@ -449,6 +456,12 @@ idual norm = 6.150960132525852e29.
 ```julia
 benchmark_problem!("Discrete boundary value function")
 ```
+
+```
+[Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode MaxIter
+s with an residual norm = 9.14970770503599e16.
+```
+
 
 ![](figures/nonlinear_solver_23_tests_15_1.png)
 
@@ -624,6 +637,9 @@ benchmark_problem!("Sample problem 18")
 ```
 
 ```
+[Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode MaxIter
+s with an residual norm = 17107.960918549157.
+
 [Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
 idual norm = 21.24046883008426.
 ```
@@ -703,6 +719,9 @@ s with an residual norm = 6.99887517242878.
 [Warn] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
 retcode MaxIters with an residual norm = 6.998875172428782.
 
+[Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode MaxIter
+s with an residual norm = 3.9844532319504604e27.
+
 [Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
 esidual norm = 6.998961666702933.
 
@@ -726,6 +745,12 @@ idual norm = 8.789770825114247e10.
 ```julia
 benchmark_problem!("Boggs function")
 ```
+
+```
+[Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode MaxIter
+s with an residual norm = 4.00005840979903e16.
+```
+
 
 ![](figures/nonlinear_solver_23_tests_28_1.png)
 
@@ -780,6 +805,7 @@ Text(String(take!(io)))
       <th style = "text-align: center;">Levenberg-Marquardt (α_geodesic, with Cholesky)</th>
       <th style = "text-align: center;">Levenberg-Marquardt (α_geodesic=0.5)</th>
       <th style = "text-align: center;">Levenberg-Marquardt (α_geodesic=0.5, with Cholesky)</th>
+      <th style = "text-align: center;">PseudoTransient (alpha_initial=10.0)</th>
       <th style = "text-align: center;">Modified Powell (CMINPACK)</th>
       <th style = "text-align: center;">Levenberg-Marquardt (CMINPACK)</th>
       <th style = "text-align: center;">Newton Raphson (NLsolveJL)</th>
@@ -805,6 +831,7 @@ Text(String(take!(io)))
       <td style = "text-align: center;">20</td>
       <td style = "text-align: center;">20</td>
       <td style = "text-align: center;">17</td>
+      <td style = "text-align: center;">17</td>
       <td style = "text-align: center;">16</td>
       <td style = "text-align: center;">21</td>
       <td style = "text-align: center;">21</td>
@@ -829,230 +856,12 @@ Text(String(take!(io)))
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
     </tr>
     <tr>
       <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-    </tr>
-    <tr>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1095,96 +904,10 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
       <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1227,6 +950,30 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
     </tr>
     <tr>
       <td style = "text-align: center;">O</td>
@@ -1249,6 +996,306 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
     </tr>
     <tr>
       <td style = "text-align: center;">O</td>
@@ -1268,6 +1315,7 @@ Text(String(take!(io)))
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
@@ -1288,6 +1336,7 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1295,6 +1344,7 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
+      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1363,19 +1413,20 @@ Package Information:
 ```
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblemTestSuite/Project.toml`
   [6e4b80f9] BenchmarkTools v1.4.0
-  [2b5f629d] DiffEqBase v6.142.0
-  [f3b72e0c] DiffEqDevTools v2.42.0
+⌃ [2b5f629d] DiffEqBase v6.142.0
+⌃ [f3b72e0c] DiffEqDevTools v2.42.0
   [b964fa9f] LaTeXStrings v1.3.1
-  [7ed4a6bd] LinearSolve v2.20.2
+⌃ [7ed4a6bd] LinearSolve v2.20.2
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.1
-  [8913a72c] NonlinearSolve v3.0.1
+⌃ [8913a72c] NonlinearSolve v3.0.1
   [91a5bcdd] Plots v1.39.0
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
-  [90137ffa] StaticArrays v1.7.0
-  [c3572dad] Sundials v4.22.0
+⌃ [90137ffa] StaticArrays v1.7.0
+⌃ [c3572dad] Sundials v4.22.0
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
@@ -1384,10 +1435,10 @@ And the full manifest:
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblemTestSuite/Manifest.toml`
   [47edcb42] ADTypes v0.2.5
   [7d9f7c33] Accessors v0.1.33
-  [79e6a3ab] Adapt v3.7.2
+⌅ [79e6a3ab] Adapt v3.7.2
   [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v7.6.1
-  [4c555306] ArrayLayouts v1.4.3
+⌃ [4fba245c] ArrayInterface v7.6.1
+⌃ [4c555306] ArrayLayouts v1.4.3
   [6e4b80f9] BenchmarkTools v1.4.0
   [d1d4a3ce] BitFlags v0.1.8
   [62783981] BitTwiddlingConvenienceFunctions v0.1.5
@@ -1415,9 +1466,9 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [864edb3b] DataStructures v0.18.15
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.142.0
-  [f3b72e0c] DiffEqDevTools v2.42.0
-  [77a26b50] DiffEqNoiseProcess v5.19.0
+⌃ [2b5f629d] DiffEqBase v6.142.0
+⌃ [f3b72e0c] DiffEqDevTools v2.42.0
+⌃ [77a26b50] DiffEqNoiseProcess v5.19.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
   [b4f34e82] Distances v0.10.11
@@ -1431,15 +1482,15 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c87230d0] FFMPEG v0.4.1
   [7034ab61] FastBroadcast v0.2.8
   [29a986be] FastLapackInterface v2.0.0
-  [1a297f60] FillArrays v1.9.2
+⌃ [1a297f60] FillArrays v1.9.2
   [6a86dc24] FiniteDiff v2.21.1
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
   [f6369f11] ForwardDiff v0.10.36
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
-  [46192b85] GPUArraysCore v0.1.5
-  [28b8d3ca] GR v0.72.10
+⌃ [46192b85] GPUArraysCore v0.1.5
+⌅ [28b8d3ca] GR v0.72.10
   [d7ba0133] Git v1.3.0
   [86223c79] Graphs v1.9.0
   [42e2da0e] Grisu v1.0.2
@@ -1464,14 +1515,14 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [73f95e8e] LatticeRules v0.0.1
   [10f19ff3] LayoutPointers v0.1.15
   [50d2b5c4] Lazy v0.15.1
-  [5078a376] LazyArrays v1.8.2
+⌃ [5078a376] LazyArrays v1.8.2
   [d3d80556] LineSearches v7.2.0
-  [7ed4a6bd] LinearSolve v2.20.2
+⌃ [7ed4a6bd] LinearSolve v2.20.2
   [2ab3a3ac] LogExpFunctions v0.3.26
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.166
   [4854310b] MINPACK v1.2.0
-  [1914dd2f] MacroTools v0.5.11
+⌃ [1914dd2f] MacroTools v0.5.11
   [d125e4d3] ManualMemory v0.1.8
   [a3b82374] MatrixFactorizations v2.1.0
   [bb5d69b7] MaybeInplace v0.1.1
@@ -1484,15 +1535,15 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
   [b7050fa9] NonlinearProblemLibrary v0.1.1
-  [8913a72c] NonlinearSolve v3.0.1
-  [6fe1bfb0] OffsetArrays v1.12.10
+⌃ [8913a72c] NonlinearSolve v3.0.1
+⌃ [6fe1bfb0] OffsetArrays v1.12.10
   [4d8831e6] OpenSSL v1.4.1
   [429524aa] Optim v1.7.8
   [bac558e1] OrderedCollections v1.6.3
   [90014a1f] PDMats v0.11.31
   [65ce6f38] PackageExtensionCompat v1.0.2
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.8.0
+⌃ [69de0a69] Parsers v2.8.0
   [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.1.0
   [995b91a9] PlotUtils v1.3.5
@@ -1501,18 +1552,18 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [f517fe37] Polyester v0.7.9
   [1d0040c9] PolyesterWeave v0.2.1
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.12
+⌃ [d236fae5] PreallocationTools v0.4.12
   [aea7be01] PrecompileTools v1.2.0
   [21216c6a] Preferences v1.4.1
   [08abe8d2] PrettyTables v2.3.1
   [27ebfcd6] Primes v0.5.5
   [1fd47b50] QuadGK v2.9.1
   [8a4e6c94] QuasiMonteCarlo v0.3.3
-  [74087812] Random123 v1.6.1
+⌃ [74087812] Random123 v1.6.1
   [e6cf234a] RandomNumbers v1.5.3
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v2.38.10
+⌅ [731186ca] RecursiveArrayTools v2.38.10
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
@@ -1523,24 +1574,24 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7e49a35a] RuntimeGeneratedFunctions v0.5.12
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
-  [0bca4576] SciMLBase v2.10.0
+⌃ [0bca4576] SciMLBase v2.10.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
-  [727e6d20] SimpleNonlinearSolve v1.0.2
+⌃ [727e6d20] SimpleNonlinearSolve v1.0.2
   [699a6c99] SimpleTraits v0.9.4
   [ed01d8cd] Sobol v1.5.0
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.2.0
-  [47a9eef4] SparseDiffTools v2.14.0
+⌃ [47a9eef4] SparseDiffTools v2.14.0
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.3.1
   [aedffcd0] Static v0.8.8
-  [0d7ed370] StaticArrayInterface v1.4.1
-  [90137ffa] StaticArrays v1.7.0
+⌃ [0d7ed370] StaticArrayInterface v1.4.1
+⌃ [90137ffa] StaticArrays v1.7.0
   [1e83bf80] StaticArraysCore v1.4.2
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.2
@@ -1549,7 +1600,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
   [09ab397b] StructArrays v0.6.16
-  [c3572dad] Sundials v4.22.0
+⌃ [c3572dad] Sundials v4.22.0
 ⌅ [2efcf032] SymbolicIndexingInterface v0.2.2
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
@@ -1579,18 +1630,18 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [a3f928ae] Fontconfig_jll v2.13.93+0
   [d7e528f0] FreeType2_jll v2.13.1+0
   [559328eb] FriBidi_jll v1.0.10+0
-  [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.72.10+0
+⌃ [0656b61e] GLFW_jll v3.3.8+0
+⌅ [d2c73de3] GR_jll v0.72.10+0
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.42.0+0
   [7746bdde] Glib_jll v2.76.5+0
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
-  [1d5cc7b8] IntelOpenMP_jll v2024.0.0+0
+⌃ [1d5cc7b8] IntelOpenMP_jll v2024.0.0+0
   [aacddb02] JpegTurbo_jll v3.0.1+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [88015f11] LERC_jll v3.0.0+1
-  [1d63c593] LLVMOpenMP_jll v15.0.4+0
+⌃ [1d63c593] LLVMOpenMP_jll v15.0.4+0
   [dd4b983a] LZO_jll v2.10.1+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
   [d4300ac3] Libgcrypt_jll v1.8.7+0
@@ -1704,6 +1755,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850b90] libblastrampoline_jll v5.8.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+0
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 ```
 
