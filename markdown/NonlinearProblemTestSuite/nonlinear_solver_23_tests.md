@@ -63,7 +63,7 @@ solvers_all = [
     (type = :LM,      name = "Levenberg-Marquardt (α_geodesic, with Cholesky)",     solver = Dict(:alg=>LevenbergMarquardt(linsolve = CholeskyFactorization())),                  color = :orchid4,         markershape = :rtriangle),
     (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.5)",                solver = Dict(:alg=>LevenbergMarquardt(α_geodesic=0.5)),                                      color = :darkorchid1,     markershape = :ltriangle),
     (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.5, with Cholesky)", solver = Dict(:alg=>LevenbergMarquardt(linsolve = CholeskyFactorization(), α_geodesic=0.5)),  color = :purple4,         markershape = :star8),
-    (type = :PT,      name = "PseudoTransient (alpha_initial=10.0)",                solver = Dict(:alg=>PseudoTransient(alpha_initial=10.0)),                                     color = :blue3,           markershape = :vline),
+    (type = :PT,      name = "PseudoTransient (alpha_initial=10.0)",                solver = Dict(:alg=>PseudoTransient(alpha_initial=10.0)),                                     color = :blue3,           markershape = :star6),
     (type = :general, name = "Modified Powell (CMINPACK)",                          solver = Dict(:alg=>CMINPACK(method=:hybr)),                                                  color = :lightgoldenrod2, markershape = :+),
     (type = :general, name = "Levenberg-Marquardt (CMINPACK)",                      solver = Dict(:alg=>CMINPACK(method=:lm)),                                                    color = :gold1,           markershape = :x),
     (type = :general, name = "Newton Raphson (NLsolveJL)",                          solver = Dict(:alg=>NLsolveJL(method=:newton)),                                               color = :olivedrab1,      markershape = :dtriangle),
@@ -100,7 +100,7 @@ Prepares various helper functions for benchmarking a specific problem.
 
 ```julia
 # Benchmarks a specific problem, checks which solvers can solve it and their performance
-function benchmark_problem!(prob_name; solver_tracker=solver_tracker, selected_NR=nothing, selected_TR=nothing, selected_LM=nothing)
+function benchmark_problem!(prob_name; solver_tracker=solver_tracker, selected_NR=nothing, selected_TR=nothing, selected_LM=nothing,selected_PT=nothing)
     # Finds the problem and the true solution.
     prob = nlprob_23_testcases[prob_name]
 
@@ -112,23 +112,28 @@ function benchmark_problem!(prob_name; solver_tracker=solver_tracker, selected_N
     solvers_NR = filter(s -> s.type==:NR, successful_solvers)
     solvers_TR = filter(s -> s.type==:TR, successful_solvers)
     solvers_LM = filter(s -> s.type==:LM, successful_solvers)
+    solvers_PT = filter(s -> s.type==:PT, successful_solvers)
     wp_NR = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_NR, :solver); names=getfield.(solvers_NR, :name), numruns=100, error_estimate=:l2, maxiters=10000000)
     wp_TR = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_TR, :solver); names=getfield.(solvers_TR, :name), numruns=100, error_estimate=:l2, maxiters=10000000)
     wp_LM = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_LM, :solver); names=getfield.(solvers_LM, :name), numruns=100, error_estimate=:l2, maxiters=10000000)
+    wp_PT = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_PT, :solver); names=getfield.(solvers_PT, :name), numruns=100, error_estimate=:l2, maxiters=10000000)
 
     # Handles the general case
     solvers_general = filter(s -> s.type==:general, successful_solvers)
     add_solver!(solvers_general, selected_TR, solvers_TR, wp_TR)
     add_solver!(solvers_general, selected_LM, solvers_LM, wp_LM)
     add_solver!(solvers_general, selected_NR, solvers_NR, wp_NR)
+    add_solver!(solvers_general,selected_PT,solvers_PT,wp_PT)
+
     wp_general = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_general, :solver); names=getfield.(solvers_general, :name), numruns=100, error_estimate=:l2, maxiters=10000000)
     
-    xlimit, ylimit, xticks, yticks = get_limits_and_ticks(wp_general, wp_NR, wp_TR, wp_LM)
+    xlimit, ylimit, xticks, yticks = get_limits_and_ticks(wp_general, wp_NR, wp_TR, wp_LM,wp_PT)
     wp_plot_general = plot_wp(wp_general, solvers_general, xguide="", xlimit, ylimit, linewidth=7, true, xticks=(xticks, fill("", length(xticks))),yticks=yticks)
     wp_plot_NR = plot_wp(wp_NR, solvers_NR, xlimit, ylimit, linewidth=7, true; xguide="", yguide="", xticks=(xticks, fill("", length(xticks))), yticks=(yticks, fill("", length(yticks))), right_margin=7mm)
     wp_plot_TR = plot_wp(wp_TR, solvers_TR, xlimit, ylimit, linewidth=7, false; xticks=xticks, yticks=yticks)
     wp_plot_LM = plot_wp(wp_LM, solvers_LM, xlimit, ylimit, linewidth=7, false; yguide="", xticks=xticks, yticks=(yticks, fill("", length(yticks))), right_margin=7mm)
-    plot(wp_plot_general, wp_plot_NR, wp_plot_TR, wp_plot_LM, layout=(2,2), size=(1600,2100), left_margin=12mm)
+    wp_plot_PT = plot_wp(wp_PT, solvers_PT, xlimit, ylimit, linewidth=7, false; xticks=xticks, yticks=yticks)
+    plot(wp_plot_general, wp_plot_NR, wp_plot_TR, wp_plot_LM,wp_plot_PT, layout=(2,3), size=(1600,2100), left_margin=12mm)
 end
 
 # Checks if a solver can successfully solve a given problem.
@@ -361,9 +366,9 @@ n of descent.", 0.0).
 [Warn] Solver Newton Raphson (More & Thuente Line Search) threw an error: L
 ineSearches.LineSearchException{Int64}("Search direction is not a direction
  of descent.", 0).
-
-[Warn] Solver Newton Raphson (BackTracking Line Search) returned retcode Un
-stable with an residual norm = NaN.
+[Warn] Solver Newton Raphson (BackTracking Line Search) threw an error: Lin
+eSearches.LineSearchException{Float64}("Linesearch failed to converge, reac
+hed maximum iterations 1000.", 0.0).
 
 [Warn] Solver Newton Trust Region returned retcode Unstable with an residua
 l norm = NaN.
@@ -387,7 +392,7 @@ onvergenceFailure with an residual norm = 74.67626757899569.
 ergenceFailure with an residual norm = 74.67626757899569.
 
 [Warn] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode MaxIte
-rs with an residual norm = NaN.
+rs with an residual norm = 129.15201656512428.
 
 [Warn] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
 ode MaxIters with an residual norm = NaN.
@@ -396,22 +401,22 @@ ode MaxIters with an residual norm = NaN.
 s with an residual norm = 129.15201656512428.
 
 [Warn] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
-retcode MaxIters with an residual norm = NaN.
+retcode MaxIters with an residual norm = 129.15201656512428.
 
 [Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode Unstabl
 e with an residual norm = NaN.
 
 [Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
-esidual norm = 127.80637043120277.
+esidual norm = NaN.
 
 [Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
-an residual norm = 109.95748343795873.
+an residual norm = NaN.
 [Warn] Solver Newton Raphson (NLsolveJL) threw an error: During the resolut
 ion of the non-linear system, the evaluation of the following equation(s) r
 esulted in a non-finite number: [1, 2].
-
-[Warn] Solver Newton Trust Region (NLsolveJL) returned retcode Failure with
- an residual norm = 258.30403313024857.
+[Warn] Solver Newton Trust Region (NLsolveJL) threw an error: During the re
+solution of the non-linear system, the evaluation of the following equation
+(s) resulted in a non-finite number: [1, 2].
 
 [Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
 idual norm = 129.15243428839898.
