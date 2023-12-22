@@ -1,6 +1,6 @@
 
-using NonlinearSolve, MINPACK, NLsolve, LinearSolve, StaticArrays, Sundials
-using BenchmarkTools, LinearAlgebra, DiffEqDevTools, CairoMakie
+using NonlinearSolve, MINPACK, NLsolve, LinearSolve, StaticArrays, Sundials,
+    BenchmarkTools, LinearAlgebra, DiffEqDevTools, CairoMakie
 RUS = RadiusUpdateSchemes;
 
 
