@@ -185,67 +185,8 @@ an residual norm = 0.000869561489816352.
 idual norm = 4.107334346313282e7.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_7_1.png" alt/></p><h3 id="Problem-2-(Powell-singular-function)"><a class="docs-heading-anchor" href="#Problem-2-(Powell-singular-function)">Problem 2 (Powell singular function)</a><a id="Problem-2-(Powell-singular-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-2-(Powell-singular-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Powell singular function&quot;)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_8_1.png" alt/></p><h3 id="Problem-3-(Powell-badly-scaled-function)"><a class="docs-heading-anchor" href="#Problem-3-(Powell-badly-scaled-function)">Problem 3 (Powell badly scaled function)</a><a id="Problem-3-(Powell-badly-scaled-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-3-(Powell-badly-scaled-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Powell badly scaled function&quot;)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson (Hager &amp; Zhang Line Search) returned retcode C
 onvergenceFailure with an residual norm = 2.0607954589429224e-8.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_9_1.png" alt/></p><h3 id="Problem-4-(Wood-function)"><a class="docs-heading-anchor" href="#Problem-4-(Wood-function)">Problem 4 (Wood function)</a><a id="Problem-4-(Wood-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-4-(Wood-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Wood function&quot;)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
 idual norm = 2.245655731895381e11.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_10_1.png" alt/></p><h3 id="Problem-5-(Helical-valley-function)"><a class="docs-heading-anchor" href="#Problem-5-(Helical-valley-function)">Problem 5 (Helical valley function)</a><a id="Problem-5-(Helical-valley-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-5-(Helical-valley-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Helical valley function&quot;)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 43118.59202077484.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_11_1.png" alt/></p><h3 id="Problem-6-(Watson-function)"><a class="docs-heading-anchor" href="#Problem-6-(Watson-function)">Problem 6 (Watson function)</a><a id="Problem-6-(Watson-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-6-(Watson-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Watson function&quot;)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson (No Line Search) returned retcode Unstable wit
-h an residual norm = 1.5907152238534665e154.
-[Warn] Solver Newton Raphson (Hager &amp; Zhang Line Search) threw an error: Li
-neSearches.LineSearchException{Float64}(&quot;Search direction is not a directio
-n of descent.&quot;, 0.0).
-[Warn] Solver Newton Raphson (More &amp; Thuente Line Search) threw an error: L
-ineSearches.LineSearchException{Int64}(&quot;Search direction is not a direction
- of descent.&quot;, 0).
-[Warn] Solver Newton Raphson (BackTracking Line Search) threw an error: Lin
-eSearches.LineSearchException{Float64}(&quot;Linesearch failed to converge, reac
-hed maximum iterations 1000.&quot;, 0.0).
-
-[Warn] Solver Newton Trust Region returned retcode ConvergenceFailure with 
-an residual norm = 74.67626757899569.
-
-[Warn] Solver Newton Trust Region (NLsolve Radius Update) returned retcode 
-ConvergenceFailure with an residual norm = 74.67626757899569.
-
-[Warn] Solver Newton Trust Region (Nocedal Wright Radius Update) returned r
-etcode ConvergenceFailure with an residual norm = 74.67628917942976.
-
-[Warn] Solver Newton Trust Region (Hei Radius Update) returned retcode Conv
-ergenceFailure with an residual norm = 3.8623126463746735.
-
-[Warn] Solver Newton Trust Region (Yuan Radius Update) returned retcode Max
-Iters with an residual norm = 129.15201656512428.
-
-[Warn] Solver Newton Trust Region (Bastin Radius Update) returned retcode C
-onvergenceFailure with an residual norm = 74.67626757899569.
-
-[Warn] Solver Newton Trust Region (Fan Radius Update) returned retcode Conv
-ergenceFailure with an residual norm = 74.67626757899569.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode MaxIte
-rs with an residual norm = 129.15201656512428.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
-ode MaxIters with an residual norm = NaN.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode MaxIter
-s with an residual norm = 129.15201656512428.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
-retcode MaxIters with an residual norm = NaN.
-
-[Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode MaxIter
-s with an residual norm = 5.563448326338129e38.
-
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
-esidual norm = 127.80637043120277.
-
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
-an residual norm = 109.95748343795873.
-[Warn] Solver Newton Raphson (NLsolveJL) had a very large residual (norm = 
-5.136305692000745e159).
-
-[Warn] Solver Newton Trust Region (NLsolveJL) returned retcode Failure with
- an residual norm = 258.30403313024857.
-
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 130.30362045687932.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_12_1.png" alt/></p><h3 id="Problem-7-(Chebyquad-function)"><a class="docs-heading-anchor" href="#Problem-7-(Chebyquad-function)">Problem 7 (Chebyquad function)</a><a id="Problem-7-(Chebyquad-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-7-(Chebyquad-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Chebyquad function&quot;)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_13_1.png" alt/></p><h3 id="Problem-8-(Brown-almost-linear-function)"><a class="docs-heading-anchor" href="#Problem-8-(Brown-almost-linear-function)">Problem 8 (Brown almost linear function)</a><a id="Problem-8-(Brown-almost-linear-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-8-(Brown-almost-linear-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Brown almost linear function&quot;)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
+idual norm = 43118.59202077484.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_11_1.png" alt/></p><h3 id="Problem-6-(Watson-function)"><a class="docs-heading-anchor" href="#Problem-6-(Watson-function)">Problem 6 (Watson function)</a><a id="Problem-6-(Watson-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-6-(Watson-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Watson function&quot;)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
+idual norm = 11.507296497074089.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_12_1.png" alt/></p><h3 id="Problem-7-(Chebyquad-function)"><a class="docs-heading-anchor" href="#Problem-7-(Chebyquad-function)">Problem 7 (Chebyquad function)</a><a id="Problem-7-(Chebyquad-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-7-(Chebyquad-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Chebyquad function&quot;)</code></pre><p><img src="../figures/nonlinear_solver_23_tests_13_1.png" alt/></p><h3 id="Problem-8-(Brown-almost-linear-function)"><a class="docs-heading-anchor" href="#Problem-8-(Brown-almost-linear-function)">Problem 8 (Brown almost linear function)</a><a id="Problem-8-(Brown-almost-linear-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-8-(Brown-almost-linear-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Brown almost linear function&quot;)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
 an residual norm = 1.000000000050551.
 
 [Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
@@ -280,29 +221,29 @@ neSearches.LineSearchException{Float64}(&quot;Search direction is not a directio
 n of descent.&quot;, 0.0).</code></pre><p><img src="../figures/nonlinear_solver_23_tests_19_1.png" alt/></p><h3 id="Problem-14-(Broyden-banded-function)"><a class="docs-heading-anchor" href="#Problem-14-(Broyden-banded-function)">Problem 14 (Broyden banded function)</a><a id="Problem-14-(Broyden-banded-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-14-(Broyden-banded-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Broyden banded function&quot;)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Raphson (Hager &amp; Zhang Line Search) threw an error: Li
 neSearches.LineSearchException{Float64}(&quot;Search direction is not a directio
 n of descent.&quot;, 0.0).</code></pre><p><img src="../figures/nonlinear_solver_23_tests_20_1.png" alt/></p><h3 id="Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)"><a class="docs-heading-anchor" href="#Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)">Problem 15 (Hammarling 2 by 2 matrix square root problem)</a><a id="Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-15-(Hammarling-2-by-2-matrix-square-root-problem)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Hammarling 2 by 2 matrix square root problem&quot;)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Trust Region returned retcode ConvergenceFailure with 
-an residual norm = 2.999604010218077e-8.
+an residual norm = 3.000101079373144e-8.
 
 [Warn] Solver Newton Trust Region (NLsolve Radius Update) returned retcode 
-ConvergenceFailure with an residual norm = 2.999251789028647e-8.
+ConvergenceFailure with an residual norm = 3.0042152941798114e-8.
 
 [Warn] Solver Newton Trust Region (Nocedal Wright Radius Update) returned r
-etcode ConvergenceFailure with an residual norm = 2.999559288567541e-8.
+etcode ConvergenceFailure with an residual norm = 3.001046575238702e-8.
 
 [Warn] Solver Newton Trust Region (Hei Radius Update) returned retcode Conv
-ergenceFailure with an residual norm = 2.999302865170479e-8.
+ergenceFailure with an residual norm = 3.000136433676609e-8.
 
 [Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
 esidual norm = 1.6728080025761286e-5.
 
 [Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
 an residual norm = 2.43021260718148e-5.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_21_1.png" alt/></p><h3 id="Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)"><a class="docs-heading-anchor" href="#Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)">Problem 16 (Hammarling 3 by 3 matrix square root problem)</a><a id="Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Hammarling 3 by 3 matrix square root problem&quot;)</code></pre><pre><code class="nohighlight hljs">[Warn] Solver Newton Trust Region returned retcode ConvergenceFailure with 
-an residual norm = 2.999587454657325e-8.
+an residual norm = 3.099164770429116e-8.
 
 [Warn] Solver Newton Trust Region (Nocedal Wright Radius Update) returned r
-etcode ConvergenceFailure with an residual norm = 2.999437328237906e-8.
+etcode ConvergenceFailure with an residual norm = 3.102266420247166e-8.
 
 [Warn] Solver Newton Trust Region (Hei Radius Update) returned retcode Conv
-ergenceFailure with an residual norm = 2.998190895386069e-8.
+ergenceFailure with an residual norm = 3.137723122039647e-8.
 
 [Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
 esidual norm = 5.66486116658339e-6.
@@ -404,26 +345,26 @@ Text(String(take!(io)))</code></pre><table>
   </thead>
   <tbody>
     <tr>
-      <td style = "text-align: center;">21</td>
-      <td style = "text-align: center;">18</td>
-      <td style = "text-align: center;">21</td>
-      <td style = "text-align: center;">21</td>
-      <td style = "text-align: center;">18</td>
-      <td style = "text-align: center;">20</td>
-      <td style = "text-align: center;">18</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">19</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">22</td>
       <td style = "text-align: center;">19</td>
       <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">19</td>
+      <td style = "text-align: center;">20</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">22</td>
       <td style = "text-align: center;">21</td>
       <td style = "text-align: center;">21</td>
-      <td style = "text-align: center;">20</td>
-      <td style = "text-align: center;">20</td>
-      <td style = "text-align: center;">20</td>
-      <td style = "text-align: center;">20</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">18</td>
+      <td style = "text-align: center;">18</td>
       <td style = "text-align: center;">17</td>
-      <td style = "text-align: center;">17</td>
-      <td style = "text-align: center;">16</td>
-      <td style = "text-align: center;">21</td>
-      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">22</td>
       <td style = "text-align: center;">15</td>
     </tr>
     <tr>
@@ -542,26 +483,26 @@ Text(String(take!(io)))</code></pre><table>
       <td style = "text-align: center;">X</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
     </tr>
     <tr>
@@ -971,34 +912,36 @@ Platform Info:
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.4.0
-⌃ [13f3f980] CairoMakie v0.11.3
-⌃ [2b5f629d] DiffEqBase v6.144.0
+  [13f3f980] CairoMakie v0.11.4
+  [2b5f629d] DiffEqBase v6.144.2
   [f3b72e0c] DiffEqDevTools v2.44.0
   [b964fa9f] LaTeXStrings v1.3.1
-⌃ [7ed4a6bd] LinearSolve v2.21.1
+  [7ed4a6bd] LinearSolve v2.21.2
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
-  [b7050fa9] NonlinearProblemLibrary v0.1.1
-  [8913a72c] NonlinearSolve v3.1.1
+  [b7050fa9] NonlinearProblemLibrary v0.1.2
+  [8913a72c] NonlinearSolve v3.3.0
   [91a5bcdd] Plots v1.39.0
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
+  [f1835b91] SpeedMapping v0.3.0
   [90137ffa] StaticArrays v1.8.1
-  [c3572dad] Sundials v4.22.1
-Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+  [c3572dad] Sundials v4.23.1</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
   [47edcb42] ADTypes v0.2.5
+  [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
   [398f06c4] AbstractLattices v0.3.0
   [1520ce14] AbstractTrees v0.4.4
+  [22286c92] AccurateArithmetic v0.3.8
 ⌅ [79e6a3ab] Adapt v3.7.2
   [27a7e980] Animations v0.4.1
   [ec485272] ArnoldiMethod v0.2.0
   [4fba245c] ArrayInterface v7.7.0
   [4c555306] ArrayLayouts v1.4.5
   [67c07d97] Automa v1.0.2
-⌃ [13072b0f] AxisAlgorithms v1.0.1
+  [13072b0f] AxisAlgorithms v1.1.0
   [39de3d68] AxisArrays v0.4.7
   [6e4b80f9] BenchmarkTools v1.4.0
   [d1d4a3ce] BitFlags v0.1.8
@@ -1007,7 +950,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [2a0fbf3d] CPUSummary v0.2.4
   [96374032] CRlibm v1.0.1
   [159f3aea] Cairo v1.0.5
-⌃ [13f3f980] CairoMakie v0.11.3
+  [13f3f980] CairoMakie v0.11.4
   [49dc2e85] Calculus v0.5.1
   [d360d2e6] ChainRulesCore v1.19.0
   [fb6a15b2] CloseOpenIntervals v0.1.12
@@ -1015,7 +958,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [a2cac450] ColorBrewer v0.4.0
   [35d6a980] ColorSchemes v3.24.0
   [3da002f7] ColorTypes v0.11.4
-⌅ [c3611d14] ColorVectorSpace v0.9.10
+  [c3611d14] ColorVectorSpace v0.10.0
   [5ae59095] Colors v0.12.10
   [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.4
@@ -1026,6 +969,8 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [8f4d0f93] Conda v1.10.0
   [187b0558] ConstructionBase v1.5.4
   [d38c429a] Contour v0.6.2
+  [a2441757] Coverage v1.6.0
+  [c36e975a] CoverageTools v1.3.0
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
   [9a962f9c] DataAPI v1.15.0
@@ -1033,7 +978,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.11
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v6.144.0
+  [2b5f629d] DiffEqBase v6.144.2
   [f3b72e0c] DiffEqDevTools v2.44.0
   [77a26b50] DiffEqNoiseProcess v5.20.0
   [163ba53b] DiffResults v1.1.0
@@ -1041,6 +986,8 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [b4f34e82] Distances v0.10.11
   [31c24e10] Distributions v0.25.104
   [ffbed154] DocStringExtensions v0.9.3
+  [e30172f5] Documenter v1.2.1
+  [35a29f4d] DocumenterTools v0.1.18
   [fa6b7ba4] DualNumbers v0.6.8
   [4e289a0a] EnumX v1.0.4
   [f151be2c] EnzymeCore v0.6.4
@@ -1063,33 +1010,35 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [59287772] Formatting v0.4.2
   [f6369f11] ForwardDiff v0.10.36
   [b38be410] FreeType v4.1.1
-⌃ [663a7486] FreeTypeAbstraction v0.10.0
+  [663a7486] FreeTypeAbstraction v0.10.1
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
 ⌃ [46192b85] GPUArraysCore v0.1.5
 ⌅ [28b8d3ca] GR v0.72.10
-  [cf35fbd7] GeoInterface v1.3.2
+  [cf35fbd7] GeoInterface v1.3.3
   [5c1252a2] GeometryBasics v0.4.9
-  [d7ba0133] Git v1.3.0
+⌃ [d7ba0133] Git v1.2.1
   [a2bd30eb] Graphics v1.1.2
   [86223c79] Graphs v1.9.0
   [3955a311] GridLayoutBase v0.10.0
   [42e2da0e] Grisu v1.0.2
+  [708ec375] Gumbo v0.8.2
   [cd3eb016] HTTP v1.10.1
   [eafb193a] Highlights v0.5.2
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
   [7073ff75] IJulia v1.24.2
+  [b5f81e59] IOCapture v0.2.3
   [615f187c] IfElse v0.1.1
   [2803e5a7] ImageAxes v0.6.11
-⌃ [c817782e] ImageBase v0.1.5
-⌅ [a09fc81d] ImageCore v0.9.4
+  [c817782e] ImageBase v0.1.7
+  [a09fc81d] ImageCore v0.10.1
   [82e4d734] ImageIO v0.6.7
   [bc367c6b] ImageMetadata v0.9.9
   [9b13fd28] IndirectArrays v1.0.0
   [d25df0c9] Inflate v0.1.4
   [18e54dd8] IntegerMathUtils v0.1.2
-⌃ [a98d9a8b] Interpolations v0.15.0
+  [a98d9a8b] Interpolations v0.15.1
 ⌅ [d1acc4aa] IntervalArithmetic v0.21.2
   [8197267c] IntervalSets v0.7.8
   [92d709cd] IrrationalConstants v0.2.2
@@ -1106,22 +1055,24 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [b964fa9f] LaTeXStrings v1.3.1
   [23fbe1c1] Latexify v0.16.1
   [10f19ff3] LayoutPointers v0.1.15
+  [0e77f7df] LazilyInitializedFields v1.2.2
   [50d2b5c4] Lazy v0.15.1
   [5078a376] LazyArrays v1.8.3
   [8cdb02fc] LazyModules v0.3.1
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
   [9b3f67b0] LinearAlgebraX v0.2.5
-⌃ [7ed4a6bd] LinearSolve v2.21.1
+  [7ed4a6bd] LinearSolve v2.21.2
   [2ab3a3ac] LogExpFunctions v0.3.26
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.166
   [4854310b] MINPACK v1.2.0
-⌃ [1914dd2f] MacroTools v0.5.11
-⌅ [ee78f7c6] Makie v0.20.2
-⌅ [20f20a25] MakieCore v0.7.1
+  [1914dd2f] MacroTools v0.5.12
+  [ee78f7c6] Makie v0.20.3
+  [20f20a25] MakieCore v0.7.2
   [d125e4d3] ManualMemory v0.1.8
   [dbb5928d] MappedArrays v0.4.2
+  [d0879d2d] MarkdownAST v0.1.2
   [0a4f8689] MathTeXEngine v0.5.7
   [a3b82374] MatrixFactorizations v2.1.0
   [bb5d69b7] MaybeInplace v0.1.1
@@ -1137,10 +1088,10 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
-  [b7050fa9] NonlinearProblemLibrary v0.1.1
-  [8913a72c] NonlinearSolve v3.1.1
+  [b7050fa9] NonlinearProblemLibrary v0.1.2
+  [8913a72c] NonlinearSolve v3.3.0
   [510215fc] Observables v0.5.5
-⌃ [6fe1bfb0] OffsetArrays v1.12.10
+  [6fe1bfb0] OffsetArrays v1.13.0
   [52e1d378] OpenEXR v0.3.2
   [4d8831e6] OpenSSL v1.4.1
   [429524aa] Optim v1.7.8
@@ -1151,7 +1102,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [19eb6ba3] Packing v0.5.0
   [5432bcbf] PaddedViews v0.5.12
   [d96e819e] Parameters v0.12.3
-⌃ [69de0a69] Parsers v2.8.0
+  [69de0a69] Parsers v2.8.1
   [2ae35dd2] Permutations v0.4.19
   [b98c9c47] Pipe v1.3.0
   [eebad327] PkgVersion v0.3.3
@@ -1172,15 +1123,16 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [92933f4c] ProgressMeter v1.9.0
   [4b34888f] QOI v1.0.0
   [1fd47b50] QuadGK v2.9.1
-⌃ [74087812] Random123 v1.6.1
+  [74087812] Random123 v1.6.2
   [e6cf234a] RandomNumbers v1.5.3
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-⌃ [731186ca] RecursiveArrayTools v3.1.0
+  [731186ca] RecursiveArrayTools v3.2.6
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
+  [2792f1a3] RegistryInstances v0.1.0
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
@@ -1191,7 +1143,8 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [7e49a35a] RuntimeGeneratedFunctions v0.5.12
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
-⌃ [0bca4576] SciMLBase v2.11.1
+  [322a6be2] Sass v0.2.0
+  [0bca4576] SciMLBase v2.11.6
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
@@ -1213,6 +1166,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [47a9eef4] SparseDiffTools v2.15.0
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.3.1
+  [f1835b91] SpeedMapping v0.3.0
   [c5dd0088] StableHashTraits v1.1.3
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v0.8.8
@@ -1226,7 +1180,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
   [09ab397b] StructArrays v0.6.16
-  [c3572dad] Sundials v4.22.1
+  [c3572dad] Sundials v4.23.1
   [2efcf032] SymbolicIndexingInterface v0.3.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
@@ -1249,7 +1203,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
   [44d3d7a6] Weave v0.10.12
-⌅ [efce3f68] WoodburyMatrices v0.5.6
+  [efce3f68] WoodburyMatrices v1.0.0
   [ddb6d928] YAML v0.4.9
   [c2297ded] ZMQ v1.2.2
   [6e34b625] Bzip2_jll v1.0.8+0
@@ -1258,24 +1212,25 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [5ae413db] EarCut_jll v2.2.4+0
   [2702e6a9] EpollShim_jll v0.0.20230411+0
   [2e619515] Expat_jll v2.5.0+0
-  [b22a6f82] FFMPEG_jll v4.4.4+1
+⌃ [b22a6f82] FFMPEG_jll v4.4.2+2
   [f5851436] FFTW_jll v3.3.10+0
   [a3f928ae] Fontconfig_jll v2.13.93+0
   [d7e528f0] FreeType2_jll v2.13.1+0
   [559328eb] FriBidi_jll v1.0.10+0
-⌃ [0656b61e] GLFW_jll v3.3.8+0
+  [0656b61e] GLFW_jll v3.3.9+0
 ⌅ [d2c73de3] GR_jll v0.72.10+0
   [78b55507] Gettext_jll v0.21.0+0
-  [f8c6e375] Git_jll v2.42.0+0
+⌅ [f8c6e375] Git_jll v2.34.1+0
   [7746bdde] Glib_jll v2.76.5+0
   [3b182d85] Graphite2_jll v1.3.14+0
+  [528830af] Gumbo_jll v0.10.2+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
   [905a6f67] Imath_jll v3.1.7+0
-⌃ [1d5cc7b8] IntelOpenMP_jll v2024.0.0+0
+  [1d5cc7b8] IntelOpenMP_jll v2024.0.2+0
   [aacddb02] JpegTurbo_jll v3.0.1+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [88015f11] LERC_jll v3.0.0+1
-⌃ [1d63c593] LLVMOpenMP_jll v15.0.4+0
+  [1d63c593] LLVMOpenMP_jll v15.0.7+0
   [dd4b983a] LZO_jll v2.10.1+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
   [d4300ac3] Libgcrypt_jll v1.8.7+0
@@ -1288,12 +1243,13 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [856f044c] MKL_jll v2024.0.0+0
   [e7412a2a] Ogg_jll v1.3.5+1
   [18a262bb] OpenEXR_jll v3.1.4+0
-  [458c3c95] OpenSSL_jll v3.0.12+0
+⌅ [9bd350c2] OpenSSH_jll v8.9.0+1
+⌅ [458c3c95] OpenSSL_jll v1.1.23+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
   [36c8627f] Pango_jll v1.50.14+0
   [30392449] Pixman_jll v0.42.2+0
-  [c0090381] Qt6Base_jll v6.5.3+1
+⌃ [c0090381] Qt6Base_jll v6.5.2+2
   [f50d1b31] Rmath_jll v0.4.0+0
 ⌅ [fb77eaff] Sundials_jll v5.2.1+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
@@ -1338,6 +1294,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [f638f0a6] libfdk_aac_jll v2.0.2+0
   [36db933b] libinput_jll v1.18.0+0
   [b53b4c65] libpng_jll v1.6.40+0
+  [47bcb7c8] libsass_jll v3.6.4+0
   [075b6546] libsixel_jll v1.10.3+0
   [a9144af2] libsodium_jll v1.0.20+0
   [f27f6e37] libvorbis_jll v1.3.7+1
@@ -1394,4 +1351,4 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [8e850b90] libblastrampoline_jll v5.8.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../nonlinear_battery_problem/">« Battery Problem</a><a class="docs-footer-nextpage" href="../quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 25 December 2023 13:23">Monday 25 December 2023</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../nonlinear_battery_problem/">« Battery Problem</a><a class="docs-footer-nextpage" href="../quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 25 December 2023 17:15">Monday 25 December 2023</span>. Using Julia version 1.9.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
