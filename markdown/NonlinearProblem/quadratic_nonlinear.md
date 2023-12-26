@@ -368,12 +368,12 @@ ue), nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing
 , nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, SymbolicIn
 dexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, nothing, no
 thing), nothing), [1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Ba
-se.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2.0), [5.0e
--324, 6.938172767976e-310], [6.9381749375028e-310, 6.93817495191294e-310], 
-SpeedMapping.State{Float64}(false, Inf, 10000.0, 1000.0, 0.01, 1.7035238579
-0203e9, 1.0e-5, true, false, 0, 1, 0, 0.0, 1.0, Inf, Inf, 0, 0, 1, 1.0, 1.0
-, 1.0, 1.0, Inf, Inf, 1.0, 1), nothing, [1.0, 1.0], nothing, nothing, true,
- false), 0x0000000000008411).
+se.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2.0), [6.94
+540155151734e-310, 6.94539437265655e-310], [6.94492911110663e-310, 6.944929
+12147727e-310], SpeedMapping.State{Float64}(false, Inf, 10000.0, 1000.0, 0.
+01, 1.703554148497716e9, 1.0e-5, true, false, 0, 1, 0, 0.0, 1.0, Inf, Inf, 
+0, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, Inf, 1.0, 1), nothing, [1.0, 1.0], nothin
+g, nothing, true, false), 0x0000000000008411).
 [Warn] Solver NLsolve threw an error: ErrorException("setindex!(::StaticArr
 aysCore.SVector{2, Float64}, value, ::Int) is not defined.\n Hint: Use `MAr
 ray` or `SizedArray` to create a mutable static array").
@@ -531,12 +531,11 @@ ue), nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing
 dexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, nothing, no
 thing), nothing), [1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearPro
 blem(), Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2
-.0), [6.93817865865823e-310, 3.746e-320, NaN, 1.706084615936e-311], [6.9381
-7364600574e-310, 5.0e-324, 2.7826e-318, 5.0e-324], SpeedMapping.State{Float
-64}(false, Inf, 10000.0, 1000.0, 0.01, 1.703523889974354e9, 1.0e-5, true, f
-alse, 0, 1, 0, 0.0, 1.0, Inf, Inf, 0, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, Inf, 1
-.0, 1), nothing, [1.0, 1.0, 1.0, 1.0], nothing, nothing, true, false), 0x00
-00000000008411).
+.0), [6.94493506783794e-310, 1.6586e-319, NaN, 0.0], [6.94493265187907e-310
+, 0.0, 2.7826e-318, 0.0], SpeedMapping.State{Float64}(false, Inf, 10000.0, 
+1000.0, 0.01, 1.703554180031229e9, 1.0e-5, true, false, 0, 1, 0, 0.0, 1.0, 
+Inf, Inf, 0, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, Inf, 1.0, 1), nothing, [1.0, 1.
+0, 1.0, 1.0], nothing, nothing, true, false), 0x0000000000008411).
 [Warn] Solver NLsolve threw an error: ErrorException("setindex!(::StaticArr
 aysCore.SVector{4, Float64}, value, ::Int) is not defined.\n Hint: Use `MAr
 ray` or `SizedArray` to create a mutable static array").
@@ -694,13 +693,13 @@ ue), nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing
 dexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, nothing, no
 thing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.
 StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple
-{(), Tuple{}}}()), 2.0), [6.93864400840203e-310, 0.0, 0.0, 0.0, 0.0, 0.0, 0
-.0, 0.0], [6.9381687875535e-310, 1.5e-323, 2.782597e-318, 1.5e-323, 1.5e-32
-3, 6.93863572493654e-310, 6.93810440198927e-310, 6.93810440197663e-310], Sp
-eedMapping.State{Float64}(false, Inf, 10000.0, 1000.0, 0.01, 1.703523901907
-214e9, 1.0e-5, true, false, 0, 1, 0, 0.0, 1.0, Inf, Inf, 0, 0, 1, 1.0, 1.0,
- 1.0, 1.0, Inf, Inf, 1.0, 1), nothing, [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
-1.0], nothing, nothing, true, false), 0x0000000000008411).
+{(), Tuple{}}}()), 2.0), [5.0e-324, 0.0, 5.0e-324, 2.0e-323, 2.0e-323, 6.94
+48764477538e-310, 6.9448764477554e-310, 6.94487644775696e-310], [2.5e-323, 
+2.0e-323, 2.76236e-318, 1.0e-323, 1.0e-323, 6.94539431247066e-310, 0.0, 5.0
+e-324], SpeedMapping.State{Float64}(false, Inf, 10000.0, 1000.0, 0.01, 1.70
+3554191917138e9, 1.0e-5, true, false, 0, 1, 0, 0.0, 1.0, Inf, Inf, 0, 0, 1,
+ 1.0, 1.0, 1.0, 1.0, Inf, Inf, 1.0, 1), nothing, [1.0, 1.0, 1.0, 1.0, 1.0, 
+1.0, 1.0, 1.0], nothing, nothing, true, false), 0x0000000000008411).
 [Warn] Solver NLsolve threw an error: ErrorException("setindex!(::StaticArr
 aysCore.SVector{8, Float64}, value, ::Int) is not defined.\n Hint: Use `MAr
 ray` or `SizedArray` to create a mutable static array").
@@ -859,15 +858,15 @@ ng, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, Symbolic
 IndexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, nothing, 
 nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 2.0
 , SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}
-, NamedTuple{(), Tuple{}}}()), 2.0), [6.93864140719225e-310, 2.5e-323, 2.78
-2597e-318, 2.5e-323, 2.5e-323, 6.93863679012784e-310, 6.93864400980794e-310
-, 6.93864400983007e-310, 6.93864400983324e-310, 6.9386440098364e-310], [6.9
-3864140728276e-310, 5.0e-324, 1.0573815e-317, 5.0e-324, 5.0e-324, 6.9381779
-2148067e-310, 5.0e-324, 1.5e-323, 6.9381773111412e-310, 6.9381773111444e-31
-0], SpeedMapping.State{Float64}(false, Inf, 10000.0, 1000.0, 0.01, 1.703523
-91620192e9, 1.0e-5, true, false, 0, 1, 0, 0.0, 1.0, Inf, Inf, 0, 0, 1, 1.0,
- 1.0, 1.0, 1.0, Inf, Inf, 1.0, 1), nothing, [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
-1.0, 1.0, 1.0, 1.0], nothing, nothing, true, false), 0x0000000000008411).
+, NamedTuple{(), Tuple{}}}()), 2.0), [6.94486299879443e-310, 1.0e-323, 5.39
+316e-318, 1.0e-323, 1.0e-323, 6.9453943730605e-310, 6.94486338004236e-310, 
+0.0, 6.9448622533474e-310, 0.0], [6.9448629988134e-310, 5.0e-324, 1.0573815
+e-317, 5.0e-324, 5.0e-324, 6.9453943730605e-310, 5.0e-324, 1.0e-323, 6.9448
+6262969103e-310, 6.9448626296942e-310], SpeedMapping.State{Float64}(false, 
+Inf, 10000.0, 1000.0, 0.01, 1.703554205862261e9, 1.0e-5, true, false, 0, 1,
+ 0, 0.0, 1.0, Inf, Inf, 0, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, Inf, 1.0, 1), not
+hing, [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], nothing, nothing,
+ true, false), 0x0000000000008411).
 [Warn] Solver NLsolve threw an error: ErrorException("setindex!(::StaticArr
 aysCore.SVector{10, Float64}, value, ::Int) is not defined.\n Hint: Use `MA
 rray` or `SizedArray` to create a mutable static array").

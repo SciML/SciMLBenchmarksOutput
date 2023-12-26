@@ -1351,30 +1351,32 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.4.0
   [13f3f980] CairoMakie v0.11.4
-  [2b5f629d] DiffEqBase v6.144.2
+⌃ [2b5f629d] DiffEqBase v6.144.2
   [f3b72e0c] DiffEqDevTools v2.44.0
   [b964fa9f] LaTeXStrings v1.3.1
   [7ed4a6bd] LinearSolve v2.21.2
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.3.0
+⌃ [8913a72c] NonlinearSolve v3.3.0
   [91a5bcdd] Plots v1.39.0
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [f1835b91] SpeedMapping v0.3.0
   [90137ffa] StaticArrays v1.8.1
   [c3572dad] Sundials v4.23.1
+Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
-  [47edcb42] ADTypes v0.2.5
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+⌃ [47edcb42] ADTypes v0.2.5
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
   [398f06c4] AbstractLattices v0.3.0
@@ -1423,7 +1425,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.11
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.144.2
+⌃ [2b5f629d] DiffEqBase v6.144.2
   [f3b72e0c] DiffEqDevTools v2.44.0
   [77a26b50] DiffEqNoiseProcess v5.20.0
   [163ba53b] DiffResults v1.1.0
@@ -1534,7 +1536,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.3.0
+⌃ [8913a72c] NonlinearSolve v3.3.0
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.13.0
   [52e1d378] OpenEXR v0.3.2
@@ -1552,7 +1554,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b98c9c47] Pipe v1.3.0
   [eebad327] PkgVersion v0.3.3
   [ccf2f8ad] PlotThemes v3.1.0
-  [995b91a9] PlotUtils v1.3.5
+⌃ [995b91a9] PlotUtils v1.3.5
   [91a5bcdd] Plots v1.39.0
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.9
@@ -1600,7 +1602,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [73760f76] SignedDistanceFields v0.4.0
   [777ac1f9] SimpleBufferStream v1.1.0
   [55797a34] SimpleGraphs v0.8.6
-  [727e6d20] SimpleNonlinearSolve v1.0.3
+⌃ [727e6d20] SimpleNonlinearSolve v1.0.3
   [ec83eff0] SimplePartitions v0.3.1
   [cc47b68c] SimplePolynomials v0.2.17
   [a6525b86] SimpleRandom v0.3.1
@@ -1797,5 +1799,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
