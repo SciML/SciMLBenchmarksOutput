@@ -2457,9 +2457,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 20.5868
-  "time_solve_compilation" => 16.2377
-  "time_solve"             => 0.112818
+  "time_build"             => 20.1518
+  "time_solve_compilation" => 16.055
+  "time_solve"             => 0.0910485
   "feasible"               => true
 ```
 
@@ -2477,9 +2477,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 2.90347
-  "time_solve_compilation" => 0.930078
-  "time_solve"             => 0.0177461
+  "time_build"             => 2.87692
+  "time_solve_compilation" => 0.899265
+  "time_solve"             => 0.0177756
   "feasible"               => true
 ```
 
@@ -2497,9 +2497,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 1.04507
-  "time_solve_compilation" => 3.44948
-  "time_solve"             => 0.0379128
+  "time_build"             => 1.02559
+  "time_solve_compilation" => 3.32001
+  "time_solve"             => 0.0767396
   "feasible"               => true
 ```
 
@@ -2543,9 +2543,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.000808725
-  "time_solve_compilation" => 27.6531
-  "time_solve"             => 17.9433
+  "time_build"             => 0.000728246
+  "time_solve_compilation" => 27.8457
+  "time_solve"             => 18.0976
   "feasible"               => false
 ```
 
@@ -2569,9 +2569,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.974321
-  "time_solve_compilation" => 12.2732
-  "time_solve"             => 0.0204383
+  "time_build"             => 0.972457
+  "time_solve_compilation" => 12.2698
+  "time_solve"             => 0.0556559
   "feasible"               => true
 ```
 
@@ -2589,9 +2589,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.00173898
-  "time_solve_compilation" => 0.00933504
-  "time_solve"             => 0.00875675
+  "time_build"             => 0.00168791
+  "time_solve_compilation" => 0.00951306
+  "time_solve"             => 0.00861299
   "feasible"               => true
 ```
 
@@ -2609,9 +2609,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0149129
-  "time_solve_compilation" => 0.0188752
-  "time_solve"             => 0.01787
+  "time_build"             => 0.0138979
+  "time_solve_compilation" => 0.0189765
+  "time_solve"             => 0.018256
   "feasible"               => true
 ```
 
@@ -2655,9 +2655,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0592879
-  "time_solve_compilation" => 2.28069
-  "time_solve"             => 2.20146
+  "time_build"             => 0.0561808
+  "time_solve_compilation" => 2.22511
+  "time_solve"             => 2.17164
   "feasible"               => false
 ```
 
@@ -2854,7 +2854,7 @@ Number of inequality constraint evaluations          = 18
 Number of equality constraint Jacobian evaluations   = 18
 Number of inequality constraint Jacobian evaluations = 18
 Number of Lagrangian Hessian evaluations             = 17
-Total seconds in IPOPT                               = 1.648
+Total seconds in IPOPT                               = 1.641
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -2912,7 +2912,7 @@ Number of inequality constraint evaluations          = 18
 Number of equality constraint Jacobian evaluations   = 18
 Number of inequality constraint Jacobian evaluations = 18
 Number of Lagrangian Hessian evaluations             = 17
-Total seconds in IPOPT                               = 0.010
+Total seconds in IPOPT                               = 0.011
 
 EXIT: Optimal Solution Found.
 file = "../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case5_pjm.m"
@@ -2976,7 +2976,7 @@ Number of inequality constraint evaluations          = 32
 Number of equality constraint Jacobian evaluations   = 22
 Number of inequality constraint Jacobian evaluations = 22
 Number of Lagrangian Hessian evaluations             = 21
-Total seconds in IPOPT                               = 4.258
+Total seconds in IPOPT                               = 4.247
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3039,15 +3039,15 @@ Number of inequality constraint evaluations          = 32
 Number of equality constraint Jacobian evaluations   = 22
 Number of inequality constraint Jacobian evaluations = 22
 Number of Lagrangian Hessian evaluations             = 21
-Total seconds in IPOPT                               = 0.019
+Total seconds in IPOPT                               = 0.020
 
 EXIT: Optimal Solution Found.
 2×23 DataFrame
  Row │ case                    vars   cons   optimization  optimization_modelb ⋯
      │ String                  Int64  Int64  Float64       Float64             ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ pglib_opf_case3_lmbd.m     24     28     0.020399                  0.37 ⋯
-   2 │ pglib_opf_case5_pjm.m      44     53     0.0927164                 0.15
+   1 │ pglib_opf_case3_lmbd.m     24     28     0.0202895                 0.39 ⋯
+   2 │ pglib_opf_case5_pjm.m      44     53     0.0966138                 0.15
                                                               19 columns omitted
 ```
 
@@ -3121,50 +3121,50 @@ Text(String(take!(io)))
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">24</td>
       <td style = "text-align: right;">28</td>
-      <td style = "text-align: right;">0.020399</td>
-      <td style = "text-align: right;">0.375793</td>
-      <td style = "text-align: right;">0.0214445</td>
+      <td style = "text-align: right;">0.0202895</td>
+      <td style = "text-align: right;">0.390984</td>
+      <td style = "text-align: right;">0.0212589</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0125156</td>
-      <td style = "text-align: right;">70.9449</td>
-      <td style = "text-align: right;">9.06841</td>
+      <td style = "text-align: right;">0.0130913</td>
+      <td style = "text-align: right;">69.7402</td>
+      <td style = "text-align: right;">9.09483</td>
       <td style = "text-align: right;">743.0</td>
-      <td style = "text-align: right;">0.00857477</td>
-      <td style = "text-align: right;">0.00173209</td>
-      <td style = "text-align: right;">0.00921909</td>
+      <td style = "text-align: right;">0.00874116</td>
+      <td style = "text-align: right;">0.00183896</td>
+      <td style = "text-align: right;">0.00958992</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0180167</td>
-      <td style = "text-align: right;">1.995</td>
-      <td style = "text-align: right;">0.535141</td>
+      <td style = "text-align: right;">0.0197697</td>
+      <td style = "text-align: right;">1.99616</td>
+      <td style = "text-align: right;">0.480728</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">2.26691</td>
-      <td style = "text-align: right;">0.000554687</td>
-      <td style = "text-align: right;">8.70497</td>
+      <td style = "text-align: right;">2.36429</td>
+      <td style = "text-align: right;">0.000612056</td>
+      <td style = "text-align: right;">8.78589</td>
       <td style = "text-align: right;">6273.63</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case5_pjm.m</td>
       <td style = "text-align: right;">44</td>
       <td style = "text-align: right;">53</td>
-      <td style = "text-align: right;">0.0927164</td>
-      <td style = "text-align: right;">0.157819</td>
-      <td style = "text-align: right;">0.12243</td>
+      <td style = "text-align: right;">0.0966138</td>
+      <td style = "text-align: right;">0.158377</td>
+      <td style = "text-align: right;">0.0968392</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0227257</td>
-      <td style = "text-align: right;">1.8844</td>
-      <td style = "text-align: right;">8.54528</td>
+      <td style = "text-align: right;">0.024368</td>
+      <td style = "text-align: right;">1.85967</td>
+      <td style = "text-align: right;">8.5423</td>
       <td style = "text-align: right;">17929.2</td>
-      <td style = "text-align: right;">0.0174922</td>
-      <td style = "text-align: right;">0.00196509</td>
-      <td style = "text-align: right;">0.0181527</td>
+      <td style = "text-align: right;">0.0175447</td>
+      <td style = "text-align: right;">0.00233202</td>
+      <td style = "text-align: right;">0.0186934</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0977817</td>
-      <td style = "text-align: right;">0.0263037</td>
-      <td style = "text-align: right;">0.0380814</td>
+      <td style = "text-align: right;">0.0392131</td>
+      <td style = "text-align: right;">0.0266248</td>
+      <td style = "text-align: right;">0.0399766</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">17.665</td>
-      <td style = "text-align: right;">0.000445138</td>
-      <td style = "text-align: right;">17.6527</td>
+      <td style = "text-align: right;">19.0642</td>
+      <td style = "text-align: right;">0.000432658</td>
+      <td style = "text-align: right;">19.2406</td>
       <td style = "text-align: right;">77.9548</td>
     </tr>
   </tbody>
@@ -3188,26 +3188,26 @@ benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)
 
 ```
 66-element Vector{String}:
- "/tmp/jl_R90cav/pglib_opf_case10000_goc.m"
- "/tmp/jl_R90cav/pglib_opf_case10192_epigrids.m"
- "/tmp/jl_R90cav/pglib_opf_case10480_goc.m"
- "/tmp/jl_R90cav/pglib_opf_case118_ieee.m"
- "/tmp/jl_R90cav/pglib_opf_case1354_pegase.m"
- "/tmp/jl_R90cav/pglib_opf_case13659_pegase.m"
- "/tmp/jl_R90cav/pglib_opf_case14_ieee.m"
- "/tmp/jl_R90cav/pglib_opf_case162_ieee_dtc.m"
- "/tmp/jl_R90cav/pglib_opf_case179_goc.m"
- "/tmp/jl_R90cav/pglib_opf_case1803_snem.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case10000_goc.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case10192_epigrids.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case10480_goc.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case118_ieee.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case1354_pegase.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case13659_pegase.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case14_ieee.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case162_ieee_dtc.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case179_goc.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case1803_snem.m"
  ⋮
- "/tmp/jl_R90cav/pglib_opf_case6515_rte.m"
- "/tmp/jl_R90cav/pglib_opf_case7336_epigrids.m"
- "/tmp/jl_R90cav/pglib_opf_case73_ieee_rts.m"
- "/tmp/jl_R90cav/pglib_opf_case78484_epigrids.m"
- "/tmp/jl_R90cav/pglib_opf_case793_goc.m"
- "/tmp/jl_R90cav/pglib_opf_case8387_pegase.m"
- "/tmp/jl_R90cav/pglib_opf_case89_pegase.m"
- "/tmp/jl_R90cav/pglib_opf_case9241_pegase.m"
- "/tmp/jl_R90cav/pglib_opf_case9591_goc.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case6515_rte.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case7336_epigrids.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case73_ieee_rts.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case78484_epigrids.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case793_goc.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case8387_pegase.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case89_pegase.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case9241_pegase.m"
+ "/tmp/jl_rAmPG0/pglib_opf_case9591_goc.m"
 ```
 
 
@@ -3217,13 +3217,13 @@ timing_data = multidata_multisolver_benchmark(benchmark_datasets)
 ```
 
 ```
-file = "/tmp/jl_R90cav/pglib_opf_case10000_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case10192_epigrids.m"
-file = "/tmp/jl_R90cav/pglib_opf_case10480_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case118_ieee.m"
-file = "/tmp/jl_R90cav/pglib_opf_case1354_pegase.m"
-file = "/tmp/jl_R90cav/pglib_opf_case13659_pegase.m"
-file = "/tmp/jl_R90cav/pglib_opf_case14_ieee.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case10000_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case10192_epigrids.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case10480_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case118_ieee.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case1354_pegase.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case13659_pegase.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case14_ieee.m"
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      189
@@ -3280,7 +3280,7 @@ Number of inequality constraint evaluations          = 20
 Number of equality constraint Jacobian evaluations   = 19
 Number of inequality constraint Jacobian evaluations = 19
 Number of Lagrangian Hessian evaluations             = 18
-Total seconds in IPOPT                               = 21.585
+Total seconds in IPOPT                               = 20.986
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3339,24 +3339,24 @@ Number of inequality constraint evaluations          = 20
 Number of equality constraint Jacobian evaluations   = 19
 Number of inequality constraint Jacobian evaluations = 19
 Number of Lagrangian Hessian evaluations             = 18
-Total seconds in IPOPT                               = 0.036
+Total seconds in IPOPT                               = 0.034
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_R90cav/pglib_opf_case162_ieee_dtc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case179_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case1803_snem.m"
-file = "/tmp/jl_R90cav/pglib_opf_case1888_rte.m"
-file = "/tmp/jl_R90cav/pglib_opf_case19402_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case1951_rte.m"
-file = "/tmp/jl_R90cav/pglib_opf_case197_snem.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2000_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case200_activ.m"
-file = "/tmp/jl_R90cav/pglib_opf_case20758_epigrids.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2312_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2383wp_k.m"
-file = "/tmp/jl_R90cav/pglib_opf_case240_pserc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case24464_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case24_ieee_rts.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case162_ieee_dtc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case179_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case1803_snem.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case1888_rte.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case19402_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case1951_rte.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case197_snem.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2000_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case200_activ.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case20758_epigrids.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2312_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2383wp_k.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case240_pserc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case24464_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case24_ieee_rts.m"
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      385
@@ -3420,7 +3420,7 @@ Number of inequality constraint evaluations          = 29
 Number of equality constraint Jacobian evaluations   = 25
 Number of inequality constraint Jacobian evaluations = 25
 Number of Lagrangian Hessian evaluations             = 24
-Total seconds in IPOPT                               = 78.473
+Total seconds in IPOPT                               = 77.578
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3486,23 +3486,23 @@ Number of inequality constraint evaluations          = 29
 Number of equality constraint Jacobian evaluations   = 25
 Number of inequality constraint Jacobian evaluations = 25
 Number of Lagrangian Hessian evaluations             = 24
-Total seconds in IPOPT                               = 0.085
+Total seconds in IPOPT                               = 0.424
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_R90cav/pglib_opf_case2736sp_k.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2737sop_k.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2742_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2746wop_k.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2746wp_k.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2848_rte.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2853_sdet.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2868_rte.m"
-file = "/tmp/jl_R90cav/pglib_opf_case2869_pegase.m"
-file = "/tmp/jl_R90cav/pglib_opf_case30000_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case300_ieee.m"
-file = "/tmp/jl_R90cav/pglib_opf_case3012wp_k.m"
-file = "/tmp/jl_R90cav/pglib_opf_case3022_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case30_as.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2736sp_k.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2737sop_k.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2742_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2746wop_k.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2746wp_k.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2848_rte.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2853_sdet.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2868_rte.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case2869_pegase.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case30000_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case300_ieee.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case3012wp_k.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case3022_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case30_as.m"
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      423
@@ -3556,7 +3556,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 15
-Total seconds in IPOPT                               = 86.731
+Total seconds in IPOPT                               = 87.586
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3612,10 +3612,10 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 15
-Total seconds in IPOPT                               = 0.056
+Total seconds in IPOPT                               = 0.057
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_R90cav/pglib_opf_case30_ieee.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case30_ieee.m"
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      421
@@ -3671,7 +3671,7 @@ Number of inequality constraint evaluations          = 18
 Number of equality constraint Jacobian evaluations   = 18
 Number of inequality constraint Jacobian evaluations = 18
 Number of Lagrangian Hessian evaluations             = 17
-Total seconds in IPOPT                               = 86.489
+Total seconds in IPOPT                               = 86.015
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3729,13 +3729,13 @@ Number of inequality constraint evaluations          = 18
 Number of equality constraint Jacobian evaluations   = 18
 Number of inequality constraint Jacobian evaluations = 18
 Number of Lagrangian Hessian evaluations             = 17
-Total seconds in IPOPT                               = 0.060
+Total seconds in IPOPT                               = 0.061
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_R90cav/pglib_opf_case3120sp_k.m"
-file = "/tmp/jl_R90cav/pglib_opf_case3375wp_k.m"
-file = "/tmp/jl_R90cav/pglib_opf_case3970_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case39_epri.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case3120sp_k.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case3375wp_k.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case3970_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case39_epri.m"
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      527
@@ -3806,7 +3806,7 @@ Number of inequality constraint evaluations          = 84
 Number of equality constraint Jacobian evaluations   = 31
 Number of inequality constraint Jacobian evaluations = 31
 Number of Lagrangian Hessian evaluations             = 30
-Total seconds in IPOPT                               = 118.904
+Total seconds in IPOPT                               = 116.835
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3879,10 +3879,10 @@ Number of inequality constraint evaluations          = 84
 Number of equality constraint Jacobian evaluations   = 31
 Number of inequality constraint Jacobian evaluations = 31
 Number of Lagrangian Hessian evaluations             = 30
-Total seconds in IPOPT                               = 0.136
+Total seconds in IPOPT                               = 0.134
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_R90cav/pglib_opf_case3_lmbd.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case3_lmbd.m"
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:       24
@@ -3999,15 +3999,15 @@ Number of Lagrangian Hessian evaluations             = 17
 Total seconds in IPOPT                               = 0.010
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_R90cav/pglib_opf_case4020_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case4601_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case4619_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case4661_sdet.m"
-file = "/tmp/jl_R90cav/pglib_opf_case4837_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case4917_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case500_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case5658_epigrids.m"
-file = "/tmp/jl_R90cav/pglib_opf_case57_ieee.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case4020_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case4601_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case4619_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case4661_sdet.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case4837_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case4917_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case500_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case5658_epigrids.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case57_ieee.m"
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      829
@@ -4062,7 +4062,7 @@ Number of inequality constraint evaluations          = 22
 Number of equality constraint Jacobian evaluations   = 17
 Number of inequality constraint Jacobian evaluations = 17
 Number of Lagrangian Hessian evaluations             = 16
-Total seconds in IPOPT                               = 393.490
+Total seconds in IPOPT                               = 374.757
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -4119,11 +4119,74 @@ Number of inequality constraint evaluations          = 22
 Number of equality constraint Jacobian evaluations   = 17
 Number of inequality constraint Jacobian evaluations = 17
 Number of Lagrangian Hessian evaluations             = 16
-Total seconds in IPOPT                               = 0.097
+Total seconds in IPOPT                               = 0.107
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_R90cav/pglib_opf_case588_sdet.m"
-file = "/tmp/jl_R90cav/pglib_opf_case5_pjm.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case588_sdet.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case5_pjm.m"
+This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
+
+Number of nonzeros in equality constraint Jacobian...:       62
+Number of nonzeros in inequality constraint Jacobian.:       60
+Number of nonzeros in Lagrangian Hessian.............:      230
+
+Total number of variables............................:       16
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:       12
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:        9
+Total number of inequality constraints...............:       24
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:       24
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+   0  9.0555999e+03 3.99e+00 5.32e-01  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0
+   1  2.9607518e+04 1.68e-03 4.63e+02  -1.0 1.60e+00    -  6.44e-02 1.00e+00H  1
+   2  2.8787931e+04 5.57e-04 1.29e+02  -1.0 4.87e-01    -  8.69e-01 6.94e-01h  1
+   3  2.7964256e+04 1.71e-02 2.83e+01  -1.0 2.69e+00    -  7.51e-01 1.00e+00f  1
+   4  2.5402248e+04 1.44e-02 2.57e+01  -1.0 3.69e+01    -  2.23e-01 1.11e-01f  3
+   5  2.3528594e+04 1.79e-02 2.25e+01  -1.0 2.32e+01    -  4.74e-01 1.06e-01h  3
+   6  1.8605289e+04 8.77e-03 2.84e+01  -1.0 8.50e+00    -  1.00e+00 1.00e+00H  1
+   7  1.9217285e+04 4.29e-03 3.58e+00  -1.0 2.37e+00    -  1.00e+00 1.00e+00h  1
+   8  1.9496133e+04 6.07e-04 3.82e-01  -1.0 6.67e-01    -  1.00e+00 1.00e+00h  1
+   9  1.8158387e+04 1.51e-03 1.48e+00  -1.7 2.10e+00    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  10  1.8184679e+04 1.10e-03 4.12e-01  -1.7 3.24e-01    -  1.00e+00 1.00e+00h  1
+  11  1.8194107e+04 1.10e-05 1.71e-03  -1.7 4.92e-02    -  1.00e+00 1.00e+00h  1
+  12  1.7994038e+04 5.90e-03 1.93e-01  -3.8 2.89e-01    -  9.01e-01 7.12e-01f  1
+  13  1.7940116e+04 1.56e-02 3.51e-01  -3.8 4.78e-01    -  7.50e-01 1.00e+00h  1
+  14  1.7937913e+04 1.47e-02 1.29e-01  -3.8 6.26e-01    -  8.87e-01 1.00e+00h  1
+  15  1.7934659e+04 5.77e-04 2.40e-03  -3.8 1.61e-01    -  1.00e+00 1.00e+00h  1
+  16  1.7932702e+04 6.02e-05 6.67e-04  -3.8 9.20e-03    -  1.00e+00 1.00e+00h  1
+  17  1.7930091e+04 1.54e-04 2.16e-03  -5.7 9.83e-02    -  9.73e-01 7.96e-01h  1
+  18  1.7929250e+04 5.52e-06 3.58e-05  -5.7 3.49e-02    -  1.00e+00 1.00e+00h  1
+  19  1.7929254e+04 2.62e-09 1.07e-08  -5.7 1.10e-03    -  1.00e+00 1.00e+00h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
+  20  1.7929213e+04 2.77e-08 5.41e-07  -8.6 1.68e-03    -  1.00e+00 9.98e-01h  1
+  21  1.7929212e+04 3.88e-13 2.79e-12  -8.6 8.55e-06    -  1.00e+00 1.00e+00h  1
+
+Number of Iterations....: 21
+
+                                   (scaled)                 (unscaled)
+Objective...............:   4.7806451881720067e+00    1.7929212376882715e+04
+Dual infeasibility......:   2.7924329515371937e-12    1.0472670835348013e-08
+Constraint violation....:   3.8782865807718281e-13    3.8782865807718281e-13
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
+Complementarity.........:   2.5059336821864200e-09    9.3981911273118078e-06
+Overall NLP error.......:   2.5059336821864200e-09    9.3981911273118078e-06
+
+
+Number of objective function evaluations             = 32
+Number of objective gradient evaluations             = 22
+Number of equality constraint evaluations            = 32
+Number of inequality constraint evaluations          = 32
+Number of equality constraint Jacobian evaluations   = 22
+Number of inequality constraint Jacobian evaluations = 22
+Number of Lagrangian Hessian evaluations             = 21
+Total seconds in IPOPT                               = 0.020
+
+EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:       62
@@ -4187,70 +4250,7 @@ Number of Lagrangian Hessian evaluations             = 21
 Total seconds in IPOPT                               = 0.019
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
-
-Number of nonzeros in equality constraint Jacobian...:       62
-Number of nonzeros in inequality constraint Jacobian.:       60
-Number of nonzeros in Lagrangian Hessian.............:      230
-
-Total number of variables............................:       16
-                     variables with only lower bounds:        0
-                variables with lower and upper bounds:       12
-                     variables with only upper bounds:        0
-Total number of equality constraints.................:        9
-Total number of inequality constraints...............:       24
-        inequality constraints with only lower bounds:        0
-   inequality constraints with lower and upper bounds:        0
-        inequality constraints with only upper bounds:       24
-
-iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-   0  9.0555999e+03 3.99e+00 5.32e-01  -1.0 0.00e+00    -  0.00e+00 0.00e+00   0
-   1  2.9607518e+04 1.68e-03 4.63e+02  -1.0 1.60e+00    -  6.44e-02 1.00e+00H  1
-   2  2.8787931e+04 5.57e-04 1.29e+02  -1.0 4.87e-01    -  8.69e-01 6.94e-01h  1
-   3  2.7964256e+04 1.71e-02 2.83e+01  -1.0 2.69e+00    -  7.51e-01 1.00e+00f  1
-   4  2.5402248e+04 1.44e-02 2.57e+01  -1.0 3.69e+01    -  2.23e-01 1.11e-01f  3
-   5  2.3528594e+04 1.79e-02 2.25e+01  -1.0 2.32e+01    -  4.74e-01 1.06e-01h  3
-   6  1.8605289e+04 8.77e-03 2.84e+01  -1.0 8.50e+00    -  1.00e+00 1.00e+00H  1
-   7  1.9217285e+04 4.29e-03 3.58e+00  -1.0 2.37e+00    -  1.00e+00 1.00e+00h  1
-   8  1.9496133e+04 6.07e-04 3.82e-01  -1.0 6.67e-01    -  1.00e+00 1.00e+00h  1
-   9  1.8158387e+04 1.51e-03 1.48e+00  -1.7 2.10e+00    -  1.00e+00 1.00e+00h  1
-iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-  10  1.8184679e+04 1.10e-03 4.12e-01  -1.7 3.24e-01    -  1.00e+00 1.00e+00h  1
-  11  1.8194107e+04 1.10e-05 1.71e-03  -1.7 4.92e-02    -  1.00e+00 1.00e+00h  1
-  12  1.7994038e+04 5.90e-03 1.93e-01  -3.8 2.89e-01    -  9.01e-01 7.12e-01f  1
-  13  1.7940116e+04 1.56e-02 3.51e-01  -3.8 4.78e-01    -  7.50e-01 1.00e+00h  1
-  14  1.7937913e+04 1.47e-02 1.29e-01  -3.8 6.26e-01    -  8.87e-01 1.00e+00h  1
-  15  1.7934659e+04 5.77e-04 2.40e-03  -3.8 1.61e-01    -  1.00e+00 1.00e+00h  1
-  16  1.7932702e+04 6.02e-05 6.67e-04  -3.8 9.20e-03    -  1.00e+00 1.00e+00h  1
-  17  1.7930091e+04 1.54e-04 2.16e-03  -5.7 9.83e-02    -  9.73e-01 7.96e-01h  1
-  18  1.7929250e+04 5.52e-06 3.58e-05  -5.7 3.49e-02    -  1.00e+00 1.00e+00h  1
-  19  1.7929254e+04 2.62e-09 1.07e-08  -5.7 1.10e-03    -  1.00e+00 1.00e+00h  1
-iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
-  20  1.7929213e+04 2.77e-08 5.41e-07  -8.6 1.68e-03    -  1.00e+00 9.98e-01h  1
-  21  1.7929212e+04 3.88e-13 2.79e-12  -8.6 8.55e-06    -  1.00e+00 1.00e+00h  1
-
-Number of Iterations....: 21
-
-                                   (scaled)                 (unscaled)
-Objective...............:   4.7806451881720067e+00    1.7929212376882715e+04
-Dual infeasibility......:   2.7924329515371937e-12    1.0472670835348013e-08
-Constraint violation....:   3.8782865807718281e-13    3.8782865807718281e-13
-Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+00
-Complementarity.........:   2.5059336821864200e-09    9.3981911273118078e-06
-Overall NLP error.......:   2.5059336821864200e-09    9.3981911273118078e-06
-
-
-Number of objective function evaluations             = 32
-Number of objective gradient evaluations             = 22
-Number of equality constraint evaluations            = 32
-Number of inequality constraint evaluations          = 32
-Number of equality constraint Jacobian evaluations   = 22
-Number of inequality constraint Jacobian evaluations = 22
-Number of Lagrangian Hessian evaluations             = 21
-Total seconds in IPOPT                               = 0.019
-
-EXIT: Optimal Solution Found.
-file = "/tmp/jl_R90cav/pglib_opf_case60_c.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case60_c.m"
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      844
@@ -4325,7 +4325,7 @@ Number of inequality constraint evaluations          = 43
 Number of equality constraint Jacobian evaluations   = 35
 Number of inequality constraint Jacobian evaluations = 35
 Number of Lagrangian Hessian evaluations             = 34
-Total seconds in IPOPT                               = 299.078
+Total seconds in IPOPT                               = 288.599
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -4402,15 +4402,15 @@ Number of inequality constraint evaluations          = 43
 Number of equality constraint Jacobian evaluations   = 35
 Number of inequality constraint Jacobian evaluations = 35
 Number of Lagrangian Hessian evaluations             = 34
-Total seconds in IPOPT                               = 0.233
+Total seconds in IPOPT                               = 0.240
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_R90cav/pglib_opf_case6468_rte.m"
-file = "/tmp/jl_R90cav/pglib_opf_case6470_rte.m"
-file = "/tmp/jl_R90cav/pglib_opf_case6495_rte.m"
-file = "/tmp/jl_R90cav/pglib_opf_case6515_rte.m"
-file = "/tmp/jl_R90cav/pglib_opf_case7336_epigrids.m"
-file = "/tmp/jl_R90cav/pglib_opf_case73_ieee_rts.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case6468_rte.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case6470_rte.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case6495_rte.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case6515_rte.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case7336_epigrids.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case73_ieee_rts.m"
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:     1133
@@ -4476,7 +4476,7 @@ Number of inequality constraint evaluations          = 27
 Number of equality constraint Jacobian evaluations   = 27
 Number of inequality constraint Jacobian evaluations = 27
 Number of Lagrangian Hessian evaluations             = 26
-Total seconds in IPOPT                               = 1032.424
+Total seconds in IPOPT                               = 1020.553
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -4544,29 +4544,29 @@ Number of inequality constraint evaluations          = 27
 Number of equality constraint Jacobian evaluations   = 27
 Number of inequality constraint Jacobian evaluations = 27
 Number of Lagrangian Hessian evaluations             = 26
-Total seconds in IPOPT                               = 0.264
+Total seconds in IPOPT                               = 0.269
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_R90cav/pglib_opf_case78484_epigrids.m"
-file = "/tmp/jl_R90cav/pglib_opf_case793_goc.m"
-file = "/tmp/jl_R90cav/pglib_opf_case8387_pegase.m"
-file = "/tmp/jl_R90cav/pglib_opf_case89_pegase.m"
-file = "/tmp/jl_R90cav/pglib_opf_case9241_pegase.m"
-file = "/tmp/jl_R90cav/pglib_opf_case9591_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case78484_epigrids.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case793_goc.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case8387_pegase.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case89_pegase.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case9241_pegase.m"
+file = "/tmp/jl_rAmPG0/pglib_opf_case9591_goc.m"
 10×23 DataFrame
  Row │ case                         vars   cons   optimization  optimization_m ⋯
      │ String                       Int64  Int64  Float64       Float64        ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ pglib_opf_case14_ieee.m        118    169     0.340033                  ⋯
-   2 │ pglib_opf_case24_ieee_rts.m    266    315     1.30299
-   3 │ pglib_opf_case30_as.m          236    348     0.841137
-   4 │ pglib_opf_case30_ieee.m        236    348     1.45801
-   5 │ pglib_opf_case39_epri.m        282    401     2.69912                   ⋯
-   6 │ pglib_opf_case3_lmbd.m          24     28     0.0188198
-   7 │ pglib_opf_case57_ieee.m        448    675     5.10589                 2
-   8 │ pglib_opf_case5_pjm.m           44     53     0.0664553
-   9 │ pglib_opf_case60_c.m           518    737     9.18115                 2 ⋯
-  10 │ pglib_opf_case73_ieee_rts.m    824    987    17.387                   4
+   1 │ pglib_opf_case14_ieee.m        118    169     0.324831                  ⋯
+   2 │ pglib_opf_case24_ieee_rts.m    266    315     1.29797
+   3 │ pglib_opf_case30_as.m          236    348     0.963435
+   4 │ pglib_opf_case30_ieee.m        236    348     1.36891
+   5 │ pglib_opf_case39_epri.m        282    401     2.5843                    ⋯
+   6 │ pglib_opf_case3_lmbd.m          24     28     0.0190105
+   7 │ pglib_opf_case57_ieee.m        448    675     4.04766                 2
+   8 │ pglib_opf_case5_pjm.m           44     53     0.0673785
+   9 │ pglib_opf_case60_c.m           518    737     8.92233                 2 ⋯
+  10 │ pglib_opf_case73_ieee_rts.m    824    987    16.6508                  4
                                                               19 columns omitted
 ```
 
@@ -4640,171 +4640,171 @@ Text(String(take!(io)))
       <td style = "text-align: right;">pglib_opf_case14_ieee.m</td>
       <td style = "text-align: right;">118</td>
       <td style = "text-align: right;">169</td>
-      <td style = "text-align: right;">0.340033</td>
-      <td style = "text-align: right;">2.58077</td>
-      <td style = "text-align: right;">12.6118</td>
+      <td style = "text-align: right;">0.324831</td>
+      <td style = "text-align: right;">2.54844</td>
+      <td style = "text-align: right;">12.5821</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">0.0461434</td>
-      <td style = "text-align: right;">4.79002</td>
-      <td style = "text-align: right;">25.7492</td>
+      <td style = "text-align: right;">0.0434061</td>
+      <td style = "text-align: right;">4.697</td>
+      <td style = "text-align: right;">25.1095</td>
       <td style = "text-align: right;">254.322</td>
-      <td style = "text-align: right;">0.0269605</td>
-      <td style = "text-align: right;">0.295323</td>
-      <td style = "text-align: right;">0.0652107</td>
+      <td style = "text-align: right;">0.026472</td>
+      <td style = "text-align: right;">0.280696</td>
+      <td style = "text-align: right;">0.0625814</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">0.0804875</td>
-      <td style = "text-align: right;">0.155069</td>
-      <td style = "text-align: right;">0.081342</td>
+      <td style = "text-align: right;">0.0808792</td>
+      <td style = "text-align: right;">0.148954</td>
+      <td style = "text-align: right;">0.0821452</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">125.924</td>
-      <td style = "text-align: right;">0.0800862</td>
-      <td style = "text-align: right;">124.276</td>
+      <td style = "text-align: right;">118.015</td>
+      <td style = "text-align: right;">0.0757271</td>
+      <td style = "text-align: right;">125.344</td>
       <td style = "text-align: right;">1658.7</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case24_ieee_rts.m</td>
       <td style = "text-align: right;">266</td>
       <td style = "text-align: right;">315</td>
-      <td style = "text-align: right;">1.30299</td>
-      <td style = "text-align: right;">6.44244</td>
-      <td style = "text-align: right;">13.2857</td>
+      <td style = "text-align: right;">1.29797</td>
+      <td style = "text-align: right;">6.19099</td>
+      <td style = "text-align: right;">13.5653</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">0.107312</td>
-      <td style = "text-align: right;">9.77958</td>
-      <td style = "text-align: right;">82.6499</td>
+      <td style = "text-align: right;">0.446589</td>
+      <td style = "text-align: right;">9.72498</td>
+      <td style = "text-align: right;">81.7288</td>
       <td style = "text-align: right;">51365.0</td>
-      <td style = "text-align: right;">0.0595269</td>
-      <td style = "text-align: right;">0.0404093</td>
-      <td style = "text-align: right;">0.06044</td>
+      <td style = "text-align: right;">0.0587089</td>
+      <td style = "text-align: right;">0.0371705</td>
+      <td style = "text-align: right;">0.0599762</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">0.217557</td>
-      <td style = "text-align: right;">0.166292</td>
-      <td style = "text-align: right;">0.215703</td>
+      <td style = "text-align: right;">0.210891</td>
+      <td style = "text-align: right;">0.153018</td>
+      <td style = "text-align: right;">0.199777</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">346.204</td>
-      <td style = "text-align: right;">0.049527</td>
-      <td style = "text-align: right;">344.887</td>
+      <td style = "text-align: right;">359.895</td>
+      <td style = "text-align: right;">0.0160048</td>
+      <td style = "text-align: right;">340.303</td>
       <td style = "text-align: right;">63741.2</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case30_as.m</td>
       <td style = "text-align: right;">236</td>
       <td style = "text-align: right;">348</td>
-      <td style = "text-align: right;">0.841137</td>
-      <td style = "text-align: right;">5.45657</td>
-      <td style = "text-align: right;">0.84381</td>
+      <td style = "text-align: right;">0.963435</td>
+      <td style = "text-align: right;">5.6007</td>
+      <td style = "text-align: right;">0.974202</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.0791074</td>
-      <td style = "text-align: right;">14.8504</td>
-      <td style = "text-align: right;">91.4061</td>
+      <td style = "text-align: right;">0.0804993</td>
+      <td style = "text-align: right;">15.0288</td>
+      <td style = "text-align: right;">92.0155</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.0410522</td>
-      <td style = "text-align: right;">0.00619211</td>
-      <td style = "text-align: right;">0.0418238</td>
+      <td style = "text-align: right;">0.0398235</td>
+      <td style = "text-align: right;">0.00658896</td>
+      <td style = "text-align: right;">0.0411561</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.138856</td>
-      <td style = "text-align: right;">0.170102</td>
-      <td style = "text-align: right;">0.140126</td>
+      <td style = "text-align: right;">0.139175</td>
+      <td style = "text-align: right;">0.171374</td>
+      <td style = "text-align: right;">0.143217</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">261.046</td>
-      <td style = "text-align: right;">0.037385</td>
-      <td style = "text-align: right;">258.939</td>
+      <td style = "text-align: right;">259.917</td>
+      <td style = "text-align: right;">0.0377113</td>
+      <td style = "text-align: right;">258.768</td>
       <td style = "text-align: right;">772.093</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case30_ieee.m</td>
       <td style = "text-align: right;">236</td>
       <td style = "text-align: right;">348</td>
-      <td style = "text-align: right;">1.45801</td>
-      <td style = "text-align: right;">5.45727</td>
-      <td style = "text-align: right;">1.46185</td>
+      <td style = "text-align: right;">1.36891</td>
+      <td style = "text-align: right;">5.36881</td>
+      <td style = "text-align: right;">1.38236</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">0.0823489</td>
-      <td style = "text-align: right;">7.53955</td>
-      <td style = "text-align: right;">91.2942</td>
+      <td style = "text-align: right;">0.0835022</td>
+      <td style = "text-align: right;">7.46073</td>
+      <td style = "text-align: right;">90.7635</td>
       <td style = "text-align: right;">-16136.6</td>
-      <td style = "text-align: right;">0.0600242</td>
-      <td style = "text-align: right;">0.00575442</td>
-      <td style = "text-align: right;">0.503853</td>
+      <td style = "text-align: right;">0.057106</td>
+      <td style = "text-align: right;">0.0060818</td>
+      <td style = "text-align: right;">0.0583597</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">0.203007</td>
-      <td style = "text-align: right;">0.153812</td>
-      <td style = "text-align: right;">0.201117</td>
+      <td style = "text-align: right;">0.198639</td>
+      <td style = "text-align: right;">0.165114</td>
+      <td style = "text-align: right;">0.589213</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">261.164</td>
-      <td style = "text-align: right;">0.0484722</td>
-      <td style = "text-align: right;">259.419</td>
+      <td style = "text-align: right;">264.109</td>
+      <td style = "text-align: right;">0.0426248</td>
+      <td style = "text-align: right;">261.39</td>
       <td style = "text-align: right;">4244.05</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case39_epri.m</td>
       <td style = "text-align: right;">282</td>
       <td style = "text-align: right;">401</td>
-      <td style = "text-align: right;">2.69912</td>
-      <td style = "text-align: right;">7.0757</td>
-      <td style = "text-align: right;">2.6973</td>
+      <td style = "text-align: right;">2.5843</td>
+      <td style = "text-align: right;">7.00754</td>
+      <td style = "text-align: right;">2.55104</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">0.162816</td>
-      <td style = "text-align: right;">9.00409</td>
-      <td style = "text-align: right;">122.999</td>
+      <td style = "text-align: right;">0.159883</td>
+      <td style = "text-align: right;">9.41579</td>
+      <td style = "text-align: right;">120.919</td>
       <td style = "text-align: right;">1.23324e5</td>
-      <td style = "text-align: right;">0.105199</td>
-      <td style = "text-align: right;">0.00696033</td>
-      <td style = "text-align: right;">0.106191</td>
+      <td style = "text-align: right;">0.104634</td>
+      <td style = "text-align: right;">0.00693982</td>
+      <td style = "text-align: right;">0.105839</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">0.348008</td>
-      <td style = "text-align: right;">0.200292</td>
-      <td style = "text-align: right;">0.3456</td>
+      <td style = "text-align: right;">0.320735</td>
+      <td style = "text-align: right;">0.194562</td>
+      <td style = "text-align: right;">0.32059</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">321.358</td>
-      <td style = "text-align: right;">0.0720757</td>
-      <td style = "text-align: right;">315.519</td>
+      <td style = "text-align: right;">322.716</td>
+      <td style = "text-align: right;">0.0666513</td>
+      <td style = "text-align: right;">320.073</td>
       <td style = "text-align: right;">72070.8</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">24</td>
       <td style = "text-align: right;">28</td>
-      <td style = "text-align: right;">0.0188198</td>
-      <td style = "text-align: right;">0.0413234</td>
-      <td style = "text-align: right;">0.020703</td>
+      <td style = "text-align: right;">0.0190105</td>
+      <td style = "text-align: right;">0.0434296</td>
+      <td style = "text-align: right;">0.0209169</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0120258</td>
-      <td style = "text-align: right;">0.377877</td>
-      <td style = "text-align: right;">0.0140992</td>
+      <td style = "text-align: right;">0.0123753</td>
+      <td style = "text-align: right;">0.392407</td>
+      <td style = "text-align: right;">0.0142627</td>
       <td style = "text-align: right;">743.0</td>
-      <td style = "text-align: right;">0.00879577</td>
-      <td style = "text-align: right;">0.00233008</td>
-      <td style = "text-align: right;">0.00916493</td>
+      <td style = "text-align: right;">0.00895457</td>
+      <td style = "text-align: right;">0.00250657</td>
+      <td style = "text-align: right;">0.00930726</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0178836</td>
-      <td style = "text-align: right;">0.0148478</td>
-      <td style = "text-align: right;">0.0189389</td>
+      <td style = "text-align: right;">0.0185664</td>
+      <td style = "text-align: right;">0.0154271</td>
+      <td style = "text-align: right;">0.0194362</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">2.06933</td>
-      <td style = "text-align: right;">0.000428927</td>
-      <td style = "text-align: right;">1.81939</td>
+      <td style = "text-align: right;">2.20767</td>
+      <td style = "text-align: right;">0.000411777</td>
+      <td style = "text-align: right;">2.05422</td>
       <td style = "text-align: right;">6273.63</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case57_ieee.m</td>
       <td style = "text-align: right;">448</td>
       <td style = "text-align: right;">675</td>
-      <td style = "text-align: right;">5.10589</td>
-      <td style = "text-align: right;">20.6809</td>
-      <td style = "text-align: right;">5.03636</td>
+      <td style = "text-align: right;">4.04766</td>
+      <td style = "text-align: right;">20.2269</td>
+      <td style = "text-align: right;">4.03098</td>
       <td style = "text-align: right;">37589.3</td>
-      <td style = "text-align: right;">0.133327</td>
-      <td style = "text-align: right;">15.361</td>
-      <td style = "text-align: right;">397.95</td>
+      <td style = "text-align: right;">0.148805</td>
+      <td style = "text-align: right;">15.1582</td>
+      <td style = "text-align: right;">379.032</td>
       <td style = "text-align: right;">37587.1</td>
-      <td style = "text-align: right;">0.0882333</td>
-      <td style = "text-align: right;">0.00724436</td>
-      <td style = "text-align: right;">0.0892245</td>
+      <td style = "text-align: right;">0.0893443</td>
+      <td style = "text-align: right;">0.009678</td>
+      <td style = "text-align: right;">0.0908557</td>
       <td style = "text-align: right;">37589.3</td>
-      <td style = "text-align: right;">0.302053</td>
-      <td style = "text-align: right;">0.317568</td>
-      <td style = "text-align: right;">0.289403</td>
+      <td style = "text-align: right;">0.319527</td>
+      <td style = "text-align: right;">0.344108</td>
+      <td style = "text-align: right;">0.320715</td>
       <td style = "text-align: right;">37589.3</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
@@ -4815,46 +4815,46 @@ Text(String(take!(io)))
       <td style = "text-align: right;">pglib_opf_case5_pjm.m</td>
       <td style = "text-align: right;">44</td>
       <td style = "text-align: right;">53</td>
-      <td style = "text-align: right;">0.0664553</td>
-      <td style = "text-align: right;">0.131016</td>
-      <td style = "text-align: right;">0.0688554</td>
+      <td style = "text-align: right;">0.0673785</td>
+      <td style = "text-align: right;">0.129699</td>
+      <td style = "text-align: right;">0.069322</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0223606</td>
-      <td style = "text-align: right;">0.882477</td>
-      <td style = "text-align: right;">0.0251204</td>
+      <td style = "text-align: right;">0.0225874</td>
+      <td style = "text-align: right;">0.889593</td>
+      <td style = "text-align: right;">0.0256533</td>
       <td style = "text-align: right;">17929.2</td>
-      <td style = "text-align: right;">0.0182293</td>
-      <td style = "text-align: right;">0.00264053</td>
-      <td style = "text-align: right;">0.01891</td>
+      <td style = "text-align: right;">0.0180174</td>
+      <td style = "text-align: right;">0.00273514</td>
+      <td style = "text-align: right;">0.0187744</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0378462</td>
-      <td style = "text-align: right;">0.0264095</td>
-      <td style = "text-align: right;">0.0389279</td>
+      <td style = "text-align: right;">0.0382635</td>
+      <td style = "text-align: right;">0.0267744</td>
+      <td style = "text-align: right;">0.0394769</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">16.4437</td>
-      <td style = "text-align: right;">0.000677596</td>
-      <td style = "text-align: right;">16.5297</td>
+      <td style = "text-align: right;">18.3739</td>
+      <td style = "text-align: right;">0.000635616</td>
+      <td style = "text-align: right;">16.8732</td>
       <td style = "text-align: right;">77.9548</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case60_c.m</td>
       <td style = "text-align: right;">518</td>
       <td style = "text-align: right;">737</td>
-      <td style = "text-align: right;">9.18115</td>
-      <td style = "text-align: right;">24.6844</td>
-      <td style = "text-align: right;">22.7606</td>
+      <td style = "text-align: right;">8.92233</td>
+      <td style = "text-align: right;">25.9854</td>
+      <td style = "text-align: right;">22.6095</td>
       <td style = "text-align: right;">92693.7</td>
-      <td style = "text-align: right;">0.273634</td>
-      <td style = "text-align: right;">13.3684</td>
-      <td style = "text-align: right;">303.246</td>
+      <td style = "text-align: right;">0.280684</td>
+      <td style = "text-align: right;">15.2625</td>
+      <td style = "text-align: right;">292.776</td>
       <td style = "text-align: right;">92310.1</td>
-      <td style = "text-align: right;">0.173094</td>
-      <td style = "text-align: right;">0.043332</td>
-      <td style = "text-align: right;">0.174408</td>
+      <td style = "text-align: right;">0.170033</td>
+      <td style = "text-align: right;">0.0397352</td>
+      <td style = "text-align: right;">0.171932</td>
       <td style = "text-align: right;">92693.7</td>
-      <td style = "text-align: right;">0.656785</td>
-      <td style = "text-align: right;">0.369293</td>
-      <td style = "text-align: right;">0.665718</td>
+      <td style = "text-align: right;">0.647081</td>
+      <td style = "text-align: right;">1.10511</td>
+      <td style = "text-align: right;">0.609388</td>
       <td style = "text-align: right;">92693.7</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
@@ -4865,21 +4865,21 @@ Text(String(take!(io)))
       <td style = "text-align: right;">pglib_opf_case73_ieee_rts.m</td>
       <td style = "text-align: right;">824</td>
       <td style = "text-align: right;">987</td>
-      <td style = "text-align: right;">17.387</td>
-      <td style = "text-align: right;">47.3409</td>
-      <td style = "text-align: right;">16.897</td>
+      <td style = "text-align: right;">16.6508</td>
+      <td style = "text-align: right;">47.7455</td>
+      <td style = "text-align: right;">16.4367</td>
       <td style = "text-align: right;">1.89764e5</td>
-      <td style = "text-align: right;">0.334067</td>
-      <td style = "text-align: right;">31.7676</td>
-      <td style = "text-align: right;">1036.7</td>
+      <td style = "text-align: right;">0.336308</td>
+      <td style = "text-align: right;">31.1003</td>
+      <td style = "text-align: right;">1024.77</td>
       <td style = "text-align: right;">180842.0</td>
-      <td style = "text-align: right;">0.206751</td>
-      <td style = "text-align: right;">0.0143258</td>
-      <td style = "text-align: right;">0.211812</td>
+      <td style = "text-align: right;">0.205783</td>
+      <td style = "text-align: right;">0.0139492</td>
+      <td style = "text-align: right;">0.207915</td>
       <td style = "text-align: right;">1.89764e5</td>
-      <td style = "text-align: right;">0.84754</td>
-      <td style = "text-align: right;">0.613032</td>
-      <td style = "text-align: right;">0.85109</td>
+      <td style = "text-align: right;">2.14965</td>
+      <td style = "text-align: right;">0.612352</td>
+      <td style = "text-align: right;">0.857447</td>
       <td style = "text-align: right;">1.89764e5</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
