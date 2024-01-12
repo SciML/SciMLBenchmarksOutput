@@ -147,3 +147,7 @@ prob = generate_prob(Val(128), Val(false))
 wpset, successful_solvers = generate_wpset(prob, solvers);
 fig = plot_wpset(wpset, successful_solvers, "N = 128")
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+
