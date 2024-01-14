@@ -2144,3 +2144,7 @@ pretty_table(io, timing_data; backend = Val(:html))
 println(io, "```")
 Text(String(take!(io)))
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+
