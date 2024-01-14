@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Optimal Powerflow Nonlinear Optimization Benchmark · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/OptimizationFrameworks/optimal_powerflow/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Battery Problem</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li class="is-active"><a class="tocitem" href>Optimal Powerflow Nonlinear Optimization Benchmark</a><ul class="internal"><li><a class="tocitem" href="#Data-Load-and-Setup-Code"><span>Data Load and Setup Code</span></a></li><li><a class="tocitem" href="#Test-Setup"><span>Test Setup</span></a></li><li><a class="tocitem" href="#Setup-and-Validations"><span>Setup and Validations</span></a></li><li><a class="tocitem" href="#ModelingToolkit.jl"><span>ModelingToolkit.jl</span></a></li><li><a class="tocitem" href="#JuMP.jl"><span>JuMP.jl</span></a></li><li><a class="tocitem" href="#NLPModels.jl"><span>NLPModels.jl</span></a></li><li><a class="tocitem" href="#Nonconvex"><span>Nonconvex</span></a></li><li><a class="tocitem" href="#Optim.jl"><span>Optim.jl</span></a></li><li><a class="tocitem" href="#CASADI"><span>CASADI</span></a></li><li><a class="tocitem" href="#Test-the-Benchmarking"><span>Test the Benchmarking</span></a></li><li><a class="tocitem" href="#Run-the-Full-Benchmark"><span>Run the Full Benchmark</span></a></li></ul></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Optimization Framework Benchmarks</a></li><li class="is-active"><a href>Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/OptimizationFrameworks/optimal_powerflow.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Optimal-Powerflow-Nonlinear-Optimization-Benchmark"><a class="docs-heading-anchor" href="#Optimal-Powerflow-Nonlinear-Optimization-Benchmark">Optimal Powerflow Nonlinear Optimization Benchmark</a><a id="Optimal-Powerflow-Nonlinear-Optimization-Benchmark-1"></a><a class="docs-heading-anchor-permalink" href="#Optimal-Powerflow-Nonlinear-Optimization-Benchmark" title="Permalink"></a></h1><h2 id="Data-Load-and-Setup-Code"><a class="docs-heading-anchor" href="#Data-Load-and-Setup-Code">Data Load and Setup Code</a><a id="Data-Load-and-Setup-Code-1"></a><a class="docs-heading-anchor-permalink" href="#Data-Load-and-Setup-Code" title="Permalink"></a></h2><p>This is generic setup code usable for all solver setups. Basically removing some unnecessary untyped dictionaries before getting to the benchmarks.</p><pre><code class="language-julia hljs">PRINT_LEVEL = 0
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Optimal Powerflow Nonlinear Optimization Benchmark · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/OptimizationFrameworks/optimal_powerflow/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Battery Problem</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li class="is-active"><a class="tocitem" href>Optimal Powerflow Nonlinear Optimization Benchmark</a><ul class="internal"><li><a class="tocitem" href="#Data-Load-and-Setup-Code"><span>Data Load and Setup Code</span></a></li><li><a class="tocitem" href="#Test-Setup"><span>Test Setup</span></a></li><li><a class="tocitem" href="#Setup-and-Validations"><span>Setup and Validations</span></a></li><li><a class="tocitem" href="#ModelingToolkit.jl"><span>ModelingToolkit.jl</span></a></li><li><a class="tocitem" href="#JuMP.jl"><span>JuMP.jl</span></a></li><li><a class="tocitem" href="#NLPModels.jl"><span>NLPModels.jl</span></a></li><li><a class="tocitem" href="#Nonconvex"><span>Nonconvex</span></a></li><li><a class="tocitem" href="#Optim.jl"><span>Optim.jl</span></a></li><li><a class="tocitem" href="#CASADI"><span>CASADI</span></a></li><li><a class="tocitem" href="#Test-the-Benchmarking"><span>Test the Benchmarking</span></a></li><li><a class="tocitem" href="#Run-the-Full-Benchmark"><span>Run the Full Benchmark</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Optimization Framework Benchmarks</a></li><li class="is-active"><a href>Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/OptimizationFrameworks/optimal_powerflow.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Optimal-Powerflow-Nonlinear-Optimization-Benchmark"><a class="docs-heading-anchor" href="#Optimal-Powerflow-Nonlinear-Optimization-Benchmark">Optimal Powerflow Nonlinear Optimization Benchmark</a><a id="Optimal-Powerflow-Nonlinear-Optimization-Benchmark-1"></a><a class="docs-heading-anchor-permalink" href="#Optimal-Powerflow-Nonlinear-Optimization-Benchmark" title="Permalink"></a></h1><h2 id="Data-Load-and-Setup-Code"><a class="docs-heading-anchor" href="#Data-Load-and-Setup-Code">Data Load and Setup Code</a><a id="Data-Load-and-Setup-Code-1"></a><a class="docs-heading-anchor-permalink" href="#Data-Load-and-Setup-Code" title="Permalink"></a></h2><p>This is generic setup code usable for all solver setups. Basically removing some unnecessary untyped dictionaries before getting to the benchmarks.</p><pre><code class="language-julia hljs">PRINT_LEVEL = 0
 
 # This is a soft upper limit to the time of each optimization.
 # If times go above this, they will halt early
@@ -2136,9 +2136,9 @@ Dict{String, Any} with 8 entries:
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 20.1518
-  &quot;time_solve_compilation&quot; =&gt; 16.055
-  &quot;time_solve&quot;             =&gt; 0.0910485
+  &quot;time_build&quot;             =&gt; 20.4581
+  &quot;time_solve_compilation&quot; =&gt; 16.1237
+  &quot;time_solve&quot;             =&gt; 0.109148
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_jump(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
   &quot;cost&quot;                   =&gt; 17551.9
@@ -2146,9 +2146,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 2.87692
-  &quot;time_solve_compilation&quot; =&gt; 0.899265
-  &quot;time_solve&quot;             =&gt; 0.0177756
+  &quot;time_build&quot;             =&gt; 2.87053
+  &quot;time_solve_compilation&quot; =&gt; 0.905956
+  &quot;time_solve&quot;             =&gt; 0.0179089
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_nlpmodels(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
   &quot;cost&quot;                   =&gt; 17551.9
@@ -2156,9 +2156,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 1.02559
-  &quot;time_solve_compilation&quot; =&gt; 3.32001
-  &quot;time_solve&quot;             =&gt; 0.0767396
+  &quot;time_build&quot;             =&gt; 1.02809
+  &quot;time_solve_compilation&quot; =&gt; 3.31637
+  &quot;time_solve&quot;             =&gt; 0.0761967
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_nonconvex(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Error: MethodError: no method matching Float64(::ForwardDiff.Dual{ForwardDi
 ff.Tag{NonconvexUtils.var&quot;#101#108&quot;{NonconvexUtils.var&quot;#100#107&quot;{NonconvexU
@@ -2182,9 +2182,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.000728246
-  &quot;time_solve_compilation&quot; =&gt; 27.8457
-  &quot;time_solve&quot;             =&gt; 18.0976
+  &quot;time_build&quot;             =&gt; 0.000765862
+  &quot;time_solve_compilation&quot; =&gt; 27.7108
+  &quot;time_solve&quot;             =&gt; 18.0901
   &quot;feasible&quot;               =&gt; false</code></pre><pre><code class="language-julia hljs">file_name = &quot;../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case3_lmbd.m&quot;
 dataset = load_and_setup_data(file_name);</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_optimization(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
@@ -2193,9 +2193,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 28
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.972457
-  &quot;time_solve_compilation&quot; =&gt; 12.2698
-  &quot;time_solve&quot;             =&gt; 0.0556559
+  &quot;time_build&quot;             =&gt; 0.977332
+  &quot;time_solve_compilation&quot; =&gt; 12.2727
+  &quot;time_solve&quot;             =&gt; 0.0209682
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_jump(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
   &quot;cost&quot;                   =&gt; 5812.64
@@ -2203,9 +2203,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 28
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.00168791
-  &quot;time_solve_compilation&quot; =&gt; 0.00951306
-  &quot;time_solve&quot;             =&gt; 0.00861299
+  &quot;time_build&quot;             =&gt; 0.00162662
+  &quot;time_solve_compilation&quot; =&gt; 0.00940448
+  &quot;time_solve&quot;             =&gt; 0.00874979
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_nlpmodels(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
   &quot;cost&quot;                   =&gt; 5812.64
@@ -2213,9 +2213,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 28
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.0138979
-  &quot;time_solve_compilation&quot; =&gt; 0.0189765
-  &quot;time_solve&quot;             =&gt; 0.018256
+  &quot;time_build&quot;             =&gt; 0.014476
+  &quot;time_solve_compilation&quot; =&gt; 0.0194793
+  &quot;time_solve&quot;             =&gt; 0.0182307
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_nonconvex(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Error: MethodError: no method matching Float64(::ForwardDiff.Dual{ForwardDi
 ff.Tag{NonconvexUtils.var&quot;#101#108&quot;{NonconvexUtils.var&quot;#100#107&quot;{NonconvexU
@@ -2239,9 +2239,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 28
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.0561808
-  &quot;time_solve_compilation&quot; =&gt; 2.22511
-  &quot;time_solve&quot;             =&gt; 2.17164
+  &quot;time_build&quot;             =&gt; 0.0563674
+  &quot;time_solve_compilation&quot; =&gt; 2.21397
+  &quot;time_solve&quot;             =&gt; 2.14341
   &quot;feasible&quot;               =&gt; false</code></pre><pre><code class="language-julia hljs">using DataFrames, PrettyTables
 
 function multidata_multisolver_benchmark(dataset_files; sizelimit = SIZE_LIMIT)
@@ -2418,7 +2418,7 @@ Number of inequality constraint evaluations          = 18
 Number of equality constraint Jacobian evaluations   = 18
 Number of inequality constraint Jacobian evaluations = 18
 Number of Lagrangian Hessian evaluations             = 17
-Total seconds in IPOPT                               = 1.641
+Total seconds in IPOPT                               = 1.697
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -2476,7 +2476,7 @@ Number of inequality constraint evaluations          = 18
 Number of equality constraint Jacobian evaluations   = 18
 Number of inequality constraint Jacobian evaluations = 18
 Number of Lagrangian Hessian evaluations             = 17
-Total seconds in IPOPT                               = 0.011
+Total seconds in IPOPT                               = 0.010
 
 EXIT: Optimal Solution Found.
 file = &quot;../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case5_pjm.m&quot;
@@ -2540,7 +2540,7 @@ Number of inequality constraint evaluations          = 32
 Number of equality constraint Jacobian evaluations   = 22
 Number of inequality constraint Jacobian evaluations = 22
 Number of Lagrangian Hessian evaluations             = 21
-Total seconds in IPOPT                               = 4.247
+Total seconds in IPOPT                               = 4.143
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -2603,15 +2603,15 @@ Number of inequality constraint evaluations          = 32
 Number of equality constraint Jacobian evaluations   = 22
 Number of inequality constraint Jacobian evaluations = 22
 Number of Lagrangian Hessian evaluations             = 21
-Total seconds in IPOPT                               = 0.020
+Total seconds in IPOPT                               = 0.019
 
 EXIT: Optimal Solution Found.
 2×23 DataFrame
  Row │ case                    vars   cons   optimization  optimization_modelb ⋯
      │ String                  Int64  Int64  Float64       Float64             ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ pglib_opf_case3_lmbd.m     24     28     0.0202895                 0.39 ⋯
-   2 │ pglib_opf_case5_pjm.m      44     53     0.0966138                 0.15
+   1 │ pglib_opf_case3_lmbd.m     24     28     0.0209239                 0.38 ⋯
+   2 │ pglib_opf_case5_pjm.m      44     53     0.103032                  0.17
                                                               19 columns omitted</code></pre><pre><code class="language-julia hljs">io = IOBuffer()
 println(io, &quot;```@raw html&quot;)
 pretty_table(io, timing_data; backend = Val(:html))
@@ -2675,50 +2675,50 @@ Text(String(take!(io)))</code></pre><table>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">24</td>
       <td style = "text-align: right;">28</td>
-      <td style = "text-align: right;">0.0202895</td>
-      <td style = "text-align: right;">0.390984</td>
-      <td style = "text-align: right;">0.0212589</td>
+      <td style = "text-align: right;">0.0209239</td>
+      <td style = "text-align: right;">0.388818</td>
+      <td style = "text-align: right;">0.0217323</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0130913</td>
-      <td style = "text-align: right;">69.7402</td>
-      <td style = "text-align: right;">9.09483</td>
+      <td style = "text-align: right;">0.0127276</td>
+      <td style = "text-align: right;">70.3889</td>
+      <td style = "text-align: right;">9.12669</td>
       <td style = "text-align: right;">743.0</td>
-      <td style = "text-align: right;">0.00874116</td>
-      <td style = "text-align: right;">0.00183896</td>
-      <td style = "text-align: right;">0.00958992</td>
+      <td style = "text-align: right;">0.00873152</td>
+      <td style = "text-align: right;">0.00175311</td>
+      <td style = "text-align: right;">0.00938312</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0197697</td>
-      <td style = "text-align: right;">1.99616</td>
-      <td style = "text-align: right;">0.480728</td>
+      <td style = "text-align: right;">0.0189494</td>
+      <td style = "text-align: right;">1.94184</td>
+      <td style = "text-align: right;">0.532283</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">2.36429</td>
-      <td style = "text-align: right;">0.000612056</td>
-      <td style = "text-align: right;">8.78589</td>
+      <td style = "text-align: right;">2.04564</td>
+      <td style = "text-align: right;">0.000538625</td>
+      <td style = "text-align: right;">8.38642</td>
       <td style = "text-align: right;">6273.63</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case5_pjm.m</td>
       <td style = "text-align: right;">44</td>
       <td style = "text-align: right;">53</td>
-      <td style = "text-align: right;">0.0966138</td>
-      <td style = "text-align: right;">0.158377</td>
-      <td style = "text-align: right;">0.0968392</td>
+      <td style = "text-align: right;">0.103032</td>
+      <td style = "text-align: right;">0.174241</td>
+      <td style = "text-align: right;">0.104094</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.024368</td>
-      <td style = "text-align: right;">1.85967</td>
-      <td style = "text-align: right;">8.5423</td>
+      <td style = "text-align: right;">0.0232197</td>
+      <td style = "text-align: right;">1.7417</td>
+      <td style = "text-align: right;">8.41272</td>
       <td style = "text-align: right;">17929.2</td>
-      <td style = "text-align: right;">0.0175447</td>
-      <td style = "text-align: right;">0.00233202</td>
-      <td style = "text-align: right;">0.0186934</td>
+      <td style = "text-align: right;">0.0177323</td>
+      <td style = "text-align: right;">0.00173311</td>
+      <td style = "text-align: right;">0.0183978</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0392131</td>
-      <td style = "text-align: right;">0.0266248</td>
-      <td style = "text-align: right;">0.0399766</td>
+      <td style = "text-align: right;">0.0389004</td>
+      <td style = "text-align: right;">0.0254924</td>
+      <td style = "text-align: right;">0.0401389</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">19.0642</td>
-      <td style = "text-align: right;">0.000432658</td>
-      <td style = "text-align: right;">19.2406</td>
+      <td style = "text-align: right;">17.5794</td>
+      <td style = "text-align: right;">0.000408216</td>
+      <td style = "text-align: right;">17.6152</td>
       <td style = "text-align: right;">77.9548</td>
     </tr>
   </tbody>
@@ -2728,32 +2728,32 @@ LibGit2.clone(&quot;https://github.com/power-grid-lib/pglib-opf&quot;, tmpdir)
 benchmarkfiles = readdir(tmpdir)
 benchmarkfiles = benchmarkfiles[endswith(&quot;.m&quot;).(benchmarkfiles)]
 benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)</code></pre><pre><code class="nohighlight hljs">66-element Vector{String}:
- &quot;/tmp/jl_rAmPG0/pglib_opf_case10000_goc.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case10192_epigrids.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case10480_goc.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case118_ieee.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case1354_pegase.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case13659_pegase.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case14_ieee.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case162_ieee_dtc.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case179_goc.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case1803_snem.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case10000_goc.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case10192_epigrids.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case10480_goc.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case118_ieee.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case1354_pegase.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case13659_pegase.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case14_ieee.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case162_ieee_dtc.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case179_goc.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case1803_snem.m&quot;
  ⋮
- &quot;/tmp/jl_rAmPG0/pglib_opf_case6515_rte.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case7336_epigrids.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case73_ieee_rts.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case78484_epigrids.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case793_goc.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case8387_pegase.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case89_pegase.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case9241_pegase.m&quot;
- &quot;/tmp/jl_rAmPG0/pglib_opf_case9591_goc.m&quot;</code></pre><pre><code class="language-julia hljs">timing_data = multidata_multisolver_benchmark(benchmark_datasets)</code></pre><pre><code class="nohighlight hljs">file = &quot;/tmp/jl_rAmPG0/pglib_opf_case10000_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case10192_epigrids.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case10480_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case118_ieee.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case1354_pegase.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case13659_pegase.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case14_ieee.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case6515_rte.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case7336_epigrids.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case73_ieee_rts.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case78484_epigrids.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case793_goc.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case8387_pegase.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case89_pegase.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case9241_pegase.m&quot;
+ &quot;/tmp/jl_AIcybZ/pglib_opf_case9591_goc.m&quot;</code></pre><pre><code class="language-julia hljs">timing_data = multidata_multisolver_benchmark(benchmark_datasets)</code></pre><pre><code class="nohighlight hljs">file = &quot;/tmp/jl_AIcybZ/pglib_opf_case10000_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case10192_epigrids.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case10480_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case118_ieee.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case1354_pegase.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case13659_pegase.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case14_ieee.m&quot;
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      189
@@ -2810,7 +2810,7 @@ Number of inequality constraint evaluations          = 20
 Number of equality constraint Jacobian evaluations   = 19
 Number of inequality constraint Jacobian evaluations = 19
 Number of Lagrangian Hessian evaluations             = 18
-Total seconds in IPOPT                               = 20.986
+Total seconds in IPOPT                               = 21.355
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -2869,24 +2869,24 @@ Number of inequality constraint evaluations          = 20
 Number of equality constraint Jacobian evaluations   = 19
 Number of inequality constraint Jacobian evaluations = 19
 Number of Lagrangian Hessian evaluations             = 18
-Total seconds in IPOPT                               = 0.034
+Total seconds in IPOPT                               = 0.033
 
 EXIT: Optimal Solution Found.
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case162_ieee_dtc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case179_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case1803_snem.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case1888_rte.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case19402_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case1951_rte.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case197_snem.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2000_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case200_activ.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case20758_epigrids.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2312_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2383wp_k.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case240_pserc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case24464_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case24_ieee_rts.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case162_ieee_dtc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case179_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case1803_snem.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case1888_rte.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case19402_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case1951_rte.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case197_snem.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2000_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case200_activ.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case20758_epigrids.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2312_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2383wp_k.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case240_pserc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case24464_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case24_ieee_rts.m&quot;
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      385
@@ -2950,7 +2950,7 @@ Number of inequality constraint evaluations          = 29
 Number of equality constraint Jacobian evaluations   = 25
 Number of inequality constraint Jacobian evaluations = 25
 Number of Lagrangian Hessian evaluations             = 24
-Total seconds in IPOPT                               = 77.578
+Total seconds in IPOPT                               = 77.624
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3016,23 +3016,23 @@ Number of inequality constraint evaluations          = 29
 Number of equality constraint Jacobian evaluations   = 25
 Number of inequality constraint Jacobian evaluations = 25
 Number of Lagrangian Hessian evaluations             = 24
-Total seconds in IPOPT                               = 0.424
+Total seconds in IPOPT                               = 0.079
 
 EXIT: Optimal Solution Found.
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2736sp_k.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2737sop_k.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2742_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2746wop_k.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2746wp_k.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2848_rte.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2853_sdet.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2868_rte.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case2869_pegase.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case30000_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case300_ieee.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case3012wp_k.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case3022_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case30_as.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2736sp_k.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2737sop_k.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2742_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2746wop_k.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2746wp_k.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2848_rte.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2853_sdet.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2868_rte.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case2869_pegase.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case30000_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case300_ieee.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case3012wp_k.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case3022_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case30_as.m&quot;
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      423
@@ -3086,7 +3086,7 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 15
-Total seconds in IPOPT                               = 87.586
+Total seconds in IPOPT                               = 87.246
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3142,10 +3142,10 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 15
-Total seconds in IPOPT                               = 0.057
+Total seconds in IPOPT                               = 0.056
 
 EXIT: Optimal Solution Found.
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case30_ieee.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case30_ieee.m&quot;
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      421
@@ -3201,7 +3201,7 @@ Number of inequality constraint evaluations          = 18
 Number of equality constraint Jacobian evaluations   = 18
 Number of inequality constraint Jacobian evaluations = 18
 Number of Lagrangian Hessian evaluations             = 17
-Total seconds in IPOPT                               = 86.015
+Total seconds in IPOPT                               = 91.870
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3259,13 +3259,13 @@ Number of inequality constraint evaluations          = 18
 Number of equality constraint Jacobian evaluations   = 18
 Number of inequality constraint Jacobian evaluations = 18
 Number of Lagrangian Hessian evaluations             = 17
-Total seconds in IPOPT                               = 0.061
+Total seconds in IPOPT                               = 0.063
 
 EXIT: Optimal Solution Found.
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case3120sp_k.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case3375wp_k.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case3970_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case39_epri.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case3120sp_k.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case3375wp_k.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case3970_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case39_epri.m&quot;
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      527
@@ -3336,7 +3336,7 @@ Number of inequality constraint evaluations          = 84
 Number of equality constraint Jacobian evaluations   = 31
 Number of inequality constraint Jacobian evaluations = 31
 Number of Lagrangian Hessian evaluations             = 30
-Total seconds in IPOPT                               = 116.835
+Total seconds in IPOPT                               = 125.978
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3409,10 +3409,10 @@ Number of inequality constraint evaluations          = 84
 Number of equality constraint Jacobian evaluations   = 31
 Number of inequality constraint Jacobian evaluations = 31
 Number of Lagrangian Hessian evaluations             = 30
-Total seconds in IPOPT                               = 0.134
+Total seconds in IPOPT                               = 0.133
 
 EXIT: Optimal Solution Found.
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case3_lmbd.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case3_lmbd.m&quot;
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:       24
@@ -3529,15 +3529,15 @@ Number of Lagrangian Hessian evaluations             = 17
 Total seconds in IPOPT                               = 0.010
 
 EXIT: Optimal Solution Found.
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case4020_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case4601_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case4619_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case4661_sdet.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case4837_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case4917_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case500_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case5658_epigrids.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case57_ieee.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case4020_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case4601_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case4619_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case4661_sdet.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case4837_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case4917_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case500_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case5658_epigrids.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case57_ieee.m&quot;
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      829
@@ -3592,7 +3592,7 @@ Number of inequality constraint evaluations          = 22
 Number of equality constraint Jacobian evaluations   = 17
 Number of inequality constraint Jacobian evaluations = 17
 Number of Lagrangian Hessian evaluations             = 16
-Total seconds in IPOPT                               = 374.757
+Total seconds in IPOPT                               = 406.154
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3649,11 +3649,11 @@ Number of inequality constraint evaluations          = 22
 Number of equality constraint Jacobian evaluations   = 17
 Number of inequality constraint Jacobian evaluations = 17
 Number of Lagrangian Hessian evaluations             = 16
-Total seconds in IPOPT                               = 0.107
+Total seconds in IPOPT                               = 0.108
 
 EXIT: Optimal Solution Found.
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case588_sdet.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case5_pjm.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case588_sdet.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case5_pjm.m&quot;
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:       62
@@ -3777,10 +3777,10 @@ Number of inequality constraint evaluations          = 32
 Number of equality constraint Jacobian evaluations   = 22
 Number of inequality constraint Jacobian evaluations = 22
 Number of Lagrangian Hessian evaluations             = 21
-Total seconds in IPOPT                               = 0.019
+Total seconds in IPOPT                               = 0.020
 
 EXIT: Optimal Solution Found.
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case60_c.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case60_c.m&quot;
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:      844
@@ -3855,7 +3855,7 @@ Number of inequality constraint evaluations          = 43
 Number of equality constraint Jacobian evaluations   = 35
 Number of inequality constraint Jacobian evaluations = 35
 Number of Lagrangian Hessian evaluations             = 34
-Total seconds in IPOPT                               = 288.599
+Total seconds in IPOPT                               = 304.262
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -3932,15 +3932,15 @@ Number of inequality constraint evaluations          = 43
 Number of equality constraint Jacobian evaluations   = 35
 Number of inequality constraint Jacobian evaluations = 35
 Number of Lagrangian Hessian evaluations             = 34
-Total seconds in IPOPT                               = 0.240
+Total seconds in IPOPT                               = 0.245
 
 EXIT: Optimal Solution Found.
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case6468_rte.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case6470_rte.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case6495_rte.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case6515_rte.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case7336_epigrids.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case73_ieee_rts.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case6468_rte.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case6470_rte.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case6495_rte.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case6515_rte.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case7336_epigrids.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case73_ieee_rts.m&quot;
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
 
 Number of nonzeros in equality constraint Jacobian...:     1133
@@ -4006,7 +4006,7 @@ Number of inequality constraint evaluations          = 27
 Number of equality constraint Jacobian evaluations   = 27
 Number of inequality constraint Jacobian evaluations = 27
 Number of Lagrangian Hessian evaluations             = 26
-Total seconds in IPOPT                               = 1020.553
+Total seconds in IPOPT                               = 1028.533
 
 EXIT: Optimal Solution Found.
 This is Ipopt version 3.14.4, running with linear solver MUMPS 5.4.1.
@@ -4074,29 +4074,29 @@ Number of inequality constraint evaluations          = 27
 Number of equality constraint Jacobian evaluations   = 27
 Number of inequality constraint Jacobian evaluations = 27
 Number of Lagrangian Hessian evaluations             = 26
-Total seconds in IPOPT                               = 0.269
+Total seconds in IPOPT                               = 0.265
 
 EXIT: Optimal Solution Found.
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case78484_epigrids.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case793_goc.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case8387_pegase.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case89_pegase.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case9241_pegase.m&quot;
-file = &quot;/tmp/jl_rAmPG0/pglib_opf_case9591_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case78484_epigrids.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case793_goc.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case8387_pegase.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case89_pegase.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case9241_pegase.m&quot;
+file = &quot;/tmp/jl_AIcybZ/pglib_opf_case9591_goc.m&quot;
 10×23 DataFrame
  Row │ case                         vars   cons   optimization  optimization_m ⋯
      │ String                       Int64  Int64  Float64       Float64        ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ pglib_opf_case14_ieee.m        118    169     0.324831                  ⋯
-   2 │ pglib_opf_case24_ieee_rts.m    266    315     1.29797
-   3 │ pglib_opf_case30_as.m          236    348     0.963435
-   4 │ pglib_opf_case30_ieee.m        236    348     1.36891
-   5 │ pglib_opf_case39_epri.m        282    401     2.5843                    ⋯
-   6 │ pglib_opf_case3_lmbd.m          24     28     0.0190105
-   7 │ pglib_opf_case57_ieee.m        448    675     4.04766                 2
-   8 │ pglib_opf_case5_pjm.m           44     53     0.0673785
-   9 │ pglib_opf_case60_c.m           518    737     8.92233                 2 ⋯
-  10 │ pglib_opf_case73_ieee_rts.m    824    987    16.6508                  4
+   1 │ pglib_opf_case14_ieee.m        118    169     0.361215                  ⋯
+   2 │ pglib_opf_case24_ieee_rts.m    266    315     1.30669
+   3 │ pglib_opf_case30_as.m          236    348     0.886799
+   4 │ pglib_opf_case30_ieee.m        236    348     1.36541
+   5 │ pglib_opf_case39_epri.m        282    401     2.80323                   ⋯
+   6 │ pglib_opf_case3_lmbd.m          24     28     0.0217032
+   7 │ pglib_opf_case57_ieee.m        448    675     5.05044                 2
+   8 │ pglib_opf_case5_pjm.m           44     53     0.122959
+   9 │ pglib_opf_case60_c.m           518    737    10.2882                  2 ⋯
+  10 │ pglib_opf_case73_ieee_rts.m    824    987    18.1416                  4
                                                               19 columns omitted</code></pre><pre><code class="language-julia hljs">io = IOBuffer()
 println(io, &quot;```@raw html&quot;)
 pretty_table(io, timing_data; backend = Val(:html))
@@ -4160,171 +4160,171 @@ Text(String(take!(io)))</code></pre><table>
       <td style = "text-align: right;">pglib_opf_case14_ieee.m</td>
       <td style = "text-align: right;">118</td>
       <td style = "text-align: right;">169</td>
-      <td style = "text-align: right;">0.324831</td>
-      <td style = "text-align: right;">2.54844</td>
-      <td style = "text-align: right;">12.5821</td>
+      <td style = "text-align: right;">0.361215</td>
+      <td style = "text-align: right;">2.55948</td>
+      <td style = "text-align: right;">12.5115</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">0.0434061</td>
-      <td style = "text-align: right;">4.697</td>
-      <td style = "text-align: right;">25.1095</td>
+      <td style = "text-align: right;">0.0424887</td>
+      <td style = "text-align: right;">4.7155</td>
+      <td style = "text-align: right;">25.5957</td>
       <td style = "text-align: right;">254.322</td>
-      <td style = "text-align: right;">0.026472</td>
-      <td style = "text-align: right;">0.280696</td>
-      <td style = "text-align: right;">0.0625814</td>
+      <td style = "text-align: right;">0.0272636</td>
+      <td style = "text-align: right;">0.28241</td>
+      <td style = "text-align: right;">0.0631449</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">0.0808792</td>
-      <td style = "text-align: right;">0.148954</td>
-      <td style = "text-align: right;">0.0821452</td>
+      <td style = "text-align: right;">0.0745637</td>
+      <td style = "text-align: right;">0.153793</td>
+      <td style = "text-align: right;">0.188667</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">118.015</td>
-      <td style = "text-align: right;">0.0757271</td>
-      <td style = "text-align: right;">125.344</td>
+      <td style = "text-align: right;">125.303</td>
+      <td style = "text-align: right;">0.0765005</td>
+      <td style = "text-align: right;">125.159</td>
       <td style = "text-align: right;">1658.7</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case24_ieee_rts.m</td>
       <td style = "text-align: right;">266</td>
       <td style = "text-align: right;">315</td>
-      <td style = "text-align: right;">1.29797</td>
-      <td style = "text-align: right;">6.19099</td>
-      <td style = "text-align: right;">13.5653</td>
+      <td style = "text-align: right;">1.30669</td>
+      <td style = "text-align: right;">6.08221</td>
+      <td style = "text-align: right;">13.4725</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">0.446589</td>
-      <td style = "text-align: right;">9.72498</td>
-      <td style = "text-align: right;">81.7288</td>
+      <td style = "text-align: right;">0.0999021</td>
+      <td style = "text-align: right;">9.74063</td>
+      <td style = "text-align: right;">81.7645</td>
       <td style = "text-align: right;">51365.0</td>
-      <td style = "text-align: right;">0.0587089</td>
-      <td style = "text-align: right;">0.0371705</td>
-      <td style = "text-align: right;">0.0599762</td>
+      <td style = "text-align: right;">0.0593167</td>
+      <td style = "text-align: right;">0.0443057</td>
+      <td style = "text-align: right;">0.0607425</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">0.210891</td>
-      <td style = "text-align: right;">0.153018</td>
-      <td style = "text-align: right;">0.199777</td>
+      <td style = "text-align: right;">0.441678</td>
+      <td style = "text-align: right;">0.159778</td>
+      <td style = "text-align: right;">0.204837</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">359.895</td>
-      <td style = "text-align: right;">0.0160048</td>
-      <td style = "text-align: right;">340.303</td>
+      <td style = "text-align: right;">343.862</td>
+      <td style = "text-align: right;">0.052153</td>
+      <td style = "text-align: right;">336.378</td>
       <td style = "text-align: right;">63741.2</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case30_as.m</td>
       <td style = "text-align: right;">236</td>
       <td style = "text-align: right;">348</td>
-      <td style = "text-align: right;">0.963435</td>
-      <td style = "text-align: right;">5.6007</td>
-      <td style = "text-align: right;">0.974202</td>
+      <td style = "text-align: right;">0.886799</td>
+      <td style = "text-align: right;">5.52978</td>
+      <td style = "text-align: right;">0.9334</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.0804993</td>
-      <td style = "text-align: right;">15.0288</td>
-      <td style = "text-align: right;">92.0155</td>
+      <td style = "text-align: right;">0.0802175</td>
+      <td style = "text-align: right;">14.7333</td>
+      <td style = "text-align: right;">91.9388</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.0398235</td>
-      <td style = "text-align: right;">0.00658896</td>
-      <td style = "text-align: right;">0.0411561</td>
+      <td style = "text-align: right;">0.0408482</td>
+      <td style = "text-align: right;">0.00567637</td>
+      <td style = "text-align: right;">0.0420292</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.139175</td>
-      <td style = "text-align: right;">0.171374</td>
-      <td style = "text-align: right;">0.143217</td>
+      <td style = "text-align: right;">0.137091</td>
+      <td style = "text-align: right;">0.165584</td>
+      <td style = "text-align: right;">0.13856</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">259.917</td>
-      <td style = "text-align: right;">0.0377113</td>
-      <td style = "text-align: right;">258.768</td>
+      <td style = "text-align: right;">262.044</td>
+      <td style = "text-align: right;">0.044345</td>
+      <td style = "text-align: right;">260.468</td>
       <td style = "text-align: right;">772.093</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case30_ieee.m</td>
       <td style = "text-align: right;">236</td>
       <td style = "text-align: right;">348</td>
-      <td style = "text-align: right;">1.36891</td>
-      <td style = "text-align: right;">5.36881</td>
-      <td style = "text-align: right;">1.38236</td>
+      <td style = "text-align: right;">1.36541</td>
+      <td style = "text-align: right;">5.21281</td>
+      <td style = "text-align: right;">1.36843</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">0.0835022</td>
-      <td style = "text-align: right;">7.46073</td>
-      <td style = "text-align: right;">90.7635</td>
+      <td style = "text-align: right;">0.0854592</td>
+      <td style = "text-align: right;">7.93356</td>
+      <td style = "text-align: right;">97.2575</td>
       <td style = "text-align: right;">-16136.6</td>
-      <td style = "text-align: right;">0.057106</td>
-      <td style = "text-align: right;">0.0060818</td>
-      <td style = "text-align: right;">0.0583597</td>
+      <td style = "text-align: right;">0.0585968</td>
+      <td style = "text-align: right;">0.00607935</td>
+      <td style = "text-align: right;">0.0598012</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">0.198639</td>
-      <td style = "text-align: right;">0.165114</td>
-      <td style = "text-align: right;">0.589213</td>
+      <td style = "text-align: right;">0.226932</td>
+      <td style = "text-align: right;">0.16369</td>
+      <td style = "text-align: right;">0.228393</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">264.109</td>
-      <td style = "text-align: right;">0.0426248</td>
-      <td style = "text-align: right;">261.39</td>
+      <td style = "text-align: right;">255.186</td>
+      <td style = "text-align: right;">0.0417084</td>
+      <td style = "text-align: right;">252.201</td>
       <td style = "text-align: right;">4244.05</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case39_epri.m</td>
       <td style = "text-align: right;">282</td>
       <td style = "text-align: right;">401</td>
-      <td style = "text-align: right;">2.5843</td>
-      <td style = "text-align: right;">7.00754</td>
-      <td style = "text-align: right;">2.55104</td>
+      <td style = "text-align: right;">2.80323</td>
+      <td style = "text-align: right;">6.93977</td>
+      <td style = "text-align: right;">2.84025</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">0.159883</td>
-      <td style = "text-align: right;">9.41579</td>
-      <td style = "text-align: right;">120.919</td>
+      <td style = "text-align: right;">0.160111</td>
+      <td style = "text-align: right;">8.96761</td>
+      <td style = "text-align: right;">130.233</td>
       <td style = "text-align: right;">1.23324e5</td>
-      <td style = "text-align: right;">0.104634</td>
-      <td style = "text-align: right;">0.00693982</td>
-      <td style = "text-align: right;">0.105839</td>
+      <td style = "text-align: right;">0.106298</td>
+      <td style = "text-align: right;">0.0078136</td>
+      <td style = "text-align: right;">0.107218</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">0.320735</td>
-      <td style = "text-align: right;">0.194562</td>
-      <td style = "text-align: right;">0.32059</td>
+      <td style = "text-align: right;">0.336316</td>
+      <td style = "text-align: right;">0.192463</td>
+      <td style = "text-align: right;">0.345857</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">322.716</td>
-      <td style = "text-align: right;">0.0666513</td>
-      <td style = "text-align: right;">320.073</td>
+      <td style = "text-align: right;">313.48</td>
+      <td style = "text-align: right;">0.376887</td>
+      <td style = "text-align: right;">310.467</td>
       <td style = "text-align: right;">72070.8</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">24</td>
       <td style = "text-align: right;">28</td>
-      <td style = "text-align: right;">0.0190105</td>
-      <td style = "text-align: right;">0.0434296</td>
-      <td style = "text-align: right;">0.0209169</td>
+      <td style = "text-align: right;">0.0217032</td>
+      <td style = "text-align: right;">0.0421261</td>
+      <td style = "text-align: right;">0.0232612</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0123753</td>
-      <td style = "text-align: right;">0.392407</td>
-      <td style = "text-align: right;">0.0142627</td>
+      <td style = "text-align: right;">0.0124752</td>
+      <td style = "text-align: right;">0.379142</td>
+      <td style = "text-align: right;">0.014488</td>
       <td style = "text-align: right;">743.0</td>
-      <td style = "text-align: right;">0.00895457</td>
-      <td style = "text-align: right;">0.00250657</td>
-      <td style = "text-align: right;">0.00930726</td>
+      <td style = "text-align: right;">0.0093538</td>
+      <td style = "text-align: right;">0.00206366</td>
+      <td style = "text-align: right;">0.0096767</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0185664</td>
-      <td style = "text-align: right;">0.0154271</td>
-      <td style = "text-align: right;">0.0194362</td>
+      <td style = "text-align: right;">0.0185874</td>
+      <td style = "text-align: right;">0.0146128</td>
+      <td style = "text-align: right;">0.0196501</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">2.20767</td>
-      <td style = "text-align: right;">0.000411777</td>
-      <td style = "text-align: right;">2.05422</td>
+      <td style = "text-align: right;">1.99811</td>
+      <td style = "text-align: right;">0.000443736</td>
+      <td style = "text-align: right;">1.94162</td>
       <td style = "text-align: right;">6273.63</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case57_ieee.m</td>
       <td style = "text-align: right;">448</td>
       <td style = "text-align: right;">675</td>
-      <td style = "text-align: right;">4.04766</td>
-      <td style = "text-align: right;">20.2269</td>
-      <td style = "text-align: right;">4.03098</td>
+      <td style = "text-align: right;">5.05044</td>
+      <td style = "text-align: right;">20.6023</td>
+      <td style = "text-align: right;">5.05659</td>
       <td style = "text-align: right;">37589.3</td>
-      <td style = "text-align: right;">0.148805</td>
-      <td style = "text-align: right;">15.1582</td>
-      <td style = "text-align: right;">379.032</td>
+      <td style = "text-align: right;">0.151276</td>
+      <td style = "text-align: right;">16.5192</td>
+      <td style = "text-align: right;">410.476</td>
       <td style = "text-align: right;">37587.1</td>
-      <td style = "text-align: right;">0.0893443</td>
-      <td style = "text-align: right;">0.009678</td>
-      <td style = "text-align: right;">0.0908557</td>
+      <td style = "text-align: right;">0.0901529</td>
+      <td style = "text-align: right;">0.00957882</td>
+      <td style = "text-align: right;">0.0909498</td>
       <td style = "text-align: right;">37589.3</td>
-      <td style = "text-align: right;">0.319527</td>
-      <td style = "text-align: right;">0.344108</td>
-      <td style = "text-align: right;">0.320715</td>
+      <td style = "text-align: right;">0.320733</td>
+      <td style = "text-align: right;">0.346574</td>
+      <td style = "text-align: right;">0.318083</td>
       <td style = "text-align: right;">37589.3</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
@@ -4335,46 +4335,46 @@ Text(String(take!(io)))</code></pre><table>
       <td style = "text-align: right;">pglib_opf_case5_pjm.m</td>
       <td style = "text-align: right;">44</td>
       <td style = "text-align: right;">53</td>
-      <td style = "text-align: right;">0.0673785</td>
-      <td style = "text-align: right;">0.129699</td>
-      <td style = "text-align: right;">0.069322</td>
+      <td style = "text-align: right;">0.122959</td>
+      <td style = "text-align: right;">0.135114</td>
+      <td style = "text-align: right;">0.124272</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0225874</td>
-      <td style = "text-align: right;">0.889593</td>
-      <td style = "text-align: right;">0.0256533</td>
+      <td style = "text-align: right;">0.0236061</td>
+      <td style = "text-align: right;">0.90135</td>
+      <td style = "text-align: right;">0.026143</td>
       <td style = "text-align: right;">17929.2</td>
-      <td style = "text-align: right;">0.0180174</td>
-      <td style = "text-align: right;">0.00273514</td>
-      <td style = "text-align: right;">0.0187744</td>
+      <td style = "text-align: right;">0.0187018</td>
+      <td style = "text-align: right;">0.00244936</td>
+      <td style = "text-align: right;">0.0195059</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0382635</td>
-      <td style = "text-align: right;">0.0267744</td>
-      <td style = "text-align: right;">0.0394769</td>
+      <td style = "text-align: right;">0.0395968</td>
+      <td style = "text-align: right;">0.0269387</td>
+      <td style = "text-align: right;">0.0410437</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">18.3739</td>
-      <td style = "text-align: right;">0.000635616</td>
-      <td style = "text-align: right;">16.8732</td>
+      <td style = "text-align: right;">17.567</td>
+      <td style = "text-align: right;">0.000646545</td>
+      <td style = "text-align: right;">16.7222</td>
       <td style = "text-align: right;">77.9548</td>
     </tr>
     <tr>
       <td style = "text-align: right;">pglib_opf_case60_c.m</td>
       <td style = "text-align: right;">518</td>
       <td style = "text-align: right;">737</td>
-      <td style = "text-align: right;">8.92233</td>
-      <td style = "text-align: right;">25.9854</td>
-      <td style = "text-align: right;">22.6095</td>
+      <td style = "text-align: right;">10.2882</td>
+      <td style = "text-align: right;">26.056</td>
+      <td style = "text-align: right;">25.3298</td>
       <td style = "text-align: right;">92693.7</td>
-      <td style = "text-align: right;">0.280684</td>
-      <td style = "text-align: right;">15.2625</td>
-      <td style = "text-align: right;">292.776</td>
+      <td style = "text-align: right;">0.288157</td>
+      <td style = "text-align: right;">14.8647</td>
+      <td style = "text-align: right;">308.497</td>
       <td style = "text-align: right;">92310.1</td>
-      <td style = "text-align: right;">0.170033</td>
-      <td style = "text-align: right;">0.0397352</td>
-      <td style = "text-align: right;">0.171932</td>
+      <td style = "text-align: right;">0.17441</td>
+      <td style = "text-align: right;">0.0412799</td>
+      <td style = "text-align: right;">0.176074</td>
       <td style = "text-align: right;">92693.7</td>
-      <td style = "text-align: right;">0.647081</td>
-      <td style = "text-align: right;">1.10511</td>
-      <td style = "text-align: right;">0.609388</td>
+      <td style = "text-align: right;">0.693474</td>
+      <td style = "text-align: right;">0.372126</td>
+      <td style = "text-align: right;">0.687129</td>
       <td style = "text-align: right;">92693.7</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
@@ -4385,21 +4385,21 @@ Text(String(take!(io)))</code></pre><table>
       <td style = "text-align: right;">pglib_opf_case73_ieee_rts.m</td>
       <td style = "text-align: right;">824</td>
       <td style = "text-align: right;">987</td>
-      <td style = "text-align: right;">16.6508</td>
-      <td style = "text-align: right;">47.7455</td>
-      <td style = "text-align: right;">16.4367</td>
+      <td style = "text-align: right;">18.1416</td>
+      <td style = "text-align: right;">48.7155</td>
+      <td style = "text-align: right;">17.9379</td>
       <td style = "text-align: right;">1.89764e5</td>
-      <td style = "text-align: right;">0.336308</td>
-      <td style = "text-align: right;">31.1003</td>
-      <td style = "text-align: right;">1024.77</td>
+      <td style = "text-align: right;">0.327173</td>
+      <td style = "text-align: right;">32.7287</td>
+      <td style = "text-align: right;">1033.1</td>
       <td style = "text-align: right;">180842.0</td>
-      <td style = "text-align: right;">0.205783</td>
-      <td style = "text-align: right;">0.0139492</td>
-      <td style = "text-align: right;">0.207915</td>
+      <td style = "text-align: right;">0.216032</td>
+      <td style = "text-align: right;">0.012598</td>
+      <td style = "text-align: right;">0.217215</td>
       <td style = "text-align: right;">1.89764e5</td>
-      <td style = "text-align: right;">2.14965</td>
-      <td style = "text-align: right;">0.612352</td>
-      <td style = "text-align: right;">0.857447</td>
+      <td style = "text-align: right;">1.51145</td>
+      <td style = "text-align: right;">0.617201</td>
+      <td style = "text-align: right;">0.904648</td>
       <td style = "text-align: right;">1.89764e5</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
@@ -4407,4 +4407,7 @@ Text(String(take!(io)))</code></pre><table>
       <td style = "text-align: right;">NaN</td>
     </tr>
   </tbody>
-</table></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Optimizaton/2drosenbrock/">« 2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a><a class="docs-footer-nextpage" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 12 January 2024 10:11">Friday 12 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+</table><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><pre><code class="nohighlight hljs">Error: ArgumentError: Package SciMLBenchmarks not found in current path, ma
+ybe you meant `import/using ..SciMLBenchmarks`.
+- Otherwise, run `import Pkg; Pkg.add(&quot;SciMLBenchmarks&quot;)` to install the Sc
+iMLBenchmarks package.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Optimizaton/2drosenbrock/">« 2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a><a class="docs-footer-nextpage" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Sunday 14 January 2024 07:15">Sunday 14 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
