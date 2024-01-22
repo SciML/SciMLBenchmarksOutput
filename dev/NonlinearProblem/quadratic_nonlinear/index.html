@@ -29,55 +29,88 @@ end</code></pre><pre><code class="nohighlight hljs">generate_prob (generic funct
     (; type = :others, solver = Dict(:alg =&gt; NLsolveJL()), name = &quot;NLsolve&quot;),
 ]</code></pre><pre><code class="nohighlight hljs">15-element Vector{NamedTuple{(:type, :solver, :name)}}:
  (type = :simplenonlinearsolve, solver = Dict(:alg =&gt; SimpleNonlinearSolve.
-SimpleNewtonRaphson{ADTypes.AutoForwardDiff{nothing, Nothing}}(ADTypes.Auto
-ForwardDiff{nothing, Nothing}(nothing))), name = &quot;SimpleNewtonRaphson&quot;)
+SimpleNewtonRaphson{Nothing}(nothing)), name = &quot;SimpleNewtonRaphson&quot;)
  (type = :simplenonlinearsolve, solver = Dict{Symbol, SimpleNonlinearSolve.
-SimpleTrustRegion{ADTypes.AutoForwardDiff{nothing, Nothing}, Float64, Float
-64, Float64, Float64, Float64, Float64, Float64}}(:alg =&gt; SimpleNonlinearSo
-lve.SimpleTrustRegion{ADTypes.AutoForwardDiff{nothing, Nothing}, Float64, F
-loat64, Float64, Float64, Float64, Float64, Float64}(ADTypes.AutoForwardDif
-f{nothing, Nothing}(nothing), 0.0, 0.0, 0.0001, 0.25, 0.75, 0.25, 2.0, 32))
-, name = &quot;SimpleTrustRegion&quot;)
+SimpleTrustRegion{Nothing, Float64, Float64, Float64, Float64, Float64, Flo
+at64, Float64}}(:alg =&gt; SimpleNonlinearSolve.SimpleTrustRegion{Nothing, Flo
+at64, Float64, Float64, Float64, Float64, Float64, Float64}(nothing, 0.0, 0
+.0, 0.0001, 0.25, 0.75, 0.25, 2.0, 32)), name = &quot;SimpleTrustRegion&quot;)
  (type = :simplenonlinearsolve, solver = Dict(:alg =&gt; SimpleNonlinearSolve.
 SimpleKlement()), name = &quot;SimpleKlement&quot;)
  (type = :simplenonlinearsolve, solver = Dict{Symbol, SimpleNonlinearSolve.
-SimpleDFSane{Float64, Float64, Float64, Float64, Float64, Float64, SimpleNo
-nlinearSolve.var&quot;#27#32&quot;}}(:alg =&gt; SimpleNonlinearSolve.SimpleDFSane{Float6
-4, Float64, Float64, Float64, Float64, Float64, SimpleNonlinearSolve.var&quot;#2
-7#32&quot;}(1.0e-10, 1.0e10, 1.0, 10, 0.0001, 0.1, 0.5, 2, SimpleNonlinearSolve.
-var&quot;#27#32&quot;())), name = &quot;SimpleDFSane&quot;)
+SimpleDFSane{10, Float64, Float64, Float64, Float64, Float64, Float64, Simp
+leNonlinearSolve.var&quot;#48#50&quot;}}(:alg =&gt; SimpleNonlinearSolve.SimpleDFSane{10
+, Float64, Float64, Float64, Float64, Float64, Float64, SimpleNonlinearSolv
+e.var&quot;#48#50&quot;}(1.0e-10, 1.0e10, 1.0, 0.0001, 0.1, 0.5, 2, SimpleNonlinearSo
+lve.var&quot;#48#50&quot;())), name = &quot;SimpleDFSane&quot;)
  (type = :simplenonlinearsolve, solver = Dict(:alg =&gt; SimpleNonlinearSolve.
-SimpleBroyden()), name = &quot;SimpleBroyden&quot;)
- (type = :nonlinearsolve, solver = Dict{Symbol, NonlinearSolve.NewtonRaphso
-n{nothing, Nothing, Nothing, typeof(NonlinearSolve.DEFAULT_PRECS), Nonlinea
-rSolve.LineSearch{Nothing, Nothing, Bool}}}(:alg =&gt; NewtonRaphson()), name 
-= &quot;NewtonRaphson&quot;)
- (type = :nonlinearsolve, solver = Dict{Symbol, NonlinearSolve.TrustRegion{
-nothing, Nothing, Rational{Int64}, Nothing, typeof(NonlinearSolve.DEFAULT_P
-RECS), Rational{Int64}, Nothing}}(:alg =&gt; TrustRegion(radius_update_scheme 
-= Simple)), name = &quot;TrustRegion&quot;)
- (type = :nonlinearsolve, solver = Dict{Symbol, NonlinearSolve.Broyden{:ide
-ntity, :good_broyden, false, Nothing, Nothing, NonlinearSolve.LineSearch{No
-thing, Nothing, Bool}, Nothing}}(:alg =&gt; Broyden()), name = &quot;Broyden&quot;)
- (type = :nonlinearsolve, solver = Dict{Symbol, NonlinearSolve.Klement{:ide
-ntity, false, Nothing, Nothing, typeof(NonlinearSolve.DEFAULT_PRECS), Nonli
-nearSolve.LineSearch{Nothing, Nothing, Bool}, Bool}}(:alg =&gt; Klement(alpha 
-= true)), name = &quot;Klement&quot;)
- (type = :nonlinearsolve, solver = Dict{Symbol, NonlinearSolve.DFSane{Float
-64, Float64, Float64, Float64, Float64, Float64, NonlinearSolve.var&quot;#57#62&quot;
-}}(:alg =&gt; DFSane()), name = &quot;DFSane&quot;)
+SimpleBroyden{false, Nothing}(nothing)), name = &quot;SimpleBroyden&quot;)
+ (type = :nonlinearsolve, solver = Dict{Symbol, NonlinearSolve.GeneralizedF
+irstOrderAlgorithm{nothing, :NewtonRaphson, NonlinearSolve.NoLineSearch, Mi
+ssing, NonlinearSolve.NewtonDescent{Nothing, typeof(NonlinearSolve.DEFAULT_
+PRECS)}, Nothing, Nothing, Nothing}}(:alg =&gt; NewtonRaphson(
+   descent = NewtonDescent()
+)), name = &quot;NewtonRaphson&quot;)
+ (type = :nonlinearsolve, solver = Dict{Symbol, NonlinearSolve.GeneralizedF
+irstOrderAlgorithm{nothing, :TrustRegion, Missing, NonlinearSolve.GenericTr
+ustRegionScheme{NonlinearSolve.RadiusUpdateSchemes.__Simple, Rational{Int64
+}, Rational{Int64}, Rational{Int64}, Rational{Int64}, Rational{Int64}, Noth
+ing, Nothing, Nothing, Nothing}, NonlinearSolve.Dogleg{NonlinearSolve.Newto
+nDescent{Nothing, typeof(NonlinearSolve.DEFAULT_PRECS)}, NonlinearSolve.Ste
+epestDescent{Nothing, typeof(NonlinearSolve.DEFAULT_PRECS)}}, Nothing, Noth
+ing, Nothing}}(:alg =&gt; TrustRegion(
+   trustregion = GenericTrustRegionScheme(method = RadiusUpdateSchemes.Simp
+le),
+   descent = Dogleg(newton_descent = NewtonDescent(), steepest_descent = St
+eepestDescent())
+)), name = &quot;TrustRegion&quot;)
+ (type = :nonlinearsolve, solver = Dict{Symbol, NonlinearSolve.ApproximateJ
+acobianSolveAlgorithm{false, :Broyden, NonlinearSolve.NoLineSearch, Missing
+, NonlinearSolve.NewtonDescent{Nothing, typeof(NonlinearSolve.DEFAULT_PRECS
+)}, NonlinearSolve.GoodBroydenUpdateRule, NonlinearSolve.NoChangeInStateRes
+et{Nothing}, NonlinearSolve.IdentityInitialization{Nothing, NonlinearSolve.
+FullStructure}}}(:alg =&gt; Broyden(
+    descent = NewtonDescent(),
+    update_rule = GoodBroydenUpdateRule(),
+    reinit_rule = NoChangeInStateReset(),
+    max_resets = 100,
+    initialization = IdentityInitialization(structure = FullStructure()),
+    inverse_jacobian = true
+)), name = &quot;Broyden&quot;)
+ (type = :nonlinearsolve, solver = Dict{Symbol, NonlinearSolve.ApproximateJ
+acobianSolveAlgorithm{false, :Klement, NonlinearSolve.NoLineSearch, Missing
+, NonlinearSolve.NewtonDescent{Nothing, typeof(NonlinearSolve.DEFAULT_PRECS
+)}, NonlinearSolve.KlementUpdateRule, NonlinearSolve.IllConditionedJacobian
+Reset, NonlinearSolve.IdentityInitialization{Nothing, NonlinearSolve.Diagon
+alStructure}}}(:alg =&gt; Klement(
+    descent = NewtonDescent(),
+    update_rule = KlementUpdateRule(),
+    reinit_rule = IllConditionedJacobianReset(),
+    max_resets = 100,
+    initialization = IdentityInitialization(structure = DiagonalStructure()
+)
+)), name = &quot;Klement&quot;)
+ (type = :nonlinearsolve, solver = Dict{Symbol, NonlinearSolve.GeneralizedD
+FSane{:DFSane, NonlinearSolve.RobustNonMonotoneLineSearch{Rational{Int64}, 
+Int64, Rational{Int64}, Rational{Int64}, NonlinearSolve.var&quot;#246#248&quot;}, Rat
+ional{Int64}, Float64, Nothing}}(:alg =&gt; DFSane(
+    linesearch = RobustNonMonotoneLineSearch(),
+    σ_min = 1//10000000000,
+    σ_max = 1.0e10,
+    σ_1 = nothing
+)), name = &quot;DFSane&quot;)
  (type = :others, solver = Dict{Symbol, Sundials.KINSOL{:Dense}}(:alg =&gt; Su
 ndials.KINSOL{:Dense}(0, 0, nothing, 0, 0, :None)), name = &quot;Newton&#39;s Method
  (Sundials)&quot;)
- (type = :others, solver = Dict{Symbol, NonlinearSolve.CMINPACK}(:alg =&gt; CM
-INPACK()), name = &quot;Levenberg-Marquardt (CMINPACK)&quot;)
- (type = :others, solver = Dict{Symbol, NonlinearSolve.CMINPACK}(:alg =&gt; CM
-INPACK()), name = &quot;Hybrid Powell (CMINPACK)&quot;)
+ (type = :others, solver = Dict{Symbol, NonlinearSolve.CMINPACK{Missing}}(:
+alg =&gt; CMINPACK()), name = &quot;Levenberg-Marquardt (CMINPACK)&quot;)
+ (type = :others, solver = Dict{Symbol, NonlinearSolve.CMINPACK{Missing}}(:
+alg =&gt; CMINPACK()), name = &quot;Hybrid Powell (CMINPACK)&quot;)
  (type = :others, solver = Dict{Symbol, NonlinearSolve.SpeedMappingJL{Float
 64, Int64}}(:alg =&gt; SpeedMappingJL()), name = &quot;SpeedMapping&quot;)
- (type = :others, solver = Dict{Symbol, NonlinearSolve.NLsolveJL{LineSearch
-es.Static, NonlinearSolve.var&quot;#21#23&quot;, Float64, Float64}}(:alg =&gt; NLsolveJL
-(linsolve = #21#23(), linesearch = Static())), name = &quot;NLsolve&quot;)</code></pre><p>Configurations:</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (3:2:12)
+ (type = :others, solver = Dict{Symbol, NonlinearSolve.NLsolveJL{Symbol, Li
+neSearches.Static, NonlinearSolve.var&quot;#261#263&quot;, Float64, Float64}}(:alg =&gt;
+ NLsolveJL()), name = &quot;NLsolve&quot;)</code></pre><p>Configurations:</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (3:2:12)
 reltols = 1.0 ./ 10.0 .^ (3:2:12)</code></pre><pre><code class="nohighlight hljs">5-element Vector{Float64}:
  0.001
  1.0e-5
@@ -158,138 +191,177 @@ fig = plot_wpset(wpset, successful_solvers, &quot;N = 2&quot;)</code></pre><pre>
 6520581969e-6).
 [Info] Solver SimpleDFSane successfully solved the problem (norm = 2.110961
 8780448975e-7).
-[Info] Solver SimpleBroyden successfully solved the problem (norm = 8.49558
-6520581969e-6).
+[Info] Solver SimpleBroyden successfully solved the problem (norm = 8.49561
+2038666664e-6).
 [Info] Solver NewtonRaphson successfully solved the problem (norm = 8.49561
 2038666664e-6).
 [Info] Solver TrustRegion successfully solved the problem (norm = 6.6873629
 21505273e-10).
 [Info] Solver Broyden successfully solved the problem (norm = 8.49561203866
 6664e-6).
-[Info] Solver Klement successfully solved the problem (norm = 8.49558652058
-1969e-6).
-[Info] Solver DFSane successfully solved the problem (norm = 2.110961878044
-8975e-7).
+[Info] Solver Klement successfully solved the problem (norm = 8.49561203866
+6664e-6).
+[Info] Solver DFSane successfully solved the problem (norm = 8.495586520581
+969e-6).
 [Warn] Solver Newton&#39;s Method (Sundials) threw an error: MethodError(Core.k
 wcall, ((userdata = nothing, linear_solver = :Dense, jac_upper = 0, jac_low
 er = 0, abstol = 1.0e-5, jac_prototype = nothing, prec_side = 0, krylov_dim
  = 0, maxiters = 10000, strategy = :None), Sundials.___kinsol, Sundials.var
 &quot;#32#38&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{2, Float64}, f
 alse, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize,
- typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScaling{B
+ typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.UniformScaling{B
 ool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
 g, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, S
 ymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, 
-Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.St
-andardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArraysCo
+Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.StandardNonl
+inearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArraysCore.SVector
+{2, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.
+FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.U
+niformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TI
+ME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothi
+ng}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBa
+se.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, SciMLBase.F
+ullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.Un
+iformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
+othing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIM
+E), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothin
+g}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.UniformScali
+ng{Bool}(true), nothing, nothing, nothing, nothing, nothing, nothing, nothi
+ng, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing,
+ SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, 
+nothing, nothing), nothing), [1.0, 1.0], 2.0, SciMLBase.StandardNonlinearPr
+oblem(), Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}()), 2.0), [1.0
+, 1.0]), 0x0000000000007c2d).
+[Warn] Solver Levenberg-Marquardt (CMINPACK) threw an error: MethodError(Co
+re.kwcall, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :l
+m, iterations = 10000), MINPACK.fsolve, NonlinearSolveMINPACKExt.var&quot;#2#4&quot;{
+NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearPr
+oblem{StaticArraysCore.SVector{2, Float64}, false, Float64, SciMLBase.Nonli
+nearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBo
+x#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(Sc
+iMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symbo
+lCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tu
+ple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}}
+(NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearP
+roblem{StaticArraysCore.SVector{2, Float64}, false, Float64, SciMLBase.Nonl
+inearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandB
+ox#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(S
+ciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symb
+olCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, T
+uple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}
+(NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVe
+ctor{2, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLB
+ase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgeb
+ra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_N
+O_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, N
+othing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, Sci
+MLBase.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{StaticArraysCo
 re.SVector{2, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, 
-SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), Linea
+SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), Linea
 rAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing,
  Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSE
 RVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Noth
-ing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{()
-, Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunctio
-n{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oo
-p), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing,
- Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEF
-AULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Noth
-ing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, Linear
-Algebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing, not
-hing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERV
-ED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing
-, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0], 2.0, SciMLBase
-.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, NamedTupl
-e{(), Tuple{}}}()), 2.0), [1.0, 1.0]), 0x0000000000008411).
-[Warn] Solver Levenberg-Marquardt (CMINPACK) threw an error: MethodError(Co
-re.kwcall, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :l
-m, iterations = 10000, reltol = 1.0e-5), MINPACK.fsolve, NonlinearSolveMINP
-ACKExt.var&quot;#3#13&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{2, Fl
-oat64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSp
-ecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.Uniform
-Scaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
-g, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), N
-othing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, N
-othing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, Sci
-MLBase.StandardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{Stati
-cArraysCore.SVector{2, Float64}, false, Float64, SciMLBase.NonlinearFunctio
-n{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oo
-p), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing,
- Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEF
-AULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Noth
-ing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, Name
-dTuple{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.Nonline
-arFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#
-292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing,
- Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciM
-LBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolC
-ache{Nothing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oo
-p, LinearAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, not
-hing, nothing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAU
-LT_OBSERVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing
-, Nothing, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0], 2.0, 
-SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, 
-NamedTuple{(), Tuple{}}}()), 2.0), [1.0, 1.0], 2), 0x0000000000008411).
+ing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}
+}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, S
+ciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), Linear
+Algebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSER
+VED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothi
+ng, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.Un
+iformScaling{Bool}(true), nothing, nothing, nothing, nothing, nothing, noth
+ing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME
+, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}
+(nothing, nothing, nothing), nothing), [1.0, 1.0], 2.0, SciMLBase.StandardN
+onlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}())),
+ (2,))), [1.0, 1.0], 2), 0x0000000000007c2d).
 [Warn] Solver Hybrid Powell (CMINPACK) threw an error: MethodError(Core.kwc
 all, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :hybr, i
-terations = 10000, reltol = 1.0e-5), MINPACK.fsolve, NonlinearSolveMINPACKE
-xt.var&quot;#3#13&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{2, Float6
-4}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecia
-lize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScal
-ing{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
-othing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothi
-ng, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothi
-ng}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBa
-se.StandardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArr
-aysCore.SVector{2, Float64}, false, Float64, SciMLBase.NonlinearFunction{fa
-lse, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), 
-LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT
-_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing,
- Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTup
-le{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFu
-nction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;
-.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBas
-e.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache
-{Nothing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, L
-inearAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing
-, nothing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_O
-BSERVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, No
-thing, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0], 2.0, SciM
-LBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, Name
-dTuple{(), Tuple{}}}()), 2.0), [1.0, 1.0], 2), 0x0000000000008411).
+terations = 10000), MINPACK.fsolve, NonlinearSolveMINPACKExt.var&quot;#2#4&quot;{Nonl
+inearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProble
+m{StaticArraysCore.SVector{2, Float64}, false, Float64, SciMLBase.Nonlinear
+Function{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#22
+5&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, N
+othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLB
+ase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCac
+he{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{
+}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}}(Non
+linearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProbl
+em{StaticArraysCore.SVector{2, Float64}, false, Float64, SciMLBase.Nonlinea
+rFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#2
+25&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciML
+Base.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCa
+che{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple
+{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}(Non
+linearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector
+{2, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.
+FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.U
+niformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TI
+ME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothi
+ng}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBa
+se.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{StaticArraysCore.S
+Vector{2, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciM
+LBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlg
+ebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED
+_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing,
+ Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, S
+ciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, SciML
+Base.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlge
+bra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
+ing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_
+NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, 
+Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.Unifor
+mScaling{Bool}(true), nothing, nothing, nothing, nothing, nothing, nothing,
+ nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, no
+thing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}(not
+hing, nothing, nothing), nothing), [1.0, 1.0], 2.0, SciMLBase.StandardNonli
+nearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}())), (2,
+))), [1.0, 1.0], 2), 0x0000000000007c2d).
 [Warn] Solver SpeedMapping threw an error: MethodError(SpeedMapping.mapping
-!, (nothing, NonlinearSolveSpeedMappingExt.var&quot;#3#6&quot;{SciMLBase.NonlinearPro
-blem{StaticArraysCore.SVector{2, Float64}, false, Float64, SciMLBase.Nonlin
-earFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox
-#292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing
-, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(Sci
-MLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symbol
-Cache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tup
-le{}, NamedTuple{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}, Float6
-4}(SciMLBase.NonlinearProblem{StaticArraysCore.SVector{2, Float64}, false, 
-Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize, typeo
-f(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, 
-Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Symboli
-cIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, Base.P
-airs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.Standard
-NonlinearProblem}(SciMLBase.NonlinearFunction{false, SciMLBase.FullSpeciali
-ze, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScalin
-g{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing
-, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing
-}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, LinearAlgebra.UniformScaling{Bool}(tr
-ue), nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing
-, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, SymbolicIn
-dexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, nothing, no
-thing), nothing), [1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Ba
-se.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2.0), [6.94
-375348659795e-310, 6.9426589797514e-310], [6.94265897974667e-310, 6.9426573
-7389103e-310], SpeedMapping.State{Float64}(false, Inf, 10000.0, 1000.0, 0.0
-1, 1.705051886575974e9, 1.0e-5, true, false, 0, 1, 0, 0.0, 1.0, Inf, Inf, 0
-, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, Inf, 1.0, 1), nothing, [1.0, 1.0], nothing
-, nothing, true, false), 0x0000000000008411).
+!, (nothing, NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#12#22&quot;{SciMLBas
+e.NonlinearProblem{StaticArraysCore.SVector{2, Float64}, false, Float64, Sc
+iMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;
+##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothi
+ng, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingIn
+terface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol
+, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, T
+uple{Int64}}(NonlinearSolve.var&quot;#12#22&quot;{SciMLBase.NonlinearProblem{StaticAr
+raysCore.SVector{2, Float64}, false, Float64, SciMLBase.NonlinearFunction{f
+alse, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop),
+ LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAUL
+T_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing
+, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedT
+uple{}}, SciMLBase.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{St
+aticArraysCore.SVector{2, Float64}, false, Float64, SciMLBase.NonlinearFunc
+tion{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f
+_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.
+DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{N
+othing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @
+NamedTuple{}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunct
+ion{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_
+oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.D
+EFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{No
+thing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, Line
+arAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing, n
+othing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSE
+RVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothi
+ng, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0], 2.0, SciMLBa
+se.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, @NamedT
+uple{}}())), (2,)), [6.94475514497303e-310, 0.0], [6.94475705535967e-310, 6
+.9447570556664e-310], SpeedMapping.State{Float64}(false, Inf, 10000.0, 1000
+.0, 0.01, 1.705923667216282e9, 1.0e-5, true, false, 0, 1, 0, 0.0, 1.0, Inf,
+ Inf, 0, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, Inf, 1.0, 1), nothing, [1.0, 1.0], 
+nothing, nothing, true, false), 0x0000000000007c2d).
 [Warn] Solver NLsolve threw an error: ErrorException(&quot;setindex!(::StaticArr
 aysCore.SVector{2, Float64}, value, ::Int) is not defined.\n Hint: Use `MAr
 ray` or `SizedArray` to create a mutable static array&quot;).</code></pre><p><img src="../figures/quadratic_nonlinear_6_1.png" alt/></p><h3 id="N-4"><a class="docs-heading-anchor" href="#N-4">N = 4</a><a id="N-4-1"></a><a class="docs-heading-anchor-permalink" href="#N-4" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob = generate_prob(Val(4), Val(true))
@@ -302,142 +374,179 @@ fig = plot_wpset(wpset, successful_solvers, &quot;N = 4&quot;)</code></pre><pre>
 73677721074e-5).
 [Info] Solver SimpleDFSane successfully solved the problem (norm = 2.985350
 9175836734e-7).
-[Info] Solver SimpleBroyden successfully solved the problem (norm = 1.20145
-73678165164e-5).
+[Info] Solver SimpleBroyden successfully solved the problem (norm = 1.20146
+09765742534e-5).
 [Info] Solver NewtonRaphson successfully solved the problem (norm = 1.20146
 09765742534e-5).
 [Info] Solver TrustRegion successfully solved the problem (norm = 9.4573593
 40103721e-10).
 [Info] Solver Broyden successfully solved the problem (norm = 1.20146097657
 42534e-5).
-[Info] Solver Klement successfully solved the problem (norm = 1.20145736777
-21074e-5).
-[Info] Solver DFSane successfully solved the problem (norm = 2.985350917583
-6734e-7).
+[Info] Solver Klement successfully solved the problem (norm = 1.20146097657
+42534e-5).
+[Info] Solver DFSane successfully solved the problem (norm = 1.201457367772
+1074e-5).
 [Warn] Solver Newton&#39;s Method (Sundials) threw an error: MethodError(Core.k
 wcall, ((userdata = nothing, linear_solver = :Dense, jac_upper = 0, jac_low
 er = 0, abstol = 1.0e-5, jac_prototype = nothing, prec_side = 0, krylov_dim
  = 0, maxiters = 10000, strategy = :None), Sundials.___kinsol, Sundials.var
 &quot;#32#38&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{4, Float64}, f
 alse, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize,
- typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScaling{B
+ typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.UniformScaling{B
 ool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
 g, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, S
 ymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, 
-Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.St
-andardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArraysCo
+Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.StandardNonl
+inearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArraysCore.SVector
+{4, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.
+FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.U
+niformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TI
+ME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothi
+ng}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBa
+se.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, SciMLBase.F
+ullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.Un
+iformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
+othing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIM
+E), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothin
+g}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.UniformScali
+ng{Bool}(true), nothing, nothing, nothing, nothing, nothing, nothing, nothi
+ng, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing,
+ SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, 
+nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardN
+onlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}()), 
+2.0), [1.0, 1.0, 1.0, 1.0]), 0x0000000000007c2d).
+[Warn] Solver Levenberg-Marquardt (CMINPACK) threw an error: MethodError(Co
+re.kwcall, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :l
+m, iterations = 10000), MINPACK.fsolve, NonlinearSolveMINPACKExt.var&quot;#2#4&quot;{
+NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearPr
+oblem{StaticArraysCore.SVector{4, Float64}, false, Float64, SciMLBase.Nonli
+nearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBo
+x#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(Sc
+iMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symbo
+lCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tu
+ple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}}
+(NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearP
+roblem{StaticArraysCore.SVector{4, Float64}, false, Float64, SciMLBase.Nonl
+inearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandB
+ox#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(S
+ciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symb
+olCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, T
+uple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}
+(NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVe
+ctor{4, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLB
+ase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgeb
+ra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_N
+O_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, N
+othing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, Sci
+MLBase.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{StaticArraysCo
 re.SVector{4, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, 
-SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), Linea
+SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), Linea
 rAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing,
  Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSE
 RVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Noth
-ing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{()
-, Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunctio
-n{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oo
-p), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing,
- Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEF
-AULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Noth
-ing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, Linear
-Algebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing, not
-hing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERV
-ED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing
-, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0], 2.0,
- SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{},
- NamedTuple{(), Tuple{}}}()), 2.0), [1.0, 1.0, 1.0, 1.0]), 0x00000000000084
-11).
-[Warn] Solver Levenberg-Marquardt (CMINPACK) threw an error: MethodError(Co
-re.kwcall, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :l
-m, iterations = 10000, reltol = 1.0e-5), MINPACK.fsolve, NonlinearSolveMINP
-ACKExt.var&quot;#3#13&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{4, Fl
-oat64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSp
-ecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.Uniform
-Scaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
-g, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), N
-othing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, N
-othing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, Sci
-MLBase.StandardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{Stati
-cArraysCore.SVector{4, Float64}, false, Float64, SciMLBase.NonlinearFunctio
-n{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oo
-p), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing,
- Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEF
-AULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Noth
-ing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, Name
-dTuple{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.Nonline
-arFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#
-292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing,
- Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciM
-LBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolC
-ache{Nothing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oo
-p, LinearAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, not
-hing, nothing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAU
-LT_OBSERVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing
-, Nothing, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1
-.0], 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{},
- Tuple{}, NamedTuple{(), Tuple{}}}()), 2.0), [1.0, 1.0, 1.0, 1.0], 4), 0x00
-00000000008411).
+ing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}
+}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, S
+ciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), Linear
+Algebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSER
+VED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothi
+ng, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.Un
+iformScaling{Bool}(true), nothing, nothing, nothing, nothing, nothing, noth
+ing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME
+, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}
+(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase
+.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTup
+le{}}())), (4,))), [1.0, 1.0, 1.0, 1.0], 4), 0x0000000000007c2d).
 [Warn] Solver Hybrid Powell (CMINPACK) threw an error: MethodError(Core.kwc
 all, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :hybr, i
-terations = 10000, reltol = 1.0e-5), MINPACK.fsolve, NonlinearSolveMINPACKE
-xt.var&quot;#3#13&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{4, Float6
-4}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecia
-lize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScal
-ing{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
-othing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothi
-ng, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothi
-ng}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBa
-se.StandardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArr
-aysCore.SVector{4, Float64}, false, Float64, SciMLBase.NonlinearFunction{fa
-lse, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), 
-LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT
-_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing,
- Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTup
-le{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFu
-nction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;
-.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBas
-e.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache
-{Nothing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, L
-inearAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing
-, nothing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_O
-BSERVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, No
-thing, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0],
- 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tup
-le{}, NamedTuple{(), Tuple{}}}()), 2.0), [1.0, 1.0, 1.0, 1.0], 4), 0x000000
-0000008411).
+terations = 10000), MINPACK.fsolve, NonlinearSolveMINPACKExt.var&quot;#2#4&quot;{Nonl
+inearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProble
+m{StaticArraysCore.SVector{4, Float64}, false, Float64, SciMLBase.Nonlinear
+Function{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#22
+5&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, N
+othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLB
+ase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCac
+he{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{
+}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}}(Non
+linearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProbl
+em{StaticArraysCore.SVector{4, Float64}, false, Float64, SciMLBase.Nonlinea
+rFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#2
+25&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciML
+Base.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCa
+che{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple
+{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}(Non
+linearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector
+{4, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.
+FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.U
+niformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TI
+ME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothi
+ng}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBa
+se.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{StaticArraysCore.S
+Vector{4, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciM
+LBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlg
+ebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED
+_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing,
+ Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, S
+ciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, SciML
+Base.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlge
+bra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
+ing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_
+NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, 
+Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.Unifor
+mScaling{Bool}(true), nothing, nothing, nothing, nothing, nothing, nothing,
+ nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, no
+thing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}(not
+hing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.Sta
+ndardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}
+}())), (4,))), [1.0, 1.0, 1.0, 1.0], 4), 0x0000000000007c2d).
 [Warn] Solver SpeedMapping threw an error: MethodError(SpeedMapping.mapping
-!, (nothing, NonlinearSolveSpeedMappingExt.var&quot;#3#6&quot;{SciMLBase.NonlinearPro
-blem{StaticArraysCore.SVector{4, Float64}, false, Float64, SciMLBase.Nonlin
-earFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox
-#292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing
-, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(Sci
-MLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symbol
-Cache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tup
-le{}, NamedTuple{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}, Float6
-4}(SciMLBase.NonlinearProblem{StaticArraysCore.SVector{4, Float64}, false, 
-Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize, typeo
-f(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, 
-Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Symboli
-cIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, Base.P
-airs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.Standard
-NonlinearProblem}(SciMLBase.NonlinearFunction{false, SciMLBase.FullSpeciali
-ze, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScalin
-g{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing
-, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing
-}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, LinearAlgebra.UniformScaling{Bool}(tr
-ue), nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing
-, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, SymbolicIn
-dexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, nothing, no
-thing), nothing), [1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearPro
-blem(), Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2
-.0), [6.9437573571952e-310, 6.9437648056901e-310, 6.9437648312934e-310, 1.4
-8539705397e-313], [6.9437573571952e-310, 6.943764812379e-310, 6.94376482233
-3e-310, 4.2439920187e-314], SpeedMapping.State{Float64}(false, Inf, 10000.0
-, 1000.0, 0.01, 1.705051918064804e9, 1.0e-5, true, false, 0, 1, 0, 0.0, 1.0
-, Inf, Inf, 0, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, Inf, 1.0, 1), nothing, [1.0, 
-1.0, 1.0, 1.0], nothing, nothing, true, false), 0x0000000000008411).
+!, (nothing, NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#12#22&quot;{SciMLBas
+e.NonlinearProblem{StaticArraysCore.SVector{4, Float64}, false, Float64, Sc
+iMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;
+##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothi
+ng, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingIn
+terface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol
+, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, T
+uple{Int64}}(NonlinearSolve.var&quot;#12#22&quot;{SciMLBase.NonlinearProblem{StaticAr
+raysCore.SVector{4, Float64}, false, Float64, SciMLBase.NonlinearFunction{f
+alse, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop),
+ LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAUL
+T_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing
+, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedT
+uple{}}, SciMLBase.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{St
+aticArraysCore.SVector{4, Float64}, false, Float64, SciMLBase.NonlinearFunc
+tion{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f
+_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.
+DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{N
+othing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @
+NamedTuple{}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunct
+ion{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_
+oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.D
+EFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{No
+thing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, Line
+arAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing, n
+othing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSE
+RVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothi
+ng, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0], 2.
+0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{
+}, @NamedTuple{}}())), (4,)), [6.9447991521313e-310, 6.94480628121717e-310,
+ 6.9448062811899e-310, 5.51718906723e-313], [6.9447991521313e-310, 6.944806
+28142547e-310, 6.9448062812887e-310, 5.7293887024e-313], SpeedMapping.State
+{Float64}(false, Inf, 10000.0, 1000.0, 0.01, 1.705923691176124e9, 1.0e-5, t
+rue, false, 0, 1, 0, 0.0, 1.0, Inf, Inf, 0, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, 
+Inf, 1.0, 1), nothing, [1.0, 1.0, 1.0, 1.0], nothing, nothing, true, false)
+, 0x0000000000007c2d).
 [Warn] Solver NLsolve threw an error: ErrorException(&quot;setindex!(::StaticArr
 aysCore.SVector{4, Float64}, value, ::Int) is not defined.\n Hint: Use `MAr
 ray` or `SizedArray` to create a mutable static array&quot;).</code></pre><p><img src="../figures/quadratic_nonlinear_7_1.png" alt/></p><h3 id="N-8"><a class="docs-heading-anchor" href="#N-8">N = 8</a><a id="N-8-1"></a><a class="docs-heading-anchor-permalink" href="#N-8" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob = generate_prob(Val(8), Val(true))
@@ -450,144 +559,183 @@ fig = plot_wpset(wpset, successful_solvers, &quot;N = 8&quot;)</code></pre><pre>
 73041163938e-5).
 [Info] Solver SimpleDFSane successfully solved the problem (norm = 4.221923
 756089795e-7).
-[Info] Solver SimpleBroyden successfully solved the problem (norm = 1.69911
-7304171347e-5).
+[Info] Solver SimpleBroyden successfully solved the problem (norm = 1.69912
+2407733333e-5).
 [Info] Solver NewtonRaphson successfully solved the problem (norm = 1.69912
 2407733333e-5).
 [Info] Solver TrustRegion successfully solved the problem (norm = 1.3374725
 843010547e-9).
 [Info] Solver Broyden successfully solved the problem (norm = 1.69912240773
 3333e-5).
-[Info] Solver Klement successfully solved the problem (norm = 1.69911730411
-63938e-5).
-[Info] Solver DFSane successfully solved the problem (norm = 4.221923756089
-795e-7).
+[Info] Solver Klement successfully solved the problem (norm = 1.69912240773
+3333e-5).
+[Info] Solver DFSane successfully solved the problem (norm = 1.699117304116
+3938e-5).
 [Warn] Solver Newton&#39;s Method (Sundials) threw an error: MethodError(Core.k
 wcall, ((userdata = nothing, linear_solver = :Dense, jac_upper = 0, jac_low
 er = 0, abstol = 1.0e-5, jac_prototype = nothing, prec_side = 0, krylov_dim
  = 0, maxiters = 10000, strategy = :None), Sundials.___kinsol, Sundials.var
 &quot;#32#38&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{8, Float64}, f
 alse, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize,
- typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScaling{B
+ typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.UniformScaling{B
 ool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
 g, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, S
 ymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, 
-Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.St
-andardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArraysCo
+Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.StandardNonl
+inearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArraysCore.SVector
+{8, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.
+FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.U
+niformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TI
+ME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothi
+ng}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBa
+se.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, SciMLBase.F
+ullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.Un
+iformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
+othing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIM
+E), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothin
+g}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.UniformScali
+ng{Bool}(true), nothing, nothing, nothing, nothing, nothing, nothing, nothi
+ng, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing,
+ SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, 
+nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 2.0,
+ SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{},
+ @NamedTuple{}}()), 2.0), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 0x0000
+000000007c2d).
+[Warn] Solver Levenberg-Marquardt (CMINPACK) threw an error: MethodError(Co
+re.kwcall, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :l
+m, iterations = 10000), MINPACK.fsolve, NonlinearSolveMINPACKExt.var&quot;#2#4&quot;{
+NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearPr
+oblem{StaticArraysCore.SVector{8, Float64}, false, Float64, SciMLBase.Nonli
+nearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBo
+x#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(Sc
+iMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symbo
+lCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tu
+ple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}}
+(NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearP
+roblem{StaticArraysCore.SVector{8, Float64}, false, Float64, SciMLBase.Nonl
+inearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandB
+ox#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(S
+ciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symb
+olCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, T
+uple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}
+(NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVe
+ctor{8, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLB
+ase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgeb
+ra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_N
+O_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, N
+othing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, Sci
+MLBase.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{StaticArraysCo
 re.SVector{8, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, 
-SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), Linea
+SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), Linea
 rAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing,
  Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSE
 RVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Noth
-ing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{()
-, Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunctio
-n{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oo
-p), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing,
- Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEF
-AULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Noth
-ing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, Linear
-Algebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing, not
-hing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERV
-ED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing
-, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 
-1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbo
-l, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2.0), [1.0, 1.0, 1.0, 1.0
-, 1.0, 1.0, 1.0, 1.0]), 0x0000000000008411).
-[Warn] Solver Levenberg-Marquardt (CMINPACK) threw an error: MethodError(Co
-re.kwcall, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :l
-m, iterations = 10000, reltol = 1.0e-5), MINPACK.fsolve, NonlinearSolveMINP
-ACKExt.var&quot;#3#13&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{8, Fl
-oat64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSp
-ecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.Uniform
-Scaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
-g, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), N
-othing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, N
-othing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, Sci
-MLBase.StandardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{Stati
-cArraysCore.SVector{8, Float64}, false, Float64, SciMLBase.NonlinearFunctio
-n{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oo
-p), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing,
- Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEF
-AULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Noth
-ing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, Name
-dTuple{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.Nonline
-arFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#
-292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing,
- Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciM
-LBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolC
-ache{Nothing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oo
-p, LinearAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, not
-hing, nothing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAU
-LT_OBSERVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing
-, Nothing, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1
-.0, 1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pa
-irs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2.0), [1.0, 1.0,
- 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 8), 0x0000000000008411).
+ing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}
+}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, S
+ciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), Linear
+Algebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSER
+VED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothi
+ng, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.Un
+iformScaling{Bool}(true), nothing, nothing, nothing, nothing, nothing, noth
+ing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME
+, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}
+(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
+1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}
+, Tuple{}, @NamedTuple{}}())), (8,))), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
+1.0], 8), 0x0000000000007c2d).
 [Warn] Solver Hybrid Powell (CMINPACK) threw an error: MethodError(Core.kwc
 all, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :hybr, i
-terations = 10000, reltol = 1.0e-5), MINPACK.fsolve, NonlinearSolveMINPACKE
-xt.var&quot;#3#13&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{8, Float6
-4}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecia
-lize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScal
-ing{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
-othing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothi
-ng, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothi
-ng}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBa
-se.StandardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArr
-aysCore.SVector{8, Float64}, false, Float64, SciMLBase.NonlinearFunction{fa
-lse, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), 
-LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT
-_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing,
- Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTup
-le{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFu
-nction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;
-.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBas
-e.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache
-{Nothing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, L
-inearAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing
-, nothing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_O
-BSERVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, No
-thing, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 
-1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{
-Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2.0), [1.0, 1.0, 1.0
-, 1.0, 1.0, 1.0, 1.0, 1.0], 8), 0x0000000000008411).
+terations = 10000), MINPACK.fsolve, NonlinearSolveMINPACKExt.var&quot;#2#4&quot;{Nonl
+inearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProble
+m{StaticArraysCore.SVector{8, Float64}, false, Float64, SciMLBase.Nonlinear
+Function{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#22
+5&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, N
+othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLB
+ase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCac
+he{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{
+}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}}(Non
+linearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProbl
+em{StaticArraysCore.SVector{8, Float64}, false, Float64, SciMLBase.Nonlinea
+rFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#2
+25&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciML
+Base.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCa
+che{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple
+{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}(Non
+linearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector
+{8, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.
+FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.U
+niformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TI
+ME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothi
+ng}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBa
+se.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{StaticArraysCore.S
+Vector{8, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciM
+LBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlg
+ebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED
+_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing,
+ Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, S
+ciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, SciML
+Base.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlge
+bra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
+ing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_
+NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, 
+Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.Unifor
+mScaling{Bool}(true), nothing, nothing, nothing, nothing, nothing, nothing,
+ nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, no
+thing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}(not
+hing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+, 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tu
+ple{}, @NamedTuple{}}())), (8,))), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]
+, 8), 0x0000000000007c2d).
 [Warn] Solver SpeedMapping threw an error: MethodError(SpeedMapping.mapping
-!, (nothing, NonlinearSolveSpeedMappingExt.var&quot;#3#6&quot;{SciMLBase.NonlinearPro
-blem{StaticArraysCore.SVector{8, Float64}, false, Float64, SciMLBase.Nonlin
-earFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox
-#292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing
-, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(Sci
-MLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symbol
-Cache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tup
-le{}, NamedTuple{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}, Float6
-4}(SciMLBase.NonlinearProblem{StaticArraysCore.SVector{8, Float64}, false, 
-Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize, typeo
-f(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, 
-Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Symboli
-cIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, Base.P
-airs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.Standard
-NonlinearProblem}(SciMLBase.NonlinearFunction{false, SciMLBase.FullSpeciali
-ze, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScalin
-g{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing
-, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing
-}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, LinearAlgebra.UniformScaling{Bool}(tr
-ue), nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing
-, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, SymbolicIn
-dexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, nothing, no
-thing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.
-StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple
-{(), Tuple{}}}()), 2.0), [6.94265379767274e-310, 1.5e-323, 2.782597e-318, 1
-.5e-323, 1.5e-323, 6.9426545151537e-310, 6.9426574357623e-310, 6.9426545151
-545e-310], [6.94265379768855e-310, 1.5e-323, 2.782597e-318, 1.5e-323, 1.5e-
-323, 6.94375738493716e-310, 6.94265451518293e-310, 6.942654511662e-310], Sp
-eedMapping.State{Float64}(false, Inf, 10000.0, 1000.0, 0.01, 1.705051929941
-289e9, 1.0e-5, true, false, 0, 1, 0, 0.0, 1.0, Inf, Inf, 0, 0, 1, 1.0, 1.0,
- 1.0, 1.0, Inf, Inf, 1.0, 1), nothing, [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
-1.0], nothing, nothing, true, false), 0x0000000000008411).
+!, (nothing, NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#12#22&quot;{SciMLBas
+e.NonlinearProblem{StaticArraysCore.SVector{8, Float64}, false, Float64, Sc
+iMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;
+##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothi
+ng, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingIn
+terface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol
+, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, T
+uple{Int64}}(NonlinearSolve.var&quot;#12#22&quot;{SciMLBase.NonlinearProblem{StaticAr
+raysCore.SVector{8, Float64}, false, Float64, SciMLBase.NonlinearFunction{f
+alse, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop),
+ LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAUL
+T_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing
+, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedT
+uple{}}, SciMLBase.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{St
+aticArraysCore.SVector{8, Float64}, false, Float64, SciMLBase.NonlinearFunc
+tion{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f
+_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.
+DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{N
+othing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @
+NamedTuple{}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunct
+ion{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_
+oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.D
+EFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{No
+thing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, Line
+arAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing, n
+othing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSE
+RVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothi
+ng, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0
+, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{Sym
+bol, Union{}, Tuple{}, @NamedTuple{}}())), (8,)), [6.9447478791891e-310, 0.
+0, 5.352687e-318, 0.0, 5.0e-324, 6.94526089175523e-310, 5.0e-324, 5.0e-324]
+, [5.0e-324, 1.5e-323, 2.782597e-318, 1.5e-323, 1.5e-323, 6.94475742960135e
+-310, 6.94474463213987e-310, 6.94475742960293e-310], SpeedMapping.State{Flo
+at64}(false, Inf, 10000.0, 1000.0, 0.01, 1.705923700786756e9, 1.0e-5, true,
+ false, 0, 1, 0, 0.0, 1.0, Inf, Inf, 0, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, Inf,
+ 1.0, 1), nothing, [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], nothing, nothi
+ng, true, false), 0x0000000000007c2d).
 [Warn] Solver NLsolve threw an error: ErrorException(&quot;setindex!(::StaticArr
 aysCore.SVector{8, Float64}, value, ::Int) is not defined.\n Hint: Use `MAr
 ray` or `SizedArray` to create a mutable static array&quot;).</code></pre><p><img src="../figures/quadratic_nonlinear_8_1.png" alt/></p><h3 id="N-10"><a class="docs-heading-anchor" href="#N-10">N = 10</a><a id="N-10-1"></a><a class="docs-heading-anchor-permalink" href="#N-10" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob = generate_prob(Val(10), Val(true))
@@ -601,145 +749,184 @@ fig = plot_wpset(wpset, successful_solvers, &quot;N = 10&quot;)</code></pre><pre
 [Info] Solver SimpleDFSane successfully solved the problem (norm = 4.720254
 2572190114e-7).
 [Info] Solver SimpleBroyden successfully solved the problem (norm = 1.89967
-089683309e-5).
+6602892423e-5).
 [Info] Solver NewtonRaphson successfully solved the problem (norm = 1.89967
 6602892423e-5).
 [Info] Solver TrustRegion successfully solved the problem (norm = 1.4953398
 082697382e-9).
 [Info] Solver Broyden successfully solved the problem (norm = 1.89967660289
 2423e-5).
-[Info] Solver Klement successfully solved the problem (norm = 1.89967089687
-522e-5).
-[Info] Solver DFSane successfully solved the problem (norm = 4.720254257219
-0114e-7).
+[Info] Solver Klement successfully solved the problem (norm = 1.89967660289
+2423e-5).
+[Info] Solver DFSane successfully solved the problem (norm = 1.899670896875
+22e-5).
 [Warn] Solver Newton&#39;s Method (Sundials) threw an error: MethodError(Core.k
 wcall, ((userdata = nothing, linear_solver = :Dense, jac_upper = 0, jac_low
 er = 0, abstol = 1.0e-5, jac_prototype = nothing, prec_side = 0, krylov_dim
  = 0, maxiters = 10000, strategy = :None), Sundials.___kinsol, Sundials.var
 &quot;#32#38&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{10, Float64}, 
 false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize
-, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScaling{
+, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.UniformScaling{
 Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothi
 ng, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, 
 SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing},
- Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.S
-tandardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArraysC
-ore.SVector{10, Float64}, false, Float64, SciMLBase.NonlinearFunction{false
-, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), Lin
-earAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothin
-g, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OB
-SERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, No
-thing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{
-(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunct
-ion{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_
-oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothin
-g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.D
-EFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{No
-thing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, Line
-arAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing, n
-othing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSE
-RVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothi
-ng, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0
-, 1.0, 1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Base
-.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2.0), [1.0, 1
-.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0]), 0x0000000000008411).
+ Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.StandardNon
+linearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticArraysCore.SVecto
+r{10, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBas
+e.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra
+.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing
+, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_
+TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Not
+hing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciML
+Base.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, SciMLBase
+.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.
+UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing,
+ Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_T
+IME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Noth
+ing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.UniformSca
+ling{Bool}(true), nothing, nothing, nothing, nothing, nothing, nothing, not
+hing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothin
+g, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing
+, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0
+, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union
+{}, Tuple{}, @NamedTuple{}}()), 2.0), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1
+.0, 1.0, 1.0]), 0x0000000000007c2d).
 [Warn] Solver Levenberg-Marquardt (CMINPACK) threw an error: MethodError(Co
 re.kwcall, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :l
-m, iterations = 10000, reltol = 1.0e-5), MINPACK.fsolve, NonlinearSolveMINP
-ACKExt.var&quot;#3#13&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{10, F
-loat64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullS
-pecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.Unifor
-mScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothi
-ng, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), 
-Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, 
-Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, Sc
-iMLBase.StandardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{Stat
-icArraysCore.SVector{10, Float64}, false, Float64, SciMLBase.NonlinearFunct
-ion{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_
-oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothin
-g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.D
-EFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{No
-thing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, Na
-medTuple{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.Nonli
-nearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBo
-x#292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothin
-g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(Sc
-iMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symbo
-lCache{Nothing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_
-oop, LinearAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, n
-othing, nothing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEF
-AULT_OBSERVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothi
-ng, Nothing, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0,
- 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProble
-m(), Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2.0)
-, [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 10), 0x00000000000084
-11).
+m, iterations = 10000), MINPACK.fsolve, NonlinearSolveMINPACKExt.var&quot;#2#4&quot;{
+NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearPr
+oblem{StaticArraysCore.SVector{10, Float64}, false, Float64, SciMLBase.Nonl
+inearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandB
+ox#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(S
+ciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symb
+olCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, T
+uple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}
+}(NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.Nonlinear
+Problem{StaticArraysCore.SVector{10, Float64}, false, Float64, SciMLBase.No
+nlinearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSan
+dBox#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof
+(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Sy
+mbolCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{},
+ Tuple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64
+}}(NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.S
+Vector{10, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, Sci
+MLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAl
+gebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVE
+D_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing
+, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, 
+SciMLBase.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{StaticArray
+sCore.SVector{10, Float64}, false, Float64, SciMLBase.NonlinearFunction{fal
+se, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), L
+inearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Noth
+ing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_
+OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, 
+Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTup
+le{}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{fals
+e, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), Li
+nearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_O
+BSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, N
+othing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebr
+a.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing, nothing, 
+nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_
+TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Noth
+ing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1
+.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{S
+ymbol, Union{}, Tuple{}, @NamedTuple{}}())), (10,))), [1.0, 1.0, 1.0, 1.0, 
+1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 10), 0x0000000000007c2d).
 [Warn] Solver Hybrid Powell (CMINPACK) threw an error: MethodError(Core.kwc
 all, ((tol = 1.0e-5, show_trace = false, tracing = false, method = :hybr, i
-terations = 10000, reltol = 1.0e-5), MINPACK.fsolve, NonlinearSolveMINPACKE
-xt.var&quot;#3#13&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVector{10, Float
-64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpeci
-alize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformSca
-ling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
-Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Noth
-ing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Noth
-ing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLB
-ase.StandardNonlinearProblem}, Float64}(SciMLBase.NonlinearProblem{StaticAr
-raysCore.SVector{10, Float64}, false, Float64, SciMLBase.NonlinearFunction{
-false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop)
-, LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAU
-LT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothin
-g, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, NamedT
-uple{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.Nonlinear
-Function{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#29
-2&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, N
-othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLB
-ase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCac
-he{Nothing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop,
- LinearAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothi
-ng, nothing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT
-_OBSERVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, 
-Nothing, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0
-, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(),
- Base.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}()), 2.0), [1
-.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 10), 0x0000000000008411).
+terations = 10000), MINPACK.fsolve, NonlinearSolveMINPACKExt.var&quot;#2#4&quot;{Nonl
+inearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProble
+m{StaticArraysCore.SVector{10, Float64}, false, Float64, SciMLBase.Nonlinea
+rFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#2
+25&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciML
+Base.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCa
+che{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple
+{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}}(No
+nlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProb
+lem{StaticArraysCore.SVector{10, Float64}, false, Float64, SciMLBase.Nonlin
+earFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox
+#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing
+, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(Sci
+MLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symbol
+Cache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tup
+le{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, Tuple{Int64}}(N
+onlinearSolve.var&quot;#14#24&quot;{SciMLBase.NonlinearProblem{StaticArraysCore.SVect
+or{10, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, SciMLBa
+se.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebr
+a.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO
+_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, No
+thing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciM
+LBase.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{StaticArraysCor
+e.SVector{10, Float64}, false, Float64, SciMLBase.NonlinearFunction{false, 
+SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), Linea
+rAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing,
+ Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSE
+RVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Noth
+ing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}
+}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFunction{false, S
+ciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop), Linear
+Algebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSER
+VED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothi
+ng, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, LinearAlgebra.Un
+iformScaling{Bool}(true), nothing, nothing, nothing, nothing, nothing, noth
+ing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME
+, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}
+(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 
+1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbo
+l, Union{}, Tuple{}, @NamedTuple{}}())), (10,))), [1.0, 1.0, 1.0, 1.0, 1.0,
+ 1.0, 1.0, 1.0, 1.0, 1.0], 10), 0x0000000000007c2d).
 [Warn] Solver SpeedMapping threw an error: MethodError(SpeedMapping.mapping
-!, (nothing, NonlinearSolveSpeedMappingExt.var&quot;#3#6&quot;{SciMLBase.NonlinearPro
-blem{StaticArraysCore.SVector{10, Float64}, false, Float64, SciMLBase.Nonli
-nearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBo
-x#292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothin
-g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(Sc
-iMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.Symbo
-lCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tu
-ple{}, NamedTuple{(), Tuple{}}}, SciMLBase.StandardNonlinearProblem}, Float
-64}(SciMLBase.NonlinearProblem{StaticArraysCore.SVector{10, Float64}, false
-, Float64, SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize, typ
-eof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}
-, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
-othing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Symbo
-licIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, Base
-.Pairs{Symbol, Union{}, Tuple{}, NamedTuple{(), Tuple{}}}, SciMLBase.Standa
-rdNonlinearProblem}(SciMLBase.NonlinearFunction{false, SciMLBase.FullSpecia
-lize, typeof(Main.var&quot;##WeaveSandBox#292&quot;.f_oop), LinearAlgebra.UniformScal
-ing{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
-othing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothi
-ng, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing}, Nothi
-ng}(Main.var&quot;##WeaveSandBox#292&quot;.f_oop, LinearAlgebra.UniformScaling{Bool}(
-true), nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothi
-ng, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, Symbolic
-IndexingInterface.SymbolCache{Nothing, Nothing, Nothing}(nothing, nothing, 
-nothing), nothing), [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 2.0
-, SciMLBase.StandardNonlinearProblem(), Base.Pairs{Symbol, Union{}, Tuple{}
-, NamedTuple{(), Tuple{}}}()), 2.0), [6.9427372778888e-310, 2.5e-323, 2.782
-597e-318, 2.5e-323, 2.5e-323, 6.9426544237223e-310, 6.94265442372624e-310, 
-6.9426544236393e-310, 6.9426605035953e-310, 6.94375767816e-310], [6.9427372
-7793664e-310, 0.0, 5.352687e-318, 0.0, 1.0e-323, 6.9426736711254e-310, 5.0e
--324, 5.0e-324, 5.0e-324, 5.0e-324], SpeedMapping.State{Float64}(false, Inf
-, 10000.0, 1000.0, 0.01, 1.705051944141537e9, 1.0e-5, true, false, 0, 1, 0,
- 0.0, 1.0, Inf, Inf, 0, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, Inf, 1.0, 1), nothin
-g, [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], nothing, nothing, tr
-ue, false), 0x0000000000008411).
+!, (nothing, NonlinearSolve.var&quot;#19#29&quot;{NonlinearSolve.var&quot;#12#22&quot;{SciMLBas
+e.NonlinearProblem{StaticArraysCore.SVector{10, Float64}, false, Float64, S
+ciMLBase.NonlinearFunction{false, SciMLBase.FullSpecialize, typeof(Main.var
+&quot;##WeaveSandBox#225&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, N
+othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
+ing, typeof(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingI
+nterface.SymbolCache{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbo
+l, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}}, 
+Tuple{Int64}}(NonlinearSolve.var&quot;#12#22&quot;{SciMLBase.NonlinearProblem{StaticA
+rraysCore.SVector{10, Float64}, false, Float64, SciMLBase.NonlinearFunction
+{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.f_oop
+), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFA
+ULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache{Nothi
+ng, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @Name
+dTuple{}}, SciMLBase.StandardNonlinearProblem}}(SciMLBase.NonlinearProblem{
+StaticArraysCore.SVector{10, Float64}, false, Float64, SciMLBase.NonlinearF
+unction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225
+&quot;.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBa
+se.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCach
+e{Nothing, Nothing, Nothing}, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}
+, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem}(SciMLBase.NonlinearFu
+nction{false, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;
+.f_oop), LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBas
+e.DEFAULT_OBSERVED_NO_TIME), Nothing, SymbolicIndexingInterface.SymbolCache
+{Nothing, Nothing, Nothing}, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.f_oop, L
+inearAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothing
+, nothing, nothing, nothing, nothing, nothing, nothing, SciMLBase.DEFAULT_O
+BSERVED_NO_TIME, nothing, SymbolicIndexingInterface.SymbolCache{Nothing, No
+thing, Nothing}(nothing, nothing, nothing), nothing), [1.0, 1.0, 1.0, 1.0, 
+1.0, 1.0, 1.0, 1.0, 1.0, 1.0], 2.0, SciMLBase.StandardNonlinearProblem(), B
+ase.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}())), (10,)), [6.94474697
+45031e-310, 2.5e-323, 2.782597e-318, 2.5e-323, 2.5e-323, 6.94526147340567e-
+310, 6.94526025637337e-310, 6.9452697025457e-310, 6.9452697025599e-310, 6.9
+4526970064293e-310], [6.94474697451735e-310, 2.5e-323, 2.782597e-318, 2.5e-
+323, 2.5e-323, 6.94526147340567e-310, 6.94526025637337e-310, 6.945269702730
+66e-310, 6.9452697027449e-310, 6.94526970064293e-310], SpeedMapping.State{F
+loat64}(false, Inf, 10000.0, 1000.0, 0.01, 1.705923711492107e9, 1.0e-5, tru
+e, false, 0, 1, 0, 0.0, 1.0, Inf, Inf, 0, 0, 1, 1.0, 1.0, 1.0, 1.0, Inf, In
+f, 1.0, 1), nothing, [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0], no
+thing, nothing, true, false), 0x0000000000007c2d).
 [Warn] Solver NLsolve threw an error: ErrorException(&quot;setindex!(::StaticArr
 aysCore.SVector{10, Float64}, value, ::Int) is not defined.\n Hint: Use `MA
 rray` or `SizedArray` to create a mutable static array&quot;).</code></pre><p><img src="../figures/quadratic_nonlinear_9_1.png" alt/></p><h2 id="Julia-Arrays"><a class="docs-heading-anchor" href="#Julia-Arrays">Julia Arrays</a><a id="Julia-Arrays-1"></a><a class="docs-heading-anchor-permalink" href="#Julia-Arrays" title="Permalink"></a></h2><h3 id="N-2-2"><a class="docs-heading-anchor" href="#N-2-2">N = 2</a><a class="docs-heading-anchor-permalink" href="#N-2-2" title="Permalink"></a></h3><pre><code class="language-julia hljs">prob = generate_prob(Val(2), Val(false))
@@ -752,18 +939,18 @@ fig = plot_wpset(wpset, successful_solvers, &quot;N = 2&quot;)</code></pre><pre>
 6520581969e-6).
 [Info] Solver SimpleDFSane successfully solved the problem (norm = 2.110961
 8780448975e-7).
-[Info] Solver SimpleBroyden successfully solved the problem (norm = 8.49558
-6520581969e-6).
+[Info] Solver SimpleBroyden successfully solved the problem (norm = 8.49561
+2038666664e-6).
 [Info] Solver NewtonRaphson successfully solved the problem (norm = 8.49561
 2038666664e-6).
 [Info] Solver TrustRegion successfully solved the problem (norm = 6.6873629
 21505273e-10).
 [Info] Solver Broyden successfully solved the problem (norm = 8.49561203866
 6664e-6).
-[Info] Solver Klement successfully solved the problem (norm = 8.49558652058
-1969e-6).
-[Info] Solver DFSane successfully solved the problem (norm = 2.110961878044
-8975e-7).
+[Info] Solver Klement successfully solved the problem (norm = 8.49561203866
+6664e-6).
+[Info] Solver DFSane successfully solved the problem (norm = 8.495586520581
+969e-6).
 [Info] Solver Newton&#39;s Method (Sundials) successfully solved the problem (n
 orm = 1.5199738513286221e-9).
 [Info] Solver Levenberg-Marquardt (CMINPACK) successfully solved the proble
@@ -783,18 +970,18 @@ fig = plot_wpset(wpset, successful_solvers, &quot;N = 8&quot;)</code></pre><pre>
 73041163938e-5).
 [Info] Solver SimpleDFSane successfully solved the problem (norm = 4.221923
 756089795e-7).
-[Info] Solver SimpleBroyden successfully solved the problem (norm = 1.69911
-73041163938e-5).
+[Info] Solver SimpleBroyden successfully solved the problem (norm = 1.69912
+2407733333e-5).
 [Info] Solver NewtonRaphson successfully solved the problem (norm = 1.69912
 2407733333e-5).
 [Info] Solver TrustRegion successfully solved the problem (norm = 1.3374725
 843010547e-9).
 [Info] Solver Broyden successfully solved the problem (norm = 1.69912240773
 3333e-5).
-[Info] Solver Klement successfully solved the problem (norm = 1.69911730411
-63938e-5).
-[Info] Solver DFSane successfully solved the problem (norm = 4.221923756089
-795e-7).
+[Info] Solver Klement successfully solved the problem (norm = 1.69912240773
+3333e-5).
+[Info] Solver DFSane successfully solved the problem (norm = 1.699117304116
+3938e-5).
 [Info] Solver Newton&#39;s Method (Sundials) successfully solved the problem (n
 orm = 3.0399477026572442e-9).
 [Info] Solver Levenberg-Marquardt (CMINPACK) successfully solved the proble
@@ -814,18 +1001,18 @@ fig = plot_wpset(wpset, successful_solvers, &quot;N = 32&quot;)</code></pre><pre
 46082327876e-5).
 [Info] Solver SimpleDFSane successfully solved the problem (norm = 8.443847
 51217959e-7).
-[Info] Solver SimpleBroyden successfully solved the problem (norm = 3.39823
-4608342694e-5).
+[Info] Solver SimpleBroyden successfully solved the problem (norm = 3.39824
+4815466665e-5).
 [Info] Solver NewtonRaphson successfully solved the problem (norm = 3.39824
 4815466665e-5).
 [Info] Solver TrustRegion successfully solved the problem (norm = 2.6749451
 686021094e-9).
 [Info] Solver Broyden successfully solved the problem (norm = 3.39824481546
 6665e-5).
-[Info] Solver Klement successfully solved the problem (norm = 3.39823460823
-27876e-5).
-[Info] Solver DFSane successfully solved the problem (norm = 8.443847512179
-59e-7).
+[Info] Solver Klement successfully solved the problem (norm = 3.39824481546
+6665e-5).
+[Info] Solver DFSane successfully solved the problem (norm = 3.398234608232
+7876e-5).
 [Info] Solver Newton&#39;s Method (Sundials) successfully solved the problem (n
 orm = 6.0798954053144885e-9).
 [Info] Solver Levenberg-Marquardt (CMINPACK) successfully solved the proble
@@ -845,18 +1032,18 @@ fig = plot_wpset(wpset, successful_solvers, &quot;N = 128&quot;)</code></pre><pr
 9216465575e-5).
 [Info] Solver SimpleDFSane successfully solved the problem (norm = 1.688769
 502435918e-6).
-[Info] Solver SimpleBroyden successfully solved the problem (norm = 6.79646
-9216481276e-5).
+[Info] Solver SimpleBroyden successfully solved the problem (norm = 6.79648
+963093333e-5).
 [Info] Solver NewtonRaphson successfully solved the problem (norm = 6.79648
 963093333e-5).
 [Info] Solver TrustRegion successfully solved the problem (norm = 5.3498903
 37204219e-9).
 [Info] Solver Broyden successfully solved the problem (norm = 6.79648963093
 333e-5).
-[Info] Solver Klement successfully solved the problem (norm = 6.79646921646
-5575e-5).
-[Info] Solver DFSane successfully solved the problem (norm = 1.688769502435
-918e-6).
+[Info] Solver Klement successfully solved the problem (norm = 6.79648963093
+333e-5).
+[Info] Solver DFSane successfully solved the problem (norm = 6.796469216465
+575e-5).
 [Info] Solver Newton&#39;s Method (Sundials) successfully solved the problem (n
 orm = 1.2159790810628977e-8).
 [Info] Solver Levenberg-Marquardt (CMINPACK) successfully solved the proble
@@ -867,8 +1054,8 @@ m = 1.0104780948413569e-8).
 3666318492408).
 [Info] Solver NLsolve successfully solved the problem (norm = 6.79648962339
 6886e-5).</code></pre><p><img src="../figures/quadratic_nonlinear_13_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
-SciMLBenchmarks.weave_file(&quot;benchmarks/NonlinearProblem&quot;,&quot;quadratic_nonlinear.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.9.4
-Commit 8e5136fa297 (2023-11-14 08:46 UTC)
+SciMLBenchmarks.weave_file(&quot;benchmarks/NonlinearProblem&quot;,&quot;quadratic_nonlinear.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.0
+Commit 3120989f39b (2023-12-25 18:01 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -876,43 +1063,41 @@ Platform Info:
   CPU: 128 × AMD EPYC 7502 32-Core Processor
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-14.0.6 (ORCJIT, znver2)
-  Threads: 128 on 128 virtual cores
+  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
+  Threads: 1 on 128 virtual cores
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-  JULIA_IMAGE_THREADS = 1
 </code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.4.0
-⌃ [13f3f980] CairoMakie v0.11.4
-⌃ [2b5f629d] DiffEqBase v6.144.2
-⌃ [f3b72e0c] DiffEqDevTools v2.44.0
+  [13f3f980] CairoMakie v0.11.5
+  [2b5f629d] DiffEqBase v6.146.0
+  [f3b72e0c] DiffEqDevTools v2.44.1
   [b964fa9f] LaTeXStrings v1.3.1
-⌃ [7ed4a6bd] LinearSolve v2.21.2
+  [7ed4a6bd] LinearSolve v2.22.1
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-⌃ [8913a72c] NonlinearSolve v3.3.0
+  [8913a72c] NonlinearSolve v3.5.0
   [91a5bcdd] Plots v1.39.0
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
+  [47a9eef4] SparseDiffTools v2.16.0
   [f1835b91] SpeedMapping v0.3.0
-⌃ [90137ffa] StaticArrays v1.8.1
-  [c3572dad] Sundials v4.23.1
-Info Packages marked with ⌃ have new versions available and may be upgradable.
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
-⌃ [47edcb42] ADTypes v0.2.5
+  [90137ffa] StaticArrays v1.9.1
+  [c3572dad] Sundials v4.23.1</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+  [47edcb42] ADTypes v0.2.6
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
   [398f06c4] AbstractLattices v0.3.0
   [1520ce14] AbstractTrees v0.4.4
   [22286c92] AccurateArithmetic v0.3.8
-⌅ [79e6a3ab] Adapt v3.7.2
+  [79e6a3ab] Adapt v4.0.1
   [27a7e980] Animations v0.4.1
   [ec485272] ArnoldiMethod v0.2.0
   [4fba245c] ArrayInterface v7.7.0
-⌃ [4c555306] ArrayLayouts v1.4.5
-  [67c07d97] Automa v1.0.2
+  [4c555306] ArrayLayouts v1.5.2
+  [67c07d97] Automa v1.0.3
   [13072b0f] AxisAlgorithms v1.1.0
   [39de3d68] AxisArrays v0.4.7
   [6e4b80f9] BenchmarkTools v1.4.0
@@ -922,9 +1107,9 @@ Warning The project dependencies or compat requirements have changed since the m
   [2a0fbf3d] CPUSummary v0.2.4
   [96374032] CRlibm v1.0.1
   [159f3aea] Cairo v1.0.5
-⌃ [13f3f980] CairoMakie v0.11.4
+  [13f3f980] CairoMakie v0.11.5
   [49dc2e85] Calculus v0.5.1
-⌃ [d360d2e6] ChainRulesCore v1.19.0
+  [d360d2e6] ChainRulesCore v1.19.1
   [fb6a15b2] CloseOpenIntervals v0.1.12
   [944b1d66] CodecZlib v0.7.3
   [a2cac450] ColorBrewer v0.4.0
@@ -935,7 +1120,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
-⌃ [34da2185] Compat v4.10.1
+  [34da2185] Compat v4.12.0
   [2569d6c7] ConcreteStructs v0.2.3
   [f0e56b4a] ConcurrentUtilities v2.3.0
   [8f4d0f93] Conda v1.10.0
@@ -946,38 +1131,37 @@ Warning The project dependencies or compat requirements have changed since the m
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
   [9a962f9c] DataAPI v1.15.0
-⌃ [864edb3b] DataStructures v0.18.15
+  [864edb3b] DataStructures v0.18.16
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.11
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v6.144.2
-⌃ [f3b72e0c] DiffEqDevTools v2.44.0
+  [2b5f629d] DiffEqBase v6.146.0
+  [f3b72e0c] DiffEqDevTools v2.44.1
   [77a26b50] DiffEqNoiseProcess v5.20.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
   [b4f34e82] Distances v0.10.11
-⌃ [31c24e10] Distributions v0.25.104
+  [31c24e10] Distributions v0.25.107
   [ffbed154] DocStringExtensions v0.9.3
   [e30172f5] Documenter v1.2.1
   [35a29f4d] DocumenterTools v0.1.18
   [fa6b7ba4] DualNumbers v0.6.8
   [4e289a0a] EnumX v1.0.4
-⌃ [f151be2c] EnzymeCore v0.6.4
-  [90fa49ef] ErrorfreeArithmetic v0.5.2
-⌃ [429591f6] ExactPredicates v2.2.6
-⌃ [460bff9d] ExceptionUnwrapping v0.1.9
+  [f151be2c] EnzymeCore v0.6.5
+  [429591f6] ExactPredicates v2.2.7
+  [460bff9d] ExceptionUnwrapping v0.1.10
   [e2ba6199] ExprTools v0.1.10
   [411431e0] Extents v0.1.2
   [c87230d0] FFMPEG v0.4.1
-  [7a1cc6ca] FFTW v1.7.2
+  [7a1cc6ca] FFTW v1.8.0
   [7034ab61] FastBroadcast v0.2.8
+  [9aa1b823] FastClosures v0.3.2
   [29a986be] FastLapackInterface v2.0.0
-  [fa42c844] FastRounding v0.3.1
-⌃ [5789e2e9] FileIO v1.16.1
+  [5789e2e9] FileIO v1.16.2
   [8fc22ac5] FilePaths v0.8.3
   [48062228] FilePathsBase v0.9.21
   [1a297f60] FillArrays v1.9.3
-⌃ [6a86dc24] FiniteDiff v2.21.1
+  [6a86dc24] FiniteDiff v2.22.0
   [53c48c17] FixedPointNumbers v0.8.4
   [59287772] Formatting v0.4.2
   [f6369f11] ForwardDiff v0.10.36
@@ -985,7 +1169,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [663a7486] FreeTypeAbstraction v0.10.1
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
-⌃ [46192b85] GPUArraysCore v0.1.5
+  [46192b85] GPUArraysCore v0.1.6
 ⌅ [28b8d3ca] GR v0.72.10
   [cf35fbd7] GeoInterface v1.3.3
   [5c1252a2] GeometryBasics v0.4.9
@@ -1000,7 +1184,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
   [7073ff75] IJulia v1.24.2
-  [b5f81e59] IOCapture v0.2.3
+  [b5f81e59] IOCapture v0.2.4
   [615f187c] IfElse v0.1.1
   [2803e5a7] ImageAxes v0.6.11
   [c817782e] ImageBase v0.1.7
@@ -1011,11 +1195,11 @@ Warning The project dependencies or compat requirements have changed since the m
   [d25df0c9] Inflate v0.1.4
   [18e54dd8] IntegerMathUtils v0.1.2
   [a98d9a8b] Interpolations v0.15.1
-⌅ [d1acc4aa] IntervalArithmetic v0.21.2
+  [d1acc4aa] IntervalArithmetic v0.22.5
   [8197267c] IntervalSets v0.7.8
   [92d709cd] IrrationalConstants v0.2.2
   [f1662d9f] Isoband v0.1.1
-⌃ [c8e1da08] IterTools v1.9.0
+  [c8e1da08] IterTools v1.10.0
   [82899510] IteratorInterfaceExtensions v1.0.0
   [1019f520] JLFzf v0.1.7
   [692b3bcd] JLLWrappers v1.5.0
@@ -1033,14 +1217,14 @@ Warning The project dependencies or compat requirements have changed since the m
   [8cdb02fc] LazyModules v0.3.1
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
-⌃ [9b3f67b0] LinearAlgebraX v0.2.5
-⌃ [7ed4a6bd] LinearSolve v2.21.2
+  [9b3f67b0] LinearAlgebraX v0.2.7
+  [7ed4a6bd] LinearSolve v2.22.1
   [2ab3a3ac] LogExpFunctions v0.3.26
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.166
   [4854310b] MINPACK v1.2.0
-  [1914dd2f] MacroTools v0.5.12
-⌅ [ee78f7c6] Makie v0.20.3
+  [1914dd2f] MacroTools v0.5.13
+  [ee78f7c6] Makie v0.20.4
   [20f20a25] MakieCore v0.7.2
   [d125e4d3] ManualMemory v0.1.8
   [dbb5928d] MappedArrays v0.4.2
@@ -1051,7 +1235,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [739be429] MbedTLS v1.1.9
   [442fdcdd] Measures v0.3.2
   [e1d29d7a] Missings v1.1.0
-⌃ [7475f97c] Mods v2.2.0
+  [7475f97c] Mods v2.2.4
   [e94cdb99] MosaicViews v0.3.4
   [46d2c3a1] MuladdMacro v0.2.4
   [3b2b4ff1] Multisets v0.4.4
@@ -1061,7 +1245,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-⌃ [8913a72c] NonlinearSolve v3.3.0
+  [8913a72c] NonlinearSolve v3.5.0
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.13.0
   [52e1d378] OpenEXR v0.3.2
@@ -1075,11 +1259,12 @@ Warning The project dependencies or compat requirements have changed since the m
   [5432bcbf] PaddedViews v0.5.12
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.8.1
-  [2ae35dd2] Permutations v0.4.19
+  [2ae35dd2] Permutations v0.4.20
+  [3bbf5609] PikaParser v0.6.1
   [b98c9c47] Pipe v1.3.0
   [eebad327] PkgVersion v0.3.3
   [ccf2f8ad] PlotThemes v3.1.0
-⌃ [995b91a9] PlotUtils v1.3.5
+  [995b91a9] PlotUtils v1.4.0
   [91a5bcdd] Plots v1.39.0
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.9
@@ -1087,21 +1272,21 @@ Warning The project dependencies or compat requirements have changed since the m
   [647866c9] PolygonOps v0.1.2
   [f27b6e38] Polynomials v4.0.6
   [85a6dd25] PositiveFactorizations v0.2.4
-⌅ [d236fae5] PreallocationTools v0.4.13
+  [d236fae5] PreallocationTools v0.4.17
   [aea7be01] PrecompileTools v1.2.0
   [21216c6a] Preferences v1.4.1
   [08abe8d2] PrettyTables v2.3.1
   [27ebfcd6] Primes v0.5.5
   [92933f4c] ProgressMeter v1.9.0
   [4b34888f] QOI v1.0.0
-⌃ [1fd47b50] QuadGK v2.9.1
+  [1fd47b50] QuadGK v2.9.4
   [74087812] Random123 v1.6.2
   [e6cf234a] RandomNumbers v1.5.3
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-⌅ [731186ca] RecursiveArrayTools v3.2.6
+  [731186ca] RecursiveArrayTools v3.5.4
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
@@ -1116,34 +1301,33 @@ Warning The project dependencies or compat requirements have changed since the m
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-⌃ [0bca4576] SciMLBase v2.11.6
+  [0bca4576] SciMLBase v2.20.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
-  [3cc68bcd] SetRounding v0.2.1
   [efcf1570] Setfield v1.1.1
   [65257c39] ShaderAbstractions v0.4.0
   [992d4aef] Showoff v1.0.3
   [73760f76] SignedDistanceFields v0.4.0
   [777ac1f9] SimpleBufferStream v1.1.0
   [55797a34] SimpleGraphs v0.8.6
-⌃ [727e6d20] SimpleNonlinearSolve v1.0.3
+  [727e6d20] SimpleNonlinearSolve v1.3.1
   [ec83eff0] SimplePartitions v0.3.1
   [cc47b68c] SimplePolynomials v0.2.17
   [a6525b86] SimpleRandom v0.3.1
   [699a6c99] SimpleTraits v0.9.4
   [45858cf5] Sixel v0.1.3
   [b85f4697] SoftGlobalScope v1.1.0
-⌃ [a2af1166] SortingAlgorithms v1.2.0
-  [47a9eef4] SparseDiffTools v2.15.0
+  [a2af1166] SortingAlgorithms v1.2.1
+  [47a9eef4] SparseDiffTools v2.16.0
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.3.1
   [f1835b91] SpeedMapping v0.3.0
-⌃ [c5dd0088] StableHashTraits v1.1.3
+  [c5dd0088] StableHashTraits v1.1.6
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v0.8.8
   [0d7ed370] StaticArrayInterface v1.5.0
-⌃ [90137ffa] StaticArrays v1.8.1
+  [90137ffa] StaticArrays v1.9.1
   [1e83bf80] StaticArraysCore v1.4.2
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.2
@@ -1151,14 +1335,15 @@ Warning The project dependencies or compat requirements have changed since the m
   [7792a7ef] StrideArraysCore v0.5.2
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
-  [09ab397b] StructArrays v0.6.16
+  [09ab397b] StructArrays v0.6.17
   [c3572dad] Sundials v4.23.1
-⌅ [2efcf032] SymbolicIndexingInterface v0.3.0
+  [2efcf032] SymbolicIndexingInterface v0.3.3
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.2
 ⌅ [731e570b] TiffImages v0.6.8
+  [a759f4b9] TimerOutputs v0.5.23
   [3bb67fe8] TranscodingStreams v0.10.2
   [d5829a12] TriangularSolve v0.1.20
   [410a4b4d] Tricks v0.1.8
@@ -1178,7 +1363,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [efce3f68] WoodburyMatrices v1.0.0
   [ddb6d928] YAML v0.4.9
   [c2297ded] ZMQ v1.2.2
-  [6e34b625] Bzip2_jll v1.0.8+0
+  [6e34b625] Bzip2_jll v1.0.8+1
   [4e9b3aee] CRlibm_jll v1.0.1+0
   [83423d85] Cairo_jll v1.16.1+1
   [5ae413db] EarCut_jll v2.2.4+0
@@ -1223,10 +1408,10 @@ Warning The project dependencies or compat requirements have changed since the m
   [30392449] Pixman_jll v0.42.2+0
 ⌃ [c0090381] Qt6Base_jll v6.5.2+2
   [f50d1b31] Rmath_jll v0.4.0+0
-⌅ [fb77eaff] Sundials_jll v5.2.1+0
+⌅ [fb77eaff] Sundials_jll v5.2.2+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.21.0+1
-⌃ [2381bf8a] Wayland_protocols_jll v1.25.0+0
+  [2381bf8a] Wayland_protocols_jll v1.31.0+0
   [02c8fc9c] XML2_jll v2.12.2+0
   [aed1982a] XSLT_jll v1.1.34+0
   [ffd25f8a] XZ_jll v5.4.5+0
@@ -1293,7 +1478,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [d6f4376e] Markdown
   [a63ad114] Mmap
   [ca575930] NetworkOptions v1.2.0
-  [44cfe95a] Pkg v1.9.2
+  [44cfe95a] Pkg v1.10.0
   [de0858da] Printf
   [9abbd945] Profile
   [3fa0cd96] REPL
@@ -1302,26 +1487,26 @@ Warning The project dependencies or compat requirements have changed since the m
   [9e88b42a] Serialization
   [1a1011a3] SharedArrays
   [6462fe0b] Sockets
-  [2f01184e] SparseArrays
-  [10745b16] Statistics v1.9.0
+  [2f01184e] SparseArrays v1.10.0
+  [10745b16] Statistics v1.10.0
   [4607b0f0] SuiteSparse
   [fa267f1f] TOML v1.0.3
   [a4e569a6] Tar v1.10.0
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v1.0.5+0
+  [e66e0078] CompilerSupportLibraries_jll v1.0.5+1
   [deac9b47] LibCURL_jll v8.4.0+0
+  [e37daf67] LibGit2_jll v1.6.4+0
   [29816b5a] LibSSH2_jll v1.11.0+1
-  [c8ffd9c3] MbedTLS_jll v2.28.2+0
-  [14a3606d] MozillaCACerts_jll v2022.10.11
-  [4536629a] OpenBLAS_jll v0.3.21+4
-  [05823500] OpenLibm_jll v0.8.1+0
-  [efcefdf7] PCRE2_jll v10.42.0+0
-  [bea87d4a] SuiteSparse_jll v5.10.1+6
-  [83775a58] Zlib_jll v1.2.13+0
-  [8e850b90] libblastrampoline_jll v5.8.0+0
+  [c8ffd9c3] MbedTLS_jll v2.28.2+1
+  [14a3606d] MozillaCACerts_jll v2023.1.10
+  [4536629a] OpenBLAS_jll v0.3.23+2
+  [05823500] OpenLibm_jll v0.8.1+2
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.2.1+1
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
-  [3f19e933] p7zip_jll v17.4.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../nonlinear_solver_23_tests/">« Nonlinear Solver 23 Test Problems</a><a class="docs-footer-nextpage" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 22 January 2024 07:26">Monday 22 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [3f19e933] p7zip_jll v17.4.0+2
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../nonlinear_solver_23_tests/">« Nonlinear Solver 23 Test Problems</a><a class="docs-footer-nextpage" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 22 January 2024 14:06">Monday 22 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
