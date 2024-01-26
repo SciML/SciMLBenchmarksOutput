@@ -12,7 +12,10 @@ const fmt = :png
 ```
 
 ```
-:png
+Error: Failed to precompile PiecewiseDeterministicMarkovProcesses [86206cdf
+-4603-54e0-bd58-22a2dcbf57aa] to "/cache/julia-buildkite-plugin/depots/5b30
+0254-1738-4989-ae0a-f4d2d937f953/compiled/v1.10/PiecewiseDeterministicMarko
+vProcesses/jl_KvapZc".
 ```
 
 
@@ -62,7 +65,9 @@ end
 ```
 
 ```
-Main.var"##WeaveSandBox#292".PreSynapseParams
+Error: LoadError: UndefVarError: `@with_kw` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:3
 ```
 
 
@@ -341,7 +346,7 @@ Main.var"##WeaveSandBox#292".PreSynapseParams
     R_a::Float64 = 1e-2
     "morphology, Dendritic properties, dendrite diameter, um."
     D_dend::Float64 = 2.0
-    "morphology, Dendritic properties, dendrite length, choosen to tune attenuation, but not modified in BaP adaptation for simplicity sake, um."
+    "morphology, Dendritic properties, dendrite length, chosen to tune attenuation, but not modified in BaP adaptation for simplicity sake, um."
     L_dend::Float64 = 1400
     "morphology, Dendritic properties, dendrite surface area, 500 gives dendrite input resistance of 200MOhm, um^2."
     A_dend::Float64 = 2 * pi * (D_dend / 2) * L_dend
@@ -542,7 +547,7 @@ Main.var"##WeaveSandBox#292".PreSynapseParams
     EGTA_kf::Float64 = 2.7e-3
     "calcium dye and buffers, assuming Kd of 0.18uM [naraghi1997] ms-1."
     EGTA_kb::Float64 = 0.18 * EGTA_kf
-    "calcium dye and buffers, 0.2 for imagin, 200 for elecrophysiology [tigaret2016] uM."
+    "calcium dye and buffers, 0.2 for imaging, 200 for elecrophysiology [tigaret2016] uM."
     EGTA_con::Float64 = 0.0
     "calcium dye and buffers [zenisek2003,naraghi1997], uM-1ms-1."
     BAPTA_kf::Float64 = 0.45
@@ -580,7 +585,9 @@ end
 ```
 
 ```
-Main.var"##WeaveSandBox#292".SynapseParams
+Error: LoadError: UndefVarError: `@with_kw` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:3
 ```
 
 
@@ -752,7 +759,9 @@ GABA_matrix() = get_stoichmatrix(gaba_destexhe)
 ```
 
 ```
-GABA_matrix (generic function with 1 method)
+Error: LoadError: UndefVarError: `@reaction_network` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:3
 ```
 
 
@@ -798,6 +807,11 @@ const events_bap = events_sorted_times[is_pre_or_post_event.==false];
 const bap_by_epsp = Float64[];
 const nu = buildTransitionMatrix();
 ```
+
+```
+Error: UndefVarError: `SynapseParams` not defined
+```
+
 
 
 
@@ -990,7 +1004,9 @@ end
 ```
 
 ```
-initial_conditions_discrete (generic function with 1 method)
+Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:4
 ```
 
 
@@ -999,6 +1015,11 @@ initial_conditions_discrete (generic function with 1 method)
 const xc0 = initial_conditions_continuous_temp(p_synapse);
 const xd0 = initial_conditions_discrete(p_synapse);
 ```
+
+```
+Error: UndefVarError: `initial_conditions_continuous_temp` not defined
+```
+
 
 
 
@@ -1061,7 +1082,9 @@ end
 ```
 
 ```
-B (generic function with 1 method)
+Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:17
 ```
 
 
@@ -1360,7 +1383,9 @@ end
 ```
 
 ```
-F_synapse (generic function with 1 method)
+Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:4
 ```
 
 
@@ -1583,7 +1608,7 @@ function R_synapse(rate, xc, xd, p_synapse::SynapseParams, t, sum_rate, glu = 0)
     rate[91] = NMDA_N2B_s_a * xd[40]
 
     # GABA
-    rate[92] = GABA_r_b1 * xd[46] * Glu #to simplify, we use the same ammount at the same time
+    rate[92] = GABA_r_b1 * xd[46] * Glu #to simplify, we use the same amount at the same time
     rate[93] = GABA_r_u1 * xd[47]
     rate[94] = GABA_r_b2 * xd[47] * Glu
     rate[95] = GABA_r_u2 * xd[48]
@@ -1602,7 +1627,9 @@ end
 ```
 
 ```
-R_synapse (generic function with 2 methods)
+Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:5
 ```
 
 
@@ -1723,7 +1750,7 @@ end
 ```
 
 ```
-Main.var"##WeaveSandBox#292".@j_jump
+Main.var"##WeaveSandBox#225".@j_jump
 ```
 
 
@@ -1735,7 +1762,7 @@ Next, we define the jumps themselves.
 ```julia
 function J_synapse(p_synapse::SynapseParams, nu)
 
-    # we order the jumps in ther order they appear in the dependency graph
+    # we order the jumps in their order they appear in the dependency graph
     jumps = JumpSet(;
         constant_jumps = [
             # AMPA
@@ -1829,7 +1856,7 @@ function J_synapse(p_synapse::SynapseParams, nu)
             @j_jump(91, p_synapse, nu, NMDA_N2B_s_a * p.xd[40]), # 91
 
             # GABA
-            @j_jump(92, p_synapse, nu, GABA_r_b1 * p.xd[46] * p.Glu), # 92 to simplify, we use the same ammount at the same time)
+            @j_jump(92, p_synapse, nu, GABA_r_b1 * p.xd[46] * p.Glu), # 92 to simplify, we use the same amount at the same time)
             @j_jump(93, p_synapse, nu, GABA_r_u1 * p.xd[47]), # 93
             @j_jump(94, p_synapse, nu, GABA_r_b2 * p.xd[47] * p.Glu), # 94
             @j_jump(95, p_synapse, nu, GABA_r_u2 * p.xd[48]), # 95
@@ -2018,7 +2045,9 @@ end
 ```
 
 ```
-J_synapse (generic function with 1 method)
+Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:66
 ```
 
 
@@ -2080,7 +2109,7 @@ end
 ```
 
 ```
-SynapseProblem (generic function with 2 methods)
+Error: UndefVarError: `CHV` not defined
 ```
 
 
@@ -2291,7 +2320,7 @@ end
 ```
 
 ```
-SynapseProblem (generic function with 3 methods)
+SynapseProblem (generic function with 1 method)
 ```
 
 
@@ -2535,7 +2564,7 @@ end
 ```
 
 ```
-formatSynapseResult (generic function with 1 method)
+Error: UndefVarError: `SynapseParams` not defined
 ```
 
 
@@ -2563,6 +2592,11 @@ const algorithms = (
     ),
 );
 ```
+
+```
+Error: UndefVarError: `Rosenbrock23` not defined
+```
+
 
 
 
@@ -2594,6 +2628,11 @@ for algo in algorithms
 end
 ```
 
+```
+Error: UndefVarError: `algorithms` not defined
+```
+
+
 
 ```julia
 fig = plot(xlabel = "Voltage", ylabel = "Time");
@@ -2604,7 +2643,11 @@ end
 title!("Vsp")
 ```
 
-![](figures/Synapse_22_1.png)
+```
+Error: UndefVarError: `plot` not defined
+```
+
+
 
 ```julia
 fig = plot(xlabel = "N", ylabel = "Time");
@@ -2615,7 +2658,11 @@ end
 title!("2line-Go, AMPA")
 ```
 
-![](figures/Synapse_23_1.png)
+```
+Error: UndefVarError: `plot` not defined
+```
+
+
 
 
 
@@ -2652,19 +2699,7 @@ end
 ```
 
 ```
-Error: AssertionError: Could not compute next jump time 7302.
-Return code = DtLessThanMin
- 812.9889530696965 < 812.9889530696965,
- solver = CompositeAlgorithm(; algs = (Tsit5(; stage_limiter! = trivial_lim
-iter!, step_limiter! = trivial_limiter!, thread = static(false),), Rosenbro
-ck23(; linsolve = nothing, precs = DEFAULT_PRECS,)), choice_function = Ordi
-naryDiffEq.AutoSwitch{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_li
-miter!), typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}, OrdinaryDi
-ffEq.Rosenbrock23{0, true, Nothing, typeof(OrdinaryDiffEq.DEFAULT_PRECS), V
-al{:forward}, true, nothing}, Rational{Int64}, Int64}(Tsit5(; stage_limiter
-! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static(fal
-se),), Rosenbrock23(; linsolve = nothing, precs = DEFAULT_PRECS,), 10, 3, 9
-//10, 9//10, 2, false, 5),). dt = 0.0
+Error: UndefVarError: `BenchmarkTools` not defined
 ```
 
 
@@ -2679,8 +2714,7 @@ title!("evolveSynapse (Median time)")
 ```
 
 ```
-Error: BoundsError: attempt to access 0-element Vector{Float64} at index [1
-]
+Error: UndefVarError: `algorithms` not defined
 ```
 
 
@@ -2694,8 +2728,7 @@ title!("evolveSynapse (Median memory)")
 ```
 
 ```
-Error: BoundsError: attempt to access 0-element Vector{Float64} at index [1
-]
+Error: UndefVarError: `bs` not defined
 ```
 
 
