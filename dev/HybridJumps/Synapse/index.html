@@ -4,7 +4,10 @@ using Catalyst, Parameters, LazySets, StaticArrays, Distributions, LinearAlgebra
 using Plots
 using BenchmarkTools
 const PDMP = PiecewiseDeterministicMarkovProcesses
-const fmt = :png</code></pre><pre><code class="nohighlight hljs">:png</code></pre><p>This benchmark implements the stochastic model of hippocampal synaptic plasticity with geometrical readount of enzyme dinamics from Rodrigues et al. [1]. The source code for the model was obtained from the Github repository <a href="https://github.com/rveltz/SynapseElife/">SynapseElife</a> that accompanies the paper. The original source code is licensed with the MIT license. We have added comments on the parts of the code that were directly borrowed from the repository.</p><p>Initial idea for benchmarking this model comes from a <a href="https://discourse.julialang.org/t/help-me-beat-lsoda/88236">Discourse discussion</a>.</p><h1 id="Model-and-example-solutions"><a class="docs-heading-anchor" href="#Model-and-example-solutions">Model and example solutions</a><a id="Model-and-example-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Model-and-example-solutions" title="Permalink"></a></h1><h2 id="Parameters-and-initial-conditions"><a class="docs-heading-anchor" href="#Parameters-and-initial-conditions">Parameters and initial conditions</a><a id="Parameters-and-initial-conditions-1"></a><a class="docs-heading-anchor-permalink" href="#Parameters-and-initial-conditions" title="Permalink"></a></h2><h3 id="Presynaptic-parameters"><a class="docs-heading-anchor" href="#Presynaptic-parameters">Presynaptic parameters</a><a id="Presynaptic-parameters-1"></a><a class="docs-heading-anchor-permalink" href="#Presynaptic-parameters" title="Permalink"></a></h3><pre><code class="language-julia hljs"># adapted from  SynapseElife/src/ParamsSynapse.jl
+const fmt = :png</code></pre><pre><code class="nohighlight hljs">Error: Failed to precompile PiecewiseDeterministicMarkovProcesses [86206cdf
+-4603-54e0-bd58-22a2dcbf57aa] to &quot;/cache/julia-buildkite-plugin/depots/5b30
+0254-1738-4989-ae0a-f4d2d937f953/compiled/v1.10/PiecewiseDeterministicMarko
+vProcesses/jl_KvapZc&quot;.</code></pre><p>This benchmark implements the stochastic model of hippocampal synaptic plasticity with geometrical readount of enzyme dinamics from Rodrigues et al. [1]. The source code for the model was obtained from the Github repository <a href="https://github.com/rveltz/SynapseElife/">SynapseElife</a> that accompanies the paper. The original source code is licensed with the MIT license. We have added comments on the parts of the code that were directly borrowed from the repository.</p><p>Initial idea for benchmarking this model comes from a <a href="https://discourse.julialang.org/t/help-me-beat-lsoda/88236">Discourse discussion</a>.</p><h1 id="Model-and-example-solutions"><a class="docs-heading-anchor" href="#Model-and-example-solutions">Model and example solutions</a><a id="Model-and-example-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Model-and-example-solutions" title="Permalink"></a></h1><h2 id="Parameters-and-initial-conditions"><a class="docs-heading-anchor" href="#Parameters-and-initial-conditions">Parameters and initial conditions</a><a id="Parameters-and-initial-conditions-1"></a><a class="docs-heading-anchor-permalink" href="#Parameters-and-initial-conditions" title="Permalink"></a></h2><h3 id="Presynaptic-parameters"><a class="docs-heading-anchor" href="#Presynaptic-parameters">Presynaptic parameters</a><a id="Presynaptic-parameters-1"></a><a class="docs-heading-anchor-permalink" href="#Presynaptic-parameters" title="Permalink"></a></h3><pre><code class="language-julia hljs"># adapted from  SynapseElife/src/ParamsSynapse.jl
 @with_kw struct PreSynapseParams
     &quot;recovery constant of pre calcium decay function.&quot;
     τ_rec::Float64 = 20000
@@ -32,7 +35,9 @@ const fmt = :png</code></pre><pre><code class="nohighlight hljs">:png</code></pr
     h::Float64 = 0.7 # this value changes given Ca external concentration
     &quot;sampling rate for plotting / printing.&quot;
     sampling_rate::Float64 = 1.0
-end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#292&quot;.PreSynapseParams</code></pre><h3 id="Postsynpatic-parameters"><a class="docs-heading-anchor" href="#Postsynpatic-parameters">Postsynpatic parameters</a><a id="Postsynpatic-parameters-1"></a><a class="docs-heading-anchor-permalink" href="#Postsynpatic-parameters" title="Permalink"></a></h3><pre><code class="language-julia hljs"># adapted from  SynapseElife/src/ParamsSynapse.jl
+end</code></pre><pre><code class="nohighlight hljs">Error: LoadError: UndefVarError: `@with_kw` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:3</code></pre><h3 id="Postsynpatic-parameters"><a class="docs-heading-anchor" href="#Postsynpatic-parameters">Postsynpatic parameters</a><a id="Postsynpatic-parameters-1"></a><a class="docs-heading-anchor-permalink" href="#Postsynpatic-parameters" title="Permalink"></a></h3><pre><code class="language-julia hljs"># adapted from  SynapseElife/src/ParamsSynapse.jl
 @with_kw struct SynapseParams{Tp}
     &quot;polygonal threshold.&quot;
     LTP_region::Tp = VPolygon([[6.35, 1.4], [10, 1.4], [6.35, 29.5], [10, 29.5]]) # VPolygon([SVector(6.35,1.4), SVector(10,1.4),SVector(6.35,29.5), SVector(10,29.5)])
@@ -300,7 +305,7 @@ end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox
     R_a::Float64 = 1e-2
     &quot;morphology, Dendritic properties, dendrite diameter, um.&quot;
     D_dend::Float64 = 2.0
-    &quot;morphology, Dendritic properties, dendrite length, choosen to tune attenuation, but not modified in BaP adaptation for simplicity sake, um.&quot;
+    &quot;morphology, Dendritic properties, dendrite length, chosen to tune attenuation, but not modified in BaP adaptation for simplicity sake, um.&quot;
     L_dend::Float64 = 1400
     &quot;morphology, Dendritic properties, dendrite surface area, 500 gives dendrite input resistance of 200MOhm, um^2.&quot;
     A_dend::Float64 = 2 * pi * (D_dend / 2) * L_dend
@@ -501,7 +506,7 @@ end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox
     EGTA_kf::Float64 = 2.7e-3
     &quot;calcium dye and buffers, assuming Kd of 0.18uM [naraghi1997] ms-1.&quot;
     EGTA_kb::Float64 = 0.18 * EGTA_kf
-    &quot;calcium dye and buffers, 0.2 for imagin, 200 for elecrophysiology [tigaret2016] uM.&quot;
+    &quot;calcium dye and buffers, 0.2 for imaging, 200 for elecrophysiology [tigaret2016] uM.&quot;
     EGTA_con::Float64 = 0.0
     &quot;calcium dye and buffers [zenisek2003,naraghi1997], uM-1ms-1.&quot;
     BAPTA_kf::Float64 = 0.45
@@ -535,7 +540,9 @@ end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox
     fluo5f_kb::Float64 = dye * 26 * fluo5f_kf
     &quot;calcium fluorescent dyes uM [tigaret2016].&quot;
     fluo5f_con::Float64 = dye * 200.0
-end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#292&quot;.SynapseParams</code></pre><h3 id="Transition-matrices"><a class="docs-heading-anchor" href="#Transition-matrices">Transition matrices</a><a id="Transition-matrices-1"></a><a class="docs-heading-anchor-permalink" href="#Transition-matrices" title="Permalink"></a></h3><p>We define some utilities to help us construct the transition matrices.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/JumpMatrices.jl
+end</code></pre><pre><code class="nohighlight hljs">Error: LoadError: UndefVarError: `@with_kw` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:3</code></pre><h3 id="Transition-matrices"><a class="docs-heading-anchor" href="#Transition-matrices">Transition matrices</a><a id="Transition-matrices-1"></a><a class="docs-heading-anchor-permalink" href="#Transition-matrices" title="Permalink"></a></h3><p>We define some utilities to help us construct the transition matrices.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/JumpMatrices.jl
 get_stoichmatrix(model) = transpose(Catalyst.netstoichmat(model)) |&gt; Matrix
 
 # adapted from SynapseElife/src/JumpMatrices.jl
@@ -677,7 +684,9 @@ const gaba_destexhe = @reaction_network begin
 end
 
 # adapted from SynapseElife/src/JumpMatrices.jl
-GABA_matrix() = get_stoichmatrix(gaba_destexhe)</code></pre><pre><code class="nohighlight hljs">GABA_matrix (generic function with 1 method)</code></pre><p>Finally, we define a wrapper function to build the main transition matrix.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/SynapseModel.jl
+GABA_matrix() = get_stoichmatrix(gaba_destexhe)</code></pre><pre><code class="nohighlight hljs">Error: LoadError: UndefVarError: `@reaction_network` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:3</code></pre><p>Finally, we define a wrapper function to build the main transition matrix.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/SynapseModel.jl
 function buildTransitionMatrix()
     matrix_list = [AMPA_matrix()]
     push!(matrix_list, NMDA_matrix()) # for GluN2A
@@ -695,7 +704,7 @@ const events_sorted_times = [500.0];
 const is_pre_or_post_event = [true];
 const events_bap = events_sorted_times[is_pre_or_post_event.==false];
 const bap_by_epsp = Float64[];
-const nu = buildTransitionMatrix();</code></pre><p>Initial conditions.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/UtilsData.jl
+const nu = buildTransitionMatrix();</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `SynapseParams` not defined</code></pre><p>Initial conditions.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/UtilsData.jl
 function initial_conditions_continuous_temp(param_synapse)
     @unpack_SynapseParams param_synapse
     if temp_rates &lt;= 25
@@ -876,8 +885,10 @@ function initial_conditions_discrete(param_synapse)
         0,
         0,
     ])  
-end</code></pre><pre><code class="nohighlight hljs">initial_conditions_discrete (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">const xc0 = initial_conditions_continuous_temp(p_synapse);
-const xd0 = initial_conditions_discrete(p_synapse);</code></pre><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>Rodrigues et al. [1] synapse model that replaces NMDA model with fully state-based one from Jahr and Stevens, plus three types of VGCCs (R-type, T-type and L-type), from Magee and Johhston [2].</p><h3 id="Continuous-evolution"><a class="docs-heading-anchor" href="#Continuous-evolution">Continuous evolution</a><a id="Continuous-evolution-1"></a><a class="docs-heading-anchor-permalink" href="#Continuous-evolution" title="Permalink"></a></h3><p>Helper functions.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/UtilsDynamics.jl
+end</code></pre><pre><code class="nohighlight hljs">Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:4</code></pre><pre><code class="language-julia hljs">const xc0 = initial_conditions_continuous_temp(p_synapse);
+const xd0 = initial_conditions_discrete(p_synapse);</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `initial_conditions_continuous_temp` not defined</code></pre><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>Rodrigues et al. [1] synapse model that replaces NMDA model with fully state-based one from Jahr and Stevens, plus three types of VGCCs (R-type, T-type and L-type), from Magee and Johhston [2].</p><h3 id="Continuous-evolution"><a class="docs-heading-anchor" href="#Continuous-evolution">Continuous evolution</a><a id="Continuous-evolution-1"></a><a class="docs-heading-anchor-permalink" href="#Continuous-evolution" title="Permalink"></a></h3><p>Helper functions.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/UtilsDynamics.jl
 @inline alpha_m(V) = 0.4 * (V + 30) / (1 - exp(-(V + 30) / 7.2))
 # adapted from SynapseElife/src/UtilsDynamics.jl
 @inline beta_m(V) = 0.124 * (V + 30) / (exp((V + 30) / 7.2) - 1)
@@ -922,7 +933,9 @@ end
 # adapted from SynapseElife/src/UtilsDynamics.jl
 @inline rates_adapt(a, b, c, d, Ca) = a * b / (c + d * Ca)
 # adapted from SynapseElife/src/UtilsDynamics.jl
-@inline B(v, Mg) = 1 / (1 + exp(-0.062 * v) * (Mg / 3.57)) #Jahr Stevens</code></pre><pre><code class="nohighlight hljs">B (generic function with 1 method)</code></pre><p>The continuous evolution.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/SynapseModel.jl
+@inline B(v, Mg) = 1 / (1 + exp(-0.062 * v) * (Mg / 3.57)) #Jahr Stevens</code></pre><pre><code class="nohighlight hljs">Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:17</code></pre><p>The continuous evolution.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/SynapseModel.jl
 function F_synapse(dxc, xc, xd, p_synapse::SynapseParams, t, events_bap, bap_by_epsp)
     @unpack_SynapseParams p_synapse
 
@@ -1207,7 +1220,9 @@ function F_synapse(dxc, xc, xd, p_synapse::SynapseParams, t, events_bap, bap_by_
     dxc[32] = ∂SK
     dxc[33] = ∂λ_age
     dxc[34] = ∂λ_aux
-end</code></pre><pre><code class="nohighlight hljs">F_synapse (generic function with 1 method)</code></pre><h3 id="Discrete-jumps."><a class="docs-heading-anchor" href="#Discrete-jumps.">Discrete jumps.</a><a id="Discrete-jumps.-1"></a><a class="docs-heading-anchor-permalink" href="#Discrete-jumps." title="Permalink"></a></h3><p>For the PDMP package we need to define the rates in which the jumps occur.</p><p>Helper functions.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/UtilsDynamics.jl
+end</code></pre><pre><code class="nohighlight hljs">Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:4</code></pre><h3 id="Discrete-jumps."><a class="docs-heading-anchor" href="#Discrete-jumps.">Discrete jumps.</a><a id="Discrete-jumps.-1"></a><a class="docs-heading-anchor-permalink" href="#Discrete-jumps." title="Permalink"></a></h3><p>For the PDMP package we need to define the rates in which the jumps occur.</p><p>Helper functions.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/UtilsDynamics.jl
 @inline function rates_m_r(Vsp)
     beta_m_r_star = 1 / (4e-1) # /ms
     minf_m_r_star = 1 / (1 + exp((3 - 10) / 8))
@@ -1402,7 +1417,7 @@ function R_synapse(rate, xc, xd, p_synapse::SynapseParams, t, sum_rate, glu = 0)
     rate[91] = NMDA_N2B_s_a * xd[40]
 
     # GABA
-    rate[92] = GABA_r_b1 * xd[46] * Glu #to simplify, we use the same ammount at the same time
+    rate[92] = GABA_r_b1 * xd[46] * Glu #to simplify, we use the same amount at the same time
     rate[93] = GABA_r_u1 * xd[47]
     rate[94] = GABA_r_b2 * xd[47] * Glu
     rate[95] = GABA_r_u2 * xd[48]
@@ -1417,7 +1432,9 @@ function R_synapse(rate, xc, xd, p_synapse::SynapseParams, t, sum_rate, glu = 0)
     else
         return sum(rate), bound
     end
-end</code></pre><pre><code class="nohighlight hljs">R_synapse (generic function with 2 methods)</code></pre><p>Alternatively, for the JumpProcesses packages we need to define the jumps. First we define a macro to aid us in the definition of the jumps.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
+end</code></pre><pre><code class="nohighlight hljs">Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:5</code></pre><p>Alternatively, for the JumpProcesses packages we need to define the jumps. First we define a macro to aid us in the definition of the jumps.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
 Macro to help with defining the Synapse problem for the JumpProcesses package, used in the `J_synapse` function body.
 
 # Arguments
@@ -1524,9 +1541,9 @@ macro j_jump(i, p_synapse, nu, rate_ex, urate_ex = nothing, rateinterval_ex = no
         $(ex...)
     end
 
-end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#292&quot;.@j_jump</code></pre><p>Next, we define the jumps themselves.</p><pre><code class="language-julia hljs">function J_synapse(p_synapse::SynapseParams, nu)
+end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#225&quot;.@j_jump</code></pre><p>Next, we define the jumps themselves.</p><pre><code class="language-julia hljs">function J_synapse(p_synapse::SynapseParams, nu)
 
-    # we order the jumps in ther order they appear in the dependency graph
+    # we order the jumps in their order they appear in the dependency graph
     jumps = JumpSet(;
         constant_jumps = [
             # AMPA
@@ -1620,7 +1637,7 @@ end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox
             @j_jump(91, p_synapse, nu, NMDA_N2B_s_a * p.xd[40]), # 91
 
             # GABA
-            @j_jump(92, p_synapse, nu, GABA_r_b1 * p.xd[46] * p.Glu), # 92 to simplify, we use the same ammount at the same time)
+            @j_jump(92, p_synapse, nu, GABA_r_b1 * p.xd[46] * p.Glu), # 92 to simplify, we use the same amount at the same time)
             @j_jump(93, p_synapse, nu, GABA_r_u1 * p.xd[47]), # 93
             @j_jump(94, p_synapse, nu, GABA_r_b2 * p.xd[47] * p.Glu), # 94
             @j_jump(95, p_synapse, nu, GABA_r_u2 * p.xd[48]), # 95
@@ -1805,7 +1822,9 @@ end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox
     )
 
     return jumps
-end</code></pre><pre><code class="nohighlight hljs">J_synapse (generic function with 1 method)</code></pre><p><code>R_synapse</code> and <code>J_synapse</code> define the exact same discrete problem. The comments at the end of the line in <code>J_synapse</code> corresponds to the rate index defined in <code>R_synapse</code>. For example, in <code>R_synapse</code> we have <code>rate[1]</code></p><pre><code class="nohighlight hljs">rate[1] = 4 * AMPA_k1 * Glu * xd[1]</code></pre><p>Equivalently, in <code>J_synapse</code> we have the equivalent formulation in terms of a jump using our macro.</p><pre><code class="nohighlight hljs">@j_jump(1, p_synapse, nu, 4 * AMPA_k1 * p.Glu * p.xd[1]), # 1</code></pre><p>Also, note that we modify the order of jumps in <code>J_synapse</code> compared to <code>R_synapse</code> because we bundle <code>ConstantRateJump</code> and <code>VariableRateJump</code> separately. Algorithms in <code>JumpProcesses</code> will approach each of this jumps in a different way.</p><p>We also remove the sampling rate from <code>J_synapse</code> (<code>rate[55]</code> in <code>R_synapse</code>) as it is not needed for <code>JumpProcesses</code>. The package can take a snapshot of the evolution at any point desired.</p><h3 id="Problem-wrappers"><a class="docs-heading-anchor" href="#Problem-wrappers">Problem wrappers</a><a id="Problem-wrappers-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-wrappers" title="Permalink"></a></h3><p>We define wrappers for setting up and solving problems involving synapses.</p><p>First, we define the problem for the <code>PDMP</code> package.</p><pre><code class="language-julia hljs">function SynapseProblem(
+end</code></pre><pre><code class="nohighlight hljs">Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:66</code></pre><p><code>R_synapse</code> and <code>J_synapse</code> define the exact same discrete problem. The comments at the end of the line in <code>J_synapse</code> corresponds to the rate index defined in <code>R_synapse</code>. For example, in <code>R_synapse</code> we have <code>rate[1]</code></p><pre><code class="nohighlight hljs">rate[1] = 4 * AMPA_k1 * Glu * xd[1]</code></pre><p>Equivalently, in <code>J_synapse</code> we have the equivalent formulation in terms of a jump using our macro.</p><pre><code class="nohighlight hljs">@j_jump(1, p_synapse, nu, 4 * AMPA_k1 * p.Glu * p.xd[1]), # 1</code></pre><p>Also, note that we modify the order of jumps in <code>J_synapse</code> compared to <code>R_synapse</code> because we bundle <code>ConstantRateJump</code> and <code>VariableRateJump</code> separately. Algorithms in <code>JumpProcesses</code> will approach each of this jumps in a different way.</p><p>We also remove the sampling rate from <code>J_synapse</code> (<code>rate[55]</code> in <code>R_synapse</code>) as it is not needed for <code>JumpProcesses</code>. The package can take a snapshot of the evolution at any point desired.</p><h3 id="Problem-wrappers"><a class="docs-heading-anchor" href="#Problem-wrappers">Problem wrappers</a><a id="Problem-wrappers-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-wrappers" title="Permalink"></a></h3><p>We define wrappers for setting up and solving problems involving synapses.</p><p>First, we define the problem for the <code>PDMP</code> package.</p><pre><code class="language-julia hljs">function SynapseProblem(
     xc,
     xd,
     t1,
@@ -1833,7 +1852,7 @@ end</code></pre><pre><code class="nohighlight hljs">J_synapse (generic function 
     )
     sol = solve(problem, algo; kwargs...)
     return sol
-end</code></pre><pre><code class="nohighlight hljs">SynapseProblem (generic function with 2 methods)</code></pre><p>Second, we define the problem for the <code>JumpProcesses</code> package.</p><p>We define a custom saving callback for the <code>JumpProcesses</code> problem to bring the saving behaviour as close as possible to the <code>PDMP</code> problem. Our callback will save jumps whenever the integrator steps and <code>save_modified == true</code>.</p><pre><code class="language-julia hljs">using DiffEqCallbacks: SavedValues, SavingAffect
+end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `CHV` not defined</code></pre><p>Second, we define the problem for the <code>JumpProcesses</code> package.</p><p>We define a custom saving callback for the <code>JumpProcesses</code> problem to bring the saving behaviour as close as possible to the <code>PDMP</code> problem. Our callback will save jumps whenever the integrator steps and <code>save_modified == true</code>.</p><pre><code class="language-julia hljs">using DiffEqCallbacks: SavedValues, SavingAffect
 import DataStructures
 
 # adapted from DiffEqCallbacks.jl/src/saving.jl
@@ -2014,7 +2033,7 @@ function SynapseProblem(
     )
     sol = (xcsol = solve(jprob, algo; saveat, save_everystep, kwargs...), xdsol = xdsol)
     return sol
-end</code></pre><pre><code class="nohighlight hljs">SynapseProblem (generic function with 3 methods)</code></pre><h3 id="Assembling-it-all-2"><a class="docs-heading-anchor" href="#Assembling-it-all-2">Assembling it all</a><a class="docs-heading-anchor-permalink" href="#Assembling-it-all-2" title="Permalink"></a></h3><p>We define functions to run the evolution of the whole synapse. The evolution includes a period before glutamate is released and after.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/SynapseModel.jl
+end</code></pre><pre><code class="nohighlight hljs">SynapseProblem (generic function with 1 method)</code></pre><h3 id="Assembling-it-all-2"><a class="docs-heading-anchor" href="#Assembling-it-all-2">Assembling it all</a><a class="docs-heading-anchor-permalink" href="#Assembling-it-all-2" title="Permalink"></a></h3><p>We define functions to run the evolution of the whole synapse. The evolution includes a period before glutamate is released and after.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/SynapseModel.jl
 function evolveSynapse(
     xc0::Vector{T},
     xd0,
@@ -2242,7 +2261,7 @@ function formatSynapseResult(tt, XC, XD)
     )
     values = (XC[i, :] for i = 1:length(namesC))
     return (t = tt, XD = XD, XC = XC, zip(namesC, values)...)
-end</code></pre><pre><code class="nohighlight hljs">formatSynapseResult (generic function with 1 method)</code></pre><h2 id="Algorithms-to-benchmark"><a class="docs-heading-anchor" href="#Algorithms-to-benchmark">Algorithms to benchmark</a><a id="Algorithms-to-benchmark-1"></a><a class="docs-heading-anchor-permalink" href="#Algorithms-to-benchmark" title="Permalink"></a></h2><p><code>CoevolveSynced</code> allow us to save at regular intervals. Thus, rather than saving when a jump occurs, we save at the same average frequency as obtained with <code>PDMP</code>.</p><pre><code class="language-julia hljs">const solver = AutoTsit5(Rosenbrock23());
+end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `SynapseParams` not defined</code></pre><h2 id="Algorithms-to-benchmark"><a class="docs-heading-anchor" href="#Algorithms-to-benchmark">Algorithms to benchmark</a><a id="Algorithms-to-benchmark-1"></a><a class="docs-heading-anchor-permalink" href="#Algorithms-to-benchmark" title="Permalink"></a></h2><p><code>CoevolveSynced</code> allow us to save at regular intervals. Thus, rather than saving when a jump occurs, we save at the same average frequency as obtained with <code>PDMP</code>.</p><pre><code class="language-julia hljs">const solver = AutoTsit5(Rosenbrock23());
 const algorithms = (
     (
         label = &quot;PDMP&quot;,
@@ -2256,7 +2275,7 @@ const algorithms = (
         solver = (solver, solver),
         saveat = 1 / p_synapse.sampling_rate,
     ),
-);</code></pre><h2 id="Example-solutions"><a class="docs-heading-anchor" href="#Example-solutions">Example solutions</a><a id="Example-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Example-solutions" title="Permalink"></a></h2><pre><code class="language-julia hljs">results = []
+);</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `Rosenbrock23` not defined</code></pre><h2 id="Example-solutions"><a class="docs-heading-anchor" href="#Example-solutions">Example solutions</a><a id="Example-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Example-solutions" title="Permalink"></a></h2><pre><code class="language-julia hljs">results = []
 
 for algo in algorithms
     push!(
@@ -2277,17 +2296,17 @@ for algo in algorithms
             save_everystep = false,
         ),
     )
-end</code></pre><pre><code class="language-julia hljs">fig = plot(xlabel = &quot;Voltage&quot;, ylabel = &quot;Time&quot;);
+end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `algorithms` not defined</code></pre><pre><code class="language-julia hljs">fig = plot(xlabel = &quot;Voltage&quot;, ylabel = &quot;Time&quot;);
 for (i, algo) in enumerate(algorithms)
     res = results[i]
     plot!(res.t, res.Vsp, label = algo.label)
 end
-title!(&quot;Vsp&quot;)</code></pre><p><img src="../figures/Synapse_22_1.png" alt/></p><pre><code class="language-julia hljs">fig = plot(xlabel = &quot;N&quot;, ylabel = &quot;Time&quot;);
+title!(&quot;Vsp&quot;)</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `plot` not defined</code></pre><pre><code class="language-julia hljs">fig = plot(xlabel = &quot;N&quot;, ylabel = &quot;Time&quot;);
 for (i, algo) in enumerate(algorithms)
     res = results[i]
     plot!(res.t, res.XD[1, :], label = algo.label)
 end
-title!(&quot;2line-Go, AMPA&quot;)</code></pre><p><img src="../figures/Synapse_23_1.png" alt/></p><h1 id="Benchmarking-performance"><a class="docs-heading-anchor" href="#Benchmarking-performance">Benchmarking performance</a><a id="Benchmarking-performance-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarking-performance" title="Permalink"></a></h1><pre><code class="language-julia hljs">bs = Vector{BenchmarkTools.Trial}()
+title!(&quot;2line-Go, AMPA&quot;)</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `plot` not defined</code></pre><h1 id="Benchmarking-performance"><a class="docs-heading-anchor" href="#Benchmarking-performance">Benchmarking performance</a><a id="Benchmarking-performance-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarking-performance" title="Permalink"></a></h1><pre><code class="language-julia hljs">bs = Vector{BenchmarkTools.Trial}()
 
 for algo in algorithms
     push!(
@@ -2313,27 +2332,13 @@ for algo in algorithms
             seconds = 500,
         )
     )
-end</code></pre><pre><code class="nohighlight hljs">Error: AssertionError: Could not compute next jump time 7302.
-Return code = DtLessThanMin
- 812.9889530696965 &lt; 812.9889530696965,
- solver = CompositeAlgorithm(; algs = (Tsit5(; stage_limiter! = trivial_lim
-iter!, step_limiter! = trivial_limiter!, thread = static(false),), Rosenbro
-ck23(; linsolve = nothing, precs = DEFAULT_PRECS,)), choice_function = Ordi
-naryDiffEq.AutoSwitch{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_li
-miter!), typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}, OrdinaryDi
-ffEq.Rosenbrock23{0, true, Nothing, typeof(OrdinaryDiffEq.DEFAULT_PRECS), V
-al{:forward}, true, nothing}, Rational{Int64}, Int64}(Tsit5(; stage_limiter
-! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static(fal
-se),), Rosenbrock23(; linsolve = nothing, precs = DEFAULT_PRECS,), 10, 3, 9
-//10, 9//10, 2, false, 5),). dt = 0.0</code></pre><pre><code class="language-julia hljs">labels = [a.label for a in algorithms]
+end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `BenchmarkTools` not defined</code></pre><pre><code class="language-julia hljs">labels = [a.label for a in algorithms]
 medtimes = [text(string(round(median(b).time/1e9, digits=3),&quot;s&quot;), :center, 12) for b in bs]
 relmedtimes = [median(b).time for b in bs]
 relmedtimes ./= relmedtimes[1]
 bar(labels, relmedtimes, markeralpha=0, series_annotation=medtimes, fmt=fmt)
-title!(&quot;evolveSynapse (Median time)&quot;)</code></pre><pre><code class="nohighlight hljs">Error: BoundsError: attempt to access 0-element Vector{Float64} at index [1
-]</code></pre><pre><code class="language-julia hljs">medmem = [text(string(round(median(b).memory/1e6, digits=3),&quot;Mb&quot;), :center, 12) for b in bs]
+title!(&quot;evolveSynapse (Median time)&quot;)</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `algorithms` not defined</code></pre><pre><code class="language-julia hljs">medmem = [text(string(round(median(b).memory/1e6, digits=3),&quot;Mb&quot;), :center, 12) for b in bs]
 relmedmem = Float64[median(b).memory for b in bs]
 relmedmem ./= relmedmem[1]
 bar(labels, relmedmem, markeralpha=0, series_annotation=medmem, fmt=fmt)
-title!(&quot;evolveSynapse (Median memory)&quot;)</code></pre><pre><code class="nohighlight hljs">Error: BoundsError: attempt to access 0-element Vector{Float64} at index [1
-]</code></pre><h1 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h1><p>[1] Y. E. Rodrigues, C. M. Tigaret, H. Marie, C. O’Donnell, and R. Veltz, &quot;A stochastic model of hippocampal synaptic plasticity with geometrical readout of enzyme dynamics.&quot; bioRxiv, p. 2021.03.30.437703, Mar. 30, 2021. doi: 10.1101/2021.03.30.437703.</p><p>[2] Magee, J.C., Johnston, D., 1995. Characterization of single voltage-gated na+ and ca2+ channels in apical dendrites of rat ca1 pyramidal neurons. The Journal of physiology 487, 67–90.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Jumps/Spatial_Signaling_Sanft/">« Spatial Signaling Model from Sanft and Othmer (2015)</a><a class="docs-footer-nextpage" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 22 January 2024 14:06">Monday 22 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+title!(&quot;evolveSynapse (Median memory)&quot;)</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `bs` not defined</code></pre><h1 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h1><p>[1] Y. E. Rodrigues, C. M. Tigaret, H. Marie, C. O’Donnell, and R. Veltz, &quot;A stochastic model of hippocampal synaptic plasticity with geometrical readout of enzyme dynamics.&quot; bioRxiv, p. 2021.03.30.437703, Mar. 30, 2021. doi: 10.1101/2021.03.30.437703.</p><p>[2] Magee, J.C., Johnston, D., 1995. Characterization of single voltage-gated na+ and ca2+ channels in apical dendrites of rat ca1 pyramidal neurons. The Journal of physiology 487, 67–90.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Jumps/Spatial_Signaling_Sanft/">« Spatial Signaling Model from Sanft and Othmer (2015)</a><a class="docs-footer-nextpage" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 26 January 2024 06:04">Friday 26 January 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
