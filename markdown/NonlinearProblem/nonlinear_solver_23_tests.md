@@ -6,12 +6,12 @@ title: "Nonlinear Solver 23 Test Problems"
 
 These benchmarks compares the runtime and error for a range of nonlinear solvers. The problems are a standard set of problems as described [here](https://people.sc.fsu.edu/~jburkardt/m_src/test_nonlin/test_nonlin.html). The solvers are implemented in [NonlinearProblemLibrary.jl](https://github.com/SciML/DiffEqProblemLibrary.jl/blob/master/lib/NonlinearProblemLibrary/src/NonlinearProblemLibrary.jl), where you can find the problem function declarations. For each problem we test the following solvers:
 - NonlinearSolve.jl's [Newton Raphson](https://docs.sciml.ai/NonlinearSolve/stable/api/nonlinearsolve/#NonlinearSolve.NewtonRaphson) method (`NewtonRaphson()`).
-- NonlinearSolve.jl's [Newton trust region](https://docs.sciml.ai/NonlinearSolve/stable/api/nonlinearsolve/#NonlinearSolve.TrustRegion) method (`TrustRegion()`).
+- NonlinearSolve.jl's [Trust Region](https://docs.sciml.ai/NonlinearSolve/stable/api/nonlinearsolve/#NonlinearSolve.TrustRegion) method (`TrustRegion()`).
 - NonlinearSolve.jl's Levenberg-Marquardt method (`LevenbergMarquardt()`).
 - MINPACK's [Modified Powell](https://docs.sciml.ai/NonlinearSolve/stable/api/minpack/#NonlinearSolveMINPACK.CMINPACK) method (`CMINPACK(method=:hybr)`).
 - MINPACK's [Levenberg-Marquardt](https://docs.sciml.ai/NonlinearSolve/stable/api/minpack/#NonlinearSolveMINPACK.CMINPACK) method (`CMINPACK(method=:lm)`).
 - NLsolveJL's [Newton Raphson](https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API) (`NLsolveJL(method=:newton)`).
-- NLsolveJL's [Newton trust region](https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API) (`NLsolveJL()`).
+- NLsolveJL's [Trust Region](https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API) (`NLsolveJL()`).
 - NLsolveJL's [Anderson acceleration](https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API) (`NLsolveJL(method=:anderson)`).
 - Sundials's [Newton-Krylov](https://docs.sciml.ai/NonlinearSolve/stable/api/sundials/#Solver-API) method (`KINSOL()`).
 
@@ -20,7 +20,7 @@ Furthermore, for NonlinearSolve.jl's Newton Raphson method we try the following 
 - `MoreThuente`
 - `BackTracking`
 
-and for NonlinearSolve.jl's Newton trust region we try the following Radius Update schemes (in addition to the default):
+and for NonlinearSolve.jl's Trust Region we try the following Radius Update schemes (in addition to the default):
 - `NLsolve` 
 - `NocedalWright` 
 - `Hei` 
@@ -29,14 +29,14 @@ and for NonlinearSolve.jl's Newton trust region we try the following Radius Upda
 - `Fan` 
 and finally for NonlinearSolve.jl's Levenberg-Marquardt method why try using both the default `α_geodesic` value (`0.75`) and a modified value (`0.5`), and also with and without setting the `CholeskyFactorization` linear solver.
 
-For each benchmarked problem, the second, third, and fourth plots compares the performance of NonlinearSolve's Newton Raphson, Newton trust region, and Levenberg-Marquardt methods, respectively. The first plot compares the best methods from each of these categories to the various methods available from other packages. At the end of the benchmarks, we print a summary table of which solvers succeeded for which problems.
+For each benchmarked problem, the second, third, and fourth plots compares the performance of NonlinearSolve's Newton Raphson, Trust Region, and Levenberg-Marquardt methods, respectively. The first plot compares the best methods from each of these categories to the various methods available from other packages. At the end of the benchmarks, we print a summary table of which solvers succeeded for which problems.
 
 # Setup
 
 Fetch required packages.
 
 ```julia
-using NonlinearSolve, MINPACK, NLsolve, LinearSolve, StaticArrays, Sundials,
+using NonlinearSolve, MINPACK, NLsolve, LinearSolve, StaticArrays, Sundials, Setfield,
     BenchmarkTools, LinearAlgebra, DiffEqDevTools, NonlinearProblemLibrary, Plots
 RUS = RadiusUpdateSchemes;
 ```
@@ -48,28 +48,28 @@ Declare the benchmarked solvers (and their names and plotting options).
 
 ```julia
 solvers_all = [ 
-    (type = :NR,      name = "Newton Raphson (No Line Search)",                     solver = Dict(:alg=>NewtonRaphson()),                                                         color = :salmon1,         markershape = :star4),
-    (type = :NR,      name = "Newton Raphson (Hager & Zhang Line Search)",          solver = Dict(:alg=>NewtonRaphson(linesearch=HagerZhang())),                                  color = :tomato1,         markershape = :pentagon),
-    (type = :NR,      name = "Newton Raphson (More & Thuente Line Search)",         solver = Dict(:alg=>NewtonRaphson(linesearch=MoreThuente())),                                 color = :red3,            markershape = :star6),
-    (type = :NR,      name = "Newton Raphson (BackTracking Line Search)",           solver = Dict(:alg=>NewtonRaphson(linesearch=BackTracking())),                                color = :firebrick,       markershape = :heptagon),
-    (type = :TR,      name = "Newton Trust Region",                                 solver = Dict(:alg=>TrustRegion()),                                                           color = :darkslategray1,  markershape = :utriangle),
-    (type = :TR,      name = "Newton Trust Region (NLsolve Radius Update)",         solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.NLsolve)),                         color = :deepskyblue1,    markershape = :rect),
-    (type = :TR,      name = "Newton Trust Region (Nocedal Wright Radius Update)",  solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.NocedalWright)),                   color = :cadetblue,       markershape = :diamond),
-    (type = :TR,      name = "Newton Trust Region (Hei Radius Update)",             solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Hei)),                             color = :lightslateblue,  markershape = :star5),
-    (type = :TR,      name = "Newton Trust Region (Yuan Radius Update)",            solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Yuan)),                            color = :royalblue2,      markershape = :hexagon),
-    (type = :TR,      name = "Newton Trust Region (Bastin Radius Update)",          solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Bastin)),                          color = :blue1,           markershape = :star7),
-    (type = :TR,      name = "Newton Trust Region (Fan Radius Update)",             solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Fan)),                             color = :navy,            markershape = :octagon),
-    (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.75)",               solver = Dict(:alg=>LevenbergMarquardt()),                                                    color = :fuchsia,         markershape = :circle),
-    (type = :LM,      name = "Levenberg-Marquardt (α_geodesic, with Cholesky)",     solver = Dict(:alg=>LevenbergMarquardt(linsolve = CholeskyFactorization())),                  color = :orchid4,         markershape = :rtriangle),
-    (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.5)",                solver = Dict(:alg=>LevenbergMarquardt(α_geodesic=0.5)),                                      color = :darkorchid1,     markershape = :ltriangle),
-    (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.5, with Cholesky)", solver = Dict(:alg=>LevenbergMarquardt(linsolve = CholeskyFactorization(), α_geodesic=0.5)),  color = :purple4,         markershape = :star8),
-    (type = :general, name = "PseudoTransient (alpha_initial=10.0)",                solver = Dict(:alg=>PseudoTransient(alpha_initial=10.0)),                                     color = :blue3,           markershape = :star6),
-    (type = :general, name = "Modified Powell (CMINPACK)",                          solver = Dict(:alg=>CMINPACK(method=:hybr)),                                                  color = :lightgoldenrod2, markershape = :+),
-    (type = :general, name = "Levenberg-Marquardt (CMINPACK)",                      solver = Dict(:alg=>CMINPACK(method=:lm)),                                                    color = :gold1,           markershape = :x),
-    (type = :general, name = "Newton Raphson (NLsolveJL)",                          solver = Dict(:alg=>NLsolveJL(method=:newton)),                                               color = :olivedrab1,      markershape = :dtriangle),
-    (type = :general, name = "Newton Trust Region (NLsolveJL)",                     solver = Dict(:alg=>NLsolveJL()),                                                             color = :green2,          markershape = :rtriangle),
-    (type = :general, name = "Newton-Krylov (Sundials)",                            solver = Dict(:alg=>KINSOL()),                                                                color = :darkorange,      markershape = :circle)
-]
+    (type = :NR,      name = "Newton Raphson (No Line Search)",                     solver = Dict(:alg=>NewtonRaphson(linsolve = LUFactorization())),                                         color = :salmon1,         markershape = :star4),
+    (type = :NR,      name = "Newton Raphson (Hager & Zhang Line Search)",          solver = Dict(:alg=>NewtonRaphson(linesearch = HagerZhang(), linsolve = LUFactorization())),              color = :tomato1,         markershape = :pentagon),
+    (type = :NR,      name = "Newton Raphson (More & Thuente Line Search)",         solver = Dict(:alg=>NewtonRaphson(linesearch = MoreThuente(), linsolve = LUFactorization())),             color = :red3,            markershape = :star6),
+    (type = :NR,      name = "Newton Raphson (BackTracking Line Search)",           solver = Dict(:alg=>NewtonRaphson(linesearch = BackTracking(), linsolve = LUFactorization())),            color = :firebrick,       markershape = :heptagon),
+    (type = :TR,      name = "Trust Region",                                        solver = Dict(:alg=>TrustRegion(linsolve = LUFactorization())),                                           color = :darkslategray1,  markershape = :utriangle),
+    (type = :TR,      name = "Trust Region (NLsolve Radius Update)",                solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.NLsolve, linsolve = LUFactorization())),       color = :deepskyblue1,    markershape = :rect),
+    (type = :TR,      name = "Trust Region (Nocedal Wright Radius Update)",         solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.NocedalWright, linsolve = LUFactorization())), color = :cadetblue,       markershape = :diamond),
+    (type = :TR,      name = "Trust Region (Hei Radius Update)",                    solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Hei, linsolve = LUFactorization())),           color = :lightslateblue,  markershape = :star5),
+    (type = :TR,      name = "Trust Region (Yuan Radius Update)",                   solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Yuan, linsolve = LUFactorization())),          color = :royalblue2,      markershape = :hexagon),
+    (type = :TR,      name = "Trust Region (Bastin Radius Update)",                 solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Bastin, linsolve = LUFactorization())),        color = :blue1,           markershape = :star7),
+    (type = :TR,      name = "Trust Region (Fan Radius Update)",                    solver = Dict(:alg=>TrustRegion(radius_update_scheme = RUS.Fan, linsolve = LUFactorization())),           color = :navy,            markershape = :octagon),
+    (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.75)",               solver = Dict(:alg=>LevenbergMarquardt(linsolve = QRFactorization())),                                    color = :fuchsia,         markershape = :circle),
+    (type = :LM,      name = "Levenberg-Marquardt (α_geodesic, with Cholesky)",     solver = Dict(:alg=>LevenbergMarquardt(linsolve = CholeskyFactorization())),                              color = :orchid4,         markershape = :rtriangle),
+    (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.5)",                solver = Dict(:alg=>LevenbergMarquardt(linsolve = QRFactorization(), α_geodesic=0.5)),                    color = :darkorchid1,     markershape = :ltriangle),
+    (type = :LM,      name = "Levenberg-Marquardt (α_geodesic=0.5, with Cholesky)", solver = Dict(:alg=>LevenbergMarquardt(linsolve = CholeskyFactorization(), α_geodesic=0.5)),              color = :purple4,         markershape = :star8),
+    (type = :general, name = "PseudoTransient (alpha_initial=10.0)",                solver = Dict(:alg=>PseudoTransient(linsolve = LUFactorization(), alpha_initial=10.0)),                   color = :blue3,           markershape = :star6),
+    (type = :general, name = "Modified Powell (CMINPACK)",                          solver = Dict(:alg=>CMINPACK(method=:hybr)),                                                              color = :lightgoldenrod2, markershape = :+),
+    (type = :general, name = "Levenberg-Marquardt (CMINPACK)",                      solver = Dict(:alg=>CMINPACK(method=:lm)),                                                                color = :gold1,           markershape = :x),
+    (type = :general, name = "Newton Raphson (NLsolveJL)",                          solver = Dict(:alg=>NLsolveJL(method=:newton)),                                                           color = :olivedrab1,      markershape = :dtriangle),
+    (type = :general, name = "Trust Region (NLsolveJL)",                            solver = Dict(:alg=>NLsolveJL()),                                                                         color = :green2,          markershape = :rtriangle),
+    (type = :general, name = "Newton Raphson (Sundials)",                           solver = Dict(:alg=>KINSOL()),                                                                            color = :darkorange,      markershape = :circle)
+];
 solver_tracker = [];
 ```
 
@@ -99,22 +99,45 @@ default(framestyle=:box,legend=:topleft,gridwidth=2, guidefontsize=25, tickfonts
 Prepares various helper functions for benchmarking a specific problem.
 
 ```julia
+function set_ad_chunksize(solvers, u0)
+    ck = min(NonlinearSolve.pickchunksize(u0), 6)
+    for i in 1:length(solvers)
+        @set! solvers[i].solver[:alg] = __set_ad_chunksize(solvers[i].solver[:alg], ck)
+    end
+    return solvers
+end
+
+function __set_ad_chunksize(solver::GeneralizedFirstOrderAlgorithm{CJ, N}, ck) where {CJ, N}
+    ad = AutoForwardDiff(; chunksize = ck)
+    return GeneralizedFirstOrderAlgorithm{CJ, N}(; solver.descent, solver.linesearch,
+        solver.trustregion, jacobian_ad = ad, solver.max_shrink_times, solver.forward_ad,
+        solver.reverse_ad)
+end
+__set_ad_chunksize(solver, ck) = solver
+
 # Benchmarks a specific problem, checks which solvers can solve it and their performance
 function benchmark_problem!(prob_name; solver_tracker=solver_tracker, selected_NR=nothing, selected_TR=nothing, selected_LM=nothing)
     # Finds the problem and the true solution.
     prob = nlprob_23_testcases[prob_name]
 
     # Finds the solvers that can solve the problem
-    successful_solvers = filter(solver -> check_solver(prob, solver), solvers_all)
+    solvers_concrete = set_ad_chunksize(solvers_all, prob.prob.u0)
+    successful_solvers = filter(solver -> check_solver(prob, solver), solvers_concrete)
     push!(solver_tracker, prob_name => successful_solvers)
 
     # Handles the non-general cases.
     solvers_NR = filter(s -> s.type==:NR, successful_solvers)
     solvers_TR = filter(s -> s.type==:TR, successful_solvers)
     solvers_LM = filter(s -> s.type==:LM, successful_solvers)
-    wp_NR = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_NR, :solver); names=getfield.(solvers_NR, :name), numruns=100, error_estimate=:l∞, maxiters=10000000)
-    wp_TR = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_TR, :solver); names=getfield.(solvers_TR, :name), numruns=100, error_estimate=:l∞, maxiters=10000000)
-    wp_LM = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_LM, :solver); names=getfield.(solvers_LM, :name), numruns=100, error_estimate=:l∞, maxiters=10000000)
+    wp_NR = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_NR, :solver);
+        names=getfield.(solvers_NR, :name), numruns=100, error_estimate=:l∞,
+        maxiters=10000, termination_condition = AbsNormTerminationMode())
+    wp_TR = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_TR, :solver);
+        names=getfield.(solvers_TR, :name), numruns=100, error_estimate=:l∞,
+        maxiters=10000, termination_condition = AbsNormTerminationMode())
+    wp_LM = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_LM, :solver);
+        names=getfield.(solvers_LM, :name), numruns=100, error_estimate=:l∞,
+        maxiters=10000, termination_condition = AbsNormTerminationMode())
 
     # Handles the general case
     solvers_general = filter(s -> s.type==:general, successful_solvers)
@@ -122,25 +145,34 @@ function benchmark_problem!(prob_name; solver_tracker=solver_tracker, selected_N
     add_solver!(solvers_general, selected_LM, solvers_LM, wp_LM)
     add_solver!(solvers_general, selected_NR, solvers_NR, wp_NR)
 
-    wp_general = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_general, :solver); names=getfield.(solvers_general, :name), numruns=100, error_estimate=:l∞, maxiters=10000000)
+    wp_general = WorkPrecisionSet(prob.prob, abstols, reltols,
+        getfield.(solvers_general, :solver); names=getfield.(solvers_general, :name),
+        numruns=100, error_estimate=:l∞, maxiters=10000)
     
     xlimit, ylimit, xticks, yticks = get_limits_and_ticks(wp_general, wp_NR, wp_TR, wp_LM)
-    wp_plot_general = plot_wp(wp_general, solvers_general, xguide="", xlimit, ylimit, linewidth=7, true, xticks=(xticks, fill("", length(xticks))),yticks=yticks)
-    wp_plot_NR = plot_wp(wp_NR, solvers_NR, xlimit, ylimit, linewidth=7, true; xguide="", yguide="", xticks=(xticks, fill("", length(xticks))), yticks=(yticks, fill("", length(yticks))), right_margin=7mm)
-    wp_plot_TR = plot_wp(wp_TR, solvers_TR, xlimit, ylimit, linewidth=7, false; xticks=xticks, yticks=yticks)
-    wp_plot_LM = plot_wp(wp_LM, solvers_LM, xlimit, ylimit, linewidth=7, false; yguide="", xticks=xticks, yticks=(yticks, fill("", length(yticks))), right_margin=7mm)
-    plot(wp_plot_general, wp_plot_NR, wp_plot_TR, wp_plot_LM, layout=(2,2), size=(1600,2100), left_margin=12mm)
+    wp_plot_general = plot_wp(wp_general, solvers_general, xguide="", xlimit, ylimit,
+        linewidth=7, true, xticks=(xticks, fill("", length(xticks))), yticks=yticks)
+    wp_plot_NR = plot_wp(wp_NR, solvers_NR, xlimit, ylimit, linewidth=7, true; xguide="",
+        yguide="", xticks=(xticks, fill("", length(xticks))),
+        yticks=(yticks, fill("", length(yticks))), right_margin=7mm)
+    wp_plot_TR = plot_wp(wp_TR, solvers_TR, xlimit, ylimit, linewidth=7, false;
+        xticks=xticks, yticks=yticks)
+    wp_plot_LM = plot_wp(wp_LM, solvers_LM, xlimit, ylimit, linewidth=7, false; yguide="",
+        xticks=xticks, yticks=(yticks, fill("", length(yticks))), right_margin=7mm)
+    plot(wp_plot_general, wp_plot_NR, wp_plot_TR, wp_plot_LM, layout=(2,2),
+        size=(1600,2100), left_margin=12mm)
 end
 
 # Checks if a solver can successfully solve a given problem.
 function check_solver(prob, solver)
     try
-        sol = solve(prob.prob, solver.solver[:alg]; abstol=1e-8, reltol=1e-8, maxiters=10000000)
-        if !SciMLBase.successful_retcode(sol.retcode)
-            Base.printstyled("\n[Warn] Solver $(solver.name) returned retcode $(sol.retcode) with an residual norm = $(norm(sol.resid)).\n"; color=:red)
-            return false
-        elseif norm(sol.resid) > 1e3
-            Base.printstyled("[Warn] Solver $(solver.name) had a very large residual (norm = $(norm(sol.resid))).\n"; color=:red)
+        sol = solve(prob.prob, solver.solver[:alg]; abstol=1e-8, reltol=1e-8,
+            maxiters=10000000, termination_condition=AbsNormTerminationMode())
+        if norm(sol.resid, Inf) < 1e-6
+            Base.printstyled("\n[Info] Solver $(solver.name) returned retcode $(sol.retcode) with an residual norm = $(norm(sol.resid, Inf)).\n"; color=:green)
+            return true
+        else
+            Base.printstyled("[Warn] Solver $(solver.name) had a very large residual (norm = $(norm(sol.resid, Inf))).\n"; color=:red)
             return false
         end
         WorkPrecisionSet(prob.prob, [1e-4, 1e-12], [1e-4, 1e-12], [solver.solver]; names=[solver.name], numruns=100, error_estimate=:l∞, maxiters=10000000)
@@ -266,31 +298,63 @@ benchmark_problem!("Generalized Rosenbrock function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (No Line Search) returned retcode Unstable wit
-h an residual norm = 4.919349550499537.
+[Warn] Solver Newton Raphson (No Line Search) had a very large residual (no
+rm = NaN).
 
-[Warn] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
-Stalled with an residual norm = 3.0631643764033566e-8.
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 1.682474159991898e-9.
 
-[Warn] Solver Newton Raphson (BackTracking Line Search) returned retcode St
-alled with an residual norm = 8.600884587252096e-7.
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 9.462121086656339e-9.
 
-[Warn] Solver Newton Trust Region (Fan Radius Update) returned retcode Stal
-led with an residual norm = 1.4550086894071017e-8.
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 9.999638894697682e-9.
 
-[Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode MaxIter
-s with an residual norm = 4.919349550499537.
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 3.6637359812630166e-13.
 
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
-esidual norm = 4.919349550499537.
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 7.771561172376096e-15.
 
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
-an residual norm = 0.000869561489816352.
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 3.6637359812630166e-13.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 2.0095036745715333e-13.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 2.0539125955565396e-13.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 1.1070477867747286e-10.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 0.0.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 5.613462694675775e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 5.613456810493744e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 1.3598844272877386e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 1.359913293086379e-10.
+[Warn] Solver PseudoTransient (alpha_initial=10.0) had a very large residua
+l (norm = 2.799710861575872e11).
+[Warn] Solver Modified Powell (CMINPACK) had a very large residual (norm = 
+4.3999999999999995).
+[Warn] Solver Levenberg-Marquardt (CMINPACK) had a very large residual (nor
+m = 0.0008523923131068534).
 [Warn] Solver Newton Raphson (NLsolveJL) had a very large residual (norm = 
 1.8134919010169324e72).
 
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 4.107334346313282e7.
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 4.36956026916846e-10.
+[Warn] Solver Newton Raphson (Sundials) had a very large residual (norm = 4
+.1030444523150355e7).
 ```
 
 
@@ -304,6 +368,72 @@ idual norm = 4.107334346313282e7.
 benchmark_problem!("Powell singular function")
 ```
 
+```
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 2.945100572117028e-9.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 7.351480171352898e-9.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 2.945100572117028e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 2.945100572117028e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 2.8429847529782356e-9.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 2.945100572117028e-9.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 2.8429847529782356e-9.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 2.7952108150126756e-9.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 7.530945254053375e-9.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 2.7952108150126756e-9.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 2.8551395051697775e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 7.887593900975011e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 7.887593866725585e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 9.888757034011156e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 9.888757023494699e-9.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 2.9904543725837263e-9.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 1.1682162549189013e-34.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 1.0735902927137218e-23.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 2.9451005722314578e-9.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 2.9451005722314578e-9.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 9.823952331145566e-9.
+```
+
+
 ![](figures/nonlinear_solver_23_tests_8_1.png)
 
 
@@ -315,8 +445,68 @@ benchmark_problem!("Powell badly scaled function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (BackTracking Line Search) returned retcode St
-alled with an residual norm = 2.836751226730555e-8.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 1.5733414571172943e-11.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 8.807574669589258e-10.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 8.115426330945752e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 9.863339034410501e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 3.1642466424841587e-12.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 1.6564527527407336e-12.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 3.1642466424841587e-12.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 1.368238855548043e-12.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 1.1168843627729075e-12.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 1.7160717291631045e-12.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 1.3488543615380877e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 4.4873949001100755e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 4.4874393090310605e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 2.687781108789977e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 2.687672306933564e-10.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 1.5247237916682366e-9.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 1.7124214268804394e-9.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 0.0.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 1.5733192526568018e-11.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 7.051692563209144e-12.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 1.0528133920217897e-10.
 ```
 
 
@@ -331,11 +521,67 @@ benchmark_problem!("Wood function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (BackTracking Line Search) returned retcode St
-alled with an residual norm = 3.6696300551145455e-8.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 4.884981308350689e-14.
 
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 2.245655731895381e11.
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 2.751798788835913e-11.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 8.272180940238627e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 9.527585387303361e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 8.449333899207545e-9.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 3.6615155352137663e-13.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 3.930189507173054e-14.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 7.783131916738739e-10.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 3.814113469502445e-10.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 1.6234904531842176e-9.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 1.649005376691548e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 5.511275658065529e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 5.511484157949553e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 5.511275658065529e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 5.511484157949553e-9.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 1.4233059175694507e-13.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 3.373679113849448e-11.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 1.3100631690576847e-14.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 4.241051954068098e-14.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 1.1522571785604896e-10.
+[Warn] Solver Newton Raphson (Sundials) had a very large residual (norm = 2
+.2456544225704483e11).
 ```
 
 
@@ -350,8 +596,67 @@ benchmark_problem!("Helical valley function")
 ```
 
 ```
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 43118.59202077484.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 1.145684605114055e-14.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 1.2989387343509406e-10.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 9.361802444374234e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 9.389520272407026e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 4.7194855486336445e-11.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 2.2591098913318186e-16.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 4.7194855486336445e-11.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 2.220446049250313e-15.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 7.23670851354411e-17.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 2.101282081278562e-12.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 2.985118509462477e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 1.2944894081552981e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 1.2944894080950794e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 1.0641488059519515e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 1.0641488059601572e-9.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 4.539462534003996e-14.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 2.565741632453209e-13.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 8.661763207506094e-17.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 1.146398379185431e-14.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 1.1102230246251565e-14.
+[Warn] Solver Newton Raphson (Sundials) had a very large residual (norm = 4
+3118.58034907).
 ```
 
 
@@ -366,11 +671,67 @@ benchmark_problem!("Watson function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (BackTracking Line Search) returned retcode St
-alled with an residual norm = 4.170221159725243e-7.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 4.2076411799207847e-13.
 
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 11.507296497074089.
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 8.54307874442739e-11.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 8.768449129975542e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 9.087108877869898e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 1.3604881110573785e-12.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 6.107614414219142e-14.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 2.035559221180705e-13.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 7.10331099496031e-13.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 4.1598668953923834e-15.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 4.2049697057677804e-15.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 8.39906963423509e-12.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 5.698641558637974e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 5.696234595120586e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 4.258127184186833e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 4.242606266302573e-11.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 5.8986529237470275e-9.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 2.222690781428227e-12.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 4.1598668953923834e-15.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 4.200216563443604e-13.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 7.246328363741394e-10.
+[Warn] Solver Newton Raphson (Sundials) had a very large residual (norm = 1
+0.896890601850592).
 ```
 
 
@@ -384,6 +745,72 @@ idual norm = 11.507296497074089.
 benchmark_problem!("Chebyquad function")
 ```
 
+```
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 3.685329819091976e-12.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 7.887698827424572e-10.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 7.237587917874322e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 8.912854621012656e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 4.268807529683727e-14.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 1.6653345369377348e-16.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 4.268807529683727e-14.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 8.68749516769185e-14.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 1.3732404102739793e-11.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 9.381384558082573e-15.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 8.729128531115293e-13.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 6.712307820677665e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 6.712307765166514e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 6.500716631663295e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 6.500056048963643e-11.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 1.0070833056374795e-11.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 1.6653345369377348e-16.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 5.551115123125783e-17.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 3.685329819091976e-12.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 9.43689570931383e-16.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 1.2562341722421877e-9.
+```
+
+
 ![](figures/nonlinear_solver_23_tests_13_1.png)
 
 
@@ -395,23 +822,63 @@ benchmark_problem!("Brown almost linear function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
-Stalled with an residual norm = 9.392536070074919e-8.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 9.544809387307396e-12.
 
-[Warn] Solver Newton Raphson (BackTracking Line Search) returned retcode In
-ternalLineSearchFailed with an residual norm = 16.477657543412246.
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 1.5631940186722204e-13.
 
-[Warn] Solver Newton Trust Region (Yuan Radius Update) returned retcode Sta
-lled with an residual norm = 16.530216206349944.
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 9.860400496108923e-9.
+[Warn] Solver Newton Raphson (BackTracking Line Search) had a very large re
+sidual (norm = 9.738415382847927e73).
 
-[Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode MaxIter
-s with an residual norm = 1.0084025112849544.
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 7.105427357601002e-15.
 
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
-an residual norm = 1.000000000050551.
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 1.652681325126082e-10.
 
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 6.150960132525852e29.
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 7.105427357601002e-15.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 2.2853652303922445e-10.
+[Warn] Solver Trust Region (Yuan Radius Update) had a very large residual (
+norm = 5.5).
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 5.344592546308036e-9.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 1.6140933034591853e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 1.4030865358449773e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 1.4029444272978253e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 3.0260240979629316e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 3.026058514876695e-9.
+[Warn] Solver PseudoTransient (alpha_initial=10.0) had a very large residua
+l (norm = 1.3725089496539944e20).
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 5.995204332975845e-15.
+[Warn] Solver Levenberg-Marquardt (CMINPACK) had a very large residual (nor
+m = 1.000000000050551).
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 9.546030632634483e-12.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 3.3823295275681176e-9.
+[Warn] Solver Newton Raphson (Sundials) had a very large residual (norm = 6
+.150960132525852e29).
 ```
 
 
@@ -425,6 +892,72 @@ idual norm = 6.150960132525852e29.
 benchmark_problem!("Discrete boundary value function")
 ```
 
+```
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 2.7755575615628914e-16.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 1.7220381648419547e-9.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 2.7755575615628914e-16.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 2.7755575615628914e-16.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 9.104287879146966e-10.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 2.7755575615628914e-16.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 9.104287879146966e-10.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 2.7755575615628914e-16.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 2.3464563625452683e-13.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 2.7755575615628914e-16.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 7.781601529810445e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 9.328525341079086e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 9.328519068318997e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 9.328525341079086e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 9.328519068318997e-9.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 4.091729732813576e-11.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 1.582067810090848e-15.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 5.551115123125783e-17.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 3.0531133177191805e-16.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 3.0531133177191805e-16.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 1.4191641750649353e-9.
+```
+
+
 ![](figures/nonlinear_solver_23_tests_15_1.png)
 
 
@@ -434,6 +967,72 @@ benchmark_problem!("Discrete boundary value function")
 ```julia
 benchmark_problem!("Discrete integral equation function")
 ```
+
+```
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 1.304512053934559e-15.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 5.207545256125101e-9.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 1.304512053934559e-15.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 1.304512053934559e-15.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 2.868085491325445e-10.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 1.304512053934559e-15.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 2.868085491325445e-10.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 1.304512053934559e-15.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 1.304512053934559e-15.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 1.304512053934559e-15.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 4.440892098500626e-16.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 8.828827668949657e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 8.828898723223233e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 8.828827668949657e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 8.828898723223233e-10.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 7.702256749064773e-10.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 4.1661118999059e-14.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 2.7755575615628914e-17.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 1.304512053934559e-15.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 1.304512053934559e-15.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 8.794850236970575e-9.
+```
+
 
 ![](figures/nonlinear_solver_23_tests_16_1.png)
 
@@ -446,50 +1045,54 @@ benchmark_problem!("Trigonometric function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (BackTracking Line Search) returned retcode St
-alled with an residual norm = 5.205984615171513e-8.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 6.942141306254257e-12.
 
-[Warn] Solver Newton Trust Region returned retcode Stalled with an residual
- norm = 0.005286829079136254.
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 6.835845778319083e-11.
 
-[Warn] Solver Newton Trust Region (NLsolve Radius Update) returned retcode 
-Stalled with an residual norm = 0.005286829032493245.
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 6.4420154766153814e-9.
 
-[Warn] Solver Newton Trust Region (Nocedal Wright Radius Update) returned r
-etcode Stalled with an residual norm = 0.005289451111329025.
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 9.590515638591146e-9.
+[Warn] Solver Trust Region had a very large residual (norm = 0.004295419787
+4424255).
+[Warn] Solver Trust Region (NLsolve Radius Update) had a very large residua
+l (norm = 0.004295418028397016).
+[Warn] Solver Trust Region (Nocedal Wright Radius Update) had a very large 
+residual (norm = 0.004295415051797022).
+[Warn] Solver Trust Region (Hei Radius Update) had a very large residual (n
+orm = 0.004295415554435758).
+[Warn] Solver Trust Region (Yuan Radius Update) had a very large residual (
+norm = 0.004295419752717078).
 
-[Warn] Solver Newton Trust Region (Hei Radius Update) returned retcode Stal
-led with an residual norm = 0.006351978612885684.
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 6.619704784327496e-15.
+[Warn] Solver Trust Region (Fan Radius Update) had a very large residual (n
+orm = 0.004295417374754237).
+[Warn] Solver Levenberg-Marquardt (α_geodesic=0.75) had a very large residu
+al (norm = 0.004813013676580463).
+[Warn] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) had a very la
+rge residual (norm = 0.004813013675675534).
+[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5) had a very large residua
+l (norm = 0.004416795838331683).
+[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) had a ver
+y large residual (norm = 0.004402824983449488).
+[Warn] Solver PseudoTransient (alpha_initial=10.0) had a very large residua
+l (norm = 7.294853510353528).
+[Warn] Solver Modified Powell (CMINPACK) had a very large residual (norm = 
+0.0044055510820976695).
+[Warn] Solver Levenberg-Marquardt (CMINPACK) had a very large residual (nor
+m = 0.004295506299377833).
 
-[Warn] Solver Newton Trust Region (Yuan Radius Update) returned retcode Sta
-lled with an residual norm = 0.00528682903249465.
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 6.938394303546147e-12.
 
-[Warn] Solver Newton Trust Region (Fan Radius Update) returned retcode Stal
-led with an residual norm = 0.005286829032492023.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode MaxIte
-rs with an residual norm = 0.005329166759994638.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
-ode MaxIters with an residual norm = 0.00532916675933288.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode MaxIter
-s with an residual norm = 0.005328491477328889.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
-retcode MaxIters with an residual norm = 0.005327539947858262.
-
-[Warn] Solver PseudoTransient (alpha_initial=10.0) returned retcode MaxIter
-s with an residual norm = 0.08411753364324727.
-
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
-esidual norm = 0.005296376610978554.
-
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
-an residual norm = 0.0052868290387983255.
-
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 54.70641649171055.
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 1.2043231689684575e-10.
+[Warn] Solver Newton Raphson (Sundials) had a very large residual (norm = 2
+4.023135592682003).
 ```
 
 
@@ -503,6 +1106,72 @@ idual norm = 54.70641649171055.
 benchmark_problem!("Variably dimensioned function")
 ```
 
+```
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 1.3234968676556491e-12.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 4.345885873391353e-9.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 1.3234968676556491e-12.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 1.3234968676556491e-12.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 1.3234968676556491e-12.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 1.3234968676556491e-12.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 1.3234968676556491e-12.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 1.3234968676556491e-12.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 1.3234968676556491e-12.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 1.3234968676556491e-12.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 1.3234968676556491e-12.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 5.197098307263559e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 5.2210791245954624e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 8.205796042659586e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 8.180903732224465e-10.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 1.3234968676556491e-12.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 5.002331882053568e-12.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 0.0.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 2.868483228724017e-12.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 2.868483228724017e-12.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 0.0.
+```
+
+
 ![](figures/nonlinear_solver_23_tests_18_1.png)
 
 
@@ -514,8 +1183,67 @@ benchmark_problem!("Broyden tridiagonal function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode I
-nternalLineSearchFailed with an residual norm = 1.6703675424557458.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 7.54840412398039e-10.
+[Warn] Solver Newton Raphson (Hager & Zhang Line Search) had a very large r
+esidual (norm = 4.810164422122141e15).
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 7.54840412398039e-10.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 7.54840412398039e-10.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 4.9817927560980024e-12.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 7.54840412398039e-10.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 4.9817927560980024e-12.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 7.54840412398039e-10.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 7.54840412398039e-10.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 7.54840412398039e-10.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 3.3433256163561964e-12.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 2.720891512097978e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 2.720909275666372e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 2.720891512097978e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 2.720909275666372e-9.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 2.12066397775601e-9.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 2.377050778434864e-10.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 4.440892098500626e-16.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 7.548405234203415e-10.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 7.548405234203415e-10.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 5.775745437475166e-10.
 ```
 
 
@@ -530,8 +1258,67 @@ benchmark_problem!("Broyden banded function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
-talled with an residual norm = 2.0271661691171015.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 9.359466091041213e-9.
+[Warn] Solver Newton Raphson (Hager & Zhang Line Search) had a very large r
+esidual (norm = 1.200186126784717).
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 9.359466091041213e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 9.359466091041213e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 9.359466091041213e-9.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 9.359466091041213e-9.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 9.359466091041213e-9.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 9.359466091041213e-9.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 9.359466091041213e-9.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 9.359466091041213e-9.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 9.359466091041213e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 1.6732734642310731e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 1.6734733043755057e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 1.6732734642310731e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 1.6734733043755057e-10.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 4.440892098500626e-16.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 1.406736505060735e-9.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 8.881784197001252e-16.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 9.35947180868979e-9.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 9.35947180868979e-9.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 3.907084933363336e-10.
 ```
 
 
@@ -546,29 +1333,66 @@ benchmark_problem!("Hammarling 2 by 2 matrix square root problem")
 ```
 
 ```
-[Warn] Solver Newton Trust Region returned retcode Stalled with an residual
- norm = 3.000101079373144e-8.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 1.1102230246251565e-16.
 
-[Warn] Solver Newton Trust Region (NLsolve Radius Update) returned retcode 
-Stalled with an residual norm = 2.99982478905439e-8.
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 1.1546319456101628e-14.
 
-[Warn] Solver Newton Trust Region (Nocedal Wright Radius Update) returned r
-etcode Stalled with an residual norm = 3.001046575238718e-8.
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 5.146422288326846e-9.
 
-[Warn] Solver Newton Trust Region (Hei Radius Update) returned retcode Stal
-led with an residual norm = 3.000136983535698e-8.
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 1.1102230246251565e-16.
 
-[Warn] Solver Newton Trust Region (Yuan Radius Update) returned retcode Sta
-lled with an residual norm = 6.058010992847294e-8.
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 9.998897371997112e-9.
 
-[Warn] Solver Newton Trust Region (Fan Radius Update) returned retcode Stal
-led with an residual norm = 2.999934388032598e-8.
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 9.998955736891987e-9.
 
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
-esidual norm = 1.6728080025761286e-5.
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 9.999969447949885e-9.
 
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
-an residual norm = 2.43021260718148e-5.
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 9.999902617651876e-9.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode ShrinkThre
+sholdExceeded with an residual norm = 6.485974185184814e-8.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 1.5627499294623703e-12.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 9.999330347021732e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 1.6792858215097795e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 1.5574467271406434e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 2.119859843219274e-12.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 2.154942890797429e-12.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 8.378686633392363e-11.
+[Warn] Solver Modified Powell (CMINPACK) had a very large residual (norm = 
+1.671832419364838e-5).
+[Warn] Solver Levenberg-Marquardt (CMINPACK) had a very large residual (nor
+m = 1.606206659118867e-5).
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 1.1102230246251565e-16.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 1.1102230246251565e-16.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 7.356216746856603e-10.
 ```
 
 
@@ -583,29 +1407,66 @@ benchmark_problem!("Hammarling 3 by 3 matrix square root problem")
 ```
 
 ```
-[Warn] Solver Newton Trust Region returned retcode Stalled with an residual
- norm = 3.099164770429116e-8.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 1.1102230246251565e-16.
 
-[Warn] Solver Newton Trust Region (NLsolve Radius Update) returned retcode 
-Stalled with an residual norm = 3.079932603991546e-8.
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 1.2318031039626476e-9.
 
-[Warn] Solver Newton Trust Region (Nocedal Wright Radius Update) returned r
-etcode Stalled with an residual norm = 3.1022664205984924e-8.
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 5.009677561673698e-9.
 
-[Warn] Solver Newton Trust Region (Hei Radius Update) returned retcode Stal
-led with an residual norm = 3.137723048087843e-8.
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 1.1102230246251565e-16.
 
-[Warn] Solver Newton Trust Region (Yuan Radius Update) returned retcode Sta
-lled with an residual norm = 3.23436286399126e-8.
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 9.999020663759086e-9.
 
-[Warn] Solver Newton Trust Region (Fan Radius Update) returned retcode Stal
-led with an residual norm = 3.020007136617945e-8.
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 9.999661246569013e-9.
 
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
-esidual norm = 5.66486116658339e-6.
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 9.998678786868239e-9.
 
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
-an residual norm = 2.3184902150984566e-5.
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 9.994120483001654e-9.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 9.99965539128097e-9.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 1.7390533457728452e-12.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 9.998200522882907e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 1.6792649493169165e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 1.0188805354971464e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 7.458966777562637e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 5.413958170663591e-11.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 9.636735853746359e-14.
+[Warn] Solver Modified Powell (CMINPACK) had a very large residual (norm = 
+4.244085431537152e-6).
+[Warn] Solver Levenberg-Marquardt (CMINPACK) had a very large residual (nor
+m = 1.5931061662838186e-5).
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 1.1102230246251565e-16.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 1.1102230246251565e-16.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 7.356216746856603e-10.
 ```
 
 
@@ -619,6 +1480,72 @@ an residual norm = 2.3184902150984566e-5.
 benchmark_problem!("Dennis and Schnabel 2 by 2 example")
 ```
 
+```
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 1.0977885267493548e-11.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 4.440892098500626e-16.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 1.0977885267493548e-11.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 1.0977885267493548e-11.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 8.36610780652336e-11.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 1.0977885267493548e-11.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 8.36610780652336e-11.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 0.0.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 1.0977885267493548e-11.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 0.0.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 2.3772983581693552e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 1.2820273731506404e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 1.2819492134497068e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 1.2147705064080583e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 1.2148948513868163e-10.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 3.97371024973836e-12.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 4.440892098500626e-16.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 2.711222357731913e-10.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 1.0977885267493548e-11.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 1.0977885267493548e-11.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 1.4388490399142029e-12.
+```
+
+
 ![](figures/nonlinear_solver_23_tests_23_1.png)
 
 
@@ -630,8 +1557,67 @@ benchmark_problem!("Sample problem 18")
 ```
 
 ```
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 21.24046883008426.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 8.16714264178066e-9.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 7.27682214862992e-11.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 7.508958829076498e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 8.16714264178066e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 2.882025410947776e-11.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 7.702104220860704e-9.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 2.882025410947776e-11.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 4.383074308503473e-9.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 8.16714264178066e-9.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 4.383074308503473e-9.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 1.5463449882634202e-12.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 2.197559528526869e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 2.1976003653193354e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 4.929866744169792e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 4.341279241060183e-9.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 9.503369559071248e-12.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 1.0601839132130227e-19.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 7.226823794985482e-27.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 8.166545633181853e-9.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 1.890631918127139e-13.
+[Warn] Solver Newton Raphson (Sundials) had a very large residual (norm = 1
+5.502775741721951).
 ```
 
 
@@ -645,6 +1631,72 @@ idual norm = 21.24046883008426.
 benchmark_problem!("Sample problem 19")
 ```
 
+```
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 4.956692686961647e-9.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 7.429376930635231e-23.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 4.956692686961647e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 4.956692686961647e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 4.956692686961647e-9.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 4.956692686961647e-9.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 4.956692686961647e-9.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 7.468845853882793e-9.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 3.995236334465612e-9.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 7.468845853882793e-9.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 4.956692686961647e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 5.040837698179729e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 5.040837698179819e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 7.160098265449655e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 7.160098265449658e-9.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 4.998140661041174e-9.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 4.56486967421927e-204.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 1.1957479394050465e-104.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 4.956712536099437e-9.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 4.956712536099437e-9.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 9.15473337849735e-9.
+```
+
+
 ![](figures/nonlinear_solver_23_tests_25_1.png)
 
 
@@ -656,8 +1708,68 @@ benchmark_problem!("Scalar problem f(x) = x(x - 5)^2")
 ```
 
 ```
-[Warn] Solver Newton Raphson (BackTracking Line Search) returned retcode St
-alled with an residual norm = 2.8703763047091932e-8.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 1.939490713125329e-15.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 1.4281273275728023e-19.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 4.851357742679811e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 9.732368488008855e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 1.1090502985101545e-11.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 0.0.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 1.1090502985101545e-11.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 0.0.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 6.671730169987746e-13.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 0.0.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 1.3176112414471956e-16.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 1.8009382137169453e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 1.800938213712313e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 1.8009382137169453e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 1.800938213712313e-9.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 1.633059876766743e-15.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 0.0.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 0.0.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 1.9400014971535805e-15.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 0.0.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 3.5473471473362887e-9.
 ```
 
 
@@ -672,59 +1784,50 @@ benchmark_problem!("Freudenstein-Roth function")
 ```
 
 ```
-[Warn] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode I
-nternalLineSearchFailed with an residual norm = 7.394113309188668.
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 4.964704203302972e-10.
+[Warn] Solver Newton Raphson (Hager & Zhang Line Search) had a very large r
+esidual (norm = 8.061678381923512e19).
+[Warn] Solver Newton Raphson (More & Thuente Line Search) had a very large 
+residual (norm = 1.963875971147506e20).
+[Warn] Solver Newton Raphson (BackTracking Line Search) had a very large re
+sidual (norm = 2.36746917732678e21).
+[Warn] Solver Trust Region had a very large residual (norm = 4.948952149637
+1545).
+[Warn] Solver Trust Region (NLsolve Radius Update) had a very large residua
+l (norm = 4.94895209564568).
+[Warn] Solver Trust Region (Nocedal Wright Radius Update) had a very large 
+residual (norm = 4.9489521496371545).
+[Warn] Solver Trust Region (Hei Radius Update) had a very large residual (n
+orm = 4.94895210287909).
+[Warn] Solver Trust Region (Yuan Radius Update) had a very large residual (
+norm = 4.948952096598568).
+[Warn] Solver Trust Region (Bastin Radius Update) had a very large residual
+ (norm = 4.948952118680715).
+[Warn] Solver Trust Region (Fan Radius Update) had a very large residual (n
+orm = 4.94895209647386).
+[Warn] Solver Levenberg-Marquardt (α_geodesic=0.75) had a very large residu
+al (norm = 5.972528495064161).
+[Warn] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) had a very la
+rge residual (norm = 5.1736438460190115).
+[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5) had a very large residua
+l (norm = 6.029219599078573).
+[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) had a ver
+y large residual (norm = 5.219602844758882).
 
-[Warn] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
-InternalLineSearchFailed with an residual norm = 7.619788755697659.
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 0.0.
+[Warn] Solver Modified Powell (CMINPACK) had a very large residual (norm = 
+4.956551834519658).
+[Warn] Solver Levenberg-Marquardt (CMINPACK) had a very large residual (nor
+m = 4.948960804228584).
 
-[Warn] Solver Newton Raphson (BackTracking Line Search) returned retcode In
-ternalLineSearchFailed with an residual norm = 7.611542799300934.
-
-[Warn] Solver Newton Trust Region returned retcode ShrinkThresholdExceeded 
-with an residual norm = 6.998875172428783.
-
-[Warn] Solver Newton Trust Region (NLsolve Radius Update) returned retcode 
-Stalled with an residual norm = 6.99887517242878.
-
-[Warn] Solver Newton Trust Region (Nocedal Wright Radius Update) returned r
-etcode ShrinkThresholdExceeded with an residual norm = 6.998875172428783.
-
-[Warn] Solver Newton Trust Region (Hei Radius Update) returned retcode Stal
-led with an residual norm = 6.99887517242878.
-
-[Warn] Solver Newton Trust Region (Yuan Radius Update) returned retcode Sta
-lled with an residual norm = 6.998875172428782.
-
-[Warn] Solver Newton Trust Region (Bastin Radius Update) returned retcode S
-talled with an residual norm = 6.998875172428782.
-
-[Warn] Solver Newton Trust Region (Fan Radius Update) returned retcode Stal
-led with an residual norm = 6.99887517242878.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode MaxIte
-rs with an residual norm = 6.998875993776454.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
-ode MaxIters with an residual norm = 6.998876005050463.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode MaxIter
-s with an residual norm = 6.998875500816712.
-
-[Warn] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
-retcode MaxIters with an residual norm = 6.998875460606084.
-
-[Warn] Solver Modified Powell (CMINPACK) returned retcode Failure with an r
-esidual norm = 6.998961666702933.
-
-[Warn] Solver Levenberg-Marquardt (CMINPACK) returned retcode Failure with 
-an residual norm = 6.998875175844748.
-
-[Warn] Solver Newton Trust Region (NLsolveJL) returned retcode Failure with
- an residual norm = 6.99887517242878.
-
-[Warn] Solver Newton-Krylov (Sundials) returned retcode Failure with an res
-idual norm = 8.789770825114247e10.
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 3.4426292927491886e-9.
+[Warn] Solver Trust Region (NLsolveJL) had a very large residual (norm = 4.
+948952141537315).
+[Warn] Solver Newton Raphson (Sundials) had a very large residual (norm = 6
+.220013152375471e10).
 ```
 
 
@@ -738,6 +1841,72 @@ idual norm = 8.789770825114247e10.
 benchmark_problem!("Boggs function")
 ```
 
+```
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 1.7319479184152442e-14.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 5.510057868165197e-10.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 6.991881518203513e-9.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 8.941490325931056e-9.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 1.3361534101363759e-11.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 6.477374192570551e-12.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 1.3361534101363759e-11.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 6.477374192570551e-12.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 3.3306690738754696e-16.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 6.477374192570551e-12.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 6.326250634458574e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 2.319087144542209e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 2.3191071285566522e-10.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 2.0244250720224954e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 2.023747835977474e-11.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 3.186340080674199e-14.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 6.772360450213455e-12.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 7.552744017741997e-17.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 6.661338147750939e-16.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 2.5139568204934903e-10.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 3.006483950684924e-13.
+```
+
+
 ![](figures/nonlinear_solver_23_tests_28_1.png)
 
 
@@ -747,6 +1916,72 @@ benchmark_problem!("Boggs function")
 ```julia
 benchmark_problem!("Chandrasekhar function")
 ```
+
+```
+[Info] Solver Newton Raphson (No Line Search) returned retcode Success with
+ an residual norm = 2.9976021664879227e-14.
+
+[Info] Solver Newton Raphson (Hager & Zhang Line Search) returned retcode S
+uccess with an residual norm = 4.440892098500626e-16.
+
+[Info] Solver Newton Raphson (More & Thuente Line Search) returned retcode 
+Success with an residual norm = 2.9976021664879227e-14.
+
+[Info] Solver Newton Raphson (BackTracking Line Search) returned retcode Su
+ccess with an residual norm = 2.9976021664879227e-14.
+
+[Info] Solver Trust Region returned retcode Success with an residual norm =
+ 9.253242616580337e-11.
+
+[Info] Solver Trust Region (NLsolve Radius Update) returned retcode Success
+ with an residual norm = 2.9976021664879227e-14.
+
+[Info] Solver Trust Region (Nocedal Wright Radius Update) returned retcode 
+Success with an residual norm = 9.253242616580337e-11.
+
+[Info] Solver Trust Region (Hei Radius Update) returned retcode Success wit
+h an residual norm = 2.220446049250313e-16.
+
+[Info] Solver Trust Region (Yuan Radius Update) returned retcode Success wi
+th an residual norm = 1.9977886012156887e-10.
+
+[Info] Solver Trust Region (Bastin Radius Update) returned retcode Success 
+with an residual norm = 2.220446049250313e-16.
+
+[Info] Solver Trust Region (Fan Radius Update) returned retcode Success wit
+h an residual norm = 3.2548048700675736e-9.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.75) returned retcode Succes
+s with an residual norm = 5.7264415431745874e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic, with Cholesky) returned retc
+ode Success with an residual norm = 5.72513148000553e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5) returned retcode Success
+ with an residual norm = 5.7264415431745874e-11.
+
+[Info] Solver Levenberg-Marquardt (α_geodesic=0.5, with Cholesky) returned 
+retcode Success with an residual norm = 5.72513148000553e-11.
+
+[Info] Solver PseudoTransient (alpha_initial=10.0) returned retcode Success
+ with an residual norm = 1.9410728580027126e-9.
+
+[Info] Solver Modified Powell (CMINPACK) returned retcode Success with an r
+esidual norm = 3.0351055002597604e-11.
+
+[Info] Solver Levenberg-Marquardt (CMINPACK) returned retcode Success with 
+an residual norm = 4.440892098500626e-16.
+
+[Info] Solver Newton Raphson (NLsolveJL) returned retcode Success with an r
+esidual norm = 2.9531932455029164e-14.
+
+[Info] Solver Trust Region (NLsolveJL) returned retcode Success with an res
+idual norm = 2.9531932455029164e-14.
+
+[Info] Solver Newton Raphson (Sundials) returned retcode Success with an re
+sidual norm = 7.105427357601002e-15.
+```
+
 
 ![](figures/nonlinear_solver_23_tests_29_1.png)
 
@@ -780,13 +2015,13 @@ Text(String(take!(io)))
       <th style = "text-align: center;">Newton Raphson (Hager &amp; Zhang Line Search)</th>
       <th style = "text-align: center;">Newton Raphson (More &amp; Thuente Line Search)</th>
       <th style = "text-align: center;">Newton Raphson (BackTracking Line Search)</th>
-      <th style = "text-align: center;">Newton Trust Region</th>
-      <th style = "text-align: center;">Newton Trust Region (NLsolve Radius Update)</th>
-      <th style = "text-align: center;">Newton Trust Region (Nocedal Wright Radius Update)</th>
-      <th style = "text-align: center;">Newton Trust Region (Hei Radius Update)</th>
-      <th style = "text-align: center;">Newton Trust Region (Yuan Radius Update)</th>
-      <th style = "text-align: center;">Newton Trust Region (Bastin Radius Update)</th>
-      <th style = "text-align: center;">Newton Trust Region (Fan Radius Update)</th>
+      <th style = "text-align: center;">Trust Region</th>
+      <th style = "text-align: center;">Trust Region (NLsolve Radius Update)</th>
+      <th style = "text-align: center;">Trust Region (Nocedal Wright Radius Update)</th>
+      <th style = "text-align: center;">Trust Region (Hei Radius Update)</th>
+      <th style = "text-align: center;">Trust Region (Yuan Radius Update)</th>
+      <th style = "text-align: center;">Trust Region (Bastin Radius Update)</th>
+      <th style = "text-align: center;">Trust Region (Fan Radius Update)</th>
       <th style = "text-align: center;">Levenberg-Marquardt (α_geodesic=0.75)</th>
       <th style = "text-align: center;">Levenberg-Marquardt (α_geodesic, with Cholesky)</th>
       <th style = "text-align: center;">Levenberg-Marquardt (α_geodesic=0.5)</th>
@@ -795,28 +2030,28 @@ Text(String(take!(io)))
       <th style = "text-align: center;">Modified Powell (CMINPACK)</th>
       <th style = "text-align: center;">Levenberg-Marquardt (CMINPACK)</th>
       <th style = "text-align: center;">Newton Raphson (NLsolveJL)</th>
-      <th style = "text-align: center;">Newton Trust Region (NLsolveJL)</th>
-      <th style = "text-align: center;">Newton-Krylov (Sundials)</th>
+      <th style = "text-align: center;">Trust Region (NLsolveJL)</th>
+      <th style = "text-align: center;">Newton Raphson (Sundials)</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td style = "text-align: center;">22</td>
-      <td style = "text-align: center;">20</td>
-      <td style = "text-align: center;">20</td>
-      <td style = "text-align: center;">15</td>
-      <td style = "text-align: center;">19</td>
-      <td style = "text-align: center;">19</td>
-      <td style = "text-align: center;">19</td>
-      <td style = "text-align: center;">19</td>
-      <td style = "text-align: center;">18</td>
-      <td style = "text-align: center;">22</td>
-      <td style = "text-align: center;">18</td>
-      <td style = "text-align: center;">21</td>
-      <td style = "text-align: center;">21</td>
-      <td style = "text-align: center;">21</td>
-      <td style = "text-align: center;">21</td>
-      <td style = "text-align: center;">20</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">0</td>
       <td style = "text-align: center;">18</td>
       <td style = "text-align: center;">17</td>
       <td style = "text-align: center;">22</td>
@@ -825,20 +2060,20 @@ Text(String(take!(io)))
     </tr>
     <tr>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
@@ -847,45 +2082,22 @@ Text(String(take!(io)))
       <td style = "text-align: center;">X</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -893,91 +2105,22 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -985,8 +2128,20 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
@@ -994,12 +2149,92 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
@@ -1008,22 +2243,22 @@ Text(String(take!(io)))
       <td style = "text-align: center;">X</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1031,22 +2266,22 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1054,16 +2289,16 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
@@ -1077,45 +2312,22 @@ Text(String(take!(io)))
       <td style = "text-align: center;">X</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1123,22 +2335,22 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1146,68 +2358,22 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1215,76 +2381,52 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
@@ -1299,30 +2441,8 @@ Text(String(take!(io)))
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">X</td>
-      <td style = "text-align: center;">X</td>
-    </tr>
-    <tr>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1330,22 +2450,137 @@ Text(String(take!(io)))
       <td style = "text-align: center;">O</td>
     </tr>
     <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
-      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
       <td style = "text-align: center;">O</td>
@@ -1398,7 +2633,7 @@ Package Information:
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.4.0
-  [13f3f980] CairoMakie v0.11.5
+  [13f3f980] CairoMakie v0.11.6
   [2b5f629d] DiffEqBase v6.146.0
   [f3b72e0c] DiffEqDevTools v2.44.1
   [b964fa9f] LaTeXStrings v1.3.1
@@ -1406,14 +2641,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.5.0
-  [91a5bcdd] Plots v1.39.0
+  [8913a72c] NonlinearSolve v3.5.1
+  [91a5bcdd] Plots v1.40.0
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
+  [efcf1570] Setfield v1.1.1
   [47a9eef4] SparseDiffTools v2.16.0
   [f1835b91] SpeedMapping v0.3.0
-  [90137ffa] StaticArrays v1.9.1
-  [c3572dad] Sundials v4.23.1
+  [90137ffa] StaticArrays v1.9.2
+  [c3572dad] Sundials v4.23.2
 ```
 
 And the full manifest:
@@ -1441,11 +2677,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2a0fbf3d] CPUSummary v0.2.4
   [96374032] CRlibm v1.0.1
   [159f3aea] Cairo v1.0.5
-  [13f3f980] CairoMakie v0.11.5
+  [13f3f980] CairoMakie v0.11.6
   [49dc2e85] Calculus v0.5.1
-  [d360d2e6] ChainRulesCore v1.19.1
+  [d360d2e6] ChainRulesCore v1.20.1
   [fb6a15b2] CloseOpenIntervals v0.1.12
-  [944b1d66] CodecZlib v0.7.3
+  [523fee87] CodecBzip2 v0.8.2
+  [944b1d66] CodecZlib v0.7.4
   [a2cac450] ColorBrewer v0.4.0
   [35d6a980] ColorSchemes v3.24.0
   [3da002f7] ColorTypes v0.11.4
@@ -1464,7 +2701,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c36e975a] CoverageTools v1.3.0
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
-  [9a962f9c] DataAPI v1.15.0
+  [9a962f9c] DataAPI v1.16.0
   [864edb3b] DataStructures v0.18.16
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.11
@@ -1478,7 +2715,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [31c24e10] Distributions v0.25.107
   [ffbed154] DocStringExtensions v0.9.3
   [e30172f5] Documenter v1.2.1
-  [35a29f4d] DocumenterTools v0.1.18
+  [35a29f4d] DocumenterTools v0.1.19
   [fa6b7ba4] DualNumbers v0.6.8
   [4e289a0a] EnumX v1.0.4
   [f151be2c] EnzymeCore v0.6.5
@@ -1490,7 +2727,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7a1cc6ca] FFTW v1.8.0
   [7034ab61] FastBroadcast v0.2.8
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v2.0.0
+  [29a986be] FastLapackInterface v2.0.1
   [5789e2e9] FileIO v1.16.2
   [8fc22ac5] FilePaths v0.8.3
   [48062228] FilePathsBase v0.9.21
@@ -1504,9 +2741,9 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [46192b85] GPUArraysCore v0.1.6
-⌅ [28b8d3ca] GR v0.72.10
+  [28b8d3ca] GR v0.73.1
   [cf35fbd7] GeoInterface v1.3.3
-  [5c1252a2] GeometryBasics v0.4.9
+  [5c1252a2] GeometryBasics v0.4.10
 ⌃ [d7ba0133] Git v1.2.1
   [a2bd30eb] Graphics v1.1.2
   [86223c79] Graphs v1.9.0
@@ -1522,7 +2759,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [615f187c] IfElse v0.1.1
   [2803e5a7] ImageAxes v0.6.11
   [c817782e] ImageBase v0.1.7
-  [a09fc81d] ImageCore v0.10.1
+  [a09fc81d] ImageCore v0.10.2
   [82e4d734] ImageIO v0.6.7
   [bc367c6b] ImageMetadata v0.9.9
   [9b13fd28] IndirectArrays v1.0.0
@@ -1558,11 +2795,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [bdcacae8] LoopVectorization v0.12.166
   [4854310b] MINPACK v1.2.0
   [1914dd2f] MacroTools v0.5.13
-  [ee78f7c6] Makie v0.20.4
-  [20f20a25] MakieCore v0.7.2
+  [ee78f7c6] Makie v0.20.5
+  [20f20a25] MakieCore v0.7.3
   [d125e4d3] ManualMemory v0.1.8
   [dbb5928d] MappedArrays v0.4.2
   [d0879d2d] MarkdownAST v0.1.2
+  [b8f27783] MathOptInterface v1.25.2
   [0a4f8689] MathTeXEngine v0.5.7
   [a3b82374] MatrixFactorizations v2.1.0
   [bb5d69b7] MaybeInplace v0.1.1
@@ -1574,17 +2812,18 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [46d2c3a1] MuladdMacro v0.2.4
   [3b2b4ff1] Multisets v0.4.4
   [ffc61752] Mustache v1.0.19
+  [d8a4904e] MutableArithmetics v1.4.0
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.5.0
+  [8913a72c] NonlinearSolve v3.5.1
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.13.0
   [52e1d378] OpenEXR v0.3.2
   [4d8831e6] OpenSSL v1.4.1
-  [429524aa] Optim v1.7.8
+  [429524aa] Optim v1.9.1
   [bac558e1] OrderedCollections v1.6.3
   [90014a1f] PDMats v0.11.31
   [f57f5aa1] PNGFiles v0.4.3
@@ -1599,7 +2838,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [eebad327] PkgVersion v0.3.3
   [ccf2f8ad] PlotThemes v3.1.0
   [995b91a9] PlotUtils v1.4.0
-  [91a5bcdd] Plots v1.39.0
+  [91a5bcdd] Plots v1.40.0
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.9
   [1d0040c9] PolyesterWeave v0.2.1
@@ -1620,7 +2859,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v3.5.4
+  [731186ca] RecursiveArrayTools v3.6.2
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
@@ -1629,13 +2868,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ae5879a3] ResettableStacks v1.1.1
   [286e9d63] RingLists v0.2.8
   [79098fc4] Rmath v0.7.1
-  [47965b36] RootedTrees v2.20.0
+  [47965b36] RootedTrees v2.21.0
   [5eaf0fd0] RoundingEmulator v0.2.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.12
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.20.0
+  [0bca4576] SciMLBase v2.21.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
@@ -1661,7 +2900,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v0.8.8
   [0d7ed370] StaticArrayInterface v1.5.0
-  [90137ffa] StaticArrays v1.9.1
+  [90137ffa] StaticArrays v1.9.2
   [1e83bf80] StaticArraysCore v1.4.2
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.2
@@ -1670,8 +2909,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
   [09ab397b] StructArrays v0.6.17
-  [c3572dad] Sundials v4.23.1
-  [2efcf032] SymbolicIndexingInterface v0.3.3
+  [c3572dad] Sundials v4.23.2
+  [2efcf032] SymbolicIndexingInterface v0.3.5
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
@@ -1709,7 +2948,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d7e528f0] FreeType2_jll v2.13.1+0
   [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.9+0
-⌅ [d2c73de3] GR_jll v0.72.10+0
+  [d2c73de3] GR_jll v0.73.1+0
   [78b55507] Gettext_jll v0.21.0+0
 ⌅ [f8c6e375] Git_jll v2.34.1+0
   [7746bdde] Glib_jll v2.76.5+0
