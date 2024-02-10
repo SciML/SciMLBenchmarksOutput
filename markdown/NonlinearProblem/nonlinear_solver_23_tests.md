@@ -1985,25 +1985,26 @@ Package Information:
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.4.0
   [13f3f980] CairoMakie v0.11.8
-  [2b5f629d] DiffEqBase v6.146.0
+  [2b5f629d] DiffEqBase v6.146.1
   [f3b72e0c] DiffEqDevTools v2.44.2
   [b964fa9f] LaTeXStrings v1.3.1
   [7ed4a6bd] LinearSolve v2.22.1
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.5.3
+  [8913a72c] NonlinearSolve v3.5.4
   [98d1487c] PolyesterForwardDiff v0.1.1
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [efcf1570] Setfield v1.1.1
-  [727e6d20] SimpleNonlinearSolve v1.4.0 `https://github.com/SciML/SimpleNonlinearSolve.jl.git#ap/tr_nlsolve_update`
+⌃ [727e6d20] SimpleNonlinearSolve v1.4.0
   [47a9eef4] SparseDiffTools v2.16.0
   [f1835b91] SpeedMapping v0.3.0
   [860ef19b] StableRNGs v1.0.1
   [90137ffa] StaticArrays v1.9.2
   [c3572dad] Sundials v4.23.2
   [0c5d862f] Symbolics v5.16.1
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
@@ -2034,7 +2035,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [159f3aea] Cairo v1.0.5
   [13f3f980] CairoMakie v0.11.8
   [49dc2e85] Calculus v0.5.1
-⌃ [d360d2e6] ChainRulesCore v1.21.0
+  [d360d2e6] ChainRulesCore v1.21.1
   [fb6a15b2] CloseOpenIntervals v0.1.12
   [523fee87] CodecBzip2 v0.8.2
   [944b1d66] CodecZlib v0.7.4
@@ -2049,7 +2050,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [34da2185] Compat v4.12.0
   [b152e2b5] CompositeTypes v0.1.3
   [2569d6c7] ConcreteStructs v0.2.3
-⌃ [f0e56b4a] ConcurrentUtilities v2.3.0
+  [f0e56b4a] ConcurrentUtilities v2.3.1
   [8f4d0f93] Conda v1.10.0
   [187b0558] ConstructionBase v1.5.4
   [d38c429a] Contour v0.6.2
@@ -2061,9 +2062,9 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [864edb3b] DataStructures v0.18.16
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.12
-  [2b5f629d] DiffEqBase v6.146.0
+  [2b5f629d] DiffEqBase v6.146.1
   [f3b72e0c] DiffEqDevTools v2.44.2
-⌃ [77a26b50] DiffEqNoiseProcess v5.20.0
+  [77a26b50] DiffEqNoiseProcess v5.20.1
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
   [b4f34e82] Distances v0.10.11
@@ -2130,7 +2131,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
   [b835a17e] JpegTurbo v0.1.5
-  [ef3ab10e] KLU v0.4.1
+⌅ [ef3ab10e] KLU v0.4.1
   [5ab0869b] KernelDensity v0.6.8
   [ba0b0d4f] Krylov v0.9.5
   [b964fa9f] LaTeXStrings v1.3.1
@@ -2174,7 +2175,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.5.3
+  [8913a72c] NonlinearSolve v3.5.4
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.13.0
   [52e1d378] OpenEXR v0.3.2
@@ -2199,7 +2200,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [647866c9] PolygonOps v0.1.2
   [f27b6e38] Polynomials v4.0.6
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.17
+  [d236fae5] PreallocationTools v0.4.18
   [aea7be01] PrecompileTools v1.2.0
   [21216c6a] Preferences v1.4.1
   [08abe8d2] PrettyTables v2.3.1
@@ -2227,7 +2228,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.23.1
+  [0bca4576] SciMLBase v2.23.2
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
@@ -2237,7 +2238,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [73760f76] SignedDistanceFields v0.4.0
   [777ac1f9] SimpleBufferStream v1.1.0
   [55797a34] SimpleGraphs v0.8.6
-  [727e6d20] SimpleNonlinearSolve v1.4.0 `https://github.com/SciML/SimpleNonlinearSolve.jl.git#ap/tr_nlsolve_update`
+⌃ [727e6d20] SimpleNonlinearSolve v1.4.0
   [ec83eff0] SimplePartitions v0.3.1
   [cc47b68c] SimplePolynomials v0.2.17
   [a6525b86] SimpleRandom v0.3.1
@@ -2252,7 +2253,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c5dd0088] StableHashTraits v1.1.6
   [860ef19b] StableRNGs v1.0.1
   [cae243ae] StackViews v0.1.1
-  [aedffcd0] Static v0.8.9
+  [aedffcd0] Static v0.8.10
   [0d7ed370] StaticArrayInterface v1.5.0
   [90137ffa] StaticArrays v1.9.2
   [1e83bf80] StaticArraysCore v1.4.2
@@ -2278,7 +2279,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [410a4b4d] Tricks v0.1.8
   [981d1d27] TriplotBase v0.1.0
   [781d530d] TruncatedStacktraces v1.4.0
-  [9d95972d] TupleTools v1.4.3
+⌃ [9d95972d] TupleTools v1.4.3
   [5c2747f8] URIs v1.5.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
