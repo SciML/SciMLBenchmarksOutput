@@ -1,25 +1,25 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Nonlinear Solver 23 Test Problems · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/NonlinearProblem/nonlinear_solver_23_tests/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../nonlinear_battery_problem/">Battery Problem</a></li><li class="is-active"><a class="tocitem" href>Nonlinear Solver 23 Test Problems</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Setup"><span>Setup</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmarks"><span>Benchmarks</span></a></li><li><a class="tocitem" href="#Summary-of-successful-solvers"><span>Summary of successful solvers</span></a></li><li><a class="tocitem" href="#Summary-of-General-Solver-Performance-on-All-Problems"><span>Summary of General Solver Performance on All Problems</span></a></li><li class="toplevel"><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li><li><a class="tocitem" href="#Appendix-2"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Nonlinear Solvers</a></li><li class="is-active"><a href>Nonlinear Solver 23 Test Problems</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Nonlinear Solver 23 Test Problems</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/NonlinearProblem/nonlinear_solver_23_tests.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Nonlinear-Solver-23-Test-Problems"><a class="docs-heading-anchor" href="#Nonlinear-Solver-23-Test-Problems">Nonlinear Solver 23 Test Problems</a><a id="Nonlinear-Solver-23-Test-Problems-1"></a><a class="docs-heading-anchor-permalink" href="#Nonlinear-Solver-23-Test-Problems" title="Permalink"></a></h1><p>These benchmarks compares the runtime and error for a range of nonlinear solvers. The problems are a standard set of problems as described <a href="https://people.sc.fsu.edu/~jburkardt/m_src/test_nonlin/test_nonlin.html">here</a>. The solvers are implemented in <a href="https://github.com/SciML/DiffEqProblemLibrary.jl/blob/master/lib/NonlinearProblemLibrary/src/NonlinearProblemLibrary.jl">NonlinearProblemLibrary.jl</a>, where you can find the problem function declarations. For each problem we test the following solvers:</p><ul><li>NonlinearSolve.jl&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/nonlinearsolve/#NonlinearSolve.NewtonRaphson">Newton Raphson</a> method (<code>NewtonRaphson()</code>).</li><li>NonlinearSolve.jl&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/nonlinearsolve/#NonlinearSolve.TrustRegion">Trust Region</a> method (<code>TrustRegion()</code>).</li><li>NonlinearSolve.jl&#39;s Levenberg-Marquardt method (<code>LevenbergMarquardt()</code>).</li><li>MINPACK&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/minpack/#NonlinearSolveMINPACK.CMINPACK">Modified Powell</a> method (<code>CMINPACK(method=:hybr)</code>).</li><li>MINPACK&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/minpack/#NonlinearSolveMINPACK.CMINPACK">Levenberg-Marquardt</a> method (<code>CMINPACK(method=:lm)</code>).</li><li>NLsolveJL&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API">Newton Raphson</a> (<code>NLsolveJL(method=:newton)</code>).</li><li>NLsolveJL&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API">Trust Region</a> (<code>NLsolveJL()</code>).</li><li>NLsolveJL&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API">Anderson acceleration</a> (<code>NLsolveJL(method=:anderson)</code>).</li><li>Sundials&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/sundials/#Solver-API">Newton-Krylov</a> method (<code>KINSOL()</code>).</li></ul><p>Furthermore, for NonlinearSolve.jl&#39;s Newton Raphson method we try the following Line Search options (in addition to the default):</p><ul><li><code>HagerZhang</code></li><li><code>MoreThuente</code></li><li><code>BackTracking</code></li></ul><p>and for NonlinearSolve.jl&#39;s Trust Region we try the following Radius Update schemes (in addition to the default):</p><ul><li><code>NLsolve</code> </li><li><code>NocedalWright</code> </li><li><code>Hei</code> </li><li><code>Yuan</code> </li><li><code>Bastin</code> </li><li><code>Fan</code> </li></ul><p>and finally for NonlinearSolve.jl&#39;s Levenberg-Marquardt method why try using both the default <code>α_geodesic</code> value (<code>0.75</code>) and a modified value (<code>0.5</code>), and also with and without setting the <code>CholeskyFactorization</code> linear solver.</p><p>For each benchmarked problem, the second, third, and fourth plots compares the performance of NonlinearSolve&#39;s Newton Raphson, Trust Region, and Levenberg-Marquardt methods, respectively. The first plot compares the best methods from each of these categories to the various methods available from other packages. At the end of the benchmarks, we print a summary table of which solvers succeeded for which problems.</p><h1 id="Setup"><a class="docs-heading-anchor" href="#Setup">Setup</a><a id="Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Setup" title="Permalink"></a></h1><p>Fetch required packages.</p><pre><code class="language-julia hljs">using NonlinearSolve, MINPACK, NLsolve, LinearSolve, StaticArrays, Sundials, Setfield,
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Nonlinear Solver 23 Test Problems · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/NonlinearProblem/nonlinear_solver_23_tests/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../nonlinear_battery_problem/">Battery Problem</a></li><li class="is-active"><a class="tocitem" href>Nonlinear Solver 23 Test Problems</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Setup"><span>Setup</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmarks"><span>Benchmarks</span></a></li><li><a class="tocitem" href="#Summary-of-successful-solvers"><span>Summary of successful solvers</span></a></li><li><a class="tocitem" href="#Summary-of-General-Solver-Performance-on-All-Problems"><span>Summary of General Solver Performance on All Problems</span></a></li><li class="toplevel"><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li><li><a class="tocitem" href="#Appendix-2"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Nonlinear Solvers</a></li><li class="is-active"><a href>Nonlinear Solver 23 Test Problems</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Nonlinear Solver 23 Test Problems</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/NonlinearProblem/nonlinear_solver_23_tests.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Nonlinear-Solver-23-Test-Problems"><a class="docs-heading-anchor" href="#Nonlinear-Solver-23-Test-Problems">Nonlinear Solver 23 Test Problems</a><a id="Nonlinear-Solver-23-Test-Problems-1"></a><a class="docs-heading-anchor-permalink" href="#Nonlinear-Solver-23-Test-Problems" title="Permalink"></a></h1><p>These benchmarks compares the runtime and error for a range of nonlinear solvers. The problems are a standard set of problems as described <a href="https://people.sc.fsu.edu/~jburkardt/m_src/test_nonlin/test_nonlin.html">here</a>. The solvers are implemented in <a href="https://github.com/SciML/DiffEqProblemLibrary.jl/blob/master/lib/NonlinearProblemLibrary/src/NonlinearProblemLibrary.jl">NonlinearProblemLibrary.jl</a>, where you can find the problem function declarations. For each problem we test the following solvers:</p><ul><li>NonlinearSolve.jl&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/nonlinearsolve/#NonlinearSolve.NewtonRaphson">Newton Raphson</a> method (<code>NewtonRaphson()</code>).</li><li>NonlinearSolve.jl&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/nonlinearsolve/#NonlinearSolve.TrustRegion">Trust Region</a> method (<code>TrustRegion()</code>).</li><li>NonlinearSolve.jl&#39;s Levenberg-Marquardt method (<code>LevenbergMarquardt()</code>).</li><li>MINPACK&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/minpack/#NonlinearSolveMINPACK.CMINPACK">Modified Powell</a> method (<code>CMINPACK(method=:hybr)</code>).</li><li>MINPACK&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/minpack/#NonlinearSolveMINPACK.CMINPACK">Levenberg-Marquardt</a> method (<code>CMINPACK(method=:lm)</code>).</li><li>NLsolveJL&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API">Newton Raphson</a> (<code>NLsolveJL(method=:newton)</code>).</li><li>NLsolveJL&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API">Trust Region</a> (<code>NLsolveJL()</code>).</li><li>NLsolveJL&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/nlsolve/#Solver-API">Anderson acceleration</a> (<code>NLsolveJL(method=:anderson)</code>).</li><li>Sundials&#39;s <a href="https://docs.sciml.ai/NonlinearSolve/stable/api/sundials/#Solver-API">Newton-Krylov</a> method (<code>KINSOL()</code>).</li></ul><p>Furthermore, for NonlinearSolve.jl&#39;s Newton Raphson method we try the following Line Search options (in addition to the default):</p><ul><li><code>HagerZhang</code></li><li><code>MoreThuente</code></li><li><code>BackTracking</code></li></ul><p>and for NonlinearSolve.jl&#39;s Trust Region we try the following Radius Update schemes (in addition to the default):</p><ul><li><code>NLsolve</code> </li><li><code>NocedalWright</code> </li><li><code>Hei</code> </li><li><code>Yuan</code> </li><li><code>Bastin</code> </li><li><code>Fan</code> </li></ul><p>and finally for NonlinearSolve.jl&#39;s Levenberg-Marquardt method why try using both the default <code>α_geodesic</code> value (<code>0.75</code>) and a modified value (<code>0.5</code>), and also with and without setting the <code>CholeskyFactorization</code> linear solver.</p><p>For each benchmarked problem, the second, third, and fourth plots compares the performance of NonlinearSolve&#39;s Newton Raphson, Trust Region, and Levenberg-Marquardt methods, respectively. The first plot compares the best methods from each of these categories to the various methods available from other packages. At the end of the benchmarks, we print a summary table of which solvers succeeded for which problems.</p><h1 id="Setup"><a class="docs-heading-anchor" href="#Setup">Setup</a><a id="Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Setup" title="Permalink"></a></h1><p>Fetch required packages.</p><pre><code class="language-julia hljs">using NonlinearSolve, MINPACK, NLsolve, LinearSolve, StaticArrays, Sundials, Setfield,
     BenchmarkTools, LinearAlgebra, DiffEqDevTools, NonlinearProblemLibrary, CairoMakie
 RUS = RadiusUpdateSchemes;</code></pre><p>Declare the benchmarked solvers (and their names and plotting options).</p><pre><code class="language-julia hljs">solvers_all = [
-    (; pkg = :nonlinearsolve, type = :NR,      name = &quot;Newton Raphson&quot;,            solver = Dict(:alg =&gt; NewtonRaphson(; linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :NR,      name = &quot;NR (HagerZhang)&quot;,           solver = Dict(:alg =&gt; NewtonRaphson(; linesearch = HagerZhang(), linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :NR,      name = &quot;NR (MoreThuente)&quot;,          solver = Dict(:alg =&gt; NewtonRaphson(; linesearch = MoreThuente(), linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :NR,      name = &quot;NR (BackTracking)&quot;,         solver = Dict(:alg =&gt; NewtonRaphson(; linesearch = BackTracking(), linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;Trust Region&quot;,              solver = Dict(:alg =&gt; TrustRegion(; linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (NLsolve Update)&quot;,       solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.NLsolve, linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (Nocedal Wright)&quot;,       solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.NocedalWright, linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (Hei)&quot;,                  solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.Hei, linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (Yuan)&quot;,                 solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.Yuan, linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (Bastin)&quot;,               solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.Bastin, linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (Fan)&quot;,                  solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.Fan, linsolve = LUFactorization()))),
+    (; pkg = :nonlinearsolve, type = :NR,      name = &quot;Newton Raphson&quot;,            solver = Dict(:alg =&gt; NewtonRaphson(; linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :NR,      name = &quot;NR (HagerZhang)&quot;,           solver = Dict(:alg =&gt; NewtonRaphson(; linesearch = HagerZhang(), linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :NR,      name = &quot;NR (MoreThuente)&quot;,          solver = Dict(:alg =&gt; NewtonRaphson(; linesearch = MoreThuente(), linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :NR,      name = &quot;NR (BackTracking)&quot;,         solver = Dict(:alg =&gt; NewtonRaphson(; linesearch = BackTracking(), linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;Trust Region&quot;,              solver = Dict(:alg =&gt; TrustRegion(; linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (NLsolve Update)&quot;,       solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.NLsolve, linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (Nocedal Wright)&quot;,       solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.NocedalWright, linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (Hei)&quot;,                  solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.Hei, linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (Yuan)&quot;,                 solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.Yuan, linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (Bastin)&quot;,               solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.Bastin, linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = &quot;TR (Fan)&quot;,                  solver = Dict(:alg =&gt; TrustRegion(; radius_update_scheme = RUS.Fan, linsolve = nothing))),
     (; pkg = :nonlinearsolve, type = :LM,      name = &quot;Levenberg-Marquardt&quot;,       solver = Dict(:alg =&gt; LevenbergMarquardt(; linsolve = QRFactorization()))),
     (; pkg = :nonlinearsolve, type = :LM,      name = &quot;LM with Cholesky&quot;,          solver = Dict(:alg =&gt; LevenbergMarquardt(; linsolve = CholeskyFactorization()))),
     (; pkg = :nonlinearsolve, type = :LM,      name = &quot;LM (α_geodesic=0.5)&quot;,       solver = Dict(:alg =&gt; LevenbergMarquardt(; linsolve = QRFactorization(), α_geodesic=0.5))),
     (; pkg = :nonlinearsolve, type = :LM,      name = &quot;LM (α_geodesic=0.5) Chol.&quot;, solver = Dict(:alg =&gt; LevenbergMarquardt(; linsolve = CholeskyFactorization(), α_geodesic=0.5))),
-    (; pkg = :nonlinearsolve, type = :LM,      name = &quot;LM (no Accln.)&quot;,            solver = Dict(:alg =&gt; LevenbergMarquardt(; disable_geodesic = Val(true)))),
+    (; pkg = :nonlinearsolve, type = :LM,      name = &quot;LM (no Accln.)&quot;,            solver = Dict(:alg =&gt; LevenbergMarquardt(; linsolve = QRFactorization(), disable_geodesic = Val(true)))),
     (; pkg = :nonlinearsolve, type = :LM,      name = &quot;LM (no Accln.) Chol.&quot;,      solver = Dict(:alg =&gt; LevenbergMarquardt(; linsolve = CholeskyFactorization(), disable_geodesic = Val(true)))),
-    (; pkg = :wrapper,        type = :general, name = &quot;Pseudo Transient&quot;,          solver = Dict(:alg =&gt; PseudoTransient(; linsolve = LUFactorization(), alpha_initial=10.0))),
+    (; pkg = :wrapper,        type = :general, name = &quot;Pseudo Transient&quot;,          solver = Dict(:alg =&gt; PseudoTransient(; linsolve = nothing, alpha_initial=10.0))),
     (; pkg = :wrapper,        type = :general, name = &quot;Powell (MINPACK)&quot;,          solver = Dict(:alg =&gt; CMINPACK(; method=:hybr))),
     (; pkg = :wrapper,        type = :general, name = &quot;LM (MINPACK)&quot;,              solver = Dict(:alg =&gt; CMINPACK(; method=:lm))),
     (; pkg = :wrapper,        type = :general, name = &quot;NR (NLsolve.jl)&quot;,           solver = Dict(:alg =&gt; NLsolveJL(; method=:newton))),
@@ -30,7 +30,7 @@ RUS = RadiusUpdateSchemes;</code></pre><p>Declare the benchmarked solvers (and t
 solver_tracker = [];
 wp_general_tracker = [];</code></pre><p>Sets tolerances.</p><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (4:12)
 reltols = 1.0 ./ 10.0 .^ (4:12);</code></pre><p>Prepares various helper functions for benchmarking a specific problem.</p><pre><code class="language-julia hljs">function set_ad_chunksize(solvers, u0)
-    ck = min(NonlinearSolve.pickchunksize(u0), 6)
+    ck = NonlinearSolve.pickchunksize(u0)
     for i in 1:length(solvers)
         @set! solvers[i].solver[:alg] = __set_ad_chunksize(solvers[i].solver[:alg], ck)
     end
@@ -290,7 +290,7 @@ m = 4.36956026916846e-10.
 idual norm = 5.7505444850392e-10.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_6_1.png" alt/></p><h3 id="Problem-2-(Powell-singular-function)"><a class="docs-heading-anchor" href="#Problem-2-(Powell-singular-function)">Problem 2 (Powell singular function)</a><a id="Problem-2-(Powell-singular-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-2-(Powell-singular-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Powell singular function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 2.945100572117028e-9.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 7.351480171352898e-9.
+m = 7.351480171346401e-9.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 2.945100572117028e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -304,7 +304,7 @@ orm = 2.945100572117028e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 2.7
 952108150126756e-9.
 [Info] Solver TR (Yuan) returned retcode Success with an residual norm = 7.
-530945254053375e-9.
+530945252948723e-9.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 2.7952108150126756e-9.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 2.8
@@ -337,7 +337,7 @@ m = 2.9451005722314578e-9.
 idual norm = 9.823952331145566e-9.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_7_1.png" alt/></p><h3 id="Problem-3-(Powell-badly-scaled-function)"><a class="docs-heading-anchor" href="#Problem-3-(Powell-badly-scaled-function)">Problem 3 (Powell badly scaled function)</a><a id="Problem-3-(Powell-badly-scaled-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-3-(Powell-badly-scaled-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Powell badly scaled function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.5733414571172943e-11.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 8.807574669589258e-10.
+m = 8.751994684530473e-10.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 8.115426330945752e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -384,25 +384,25 @@ m = 7.051692563209144e-12.
 idual norm = 1.7719525846615625e-10.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_8_1.png" alt/></p><h3 id="Problem-4-(Wood-function)"><a class="docs-heading-anchor" href="#Problem-4-(Wood-function)">Problem 4 (Wood function)</a><a id="Problem-4-(Wood-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-4-(Wood-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Wood function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 4.884981308350689e-14.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 2.751798788835913e-11.
+m = 2.74760214580283e-11.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
-rm = 8.272180940238627e-9.
+rm = 8.272160512134974e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
-orm = 9.527585387303361e-9.
+orm = 9.527507893736242e-9.
 [Info] Solver Trust Region returned retcode Success with an residual norm =
- 8.449333899207545e-9.
+ 8.449294375267868e-9.
 [Info] Solver TR (NLsolve Update) returned retcode Success with an residual
- norm = 3.6615155352137663e-13.
+ norm = 3.8813396940895473e-13.
 [Info] Solver TR (Nocedal Wright) returned retcode Success with an residual
- norm = 3.930189507173054e-14.
+ norm = 6.23945339839338e-14.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 7.7
-83131916738739e-10.
+83136357630838e-10.
 [Info] Solver TR (Yuan) returned retcode Success with an residual norm = 3.
-814113469502445e-10.
+8142977665245326e-10.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
-1.6234904531842176e-9.
+1.623468248723725e-9.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 1.6
-49005376691548e-10.
+490009357994495e-10.
 [Info] Solver Levenberg-Marquardt returned retcode Success with an residual
  norm = 5.511275658065529e-9.
 [Info] Solver LM with Cholesky returned retcode Success with an residual no
@@ -416,7 +416,7 @@ sidual norm = 5.511484157949553e-9.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 4.5968340245394756e-11.
 [Info] Solver Pseudo Transient returned retcode Success with an residual no
-rm = 1.4233059175694507e-13.
+rm = 1.6053824936079764e-13.
 [Info] Solver Powell (MINPACK) returned retcode Success with an residual no
 rm = 3.373679113849448e-11.
 [Info] Solver LM (MINPACK) returned retcode Success with an residual norm =
@@ -445,7 +445,7 @@ orm = 9.389520272407026e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 2.2
 20446049250313e-15.
 [Info] Solver TR (Yuan) returned retcode Success with an residual norm = 7.
-23670851354411e-17.
+236709830042941e-17.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 2.101282081278562e-12.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 2.9
@@ -491,8 +491,8 @@ orm = 9.087108877869898e-9.
  norm = 2.035559221180705e-13.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 7.1
 0331099496031e-13.
-[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 4.
-1598668953923834e-15.
+[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 9.
+56179579958416e-15.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 4.2049697057677804e-15.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 8.3
@@ -572,24 +572,24 @@ m = 9.43689570931383e-16.
 idual norm = 1.8266332335592494e-9.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_12_1.png" alt/></p><h3 id="Problem-8-(Brown-almost-linear-function)"><a class="docs-heading-anchor" href="#Problem-8-(Brown-almost-linear-function)">Problem 8 (Brown almost linear function)</a><a id="Problem-8-(Brown-almost-linear-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-8-(Brown-almost-linear-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Brown almost linear function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 9.544809387307396e-12.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 1.5631940186722204e-13.
+m = 2.859934511434403e-13.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
-rm = 9.860400496108923e-9.
-[Warn] Solver NR (BackTracking) had a very large residual (norm = 9.7384153
-82847927e73).
+rm = 9.864521643976332e-9.
+[Warn] Solver NR (BackTracking) had a very large residual (norm = 2.9784882
+239258917e78).
 [Info] Solver Trust Region returned retcode Success with an residual norm =
- 7.105427357601002e-15.
+ 6.994405055138486e-15.
 [Info] Solver TR (NLsolve Update) returned retcode Success with an residual
  norm = 1.652681325126082e-10.
 [Info] Solver TR (Nocedal Wright) returned retcode Success with an residual
- norm = 7.105427357601002e-15.
+ norm = 6.994405055138486e-15.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 2.2
-853652303922445e-10.
+853618997231706e-10.
 [Warn] Solver TR (Yuan) had a very large residual (norm = 5.5).
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
-5.344592546308036e-9.
+5.344593545508758e-9.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 1.6
-140933034591853e-10.
+140988545743085e-10.
 [Info] Solver Levenberg-Marquardt returned retcode Success with an residual
  norm = 1.4030865358449773e-10.
 [Info] Solver LM with Cholesky returned retcode Success with an residual no
@@ -603,7 +603,7 @@ sidual norm = 3.026058514876695e-9.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 7.025280357453312e-11.
 [Warn] Solver Pseudo Transient had a very large residual (norm = 1.37250894
-96539944e20).
+99957826e20).
 [Info] Solver Powell (MINPACK) returned retcode Success with an residual no
 rm = 5.995204332975845e-15.
 [Warn] Solver LM (MINPACK) had a very large residual (norm = 1.000000000050
@@ -665,7 +665,7 @@ m = 3.0531133177191805e-16.
 idual norm = 1.4191641750649353e-9.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_14_1.png" alt/></p><h3 id="Problem-10-(Discrete-integral-equation-function)"><a class="docs-heading-anchor" href="#Problem-10-(Discrete-integral-equation-function)">Problem 10 (Discrete integral equation function)</a><a id="Problem-10-(Discrete-integral-equation-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-10-(Discrete-integral-equation-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Discrete integral equation function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.304512053934559e-15.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 5.207545256125101e-9.
+m = 5.2075453116362524e-9.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 1.304512053934559e-15.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -710,27 +710,27 @@ m = 1.304512053934559e-15.
 = 8.794850236970575e-9.
 [Info] Solver NR LineSearch (Sundials) returned retcode Success with an res
 idual norm = 8.794850236970575e-9.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_15_1.png" alt/></p><h3 id="Problem-11-(Trigonometric-function)"><a class="docs-heading-anchor" href="#Problem-11-(Trigonometric-function)">Problem 11 (Trigonometric function)</a><a id="Problem-11-(Trigonometric-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-11-(Trigonometric-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Trigonometric function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
- = 6.942141306254257e-12.
+ = 6.942307839707951e-12.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 6.835845778319083e-11.
+m = 6.836099741835966e-11.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
-rm = 6.4420154766153814e-9.
+rm = 6.442012645546669e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
 orm = 9.590515638591146e-9.
-[Warn] Solver Trust Region had a very large residual (norm = 0.004295419787
-4424255).
+[Warn] Solver Trust Region had a very large residual (norm = 0.004295419401
+194753).
 [Warn] Solver TR (NLsolve Update) had a very large residual (norm = 0.00429
-5418028397016).
+541738114847).
 [Warn] Solver TR (Nocedal Wright) had a very large residual (norm = 0.00429
-5415051797022).
-[Warn] Solver TR (Hei) had a very large residual (norm = 0.0042954155544357
-58).
-[Warn] Solver TR (Yuan) had a very large residual (norm = 0.004295419752717
-078).
+541395863188).
+[Warn] Solver TR (Hei) had a very large residual (norm = 0.0042954157598625
+03).
+[Warn] Solver TR (Yuan) had a very large residual (norm = 0.004295418673702
+9915).
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
-6.619704784327496e-15.
-[Warn] Solver TR (Fan) had a very large residual (norm = 0.0042954173747542
-37).
+6.647460359943125e-15.
+[Warn] Solver TR (Fan) had a very large residual (norm = 0.0042954175467514
+87).
 [Warn] Solver Levenberg-Marquardt had a very large residual (norm = 0.00481
 3013676580463).
 [Warn] Solver LM with Cholesky had a very large residual (norm = 0.00481301
@@ -743,8 +743,8 @@ orm = 9.590515638591146e-9.
  = 2.772573837184211e-13.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 5.103298811315327e-9.
-[Warn] Solver Pseudo Transient had a very large residual (norm = 7.29485351
-0353528).
+[Warn] Solver Pseudo Transient had a very large residual (norm = 27.1504407
+62085257).
 [Warn] Solver Powell (MINPACK) had a very large residual (norm = 0.00440555
 10820976695).
 [Warn] Solver LM (MINPACK) had a very large residual (norm = 0.004295506299
@@ -759,7 +759,7 @@ m = 1.2043231689684575e-10.
 idual norm = 1.373655786340855e-9.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_16_1.png" alt/></p><h3 id="Problem-12-(Variably-dimensioned-function)"><a class="docs-heading-anchor" href="#Problem-12-(Variably-dimensioned-function)">Problem 12 (Variably dimensioned function)</a><a id="Problem-12-(Variably-dimensioned-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-12-(Variably-dimensioned-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Variably dimensioned function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.3234968676556491e-12.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 4.345885873391353e-9.
+m = 4.345897086643902e-9.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 1.3234968676556491e-12.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -805,8 +805,8 @@ m = 2.868483228724017e-12.
 [Info] Solver NR LineSearch (Sundials) returned retcode Success with an res
 idual norm = 0.0.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_17_1.png" alt/></p><h3 id="Problem-13-(Broyden-tridiagonal-function)"><a class="docs-heading-anchor" href="#Problem-13-(Broyden-tridiagonal-function)">Problem 13 (Broyden tridiagonal function)</a><a id="Problem-13-(Broyden-tridiagonal-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-13-(Broyden-tridiagonal-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Broyden tridiagonal function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 7.54840412398039e-10.
-[Warn] Solver NR (HagerZhang) had a very large residual (norm = 4.810164422
-122141e15).
+[Warn] Solver NR (HagerZhang) had a very large residual (norm = 0.901578708
+3419275).
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 7.54840412398039e-10.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -852,8 +852,8 @@ m = 7.548405234203415e-10.
 [Info] Solver NR LineSearch (Sundials) returned retcode Success with an res
 idual norm = 5.775745437475166e-10.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_18_1.png" alt/></p><h3 id="Problem-14-(Broyden-banded-function)"><a class="docs-heading-anchor" href="#Problem-14-(Broyden-banded-function)">Problem 14 (Broyden banded function)</a><a id="Problem-14-(Broyden-banded-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-14-(Broyden-banded-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Broyden banded function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 9.359466091041213e-9.
-[Warn] Solver NR (HagerZhang) had a very large residual (norm = 1.200186126
-784717).
+[Warn] Solver NR (HagerZhang) had a very large residual (norm = 1.199193251
+7532473).
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 9.359466091041213e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -908,13 +908,13 @@ orm = 1.1102230246251565e-16.
 [Info] Solver Trust Region returned retcode Success with an residual norm =
  9.998897371997112e-9.
 [Info] Solver TR (NLsolve Update) returned retcode Success with an residual
- norm = 9.998955736891987e-9.
+ norm = 9.998955736892439e-9.
 [Info] Solver TR (Nocedal Wright) returned retcode Success with an residual
- norm = 9.999969447949885e-9.
+ norm = 9.999969447949803e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 9.9
-99902617651876e-9.
+99902745925823e-9.
 [Info] Solver TR (Yuan) returned retcode ShrinkThresholdExceeded with an re
-sidual norm = 6.485974185184814e-8.
+sidual norm = 5.2060943067797335e-8.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 1.5627499294623703e-12.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 9.9
@@ -947,7 +947,7 @@ m = 1.1102230246251565e-16.
 idual norm = 1.411651795457658e-9.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_20_1.png" alt/></p><h3 id="Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)"><a class="docs-heading-anchor" href="#Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)">Problem 16 (Hammarling 3 by 3 matrix square root problem)</a><a id="Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-16-(Hammarling-3-by-3-matrix-square-root-problem)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Hammarling 3 by 3 matrix square root problem&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.1102230246251565e-16.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 1.2318031039626476e-9.
+m = 1.063028109982156e-9.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 5.009677561673698e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -955,17 +955,17 @@ orm = 1.1102230246251565e-16.
 [Info] Solver Trust Region returned retcode Success with an residual norm =
  9.999020663759086e-9.
 [Info] Solver TR (NLsolve Update) returned retcode Success with an residual
- norm = 9.999661246569013e-9.
+ norm = 9.99966124650125e-9.
 [Info] Solver TR (Nocedal Wright) returned retcode Success with an residual
- norm = 9.998678786868239e-9.
+ norm = 9.998678786868236e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 9.9
-94120483001654e-9.
+94120491051855e-9.
 [Info] Solver TR (Yuan) returned retcode Success with an residual norm = 9.
-99965539128097e-9.
+999992323585943e-9.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 1.7390533457728452e-12.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 9.9
-98200522882907e-9.
+98200522503436e-9.
 [Info] Solver Levenberg-Marquardt returned retcode Success with an residual
  norm = 1.6792649493169165e-9.
 [Info] Solver LM with Cholesky returned retcode Success with an residual no
@@ -1039,13 +1039,13 @@ m = 1.0977885267493548e-11.
 = 1.4388490399142029e-12.
 [Info] Solver NR LineSearch (Sundials) returned retcode Success with an res
 idual norm = 1.4388490399142029e-12.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_22_1.png" alt/></p><h3 id="Problem-18-(Sample-problem-18)"><a class="docs-heading-anchor" href="#Problem-18-(Sample-problem-18)">Problem 18 (Sample problem 18)</a><a id="Problem-18-(Sample-problem-18)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-18-(Sample-problem-18)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Sample problem 18&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
- = 8.16714264178066e-9.
+ = 8.167142642163074e-9.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
 m = 7.27682214862992e-11.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 7.508958829076498e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
-orm = 8.16714264178066e-9.
+orm = 8.167142642163074e-9.
 [Info] Solver Trust Region returned retcode Success with an residual norm =
  2.882025410947776e-11.
 [Info] Solver TR (NLsolve Update) returned retcode Success with an residual
@@ -1055,7 +1055,7 @@ orm = 8.16714264178066e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 4.3
 83074308503473e-9.
 [Info] Solver TR (Yuan) returned retcode Success with an residual norm = 8.
-16714264178066e-9.
+167142642163074e-9.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 4.383074308503473e-9.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 1.5
@@ -1073,7 +1073,7 @@ sidual norm = 4.341279241060183e-9.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 4.107327806644548e-10.
 [Info] Solver Pseudo Transient returned retcode Success with an residual no
-rm = 9.503369559071248e-12.
+rm = 9.505036886102531e-12.
 [Info] Solver Powell (MINPACK) returned retcode Success with an residual no
 rm = 1.0601839132130227e-19.
 [Info] Solver LM (MINPACK) returned retcode Success with an residual norm =
@@ -1120,7 +1120,7 @@ sidual norm = 7.160098265449658e-9.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 6.758031521862518e-9.
 [Info] Solver Pseudo Transient returned retcode Success with an residual no
-rm = 4.998140661041174e-9.
+rm = 4.998140661041176e-9.
 [Info] Solver Powell (MINPACK) returned retcode Success with an residual no
 rm = 4.56486967421927e-204.
 [Info] Solver LM (MINPACK) returned retcode Success with an residual norm =
@@ -1180,13 +1180,13 @@ m = 0.0.
 = 3.5473471473362887e-9.
 [Info] Solver NR LineSearch (Sundials) returned retcode Success with an res
 idual norm = 5.29020237668436e-10.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_25_1.png" alt/></p><h3 id="Problem-21-(Freudenstein-Roth-function)"><a class="docs-heading-anchor" href="#Problem-21-(Freudenstein-Roth-function)">Problem 21 (Freudenstein-Roth function)</a><a id="Problem-21-(Freudenstein-Roth-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-21-(Freudenstein-Roth-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Freudenstein-Roth function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
- = 4.964704203302972e-10.
-[Warn] Solver NR (HagerZhang) had a very large residual (norm = 8.061678381
-923512e19).
-[Warn] Solver NR (MoreThuente) had a very large residual (norm = 1.96387597
-1147506e20).
-[Warn] Solver NR (BackTracking) had a very large residual (norm = 2.3674691
-7732678e21).
+ = 4.852083179684996e-10.
+[Warn] Solver NR (HagerZhang) had a very large residual (norm = 1.709729979
+8267514e20).
+[Warn] Solver NR (MoreThuente) had a very large residual (norm = 1.37540743
+48791905e20).
+[Warn] Solver NR (BackTracking) had a very large residual (norm = 3.6969134
+97452888e21).
 [Warn] Solver Trust Region had a very large residual (norm = 4.948952149637
 1545).
 [Warn] Solver TR (NLsolve Update) had a very large residual (norm = 4.94895
@@ -1194,7 +1194,7 @@ idual norm = 5.29020237668436e-10.</code></pre><p><img src="../figures/nonlinear
 [Warn] Solver TR (Nocedal Wright) had a very large residual (norm = 4.94895
 21496371545).
 [Warn] Solver TR (Hei) had a very large residual (norm = 4.94895210287909).
-[Warn] Solver TR (Yuan) had a very large residual (norm = 4.948952096598568
+[Warn] Solver TR (Yuan) had a very large residual (norm = 4.948952095684966
 ).
 [Warn] Solver TR (Bastin) had a very large residual (norm = 4.9489521186807
 15).
@@ -1212,7 +1212,7 @@ idual norm = 5.29020237668436e-10.</code></pre><p><img src="../figures/nonlinear
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 5.917158318879956e-9.
 [Info] Solver Pseudo Transient returned retcode Success with an residual no
-rm = 0.0.
+rm = 7.105427357601002e-15.
 [Warn] Solver Powell (MINPACK) had a very large residual (norm = 4.95655183
 4519658).
 [Warn] Solver LM (MINPACK) had a very large residual (norm = 4.948960804228
@@ -1274,7 +1274,7 @@ m = 2.5139568204934903e-10.
 idual norm = 9.815370738408546e-12.</code></pre><p><img src="../figures/nonlinear_solver_23_tests_27_1.png" alt/></p><h3 id="Problem-23-(Chandrasekhar-function)"><a class="docs-heading-anchor" href="#Problem-23-(Chandrasekhar-function)">Problem 23 (Chandrasekhar function)</a><a id="Problem-23-(Chandrasekhar-function)-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-23-(Chandrasekhar-function)" title="Permalink"></a></h3><pre><code class="language-julia hljs">benchmark_problem!(&quot;Chandrasekhar function&quot;)</code></pre><pre><code class="nohighlight hljs">[Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 2.9976021664879227e-14.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 4.440892098500626e-16.
+m = 6.661338147750939e-16.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 2.9976021664879227e-14.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -1487,13 +1487,13 @@ Platform Info:
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.4.0
   [13f3f980] CairoMakie v0.11.8
-  [2b5f629d] DiffEqBase v6.146.1
+  [2b5f629d] DiffEqBase v6.146.2
   [f3b72e0c] DiffEqDevTools v2.44.2
   [b964fa9f] LaTeXStrings v1.3.1
-  [7ed4a6bd] LinearSolve v2.22.1
+  [7ed4a6bd] LinearSolve v2.23.3
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
@@ -1502,15 +1502,13 @@ Environment:
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [efcf1570] Setfield v1.1.1
-⌃ [727e6d20] SimpleNonlinearSolve v1.4.0
+  [727e6d20] SimpleNonlinearSolve v1.4.1
   [47a9eef4] SparseDiffTools v2.16.0
   [f1835b91] SpeedMapping v0.3.0
   [860ef19b] StableRNGs v1.0.1
   [90137ffa] StaticArrays v1.9.2
   [c3572dad] Sundials v4.23.2
-  [0c5d862f] Symbolics v5.16.1
-Info Packages marked with ⌃ have new versions available and may be upgradable.
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+  [0c5d862f] Symbolics v5.17.0</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
   [47edcb42] ADTypes v0.2.6
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
@@ -1519,7 +1517,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [22286c92] AccurateArithmetic v0.3.8
   [79e6a3ab] Adapt v4.0.1
   [27a7e980] Animations v0.4.1
-  [ec485272] ArnoldiMethod v0.2.0
+⌅ [ec485272] ArnoldiMethod v0.2.0
   [4fba245c] ArrayInterface v7.7.0
   [4c555306] ArrayLayouts v1.6.0
   [67c07d97] Automa v1.0.3
@@ -1562,7 +1560,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [864edb3b] DataStructures v0.18.16
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.12
-  [2b5f629d] DiffEqBase v6.146.1
+  [2b5f629d] DiffEqBase v6.146.2
   [f3b72e0c] DiffEqDevTools v2.44.2
   [77a26b50] DiffEqNoiseProcess v5.20.1
   [163ba53b] DiffResults v1.1.0
@@ -1631,7 +1629,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
   [b835a17e] JpegTurbo v0.1.5
-⌅ [ef3ab10e] KLU v0.4.1
+  [ef3ab10e] KLU v0.5.0
   [5ab0869b] KernelDensity v0.6.8
   [ba0b0d4f] Krylov v0.9.5
   [b964fa9f] LaTeXStrings v1.3.1
@@ -1646,7 +1644,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
   [9b3f67b0] LinearAlgebraX v0.2.7
-  [7ed4a6bd] LinearSolve v2.22.1
+  [7ed4a6bd] LinearSolve v2.23.3
   [2ab3a3ac] LogExpFunctions v0.3.26
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.166
@@ -1700,7 +1698,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [647866c9] PolygonOps v0.1.2
   [f27b6e38] Polynomials v4.0.6
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.18
+  [d236fae5] PreallocationTools v0.4.20
   [aea7be01] PrecompileTools v1.2.0
   [21216c6a] Preferences v1.4.1
   [08abe8d2] PrettyTables v2.3.1
@@ -1713,7 +1711,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
-  [731186ca] RecursiveArrayTools v3.8.0
+  [731186ca] RecursiveArrayTools v3.8.1
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
@@ -1728,7 +1726,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.23.2
+  [0bca4576] SciMLBase v2.24.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
@@ -1738,7 +1736,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [73760f76] SignedDistanceFields v0.4.0
   [777ac1f9] SimpleBufferStream v1.1.0
   [55797a34] SimpleGraphs v0.8.6
-⌃ [727e6d20] SimpleNonlinearSolve v1.4.0
+  [727e6d20] SimpleNonlinearSolve v1.4.1
   [ec83eff0] SimplePartitions v0.3.1
   [cc47b68c] SimplePolynomials v0.2.17
   [a6525b86] SimpleRandom v0.3.1
@@ -1750,7 +1748,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.3.1
   [f1835b91] SpeedMapping v0.3.0
-  [c5dd0088] StableHashTraits v1.1.6
+  [c5dd0088] StableHashTraits v1.1.7
   [860ef19b] StableRNGs v1.0.1
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v0.8.10
@@ -1767,7 +1765,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [c3572dad] Sundials v4.23.2
   [2efcf032] SymbolicIndexingInterface v0.3.5
   [d1185830] SymbolicUtils v1.5.0
-  [0c5d862f] Symbolics v5.16.1
+  [0c5d862f] Symbolics v5.17.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
@@ -1779,7 +1777,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [410a4b4d] Tricks v0.1.8
   [981d1d27] TriplotBase v0.1.0
   [781d530d] TruncatedStacktraces v1.4.0
-⌃ [9d95972d] TupleTools v1.4.3
+  [9d95972d] TupleTools v1.5.0
   [5c2747f8] URIs v1.5.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
@@ -1902,5 +1900,4 @@ Warning The project dependencies or compat requirements have changed since the m
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../nonlinear_battery_problem/">« Battery Problem</a><a class="docs-footer-nextpage" href="../quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Tuesday 13 February 2024 14:03">Tuesday 13 February 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../nonlinear_battery_problem/">« Battery Problem</a><a class="docs-footer-nextpage" href="../quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Wednesday 14 February 2024 12:27">Wednesday 14 February 2024</span>. Using Julia version 1.10.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
