@@ -48,24 +48,24 @@ Declare the benchmarked solvers (and their names and plotting options).
 
 ```julia
 solvers_all = [
-    (; pkg = :nonlinearsolve, type = :NR,      name = "Newton Raphson",            solver = Dict(:alg => NewtonRaphson(; linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :NR,      name = "NR (HagerZhang)",           solver = Dict(:alg => NewtonRaphson(; linesearch = HagerZhang(), linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :NR,      name = "NR (MoreThuente)",          solver = Dict(:alg => NewtonRaphson(; linesearch = MoreThuente(), linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :NR,      name = "NR (BackTracking)",         solver = Dict(:alg => NewtonRaphson(; linesearch = BackTracking(), linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = "Trust Region",              solver = Dict(:alg => TrustRegion(; linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (NLsolve Update)",       solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.NLsolve, linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (Nocedal Wright)",       solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.NocedalWright, linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (Hei)",                  solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.Hei, linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (Yuan)",                 solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.Yuan, linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (Bastin)",               solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.Bastin, linsolve = LUFactorization()))),
-    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (Fan)",                  solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.Fan, linsolve = LUFactorization()))),
+    (; pkg = :nonlinearsolve, type = :NR,      name = "Newton Raphson",            solver = Dict(:alg => NewtonRaphson(; linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :NR,      name = "NR (HagerZhang)",           solver = Dict(:alg => NewtonRaphson(; linesearch = HagerZhang(), linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :NR,      name = "NR (MoreThuente)",          solver = Dict(:alg => NewtonRaphson(; linesearch = MoreThuente(), linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :NR,      name = "NR (BackTracking)",         solver = Dict(:alg => NewtonRaphson(; linesearch = BackTracking(), linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = "Trust Region",              solver = Dict(:alg => TrustRegion(; linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (NLsolve Update)",       solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.NLsolve, linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (Nocedal Wright)",       solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.NocedalWright, linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (Hei)",                  solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.Hei, linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (Yuan)",                 solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.Yuan, linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (Bastin)",               solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.Bastin, linsolve = nothing))),
+    (; pkg = :nonlinearsolve, type = :TR,      name = "TR (Fan)",                  solver = Dict(:alg => TrustRegion(; radius_update_scheme = RUS.Fan, linsolve = nothing))),
     (; pkg = :nonlinearsolve, type = :LM,      name = "Levenberg-Marquardt",       solver = Dict(:alg => LevenbergMarquardt(; linsolve = QRFactorization()))),
     (; pkg = :nonlinearsolve, type = :LM,      name = "LM with Cholesky",          solver = Dict(:alg => LevenbergMarquardt(; linsolve = CholeskyFactorization()))),
     (; pkg = :nonlinearsolve, type = :LM,      name = "LM (α_geodesic=0.5)",       solver = Dict(:alg => LevenbergMarquardt(; linsolve = QRFactorization(), α_geodesic=0.5))),
     (; pkg = :nonlinearsolve, type = :LM,      name = "LM (α_geodesic=0.5) Chol.", solver = Dict(:alg => LevenbergMarquardt(; linsolve = CholeskyFactorization(), α_geodesic=0.5))),
-    (; pkg = :nonlinearsolve, type = :LM,      name = "LM (no Accln.)",            solver = Dict(:alg => LevenbergMarquardt(; disable_geodesic = Val(true)))),
+    (; pkg = :nonlinearsolve, type = :LM,      name = "LM (no Accln.)",            solver = Dict(:alg => LevenbergMarquardt(; linsolve = QRFactorization(), disable_geodesic = Val(true)))),
     (; pkg = :nonlinearsolve, type = :LM,      name = "LM (no Accln.) Chol.",      solver = Dict(:alg => LevenbergMarquardt(; linsolve = CholeskyFactorization(), disable_geodesic = Val(true)))),
-    (; pkg = :wrapper,        type = :general, name = "Pseudo Transient",          solver = Dict(:alg => PseudoTransient(; linsolve = LUFactorization(), alpha_initial=10.0))),
+    (; pkg = :wrapper,        type = :general, name = "Pseudo Transient",          solver = Dict(:alg => PseudoTransient(; linsolve = nothing, alpha_initial=10.0))),
     (; pkg = :wrapper,        type = :general, name = "Powell (MINPACK)",          solver = Dict(:alg => CMINPACK(; method=:hybr))),
     (; pkg = :wrapper,        type = :general, name = "LM (MINPACK)",              solver = Dict(:alg => CMINPACK(; method=:lm))),
     (; pkg = :wrapper,        type = :general, name = "NR (NLsolve.jl)",           solver = Dict(:alg => NLsolveJL(; method=:newton))),
@@ -94,7 +94,7 @@ Prepares various helper functions for benchmarking a specific problem.
 
 ```julia
 function set_ad_chunksize(solvers, u0)
-    ck = min(NonlinearSolve.pickchunksize(u0), 6)
+    ck = NonlinearSolve.pickchunksize(u0)
     for i in 1:length(solvers)
         @set! solvers[i].solver[:alg] = __set_ad_chunksize(solvers[i].solver[:alg], ck)
     end
@@ -400,7 +400,7 @@ benchmark_problem!("Powell singular function")
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 2.945100572117028e-9.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 7.351480171352898e-9.
+m = 7.351480171346401e-9.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 2.945100572117028e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -414,7 +414,7 @@ orm = 2.945100572117028e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 2.7
 952108150126756e-9.
 [Info] Solver TR (Yuan) returned retcode Success with an residual norm = 7.
-530945254053375e-9.
+530945252948723e-9.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 2.7952108150126756e-9.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 2.8
@@ -462,7 +462,7 @@ benchmark_problem!("Powell badly scaled function")
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.5733414571172943e-11.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 8.807574669589258e-10.
+m = 8.751994684530473e-10.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 8.115426330945752e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -524,25 +524,25 @@ benchmark_problem!("Wood function")
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 4.884981308350689e-14.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 2.751798788835913e-11.
+m = 2.74760214580283e-11.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
-rm = 8.272180940238627e-9.
+rm = 8.272160512134974e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
-orm = 9.527585387303361e-9.
+orm = 9.527507893736242e-9.
 [Info] Solver Trust Region returned retcode Success with an residual norm =
- 8.449333899207545e-9.
+ 8.449294375267868e-9.
 [Info] Solver TR (NLsolve Update) returned retcode Success with an residual
- norm = 3.6615155352137663e-13.
+ norm = 3.8813396940895473e-13.
 [Info] Solver TR (Nocedal Wright) returned retcode Success with an residual
- norm = 3.930189507173054e-14.
+ norm = 6.23945339839338e-14.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 7.7
-83131916738739e-10.
+83136357630838e-10.
 [Info] Solver TR (Yuan) returned retcode Success with an residual norm = 3.
-814113469502445e-10.
+8142977665245326e-10.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
-1.6234904531842176e-9.
+1.623468248723725e-9.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 1.6
-49005376691548e-10.
+490009357994495e-10.
 [Info] Solver Levenberg-Marquardt returned retcode Success with an residual
  norm = 5.511275658065529e-9.
 [Info] Solver LM with Cholesky returned retcode Success with an residual no
@@ -556,7 +556,7 @@ sidual norm = 5.511484157949553e-9.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 4.5968340245394756e-11.
 [Info] Solver Pseudo Transient returned retcode Success with an residual no
-rm = 1.4233059175694507e-13.
+rm = 1.6053824936079764e-13.
 [Info] Solver Powell (MINPACK) returned retcode Success with an residual no
 rm = 3.373679113849448e-11.
 [Info] Solver LM (MINPACK) returned retcode Success with an residual norm =
@@ -600,7 +600,7 @@ orm = 9.389520272407026e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 2.2
 20446049250313e-15.
 [Info] Solver TR (Yuan) returned retcode Success with an residual norm = 7.
-23670851354411e-17.
+236709830042941e-17.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 2.101282081278562e-12.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 2.9
@@ -661,8 +661,8 @@ orm = 9.087108877869898e-9.
  norm = 2.035559221180705e-13.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 7.1
 0331099496031e-13.
-[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 4.
-1598668953923834e-15.
+[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 9.
+56179579958416e-15.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 4.2049697057677804e-15.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 8.3
@@ -772,24 +772,24 @@ benchmark_problem!("Brown almost linear function")
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 9.544809387307396e-12.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 1.5631940186722204e-13.
+m = 2.859934511434403e-13.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
-rm = 9.860400496108923e-9.
-[Warn] Solver NR (BackTracking) had a very large residual (norm = 9.7384153
-82847927e73).
+rm = 9.864521643976332e-9.
+[Warn] Solver NR (BackTracking) had a very large residual (norm = 2.9784882
+239258917e78).
 [Info] Solver Trust Region returned retcode Success with an residual norm =
- 7.105427357601002e-15.
+ 6.994405055138486e-15.
 [Info] Solver TR (NLsolve Update) returned retcode Success with an residual
  norm = 1.652681325126082e-10.
 [Info] Solver TR (Nocedal Wright) returned retcode Success with an residual
- norm = 7.105427357601002e-15.
+ norm = 6.994405055138486e-15.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 2.2
-853652303922445e-10.
+853618997231706e-10.
 [Warn] Solver TR (Yuan) had a very large residual (norm = 5.5).
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
-5.344592546308036e-9.
+5.344593545508758e-9.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 1.6
-140933034591853e-10.
+140988545743085e-10.
 [Info] Solver Levenberg-Marquardt returned retcode Success with an residual
  norm = 1.4030865358449773e-10.
 [Info] Solver LM with Cholesky returned retcode Success with an residual no
@@ -803,7 +803,7 @@ sidual norm = 3.026058514876695e-9.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 7.025280357453312e-11.
 [Warn] Solver Pseudo Transient had a very large residual (norm = 1.37250894
-96539944e20).
+99957826e20).
 [Info] Solver Powell (MINPACK) returned retcode Success with an residual no
 rm = 5.995204332975845e-15.
 [Warn] Solver LM (MINPACK) had a very large residual (norm = 1.000000000050
@@ -895,7 +895,7 @@ benchmark_problem!("Discrete integral equation function")
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.304512053934559e-15.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 5.207545256125101e-9.
+m = 5.2075453116362524e-9.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 1.304512053934559e-15.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -955,27 +955,27 @@ benchmark_problem!("Trigonometric function")
 
 ```
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
- = 6.942141306254257e-12.
+ = 6.942307839707951e-12.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 6.835845778319083e-11.
+m = 6.836099741835966e-11.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
-rm = 6.4420154766153814e-9.
+rm = 6.442012645546669e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
 orm = 9.590515638591146e-9.
-[Warn] Solver Trust Region had a very large residual (norm = 0.004295419787
-4424255).
+[Warn] Solver Trust Region had a very large residual (norm = 0.004295419401
+194753).
 [Warn] Solver TR (NLsolve Update) had a very large residual (norm = 0.00429
-5418028397016).
+541738114847).
 [Warn] Solver TR (Nocedal Wright) had a very large residual (norm = 0.00429
-5415051797022).
-[Warn] Solver TR (Hei) had a very large residual (norm = 0.0042954155544357
-58).
-[Warn] Solver TR (Yuan) had a very large residual (norm = 0.004295419752717
-078).
+541395863188).
+[Warn] Solver TR (Hei) had a very large residual (norm = 0.0042954157598625
+03).
+[Warn] Solver TR (Yuan) had a very large residual (norm = 0.004295418673702
+9915).
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
-6.619704784327496e-15.
-[Warn] Solver TR (Fan) had a very large residual (norm = 0.0042954173747542
-37).
+6.647460359943125e-15.
+[Warn] Solver TR (Fan) had a very large residual (norm = 0.0042954175467514
+87).
 [Warn] Solver Levenberg-Marquardt had a very large residual (norm = 0.00481
 3013676580463).
 [Warn] Solver LM with Cholesky had a very large residual (norm = 0.00481301
@@ -988,8 +988,8 @@ orm = 9.590515638591146e-9.
  = 2.772573837184211e-13.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 5.103298811315327e-9.
-[Warn] Solver Pseudo Transient had a very large residual (norm = 7.29485351
-0353528).
+[Warn] Solver Pseudo Transient had a very large residual (norm = 27.1504407
+62085257).
 [Warn] Solver Powell (MINPACK) had a very large residual (norm = 0.00440555
 10820976695).
 [Warn] Solver LM (MINPACK) had a very large residual (norm = 0.004295506299
@@ -1019,7 +1019,7 @@ benchmark_problem!("Variably dimensioned function")
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.3234968676556491e-12.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 4.345885873391353e-9.
+m = 4.345897086643902e-9.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 1.3234968676556491e-12.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -1080,8 +1080,8 @@ benchmark_problem!("Broyden tridiagonal function")
 ```
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 7.54840412398039e-10.
-[Warn] Solver NR (HagerZhang) had a very large residual (norm = 4.810164422
-122141e15).
+[Warn] Solver NR (HagerZhang) had a very large residual (norm = 0.901578708
+3419275).
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 7.54840412398039e-10.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -1142,8 +1142,8 @@ benchmark_problem!("Broyden banded function")
 ```
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 9.359466091041213e-9.
-[Warn] Solver NR (HagerZhang) had a very large residual (norm = 1.200186126
-784717).
+[Warn] Solver NR (HagerZhang) had a very large residual (norm = 1.199193251
+7532473).
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 9.359466091041213e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -1213,13 +1213,13 @@ orm = 1.1102230246251565e-16.
 [Info] Solver Trust Region returned retcode Success with an residual norm =
  9.998897371997112e-9.
 [Info] Solver TR (NLsolve Update) returned retcode Success with an residual
- norm = 9.998955736891987e-9.
+ norm = 9.998955736892439e-9.
 [Info] Solver TR (Nocedal Wright) returned retcode Success with an residual
- norm = 9.999969447949885e-9.
+ norm = 9.999969447949803e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 9.9
-99902617651876e-9.
+99902745925823e-9.
 [Info] Solver TR (Yuan) returned retcode ShrinkThresholdExceeded with an re
-sidual norm = 6.485974185184814e-8.
+sidual norm = 5.2060943067797335e-8.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 1.5627499294623703e-12.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 9.9
@@ -1267,7 +1267,7 @@ benchmark_problem!("Hammarling 3 by 3 matrix square root problem")
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.1102230246251565e-16.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 1.2318031039626476e-9.
+m = 1.063028109982156e-9.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 5.009677561673698e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -1275,17 +1275,17 @@ orm = 1.1102230246251565e-16.
 [Info] Solver Trust Region returned retcode Success with an residual norm =
  9.999020663759086e-9.
 [Info] Solver TR (NLsolve Update) returned retcode Success with an residual
- norm = 9.999661246569013e-9.
+ norm = 9.99966124650125e-9.
 [Info] Solver TR (Nocedal Wright) returned retcode Success with an residual
- norm = 9.998678786868239e-9.
+ norm = 9.998678786868236e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 9.9
-94120483001654e-9.
+94120491051855e-9.
 [Info] Solver TR (Yuan) returned retcode Success with an residual norm = 9.
-99965539128097e-9.
+999992323585943e-9.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 1.7390533457728452e-12.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 9.9
-98200522882907e-9.
+98200522503436e-9.
 [Info] Solver Levenberg-Marquardt returned retcode Success with an residual
  norm = 1.6792649493169165e-9.
 [Info] Solver LM with Cholesky returned retcode Success with an residual no
@@ -1389,13 +1389,13 @@ benchmark_problem!("Sample problem 18")
 
 ```
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
- = 8.16714264178066e-9.
+ = 8.167142642163074e-9.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
 m = 7.27682214862992e-11.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 7.508958829076498e-9.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
-orm = 8.16714264178066e-9.
+orm = 8.167142642163074e-9.
 [Info] Solver Trust Region returned retcode Success with an residual norm =
  2.882025410947776e-11.
 [Info] Solver TR (NLsolve Update) returned retcode Success with an residual
@@ -1405,7 +1405,7 @@ orm = 8.16714264178066e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 4.3
 83074308503473e-9.
 [Info] Solver TR (Yuan) returned retcode Success with an residual norm = 8.
-16714264178066e-9.
+167142642163074e-9.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 4.383074308503473e-9.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 1.5
@@ -1423,7 +1423,7 @@ sidual norm = 4.341279241060183e-9.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 4.107327806644548e-10.
 [Info] Solver Pseudo Transient returned retcode Success with an residual no
-rm = 9.503369559071248e-12.
+rm = 9.505036886102531e-12.
 [Info] Solver Powell (MINPACK) returned retcode Success with an residual no
 rm = 1.0601839132130227e-19.
 [Info] Solver LM (MINPACK) returned retcode Success with an residual norm =
@@ -1485,7 +1485,7 @@ sidual norm = 7.160098265449658e-9.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 6.758031521862518e-9.
 [Info] Solver Pseudo Transient returned retcode Success with an residual no
-rm = 4.998140661041174e-9.
+rm = 4.998140661041176e-9.
 [Info] Solver Powell (MINPACK) returned retcode Success with an residual no
 rm = 4.56486967421927e-204.
 [Info] Solver LM (MINPACK) returned retcode Success with an residual norm =
@@ -1575,13 +1575,13 @@ benchmark_problem!("Freudenstein-Roth function")
 
 ```
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
- = 4.964704203302972e-10.
-[Warn] Solver NR (HagerZhang) had a very large residual (norm = 8.061678381
-923512e19).
-[Warn] Solver NR (MoreThuente) had a very large residual (norm = 1.96387597
-1147506e20).
-[Warn] Solver NR (BackTracking) had a very large residual (norm = 2.3674691
-7732678e21).
+ = 4.852083179684996e-10.
+[Warn] Solver NR (HagerZhang) had a very large residual (norm = 1.709729979
+8267514e20).
+[Warn] Solver NR (MoreThuente) had a very large residual (norm = 1.37540743
+48791905e20).
+[Warn] Solver NR (BackTracking) had a very large residual (norm = 3.6969134
+97452888e21).
 [Warn] Solver Trust Region had a very large residual (norm = 4.948952149637
 1545).
 [Warn] Solver TR (NLsolve Update) had a very large residual (norm = 4.94895
@@ -1589,7 +1589,7 @@ benchmark_problem!("Freudenstein-Roth function")
 [Warn] Solver TR (Nocedal Wright) had a very large residual (norm = 4.94895
 21496371545).
 [Warn] Solver TR (Hei) had a very large residual (norm = 4.94895210287909).
-[Warn] Solver TR (Yuan) had a very large residual (norm = 4.948952096598568
+[Warn] Solver TR (Yuan) had a very large residual (norm = 4.948952095684966
 ).
 [Warn] Solver TR (Bastin) had a very large residual (norm = 4.9489521186807
 15).
@@ -1607,7 +1607,7 @@ benchmark_problem!("Freudenstein-Roth function")
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 5.917158318879956e-9.
 [Info] Solver Pseudo Transient returned retcode Success with an residual no
-rm = 0.0.
+rm = 7.105427357601002e-15.
 [Warn] Solver Powell (MINPACK) had a very large residual (norm = 4.95655183
 4519658).
 [Warn] Solver LM (MINPACK) had a very large residual (norm = 4.948960804228
@@ -1699,7 +1699,7 @@ benchmark_problem!("Chandrasekhar function")
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 2.9976021664879227e-14.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
-m = 4.440892098500626e-16.
+m = 6.661338147750939e-16.
 [Info] Solver NR (MoreThuente) returned retcode Success with an residual no
 rm = 2.9976021664879227e-14.
 [Info] Solver NR (BackTracking) returned retcode Success with an residual n
@@ -1982,13 +1982,13 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.4.0
   [13f3f980] CairoMakie v0.11.8
-  [2b5f629d] DiffEqBase v6.146.1
+  [2b5f629d] DiffEqBase v6.146.2
   [f3b72e0c] DiffEqDevTools v2.44.2
   [b964fa9f] LaTeXStrings v1.3.1
-  [7ed4a6bd] LinearSolve v2.22.1
+  [7ed4a6bd] LinearSolve v2.23.3
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
@@ -1997,21 +1997,19 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [efcf1570] Setfield v1.1.1
-⌃ [727e6d20] SimpleNonlinearSolve v1.4.0
+  [727e6d20] SimpleNonlinearSolve v1.4.1
   [47a9eef4] SparseDiffTools v2.16.0
   [f1835b91] SpeedMapping v0.3.0
   [860ef19b] StableRNGs v1.0.1
   [90137ffa] StaticArrays v1.9.2
   [c3572dad] Sundials v4.23.2
-  [0c5d862f] Symbolics v5.16.1
-Info Packages marked with ⌃ have new versions available and may be upgradable.
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
+  [0c5d862f] Symbolics v5.17.0
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
   [47edcb42] ADTypes v0.2.6
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
@@ -2020,7 +2018,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [22286c92] AccurateArithmetic v0.3.8
   [79e6a3ab] Adapt v4.0.1
   [27a7e980] Animations v0.4.1
-  [ec485272] ArnoldiMethod v0.2.0
+⌅ [ec485272] ArnoldiMethod v0.2.0
   [4fba245c] ArrayInterface v7.7.0
   [4c555306] ArrayLayouts v1.6.0
   [67c07d97] Automa v1.0.3
@@ -2063,7 +2061,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [864edb3b] DataStructures v0.18.16
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.12
-  [2b5f629d] DiffEqBase v6.146.1
+  [2b5f629d] DiffEqBase v6.146.2
   [f3b72e0c] DiffEqDevTools v2.44.2
   [77a26b50] DiffEqNoiseProcess v5.20.1
   [163ba53b] DiffResults v1.1.0
@@ -2132,7 +2130,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
   [b835a17e] JpegTurbo v0.1.5
-⌅ [ef3ab10e] KLU v0.4.1
+  [ef3ab10e] KLU v0.5.0
   [5ab0869b] KernelDensity v0.6.8
   [ba0b0d4f] Krylov v0.9.5
   [b964fa9f] LaTeXStrings v1.3.1
@@ -2147,7 +2145,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
   [9b3f67b0] LinearAlgebraX v0.2.7
-  [7ed4a6bd] LinearSolve v2.22.1
+  [7ed4a6bd] LinearSolve v2.23.3
   [2ab3a3ac] LogExpFunctions v0.3.26
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.166
@@ -2201,7 +2199,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [647866c9] PolygonOps v0.1.2
   [f27b6e38] Polynomials v4.0.6
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.18
+  [d236fae5] PreallocationTools v0.4.20
   [aea7be01] PrecompileTools v1.2.0
   [21216c6a] Preferences v1.4.1
   [08abe8d2] PrettyTables v2.3.1
@@ -2214,7 +2212,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
-  [731186ca] RecursiveArrayTools v3.8.0
+  [731186ca] RecursiveArrayTools v3.8.1
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
@@ -2229,7 +2227,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.23.2
+  [0bca4576] SciMLBase v2.24.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
@@ -2239,7 +2237,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [73760f76] SignedDistanceFields v0.4.0
   [777ac1f9] SimpleBufferStream v1.1.0
   [55797a34] SimpleGraphs v0.8.6
-⌃ [727e6d20] SimpleNonlinearSolve v1.4.0
+  [727e6d20] SimpleNonlinearSolve v1.4.1
   [ec83eff0] SimplePartitions v0.3.1
   [cc47b68c] SimplePolynomials v0.2.17
   [a6525b86] SimpleRandom v0.3.1
@@ -2251,7 +2249,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.3.1
   [f1835b91] SpeedMapping v0.3.0
-  [c5dd0088] StableHashTraits v1.1.6
+  [c5dd0088] StableHashTraits v1.1.7
   [860ef19b] StableRNGs v1.0.1
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v0.8.10
@@ -2268,7 +2266,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c3572dad] Sundials v4.23.2
   [2efcf032] SymbolicIndexingInterface v0.3.5
   [d1185830] SymbolicUtils v1.5.0
-  [0c5d862f] Symbolics v5.16.1
+  [0c5d862f] Symbolics v5.17.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
@@ -2280,7 +2278,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [410a4b4d] Tricks v0.1.8
   [981d1d27] TriplotBase v0.1.0
   [781d530d] TruncatedStacktraces v1.4.0
-⌃ [9d95972d] TupleTools v1.4.3
+  [9d95972d] TupleTools v1.5.0
   [5c2747f8] URIs v1.5.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
@@ -2404,6 +2402,5 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

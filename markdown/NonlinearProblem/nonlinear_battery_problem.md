@@ -36,22 +36,22 @@ DEFAULT_FORWARD_AD = AutoForwardDiff(; chunksize = 12)
 
 solvers_all = [
     (; pkg = :nonlinearsolve,       name = "Default PolyAlgorithm",                                  solver = Dict(:alg => nothing)),
-    (; pkg = :nonlinearsolve,       name = "Newton Raphson",                                         solver = Dict(:alg => NewtonRaphson(; autodiff = DEFAULT_FORWARD_AD))),
-    (; pkg = :nonlinearsolve,       name = "Newton Raphson (HagerZhang LineSearch)",                 solver = Dict(:alg => NewtonRaphson(; linesearch = HagerZhang()))),
-    (; pkg = :nonlinearsolve,       name = "Newton Raphson (MoreThuente LineSearch)",                solver = Dict(:alg => NewtonRaphson(; linesearch = MoreThuente()))),
-    (; pkg = :nonlinearsolve,       name = "Newton Raphson (BackTracking LineSearch)",               solver = Dict(:alg => NewtonRaphson(; linesearch = BackTracking()))),
+    (; pkg = :nonlinearsolve,       name = "Newton Raphson",                                         solver = Dict(:alg => NewtonRaphson(; linsolve = nothing, autodiff = DEFAULT_FORWARD_AD))),
+    (; pkg = :nonlinearsolve,       name = "Newton Raphson (HagerZhang LineSearch)",                 solver = Dict(:alg => NewtonRaphson(; linsolve = nothing, linesearch = HagerZhang()))),
+    (; pkg = :nonlinearsolve,       name = "Newton Raphson (MoreThuente LineSearch)",                solver = Dict(:alg => NewtonRaphson(; linsolve = nothing, linesearch = MoreThuente()))),
+    (; pkg = :nonlinearsolve,       name = "Newton Raphson (BackTracking LineSearch)",               solver = Dict(:alg => NewtonRaphson(; linsolve = nothing, linesearch = BackTracking()))),
     (; pkg = :nonlinearsolve,       name = "Newton Krylov with GMRES",                               solver = Dict(:alg => NewtonRaphson(; linsolve = KrylovJL_GMRES()))),
     (; pkg = :nonlinearsolve,       name = "DFSane",                                                 solver = Dict(:alg => DFSane())),
     (; pkg = :nonlinearsolve,       name = "Trust Region",                                           solver = Dict(:alg => TrustRegion())),
-    (; pkg = :nonlinearsolve,       name = "Trust Region (NLsolve Update)",                          solver = Dict(:alg => TrustRegion(; autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.NLsolve))),
-    (; pkg = :nonlinearsolve,       name = "Trust Region (Nocedal Wright)",                          solver = Dict(:alg => TrustRegion(; autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.NocedalWright))),
-    (; pkg = :nonlinearsolve,       name = "Trust Region (Hei)",                                     solver = Dict(:alg => TrustRegion(; autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.Hei))),
-    (; pkg = :nonlinearsolve,       name = "Trust Region (Yuan)",                                    solver = Dict(:alg => TrustRegion(; autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.Yuan))),
-    (; pkg = :nonlinearsolve,       name = "Trust Region (Bastin)",                                  solver = Dict(:alg => TrustRegion(; autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.Bastin))),
-    (; pkg = :nonlinearsolve,       name = "Trust Region (Fan)",                                     solver = Dict(:alg => TrustRegion(; autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.Fan))),
-    (; pkg = :nonlinearsolve,       name = "Levenberg-Marquardt",                                    solver = Dict(:alg => LevenbergMarquardt(; autodiff = DEFAULT_FORWARD_AD))),
+    (; pkg = :nonlinearsolve,       name = "Trust Region (NLsolve Update)",                          solver = Dict(:alg => TrustRegion(; linsolve = nothing, autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.NLsolve))),
+    (; pkg = :nonlinearsolve,       name = "Trust Region (Nocedal Wright)",                          solver = Dict(:alg => TrustRegion(; linsolve = nothing, autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.NocedalWright))),
+    (; pkg = :nonlinearsolve,       name = "Trust Region (Hei)",                                     solver = Dict(:alg => TrustRegion(; linsolve = nothing, autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.Hei))),
+    (; pkg = :nonlinearsolve,       name = "Trust Region (Yuan)",                                    solver = Dict(:alg => TrustRegion(; linsolve = nothing, autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.Yuan))),
+    (; pkg = :nonlinearsolve,       name = "Trust Region (Bastin)",                                  solver = Dict(:alg => TrustRegion(; linsolve = nothing, autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.Bastin))),
+    (; pkg = :nonlinearsolve,       name = "Trust Region (Fan)",                                     solver = Dict(:alg => TrustRegion(; linsolve = nothing, autodiff = DEFAULT_FORWARD_AD, radius_update_scheme = RUS.Fan))),
+    (; pkg = :nonlinearsolve,       name = "Levenberg-Marquardt",                                    solver = Dict(:alg => LevenbergMarquardt(; linsolve = nothing, autodiff = DEFAULT_FORWARD_AD))),
     (; pkg = :nonlinearsolve,       name = "Levenberg-Marquardt with Cholesky",                      solver = Dict(:alg => LevenbergMarquardt(; autodiff = DEFAULT_FORWARD_AD, linsolve = CholeskyFactorization()))),
-    (; pkg = :nonlinearsolve,       name = "Levenberg-Marquardt (No Geodesic Accln.)",               solver = Dict(:alg => LevenbergMarquardt(; disable_geodesic = Val(true), autodiff = DEFAULT_FORWARD_AD))),
+    (; pkg = :nonlinearsolve,       name = "Levenberg-Marquardt (No Geodesic Accln.)",               solver = Dict(:alg => LevenbergMarquardt(; linsolve = nothing, disable_geodesic = Val(true), autodiff = DEFAULT_FORWARD_AD))),
     (; pkg = :nonlinearsolve,       name = "Levenberg-Marquardt (No Geodesic Accln.) with Cholesky", solver = Dict(:alg => LevenbergMarquardt(; disable_geodesic = Val(true), autodiff = DEFAULT_FORWARD_AD, linsolve = CholeskyFactorization()))),
     (; pkg = :wrapper,              name = "Modified Powell (MINPACK)",                              solver = Dict(:alg => CMINPACK(; method = :hybr))),
     (; pkg = :wrapper,              name = "Levenberg-Marquardt (MINPACK)",                          solver = Dict(:alg => CMINPACK(; method = :lm))),
@@ -535,13 +535,13 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.4.0
   [13f3f980] CairoMakie v0.11.8
-  [2b5f629d] DiffEqBase v6.146.1
+  [2b5f629d] DiffEqBase v6.146.2
   [f3b72e0c] DiffEqDevTools v2.44.2
   [b964fa9f] LaTeXStrings v1.3.1
-  [7ed4a6bd] LinearSolve v2.22.1
+  [7ed4a6bd] LinearSolve v2.23.3
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
@@ -550,21 +550,19 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [efcf1570] Setfield v1.1.1
-⌃ [727e6d20] SimpleNonlinearSolve v1.4.0
+  [727e6d20] SimpleNonlinearSolve v1.4.1
   [47a9eef4] SparseDiffTools v2.16.0
   [f1835b91] SpeedMapping v0.3.0
   [860ef19b] StableRNGs v1.0.1
   [90137ffa] StaticArrays v1.9.2
   [c3572dad] Sundials v4.23.2
-  [0c5d862f] Symbolics v5.16.1
-Info Packages marked with ⌃ have new versions available and may be upgradable.
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
+  [0c5d862f] Symbolics v5.17.0
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
   [47edcb42] ADTypes v0.2.6
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
@@ -573,7 +571,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [22286c92] AccurateArithmetic v0.3.8
   [79e6a3ab] Adapt v4.0.1
   [27a7e980] Animations v0.4.1
-  [ec485272] ArnoldiMethod v0.2.0
+⌅ [ec485272] ArnoldiMethod v0.2.0
   [4fba245c] ArrayInterface v7.7.0
   [4c555306] ArrayLayouts v1.6.0
   [67c07d97] Automa v1.0.3
@@ -616,7 +614,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [864edb3b] DataStructures v0.18.16
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.12
-  [2b5f629d] DiffEqBase v6.146.1
+  [2b5f629d] DiffEqBase v6.146.2
   [f3b72e0c] DiffEqDevTools v2.44.2
   [77a26b50] DiffEqNoiseProcess v5.20.1
   [163ba53b] DiffResults v1.1.0
@@ -685,7 +683,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
   [b835a17e] JpegTurbo v0.1.5
-⌅ [ef3ab10e] KLU v0.4.1
+  [ef3ab10e] KLU v0.5.0
   [5ab0869b] KernelDensity v0.6.8
   [ba0b0d4f] Krylov v0.9.5
   [b964fa9f] LaTeXStrings v1.3.1
@@ -700,7 +698,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
   [9b3f67b0] LinearAlgebraX v0.2.7
-  [7ed4a6bd] LinearSolve v2.22.1
+  [7ed4a6bd] LinearSolve v2.23.3
   [2ab3a3ac] LogExpFunctions v0.3.26
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.166
@@ -754,7 +752,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [647866c9] PolygonOps v0.1.2
   [f27b6e38] Polynomials v4.0.6
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.18
+  [d236fae5] PreallocationTools v0.4.20
   [aea7be01] PrecompileTools v1.2.0
   [21216c6a] Preferences v1.4.1
   [08abe8d2] PrettyTables v2.3.1
@@ -767,7 +765,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
-  [731186ca] RecursiveArrayTools v3.8.0
+  [731186ca] RecursiveArrayTools v3.8.1
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
@@ -782,7 +780,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.23.2
+  [0bca4576] SciMLBase v2.24.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
@@ -792,7 +790,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [73760f76] SignedDistanceFields v0.4.0
   [777ac1f9] SimpleBufferStream v1.1.0
   [55797a34] SimpleGraphs v0.8.6
-⌃ [727e6d20] SimpleNonlinearSolve v1.4.0
+  [727e6d20] SimpleNonlinearSolve v1.4.1
   [ec83eff0] SimplePartitions v0.3.1
   [cc47b68c] SimplePolynomials v0.2.17
   [a6525b86] SimpleRandom v0.3.1
@@ -804,7 +802,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.3.1
   [f1835b91] SpeedMapping v0.3.0
-  [c5dd0088] StableHashTraits v1.1.6
+  [c5dd0088] StableHashTraits v1.1.7
   [860ef19b] StableRNGs v1.0.1
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v0.8.10
@@ -821,7 +819,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c3572dad] Sundials v4.23.2
   [2efcf032] SymbolicIndexingInterface v0.3.5
   [d1185830] SymbolicUtils v1.5.0
-  [0c5d862f] Symbolics v5.16.1
+  [0c5d862f] Symbolics v5.17.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
@@ -833,7 +831,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [410a4b4d] Tricks v0.1.8
   [981d1d27] TriplotBase v0.1.0
   [781d530d] TruncatedStacktraces v1.4.0
-⌃ [9d95972d] TupleTools v1.4.3
+  [9d95972d] TupleTools v1.5.0
   [5c2747f8] URIs v1.5.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
@@ -957,6 +955,5 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
