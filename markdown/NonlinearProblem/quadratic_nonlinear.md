@@ -200,7 +200,7 @@ function plot_all_wpsets(wpset_list, solver_all, titles, suptitle)
             titlesize = 16, nbanks = 3, labelsize = 16,
             tellheight = true, tellwidth = false, patchsize = (40.0f0, 20.0f0))
 
-        fig[0, :] = Label(fig, suptitle, fontsize = 24, tellwidth = false, font = :bold)
+        fig[0, :] = Label(fig, "Quadratic Problem with $(suptitle): Work Precision Diagram", fontsize = 24, tellwidth = false, font = :bold)
 
         fig
     end
@@ -623,10 +623,9 @@ fig = begin
 
     fig[0, :] = Label(fig, "Simple Algorithms on Quadratic Root-Finding Problem",
         fontsize = 24, font = :bold)
-    fig[1, 0] = Label(fig, "Quadratic Problem with Static Arrays: Work Precision Diagram",
+    fig[1, 0] = Label(fig, "Static Arrays",
         fontsize = 24, rotation = π / 2, tellheight = false)
-    fig[2, 0] = Label(fig,
-        "Quadratic Problem with Regular Julia Arrays: Work Precision Diagram",
+    fig[2, 0] = Label(fig, "Regular Julia Arrays",
         fontsize = 24, rotation = π / 2, tellheight = false)
 
     labels = ["NonlinearSolve.jl", "NLsolve.jl", "Sundials"]
@@ -676,7 +675,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -742,7 +741,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [159f3aea] Cairo v1.0.5
   [13f3f980] CairoMakie v0.11.8
   [49dc2e85] Calculus v0.5.1
-  [d360d2e6] ChainRulesCore v1.21.1
+⌃ [d360d2e6] ChainRulesCore v1.21.1
   [fb6a15b2] CloseOpenIntervals v0.1.12
   [523fee87] CodecBzip2 v0.8.2
   [944b1d66] CodecZlib v0.7.4
