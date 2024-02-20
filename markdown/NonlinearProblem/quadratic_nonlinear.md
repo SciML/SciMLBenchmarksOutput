@@ -11,6 +11,7 @@ using NonlinearSolve, StaticArrays, DiffEqDevTools, Sundials, CairoMakie, Linear
     LinearAlgebra, StableRNGs, BenchmarkTools, Setfield
 import PolyesterForwardDiff, MINPACK, NLsolve, SpeedMapping
 RUS = RadiusUpdateSchemes;
+BenchmarkTools.DEFAULT_PARAMETERS.seconds = 0.5;
 
 f_oop(u, p) = u .* u .- p
 f_iip(du, u, p) = @. du = u * u - p
@@ -622,10 +623,11 @@ fig = begin
 
     fig[0, :] = Label(fig, "Simple Algorithms on Quadratic Root-Finding Problem",
         fontsize = 24, font = :bold)
-    fig[1, 0] = Label(fig, "Static Arrays", fontsize = 24, rotation = π / 2,
-        tellheight = false)
-    fig[2, 0] = Label(fig, "Regular Julia Arrays", fontsize = 24, rotation = π / 2,
-        tellheight = false)
+    fig[1, 0] = Label(fig, "Quadratic Problem with Static Arrays: Work Precision Diagram",
+        fontsize = 24, rotation = π / 2, tellheight = false)
+    fig[2, 0] = Label(fig,
+        "Quadratic Problem with Regular Julia Arrays: Work Precision Diagram",
+        fontsize = 24, rotation = π / 2, tellheight = false)
 
     labels = ["NonlinearSolve.jl", "NLsolve.jl", "Sundials"]
     colors = cgrad(:berlin, length(labels); categorical = true)
@@ -684,41 +686,45 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+  [2169fc97] AlgebraicMultigrid v0.6.0
   [6e4b80f9] BenchmarkTools v1.4.0
   [13f3f980] CairoMakie v0.11.8
   [2b5f629d] DiffEqBase v6.147.0
   [f3b72e0c] DiffEqDevTools v2.44.2
+  [40713840] IncompleteLU v0.2.1
   [b964fa9f] LaTeXStrings v1.3.1
   [7ed4a6bd] LinearSolve v2.23.4
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.5.6
+  [8913a72c] NonlinearSolve v3.6.0
   [98d1487c] PolyesterForwardDiff v0.1.1
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [efcf1570] Setfield v1.1.1
-  [727e6d20] SimpleNonlinearSolve v1.4.1
+  [727e6d20] SimpleNonlinearSolve v1.5.0
   [47a9eef4] SparseDiffTools v2.17.0
   [f1835b91] SpeedMapping v0.3.0
   [860ef19b] StableRNGs v1.0.1
   [90137ffa] StaticArrays v1.9.2
   [c3572dad] Sundials v4.24.0
-  [0c5d862f] Symbolics v5.18.0
+⌃ [0c5d862f] Symbolics v5.18.0
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
   [47edcb42] ADTypes v0.2.6
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
   [398f06c4] AbstractLattices v0.3.0
-  [1520ce14] AbstractTrees v0.4.4
+⌃ [1520ce14] AbstractTrees v0.4.4
   [22286c92] AccurateArithmetic v0.3.8
   [79e6a3ab] Adapt v4.0.1
+  [2169fc97] AlgebraicMultigrid v0.6.0
   [27a7e980] Animations v0.4.1
 ⌅ [ec485272] ArnoldiMethod v0.2.0
   [4fba245c] ArrayInterface v7.7.1
@@ -748,7 +754,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v4.12.0
+  [34da2185] Compat v4.13.0
   [b152e2b5] CompositeTypes v0.1.3
   [2569d6c7] ConcreteStructs v0.2.3
   [f0e56b4a] ConcurrentUtilities v2.3.1
@@ -773,7 +779,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ffbed154] DocStringExtensions v0.9.3
   [e30172f5] Documenter v1.2.1
   [35a29f4d] DocumenterTools v0.1.19
-  [5b8099bc] DomainSets v0.7.3
+⌃ [5b8099bc] DomainSets v0.7.3
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.5.5
   [4e289a0a] EnumX v1.0.4
@@ -819,6 +825,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [a09fc81d] ImageCore v0.10.2
   [82e4d734] ImageIO v0.6.7
   [bc367c6b] ImageMetadata v0.9.9
+  [40713840] IncompleteLU v0.2.1
   [9b13fd28] IndirectArrays v1.0.0
   [d25df0c9] Inflate v0.1.4
   [18e54dd8] IntegerMathUtils v0.1.2
@@ -876,7 +883,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.5.6
+  [8913a72c] NonlinearSolve v3.6.0
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.13.0
   [52e1d378] OpenEXR v0.3.2
@@ -929,7 +936,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.26.0
+  [0bca4576] SciMLBase v2.26.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
@@ -939,7 +946,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [73760f76] SignedDistanceFields v0.4.0
   [777ac1f9] SimpleBufferStream v1.1.0
   [55797a34] SimpleGraphs v0.8.6
-  [727e6d20] SimpleNonlinearSolve v1.4.1
+  [727e6d20] SimpleNonlinearSolve v1.5.0
   [ec83eff0] SimplePartitions v0.3.1
   [cc47b68c] SimplePolynomials v0.2.17
   [a6525b86] SimpleRandom v0.3.1
@@ -968,7 +975,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c3572dad] Sundials v4.24.0
   [2efcf032] SymbolicIndexingInterface v0.3.6
   [d1185830] SymbolicUtils v1.5.0
-  [0c5d862f] Symbolics v5.18.0
+⌃ [0c5d862f] Symbolics v5.18.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
