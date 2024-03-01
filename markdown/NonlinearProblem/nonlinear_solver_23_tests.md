@@ -1945,9 +1945,6 @@ CairoMakie.Screen{SVG}
 
 
 
-
-# Appendix
-
 ## Appendix
 
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
@@ -1972,7 +1969,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -1985,16 +1982,16 @@ Package Information:
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [2169fc97] AlgebraicMultigrid v0.6.0
   [6e4b80f9] BenchmarkTools v1.4.0
-  [13f3f980] CairoMakie v0.11.8
+⌃ [13f3f980] CairoMakie v0.11.8
   [2b5f629d] DiffEqBase v6.147.0
   [f3b72e0c] DiffEqDevTools v2.44.2
   [40713840] IncompleteLU v0.2.1
   [b964fa9f] LaTeXStrings v1.3.1
-  [7ed4a6bd] LinearSolve v2.23.4
+⌃ [7ed4a6bd] LinearSolve v2.23.4
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.6.0
+⌃ [8913a72c] NonlinearSolve v3.6.0
   [98d1487c] PolyesterForwardDiff v0.1.1
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
@@ -2003,7 +2000,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [47a9eef4] SparseDiffTools v2.17.0
   [f1835b91] SpeedMapping v0.3.0
   [860ef19b] StableRNGs v1.0.1
-  [90137ffa] StaticArrays v1.9.2
+⌃ [90137ffa] StaticArrays v1.9.2
   [c3572dad] Sundials v4.24.0
 ⌃ [0c5d862f] Symbolics v5.18.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
@@ -2037,7 +2034,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2a0fbf3d] CPUSummary v0.2.4
   [96374032] CRlibm v1.0.1
   [159f3aea] Cairo v1.0.5
-  [13f3f980] CairoMakie v0.11.8
+⌃ [13f3f980] CairoMakie v0.11.8
   [49dc2e85] Calculus v0.5.1
 ⌃ [d360d2e6] ChainRulesCore v1.21.1
   [fb6a15b2] CloseOpenIntervals v0.1.12
@@ -2051,7 +2048,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v4.13.0
+⌃ [34da2185] Compat v4.13.0
   [b152e2b5] CompositeTypes v0.1.3
   [2569d6c7] ConcreteStructs v0.2.3
   [f0e56b4a] ConcurrentUtilities v2.3.1
@@ -2151,18 +2148,18 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
   [9b3f67b0] LinearAlgebraX v0.2.7
-  [7ed4a6bd] LinearSolve v2.23.4
+⌃ [7ed4a6bd] LinearSolve v2.23.4
   [2ab3a3ac] LogExpFunctions v0.3.27
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.166
   [4854310b] MINPACK v1.2.0
   [1914dd2f] MacroTools v0.5.13
-  [ee78f7c6] Makie v0.20.7
+⌅ [ee78f7c6] Makie v0.20.7
   [20f20a25] MakieCore v0.7.3
   [d125e4d3] ManualMemory v0.1.8
   [dbb5928d] MappedArrays v0.4.2
   [d0879d2d] MarkdownAST v0.1.2
-  [b8f27783] MathOptInterface v1.25.3
+⌃ [b8f27783] MathOptInterface v1.25.3
   [0a4f8689] MathTeXEngine v0.5.7
   [a3b82374] MatrixFactorizations v2.1.0
   [bb5d69b7] MaybeInplace v0.1.1
@@ -2180,7 +2177,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.6.0
+⌃ [8913a72c] NonlinearSolve v3.6.0
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.13.0
   [52e1d378] OpenEXR v0.3.2
@@ -2209,7 +2206,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [aea7be01] PrecompileTools v1.2.0
   [21216c6a] Preferences v1.4.1
   [08abe8d2] PrettyTables v2.3.1
-  [27ebfcd6] Primes v0.5.5
+⌃ [27ebfcd6] Primes v0.5.5
   [92933f4c] ProgressMeter v1.9.0
   [4b34888f] QOI v1.0.0
   [1fd47b50] QuadGK v2.9.4
@@ -2218,7 +2215,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
-  [731186ca] RecursiveArrayTools v3.8.1
+⌃ [731186ca] RecursiveArrayTools v3.8.1
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
@@ -2233,7 +2230,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.26.1
+⌃ [0bca4576] SciMLBase v2.26.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.7
   [6c6a2e73] Scratch v1.2.1
@@ -2260,7 +2257,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v0.8.10
   [0d7ed370] StaticArrayInterface v1.5.0
-  [90137ffa] StaticArrays v1.9.2
+⌃ [90137ffa] StaticArrays v1.9.2
   [1e83bf80] StaticArraysCore v1.4.2
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.2
@@ -2268,9 +2265,9 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7792a7ef] StrideArraysCore v0.5.2
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
-  [09ab397b] StructArrays v0.6.17
+⌃ [09ab397b] StructArrays v0.6.17
   [c3572dad] Sundials v4.24.0
-  [2efcf032] SymbolicIndexingInterface v0.3.6
+⌃ [2efcf032] SymbolicIndexingInterface v0.3.6
   [d1185830] SymbolicUtils v1.5.0
 ⌃ [0c5d862f] Symbolics v5.18.0
   [3783bdb8] TableTraits v1.0.1
@@ -2314,7 +2311,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
   [905a6f67] Imath_jll v3.1.7+0
   [1d5cc7b8] IntelOpenMP_jll v2024.0.2+0
-  [aacddb02] JpegTurbo_jll v3.0.1+0
+⌃ [aacddb02] JpegTurbo_jll v3.0.1+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [1d63c593] LLVMOpenMP_jll v15.0.7+0
   [dd4b983a] LZO_jll v2.10.1+0
