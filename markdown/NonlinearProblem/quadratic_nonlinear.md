@@ -141,7 +141,7 @@ function plot_all_wpsets(wpset_list, solver_all, titles, suptitle)
     HEIGHT = round(Int, WIDTH * ASPECT_RATIO)
     STROKEWIDTH = 2.5
 
-    colors = cgrad(:berlin, length(solver_all); categorical = true)
+    colors = cgrad(:seaborn_bright, length(solver_all); categorical = true)
     cycle = Cycle([:marker], covary = true)
     plot_theme = Theme(Lines = (; cycle,), Scatter = (; cycle,))
 
@@ -152,7 +152,7 @@ function plot_all_wpsets(wpset_list, solver_all, titles, suptitle)
 
         for i in 1:2, j in 1:2
             ylabel = j == 1 ? L"$\mathrm{\mathbf{Time}}$ $\mathbf{(s)}$" : ""
-            xlabel = i == 2 ? L"$\mathrm{\mathbf{Error}}$: $\mathbf{f(u^\ast)}$ $\mathbf{L_{\infty}}-\mathrm{\mathbf{norm}}$" : ""
+            xlabel = i == 2 ? L"Error: $\mathbf{||f(u^\ast)||_\infty}$" : ""
             ax = Axis(fig[i, j]; ylabel = ylabel, title = titles[2 * (i - 1) + j],
                 titlegap = 10, titlesize = 22, xlabelsize = 22, ylabelsize = 22,
                 xticklabelsize = 20, yticklabelsize = 20,
@@ -229,7 +229,7 @@ fig = plot_all_wpsets(wpsets, solvers, titles, "Static Arrays")
 
 ```
 [Info] Solver Default PolyAlgorithm successfully solved the problem (norm =
- 7.743550661734637e-6).
+ 8.903708005997684e-6).
 [Info] Solver Simple Newton Raphson successfully solved the problem (norm =
  8.903708005997684e-6).
 [Info] Solver Simple DFSane successfully solved the problem (norm = 2.21391
@@ -251,7 +251,7 @@ fig = plot_all_wpsets(wpsets, solvers, titles, "Static Arrays")
 [Info] Solver Klement successfully solved the problem (norm = 7.74279203948
 5169e-6).
 [Info] Solver Default PolyAlgorithm successfully solved the problem (norm =
- 1.0524944462494045e-5).
+ 1.3175515250018797e-5).
 [Info] Solver Simple Newton Raphson successfully solved the problem (norm =
  1.3175515250018797e-5).
 [Info] Solver Simple DFSane successfully solved the problem (norm = 3.21318
@@ -273,7 +273,7 @@ fig = plot_all_wpsets(wpsets, solvers, titles, "Static Arrays")
 [Info] Solver Klement successfully solved the problem (norm = 1.04709031908
 2685e-5).
 [Info] Solver Default PolyAlgorithm successfully solved the problem (norm =
- 1.4246490327013533e-5).
+ 1.9046552208413456e-5).
 [Info] Solver Simple Newton Raphson successfully solved the problem (norm =
  1.9046552208413456e-5).
 [Info] Solver Simple DFSane successfully solved the problem (norm = 4.64939
@@ -295,7 +295,7 @@ fig = plot_all_wpsets(wpsets, solvers, titles, "Static Arrays")
 [Info] Solver Klement successfully solved the problem (norm = 1.41180265390
 8467e-5).
 [Info] Solver Default PolyAlgorithm successfully solved the problem (norm =
- 1.928785498427112e-5).
+ 2.2187014239665903e-5).
 [Info] Solver Simple Newton Raphson successfully solved the problem (norm =
  2.2187014239665903e-5).
 [Info] Solver Simple DFSane successfully solved the problem (norm = 5.40467
@@ -346,7 +346,7 @@ fig = plot_all_wpsets(wpsets, solvers, titles, "Regular Julia Arrays")
 ```
 length(prob.u0) = 4
 [Info] Solver Default PolyAlgorithm successfully solved the problem (norm =
- 1.0524944462889887e-5).
+ 1.3175515250018797e-5).
 [Info] Solver Simple Newton Raphson successfully solved the problem (norm =
  1.3175515250018797e-5).
 [Info] Solver Simple DFSane successfully solved the problem (norm = 3.21318
@@ -377,7 +377,7 @@ rm = 3.507854466145342e-9).
 em (norm = 1.9601492832512963e-5).
 length(prob.u0) = 16
 [Info] Solver Default PolyAlgorithm successfully solved the problem (norm =
- 2.3141389150698733e-5).
+ 2.5044494662558595e-5).
 [Info] Solver Simple Newton Raphson successfully solved the problem (norm =
  2.5044494662558595e-5).
 [Info] Solver Simple DFSane successfully solved the problem (norm = 6.11269
@@ -564,7 +564,7 @@ df_reg = create_structure_data(solve_timings_reg)
 
 fig = begin
     ASPECT_RATIO = 0.7
-    WIDTH = 1400
+    WIDTH = 1200
     HEIGHT = round(Int, WIDTH * ASPECT_RATIO)
     STROKEWIDTH = 2.5
 
@@ -579,7 +579,7 @@ fig = begin
         ys = reduce(vcat, [[xx.second[i] for xx in dfᵢ.second] for dfᵢ in df_sa])
 
         ax = Axis(fig[1, i];
-            ylabel = i == 1 ? L"Relative to $\mathbf{\mathrm{SimpleNonlinearSolve}}$" : "",
+            ylabel = "",
             title = L"N = %$(length(probs_sa[i].u0))$",
             titlegap = 10, xticksvisible = false, yticksvisible = true,
             xticklabelsvisible = false, yticklabelsvisible = true, titlesize = 22,
@@ -587,7 +587,7 @@ fig = begin
             xticklabelrotation = π / 4, xticklabelsize = 20, yticklabelsize = 20)
         axs[1, i] = ax
 
-        barplot!(ax, xs, ys; dogde = dodge, color = dodge, colormap = :berlin,
+        barplot!(ax, xs, ys; dogde = dodge, color = dodge, colormap = :seaborn_bright,
             strokewidth = 2)
 
         hlines!(ax, [1.0], color = :black, linestyle = :dash, linewidth = 2)
@@ -604,7 +604,7 @@ fig = begin
         ys = reduce(vcat, [[xx.second[i] for xx in dfᵢ.second] for dfᵢ in df_reg])
 
         ax = Axis(fig[2, i];
-            ylabel = i == 1 ? L"Relative to $\mathbf{\mathrm{SimpleNonlinearSolve}}$" : "",
+            ylabel = "",
             title = L"N = %$(length(probs_reg[i].u0))$",
             titlegap = 10, xticksvisible = true, yticksvisible = true,
             xticklabelsvisible = true, yticklabelsvisible = true, titlesize = 22,
@@ -613,10 +613,10 @@ fig = begin
             xticklabelrotation = π / 4, xticklabelsize = 20, yticklabelsize = 20)
         axs[1, i] = ax
 
-        barplot!(ax, xs, ys; color = dodge, dodge = dodge, colormap = :berlin,
-            strokewidth = 2)
+        barplot!(ax, xs, ys; color = dodge, dodge = dodge, colormap = :seaborn_bright,
+            strokewidth = 3)
 
-        hlines!(ax, [1.0], color = :black, linestyle = :dash, linewidth = 2)
+        hlines!(ax, [1.0], color = :black, linestyle = :dash, linewidth = 3)
     end
 
     linkaxes!(axs...)
@@ -627,12 +627,14 @@ fig = begin
         fontsize = 24, rotation = π / 2, tellheight = false)
     fig[2, 0] = Label(fig, "Regular Julia Arrays",
         fontsize = 24, rotation = π / 2, tellheight = false)
+    fig[1:2, end + 1] = Label(fig, "Relative to SimpleNonlinearSolve.jl (Higher is Better)",
+        fontsize = 22, tellheight = false, rotation = π / 2)
 
     labels = ["NonlinearSolve.jl", "NLsolve.jl", "Sundials"]
-    colors = cgrad(:berlin, length(labels); categorical = true)
-    elements = [PolyElement(polycolor = colors[i]) for i in 1:3]
-    axislegend(axs[1, 4], elements, labels, "Package",
-        labelsize = 16, titlesize = 16, framewidth = STROKEWIDTH)
+    colors = cgrad(:seaborn_bright, length(labels); categorical = true)
+    elements = [PolyElement(; polycolor = colors[i], strokewidth = 3) for i in 1:3]
+    axislegend(axs[1, 4], elements, labels, "Package", patchsize = (20, 20),
+        labelsize = 16, titlesize = 20, framewidth = STROKEWIDTH, rowgap = 5)
 
     fig
 end
@@ -665,8 +667,8 @@ SciMLBenchmarks.weave_file("benchmarks/NonlinearProblem","quadratic_nonlinear.jm
 Computer Information:
 
 ```
-Julia Version 1.10.1
-Commit 7790d6f0641 (2024-02-13 20:41 UTC)
+Julia Version 1.10.2
+Commit bd47eca2c8a (2024-03-01 10:14 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -687,62 +689,60 @@ Package Information:
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [2169fc97] AlgebraicMultigrid v0.6.0
-  [6e4b80f9] BenchmarkTools v1.4.0
-  [13f3f980] CairoMakie v0.11.8
-  [2b5f629d] DiffEqBase v6.147.0
+  [6e4b80f9] BenchmarkTools v1.5.0
+  [13f3f980] CairoMakie v0.11.9
+  [2b5f629d] DiffEqBase v6.148.0
   [f3b72e0c] DiffEqDevTools v2.44.2
   [40713840] IncompleteLU v0.2.1
   [b964fa9f] LaTeXStrings v1.3.1
-  [7ed4a6bd] LinearSolve v2.23.4
+  [7ed4a6bd] LinearSolve v2.27.0
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.6.0
+  [8913a72c] NonlinearSolve v3.8.0
   [98d1487c] PolyesterForwardDiff v0.1.1
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [efcf1570] Setfield v1.1.1
-  [727e6d20] SimpleNonlinearSolve v1.5.0
+  [727e6d20] SimpleNonlinearSolve v1.6.0
   [47a9eef4] SparseDiffTools v2.17.0
   [f1835b91] SpeedMapping v0.3.0
   [860ef19b] StableRNGs v1.0.1
-  [90137ffa] StaticArrays v1.9.2
+  [90137ffa] StaticArrays v1.9.3
   [c3572dad] Sundials v4.24.0
-⌃ [0c5d862f] Symbolics v5.18.0
+⌃ [0c5d862f] Symbolics v5.23.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
-  [47edcb42] ADTypes v0.2.6
+⌃ [47edcb42] ADTypes v0.2.6
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
   [398f06c4] AbstractLattices v0.3.0
-⌃ [1520ce14] AbstractTrees v0.4.4
+  [1520ce14] AbstractTrees v0.4.5
   [22286c92] AccurateArithmetic v0.3.8
-  [79e6a3ab] Adapt v4.0.1
+  [79e6a3ab] Adapt v4.0.3
   [2169fc97] AlgebraicMultigrid v0.6.0
   [27a7e980] Animations v0.4.1
 ⌅ [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v7.7.1
-  [4c555306] ArrayLayouts v1.6.0
+  [4fba245c] ArrayInterface v7.9.0
+  [4c555306] ArrayLayouts v1.6.1
   [67c07d97] Automa v1.0.3
   [13072b0f] AxisAlgorithms v1.1.0
   [39de3d68] AxisArrays v0.4.7
-  [6e4b80f9] BenchmarkTools v1.4.0
+  [6e4b80f9] BenchmarkTools v1.5.0
   [e2ed5e7c] Bijections v0.1.6
   [d1d4a3ce] BitFlags v0.1.8
   [62783981] BitTwiddlingConvenienceFunctions v0.1.5
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.4
-  [96374032] CRlibm v1.0.1
   [159f3aea] Cairo v1.0.5
-  [13f3f980] CairoMakie v0.11.8
+  [13f3f980] CairoMakie v0.11.9
   [49dc2e85] Calculus v0.5.1
-⌃ [d360d2e6] ChainRulesCore v1.21.1
+  [d360d2e6] ChainRulesCore v1.23.0
   [fb6a15b2] CloseOpenIntervals v0.1.12
   [523fee87] CodecBzip2 v0.8.2
   [944b1d66] CodecZlib v0.7.4
@@ -754,10 +754,10 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v4.13.0
+  [34da2185] Compat v4.14.0
   [b152e2b5] CompositeTypes v0.1.3
   [2569d6c7] ConcreteStructs v0.2.3
-  [f0e56b4a] ConcurrentUtilities v2.3.1
+⌃ [f0e56b4a] ConcurrentUtilities v2.3.1
   [8f4d0f93] Conda v1.10.0
   [187b0558] ConstructionBase v1.5.4
   [d38c429a] Contour v0.6.2
@@ -766,24 +766,24 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
   [9a962f9c] DataAPI v1.16.0
-⌃ [864edb3b] DataStructures v0.18.16
+  [864edb3b] DataStructures v0.18.18
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.12
-  [2b5f629d] DiffEqBase v6.147.0
+  [2b5f629d] DiffEqBase v6.148.0
   [f3b72e0c] DiffEqDevTools v2.44.2
-  [77a26b50] DiffEqNoiseProcess v5.20.1
+  [77a26b50] DiffEqNoiseProcess v5.21.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
   [b4f34e82] Distances v0.10.11
   [31c24e10] Distributions v0.25.107
   [ffbed154] DocStringExtensions v0.9.3
-  [e30172f5] Documenter v1.2.1
+  [e30172f5] Documenter v1.3.0
   [35a29f4d] DocumenterTools v0.1.19
-⌃ [5b8099bc] DomainSets v0.7.3
+  [5b8099bc] DomainSets v0.7.9
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.5.5
   [4e289a0a] EnumX v1.0.4
-  [f151be2c] EnzymeCore v0.6.5
+⌃ [f151be2c] EnzymeCore v0.6.5
   [429591f6] ExactPredicates v2.2.8
   [460bff9d] ExceptionUnwrapping v0.1.10
   [e2ba6199] ExprTools v0.1.10
@@ -791,14 +791,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7a1cc6ca] FFTW v1.8.0
   [7034ab61] FastBroadcast v0.2.8
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v2.0.1
+  [29a986be] FastLapackInterface v2.0.2
   [5789e2e9] FileIO v1.16.2
   [8fc22ac5] FilePaths v0.8.3
   [48062228] FilePathsBase v0.9.21
   [1a297f60] FillArrays v1.9.3
-  [6a86dc24] FiniteDiff v2.22.0
+  [6a86dc24] FiniteDiff v2.23.0
   [53c48c17] FixedPointNumbers v0.8.4
-  [59287772] Formatting v0.4.2
+  [1fa38f19] Format v1.3.6
   [f6369f11] ForwardDiff v0.10.36
   [b38be410] FreeType v4.1.1
   [663a7486] FreeTypeAbstraction v0.10.1
@@ -807,13 +807,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [46192b85] GPUArraysCore v0.1.6
   [cf35fbd7] GeoInterface v1.3.3
   [5c1252a2] GeometryBasics v0.4.10
-  [d7ba0133] Git v1.3.0
+⌃ [d7ba0133] Git v1.3.0
   [a2bd30eb] Graphics v1.1.2
   [86223c79] Graphs v1.9.0
   [3955a311] GridLayoutBase v0.10.0
   [42e2da0e] Grisu v1.0.2
   [708ec375] Gumbo v0.8.2
-  [cd3eb016] HTTP v1.10.2
+  [cd3eb016] HTTP v1.10.3
   [eafb193a] Highlights v0.5.2
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
@@ -830,7 +830,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d25df0c9] Inflate v0.1.4
   [18e54dd8] IntegerMathUtils v0.1.2
   [a98d9a8b] Interpolations v0.15.1
-⌅ [d1acc4aa] IntervalArithmetic v0.22.5
+  [d1acc4aa] IntervalArithmetic v0.22.8
   [8197267c] IntervalSets v0.7.10
   [92d709cd] IrrationalConstants v0.2.2
   [f1662d9f] Isoband v0.1.1
@@ -839,33 +839,32 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
   [b835a17e] JpegTurbo v0.1.5
-  [ef3ab10e] KLU v0.5.0
+  [ef3ab10e] KLU v0.6.0
   [5ab0869b] KernelDensity v0.6.8
   [ba0b0d4f] Krylov v0.9.5
   [b964fa9f] LaTeXStrings v1.3.1
   [2ee39098] LabelledArrays v1.15.1
   [984bce1d] LambertW v0.4.6
-  [23fbe1c1] Latexify v0.16.1
+  [23fbe1c1] Latexify v0.16.2
   [10f19ff3] LayoutPointers v0.1.15
   [0e77f7df] LazilyInitializedFields v1.2.2
-  [50d2b5c4] Lazy v0.15.1
   [5078a376] LazyArrays v1.8.3
   [8cdb02fc] LazyModules v0.3.1
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
   [9b3f67b0] LinearAlgebraX v0.2.7
-  [7ed4a6bd] LinearSolve v2.23.4
+  [7ed4a6bd] LinearSolve v2.27.0
   [2ab3a3ac] LogExpFunctions v0.3.27
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.166
   [4854310b] MINPACK v1.2.0
   [1914dd2f] MacroTools v0.5.13
-  [ee78f7c6] Makie v0.20.7
+  [ee78f7c6] Makie v0.20.8
   [20f20a25] MakieCore v0.7.3
   [d125e4d3] ManualMemory v0.1.8
   [dbb5928d] MappedArrays v0.4.2
   [d0879d2d] MarkdownAST v0.1.2
-  [b8f27783] MathOptInterface v1.25.3
+  [b8f27783] MathOptInterface v1.27.0
   [0a4f8689] MathTeXEngine v0.5.7
   [a3b82374] MatrixFactorizations v2.1.0
   [bb5d69b7] MaybeInplace v0.1.1
@@ -883,11 +882,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-  [8913a72c] NonlinearSolve v3.6.0
+  [8913a72c] NonlinearSolve v3.8.0
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.13.0
   [52e1d378] OpenEXR v0.3.2
-  [4d8831e6] OpenSSL v1.4.1
+  [4d8831e6] OpenSSL v1.4.2
   [429524aa] Optim v1.9.2
   [bac558e1] OrderedCollections v1.6.3
   [90014a1f] PDMats v0.11.31
@@ -900,7 +899,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2ae35dd2] Permutations v0.4.20
   [3bbf5609] PikaParser v0.6.1
   [eebad327] PkgVersion v0.3.3
-  [995b91a9] PlotUtils v1.4.0
+  [995b91a9] PlotUtils v1.4.1
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.9
   [98d1487c] PolyesterForwardDiff v0.1.1
@@ -909,19 +908,19 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [f27b6e38] Polynomials v4.0.6
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.20
-  [aea7be01] PrecompileTools v1.2.0
-  [21216c6a] Preferences v1.4.1
+  [aea7be01] PrecompileTools v1.2.1
+  [21216c6a] Preferences v1.4.3
   [08abe8d2] PrettyTables v2.3.1
-  [27ebfcd6] Primes v0.5.5
-  [92933f4c] ProgressMeter v1.9.0
+  [27ebfcd6] Primes v0.5.6
+  [92933f4c] ProgressMeter v1.10.0
   [4b34888f] QOI v1.0.0
   [1fd47b50] QuadGK v2.9.4
-⌃ [74087812] Random123 v1.6.2
+  [74087812] Random123 v1.7.0
   [e6cf234a] RandomNumbers v1.5.3
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
-  [731186ca] RecursiveArrayTools v3.8.1
+  [731186ca] RecursiveArrayTools v3.12.0
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
@@ -936,9 +935,9 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.26.1
+  [0bca4576] SciMLBase v2.29.0
   [31c91b34] SciMLBenchmarks v0.1.3
-  [c0aeaf25] SciMLOperators v0.3.7
+  [c0aeaf25] SciMLOperators v0.3.8
   [6c6a2e73] Scratch v1.2.1
   [efcf1570] Setfield v1.1.1
   [65257c39] ShaderAbstractions v0.4.1
@@ -946,8 +945,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [73760f76] SignedDistanceFields v0.4.0
   [777ac1f9] SimpleBufferStream v1.1.0
   [55797a34] SimpleGraphs v0.8.6
-  [727e6d20] SimpleNonlinearSolve v1.5.0
-⌃ [ec83eff0] SimplePartitions v0.3.1
+  [727e6d20] SimpleNonlinearSolve v1.6.0
+  [ec83eff0] SimplePartitions v0.3.2
   [cc47b68c] SimplePolynomials v0.2.17
   [a6525b86] SimpleRandom v0.3.1
   [699a6c99] SimpleTraits v0.9.4
@@ -963,7 +962,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v0.8.10
   [0d7ed370] StaticArrayInterface v1.5.0
-  [90137ffa] StaticArrays v1.9.2
+  [90137ffa] StaticArrays v1.9.3
   [1e83bf80] StaticArraysCore v1.4.2
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.2
@@ -971,18 +970,18 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7792a7ef] StrideArraysCore v0.5.2
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
-  [09ab397b] StructArrays v0.6.17
+  [09ab397b] StructArrays v0.6.18
   [c3572dad] Sundials v4.24.0
-  [2efcf032] SymbolicIndexingInterface v0.3.6
-  [d1185830] SymbolicUtils v1.5.0
-⌃ [0c5d862f] Symbolics v5.18.0
+  [2efcf032] SymbolicIndexingInterface v0.3.11
+  [d1185830] SymbolicUtils v1.5.1
+⌃ [0c5d862f] Symbolics v5.23.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.2
 ⌅ [731e570b] TiffImages v0.6.8
   [a759f4b9] TimerOutputs v0.5.23
-  [3bb67fe8] TranscodingStreams v0.10.3
+  [3bb67fe8] TranscodingStreams v0.10.4
   [d5829a12] TriangularSolve v0.1.20
   [410a4b4d] Tricks v0.1.8
   [981d1d27] TriplotBase v0.1.0
@@ -1001,7 +1000,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c2297ded] ZMQ v1.2.2
   [6e34b625] Bzip2_jll v1.0.8+1
   [4e9b3aee] CRlibm_jll v1.0.1+0
-  [83423d85] Cairo_jll v1.16.1+1
+  [83423d85] Cairo_jll v1.18.0+1
   [5ae413db] EarCut_jll v2.2.4+0
   [2e619515] Expat_jll v2.5.0+0
 ⌃ [b22a6f82] FFMPEG_jll v4.4.2+2
@@ -1011,13 +1010,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [559328eb] FriBidi_jll v1.0.10+0
   [78b55507] Gettext_jll v0.21.0+0
 ⌃ [f8c6e375] Git_jll v2.36.1+2
-  [7746bdde] Glib_jll v2.76.5+0
+  [7746bdde] Glib_jll v2.80.0+0
   [3b182d85] Graphite2_jll v1.3.14+0
   [528830af] Gumbo_jll v0.10.2+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
   [905a6f67] Imath_jll v3.1.7+0
   [1d5cc7b8] IntelOpenMP_jll v2024.0.2+0
-  [aacddb02] JpegTurbo_jll v3.0.1+0
+  [aacddb02] JpegTurbo_jll v3.0.2+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [1d63c593] LLVMOpenMP_jll v15.0.7+0
   [dd4b983a] LZO_jll v2.10.1+0
@@ -1025,8 +1024,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d4300ac3] Libgcrypt_jll v1.8.7+0
   [7add5ba3] Libgpg_error_jll v1.42.0+0
   [94ce4f54] Libiconv_jll v1.17.0+0
-  [4b2f31a3] Libmount_jll v2.35.0+0
-  [38a345b3] Libuuid_jll v2.36.0+0
+  [4b2f31a3] Libmount_jll v2.39.3+0
+  [38a345b3] Libuuid_jll v2.39.3+1
   [856f044c] MKL_jll v2024.0.0+0
   [e7412a2a] Ogg_jll v1.3.5+1
   [18a262bb] OpenEXR_jll v3.1.4+0
@@ -1034,11 +1033,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [458c3c95] OpenSSL_jll v1.1.23+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
-  [36c8627f] Pango_jll v1.50.14+0
+  [36c8627f] Pango_jll v1.52.1+0
   [30392449] Pixman_jll v0.42.2+0
   [f50d1b31] Rmath_jll v0.4.0+0
 ⌅ [fb77eaff] Sundials_jll v5.2.2+0
-  [02c8fc9c] XML2_jll v2.12.2+0
+  [02c8fc9c] XML2_jll v2.12.5+0
   [aed1982a] XSLT_jll v1.1.34+0
   [4f6342f7] Xorg_libX11_jll v1.8.6+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
@@ -1048,12 +1047,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
   [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
   [c5fb5394] Xorg_xtrans_jll v1.5.0+0
-  [8f1865be] ZeroMQ_jll v4.3.4+0
+  [8f1865be] ZeroMQ_jll v4.3.5+0
   [9a68df92] isoband_jll v0.2.3+0
   [a4ae2306] libaom_jll v3.4.0+0
   [0ac62f75] libass_jll v0.15.1+0
   [f638f0a6] libfdk_aac_jll v2.0.2+0
-  [b53b4c65] libpng_jll v1.6.42+0
+  [b53b4c65] libpng_jll v1.6.43+1
   [47bcb7c8] libsass_jll v3.6.4+0
   [075b6546] libsixel_jll v1.10.3+0
   [a9144af2] libsodium_jll v1.0.20+0
@@ -1111,6 +1110,5 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

@@ -36,8 +36,9 @@ For each benchmarked problem, the second, third, and fourth plots compares the p
 Fetch required packages.
 
 ```julia
-using NonlinearSolve, MINPACK, NLsolve, LinearSolve, StaticArrays, Sundials, Setfield,
+using NonlinearSolve, LinearSolve, StaticArrays, Sundials, Setfield,
     BenchmarkTools, LinearAlgebra, DiffEqDevTools, NonlinearProblemLibrary, CairoMakie
+import PolyesterForwardDiff, MINPACK, NLsolve
 RUS = RadiusUpdateSchemes;
 ```
 
@@ -48,6 +49,7 @@ Declare the benchmarked solvers (and their names and plotting options).
 
 ```julia
 solvers_all = [
+    (; pkg = :nonlinearsolve, type = :general, name = "Default PolyAlg.",          solver = Dict(:alg => FastShortcutNonlinearPolyalg(; u0_len = 10))),
     (; pkg = :nonlinearsolve, type = :NR,      name = "Newton Raphson",            solver = Dict(:alg => NewtonRaphson(; linsolve = nothing))),
     (; pkg = :nonlinearsolve, type = :NR,      name = "NR (HagerZhang)",           solver = Dict(:alg => NewtonRaphson(; linesearch = HagerZhang(), linsolve = nothing))),
     (; pkg = :nonlinearsolve, type = :NR,      name = "NR (MoreThuente)",          solver = Dict(:alg => NewtonRaphson(; linesearch = MoreThuente(), linsolve = nothing))),
@@ -65,7 +67,7 @@ solvers_all = [
     (; pkg = :nonlinearsolve, type = :LM,      name = "LM (α_geodesic=0.5) Chol.", solver = Dict(:alg => LevenbergMarquardt(; linsolve = CholeskyFactorization(), α_geodesic=0.5))),
     (; pkg = :nonlinearsolve, type = :LM,      name = "LM (no Accln.)",            solver = Dict(:alg => LevenbergMarquardt(; linsolve = QRFactorization(), disable_geodesic = Val(true)))),
     (; pkg = :nonlinearsolve, type = :LM,      name = "LM (no Accln.) Chol.",      solver = Dict(:alg => LevenbergMarquardt(; linsolve = CholeskyFactorization(), disable_geodesic = Val(true)))),
-    (; pkg = :wrapper,        type = :general, name = "Pseudo Transient",          solver = Dict(:alg => PseudoTransient(; linsolve = nothing, alpha_initial=10.0))),
+    (; pkg = :nonlinearsolve, type = :general, name = "Pseudo Transient",          solver = Dict(:alg => PseudoTransient(; linsolve = nothing, alpha_initial=10.0))),
     (; pkg = :wrapper,        type = :general, name = "Powell (MINPACK)",          solver = Dict(:alg => CMINPACK(; method=:hybr))),
     (; pkg = :wrapper,        type = :general, name = "LM (MINPACK)",              solver = Dict(:alg => CMINPACK(; method=:lm))),
     (; pkg = :wrapper,        type = :general, name = "NR (NLsolve.jl)",           solver = Dict(:alg => NLsolveJL(; method=:newton))),
@@ -107,6 +109,10 @@ function __set_ad_chunksize(solver::GeneralizedFirstOrderAlgorithm{CJ, N}, ck) w
         solver.trustregion, jacobian_ad = ad, solver.max_shrink_times, solver.forward_ad,
         solver.reverse_ad)
 end
+function __set_ad_chunksize(solver::NonlinearSolvePolyAlgorithm{pType}, ck) where {pType}
+    algs = [__set_ad_chunksize(alg, ck) for alg in solver.algs]
+    return NonlinearSolvePolyAlgorithm(algs, Val(pType); solver.start_index)
+end
 __set_ad_chunksize(solver, ck) = solver
 
 # Benchmarks a specific problem, checks which solvers can solve it and their performance
@@ -117,8 +123,7 @@ function benchmark_problem!(prob_name; solver_tracker=solver_tracker)
     # Finds the solvers that can solve the problem
     solvers_concrete = set_ad_chunksize(solvers_all, prob.prob.u0);
     successful_solvers = filter(solver -> check_solver(prob, solver), solvers_concrete);
-    solver_tracker_2 = []
-    push!(solver_tracker_2, prob_name => successful_solvers);
+    push!(solver_tracker, prob_name => successful_solvers);
 
     # Handles the non-general cases.
     solvers_NR = filter(s -> s.type==:NR, successful_solvers)
@@ -126,13 +131,13 @@ function benchmark_problem!(prob_name; solver_tracker=solver_tracker)
     solvers_LM = filter(s -> s.type==:LM, successful_solvers)
     wp_NR = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_NR, :solver);
         names=getfield.(solvers_NR, :name), numruns=100, error_estimate=:l∞,
-        maxiters=10000, termination_condition = AbsNormTerminationMode())
+        maxiters=1000, termination_condition = AbsNormTerminationMode())
     wp_TR = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_TR, :solver);
         names=getfield.(solvers_TR, :name), numruns=100, error_estimate=:l∞,
-        maxiters=10000, termination_condition = AbsNormTerminationMode())
+        maxiters=1000, termination_condition = AbsNormTerminationMode())
     wp_LM = WorkPrecisionSet(prob.prob, abstols, reltols, getfield.(solvers_LM, :solver);
         names=getfield.(solvers_LM, :name), numruns=100, error_estimate=:l∞,
-        maxiters=10000, termination_condition = AbsNormTerminationMode())
+        maxiters=1000, termination_condition = AbsNormTerminationMode())
 
     # Handles the general case
     solvers_general = filter(s -> s.type==:general, successful_solvers)
@@ -142,7 +147,7 @@ function benchmark_problem!(prob_name; solver_tracker=solver_tracker)
 
     wp_general = WorkPrecisionSet(prob.prob, abstols, reltols,
         getfield.(solvers_general, :solver); names=getfield.(solvers_general, :name),
-        numruns=100, error_estimate=:l∞, maxiters=10000)
+        numruns=100, error_estimate=:l∞, maxiters=1000)
 
     push!(wp_general_tracker, prob_name => wp_general)
 
@@ -157,7 +162,7 @@ end
 function check_solver(prob, solver)
     try
         sol = solve(prob.prob, solver.solver[:alg]; abstol=1e-8, reltol=1e-8,
-            maxiters=10000000, termination_condition=AbsNormTerminationMode())
+            maxiters=1000000, termination_condition=AbsNormTerminationMode())
         if norm(sol.resid, Inf) < 1e-6
             Base.printstyled("[Info] Solver $(solver.name) returned retcode $(sol.retcode) \
                 with an residual norm = $(norm(sol.resid, Inf)).\n"; color=:green)
@@ -236,7 +241,7 @@ function plot_collective_benchmark(prob_name, wp_general, wp_NR, wp_TR, wp_LM)
     HEIGHT = round(Int, WIDTH * ASPECT_RATIO)
     STROKEWIDTH = 2.5
 
-    colors = cgrad(:berlin, length(solvers_all); categorical = true)
+    colors = cgrad(:seaborn_bright, length(solvers_all); categorical = true)
     cycle = Cycle([:marker], covary = true)
     plot_theme = Theme(Lines = (; cycle), Scatter = (; cycle))
 
@@ -251,7 +256,7 @@ function plot_collective_benchmark(prob_name, wp_general, wp_NR, wp_TR, wp_LM)
 
             ax = Axis(fig[i + 1, j], ylabel = j == 1 ? L"Time $\mathbf{(s)}$" : "",
                 xlabelsize = 22, ylabelsize = 22,
-                xlabel = i == 2 ? L"Error: $\mathbf{f(u^\ast)}$ $\mathbf{L_{\infty}}-\mathrm{\mathbf{norm}}$" : "",
+                xlabel = i == 2 ? L"Error: $\mathbf{||f(u^\ast)||_\infty}$" : "",
                 xscale = __log10_zero, yscale = __log10_zero,
                 xtickwidth = STROKEWIDTH,
                 ytickwidth = STROKEWIDTH, spinewidth = STROKEWIDTH,
@@ -336,6 +341,8 @@ benchmark_problem!("Generalized Rosenbrock function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 9.999638894697682e-9.
 [Warn] Solver Newton Raphson had a very large residual (norm = NaN).
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
 m = 1.682474159991898e-9.
@@ -369,8 +376,8 @@ sidual norm = 1.359913293086379e-10.
  = 5.430651484061855e-9.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 5.4307913721629575e-9.
-[Warn] Solver Pseudo Transient had a very large residual (norm = 2.79971086
-1575872e11).
+[Warn] Solver Pseudo Transient had a very large residual (norm = 2.63808362
+83039436e10).
 [Warn] Solver Powell (MINPACK) had a very large residual (norm = 4.39999999
 99999995).
 [Warn] Solver LM (MINPACK) had a very large residual (norm = 0.000852392313
@@ -397,6 +404,8 @@ benchmark_problem!("Powell singular function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 2.945100572117028e-9.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 2.945100572117028e-9.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -459,6 +468,8 @@ benchmark_problem!("Powell badly scaled function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 1.5733414571172943e-11.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.5733414571172943e-11.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -521,6 +532,8 @@ benchmark_problem!("Wood function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 4.884981308350689e-14.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 4.884981308350689e-14.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -583,6 +596,8 @@ benchmark_problem!("Helical valley function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 1.145684605114055e-14.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.145684605114055e-14.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -645,6 +660,8 @@ benchmark_problem!("Watson function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 4.2076411799207847e-13.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 4.2076411799207847e-13.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -707,6 +724,8 @@ benchmark_problem!("Chebyquad function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 3.685329819091976e-12.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 3.685329819091976e-12.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -769,6 +788,8 @@ benchmark_problem!("Brown almost linear function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 9.544809387307396e-12.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 9.544809387307396e-12.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -802,8 +823,8 @@ sidual norm = 3.026058514876695e-9.
  = 7.025180437381096e-11.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 7.025280357453312e-11.
-[Warn] Solver Pseudo Transient had a very large residual (norm = 1.37250894
-99957826e20).
+[Warn] Solver Pseudo Transient had a very large residual (norm = 1.35899023
+72098947e19).
 [Info] Solver Powell (MINPACK) returned retcode Success with an residual no
 rm = 5.995204332975845e-15.
 [Warn] Solver LM (MINPACK) had a very large residual (norm = 1.000000000050
@@ -830,6 +851,8 @@ benchmark_problem!("Discrete boundary value function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 2.7755575615628914e-16.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 2.7755575615628914e-16.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -892,6 +915,8 @@ benchmark_problem!("Discrete integral equation function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 1.304512053934559e-15.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.304512053934559e-15.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -954,6 +979,8 @@ benchmark_problem!("Trigonometric function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 6.942307839707951e-12.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 6.942307839707951e-12.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -976,20 +1003,20 @@ orm = 9.590515638591146e-9.
 6.647460359943125e-15.
 [Warn] Solver TR (Fan) had a very large residual (norm = 0.0042954175467514
 87).
-[Warn] Solver Levenberg-Marquardt had a very large residual (norm = 0.00481
-3013676580463).
-[Warn] Solver LM with Cholesky had a very large residual (norm = 0.00481301
-3675675534).
-[Warn] Solver LM (α_geodesic=0.5) had a very large residual (norm = 0.00441
-6795838331683).
+[Warn] Solver Levenberg-Marquardt had a very large residual (norm = 0.00486
+7042382490749).
+[Warn] Solver LM with Cholesky had a very large residual (norm = 0.00486704
+2385246448).
+[Warn] Solver LM (α_geodesic=0.5) had a very large residual (norm = 0.00440
+9709072016127).
 [Warn] Solver LM (α_geodesic=0.5) Chol. had a very large residual (norm = 0
-.004402824983449488).
+.004324385118965601).
 [Info] Solver LM (no Accln.) returned retcode Success with an residual norm
  = 2.772573837184211e-13.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
 l norm = 5.103298811315327e-9.
-[Warn] Solver Pseudo Transient had a very large residual (norm = 27.1504407
-62085257).
+[Warn] Solver Pseudo Transient had a very large residual (norm = 29.8676195
+65670054).
 [Warn] Solver Powell (MINPACK) had a very large residual (norm = 0.00440555
 10820976695).
 [Warn] Solver LM (MINPACK) had a very large residual (norm = 0.004295506299
@@ -1016,6 +1043,8 @@ benchmark_problem!("Variably dimensioned function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 1.3234968676556491e-12.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.3234968676556491e-12.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -1078,6 +1107,8 @@ benchmark_problem!("Broyden tridiagonal function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 7.54840412398039e-10.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 7.54840412398039e-10.
 [Warn] Solver NR (HagerZhang) had a very large residual (norm = 0.901578708
@@ -1140,6 +1171,8 @@ benchmark_problem!("Broyden banded function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 9.359466091041213e-9.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 9.359466091041213e-9.
 [Warn] Solver NR (HagerZhang) had a very large residual (norm = 1.199193251
@@ -1202,6 +1235,8 @@ benchmark_problem!("Hammarling 2 by 2 matrix square root problem")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 1.1102230246251565e-16.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.1102230246251565e-16.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -1218,8 +1253,8 @@ orm = 1.1102230246251565e-16.
  norm = 9.999969447949803e-9.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 9.9
 99902745925823e-9.
-[Info] Solver TR (Yuan) returned retcode ShrinkThresholdExceeded with an re
-sidual norm = 5.2060943067797335e-8.
+[Info] Solver TR (Yuan) returned retcode MaxIters with an residual norm = 9
+.722821522888084e-8.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 1.5627499294623703e-12.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 9.9
@@ -1264,6 +1299,8 @@ benchmark_problem!("Hammarling 3 by 3 matrix square root problem")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 1.1102230246251565e-16.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.1102230246251565e-16.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -1326,6 +1363,8 @@ benchmark_problem!("Dennis and Schnabel 2 by 2 example")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 1.0977885267493548e-11.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.0977885267493548e-11.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -1388,6 +1427,8 @@ benchmark_problem!("Sample problem 18")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 8.167142642163074e-9.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 8.167142642163074e-9.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -1450,6 +1491,8 @@ benchmark_problem!("Sample problem 19")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 4.956692686961647e-9.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 4.956692686961647e-9.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -1512,6 +1555,8 @@ benchmark_problem!("Scalar problem f(x) = x(x - 5)^2")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 1.939490713125329e-15.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.939490713125329e-15.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -1574,6 +1619,8 @@ benchmark_problem!("Freudenstein-Roth function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 4.852083179684996e-10.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 4.852083179684996e-10.
 [Warn] Solver NR (HagerZhang) had a very large residual (norm = 1.709729979
@@ -1594,14 +1641,14 @@ benchmark_problem!("Freudenstein-Roth function")
 [Warn] Solver TR (Bastin) had a very large residual (norm = 4.9489521186807
 15).
 [Warn] Solver TR (Fan) had a very large residual (norm = 4.94895209647386).
-[Warn] Solver Levenberg-Marquardt had a very large residual (norm = 5.97252
-8495064161).
-[Warn] Solver LM with Cholesky had a very large residual (norm = 5.17364384
-60190115).
-[Warn] Solver LM (α_geodesic=0.5) had a very large residual (norm = 6.02921
-9599078573).
+[Warn] Solver Levenberg-Marquardt had a very large residual (norm = 5.22335
+12793720145).
+[Warn] Solver LM with Cholesky had a very large residual (norm = 5.15000802
+43610284).
+[Warn] Solver LM (α_geodesic=0.5) had a very large residual (norm = 5.06609
+74755918815).
 [Warn] Solver LM (α_geodesic=0.5) Chol. had a very large residual (norm = 5
-.219602844758882).
+.185988136881765).
 [Info] Solver LM (no Accln.) returned retcode Success with an residual norm
  = 5.3769895203004126e-9.
 [Info] Solver LM (no Accln.) Chol. returned retcode Success with an residua
@@ -1634,6 +1681,8 @@ benchmark_problem!("Boggs function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 1.7319479184152442e-14.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 1.7319479184152442e-14.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -1696,6 +1745,8 @@ benchmark_problem!("Chandrasekhar function")
 ```
 
 ```
+[Info] Solver Default PolyAlg. returned retcode Success with an residual no
+rm = 2.9976021664879227e-14.
 [Info] Solver Newton Raphson returned retcode Success with an residual norm
  = 2.9976021664879227e-14.
 [Info] Solver NR (HagerZhang) returned retcode Success with an residual nor
@@ -1756,7 +1807,7 @@ idual norm = 7.105427357601002e-15.
 Finally, we print a summary of which solvers successfully solved which problems.
 
 ```julia
-solver_successes = [(solver in prob[2]) ? "O" : "X" for prob in solver_tracker, solver in solvers_all];
+solver_successes = [(solver.name in getfield.(prob[2], :name)) ? "O" : "X" for prob in solver_tracker, solver in solvers_all]
 total_successes = [sum(solver_successes[:,i] .== "O") for i in 1:length(solvers_all)]
 solver_outcomes = vcat(total_successes', solver_successes);
 ```
@@ -1775,6 +1826,7 @@ Base.Text(String(take!(io)))
 <table>
   <thead>
     <tr class = "header headerLastRow">
+      <th style = "text-align: center;">Default PolyAlg.</th>
       <th style = "text-align: center;">Newton Raphson</th>
       <th style = "text-align: center;">NR (HagerZhang)</th>
       <th style = "text-align: center;">NR (MoreThuente)</th>
@@ -1803,30 +1855,652 @@ Base.Text(String(take!(io)))
   </thead>
   <tbody>
     <tr>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
-      <td style = "text-align: center;">0</td>
+      <td style = "text-align: center;">23</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">20</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">20</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">21</td>
+      <td style = "text-align: center;">23</td>
+      <td style = "text-align: center;">23</td>
+      <td style = "text-align: center;">20</td>
+      <td style = "text-align: center;">18</td>
+      <td style = "text-align: center;">17</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">22</td>
+      <td style = "text-align: center;">15</td>
+      <td style = "text-align: center;">22</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+      <td style = "text-align: center;">X</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+    </tr>
+    <tr>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
+      <td style = "text-align: center;">O</td>
     </tr>
   </tbody>
 </table>
@@ -1846,8 +2520,8 @@ fig = begin
     WIDTH = 1800
     HEIGHT = round(Int, WIDTH * ASPECT_RATIO)
     STROKEWIDTH = 2.5
-    
-    colors = cgrad(:berlin, length(solvers_all); categorical = true)
+
+    colors = cgrad(:seaborn_bright, length(solvers_all); categorical = true)
     cycle = Cycle([:marker], covary = true)
     plot_theme = Theme(Lines = (; cycle), Scatter = (; cycle))
 
@@ -1859,6 +2533,7 @@ fig = begin
         ls = []
         scs = []
         labels = []
+        solver_times = []
 
         for i in 1:5, j in 1:5
             idx = 5 * (i - 1) + j
@@ -1899,6 +2574,13 @@ fig = begin
                     push!(scs, sc)
                     push!(labels, wpᵢ.name)
                 end
+
+                if wpᵢ.name ∈ first.(solver_times)
+                    idxi = findfirst(x -> first(x) == wpᵢ.name, solver_times)
+                    push!(solver_times[idxi][2], median(times) / length(wp.prob.u0))
+                else
+                    push!(solver_times, wpᵢ.name => [median(times) / length(wp.prob.u0)])
+                end
             end
 
             xmin = max(xmin, 10^-100)
@@ -1912,19 +2594,21 @@ fig = begin
             ax.yticks = yticks
         end
 
+        ordering = sortperm(median.(last.(solver_times)))
+
         fig[0, :] = Label(fig, "Work-Precision Diagram for 23 Test Problems",
             fontsize = 24, tellwidth = false, font = :bold)
 
         fig[:, 0] = Label(fig, "Time (s)", fontsize = 20, tellheight = false, font = :bold,
             rotation = π / 2)
         fig[end + 1, :] = Label(fig,
-            L"Error: $\mathbf{f(u^\ast)}$ $\mathbf{L_{\infty}}-\mathrm{\mathbf{norm}}$",
+            L"Error: $\mathbf{||f(u^\ast)||_\infty}$",
             fontsize = 20, tellwidth = false, font = :bold)
 
-        Legend(fig[5, 4:5], [[l, sc] for (l, sc) in zip(ls, scs)],
-            labels, "Successful Solvers";
+        Legend(fig[5, 4:5], [[l, sc] for (l, sc) in zip(ls[ordering], scs[ordering])],
+            labels[ordering], "Successful Solvers";
             framevisible=true, framewidth = STROKEWIDTH, orientation = :horizontal,
-            titlesize = 16, nbanks = 6, labelsize = 16,
+            titlesize = 20, nbanks = 9, labelsize = 20, halign = :center,
             tellheight = false, tellwidth = false, patchsize = (40.0f0, 20.0f0))
 
         return fig
@@ -1959,8 +2643,8 @@ SciMLBenchmarks.weave_file("benchmarks/NonlinearProblem","nonlinear_solver_23_te
 Computer Information:
 
 ```
-Julia Version 1.10.1
-Commit 7790d6f0641 (2024-02-13 20:41 UTC)
+Julia Version 1.10.2
+Commit bd47eca2c8a (2024-03-01 10:14 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -1969,7 +2653,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -1981,62 +2665,60 @@ Package Information:
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [2169fc97] AlgebraicMultigrid v0.6.0
-  [6e4b80f9] BenchmarkTools v1.4.0
-⌃ [13f3f980] CairoMakie v0.11.8
-  [2b5f629d] DiffEqBase v6.147.0
+  [6e4b80f9] BenchmarkTools v1.5.0
+  [13f3f980] CairoMakie v0.11.9
+  [2b5f629d] DiffEqBase v6.148.0
   [f3b72e0c] DiffEqDevTools v2.44.2
   [40713840] IncompleteLU v0.2.1
   [b964fa9f] LaTeXStrings v1.3.1
-⌃ [7ed4a6bd] LinearSolve v2.23.4
+  [7ed4a6bd] LinearSolve v2.27.0
   [4854310b] MINPACK v1.2.0
   [2774e3e8] NLsolve v4.5.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-⌃ [8913a72c] NonlinearSolve v3.6.0
+  [8913a72c] NonlinearSolve v3.8.0
   [98d1487c] PolyesterForwardDiff v0.1.1
   [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [efcf1570] Setfield v1.1.1
-  [727e6d20] SimpleNonlinearSolve v1.5.0
+  [727e6d20] SimpleNonlinearSolve v1.6.0
   [47a9eef4] SparseDiffTools v2.17.0
   [f1835b91] SpeedMapping v0.3.0
   [860ef19b] StableRNGs v1.0.1
-⌃ [90137ffa] StaticArrays v1.9.2
+  [90137ffa] StaticArrays v1.9.3
   [c3572dad] Sundials v4.24.0
-⌃ [0c5d862f] Symbolics v5.18.0
+⌃ [0c5d862f] Symbolics v5.23.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
-  [47edcb42] ADTypes v0.2.6
+⌃ [47edcb42] ADTypes v0.2.6
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
   [398f06c4] AbstractLattices v0.3.0
-⌃ [1520ce14] AbstractTrees v0.4.4
+  [1520ce14] AbstractTrees v0.4.5
   [22286c92] AccurateArithmetic v0.3.8
-  [79e6a3ab] Adapt v4.0.1
+  [79e6a3ab] Adapt v4.0.3
   [2169fc97] AlgebraicMultigrid v0.6.0
   [27a7e980] Animations v0.4.1
 ⌅ [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v7.7.1
-  [4c555306] ArrayLayouts v1.6.0
+  [4fba245c] ArrayInterface v7.9.0
+  [4c555306] ArrayLayouts v1.6.1
   [67c07d97] Automa v1.0.3
   [13072b0f] AxisAlgorithms v1.1.0
   [39de3d68] AxisArrays v0.4.7
-  [6e4b80f9] BenchmarkTools v1.4.0
+  [6e4b80f9] BenchmarkTools v1.5.0
   [e2ed5e7c] Bijections v0.1.6
   [d1d4a3ce] BitFlags v0.1.8
   [62783981] BitTwiddlingConvenienceFunctions v0.1.5
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.4
-  [96374032] CRlibm v1.0.1
   [159f3aea] Cairo v1.0.5
-⌃ [13f3f980] CairoMakie v0.11.8
+  [13f3f980] CairoMakie v0.11.9
   [49dc2e85] Calculus v0.5.1
-⌃ [d360d2e6] ChainRulesCore v1.21.1
+  [d360d2e6] ChainRulesCore v1.23.0
   [fb6a15b2] CloseOpenIntervals v0.1.12
   [523fee87] CodecBzip2 v0.8.2
   [944b1d66] CodecZlib v0.7.4
@@ -2048,10 +2730,10 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
-⌃ [34da2185] Compat v4.13.0
+  [34da2185] Compat v4.14.0
   [b152e2b5] CompositeTypes v0.1.3
   [2569d6c7] ConcreteStructs v0.2.3
-  [f0e56b4a] ConcurrentUtilities v2.3.1
+⌃ [f0e56b4a] ConcurrentUtilities v2.3.1
   [8f4d0f93] Conda v1.10.0
   [187b0558] ConstructionBase v1.5.4
   [d38c429a] Contour v0.6.2
@@ -2060,24 +2742,24 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
   [9a962f9c] DataAPI v1.16.0
-⌃ [864edb3b] DataStructures v0.18.16
+  [864edb3b] DataStructures v0.18.18
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v0.8.12
-  [2b5f629d] DiffEqBase v6.147.0
+  [2b5f629d] DiffEqBase v6.148.0
   [f3b72e0c] DiffEqDevTools v2.44.2
-  [77a26b50] DiffEqNoiseProcess v5.20.1
+  [77a26b50] DiffEqNoiseProcess v5.21.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
   [b4f34e82] Distances v0.10.11
   [31c24e10] Distributions v0.25.107
   [ffbed154] DocStringExtensions v0.9.3
-  [e30172f5] Documenter v1.2.1
+  [e30172f5] Documenter v1.3.0
   [35a29f4d] DocumenterTools v0.1.19
-⌃ [5b8099bc] DomainSets v0.7.3
+  [5b8099bc] DomainSets v0.7.9
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.5.5
   [4e289a0a] EnumX v1.0.4
-  [f151be2c] EnzymeCore v0.6.5
+⌃ [f151be2c] EnzymeCore v0.6.5
   [429591f6] ExactPredicates v2.2.8
   [460bff9d] ExceptionUnwrapping v0.1.10
   [e2ba6199] ExprTools v0.1.10
@@ -2085,14 +2767,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7a1cc6ca] FFTW v1.8.0
   [7034ab61] FastBroadcast v0.2.8
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v2.0.1
+  [29a986be] FastLapackInterface v2.0.2
   [5789e2e9] FileIO v1.16.2
   [8fc22ac5] FilePaths v0.8.3
   [48062228] FilePathsBase v0.9.21
   [1a297f60] FillArrays v1.9.3
-  [6a86dc24] FiniteDiff v2.22.0
+  [6a86dc24] FiniteDiff v2.23.0
   [53c48c17] FixedPointNumbers v0.8.4
-  [59287772] Formatting v0.4.2
+  [1fa38f19] Format v1.3.6
   [f6369f11] ForwardDiff v0.10.36
   [b38be410] FreeType v4.1.1
   [663a7486] FreeTypeAbstraction v0.10.1
@@ -2101,13 +2783,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [46192b85] GPUArraysCore v0.1.6
   [cf35fbd7] GeoInterface v1.3.3
   [5c1252a2] GeometryBasics v0.4.10
-  [d7ba0133] Git v1.3.0
+⌃ [d7ba0133] Git v1.3.0
   [a2bd30eb] Graphics v1.1.2
   [86223c79] Graphs v1.9.0
   [3955a311] GridLayoutBase v0.10.0
   [42e2da0e] Grisu v1.0.2
   [708ec375] Gumbo v0.8.2
-  [cd3eb016] HTTP v1.10.2
+  [cd3eb016] HTTP v1.10.3
   [eafb193a] Highlights v0.5.2
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
@@ -2124,7 +2806,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d25df0c9] Inflate v0.1.4
   [18e54dd8] IntegerMathUtils v0.1.2
   [a98d9a8b] Interpolations v0.15.1
-⌅ [d1acc4aa] IntervalArithmetic v0.22.5
+  [d1acc4aa] IntervalArithmetic v0.22.8
   [8197267c] IntervalSets v0.7.10
   [92d709cd] IrrationalConstants v0.2.2
   [f1662d9f] Isoband v0.1.1
@@ -2133,33 +2815,32 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
   [b835a17e] JpegTurbo v0.1.5
-  [ef3ab10e] KLU v0.5.0
+  [ef3ab10e] KLU v0.6.0
   [5ab0869b] KernelDensity v0.6.8
   [ba0b0d4f] Krylov v0.9.5
   [b964fa9f] LaTeXStrings v1.3.1
   [2ee39098] LabelledArrays v1.15.1
   [984bce1d] LambertW v0.4.6
-  [23fbe1c1] Latexify v0.16.1
+  [23fbe1c1] Latexify v0.16.2
   [10f19ff3] LayoutPointers v0.1.15
   [0e77f7df] LazilyInitializedFields v1.2.2
-  [50d2b5c4] Lazy v0.15.1
   [5078a376] LazyArrays v1.8.3
   [8cdb02fc] LazyModules v0.3.1
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
   [9b3f67b0] LinearAlgebraX v0.2.7
-⌃ [7ed4a6bd] LinearSolve v2.23.4
+  [7ed4a6bd] LinearSolve v2.27.0
   [2ab3a3ac] LogExpFunctions v0.3.27
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.166
   [4854310b] MINPACK v1.2.0
   [1914dd2f] MacroTools v0.5.13
-⌅ [ee78f7c6] Makie v0.20.7
+  [ee78f7c6] Makie v0.20.8
   [20f20a25] MakieCore v0.7.3
   [d125e4d3] ManualMemory v0.1.8
   [dbb5928d] MappedArrays v0.4.2
   [d0879d2d] MarkdownAST v0.1.2
-⌃ [b8f27783] MathOptInterface v1.25.3
+  [b8f27783] MathOptInterface v1.27.0
   [0a4f8689] MathTeXEngine v0.5.7
   [a3b82374] MatrixFactorizations v2.1.0
   [bb5d69b7] MaybeInplace v0.1.1
@@ -2177,11 +2858,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
   [b7050fa9] NonlinearProblemLibrary v0.1.2
-⌃ [8913a72c] NonlinearSolve v3.6.0
+  [8913a72c] NonlinearSolve v3.8.0
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.13.0
   [52e1d378] OpenEXR v0.3.2
-  [4d8831e6] OpenSSL v1.4.1
+  [4d8831e6] OpenSSL v1.4.2
   [429524aa] Optim v1.9.2
   [bac558e1] OrderedCollections v1.6.3
   [90014a1f] PDMats v0.11.31
@@ -2194,7 +2875,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2ae35dd2] Permutations v0.4.20
   [3bbf5609] PikaParser v0.6.1
   [eebad327] PkgVersion v0.3.3
-  [995b91a9] PlotUtils v1.4.0
+  [995b91a9] PlotUtils v1.4.1
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.9
   [98d1487c] PolyesterForwardDiff v0.1.1
@@ -2203,19 +2884,19 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [f27b6e38] Polynomials v4.0.6
   [85a6dd25] PositiveFactorizations v0.2.4
   [d236fae5] PreallocationTools v0.4.20
-  [aea7be01] PrecompileTools v1.2.0
-  [21216c6a] Preferences v1.4.1
+  [aea7be01] PrecompileTools v1.2.1
+  [21216c6a] Preferences v1.4.3
   [08abe8d2] PrettyTables v2.3.1
-⌃ [27ebfcd6] Primes v0.5.5
-  [92933f4c] ProgressMeter v1.9.0
+  [27ebfcd6] Primes v0.5.6
+  [92933f4c] ProgressMeter v1.10.0
   [4b34888f] QOI v1.0.0
   [1fd47b50] QuadGK v2.9.4
-⌃ [74087812] Random123 v1.6.2
+  [74087812] Random123 v1.7.0
   [e6cf234a] RandomNumbers v1.5.3
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
-⌃ [731186ca] RecursiveArrayTools v3.8.1
+  [731186ca] RecursiveArrayTools v3.12.0
   [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [2792f1a3] RegistryInstances v0.1.0
@@ -2230,9 +2911,9 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-⌃ [0bca4576] SciMLBase v2.26.1
+  [0bca4576] SciMLBase v2.29.0
   [31c91b34] SciMLBenchmarks v0.1.3
-  [c0aeaf25] SciMLOperators v0.3.7
+  [c0aeaf25] SciMLOperators v0.3.8
   [6c6a2e73] Scratch v1.2.1
   [efcf1570] Setfield v1.1.1
   [65257c39] ShaderAbstractions v0.4.1
@@ -2240,8 +2921,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [73760f76] SignedDistanceFields v0.4.0
   [777ac1f9] SimpleBufferStream v1.1.0
   [55797a34] SimpleGraphs v0.8.6
-  [727e6d20] SimpleNonlinearSolve v1.5.0
-⌃ [ec83eff0] SimplePartitions v0.3.1
+  [727e6d20] SimpleNonlinearSolve v1.6.0
+  [ec83eff0] SimplePartitions v0.3.2
   [cc47b68c] SimplePolynomials v0.2.17
   [a6525b86] SimpleRandom v0.3.1
   [699a6c99] SimpleTraits v0.9.4
@@ -2257,7 +2938,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [cae243ae] StackViews v0.1.1
   [aedffcd0] Static v0.8.10
   [0d7ed370] StaticArrayInterface v1.5.0
-⌃ [90137ffa] StaticArrays v1.9.2
+  [90137ffa] StaticArrays v1.9.3
   [1e83bf80] StaticArraysCore v1.4.2
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.2
@@ -2265,18 +2946,18 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7792a7ef] StrideArraysCore v0.5.2
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
-⌃ [09ab397b] StructArrays v0.6.17
+  [09ab397b] StructArrays v0.6.18
   [c3572dad] Sundials v4.24.0
-⌃ [2efcf032] SymbolicIndexingInterface v0.3.6
-  [d1185830] SymbolicUtils v1.5.0
-⌃ [0c5d862f] Symbolics v5.18.0
+  [2efcf032] SymbolicIndexingInterface v0.3.11
+  [d1185830] SymbolicUtils v1.5.1
+⌃ [0c5d862f] Symbolics v5.23.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.2
 ⌅ [731e570b] TiffImages v0.6.8
   [a759f4b9] TimerOutputs v0.5.23
-  [3bb67fe8] TranscodingStreams v0.10.3
+  [3bb67fe8] TranscodingStreams v0.10.4
   [d5829a12] TriangularSolve v0.1.20
   [410a4b4d] Tricks v0.1.8
   [981d1d27] TriplotBase v0.1.0
@@ -2295,7 +2976,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c2297ded] ZMQ v1.2.2
   [6e34b625] Bzip2_jll v1.0.8+1
   [4e9b3aee] CRlibm_jll v1.0.1+0
-  [83423d85] Cairo_jll v1.16.1+1
+  [83423d85] Cairo_jll v1.18.0+1
   [5ae413db] EarCut_jll v2.2.4+0
   [2e619515] Expat_jll v2.5.0+0
 ⌃ [b22a6f82] FFMPEG_jll v4.4.2+2
@@ -2305,13 +2986,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [559328eb] FriBidi_jll v1.0.10+0
   [78b55507] Gettext_jll v0.21.0+0
 ⌃ [f8c6e375] Git_jll v2.36.1+2
-  [7746bdde] Glib_jll v2.76.5+0
+  [7746bdde] Glib_jll v2.80.0+0
   [3b182d85] Graphite2_jll v1.3.14+0
   [528830af] Gumbo_jll v0.10.2+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
   [905a6f67] Imath_jll v3.1.7+0
   [1d5cc7b8] IntelOpenMP_jll v2024.0.2+0
-⌃ [aacddb02] JpegTurbo_jll v3.0.1+0
+  [aacddb02] JpegTurbo_jll v3.0.2+0
   [c1c5ebd0] LAME_jll v3.100.1+0
   [1d63c593] LLVMOpenMP_jll v15.0.7+0
   [dd4b983a] LZO_jll v2.10.1+0
@@ -2319,8 +3000,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d4300ac3] Libgcrypt_jll v1.8.7+0
   [7add5ba3] Libgpg_error_jll v1.42.0+0
   [94ce4f54] Libiconv_jll v1.17.0+0
-  [4b2f31a3] Libmount_jll v2.35.0+0
-  [38a345b3] Libuuid_jll v2.36.0+0
+  [4b2f31a3] Libmount_jll v2.39.3+0
+  [38a345b3] Libuuid_jll v2.39.3+1
   [856f044c] MKL_jll v2024.0.0+0
   [e7412a2a] Ogg_jll v1.3.5+1
   [18a262bb] OpenEXR_jll v3.1.4+0
@@ -2328,11 +3009,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [458c3c95] OpenSSL_jll v1.1.23+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
-  [36c8627f] Pango_jll v1.50.14+0
+  [36c8627f] Pango_jll v1.52.1+0
   [30392449] Pixman_jll v0.42.2+0
   [f50d1b31] Rmath_jll v0.4.0+0
 ⌅ [fb77eaff] Sundials_jll v5.2.2+0
-  [02c8fc9c] XML2_jll v2.12.2+0
+  [02c8fc9c] XML2_jll v2.12.5+0
   [aed1982a] XSLT_jll v1.1.34+0
   [4f6342f7] Xorg_libX11_jll v1.8.6+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
@@ -2342,12 +3023,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
   [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
   [c5fb5394] Xorg_xtrans_jll v1.5.0+0
-  [8f1865be] ZeroMQ_jll v4.3.4+0
+  [8f1865be] ZeroMQ_jll v4.3.5+0
   [9a68df92] isoband_jll v0.2.3+0
   [a4ae2306] libaom_jll v3.4.0+0
   [0ac62f75] libass_jll v0.15.1+0
   [f638f0a6] libfdk_aac_jll v2.0.2+0
-  [b53b4c65] libpng_jll v1.6.42+0
+  [b53b4c65] libpng_jll v1.6.43+1
   [47bcb7c8] libsass_jll v3.6.4+0
   [075b6546] libsixel_jll v1.10.3+0
   [a9144af2] libsodium_jll v1.0.20+0
@@ -2405,6 +3086,5 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
