@@ -54,14 +54,14 @@ solvers_all = [
     (; pkg = :nonlinearsolve,       name = "Levenberg-Marquardt with Cholesky",                      solver = Dict(:alg => LevenbergMarquardt(; autodiff = DEFAULT_FORWARD_AD, linsolve = CholeskyFactorization()))),
     (; pkg = :nonlinearsolve,       name = "Levenberg-Marquardt (No Geodesic Accln.)",               solver = Dict(:alg => LevenbergMarquardt(; linsolve = nothing, disable_geodesic = Val(true), autodiff = DEFAULT_FORWARD_AD))),
     (; pkg = :nonlinearsolve,       name = "Levenberg-Marquardt (No Geodesic Accln.) with Cholesky", solver = Dict(:alg => LevenbergMarquardt(; disable_geodesic = Val(true), autodiff = DEFAULT_FORWARD_AD, linsolve = CholeskyFactorization()))),
-    (; pkg = :wrapper,              name = "Modified Powell (MINPACK)",                              solver = Dict(:alg => CMINPACK(; method = :hybr))),
-    (; pkg = :wrapper,              name = "Levenberg-Marquardt (MINPACK)",                          solver = Dict(:alg => CMINPACK(; method = :lm))),
-    (; pkg = :wrapper,              name = "Newton Raphson (NLsolve.jl)",                            solver = Dict(:alg => NLsolveJL(; method = :newton, autodiff = :forward))),
-    (; pkg = :wrapper,              name = "Trust Region (NLsolve.jl)",                              solver = Dict(:alg => NLsolveJL(; autodiff = :forward))),
-    (; pkg = :wrapper,              name = "Newton Raphson (Sundials)",                              solver = Dict(:alg => KINSOL())),
-    (; pkg = :wrapper,              name = "Newton Krylov [GMRES] (Sundials)",                       solver = Dict(:alg => KINSOL(; linear_solver = :GMRES))),
-    (; pkg = :wrapper,              name = "Newton Raphson with LineSearch (Sundials)",              solver = Dict(:alg => KINSOL(; globalization_strategy = :LineSearch))),
-    (; pkg = :wrapper,              name = "Speed Mapping (SpeedMapping.jl)",                        solver = Dict(:alg => SpeedMappingJL()))
+    (; pkg = :wrapper,              name = "Modified Powell [MINPACK]",                              solver = Dict(:alg => CMINPACK(; method = :hybr))),
+    (; pkg = :wrapper,              name = "Levenberg-Marquardt [MINPACK]",                          solver = Dict(:alg => CMINPACK(; method = :lm))),
+    (; pkg = :wrapper,              name = "Newton Raphson [NLsolve.jl]",                            solver = Dict(:alg => NLsolveJL(; method = :newton, autodiff = :forward))),
+    (; pkg = :wrapper,              name = "Trust Region [NLsolve.jl]",                              solver = Dict(:alg => NLsolveJL(; autodiff = :forward))),
+    (; pkg = :wrapper,              name = "Mod. Newton Raphson [Sundials]",                         solver = Dict(:alg => KINSOL())),
+    (; pkg = :wrapper,              name = "Newton Krylov [Sundials]",                               solver = Dict(:alg => KINSOL(; linear_solver = :GMRES))),
+    (; pkg = :wrapper,              name = "Newton Raphson with LineSearch [Sundials]",              solver = Dict(:alg => KINSOL(; globalization_strategy = :LineSearch))),
+    (; pkg = :wrapper,              name = "Speed Mapping [SpeedMapping.jl]",                        solver = Dict(:alg => SpeedMappingJL()))
 ];
 ```
 
@@ -328,20 +328,20 @@ th an residual norm = 0.00039458054329866794.
 the problem (norm = 5.246607252366464e-7).
 [Warn] Solver Levenberg-Marquardt (No Geodesic Accln.) with Cholesky return
 ed retcode Unstable with an residual norm = 0.0003015473498789062.
-[Warn] Solver Modified Powell (MINPACK) returned retcode Failure with an re
+[Warn] Solver Modified Powell [MINPACK] returned retcode Failure with an re
 sidual norm = 292.3000724036127.
-[Warn] Solver Levenberg-Marquardt (MINPACK) returned retcode Failure with a
+[Warn] Solver Levenberg-Marquardt [MINPACK] returned retcode Failure with a
 n residual norm = 292.3000724036127.
-[Info] Solver Newton Raphson (NLsolve.jl) successfully solved the problem (
+[Info] Solver Newton Raphson [NLsolve.jl] successfully solved the problem (
 norm = 1.5941104186169045e-6).
-[Info] Solver Trust Region (NLsolve.jl) successfully solved the problem (no
+[Info] Solver Trust Region [NLsolve.jl] successfully solved the problem (no
 rm = 6.940612093440701e-7).
-[Warn] Solver Newton Raphson (Sundials) had a residual of NaN.
-[Warn] Solver Newton Krylov [GMRES] (Sundials) returned retcode Failure wit
-h an residual norm = 292.3000724036127.
-[Warn] Solver Newton Raphson with LineSearch (Sundials) returned retcode Fa
+[Warn] Solver Mod. Newton Raphson [Sundials] had a residual of NaN.
+[Warn] Solver Newton Krylov [Sundials] returned retcode Failure with an res
+idual norm = 292.3000724036127.
+[Warn] Solver Newton Raphson with LineSearch [Sundials] returned retcode Fa
 ilure with an residual norm = 287.9954636633953.
-[Warn] Solver Speed Mapping (SpeedMapping.jl) returned retcode Failure with
+[Warn] Solver Speed Mapping [SpeedMapping.jl] returned retcode Failure with
  an residual norm = 1.8355122321179187e92.
 ```
 
@@ -389,16 +389,15 @@ fig = begin
             push!(scs, sc)
         end
 
-        Legend(fig[2, :], [[l, sc] for (l, sc) in zip(ls, scs)],
-            [solver.name for solver in successful_solvers[idxs]], "Successful Solvers";
-            framevisible=true, framewidth = STROKEWIDTH, orientation = :horizontal,
-            titlesize = 20, nbanks = 3, labelsize = 16, margin = (0.0, 80.0, 0.0, 0.0),
-            tellheight = true, tellwidth = false, patchsize = (40.0f0, 20.0f0))
+        axislegend(ax, [[l, sc] for (l, sc) in zip(ls, scs)],
+            [solver.name for solver in successful_solvers[idxs]], "Successful Solvers\n(Fastest to Slowest)";
+            framevisible=true, framewidth = STROKEWIDTH, orientation = :vertical,
+            titlesize = 20, nbanks = 1, labelsize = 16,#  margin = (0.0, 80.0, 0.0, 0.0),
+            tellheight = false, tellwidth = true, patchsize = (40.0f0, 20.0f0),
+            position = :rb)
 
         fig[0, :] = Label(fig, "Doyle-Fuller-Newman (DFN) Battery Model Initialization: Work Precision Diagram",
             fontsize = 24, tellwidth = false, font = :bold)
-
-        resize_to_layout!(fig)
 
         fig
     end
@@ -460,14 +459,14 @@ Docs.Text(String(take!(io)))
       <th style = "text-align: center;">Levenberg-Marquardt with Cholesky</th>
       <th style = "text-align: center;">Levenberg-Marquardt (No Geodesic Accln.)</th>
       <th style = "text-align: center;">Levenberg-Marquardt (No Geodesic Accln.) with Cholesky</th>
-      <th style = "text-align: center;">Modified Powell (MINPACK)</th>
-      <th style = "text-align: center;">Levenberg-Marquardt (MINPACK)</th>
-      <th style = "text-align: center;">Newton Raphson (NLsolve.jl)</th>
-      <th style = "text-align: center;">Trust Region (NLsolve.jl)</th>
-      <th style = "text-align: center;">Newton Raphson (Sundials)</th>
-      <th style = "text-align: center;">Newton Krylov [GMRES] (Sundials)</th>
-      <th style = "text-align: center;">Newton Raphson with LineSearch (Sundials)</th>
-      <th style = "text-align: center;">Speed Mapping (SpeedMapping.jl)</th>
+      <th style = "text-align: center;">Modified Powell [MINPACK]</th>
+      <th style = "text-align: center;">Levenberg-Marquardt [MINPACK]</th>
+      <th style = "text-align: center;">Newton Raphson [NLsolve.jl]</th>
+      <th style = "text-align: center;">Trust Region [NLsolve.jl]</th>
+      <th style = "text-align: center;">Mod. Newton Raphson [Sundials]</th>
+      <th style = "text-align: center;">Newton Krylov [Sundials]</th>
+      <th style = "text-align: center;">Newton Raphson with LineSearch [Sundials]</th>
+      <th style = "text-align: center;">Speed Mapping [SpeedMapping.jl]</th>
     </tr>
   </thead>
   <tbody>
@@ -530,7 +529,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -632,7 +631,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ffbed154] DocStringExtensions v0.9.3
   [e30172f5] Documenter v1.3.0
   [35a29f4d] DocumenterTools v0.1.19
-  [5b8099bc] DomainSets v0.7.9
+⌃ [5b8099bc] DomainSets v0.7.9
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.5.5
   [4e289a0a] EnumX v1.0.4
@@ -663,7 +662,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [d7ba0133] Git v1.3.0
   [a2bd30eb] Graphics v1.1.2
   [86223c79] Graphs v1.9.0
-  [3955a311] GridLayoutBase v0.10.0
+⌃ [3955a311] GridLayoutBase v0.10.0
   [42e2da0e] Grisu v1.0.2
   [708ec375] Gumbo v0.8.2
   [cd3eb016] HTTP v1.10.3
