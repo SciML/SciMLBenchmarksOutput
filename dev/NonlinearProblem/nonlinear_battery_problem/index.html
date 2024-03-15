@@ -23,14 +23,14 @@ solvers_all = [
     (; pkg = :nonlinearsolve,       name = &quot;Levenberg-Marquardt with Cholesky&quot;,                      solver = Dict(:alg =&gt; LevenbergMarquardt(; autodiff = DEFAULT_FORWARD_AD, linsolve = CholeskyFactorization()))),
     (; pkg = :nonlinearsolve,       name = &quot;Levenberg-Marquardt (No Geodesic Accln.)&quot;,               solver = Dict(:alg =&gt; LevenbergMarquardt(; linsolve = nothing, disable_geodesic = Val(true), autodiff = DEFAULT_FORWARD_AD))),
     (; pkg = :nonlinearsolve,       name = &quot;Levenberg-Marquardt (No Geodesic Accln.) with Cholesky&quot;, solver = Dict(:alg =&gt; LevenbergMarquardt(; disable_geodesic = Val(true), autodiff = DEFAULT_FORWARD_AD, linsolve = CholeskyFactorization()))),
-    (; pkg = :wrapper,              name = &quot;Modified Powell (MINPACK)&quot;,                              solver = Dict(:alg =&gt; CMINPACK(; method = :hybr))),
-    (; pkg = :wrapper,              name = &quot;Levenberg-Marquardt (MINPACK)&quot;,                          solver = Dict(:alg =&gt; CMINPACK(; method = :lm))),
-    (; pkg = :wrapper,              name = &quot;Newton Raphson (NLsolve.jl)&quot;,                            solver = Dict(:alg =&gt; NLsolveJL(; method = :newton, autodiff = :forward))),
-    (; pkg = :wrapper,              name = &quot;Trust Region (NLsolve.jl)&quot;,                              solver = Dict(:alg =&gt; NLsolveJL(; autodiff = :forward))),
-    (; pkg = :wrapper,              name = &quot;Newton Raphson (Sundials)&quot;,                              solver = Dict(:alg =&gt; KINSOL())),
-    (; pkg = :wrapper,              name = &quot;Newton Krylov [GMRES] (Sundials)&quot;,                       solver = Dict(:alg =&gt; KINSOL(; linear_solver = :GMRES))),
-    (; pkg = :wrapper,              name = &quot;Newton Raphson with LineSearch (Sundials)&quot;,              solver = Dict(:alg =&gt; KINSOL(; globalization_strategy = :LineSearch))),
-    (; pkg = :wrapper,              name = &quot;Speed Mapping (SpeedMapping.jl)&quot;,                        solver = Dict(:alg =&gt; SpeedMappingJL()))
+    (; pkg = :wrapper,              name = &quot;Modified Powell [MINPACK]&quot;,                              solver = Dict(:alg =&gt; CMINPACK(; method = :hybr))),
+    (; pkg = :wrapper,              name = &quot;Levenberg-Marquardt [MINPACK]&quot;,                          solver = Dict(:alg =&gt; CMINPACK(; method = :lm))),
+    (; pkg = :wrapper,              name = &quot;Newton Raphson [NLsolve.jl]&quot;,                            solver = Dict(:alg =&gt; NLsolveJL(; method = :newton, autodiff = :forward))),
+    (; pkg = :wrapper,              name = &quot;Trust Region [NLsolve.jl]&quot;,                              solver = Dict(:alg =&gt; NLsolveJL(; autodiff = :forward))),
+    (; pkg = :wrapper,              name = &quot;Mod. Newton Raphson [Sundials]&quot;,                         solver = Dict(:alg =&gt; KINSOL())),
+    (; pkg = :wrapper,              name = &quot;Newton Krylov [Sundials]&quot;,                               solver = Dict(:alg =&gt; KINSOL(; linear_solver = :GMRES))),
+    (; pkg = :wrapper,              name = &quot;Newton Raphson with LineSearch [Sundials]&quot;,              solver = Dict(:alg =&gt; KINSOL(; globalization_strategy = :LineSearch))),
+    (; pkg = :wrapper,              name = &quot;Speed Mapping [SpeedMapping.jl]&quot;,                        solver = Dict(:alg =&gt; SpeedMappingJL()))
 ];</code></pre><p>Setup the problem</p><pre><code class="language-julia hljs">function f!(out, u, p = nothing)
     out[1] = -u[33]
     out[2] = -u[32]
@@ -244,20 +244,20 @@ th an residual norm = 0.00039458054329866794.
 the problem (norm = 5.246607252366464e-7).
 [Warn] Solver Levenberg-Marquardt (No Geodesic Accln.) with Cholesky return
 ed retcode Unstable with an residual norm = 0.0003015473498789062.
-[Warn] Solver Modified Powell (MINPACK) returned retcode Failure with an re
+[Warn] Solver Modified Powell [MINPACK] returned retcode Failure with an re
 sidual norm = 292.3000724036127.
-[Warn] Solver Levenberg-Marquardt (MINPACK) returned retcode Failure with a
+[Warn] Solver Levenberg-Marquardt [MINPACK] returned retcode Failure with a
 n residual norm = 292.3000724036127.
-[Info] Solver Newton Raphson (NLsolve.jl) successfully solved the problem (
+[Info] Solver Newton Raphson [NLsolve.jl] successfully solved the problem (
 norm = 1.5941104186169045e-6).
-[Info] Solver Trust Region (NLsolve.jl) successfully solved the problem (no
+[Info] Solver Trust Region [NLsolve.jl] successfully solved the problem (no
 rm = 6.940612093440701e-7).
-[Warn] Solver Newton Raphson (Sundials) had a residual of NaN.
-[Warn] Solver Newton Krylov [GMRES] (Sundials) returned retcode Failure wit
-h an residual norm = 292.3000724036127.
-[Warn] Solver Newton Raphson with LineSearch (Sundials) returned retcode Fa
+[Warn] Solver Mod. Newton Raphson [Sundials] had a residual of NaN.
+[Warn] Solver Newton Krylov [Sundials] returned retcode Failure with an res
+idual norm = 292.3000724036127.
+[Warn] Solver Newton Raphson with LineSearch [Sundials] returned retcode Fa
 ilure with an residual norm = 287.9954636633953.
-[Warn] Solver Speed Mapping (SpeedMapping.jl) returned retcode Failure with
+[Warn] Solver Speed Mapping [SpeedMapping.jl] returned retcode Failure with
  an residual norm = 1.8355122321179187e92.</code></pre><h2 id="Plot-and-Save-the-Plot"><a class="docs-heading-anchor" href="#Plot-and-Save-the-Plot">Plot and Save the Plot</a><a id="Plot-and-Save-the-Plot-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-and-Save-the-Plot" title="Permalink"></a></h2><pre><code class="language-julia hljs">fig = begin
     LINESTYLES = Dict(:nonlinearsolve =&gt; :solid, :simplenonlinearsolve =&gt; :dash,
         :wrapper =&gt; :dot)
@@ -295,16 +295,15 @@ ilure with an residual norm = 287.9954636633953.
             push!(scs, sc)
         end
 
-        Legend(fig[2, :], [[l, sc] for (l, sc) in zip(ls, scs)],
-            [solver.name for solver in successful_solvers[idxs]], &quot;Successful Solvers&quot;;
-            framevisible=true, framewidth = STROKEWIDTH, orientation = :horizontal,
-            titlesize = 20, nbanks = 3, labelsize = 16, margin = (0.0, 80.0, 0.0, 0.0),
-            tellheight = true, tellwidth = false, patchsize = (40.0f0, 20.0f0))
+        axislegend(ax, [[l, sc] for (l, sc) in zip(ls, scs)],
+            [solver.name for solver in successful_solvers[idxs]], &quot;Successful Solvers\n(Fastest to Slowest)&quot;;
+            framevisible=true, framewidth = STROKEWIDTH, orientation = :vertical,
+            titlesize = 20, nbanks = 1, labelsize = 16,#  margin = (0.0, 80.0, 0.0, 0.0),
+            tellheight = false, tellwidth = true, patchsize = (40.0f0, 20.0f0),
+            position = :rb)
 
         fig[0, :] = Label(fig, &quot;Doyle-Fuller-Newman (DFN) Battery Model Initialization: Work Precision Diagram&quot;,
             fontsize = 24, tellwidth = false, font = :bold)
-
-        resize_to_layout!(fig)
 
         fig
     end
@@ -335,14 +334,14 @@ Docs.Text(String(take!(io)))</code></pre><table>
       <th style = "text-align: center;">Levenberg-Marquardt with Cholesky</th>
       <th style = "text-align: center;">Levenberg-Marquardt (No Geodesic Accln.)</th>
       <th style = "text-align: center;">Levenberg-Marquardt (No Geodesic Accln.) with Cholesky</th>
-      <th style = "text-align: center;">Modified Powell (MINPACK)</th>
-      <th style = "text-align: center;">Levenberg-Marquardt (MINPACK)</th>
-      <th style = "text-align: center;">Newton Raphson (NLsolve.jl)</th>
-      <th style = "text-align: center;">Trust Region (NLsolve.jl)</th>
-      <th style = "text-align: center;">Newton Raphson (Sundials)</th>
-      <th style = "text-align: center;">Newton Krylov [GMRES] (Sundials)</th>
-      <th style = "text-align: center;">Newton Raphson with LineSearch (Sundials)</th>
-      <th style = "text-align: center;">Speed Mapping (SpeedMapping.jl)</th>
+      <th style = "text-align: center;">Modified Powell [MINPACK]</th>
+      <th style = "text-align: center;">Levenberg-Marquardt [MINPACK]</th>
+      <th style = "text-align: center;">Newton Raphson [NLsolve.jl]</th>
+      <th style = "text-align: center;">Trust Region [NLsolve.jl]</th>
+      <th style = "text-align: center;">Mod. Newton Raphson [Sundials]</th>
+      <th style = "text-align: center;">Newton Krylov [Sundials]</th>
+      <th style = "text-align: center;">Newton Raphson with LineSearch [Sundials]</th>
+      <th style = "text-align: center;">Speed Mapping [SpeedMapping.jl]</th>
     </tr>
   </thead>
   <tbody>
@@ -386,7 +385,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -476,7 +475,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [ffbed154] DocStringExtensions v0.9.3
   [e30172f5] Documenter v1.3.0
   [35a29f4d] DocumenterTools v0.1.19
-  [5b8099bc] DomainSets v0.7.9
+⌃ [5b8099bc] DomainSets v0.7.9
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.5.5
   [4e289a0a] EnumX v1.0.4
@@ -507,7 +506,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 ⌃ [d7ba0133] Git v1.3.0
   [a2bd30eb] Graphics v1.1.2
   [86223c79] Graphs v1.9.0
-  [3955a311] GridLayoutBase v0.10.0
+⌃ [3955a311] GridLayoutBase v0.10.0
   [42e2da0e] Grisu v1.0.2
   [708ec375] Gumbo v0.8.2
   [cd3eb016] HTTP v1.10.3
@@ -806,4 +805,4 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../bruss/">« Ill-Conditioned Nonlinear System Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Thursday 14 March 2024 06:00">Thursday 14 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../bruss/">« Ill-Conditioned Nonlinear System Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 15 March 2024 19:14">Friday 15 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
