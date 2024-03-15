@@ -363,15 +363,15 @@ solvers_scaling = [
     (; pkg = :nonlinearsolve,       sparsity = :none,   name = "NR (Dense)",                     alg = NewtonRaphson(; linsolve = nothing)),
     (; pkg = :nonlinearsolve,       sparsity = :approx, name = "NR (Approx. Sparse)",            alg = NewtonRaphson(; linsolve = nothing)),
     (; pkg = :nonlinearsolve,       sparsity = :exact,  name = "NR (Exact Sparse)",              alg = NewtonRaphson(; linsolve = nothing)),
-    (; pkg = :wrapper,              sparsity = :none,   name = "NR (NLsolve.jl)",                alg = NLsolveJL(; method = :newton, autodiff = :forward)),
-    (; pkg = :wrapper,              sparsity = :none,   name = "Mod. NR (Sundials)",             alg = KINSOL()),
+    (; pkg = :wrapper,              sparsity = :none,   name = "NR [NLsolve.jl]",                alg = NLsolveJL(; method = :newton, autodiff = :forward)),
+    (; pkg = :wrapper,              sparsity = :none,   name = "Mod. NR [Sundials]",             alg = KINSOL()),
 
     (; pkg = :nonlinearsolve,       sparsity = :none,   name = "TR (Dense)",                     alg = TrustRegion(; radius_update_scheme = RUS.NLsolve, linsolve = nothing)),
     (; pkg = :nonlinearsolve,       sparsity = :approx, name = "TR (Approx. Sparse)",            alg = TrustRegion(; radius_update_scheme = RUS.NLsolve, linsolve = nothing)),
     (; pkg = :nonlinearsolve,       sparsity = :exact,  name = "TR (Exact Sparse)",              alg = TrustRegion(; radius_update_scheme = RUS.NLsolve, linsolve = nothing)),
-    (; pkg = :wrapper,              sparsity = :none,   name = "TR (NLsolve.jl)",                alg = NLsolveJL(; autodiff = :forward)),
+    (; pkg = :wrapper,              sparsity = :none,   name = "TR [NLsolve.jl]",                alg = NLsolveJL(; autodiff = :forward)),
 
-    (; pkg = :wrapper,              sparsity = :none,   name = "MINPACK",                       alg = CMINPACK()),
+    (; pkg = :wrapper,              sparsity = :none,   name = "Mod. Powell [MINPACK]",          alg = CMINPACK()),
 ]
 
 runtimes_scaling = zeros(length(solvers_scaling), length(Ns)) .- 1
@@ -457,11 +457,11 @@ fig = begin
         fig = Figure(; size = (WIDTH, HEIGHT))
 
         ax = Axis(fig[1, 1:3], ylabel = L"Time ($s$)", xlabel = L"Problem Size ($N$)",
-            xscale = log2, yscale = log2, xlabelsize = 22, ylabelsize = 22,
+            xscale = log10, yscale = log10, xlabelsize = 22, ylabelsize = 22,
             xticklabelsize = 20, yticklabelsize = 20, xtickwidth = STROKEWIDTH,
             ytickwidth = STROKEWIDTH, spinewidth = STROKEWIDTH)
 
-        idxs = sortperm(vec(median(runtimes_scaling ./ reshape(Ns_, 1, :); dims=2)))
+        idxs = sortperm(runtimes_scaling[:, end])
 
         ls, scs = [], []
         for (i, solver) in zip(idxs, solvers_scaling[idxs])
@@ -490,17 +490,18 @@ fig = begin
             LineElement(; linestyle = :dashdot, linewidth = 5),
         ]
 
-        Legend(fig[2, 1:2], main_legend, [s.name for s in solvers_scaling[idxs]], "Solvers";
-            framevisible=true, framewidth = STROKEWIDTH, orientation = :horizontal,
-            titlesize = 20, nbanks = 3, labelsize = 16,
+        axislegend(ax, main_legend, [s.name for s in solvers_scaling[idxs]],
+            "Successful Solvers\n(Fastest to Slowest)";
+            framevisible=true, framewidth = STROKEWIDTH, orientation = :vertical,
+            titlesize = 20, nbanks = 1, labelsize = 16,
             tellheight = true, tellwidth = false, patchsize = (60.0f0, 20.0f0),
-            margin = (50, 0, 0, 0))
+            position = :rb)
 
-        Legend(fig[2, 3], sparsity_legend, ["No Sparsity Detection", "Approx. Sparsity", "Exact Sparsity"],
+        axislegend(ax, sparsity_legend, ["No Sparsity Detection", "Approx. Sparsity", "Exact Sparsity"],
             "Sparsity Detection"; framevisible=true, framewidth = STROKEWIDTH,
-            orientation = :horizontal, titlesize = 20, nbanks = 3, labelsize = 16,
+            orientation = :vertical, titlesize = 20, nbanks = 1, labelsize = 16,
             tellheight = true, tellwidth = false, patchsize = (60.0f0, 20.0f0),
-            halign = :right, margin = (0, 10, 0, 0))
+            position = :lt)
 
         fig[0, :] = Label(fig,
             "Brusselator 2D: Scaling of First-Order Nonlinear Solvers with Problem Size",
@@ -572,11 +573,11 @@ solvers_scaling_jacobian_free = [
     (; pkg = :nonlinearsolve,  name = "Newton Krylov (ILU)",              alg = NewtonRaphson(; linsolve = KrylovJL_GMRES(), precs = incompletelu, concrete_jac = true)),
     (; pkg = :nonlinearsolve,  name = "Newton Krylov (AMG)",              alg = NewtonRaphson(; linsolve = KrylovJL_GMRES(), precs = algebraicmultigrid, concrete_jac = true)),
     (; pkg = :nonlinearsolve,  name = "Newton Krylov (AMG Jacobi)",       alg = NewtonRaphson(; linsolve = KrylovJL_GMRES(), precs = algebraicmultigrid_jacobi, concrete_jac = true)),
-    (; pkg = :nonlinearsolve,  name = "Trust Region Krylov",              alg = TrustRegion(; linsolve = KrylovJL_GMRES())),
-    (; pkg = :nonlinearsolve,  name = "Trust Region Krylov (ILU)",        alg = TrustRegion(; linsolve = KrylovJL_GMRES(), precs = incompletelu, concrete_jac = true)),
-    (; pkg = :nonlinearsolve,  name = "Trust Region Krylov (AMG)",        alg = TrustRegion(; linsolve = KrylovJL_GMRES(), precs = algebraicmultigrid, concrete_jac = true)),
-    (; pkg = :nonlinearsolve,  name = "Trust Region Krylov (AMG Jacobi)", alg = TrustRegion(; linsolve = KrylovJL_GMRES(), precs = algebraicmultigrid_jacobi, concrete_jac = true)),
-    (; pkg = :wrapper,         name = "Newton Krylov (Sundials)",         alg = KINSOL(; linear_solver = :GMRES)),
+    (; pkg = :nonlinearsolve,  name = "TR Krylov",                        alg = TrustRegion(; linsolve = KrylovJL_GMRES())),
+    (; pkg = :nonlinearsolve,  name = "TR Krylov (ILU)",                  alg = TrustRegion(; linsolve = KrylovJL_GMRES(), precs = incompletelu, concrete_jac = true)),
+    (; pkg = :nonlinearsolve,  name = "TR Krylov (AMG)",                  alg = TrustRegion(; linsolve = KrylovJL_GMRES(), precs = algebraicmultigrid, concrete_jac = true)),
+    (; pkg = :nonlinearsolve,  name = "TR Krylov (AMG Jacobi)",           alg = TrustRegion(; linsolve = KrylovJL_GMRES(), precs = algebraicmultigrid_jacobi, concrete_jac = true)),
+    (; pkg = :wrapper,         name = "Newton Krylov [Sundials]",         alg = KINSOL(; linear_solver = :GMRES)),
 ]
 
 runtimes_scaling = zeros(length(solvers_scaling_jacobian_free), length(Ns)) .- 1
@@ -651,11 +652,11 @@ fig = begin
         fig = Figure(; size = (WIDTH, HEIGHT))
 
         ax = Axis(fig[1, 1:2], ylabel = L"Time ($s$)", xlabel = L"Problem Size ($N$)",
-            xscale = log2, yscale = log2, xlabelsize = 22, ylabelsize = 22,
+            xscale = log10, yscale = log10, xlabelsize = 22, ylabelsize = 22,
             xticklabelsize = 20, yticklabelsize = 20, xtickwidth = STROKEWIDTH,
             ytickwidth = STROKEWIDTH, spinewidth = STROKEWIDTH)
 
-        idxs = sortperm(vec(mean(runtimes_scaling ./ reshape(Ns_, 1, :); dims=2)))
+        idxs = sortperm(runtimes_scaling[:, end])
 
         ls, scs, labels = [], [], []
         for (i, solver) in zip(idxs, solvers_scaling_jacobian_free[idxs])
@@ -671,22 +672,22 @@ fig = begin
             push!(labels, solver.name)
         end
 
-        Legend(fig[2, 1], [[l, sc] for (l, sc) in zip(ls, scs)], labels, "Solvers";
-            framevisible=true, framewidth = STROKEWIDTH, orientation = :horizontal,
-            titlesize = 20, nbanks = 3, labelsize = 16, halign = :left,
-            margin = (0, 0, 0, 0),
+        axislegend(ax, [[l, sc] for (l, sc) in zip(ls, scs)], labels,
+            "Successful Solvers\n(Fastest to Slowest)";
+            framevisible=true, framewidth = STROKEWIDTH, orientation = :vertical,
+            titlesize = 20, labelsize = 16, position = :rb,
             tellheight = true, tellwidth = false, patchsize = (40.0f0, 20.0f0))
 
-        Legend(fig[2, 2], [
+        axislegend(ax, [
                 LineElement(; linestyle = :solid, linewidth = 5),
                 LineElement(; linestyle = :dot, linewidth = 5),
                 LineElement(; linestyle = :dash, linewidth = 5),
                 LineElement(; linestyle = :dashdot, linewidth = 5),
             ], ["No Preconditioning", "AMG", "AMG Jacobi", "Incomplete LU"],
             "Preconditioning"; framevisible=true, framewidth = STROKEWIDTH,
-            orientation = :horizontal, titlesize = 20, nbanks = 4, labelsize = 16,
+            orientation = :vertical, titlesize = 20, labelsize = 16,
             tellheight = true, tellwidth = true, patchsize = (40.0f0, 20.0f0),
-            halign = :right, margin = (0, 20, 0, 0))
+            position = :lt)
 
         fig[0, :] = Label(fig,
             "Brusselator 2D: Scaling of Jacobian-Free Nonlinear Solvers with Problem Size",
@@ -721,23 +722,17 @@ DEFAULT_FORWARD_AD = AutoSparsePolyesterForwardDiff(; chunksize = 12)
 
 solvers_all = [
     (; pkg = :nonlinearsolve,       name = "Default PolyAlg",                                        solver = Dict(:alg => FastShortcutNonlinearPolyalg(; autodiff = DEFAULT_FORWARD_AD))),
-    (; pkg = :nonlinearsolve,       name = "RobustMultiNewton (with GMRES)",                         solver = Dict(:alg => RobustMultiNewton(; linsolve = KrylovJL_GMRES(), autodiff = DEFAULT_FORWARD_AD))),
+    (; pkg = :nonlinearsolve,       name = "RobustMultiNewton (GMRES)",                              solver = Dict(:alg => RobustMultiNewton(; linsolve = KrylovJL_GMRES(), autodiff = DEFAULT_FORWARD_AD))),
     (; pkg = :nonlinearsolve,       name = "Newton Raphson",                                         solver = Dict(:alg => NewtonRaphson(; linsolve = nothing, autodiff = DEFAULT_FORWARD_AD))),
     (; pkg = :nonlinearsolve,       name = "Newton Krylov",                                          solver = Dict(:alg => NewtonRaphson(; linsolve = KrylovJL_GMRES(), autodiff = DEFAULT_FORWARD_AD))),
-    # (; pkg = :nonlinearsolve,       name = "Newton Krylov (ILU)",                                    solver = Dict(:alg => NewtonRaphson(; linsolve = KrylovJL_GMRES(), concrete_jac = true, precs = incompletelu, autodiff = DEFAULT_FORWARD_AD))),
-    # (; pkg = :nonlinearsolve,       name = "Newton Krylov (AMG)",                                    solver = Dict(:alg => NewtonRaphson(; linsolve = KrylovJL_GMRES(), concrete_jac = true, precs = algebraicmultigrid, autodiff = DEFAULT_FORWARD_AD))),
-    # (; pkg = :nonlinearsolve,       name = "Newton Krylov (AMG Jacobi)",                             solver = Dict(:alg => NewtonRaphson(; linsolve = KrylovJL_GMRES(), concrete_jac = true, precs = algebraicmultigrid_jacobi, autodiff = DEFAULT_FORWARD_AD))),
     (; pkg = :nonlinearsolve,       name = "Trust Region",                                           solver = Dict(:alg => TrustRegion(; autodiff = DEFAULT_FORWARD_AD))),
-    (; pkg = :nonlinearsolve,       name = "Trust Region Krylov",                                    solver = Dict(:alg => TrustRegion(; linsolve = KrylovJL_GMRES(), autodiff = DEFAULT_FORWARD_AD))),
-    # (; pkg = :nonlinearsolve,       name = "Trust Region Krylov (ILU)",                              solver = Dict(:alg => TrustRegion(; linsolve = KrylovJL_GMRES(), concrete_jac = true, precs = incompletelu, autodiff = DEFAULT_FORWARD_AD))),
-    # (; pkg = :nonlinearsolve,       name = "Trust Region Krylov (AMG)",                              solver = Dict(:alg => TrustRegion(; linsolve = KrylovJL_GMRES(), concrete_jac = true, precs = algebraicmultigrid, autodiff = DEFAULT_FORWARD_AD))),
-    # (; pkg = :nonlinearsolve,       name = "Trust Region Krylov (AMG Jacobi)",                       solver = Dict(:alg => TrustRegion(; linsolve = KrylovJL_GMRES(), concrete_jac = true, precs = algebraicmultigrid_jacobi, autodiff = DEFAULT_FORWARD_AD))),
-    (; pkg = :wrapper,              name = "Newton Raphson (NLsolve.jl)",                            solver = Dict(:alg => NLsolveJL(; method = :newton, autodiff = :forward))),
-    (; pkg = :wrapper,              name = "Trust Region (NLsolve.jl)",                              solver = Dict(:alg => NLsolveJL(; autodiff = :forward))),
-    (; pkg = :wrapper,              name = "Newton Raphson (Sundials)",                              solver = Dict(:alg => KINSOL())),
-    (; pkg = :wrapper,              name = "Newton Krylov (Sundials)",                               solver = Dict(:alg => KINSOL(; linear_solver = :GMRES))),
+    (; pkg = :nonlinearsolve,       name = "TR Krylov",                                              solver = Dict(:alg => TrustRegion(; linsolve = KrylovJL_GMRES(), autodiff = DEFAULT_FORWARD_AD))),
+    (; pkg = :wrapper,              name = "NR [NLsolve.jl]",                                        solver = Dict(:alg => NLsolveJL(; method = :newton, autodiff = :forward))),
+    (; pkg = :wrapper,              name = "TR [NLsolve.jl]",                                        solver = Dict(:alg => NLsolveJL(; autodiff = :forward))),
+    (; pkg = :wrapper,              name = "NR [Sundials]",                                          solver = Dict(:alg => KINSOL())),
+    (; pkg = :wrapper,              name = "Newton Krylov [Sundials]",                               solver = Dict(:alg => KINSOL(; linear_solver = :GMRES))),
 
-    (; pkg = :wrapper,              name = "Modified Powell (MINPACK)",                              solver = Dict(:alg => CMINPACK())),
+    (; pkg = :wrapper,              name = "Mod. Powell [MINPACK]",                                  solver = Dict(:alg => CMINPACK())),
 ];
 ```
 
@@ -799,26 +794,26 @@ wp_set, successful_solvers = generate_wpset(prob_wpd, solvers_all);
 ```
 [Info] Solver Default PolyAlg successfully solved the problem (norm = 0.000
 20409942583029592).
-[Info] Solver RobustMultiNewton (with GMRES) successfully solved the proble
-m (norm = 1.1664069101655303e-8).
+[Info] Solver RobustMultiNewton (GMRES) successfully solved the problem (no
+rm = 1.1664069101655303e-8).
 [Info] Solver Newton Raphson successfully solved the problem (norm = 2.6476
 053818757766e-9).
 [Info] Solver Newton Krylov successfully solved the problem (norm = 1.16640
 69101655303e-8).
 [Info] Solver Trust Region successfully solved the problem (norm = 2.647605
 3818757766e-9).
-[Info] Solver Trust Region Krylov successfully solved the problem (norm = 1
-.1664069101655303e-8).
-[Info] Solver Newton Raphson (NLsolve.jl) successfully solved the problem (
-norm = 2.629767216137896e-9).
-[Info] Solver Trust Region (NLsolve.jl) successfully solved the problem (no
-rm = 2.629767216137896e-9).
-[Info] Solver Newton Raphson (Sundials) successfully solved the problem (no
-rm = 5.946162345262808e-6).
-[Warn] Solver Newton Krylov (Sundials) returned retcode Failure with an res
+[Info] Solver TR Krylov successfully solved the problem (norm = 1.166406910
+1655303e-8).
+[Info] Solver NR [NLsolve.jl] successfully solved the problem (norm = 2.629
+767216137896e-9).
+[Info] Solver TR [NLsolve.jl] successfully solved the problem (norm = 2.629
+767216137896e-9).
+[Info] Solver NR [Sundials] successfully solved the problem (norm = 5.94616
+2345262808e-6).
+[Warn] Solver Newton Krylov [Sundials] returned retcode Failure with an res
 idual norm = 34.06162309153361.
-[Info] Solver Modified Powell (MINPACK) successfully solved the problem (no
-rm = 1.962972484440553e-6).
+[Info] Solver Mod. Powell [MINPACK] successfully solved the problem (norm =
+ 1.962972484440553e-6).
 ```
 
 
@@ -865,11 +860,12 @@ fig = begin
             push!(scs, sc)
         end
 
-        Legend(fig[2, 1], [[l, sc] for (l, sc) in zip(ls, scs)],
-            [solver.name for solver in successful_solvers[idxs]], "Successful Solvers";
-            framevisible=true, framewidth = STROKEWIDTH, orientation = :horizontal,
-            titlesize = 20, nbanks = 3, labelsize = 16, margin = (0.0, 70.0, 0.0, 0.0),
-            tellheight = true, tellwidth = false, patchsize = (40.0f0, 20.0f0))
+        xlims!(ax; high=1)
+
+        axislegend(ax, [[l, sc] for (l, sc) in zip(ls, scs)],
+            [solver.name for solver in successful_solvers[idxs]], "Successful Solvers\n(Fastest to Slowest)";
+            framevisible=true, framewidth = STROKEWIDTH, position = :rb,
+            titlesize = 20, labelsize = 16, patchsize = (40.0f0, 20.0f0))
 
         fig[0, :] = Label(fig, "Brusselator Steady State PDE: Work Precision Diagram",
             fontsize = 24, tellwidth = false, font = :bold)
@@ -916,7 +912,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -1018,7 +1014,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ffbed154] DocStringExtensions v0.9.3
   [e30172f5] Documenter v1.3.0
   [35a29f4d] DocumenterTools v0.1.19
-  [5b8099bc] DomainSets v0.7.9
+⌃ [5b8099bc] DomainSets v0.7.9
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.5.5
   [4e289a0a] EnumX v1.0.4
@@ -1049,7 +1045,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [d7ba0133] Git v1.3.0
   [a2bd30eb] Graphics v1.1.2
   [86223c79] Graphs v1.9.0
-  [3955a311] GridLayoutBase v0.10.0
+⌃ [3955a311] GridLayoutBase v0.10.0
   [42e2da0e] Grisu v1.0.2
   [708ec375] Gumbo v0.8.2
   [cd3eb016] HTTP v1.10.3
