@@ -158,10 +158,29 @@ function __set_ad_chunksize(solver::SimpleTrustRegion, ck, sparsity, psize)
     return SimpleTrustRegion(; autodiff)
 end
 __set_ad_chunksize(solver, ck, sparsity, psize) = solver
+
+function get_ordering(x::AbstractMatrix)
+    idxs = Vector{Int}(undef, size(x, 1))
+    placed = zeros(Bool, size(x, 1))
+    idx = 1
+    for i in size(x, 2):-1:1
+        col = view(x, :, i)
+        idxs_col = sortperm(col; by = x -> isnan(x) ? Inf : (x == -1 ? Inf : x))
+        for j in idxs_col
+            if !placed[j] && !isnan(col[j]) && col[j] ≠ -1
+                idxs[j] = idx
+                idx += 1
+                placed[j] = true
+            end
+        end
+        idx > length(idxs) && break
+    end
+    return idxs
+end
 ```
 
 ```
-__set_ad_chunksize (generic function with 5 methods)
+get_ordering (generic function with 1 method)
 ```
 
 
@@ -461,7 +480,7 @@ fig = begin
             xticklabelsize = 20, yticklabelsize = 20, xtickwidth = STROKEWIDTH,
             ytickwidth = STROKEWIDTH, spinewidth = STROKEWIDTH)
 
-        idxs = sortperm(runtimes_scaling[:, end])
+        idxs = get_ordering(runtimes_scaling)
 
         ls, scs = [], []
         for (i, solver) in zip(idxs, solvers_scaling[idxs])
@@ -656,7 +675,7 @@ fig = begin
             xticklabelsize = 20, yticklabelsize = 20, xtickwidth = STROKEWIDTH,
             ytickwidth = STROKEWIDTH, spinewidth = STROKEWIDTH)
 
-        idxs = sortperm(runtimes_scaling[:, end])
+        idxs = get_ordering(runtimes_scaling)
 
         ls, scs, labels = [], [], []
         for (i, solver) in zip(idxs, solvers_scaling_jacobian_free[idxs])
@@ -698,7 +717,12 @@ fig = begin
 end
 ```
 
-![](figures/bruss_12_1.png)
+```
+Error: BoundsError: attempt to access 9-element Vector{NamedTuple{(:pkg, :n
+ame, :alg)}} at index [[3, 8, 1, 6, 4, 7, 2, 5, 27127150881566736]]
+```
+
+
 
 ```julia
 save("brusselator_krylov_methods_scaling.svg", fig)
@@ -861,9 +885,10 @@ fig = begin
         end
 
         xlims!(ax; high=1)
+        ylims!(ax; low=5e-3)
 
         axislegend(ax, [[l, sc] for (l, sc) in zip(ls, scs)],
-            [solver.name for solver in successful_solvers[idxs]], "Successful Solvers\n(Fastest to Slowest)";
+            [solver.name for solver in successful_solvers[idxs]], "Successful Solvers";
             framevisible=true, framewidth = STROKEWIDTH, position = :rb,
             titlesize = 20, labelsize = 16, patchsize = (40.0f0, 20.0f0))
 
