@@ -114,7 +114,26 @@ function __set_ad_chunksize(solver::SimpleTrustRegion, ck, sparsity, psize)
     autodiff = __ad_backend(nothing, psize, ck)
     return SimpleTrustRegion(; autodiff)
 end
-__set_ad_chunksize(solver, ck, sparsity, psize) = solver</code></pre><pre><code class="nohighlight hljs">__set_ad_chunksize (generic function with 5 methods)</code></pre><h1 id="Scaling-of-Sparsity-Detection-Algorithm"><a class="docs-heading-anchor" href="#Scaling-of-Sparsity-Detection-Algorithm">Scaling of Sparsity Detection Algorithm</a><a id="Scaling-of-Sparsity-Detection-Algorithm-1"></a><a class="docs-heading-anchor-permalink" href="#Scaling-of-Sparsity-Detection-Algorithm" title="Permalink"></a></h1><p>We increase the problem size, and compute the jacobian 10 times similar to a real workload where the jacobian is computed several times and amortizes the cost for computing the sparsity pattern.</p><pre><code class="language-julia hljs">test_problem = generate_brusselator_problem(4)
+__set_ad_chunksize(solver, ck, sparsity, psize) = solver
+
+function get_ordering(x::AbstractMatrix)
+    idxs = Vector{Int}(undef, size(x, 1))
+    placed = zeros(Bool, size(x, 1))
+    idx = 1
+    for i in size(x, 2):-1:1
+        col = view(x, :, i)
+        idxs_col = sortperm(col; by = x -&gt; isnan(x) ? Inf : (x == -1 ? Inf : x))
+        for j in idxs_col
+            if !placed[j] &amp;&amp; !isnan(col[j]) &amp;&amp; col[j] ≠ -1
+                idxs[j] = idx
+                idx += 1
+                placed[j] = true
+            end
+        end
+        idx &gt; length(idxs) &amp;&amp; break
+    end
+    return idxs
+end</code></pre><pre><code class="nohighlight hljs">get_ordering (generic function with 1 method)</code></pre><h1 id="Scaling-of-Sparsity-Detection-Algorithm"><a class="docs-heading-anchor" href="#Scaling-of-Sparsity-Detection-Algorithm">Scaling of Sparsity Detection Algorithm</a><a id="Scaling-of-Sparsity-Detection-Algorithm-1"></a><a class="docs-heading-anchor-permalink" href="#Scaling-of-Sparsity-Detection-Algorithm" title="Permalink"></a></h1><p>We increase the problem size, and compute the jacobian 10 times similar to a real workload where the jacobian is computed several times and amortizes the cost for computing the sparsity pattern.</p><pre><code class="language-julia hljs">test_problem = generate_brusselator_problem(4)
 bruss_f!, u0 = (du, u) -&gt; test_problem.f(du, u, test_problem.p), test_problem.u0
 y = similar(u0)
 
@@ -360,7 +379,7 @@ end</code></pre><p>Plot the results.</p><pre><code class="language-julia hljs">f
             xticklabelsize = 20, yticklabelsize = 20, xtickwidth = STROKEWIDTH,
             ytickwidth = STROKEWIDTH, spinewidth = STROKEWIDTH)
 
-        idxs = sortperm(runtimes_scaling[:, end])
+        idxs = get_ordering(runtimes_scaling)
 
         ls, scs = [], []
         for (i, solver) in zip(idxs, solvers_scaling[idxs])
@@ -521,7 +540,7 @@ end</code></pre><p>Plot the results.</p><pre><code class="language-julia hljs">f
             xticklabelsize = 20, yticklabelsize = 20, xtickwidth = STROKEWIDTH,
             ytickwidth = STROKEWIDTH, spinewidth = STROKEWIDTH)
 
-        idxs = sortperm(runtimes_scaling[:, end])
+        idxs = get_ordering(runtimes_scaling)
 
         ls, scs, labels = [], [], []
         for (i, solver) in zip(idxs, solvers_scaling_jacobian_free[idxs])
@@ -560,7 +579,8 @@ end</code></pre><p>Plot the results.</p><pre><code class="language-julia hljs">f
 
         return fig
     end
-end</code></pre><p><img src="../figures/bruss_12_1.png" alt/></p><pre><code class="language-julia hljs">save(&quot;brusselator_krylov_methods_scaling.svg&quot;, fig)</code></pre><pre><code class="nohighlight hljs">CairoMakie.Screen{SVG}</code></pre><h1 id="Work-Precision-Diagram"><a class="docs-heading-anchor" href="#Work-Precision-Diagram">Work-Precision Diagram</a><a id="Work-Precision-Diagram-1"></a><a class="docs-heading-anchor-permalink" href="#Work-Precision-Diagram" title="Permalink"></a></h1><p>In this section, we will generate the work-precision of the solvers. All solvers that can exploit sparsity will automatically do so.</p><pre><code class="language-julia hljs">DEFAULT_FORWARD_AD = AutoSparsePolyesterForwardDiff(; chunksize = 12)
+end</code></pre><pre><code class="nohighlight hljs">Error: BoundsError: attempt to access 9-element Vector{NamedTuple{(:pkg, :n
+ame, :alg)}} at index [[3, 8, 1, 6, 4, 7, 2, 5, 27127150881566736]]</code></pre><pre><code class="language-julia hljs">save(&quot;brusselator_krylov_methods_scaling.svg&quot;, fig)</code></pre><pre><code class="nohighlight hljs">CairoMakie.Screen{SVG}</code></pre><h1 id="Work-Precision-Diagram"><a class="docs-heading-anchor" href="#Work-Precision-Diagram">Work-Precision Diagram</a><a id="Work-Precision-Diagram-1"></a><a class="docs-heading-anchor-permalink" href="#Work-Precision-Diagram" title="Permalink"></a></h1><p>In this section, we will generate the work-precision of the solvers. All solvers that can exploit sparsity will automatically do so.</p><pre><code class="language-julia hljs">DEFAULT_FORWARD_AD = AutoSparsePolyesterForwardDiff(; chunksize = 12)
 
 solvers_all = [
     (; pkg = :nonlinearsolve,       name = &quot;Default PolyAlg&quot;,                                        solver = Dict(:alg =&gt; FastShortcutNonlinearPolyalg(; autodiff = DEFAULT_FORWARD_AD))),
@@ -674,9 +694,10 @@ idual norm = 34.06162309153361.
         end
 
         xlims!(ax; high=1)
+        ylims!(ax; low=5e-3)
 
         axislegend(ax, [[l, sc] for (l, sc) in zip(ls, scs)],
-            [solver.name for solver in successful_solvers[idxs]], &quot;Successful Solvers\n(Fastest to Slowest)&quot;;
+            [solver.name for solver in successful_solvers[idxs]], &quot;Successful Solvers&quot;;
             framevisible=true, framewidth = STROKEWIDTH, position = :rb,
             titlesize = 20, labelsize = 16, patchsize = (40.0f0, 20.0f0))
 
@@ -1116,4 +1137,4 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">« Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a><a class="docs-footer-nextpage" href="../nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 15 March 2024 19:19">Friday 15 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">« Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a><a class="docs-footer-nextpage" href="../nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 16 March 2024 02:21">Saturday 16 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
