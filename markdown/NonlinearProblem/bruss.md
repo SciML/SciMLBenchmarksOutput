@@ -163,14 +163,15 @@ function get_ordering(x::AbstractMatrix)
     idxs = Vector{Int}(undef, size(x, 1))
     placed = zeros(Bool, size(x, 1))
     idx = 1
-    for i in size(x, 2):-1:1
-        col = view(x, :, i)
-        idxs_col = sortperm(col; by = x -> isnan(x) ? Inf : (x == -1 ? Inf : x))
-        for j in idxs_col
-            if !placed[j] && !isnan(col[j]) && col[j] ≠ -1
-                idxs[j] = idx
+    for j in size(x, 2):-1:1
+        row = view(x, :, j)
+        idxs_row = sortperm(row; by = x -> isnan(x) ? Inf : (x == -1 ? Inf : x))
+        for i in idxs_row
+            if !placed[i] && !isnan(row[i]) && row[i] ≠ -1
+                idxs[idx] = i
+                placed[i] = true
                 idx += 1
-                placed[j] = true
+                idx > length(idxs) && break
             end
         end
         idx > length(idxs) && break
@@ -239,7 +240,7 @@ for (i, N) in enumerate(Ns)
     bruss_f!, u0 = (du, u) -> test_problem.f(du, u, test_problem.p), test_problem.u0
     y = similar(u0)
     for (j, (sd, adtype)) in enumerate(algs)
-        if N < 2^8 || (N ≥ 2^8 && sd isa SymbolicsSparsityDetection)
+        if N < 2^9 || (N ≥ 2^9 && sd isa SymbolicsSparsityDetection)
             times[i, j] = @belapsed $cache_and_compute_10_jacobians($adtype, $sd, $bruss_f!, $y, $u0)
             @info times[i, j]
         else
@@ -272,7 +273,7 @@ fig = begin
             colormap = :seaborn_bright, strokewidth = 3)
 
         ax = Axis(fig[1, 2]; title = "Scaling of Sparse Jacobian Computation Algorithms",
-            titlesize = 22, titlegap = 10, xscale = log2, yscale = log2,
+            titlesize = 22, titlegap = 10, xscale = log10, yscale = log10,
             xticksize = 20, yticksize = 20, xticklabelsize = 20, yticklabelsize = 20,
             xtickwidth = 2.5, ytickwidth = 2.5, spinewidth = 2.5,
             xlabel = L"Input Dimension ($\mathbf{N}$)", ylabel = L"Time $\mathbf{(s)}$", xlabelsize = 22,
@@ -376,7 +377,7 @@ CairoMakie.Screen{SVG}
 First, let us experiment the scaling of each algorithm with the problem size.
 
 ```julia
-Ns = 2 .^ (2:7)
+Ns = vcat(collect(2 .^ (2:7)), [150, 175, 200]) 
 
 solvers_scaling = [
     (; pkg = :nonlinearsolve,       sparsity = :none,   name = "NR (Dense)",                     alg = NewtonRaphson(; linsolve = nothing)),
@@ -420,7 +421,10 @@ for (i, N) in enumerate(Ns)
         if (j > 1 && runtimes_scaling[j - 1, i] == -1) || (alg isa CMINPACK && N > 32) ||
             (alg isa KINSOL && N > 64) ||
             (alg isa NLsolveJL && N > 64 && alg.method == :trust_region) ||
-            (alg isa GeneralizedFirstOrderAlgorithm{nothing, :TrustRegion} && N > 64)
+            (alg isa GeneralizedFirstOrderAlgorithm{nothing, :TrustRegion} && N > 64) ||
+            (alg isa NLsolveJL && N > 128 && alg.method == :newton) ||
+            (alg isa GeneralizedFirstOrderAlgorithm{nothing, :NewtonRaphson} && N > 128 && ptype == :none) ||
+            (alg isa GeneralizedFirstOrderAlgorithm{nothing, :NewtonRaphson} && N > 150 && ptype == :approx)
             # The last benchmark failed so skip this too
             runtimes_scaling[j, i] = NaN
             @warn "$(name): Would Have Timed out"
@@ -717,12 +721,7 @@ fig = begin
 end
 ```
 
-```
-Error: BoundsError: attempt to access 9-element Vector{NamedTuple{(:pkg, :n
-ame, :alg)}} at index [[3, 8, 1, 6, 4, 7, 2, 5, 27127150881566736]]
-```
-
-
+![](figures/bruss_12_1.png)
 
 ```julia
 save("brusselator_krylov_methods_scaling.svg", fig)
@@ -947,7 +946,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [2169fc97] AlgebraicMultigrid v0.6.0
   [6e4b80f9] BenchmarkTools v1.5.0
   [13f3f980] CairoMakie v0.11.9
@@ -977,7 +976,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
 ⌃ [47edcb42] ADTypes v0.2.6
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
@@ -1052,7 +1051,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7034ab61] FastBroadcast v0.2.8
   [9aa1b823] FastClosures v0.3.2
   [29a986be] FastLapackInterface v2.0.2
-  [5789e2e9] FileIO v1.16.2
+⌃ [5789e2e9] FileIO v1.16.2
   [8fc22ac5] FilePaths v0.8.3
   [48062228] FilePathsBase v0.9.21
   [1a297f60] FillArrays v1.9.3
@@ -1073,7 +1072,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [3955a311] GridLayoutBase v0.10.0
   [42e2da0e] Grisu v1.0.2
   [708ec375] Gumbo v0.8.2
-  [cd3eb016] HTTP v1.10.3
+⌃ [cd3eb016] HTTP v1.10.3
   [eafb193a] Highlights v0.5.2
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
@@ -1195,7 +1194,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.29.0
+⌃ [0bca4576] SciMLBase v2.29.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.8
   [6c6a2e73] Scratch v1.2.1
