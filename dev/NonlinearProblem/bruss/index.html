@@ -120,14 +120,15 @@ function get_ordering(x::AbstractMatrix)
     idxs = Vector{Int}(undef, size(x, 1))
     placed = zeros(Bool, size(x, 1))
     idx = 1
-    for i in size(x, 2):-1:1
-        col = view(x, :, i)
-        idxs_col = sortperm(col; by = x -&gt; isnan(x) ? Inf : (x == -1 ? Inf : x))
-        for j in idxs_col
-            if !placed[j] &amp;&amp; !isnan(col[j]) &amp;&amp; col[j] ≠ -1
-                idxs[j] = idx
+    for j in size(x, 2):-1:1
+        row = view(x, :, j)
+        idxs_row = sortperm(row; by = x -&gt; isnan(x) ? Inf : (x == -1 ? Inf : x))
+        for i in idxs_row
+            if !placed[i] &amp;&amp; !isnan(row[i]) &amp;&amp; row[i] ≠ -1
+                idxs[idx] = i
+                placed[i] = true
                 idx += 1
-                placed[j] = true
+                idx &gt; length(idxs) &amp;&amp; break
             end
         end
         idx &gt; length(idxs) &amp;&amp; break
@@ -178,7 +179,7 @@ for (i, N) in enumerate(Ns)
     bruss_f!, u0 = (du, u) -&gt; test_problem.f(du, u, test_problem.p), test_problem.u0
     y = similar(u0)
     for (j, (sd, adtype)) in enumerate(algs)
-        if N &lt; 2^8 || (N ≥ 2^8 &amp;&amp; sd isa SymbolicsSparsityDetection)
+        if N &lt; 2^9 || (N ≥ 2^9 &amp;&amp; sd isa SymbolicsSparsityDetection)
             times[i, j] = @belapsed $cache_and_compute_10_jacobians($adtype, $sd, $bruss_f!, $y, $u0)
             @info times[i, j]
         else
@@ -202,7 +203,7 @@ end</code></pre><p>Plotting the results.</p><pre><code class="language-julia hlj
             colormap = :seaborn_bright, strokewidth = 3)
 
         ax = Axis(fig[1, 2]; title = &quot;Scaling of Sparse Jacobian Computation Algorithms&quot;,
-            titlesize = 22, titlegap = 10, xscale = log2, yscale = log2,
+            titlesize = 22, titlegap = 10, xscale = log10, yscale = log10,
             xticksize = 20, yticksize = 20, xticklabelsize = 20, yticklabelsize = 20,
             xtickwidth = 2.5, ytickwidth = 2.5, spinewidth = 2.5,
             xlabel = L&quot;Input Dimension ($\mathbf{N}$)&quot;, ylabel = L&quot;Time $\mathbf{(s)}$&quot;, xlabelsize = 22,
@@ -284,7 +285,7 @@ end</code></pre><p>Plotting the results.</p><pre><code class="language-julia hlj
 
         fig
     end
-end</code></pre><p><img src="../figures/bruss_6_1.png" alt/></p><pre><code class="language-julia hljs">save(&quot;brusselator_sparse_jacobian_scaling.svg&quot;, fig)</code></pre><pre><code class="nohighlight hljs">CairoMakie.Screen{SVG}</code></pre><h1 id="Scaling-with-Problem-Size"><a class="docs-heading-anchor" href="#Scaling-with-Problem-Size">Scaling with Problem Size</a><a id="Scaling-with-Problem-Size-1"></a><a class="docs-heading-anchor-permalink" href="#Scaling-with-Problem-Size" title="Permalink"></a></h1><p>First, let us experiment the scaling of each algorithm with the problem size.</p><pre><code class="language-julia hljs">Ns = 2 .^ (2:7)
+end</code></pre><p><img src="../figures/bruss_6_1.png" alt/></p><pre><code class="language-julia hljs">save(&quot;brusselator_sparse_jacobian_scaling.svg&quot;, fig)</code></pre><pre><code class="nohighlight hljs">CairoMakie.Screen{SVG}</code></pre><h1 id="Scaling-with-Problem-Size"><a class="docs-heading-anchor" href="#Scaling-with-Problem-Size">Scaling with Problem Size</a><a id="Scaling-with-Problem-Size-1"></a><a class="docs-heading-anchor-permalink" href="#Scaling-with-Problem-Size" title="Permalink"></a></h1><p>First, let us experiment the scaling of each algorithm with the problem size.</p><pre><code class="language-julia hljs">Ns = vcat(collect(2 .^ (2:7)), [150, 175, 200]) 
 
 solvers_scaling = [
     (; pkg = :nonlinearsolve,       sparsity = :none,   name = &quot;NR (Dense)&quot;,                     alg = NewtonRaphson(; linsolve = nothing)),
@@ -328,7 +329,10 @@ for (i, N) in enumerate(Ns)
         if (j &gt; 1 &amp;&amp; runtimes_scaling[j - 1, i] == -1) || (alg isa CMINPACK &amp;&amp; N &gt; 32) ||
             (alg isa KINSOL &amp;&amp; N &gt; 64) ||
             (alg isa NLsolveJL &amp;&amp; N &gt; 64 &amp;&amp; alg.method == :trust_region) ||
-            (alg isa GeneralizedFirstOrderAlgorithm{nothing, :TrustRegion} &amp;&amp; N &gt; 64)
+            (alg isa GeneralizedFirstOrderAlgorithm{nothing, :TrustRegion} &amp;&amp; N &gt; 64) ||
+            (alg isa NLsolveJL &amp;&amp; N &gt; 128 &amp;&amp; alg.method == :newton) ||
+            (alg isa GeneralizedFirstOrderAlgorithm{nothing, :NewtonRaphson} &amp;&amp; N &gt; 128 &amp;&amp; ptype == :none) ||
+            (alg isa GeneralizedFirstOrderAlgorithm{nothing, :NewtonRaphson} &amp;&amp; N &gt; 150 &amp;&amp; ptype == :approx)
             # The last benchmark failed so skip this too
             runtimes_scaling[j, i] = NaN
             @warn &quot;$(name): Would Have Timed out&quot;
@@ -579,8 +583,7 @@ end</code></pre><p>Plot the results.</p><pre><code class="language-julia hljs">f
 
         return fig
     end
-end</code></pre><pre><code class="nohighlight hljs">Error: BoundsError: attempt to access 9-element Vector{NamedTuple{(:pkg, :n
-ame, :alg)}} at index [[3, 8, 1, 6, 4, 7, 2, 5, 27127150881566736]]</code></pre><pre><code class="language-julia hljs">save(&quot;brusselator_krylov_methods_scaling.svg&quot;, fig)</code></pre><pre><code class="nohighlight hljs">CairoMakie.Screen{SVG}</code></pre><h1 id="Work-Precision-Diagram"><a class="docs-heading-anchor" href="#Work-Precision-Diagram">Work-Precision Diagram</a><a id="Work-Precision-Diagram-1"></a><a class="docs-heading-anchor-permalink" href="#Work-Precision-Diagram" title="Permalink"></a></h1><p>In this section, we will generate the work-precision of the solvers. All solvers that can exploit sparsity will automatically do so.</p><pre><code class="language-julia hljs">DEFAULT_FORWARD_AD = AutoSparsePolyesterForwardDiff(; chunksize = 12)
+end</code></pre><p><img src="../figures/bruss_12_1.png" alt/></p><pre><code class="language-julia hljs">save(&quot;brusselator_krylov_methods_scaling.svg&quot;, fig)</code></pre><pre><code class="nohighlight hljs">CairoMakie.Screen{SVG}</code></pre><h1 id="Work-Precision-Diagram"><a class="docs-heading-anchor" href="#Work-Precision-Diagram">Work-Precision Diagram</a><a id="Work-Precision-Diagram-1"></a><a class="docs-heading-anchor-permalink" href="#Work-Precision-Diagram" title="Permalink"></a></h1><p>In this section, we will generate the work-precision of the solvers. All solvers that can exploit sparsity will automatically do so.</p><pre><code class="language-julia hljs">DEFAULT_FORWARD_AD = AutoSparsePolyesterForwardDiff(; chunksize = 12)
 
 solvers_all = [
     (; pkg = :nonlinearsolve,       name = &quot;Default PolyAlg&quot;,                                        solver = Dict(:alg =&gt; FastShortcutNonlinearPolyalg(; autodiff = DEFAULT_FORWARD_AD))),
@@ -721,7 +724,7 @@ Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [2169fc97] AlgebraicMultigrid v0.6.0
   [6e4b80f9] BenchmarkTools v1.5.0
   [13f3f980] CairoMakie v0.11.9
@@ -745,7 +748,7 @@ Environment:
   [90137ffa] StaticArrays v1.9.3
   [c3572dad] Sundials v4.24.0
 ⌃ [0c5d862f] Symbolics v5.23.0
-Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
 ⌃ [47edcb42] ADTypes v0.2.6
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
@@ -820,7 +823,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [7034ab61] FastBroadcast v0.2.8
   [9aa1b823] FastClosures v0.3.2
   [29a986be] FastLapackInterface v2.0.2
-  [5789e2e9] FileIO v1.16.2
+⌃ [5789e2e9] FileIO v1.16.2
   [8fc22ac5] FilePaths v0.8.3
   [48062228] FilePathsBase v0.9.21
   [1a297f60] FillArrays v1.9.3
@@ -841,7 +844,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 ⌃ [3955a311] GridLayoutBase v0.10.0
   [42e2da0e] Grisu v1.0.2
   [708ec375] Gumbo v0.8.2
-  [cd3eb016] HTTP v1.10.3
+⌃ [cd3eb016] HTTP v1.10.3
   [eafb193a] Highlights v0.5.2
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
@@ -963,7 +966,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.29.0
+⌃ [0bca4576] SciMLBase v2.29.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.8
   [6c6a2e73] Scratch v1.2.1
@@ -1137,4 +1140,4 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">« Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a><a class="docs-footer-nextpage" href="../nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 16 March 2024 02:21">Saturday 16 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">« Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a><a class="docs-footer-nextpage" href="../nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 22 March 2024 22:11">Friday 22 March 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
