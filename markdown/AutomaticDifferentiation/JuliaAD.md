@@ -1,10 +1,11 @@
 ---
-author: "Chris Rackauckas"
+author: "Guillaume Dalle and Chris Rackauckas"
 title: "Julia AD Benchmarks"
 ---
 ```julia
 using DifferentiationInterface, DifferentiationInterfaceTest, DataFrames
 import Enzyme, Zygote, Tapir
+import Markdown, PrettyTables
 
 function f(x::AbstractVector{T}) where {T}
     y = zero(T)
@@ -22,15 +23,30 @@ backends = [AutoEnzyme(Enzyme.Reverse), AutoZygote(), AutoTapir()];
 scenarios = [GradientScenario(f, x=rand(100)), GradientScenario(f, x=rand(10_000))];
 result = benchmark_differentiation(backends, scenarios, logging=true)
 data = DataFrame(result)
+Markdown.parse(PrettyTables.pretty_table(String, data; backend=Val(:markdown), header=names(data)))
 ```
 
-```
-Error: ArgumentError: Package DifferentiationInterface not found in current
- path.
-- Run `import Pkg; Pkg.add("DifferentiationInterface")` to install the Diff
-erentiationInterface package.
-```
 
+|      **backend** |            **mode** |     **scenario** |         **operator** | **func** | **mutating** |  **input_type** | **output_type** | **input_size** | **output_size** | **calls** | **samples** |    **time** | **bytes** | **allocs** | **compile_fraction** | **gc_fraction** | **evals** |
+| ----------------:| -------------------:| ----------------:| --------------------:| --------:| ------------:| ---------------:| ---------------:| --------------:| ---------------:| ---------:| -----------:| -----------:| ---------:| ----------:| --------------------:| ---------------:| ---------:|
+| Enzyme (reverse) | AbstractReverseMode | GradientScenario |     prepare_gradient |        f |        false | Vector{Float64} |         Float64 |         (100,) |              () |         0 |           2 |      1.8e-7 |       0.0 |        0.0 |                  0.0 |             0.0 |       1.0 |
+| Enzyme (reverse) | AbstractReverseMode | GradientScenario | value_and_gradient!! |        f |        false | Vector{Float64} |         Float64 |         (100,) |              () |         1 |        2662 |  3.35113e-6 |     220.0 |       10.0 |                  0.0 |             0.0 |       8.0 |
+| Enzyme (reverse) | AbstractReverseMode | GradientScenario |           gradient!! |        f |        false | Vector{Float64} |         Float64 |         (100,) |              () |         1 |        2622 |  1.01143e-6 |   6.28571 |       0.25 |                  0.0 |             0.0 |      28.0 |
+| Enzyme (reverse) | AbstractReverseMode | GradientScenario |     prepare_gradient |        f |        false | Vector{Float64} |         Float64 |       (10000,) |              () |         0 |           2 |      4.0e-8 |       0.0 |        0.0 |                  0.0 |             0.0 |       1.0 |
+| Enzyme (reverse) | AbstractReverseMode | GradientScenario | value_and_gradient!! |        f |        false | Vector{Float64} |         Float64 |       (10000,) |              () |         1 |         406 | 0.000212498 |     416.0 |       17.0 |                  0.0 |             0.0 |       1.0 |
+| Enzyme (reverse) | AbstractReverseMode | GradientScenario |           gradient!! |        f |        false | Vector{Float64} |         Float64 |       (10000,) |              () |         1 |         555 | 0.000121158 |     176.0 |        7.0 |                  0.0 |             0.0 |       1.0 |
+| Zygote (reverse) | AbstractReverseMode | GradientScenario |     prepare_gradient |        f |        false | Vector{Float64} |         Float64 |         (100,) |              () |         0 |           2 |      4.0e-8 |       0.0 |        0.0 |                  0.0 |             0.0 |       1.0 |
+| Zygote (reverse) | AbstractReverseMode | GradientScenario | value_and_gradient!! |        f |        false | Vector{Float64} |         Float64 |         (100,) |              () |         1 |         118 | 0.000692883 |  262400.0 |     3899.0 |                  0.0 |             0.0 |       1.0 |
+| Zygote (reverse) | AbstractReverseMode | GradientScenario |           gradient!! |        f |        false | Vector{Float64} |         Float64 |         (100,) |              () |         1 |         114 | 0.000774353 |  262224.0 |     3893.0 |                  0.0 |             0.0 |       1.0 |
+| Zygote (reverse) | AbstractReverseMode | GradientScenario |     prepare_gradient |        f |        false | Vector{Float64} |         Float64 |       (10000,) |              () |         0 |           2 |      4.0e-8 |       0.0 |        0.0 |                  0.0 |             0.0 |       1.0 |
+| Zygote (reverse) | AbstractReverseMode | GradientScenario | value_and_gradient!! |        f |        false | Vector{Float64} |         Float64 |       (10000,) |              () |         1 |           1 |    0.211318 | 8.18037e8 |   390152.0 |                  0.0 |        0.187885 |       1.0 |
+| Zygote (reverse) | AbstractReverseMode | GradientScenario |           gradient!! |        f |        false | Vector{Float64} |         Float64 |       (10000,) |              () |         1 |           1 |    0.190919 | 8.18037e8 |   390146.0 |                  0.0 |        0.172634 |       1.0 |
+|  Tapir (reverse) | AbstractReverseMode | GradientScenario |     prepare_gradient |        f |        false | Vector{Float64} |         Float64 |         (100,) |              () |         1 |           2 |    0.172564 | 1.99133e7 |   294269.0 |             0.928962 |             0.0 |       1.0 |
+|  Tapir (reverse) | AbstractReverseMode | GradientScenario | value_and_gradient!! |        f |        false | Vector{Float64} |         Float64 |         (100,) |              () |         0 |        3028 |     9.78e-6 |   298.667 |    7.66667 |                  0.0 |             0.0 |       3.0 |
+|  Tapir (reverse) | AbstractReverseMode | GradientScenario |           gradient!! |        f |        false | Vector{Float64} |         Float64 |         (100,) |              () |         0 |        3014 |  9.80333e-6 |   250.667 |    6.33333 |                  0.0 |             0.0 |       3.0 |
+|  Tapir (reverse) | AbstractReverseMode | GradientScenario |     prepare_gradient |        f |        false | Vector{Float64} |         Float64 |       (10000,) |              () |         1 |           2 |    0.172571 | 1.99146e7 |   294273.0 |             0.928487 |             0.0 |       1.0 |
+|  Tapir (reverse) | AbstractReverseMode | GradientScenario | value_and_gradient!! |        f |        false | Vector{Float64} |         Float64 |       (10000,) |              () |         0 |         104 | 0.000902792 |     448.0 |       13.0 |                  0.0 |             0.0 |       1.0 |
+|  Tapir (reverse) | AbstractReverseMode | GradientScenario |           gradient!! |        f |        false | Vector{Float64} |         Float64 |       (10000,) |              () |         0 |          85 | 0.000905172 |     368.0 |       11.0 |                  0.0 |             0.0 |       1.0 |
 
 
 
@@ -72,29 +88,37 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [a93c6f00] DataFrames v1.6.1
+  [a0c0ee7d] DifferentiationInterface v0.1.0 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterface#main`
+  [a82114a7] DifferentiationInterfaceTest v0.1.0 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterfaceTest#main`
   [7da242da] Enzyme v0.11.20
+  [08abe8d2] PrettyTables v2.3.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [07d77754] Tapir v0.1.2
   [e88e6eb3] Zygote v0.6.69
+  [d6f4376e] Markdown
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+  [47edcb42] ADTypes v0.2.7
   [621f4979] AbstractFFTs v1.5.0
   [79e6a3ab] Adapt v4.0.4
   [ec485272] ArnoldiMethod v0.4.0
+  [4fba245c] ArrayInterface v7.9.0
   [6e4b80f9] BenchmarkTools v1.5.0
   [fa961155] CEnum v0.5.0
   [082447d4] ChainRules v1.63.0
   [d360d2e6] ChainRulesCore v1.23.0
+  [0ca39b1e] Chairmarks v1.2.1
   [da1fd8a2] CodeTracking v1.3.5
   [bbf7d656] CommonSubexpressions v0.3.0
   [34da2185] Compat v4.14.0
+  [b0b7db55] ComponentArrays v0.15.11
   [8f4d0f93] Conda v1.10.0
   [187b0558] ConstructionBase v1.5.5
   [a8cc5b0e] Crayons v4.1.1
@@ -105,12 +129,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
   [de460e47] DiffTests v0.1.2
+  [a0c0ee7d] DifferentiationInterface v0.1.0 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterface#main`
+  [a82114a7] DifferentiationInterfaceTest v0.1.0 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterfaceTest#main`
   [ffbed154] DocStringExtensions v0.9.3
   [7da242da] Enzyme v0.11.20
 ⌅ [f151be2c] EnzymeCore v0.6.6
   [e2ba6199] ExprTools v0.1.10
   [1a297f60] FillArrays v1.10.0
   [f6369f11] ForwardDiff v0.10.36
+  [d9f16b24] Functors v0.4.10
   [0c68f7d7] GPUArrays v10.1.0
   [46192b85] GPUArraysCore v0.1.6
 ⌅ [61eb1bfa] GPUCompiler v0.25.0
@@ -119,12 +146,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [eafb193a] Highlights v0.5.2
   [7073ff75] IJulia v1.24.2
   [7869d1d1] IRTools v0.4.12
+  [615f187c] IfElse v0.1.1
   [d25df0c9] Inflate v0.1.4
   [842dd82b] InlineStrings v1.4.0
   [41ab1584] InvertedIndices v1.3.0
   [92d709cd] IrrationalConstants v0.2.2
   [82899510] IteratorInterfaceExtensions v1.0.0
 ⌃ [c3a54625] JET v0.8.22
+  [27aeb0d3] JLArrays v0.1.4
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
   [aa1ae85d] JuliaInterpreter v0.9.31
@@ -139,11 +168,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [77ba4419] NaNMath v1.0.2
   [d8793406] ObjectFile v0.4.1
   [bac558e1] OrderedCollections v1.6.3
+  [65ce6f38] PackageExtensionCompat v1.0.2
   [69de0a69] Parsers v2.8.1
   [2dfb63ee] PooledArrays v1.4.3
   [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.4.3
   [08abe8d2] PrettyTables v2.3.1
+  [92933f4c] ProgressMeter v1.10.0
   [c1ae055f] RealDot v0.1.0
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
@@ -158,6 +189,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [a2af1166] SortingAlgorithms v1.2.1
   [dc90abb0] SparseInverseSubset v0.1.2
   [276daf66] SpecialFunctions v2.3.1
+  [aedffcd0] Static v0.8.10
+  [0d7ed370] StaticArrayInterface v1.5.0
   [90137ffa] StaticArrays v1.9.3
   [1e83bf80] StaticArraysCore v1.4.2
   [69024149] StringEncodings v0.3.7
@@ -218,13 +251,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v1.0.5+1
+  [e66e0078] CompilerSupportLibraries_jll v1.1.0+0
   [deac9b47] LibCURL_jll v8.4.0+0
   [e37daf67] LibGit2_jll v1.6.4+0
   [29816b5a] LibSSH2_jll v1.11.0+1
   [c8ffd9c3] MbedTLS_jll v2.28.2+1
   [14a3606d] MozillaCACerts_jll v2023.1.10
-  [4536629a] OpenBLAS_jll v0.3.23+2
+  [4536629a] OpenBLAS_jll v0.3.23+4
   [05823500] OpenLibm_jll v0.8.1+2
   [efcefdf7] PCRE2_jll v10.42.0+1
   [bea87d4a] SuiteSparse_jll v7.2.1+1

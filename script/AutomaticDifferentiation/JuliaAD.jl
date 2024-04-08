@@ -1,6 +1,7 @@
 
 using DifferentiationInterface, DifferentiationInterfaceTest, DataFrames
 import Enzyme, Zygote, Tapir
+import Markdown, PrettyTables
 
 function f(x::AbstractVector{T}) where {T}
     y = zero(T)
@@ -18,6 +19,7 @@ backends = [AutoEnzyme(Enzyme.Reverse), AutoZygote(), AutoTapir()];
 scenarios = [GradientScenario(f, x=rand(100)), GradientScenario(f, x=rand(10_000))];
 result = benchmark_differentiation(backends, scenarios, logging=true)
 data = DataFrame(result)
+Markdown.parse(PrettyTables.pretty_table(String, data; backend=Val(:markdown), header=names(data)))
 
 
 using SciMLBenchmarks
