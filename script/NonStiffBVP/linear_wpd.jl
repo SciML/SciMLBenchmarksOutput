@@ -1,5 +1,6 @@
 
-using BoundaryValueDiffEq, OrdinaryDiffEq, ODEInterface, DiffEqDevTools, BenchmarkTools, BVProblemLibrary, Plots
+using BoundaryValueDiffEq, OrdinaryDiffEq, ODEInterface, DiffEqDevTools, BenchmarkTools,
+      BVProblemLibrary, Plots
 
 
 setups = [ Dict(:alg=>MIRK2(), :dts=>1.0 ./ 10.0 .^ (1:4)),
@@ -7,7 +8,7 @@ setups = [ Dict(:alg=>MIRK2(), :dts=>1.0 ./ 10.0 .^ (1:4)),
             Dict(:alg=>MIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4)),
             Dict(:alg=>MIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4)),
             Dict(:alg=>MIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4)),
-            Dict(:alg=>BVPM2(), :dts=>1.0 ./ 7.0 .^ (1:4)),
+            Dict(:alg=>BVPM2(), :dts=>1.0 ./ 10.0 .^ (1:4)),
             Dict(:alg=>COLNEW(), :dts=>1.0 ./ 10.0 .^ (1:4)),
             Dict(:alg=>Shooting(Tsit5())),
             Dict(:alg=>Shooting(Vern7())),
