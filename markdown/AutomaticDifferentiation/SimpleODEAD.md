@@ -510,12 +510,12 @@ end
 
 ```
 6-element Vector{Float64}:
- 9.8639e-5
- 4.9139e-5
- 0.000435268
- 0.000526237
- 0.000274168
- 0.000244648
+ 9.8659e-5
+ 4.7979e-5
+ 0.000413987
+ 0.000521776
+ 0.000278367
+ 0.000245528
 ```
 
 
@@ -555,24 +555,24 @@ end
 ```
 
 ```
-4.839062 seconds (6.06 M allocations: 436.429 MiB, 3.97% gc time, 89.79% 
+4.879934 seconds (6.06 M allocations: 436.652 MiB, 3.58% gc time, 89.56% 
 compilation time)
- 18.339441 seconds (15.78 M allocations: 1.007 GiB, 2.58% gc time, 87.47% c
+ 18.551835 seconds (15.78 M allocations: 1.006 GiB, 2.56% gc time, 87.33% c
 ompilation time)
- 94.921816 seconds (5.13 M allocations: 727.528 MiB, 0.14% gc time, 6.33% c
+ 93.247470 seconds (5.12 M allocations: 726.773 MiB, 0.15% gc time, 6.50% c
 ompilation time)
-108.442127 seconds (6.77 M allocations: 1.002 GiB, 2.30% gc time, 4.54% com
+110.417175 seconds (6.97 M allocations: 1.015 GiB, 2.41% gc time, 4.33% com
 pilation time)
- 62.905673 seconds (3.72 M allocations: 796.687 MiB, 1.80% gc time, 4.02% c
+ 68.683736 seconds (3.72 M allocations: 796.691 MiB, 1.72% gc time, 4.01% c
 ompilation time)
 
 6-element Vector{Float64}:
- 60.143554522
-  2.249862322
- 99.787766062
- 87.189528779
- 80.532525715
-  0.461263588
+ 54.153835357
+  2.339744743
+ 97.888440732
+ 72.644759831
+ 84.206718334
+  0.464709934
 ```
 
 
@@ -602,11 +602,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.009838988
- 0.475341032
- 0.521772122
- 0.519916017
- 0.008255916
+ 0.009845248
+ 0.42650514
+ 0.524227669
+ 0.489779855
+ 0.008374541
 ```
 
 
@@ -641,11 +641,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.002190268
- 0.008893153
- 0.006997923
- 0.00933437
- 0.008673243
+ 0.002234981
+ 0.008724418
+ 0.007570737
+ 0.009240393
+ 0.008551629
 ```
 
 
@@ -658,24 +658,24 @@ display(forward_timings)
 
 ```
 6×5 DataFrame
- Row │ methods                    LV           Bruss      Pollution   PKPD 
+ Row │ methods                    LV           Bruss     Pollution   PKPD  
     ⋯
-     │ String                     Float64      Float64    Float64     Float
-64  ⋯
+     │ String                     Float64      Float64   Float64     Float6
+4   ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ Compile-time CSA           9.8639e-5    60.1436    0.0         0.0  
+   1 │ Compile-time CSA           9.8659e-5    54.1538   0.0         0.0   
     ⋯
-   2 │ DSA                        4.9139e-5     2.24986   0.00983899  0.002
-190
-   3 │ CSA user-Jacobian          0.000435268  99.7878    0.475341    0.008
-893
-   4 │ AD-Jacobian                0.000526237  87.1895    0.521772    0.006
-997
-   5 │ AD-Jv seeding              0.000274168  80.5325    0.519916    0.009
-334 ⋯
-   6 │ Numerical Differentiation  0.000244648   0.461264  0.00825592  0.008
-673
+   2 │ DSA                        4.7979e-5     2.33974  0.00984525  0.0022
+349
+   3 │ CSA user-Jacobian          0.000413987  97.8884   0.426505    0.0087
+244
+   4 │ AD-Jacobian                0.000521776  72.6448   0.524228    0.0075
+707
+   5 │ AD-Jv seeding              0.000278367  84.2067   0.48978     0.0092
+403 ⋯
+   6 │ Numerical Differentiation  0.000245528   0.46471  0.00837454  0.0085
+516
                                                                 1 column om
 itted
 ```
@@ -716,27 +716,27 @@ end
 ```
 
 ```
-3.223191 seconds (4.81 M allocations: 320.293 MiB, 3.13% gc time, 99.81% 
+3.250405 seconds (4.81 M allocations: 320.293 MiB, 2.89% gc time, 99.93% 
 compilation time)
-  4.900289 seconds (5.26 M allocations: 344.846 MiB, 3.99% gc time, 99.80% 
+  4.950531 seconds (5.26 M allocations: 344.775 MiB, 4.09% gc time, 99.76% 
 compilation time)
- 89.773474 seconds (80.74 M allocations: 5.357 GiB, 3.70% gc time, 99.94% c
+ 90.422629 seconds (80.83 M allocations: 5.363 GiB, 4.04% gc time, 99.87% c
 ompilation time: <1% of which was recompilation)
-  0.735277 seconds (782.10 k allocations: 52.724 MiB, 6.47% gc time, 99.70%
- compilation time)
+  0.674302 seconds (784.55 k allocations: 52.922 MiB, 99.64% compilation ti
+me)
 12-element Vector{Float64}:
- 0.000128359
- 0.005804609
- 0.000617877
- 0.000728996
- 0.000440948
- 0.001474862
- 0.001605961
- 0.002305837
- 0.001044925
- 0.001255253
- 0.000700076
- 0.000762326
+ 0.000128759
+ 0.005860771
+ 0.000609425
+ 0.000728224
+ 0.000434037
+ 0.001462118
+ 0.001596287
+ 0.002244902
+ 0.001072661
+ 0.00127189
+ 0.000689635
+ 0.000766534
 ```
 
 
@@ -779,25 +779,25 @@ end
 ```
 
 ```
-17.655772 seconds (14.40 M allocations: 959.494 MiB, 2.43% gc time, 86.87%
+17.680796 seconds (14.41 M allocations: 959.526 MiB, 1.87% gc time, 86.93%
  compilation time)
- 92.916593 seconds (56.32 M allocations: 3.776 GiB, 1.24% gc time, 86.43% c
+ 93.904244 seconds (56.32 M allocations: 3.776 GiB, 1.62% gc time, 86.64% c
 ompilation time)
-  4.022943 seconds (2.15 M allocations: 205.060 MiB, 1.33% gc time, 69.08% 
-compilation time)
+  3.819235 seconds (2.15 M allocations: 205.129 MiB, 66.96% compilation tim
+e)
 12-element Vector{Float64}:
-   2.297008883
+   2.253754141
  NaN
-   3.796222054
-   2.021176093
-   0.131234809
-   0.227894154
-   0.354773266
-   0.093309724
+   3.84958717
+   2.032151791
+   0.133776797
+   0.229460378
+   0.354122326
+   0.092243618
  NaN
  NaN
  NaN
-   1.241414854
+   1.244113442
 ```
 
 
@@ -838,25 +838,25 @@ end
 ```
 
 ```
-17.511885 seconds (14.62 M allocations: 942.047 MiB, 2.27% gc time, 99.96%
+17.434006 seconds (14.62 M allocations: 942.153 MiB, 2.05% gc time, 99.95%
  compilation time)
- 75.309687 seconds (57.87 M allocations: 3.323 GiB, 1.56% gc time, 91.26% c
+ 75.402950 seconds (57.87 M allocations: 3.324 GiB, 1.65% gc time, 91.21% c
 ompilation time)
-  2.508901 seconds (2.00 M allocations: 138.521 MiB, 2.96% gc time, 99.17% 
+  2.495385 seconds (2.00 M allocations: 138.607 MiB, 2.46% gc time, 99.18% 
 compilation time)
 12-element Vector{Float64}:
-   0.006102561
+   0.006134262
  NaN
-   1.114918607
-   1.7324412
-   0.259040866
-   0.265303806
-   0.770541217
-   0.482690241
+   1.110892129
+   1.737125764
+   0.264045858
+   0.256947352
+   0.776584934
+   0.50822327
  NaN
  NaN
  NaN
-   0.019450407
+   0.019337731
 ```
 
 
@@ -897,27 +897,27 @@ end
 ```
 
 ```
-3.481870 seconds (3.83 M allocations: 256.212 MiB, 2.14% gc time, 99.73% 
+3.534121 seconds (3.83 M allocations: 256.087 MiB, 2.25% gc time, 99.69% 
 compilation time)
-  3.806812 seconds (4.76 M allocations: 250.068 MiB, 2.76% gc time, 94.01% 
+  3.784805 seconds (4.76 M allocations: 250.052 MiB, 3.07% gc time, 93.78% 
 compilation time)
- 31.752642 seconds (29.04 M allocations: 1.867 GiB, 2.09% gc time, 99.78% c
+ 32.017337 seconds (29.10 M allocations: 1.871 GiB, 2.14% gc time, 99.78% c
 ompilation time)
-  0.339923 seconds (437.52 k allocations: 33.469 MiB, 16.52% gc time, 76.74
-% compilation time)
+  0.285013 seconds (438.81 k allocations: 33.557 MiB, 92.27% compilation ti
+me)
 12-element Vector{Float64}:
-   0.003044895
-   0.158095754
-   0.008814267
-   0.006751306
-   0.002417988
-   0.008264308
-   0.007626952
-   0.007705142
+   0.003086006
+   0.158892569
+   0.008703853
+   0.007309973
+   0.002302243
+   0.008315126
+   0.00771843
+   0.007727371
  NaN
  NaN
  NaN
-   0.020684226
+   0.02057329
 ```
 
 
@@ -935,18 +935,18 @@ Markdown.parse(PrettyTables.pretty_table(String, adjoint_timings; backend=Val(:m
 
 |                   **methods** |      **LV** | **Bruss** | **Pollution** |   **PKPD** |
 | -----------------------------:| -----------:| ---------:| -------------:| ----------:|
-|                   ForwardDiff | 0.000128359 |   2.29701 |    0.00610256 |  0.0030449 |
-|                   ReverseDiff |  0.00580461 |       NaN |           NaN |   0.158096 |
-| InterpolatingAdjoint User Jac | 0.000617877 |   3.79622 |       1.11492 | 0.00881427 |
-|   InterpolatingAdjoint AD Jac | 0.000728996 |   2.02118 |       1.73244 | 0.00675131 |
-|      InterpolatingAdjoint v'J | 0.000440948 |  0.131235 |      0.259041 | 0.00241799 |
-|    QuadratureAdjoint User Jac |  0.00147486 |  0.227894 |      0.265304 | 0.00826431 |
-|      QuadratureAdjoint AD Jac |  0.00160596 |  0.354773 |      0.770541 | 0.00762695 |
-|         QuadratureAdjoint v'J |  0.00230584 | 0.0933097 |       0.48269 | 0.00770514 |
-|     BacksolveAdjoint User Jac |  0.00104492 |       NaN |           NaN |        NaN |
-|       BacksolveAdjoint AD Jac |  0.00125525 |       NaN |           NaN |        NaN |
-|          BacksolveAdjoint v'J | 0.000700076 |       NaN |           NaN |        NaN |
-|     Numerical Differentiation | 0.000762326 |   1.24141 |     0.0194504 |  0.0206842 |
+|                   ForwardDiff | 0.000128759 |   2.25375 |    0.00613426 | 0.00308601 |
+|                   ReverseDiff |  0.00586077 |       NaN |           NaN |   0.158893 |
+| InterpolatingAdjoint User Jac | 0.000609425 |   3.84959 |       1.11089 | 0.00870385 |
+|   InterpolatingAdjoint AD Jac | 0.000728224 |   2.03215 |       1.73713 | 0.00730997 |
+|      InterpolatingAdjoint v'J | 0.000434037 |  0.133777 |      0.264046 | 0.00230224 |
+|    QuadratureAdjoint User Jac |  0.00146212 |   0.22946 |      0.256947 | 0.00831513 |
+|      QuadratureAdjoint AD Jac |  0.00159629 |  0.354122 |      0.776585 | 0.00771843 |
+|         QuadratureAdjoint v'J |   0.0022449 | 0.0922436 |      0.508223 | 0.00772737 |
+|     BacksolveAdjoint User Jac |  0.00107266 |       NaN |           NaN |        NaN |
+|       BacksolveAdjoint AD Jac |  0.00127189 |       NaN |           NaN |        NaN |
+|          BacksolveAdjoint v'J | 0.000689635 |       NaN |           NaN |        NaN |
+|     Numerical Differentiation | 0.000766534 |   1.24411 |     0.0193377 |  0.0205733 |
 
 
 
@@ -988,7 +988,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [a93c6f00] DataFrames v1.6.1
   [1313f7d8] DataFramesMeta v0.15.2
@@ -1018,7 +1018,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
   [47edcb42] ADTypes v0.2.7
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -1242,7 +1242,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2913bbd2] StatsBase v0.34.3
   [4c63d2b9] StatsFuns v1.3.1
   [789caeaf] StochasticDiffEq v6.65.1
-  [7792a7ef] StrideArraysCore v0.5.2
+⌃ [7792a7ef] StrideArraysCore v0.5.2
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
   [09ab397b] StructArrays v0.6.18
