@@ -53,12 +53,12 @@ Markdown.parse(table)
 
 |      **backend** | **operator** |   **func** |  **input_type** | **input_size** | **time** | **bytes** | **allocs** | **compile_fraction** | **gc_fraction** |
 | ----------------:| ------------:| ----------:| ---------------:| --------------:| --------:| ---------:| ----------:| --------------------:| ---------------:|
-| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.2e-07 |   5.7e+00 |    2.3e-01 |              0.0e+00 |         0.0e+00 |
+| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.8e-07 |   5.9e+00 |    2.3e-01 |              0.0e+00 |         0.0e+00 |
 | Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.2e-04 |   1.8e+02 |    7.0e+00 |              0.0e+00 |         0.0e+00 |
-|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.6e-06 |   2.5e+02 |    6.3e+00 |              0.0e+00 |         0.0e+00 |
-|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  9.1e-04 |   3.7e+02 |    1.1e+01 |              0.0e+00 |         0.0e+00 |
-| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  8.0e-04 |   2.6e+05 |    3.9e+03 |              0.0e+00 |         0.0e+00 |
-| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  2.0e-01 |   8.2e+08 |    3.9e+05 |              0.0e+00 |         1.6e-01 |
+|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.3e-06 |   2.5e+02 |    6.3e+00 |              0.0e+00 |         0.0e+00 |
+|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  9.8e-04 |   3.7e+02 |    1.1e+01 |              0.0e+00 |         0.0e+00 |
+| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  8.2e-04 |   2.6e+05 |    3.9e+03 |              0.0e+00 |         0.0e+00 |
+| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.9e-01 |   8.2e+08 |    3.9e+05 |              0.0e+00 |         1.5e-01 |
 
 
 
@@ -283,7 +283,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [6fe1bfb0] OffsetArrays v1.13.0
   [4d8831e6] OpenSSL v1.4.2
   [429524aa] Optim v1.9.4
-  [3bd65402] Optimisers v0.3.2
+⌃ [3bd65402] Optimisers v0.3.2
   [bac558e1] OrderedCollections v1.6.3
   [1dea7af3] OrdinaryDiffEq v6.74.1
   [90014a1f] PDMats v0.11.31
