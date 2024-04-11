@@ -53,12 +53,12 @@ Markdown.parse(table)
 
 |      **backend** | **operator** |   **func** |  **input_type** | **input_size** | **time** | **bytes** | **allocs** | **compile_fraction** | **gc_fraction** |
 | ----------------:| ------------:| ----------:| ---------------:| --------------:| --------:| ---------:| ----------:| --------------------:| ---------------:|
-| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  1.2e-06 |   7.3e+00 |    2.9e-01 |              0.0e+00 |         0.0e+00 |
-| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.6e-04 |   1.8e+02 |    7.0e+00 |              0.0e+00 |         0.0e+00 |
-|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  1.1e-05 |   2.8e+02 |    7.5e+00 |              0.0e+00 |         0.0e+00 |
-|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  9.2e-04 |   3.7e+02 |    1.1e+01 |              0.0e+00 |         0.0e+00 |
-| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  7.8e-04 |   2.6e+05 |    3.9e+03 |              0.0e+00 |         0.0e+00 |
-| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.8e-01 |   8.2e+08 |    3.9e+05 |              0.0e+00 |         1.3e-01 |
+| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.3e-07 |   5.7e+00 |    2.3e-01 |              0.0e+00 |         0.0e+00 |
+| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.2e-04 |   1.8e+02 |    7.0e+00 |              0.0e+00 |         0.0e+00 |
+|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.4e-06 |   2.5e+02 |    6.3e+00 |              0.0e+00 |         0.0e+00 |
+|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  9.3e-04 |   3.7e+02 |    1.1e+01 |              0.0e+00 |         0.0e+00 |
+| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  7.3e-04 |   2.6e+05 |    3.9e+03 |              0.0e+00 |         0.0e+00 |
+| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  2.0e-01 |   8.2e+08 |    3.9e+05 |              0.0e+00 |         1.5e-01 |
 
 
 
@@ -96,13 +96,13 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [a93c6f00] DataFrames v1.6.1
   [1313f7d8] DataFramesMeta v0.15.2
   [a0c0ee7d] DifferentiationInterface v0.1.0 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterface#main`
   [a82114a7] DifferentiationInterfaceTest v0.1.0 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterfaceTest#main`
-  [7da242da] Enzyme v0.11.20
+⌅ [7da242da] Enzyme v0.11.20
   [6a86dc24] FiniteDiff v2.23.0
   [f6369f11] ForwardDiff v0.10.36
   [1dea7af3] OrdinaryDiffEq v6.74.1
@@ -120,13 +120,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d6f4376e] Markdown
   [de0858da] Printf
   [8dfed614] Test
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
   [47edcb42] ADTypes v0.2.7
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -188,13 +189,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b4f34e82] Distances v0.10.11
   [31c24e10] Distributions v0.25.107
   [ffbed154] DocStringExtensions v0.9.3
-  [5b8099bc] DomainSets v0.7.11
+⌃ [5b8099bc] DomainSets v0.7.11
   [fa6b7ba4] DualNumbers v0.6.8
   [7c1d4256] DynamicPolynomials v0.5.5
   [06fc5a27] DynamicQuantities v0.13.2
   [da5c29d0] EllipsisNotation v1.8.0
   [4e289a0a] EnumX v1.0.4
-  [7da242da] Enzyme v0.11.20
+⌅ [7da242da] Enzyme v0.11.20
 ⌅ [f151be2c] EnzymeCore v0.6.6
   [460bff9d] ExceptionUnwrapping v0.1.10
   [d4d017d3] ExponentialUtilities v1.26.1
