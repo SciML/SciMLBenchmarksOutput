@@ -2151,9 +2151,9 @@ Dict{String, Any} with 8 entries:
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 9.85608
-  &quot;time_solve_compilation&quot; =&gt; 7.83109
-  &quot;time_solve&quot;             =&gt; 0.0995637
+  &quot;time_build&quot;             =&gt; 12.991
+  &quot;time_solve_compilation&quot; =&gt; 9.13181
+  &quot;time_solve&quot;             =&gt; 0.109643
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_jump(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
   &quot;cost&quot;                   =&gt; 17551.9
@@ -2161,9 +2161,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.00204758
-  &quot;time_solve_compilation&quot; =&gt; 0.954648
-  &quot;time_solve&quot;             =&gt; 0.0160452
+  &quot;time_build&quot;             =&gt; 0.00254357
+  &quot;time_solve_compilation&quot; =&gt; 1.26675
+  &quot;time_solve&quot;             =&gt; 0.0213928
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_nlpmodels(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
   &quot;cost&quot;                   =&gt; 17551.9
@@ -2171,9 +2171,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.234455
-  &quot;time_solve_compilation&quot; =&gt; 2.61176
-  &quot;time_solve&quot;             =&gt; 0.0376862
+  &quot;time_build&quot;             =&gt; 0.315511
+  &quot;time_solve_compilation&quot; =&gt; 3.44746
+  &quot;time_solve&quot;             =&gt; 0.0513159
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_nonconvex(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Error: MethodError: no method matching Float64(::ForwardDiff.Dual{ForwardDi
 ff.Tag{NonconvexUtils.var&quot;#101#108&quot;{NonconvexUtils.var&quot;#100#107&quot;{NonconvexU
@@ -2358,8 +2358,8 @@ Closest candidates are:
    @ Base rounding.jl:207
   (::Type{T})(::T) where T&lt;:Number
    @ Core boot.jl:792
-  Float64(!Matched::Int16)
-   @ Base float.jl:159
+  Float64(!Matched::Float32)
+   @ Base float.jl:261
   ...</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_optim(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
   &quot;cost&quot;                   =&gt; 77.9548
@@ -2367,9 +2367,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.000490626
-  &quot;time_solve_compilation&quot; =&gt; 21.6869
-  &quot;time_solve&quot;             =&gt; 17.3996
+  &quot;time_build&quot;             =&gt; 0.000631575
+  &quot;time_solve_compilation&quot; =&gt; 28.9002
+  &quot;time_solve&quot;             =&gt; 23.5146
   &quot;feasible&quot;               =&gt; false</code></pre><pre><code class="language-julia hljs">file_name = &quot;../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case3_lmbd.m&quot;
 dataset = load_and_setup_data(file_name);</code></pre><pre><code class="nohighlight hljs">Error: IOError: stream is closed or unusable</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_optimization(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
@@ -2378,9 +2378,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.178576
-  &quot;time_solve_compilation&quot; =&gt; 0.0861387
-  &quot;time_solve&quot;             =&gt; 0.084448
+  &quot;time_build&quot;             =&gt; 0.142731
+  &quot;time_solve_compilation&quot; =&gt; 0.0920807
+  &quot;time_solve&quot;             =&gt; 0.0904466
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_jump(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
   &quot;cost&quot;                   =&gt; 17551.9
@@ -2388,9 +2388,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.00204671
-  &quot;time_solve_compilation&quot; =&gt; 0.0165238
-  &quot;time_solve&quot;             =&gt; 0.0159231
+  &quot;time_build&quot;             =&gt; 0.00415842
+  &quot;time_solve_compilation&quot; =&gt; 0.022096
+  &quot;time_solve&quot;             =&gt; 0.0213519
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_nlpmodels(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
   &quot;cost&quot;                   =&gt; 17551.9
@@ -2398,9 +2398,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.0252522
-  &quot;time_solve_compilation&quot; =&gt; 0.0391716
-  &quot;time_solve&quot;             =&gt; 0.0384374
+  &quot;time_build&quot;             =&gt; 0.0317253
+  &quot;time_solve_compilation&quot; =&gt; 0.0522724
+  &quot;time_solve&quot;             =&gt; 0.0513845
   &quot;feasible&quot;               =&gt; true</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_nonconvex(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Error: MethodError: no method matching Float64(::ForwardDiff.Dual{ForwardDi
 ff.Tag{NonconvexUtils.var&quot;#101#108&quot;{NonconvexUtils.var&quot;#100#107&quot;{NonconvexU
@@ -2585,8 +2585,8 @@ Closest candidates are:
    @ Base rounding.jl:207
   (::Type{T})(::T) where T&lt;:Number
    @ Core boot.jl:792
-  Float64(!Matched::Int16)
-   @ Base float.jl:159
+  Float64(!Matched::Float32)
+   @ Base float.jl:261
   ...</code></pre><pre><code class="language-julia hljs">model, res = solve_opf_optim(dataset);
 res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 entries:
   &quot;cost&quot;                   =&gt; 77.9548
@@ -2594,9 +2594,9 @@ res</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 8 ent
   &quot;constraints&quot;            =&gt; 53
   &quot;case&quot;                   =&gt; &quot;../../benchmarks/OptimizationFrameworks/opf_
 data…
-  &quot;time_build&quot;             =&gt; 0.000575455
-  &quot;time_solve_compilation&quot; =&gt; 17.7061
-  &quot;time_solve&quot;             =&gt; 17.6302
+  &quot;time_build&quot;             =&gt; 0.000579345
+  &quot;time_solve_compilation&quot; =&gt; 23.5605
+  &quot;time_solve&quot;             =&gt; 23.5719
   &quot;feasible&quot;               =&gt; false</code></pre><pre><code class="language-julia hljs">using DataFrames, PrettyTables
 
 function multidata_multisolver_benchmark(dataset_files; sizelimit = SIZE_LIMIT)
@@ -2729,26 +2729,26 @@ LibGit2.clone(&quot;https://github.com/power-grid-lib/pglib-opf&quot;, tmpdir)
 benchmarkfiles = readdir(tmpdir)
 benchmarkfiles = benchmarkfiles[endswith(&quot;.m&quot;).(benchmarkfiles)]
 benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)</code></pre><pre><code class="nohighlight hljs">66-element Vector{String}:
- &quot;/tmp/jl_BZO4gN/pglib_opf_case10000_goc.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case10192_epigrids.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case10480_goc.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case118_ieee.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case1354_pegase.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case13659_pegase.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case14_ieee.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case162_ieee_dtc.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case179_goc.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case1803_snem.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case10000_goc.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case10192_epigrids.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case10480_goc.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case118_ieee.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case1354_pegase.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case13659_pegase.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case14_ieee.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case162_ieee_dtc.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case179_goc.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case1803_snem.m&quot;
  ⋮
- &quot;/tmp/jl_BZO4gN/pglib_opf_case6515_rte.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case7336_epigrids.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case73_ieee_rts.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case78484_epigrids.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case793_goc.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case8387_pegase.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case89_pegase.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case9241_pegase.m&quot;
- &quot;/tmp/jl_BZO4gN/pglib_opf_case9591_goc.m&quot;</code></pre><pre><code class="language-julia hljs">timing_data = multidata_multisolver_benchmark(benchmark_datasets)</code></pre><pre><code class="nohighlight hljs">file = &quot;/tmp/jl_BZO4gN/pglib_opf_case10000_goc.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case6515_rte.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case7336_epigrids.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case73_ieee_rts.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case78484_epigrids.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case793_goc.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case8387_pegase.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case89_pegase.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case9241_pegase.m&quot;
+ &quot;/tmp/jl_BHTsnT/pglib_opf_case9591_goc.m&quot;</code></pre><pre><code class="language-julia hljs">timing_data = multidata_multisolver_benchmark(benchmark_datasets)</code></pre><pre><code class="nohighlight hljs">file = &quot;/tmp/jl_BHTsnT/pglib_opf_case10000_goc.m&quot;
 Error: IOError: stream is closed or unusable</code></pre><pre><code class="language-julia hljs">io = IOBuffer()
 println(io, &quot;```@raw html&quot;)
 pretty_table(io, timing_data; backend = Val(:html))
@@ -2757,4 +2757,4 @@ println(io, &quot;```&quot;)
 Text(String(take!(io)))</code></pre><p>Error: UndefVarError: <code>timing_data</code> not defined</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><pre><code class="nohighlight hljs">Error: ArgumentError: Package SciMLBenchmarks not found in current path, ma
 ybe you meant `import/using ..SciMLBenchmarks`.
 - Otherwise, run `import Pkg; Pkg.add(&quot;SciMLBenchmarks&quot;)` to install the Sc
-iMLBenchmarks package.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../clnlbeam/">« CLNLBEAM Nonlinear Optimization Benchmark</a><a class="docs-footer-nextpage" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 12 April 2024 12:43">Friday 12 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+iMLBenchmarks package.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../clnlbeam/">« CLNLBEAM Nonlinear Optimization Benchmark</a><a class="docs-footer-nextpage" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 13 April 2024 03:42">Saturday 13 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

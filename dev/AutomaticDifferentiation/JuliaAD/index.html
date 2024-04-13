@@ -43,7 +43,7 @@ table = PrettyTables.pretty_table(
     formatters=PrettyTables.ft_printf(&quot;%.1e&quot;),
 )
 
-Markdown.parse(table)</code></pre><table><tr><th style="text-align: right"><strong>backend</strong></th><th style="text-align: right"><strong>operator</strong></th><th style="text-align: right"><strong>func</strong></th><th style="text-align: right"><strong>input_type</strong></th><th style="text-align: right"><strong>input_size</strong></th><th style="text-align: right"><strong>time</strong></th><th style="text-align: right"><strong>bytes</strong></th><th style="text-align: right"><strong>allocs</strong></th><th style="text-align: right"><strong>compile_fraction</strong></th><th style="text-align: right"><strong>gc_fraction</strong></th></tr><tr><td style="text-align: right">Enzyme (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(100,)</td><td style="text-align: right">9.3e-07</td><td style="text-align: right">5.7e+00</td><td style="text-align: right">2.3e-01</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">0.0e+00</td></tr><tr><td style="text-align: right">Enzyme (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(10000,)</td><td style="text-align: right">1.2e-04</td><td style="text-align: right">1.8e+02</td><td style="text-align: right">7.0e+00</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">0.0e+00</td></tr><tr><td style="text-align: right">Tapir (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(100,)</td><td style="text-align: right">9.4e-06</td><td style="text-align: right">2.5e+02</td><td style="text-align: right">6.3e+00</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">0.0e+00</td></tr><tr><td style="text-align: right">Tapir (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(10000,)</td><td style="text-align: right">9.3e-04</td><td style="text-align: right">3.7e+02</td><td style="text-align: right">1.1e+01</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">0.0e+00</td></tr><tr><td style="text-align: right">Zygote (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(100,)</td><td style="text-align: right">7.3e-04</td><td style="text-align: right">2.6e+05</td><td style="text-align: right">3.9e+03</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">0.0e+00</td></tr><tr><td style="text-align: right">Zygote (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(10000,)</td><td style="text-align: right">2.0e-01</td><td style="text-align: right">8.2e+08</td><td style="text-align: right">3.9e+05</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">1.5e-01</td></tr></table><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+Markdown.parse(table)</code></pre><table><tr><th style="text-align: right"><strong>backend</strong></th><th style="text-align: right"><strong>operator</strong></th><th style="text-align: right"><strong>func</strong></th><th style="text-align: right"><strong>input_type</strong></th><th style="text-align: right"><strong>input_size</strong></th><th style="text-align: right"><strong>time</strong></th><th style="text-align: right"><strong>bytes</strong></th><th style="text-align: right"><strong>allocs</strong></th><th style="text-align: right"><strong>compile_fraction</strong></th><th style="text-align: right"><strong>gc_fraction</strong></th></tr><tr><td style="text-align: right">Enzyme (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(100,)</td><td style="text-align: right">1.0e-06</td><td style="text-align: right">6.1e+00</td><td style="text-align: right">2.4e-01</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">0.0e+00</td></tr><tr><td style="text-align: right">Enzyme (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(10000,)</td><td style="text-align: right">1.2e-04</td><td style="text-align: right">1.8e+02</td><td style="text-align: right">7.0e+00</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">0.0e+00</td></tr><tr><td style="text-align: right">Tapir (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(100,)</td><td style="text-align: right">9.5e-06</td><td style="text-align: right">2.5e+02</td><td style="text-align: right">6.3e+00</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">0.0e+00</td></tr><tr><td style="text-align: right">Tapir (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(10000,)</td><td style="text-align: right">9.2e-04</td><td style="text-align: right">3.7e+02</td><td style="text-align: right">1.1e+01</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">0.0e+00</td></tr><tr><td style="text-align: right">Zygote (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(100,)</td><td style="text-align: right">7.6e-04</td><td style="text-align: right">2.6e+05</td><td style="text-align: right">3.9e+03</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">0.0e+00</td></tr><tr><td style="text-align: right">Zygote (reverse)</td><td style="text-align: right">gradient!!</td><td style="text-align: right">paritytrig</td><td style="text-align: right">Vector{Float64}</td><td style="text-align: right">(10000,)</td><td style="text-align: right">1.7e-01</td><td style="text-align: right">8.2e+08</td><td style="text-align: right">3.9e+05</td><td style="text-align: right">0.0e+00</td><td style="text-align: right">1.7e-01</td></tr></table><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/AutomaticDifferentiation&quot;,&quot;JuliaAD.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.2
 Commit bd47eca2c8a (2024-03-01 10:14 UTC)
 Build Info:
@@ -69,7 +69,7 @@ Environment:
   [f6369f11] ForwardDiff v0.10.36
   [1dea7af3] OrdinaryDiffEq v6.74.1
   [65888b18] ParameterizedFunctions v5.17.0
-  [91a5bcdd] Plots v1.40.3
+⌃ [91a5bcdd] Plots v1.40.3
   [08abe8d2] PrettyTables v2.3.1
   [37e2e3b7] ReverseDiff v1.15.1
   [31c91b34] SciMLBenchmarks v0.1.3
@@ -82,7 +82,7 @@ Environment:
   [d6f4376e] Markdown
   [de0858da] Printf
   [8dfed614] Test
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
   [47edcb42] ADTypes v0.2.7
   [621f4979] AbstractFFTs v1.5.0
@@ -131,11 +131,11 @@ Warning The project dependencies or compat requirements have changed since the m
   [9a962f9c] DataAPI v1.16.0
   [a93c6f00] DataFrames v1.6.1
   [1313f7d8] DataFramesMeta v0.15.2
-  [864edb3b] DataStructures v0.18.18
+⌃ [864edb3b] DataStructures v0.18.18
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
   [2b5f629d] DiffEqBase v6.149.0
-  [459566f4] DiffEqCallbacks v3.5.0
+⌃ [459566f4] DiffEqCallbacks v3.5.0
   [77a26b50] DiffEqNoiseProcess v5.21.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
@@ -147,7 +147,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [ffbed154] DocStringExtensions v0.9.3
 ⌃ [5b8099bc] DomainSets v0.7.11
   [fa6b7ba4] DualNumbers v0.6.8
-  [7c1d4256] DynamicPolynomials v0.5.5
+⌃ [7c1d4256] DynamicPolynomials v0.5.5
   [06fc5a27] DynamicQuantities v0.13.2
   [da5c29d0] EllipsisNotation v1.8.0
   [4e289a0a] EnumX v1.0.4
@@ -251,7 +251,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.1.0
   [995b91a9] PlotUtils v1.4.1
-  [91a5bcdd] Plots v1.40.3
+⌃ [91a5bcdd] Plots v1.40.3
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.12
   [1d0040c9] PolyesterWeave v0.2.1
@@ -269,7 +269,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
   [731186ca] RecursiveArrayTools v3.13.0
-  [f2c3362d] RecursiveFactorization v0.2.21
+⌃ [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.0
@@ -280,7 +280,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [7e49a35a] RuntimeGeneratedFunctions v0.5.12
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
-  [0bca4576] SciMLBase v2.31.0
+⌃ [0bca4576] SciMLBase v2.31.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.8
   [1ed8b502] SciMLSensitivity v7.56.2
@@ -315,7 +315,7 @@ Warning The project dependencies or compat requirements have changed since the m
   [2efcf032] SymbolicIndexingInterface v0.3.15
   [19f23fe9] SymbolicLimits v0.2.0
   [d1185830] SymbolicUtils v1.5.1
-  [0c5d862f] Symbolics v5.27.1
+⌃ [0c5d862f] Symbolics v5.27.1
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
@@ -482,4 +482,4 @@ Warning The project dependencies or compat requirements have changed since the m
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BrussScaling/">« Bruss Scaling PDE Differentaition Benchmarks</a><a class="docs-footer-nextpage" href="../SimpleODEAD/">Differentiation of Simple ODE Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 12 April 2024 12:43">Friday 12 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BrussScaling/">« Bruss Scaling PDE Differentaition Benchmarks</a><a class="docs-footer-nextpage" href="../SimpleODEAD/">Differentiation of Simple ODE Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 13 April 2024 03:42">Saturday 13 April 2024</span>. Using Julia version 1.10.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
