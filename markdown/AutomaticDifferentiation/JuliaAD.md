@@ -53,12 +53,12 @@ Markdown.parse(table)
 
 |      **backend** | **operator** |   **func** |  **input_type** | **input_size** | **time** | **bytes** | **allocs** | **compile_fraction** | **gc_fraction** |
 | ----------------:| ------------:| ----------:| ---------------:| --------------:| --------:| ---------:| ----------:| --------------------:| ---------------:|
-| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  1.0e-06 |   6.1e+00 |    2.4e-01 |              0.0e+00 |         0.0e+00 |
+| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  1.0e-06 |   6.3e+00 |    2.5e-01 |              0.0e+00 |         0.0e+00 |
 | Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.2e-04 |   1.8e+02 |    7.0e+00 |              0.0e+00 |         0.0e+00 |
 |  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.5e-06 |   2.5e+02 |    6.3e+00 |              0.0e+00 |         0.0e+00 |
-|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  9.2e-04 |   3.7e+02 |    1.1e+01 |              0.0e+00 |         0.0e+00 |
-| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  7.6e-04 |   2.6e+05 |    3.9e+03 |              0.0e+00 |         0.0e+00 |
-| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.7e-01 |   8.2e+08 |    3.9e+05 |              0.0e+00 |         1.7e-01 |
+|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  9.1e-04 |   3.7e+02 |    1.1e+01 |              0.0e+00 |         0.0e+00 |
+| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  7.8e-04 |   2.6e+05 |    3.9e+03 |              0.0e+00 |         0.0e+00 |
+| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.8e-01 |   8.2e+08 |    3.9e+05 |              0.0e+00 |         1.5e-01 |
 
 
 
@@ -96,7 +96,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [a93c6f00] DataFrames v1.6.1
   [1313f7d8] DataFramesMeta v0.15.2
@@ -127,7 +127,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
   [47edcb42] ADTypes v0.2.7
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
