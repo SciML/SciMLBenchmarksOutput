@@ -53,12 +53,12 @@ Markdown.parse(table)
 
 |      **backend** | **operator** |   **func** |  **input_type** | **input_size** | **time** | **bytes** | **allocs** | **compile_fraction** | **gc_fraction** |
 | ----------------:| ------------:| ----------:| ---------------:| --------------:| --------:| ---------:| ----------:| --------------------:| ---------------:|
-| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.3e-07 |   5.7e+00 |    2.3e-01 |              0.0e+00 |         0.0e+00 |
+| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  1.0e-06 |   6.1e+00 |    2.4e-01 |              0.0e+00 |         0.0e+00 |
 | Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.2e-04 |   1.8e+02 |    7.0e+00 |              0.0e+00 |         0.0e+00 |
-|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.4e-06 |   2.5e+02 |    6.3e+00 |              0.0e+00 |         0.0e+00 |
-|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  9.3e-04 |   3.7e+02 |    1.1e+01 |              0.0e+00 |         0.0e+00 |
-| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  7.3e-04 |   2.6e+05 |    3.9e+03 |              0.0e+00 |         0.0e+00 |
-| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  2.0e-01 |   8.2e+08 |    3.9e+05 |              0.0e+00 |         1.5e-01 |
+|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.5e-06 |   2.5e+02 |    6.3e+00 |              0.0e+00 |         0.0e+00 |
+|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  9.2e-04 |   3.7e+02 |    1.1e+01 |              0.0e+00 |         0.0e+00 |
+| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  7.6e-04 |   2.6e+05 |    3.9e+03 |              0.0e+00 |         0.0e+00 |
+| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.7e-01 |   8.2e+08 |    3.9e+05 |              0.0e+00 |         1.7e-01 |
 
 
 
@@ -107,7 +107,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [f6369f11] ForwardDiff v0.10.36
   [1dea7af3] OrdinaryDiffEq v6.74.1
   [65888b18] ParameterizedFunctions v5.17.0
-  [91a5bcdd] Plots v1.40.3
+⌃ [91a5bcdd] Plots v1.40.3
   [08abe8d2] PrettyTables v2.3.1
   [37e2e3b7] ReverseDiff v1.15.1
   [31c91b34] SciMLBenchmarks v0.1.3
@@ -120,7 +120,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d6f4376e] Markdown
   [de0858da] Printf
   [8dfed614] Test
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
@@ -175,11 +175,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9a962f9c] DataAPI v1.16.0
   [a93c6f00] DataFrames v1.6.1
   [1313f7d8] DataFramesMeta v0.15.2
-  [864edb3b] DataStructures v0.18.18
+⌃ [864edb3b] DataStructures v0.18.18
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
   [2b5f629d] DiffEqBase v6.149.0
-  [459566f4] DiffEqCallbacks v3.5.0
+⌃ [459566f4] DiffEqCallbacks v3.5.0
   [77a26b50] DiffEqNoiseProcess v5.21.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
@@ -191,7 +191,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ffbed154] DocStringExtensions v0.9.3
 ⌃ [5b8099bc] DomainSets v0.7.11
   [fa6b7ba4] DualNumbers v0.6.8
-  [7c1d4256] DynamicPolynomials v0.5.5
+⌃ [7c1d4256] DynamicPolynomials v0.5.5
   [06fc5a27] DynamicQuantities v0.13.2
   [da5c29d0] EllipsisNotation v1.8.0
   [4e289a0a] EnumX v1.0.4
@@ -295,7 +295,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.1.0
   [995b91a9] PlotUtils v1.4.1
-  [91a5bcdd] Plots v1.40.3
+⌃ [91a5bcdd] Plots v1.40.3
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.12
   [1d0040c9] PolyesterWeave v0.2.1
@@ -313,7 +313,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
   [731186ca] RecursiveArrayTools v3.13.0
-  [f2c3362d] RecursiveFactorization v0.2.21
+⌃ [f2c3362d] RecursiveFactorization v0.2.21
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.0
@@ -324,7 +324,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7e49a35a] RuntimeGeneratedFunctions v0.5.12
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
-  [0bca4576] SciMLBase v2.31.0
+⌃ [0bca4576] SciMLBase v2.31.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.8
   [1ed8b502] SciMLSensitivity v7.56.2
@@ -359,7 +359,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2efcf032] SymbolicIndexingInterface v0.3.15
   [19f23fe9] SymbolicLimits v0.2.0
   [d1185830] SymbolicUtils v1.5.1
-  [0c5d862f] Symbolics v5.27.1
+⌃ [0c5d862f] Symbolics v5.27.1
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
