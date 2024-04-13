@@ -2482,9 +2482,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 9.85608
-  "time_solve_compilation" => 7.83109
-  "time_solve"             => 0.0995637
+  "time_build"             => 12.991
+  "time_solve_compilation" => 9.13181
+  "time_solve"             => 0.109643
   "feasible"               => true
 ```
 
@@ -2502,9 +2502,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.00204758
-  "time_solve_compilation" => 0.954648
-  "time_solve"             => 0.0160452
+  "time_build"             => 0.00254357
+  "time_solve_compilation" => 1.26675
+  "time_solve"             => 0.0213928
   "feasible"               => true
 ```
 
@@ -2522,9 +2522,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.234455
-  "time_solve_compilation" => 2.61176
-  "time_solve"             => 0.0376862
+  "time_build"             => 0.315511
+  "time_solve_compilation" => 3.44746
+  "time_solve"             => 0.0513159
   "feasible"               => true
 ```
 
@@ -2719,8 +2719,8 @@ Closest candidates are:
    @ Base rounding.jl:207
   (::Type{T})(::T) where T<:Number
    @ Core boot.jl:792
-  Float64(!Matched::Int16)
-   @ Base float.jl:159
+  Float64(!Matched::Float32)
+   @ Base float.jl:261
   ...
 ```
 
@@ -2738,9 +2738,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.000490626
-  "time_solve_compilation" => 21.6869
-  "time_solve"             => 17.3996
+  "time_build"             => 0.000631575
+  "time_solve_compilation" => 28.9002
+  "time_solve"             => 23.5146
   "feasible"               => false
 ```
 
@@ -2769,9 +2769,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.178576
-  "time_solve_compilation" => 0.0861387
-  "time_solve"             => 0.084448
+  "time_build"             => 0.142731
+  "time_solve_compilation" => 0.0920807
+  "time_solve"             => 0.0904466
   "feasible"               => true
 ```
 
@@ -2789,9 +2789,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.00204671
-  "time_solve_compilation" => 0.0165238
-  "time_solve"             => 0.0159231
+  "time_build"             => 0.00415842
+  "time_solve_compilation" => 0.022096
+  "time_solve"             => 0.0213519
   "feasible"               => true
 ```
 
@@ -2809,9 +2809,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0252522
-  "time_solve_compilation" => 0.0391716
-  "time_solve"             => 0.0384374
+  "time_build"             => 0.0317253
+  "time_solve_compilation" => 0.0522724
+  "time_solve"             => 0.0513845
   "feasible"               => true
 ```
 
@@ -3006,8 +3006,8 @@ Closest candidates are:
    @ Base rounding.jl:207
   (::Type{T})(::T) where T<:Number
    @ Core boot.jl:792
-  Float64(!Matched::Int16)
-   @ Base float.jl:159
+  Float64(!Matched::Float32)
+   @ Base float.jl:261
   ...
 ```
 
@@ -3025,9 +3025,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.000575455
-  "time_solve_compilation" => 17.7061
-  "time_solve"             => 17.6302
+  "time_build"             => 0.000579345
+  "time_solve_compilation" => 23.5605
+  "time_solve"             => 23.5719
   "feasible"               => false
 ```
 
@@ -3201,26 +3201,26 @@ benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)
 
 ```
 66-element Vector{String}:
- "/tmp/jl_BZO4gN/pglib_opf_case10000_goc.m"
- "/tmp/jl_BZO4gN/pglib_opf_case10192_epigrids.m"
- "/tmp/jl_BZO4gN/pglib_opf_case10480_goc.m"
- "/tmp/jl_BZO4gN/pglib_opf_case118_ieee.m"
- "/tmp/jl_BZO4gN/pglib_opf_case1354_pegase.m"
- "/tmp/jl_BZO4gN/pglib_opf_case13659_pegase.m"
- "/tmp/jl_BZO4gN/pglib_opf_case14_ieee.m"
- "/tmp/jl_BZO4gN/pglib_opf_case162_ieee_dtc.m"
- "/tmp/jl_BZO4gN/pglib_opf_case179_goc.m"
- "/tmp/jl_BZO4gN/pglib_opf_case1803_snem.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case10000_goc.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case10192_epigrids.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case10480_goc.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case118_ieee.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case1354_pegase.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case13659_pegase.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case14_ieee.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case162_ieee_dtc.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case179_goc.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case1803_snem.m"
  ⋮
- "/tmp/jl_BZO4gN/pglib_opf_case6515_rte.m"
- "/tmp/jl_BZO4gN/pglib_opf_case7336_epigrids.m"
- "/tmp/jl_BZO4gN/pglib_opf_case73_ieee_rts.m"
- "/tmp/jl_BZO4gN/pglib_opf_case78484_epigrids.m"
- "/tmp/jl_BZO4gN/pglib_opf_case793_goc.m"
- "/tmp/jl_BZO4gN/pglib_opf_case8387_pegase.m"
- "/tmp/jl_BZO4gN/pglib_opf_case89_pegase.m"
- "/tmp/jl_BZO4gN/pglib_opf_case9241_pegase.m"
- "/tmp/jl_BZO4gN/pglib_opf_case9591_goc.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case6515_rte.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case7336_epigrids.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case73_ieee_rts.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case78484_epigrids.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case793_goc.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case8387_pegase.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case89_pegase.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case9241_pegase.m"
+ "/tmp/jl_BHTsnT/pglib_opf_case9591_goc.m"
 ```
 
 
@@ -3230,7 +3230,7 @@ timing_data = multidata_multisolver_benchmark(benchmark_datasets)
 ```
 
 ```
-file = "/tmp/jl_BZO4gN/pglib_opf_case10000_goc.m"
+file = "/tmp/jl_BHTsnT/pglib_opf_case10000_goc.m"
 Error: IOError: stream is closed or unusable
 ```
 
