@@ -1,5 +1,5 @@
 ---
-author: "Jürgen Fuhrmann"
+author: "Jürgen Fuhrmann, Anastasia Dunca"
 title: "Finite Difference Sparse PDE Jacobian Factorization Benchmarks"
 ---
 ```julia
@@ -7,35 +7,12 @@ using BenchmarkTools, Random, VectorizationBase
 using LinearAlgebra, SparseArrays, LinearSolve, Sparspak
 import Pardiso
 using Plots
+using MatrixDepot
 
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 0.5
 
 # Why do I need to set this ?
 BenchmarkTools.DEFAULT_PARAMETERS.samples = 10
-
-# Sparse matrix generation on  a n-dimensional rectangular grid. After
-# https://discourse.julialang.org/t/seven-lines-of-julia-examples-sought/50416/135
-# by A. Braunstein.
-
-A ⊕ B = kron(I(size(B, 1)), A) + kron(B, I(size(A, 1)))
-
-function lattice(n; Tv = Float64)
-    d = fill(2 * one(Tv), n)
-    d[1] = one(Tv)
-    d[end] = one(Tv)
-    spdiagm(1 => -ones(Tv, n - 1), 0 => d, -1 => -ones(Tv, n - 1))
-end
-
-lattice(L...; Tv = Float64) = lattice(L[1]; Tv) ⊕ lattice(L[2:end]...; Tv)
-
-#
-# Create a matrix similar to that of a finite difference discretization in a `dim`-dimensional
-# unit cube of  ``-Δu + δu`` with approximately N unknowns. It is strictly diagonally dominant.
-#
-function fdmatrix(N; dim = 2, Tv = Float64, δ = 1.0e-2)
-    n = N^(1 / dim) |> ceil |> Int
-    lattice([n for i in 1:dim]...; Tv) + Tv(δ) * I
-end
 
 algs = [
     UMFPACKFactorization(),
@@ -61,7 +38,8 @@ function run_and_plot(dim; kmax = 12)
 
     for i in 1:length(ns)
         rng = MersenneTwister(123)
-        A = fdmatrix(ns[i]; dim)
+        A = mdopen("HB/1138_bus").A
+        A = convert(SparseMatrixCSC, A)
         n = size(A, 1)
         @info "dim=$(dim): $n × $n"
         b = rand(rng, n)
@@ -105,19 +83,19 @@ run_and_plot (generic function with 1 method)
 run_and_plot(1)
 ```
 
-![](figures/SparsePDE_2_1.png)
+![](figures/MatrixDepot_2_1.png)
 
 ```julia
 run_and_plot(2)
 ```
 
-![](figures/SparsePDE_3_1.png)
+![](figures/MatrixDepot_3_1.png)
 
 ```julia
 run_and_plot(3)
 ```
 
-![](figures/SparsePDE_4_1.png)
+![](figures/MatrixDepot_4_1.png)
 
 
 
@@ -132,7 +110,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/LinearSolve","SparsePDE.jmd")
+SciMLBenchmarks.weave_file("benchmarks/LinearSolve","MatrixDepot.jmd")
 ```
 
 Computer Information:
