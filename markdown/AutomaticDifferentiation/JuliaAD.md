@@ -26,8 +26,8 @@ backends = [
 ];
 
 scenarios = [
-    GradientScenario(paritytrig, x=rand(100)),
-    GradientScenario(paritytrig, x=rand(10_000))
+    GradientScenario(paritytrig, x=rand(100); operator=:inplace),
+    GradientScenario(paritytrig, x=rand(10_000); operator=:inplace)
 ];
 
 result = benchmark_differentiation(backends, scenarios, logging=false);
@@ -35,8 +35,8 @@ result = benchmark_differentiation(backends, scenarios, logging=false);
 data = DataFrame(result);
 
 filtered_data = @chain data begin
-    @select(Not([:mode, :scenario, :mutating, :output_type, :output_size, :calls, :samples, :evals]))
-    @rsubset(string(:operator) in ["gradient!!"])
+    @select(:backend, :operator, :func, :input_type, :input_size, :time, :bytes, :allocs, :compile_fraction, :gc_fraction)
+    @rsubset(string(:operator) in ["gradient!"])
 end
 
 table = PrettyTables.pretty_table(
@@ -53,12 +53,12 @@ Markdown.parse(table)
 
 |      **backend** | **operator** |   **func** |  **input_type** | **input_size** | **time** | **bytes** | **allocs** | **compile_fraction** | **gc_fraction** |
 | ----------------:| ------------:| ----------:| ---------------:| --------------:| --------:| ---------:| ----------:| --------------------:| ---------------:|
-| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.6e-07 |   5.7e+00 |    2.3e-01 |              0.0e+00 |         0.0e+00 |
-| Enzyme (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  1.4e-04 |   1.8e+02 |    7.0e+00 |              0.0e+00 |         0.0e+00 |
-|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  9.3e-06 |   2.5e+02 |    6.3e+00 |              0.0e+00 |         0.0e+00 |
-|  Tapir (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  9.2e-04 |   3.7e+02 |    1.1e+01 |              0.0e+00 |         0.0e+00 |
-| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |         (100,) |  7.1e-04 |   2.6e+05 |    3.9e+03 |              0.0e+00 |         0.0e+00 |
-| Zygote (reverse) |   gradient!! | paritytrig | Vector{Float64} |       (10000,) |  6.6e-01 |   8.2e+08 |    3.9e+05 |              0.0e+00 |         6.8e-01 |
+| Enzyme (reverse) |    gradient! | paritytrig | Vector{Float64} |         (100,) |  9.3e-07 |   5.7e+00 |    2.3e-01 |              0.0e+00 |         0.0e+00 |
+| Enzyme (reverse) |    gradient! | paritytrig | Vector{Float64} |       (10000,) |  1.2e-04 |   1.8e+02 |    7.0e+00 |              0.0e+00 |         0.0e+00 |
+|  Tapir (reverse) |    gradient! | paritytrig | Vector{Float64} |         (100,) |  9.4e-06 |   2.5e+02 |    6.3e+00 |              0.0e+00 |         0.0e+00 |
+|  Tapir (reverse) |    gradient! | paritytrig | Vector{Float64} |       (10000,) |  9.3e-04 |   3.7e+02 |    1.1e+01 |              0.0e+00 |         0.0e+00 |
+| Zygote (reverse) |    gradient! | paritytrig | Vector{Float64} |         (100,) |  7.8e-04 |   2.6e+05 |    3.9e+03 |              0.0e+00 |         0.0e+00 |
+| Zygote (reverse) |    gradient! | paritytrig | Vector{Float64} |       (10000,) |  2.0e-01 |   8.2e+08 |    3.9e+05 |              0.0e+00 |         1.5e-01 |
 
 
 
@@ -96,20 +96,20 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [a93c6f00] DataFrames v1.6.1
   [1313f7d8] DataFramesMeta v0.15.2
-  [a0c0ee7d] DifferentiationInterface v0.1.0 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterface#main`
-  [a82114a7] DifferentiationInterfaceTest v0.1.0 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterfaceTest#main`
+  [a0c0ee7d] DifferentiationInterface v0.2.1 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterface#main`
+  [a82114a7] DifferentiationInterfaceTest v0.2.1 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterfaceTest#main`
 ⌅ [7da242da] Enzyme v0.11.20
-  [6a86dc24] FiniteDiff v2.23.0
+  [6a86dc24] FiniteDiff v2.23.1
   [f6369f11] ForwardDiff v0.10.36
   [1dea7af3] OrdinaryDiffEq v6.74.1
   [65888b18] ParameterizedFunctions v5.17.0
-⌃ [91a5bcdd] Plots v1.40.3
+  [91a5bcdd] Plots v1.40.4
   [08abe8d2] PrettyTables v2.3.1
-  [37e2e3b7] ReverseDiff v1.15.1
+  [37e2e3b7] ReverseDiff v1.15.2
   [31c91b34] SciMLBenchmarks v0.1.3
   [1ed8b502] SciMLSensitivity v7.56.2
   [90137ffa] StaticArrays v1.9.3
@@ -120,14 +120,13 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d6f4376e] Markdown
   [de0858da] Printf
   [8dfed614] Test
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
   [47edcb42] ADTypes v0.2.7
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -135,7 +134,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [79e6a3ab] Adapt v4.0.4
   [ec485272] ArnoldiMethod v0.4.0
   [4fba245c] ArrayInterface v7.9.0
-⌃ [4c555306] ArrayLayouts v1.9.1
+  [4c555306] ArrayLayouts v1.9.2
   [a9b6321e] Atomix v0.1.0
   [6e4b80f9] BenchmarkTools v1.5.0
   [e2ed5e7c] Bijections v0.1.6
@@ -147,7 +146,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [49dc2e85] Calculus v0.5.1
   [7057c7e9] Cassette v0.3.13
   [8be319e6] Chain v0.6.0
-  [082447d4] ChainRules v1.63.0
+  [082447d4] ChainRules v1.64.0
   [d360d2e6] ChainRulesCore v1.23.0
   [0ca39b1e] Chairmarks v1.2.1
   [fb6a15b2] CloseOpenIntervals v0.1.12
@@ -175,23 +174,23 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9a962f9c] DataAPI v1.16.0
   [a93c6f00] DataFrames v1.6.1
   [1313f7d8] DataFramesMeta v0.15.2
-⌃ [864edb3b] DataStructures v0.18.18
+  [864edb3b] DataStructures v0.18.20
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
   [2b5f629d] DiffEqBase v6.149.0
-⌃ [459566f4] DiffEqCallbacks v3.5.0
+  [459566f4] DiffEqCallbacks v3.6.1
   [77a26b50] DiffEqNoiseProcess v5.21.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
   [de460e47] DiffTests v0.1.2
-  [a0c0ee7d] DifferentiationInterface v0.1.0 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterface#main`
-  [a82114a7] DifferentiationInterfaceTest v0.1.0 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterfaceTest#main`
+  [a0c0ee7d] DifferentiationInterface v0.2.1 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterface#main`
+  [a82114a7] DifferentiationInterfaceTest v0.2.1 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterfaceTest#main`
   [b4f34e82] Distances v0.10.11
   [31c24e10] Distributions v0.25.107
   [ffbed154] DocStringExtensions v0.9.3
-⌃ [5b8099bc] DomainSets v0.7.11
+  [5b8099bc] DomainSets v0.7.12
   [fa6b7ba4] DualNumbers v0.6.8
-⌃ [7c1d4256] DynamicPolynomials v0.5.5
+  [7c1d4256] DynamicPolynomials v0.5.6
   [06fc5a27] DynamicQuantities v0.13.2
   [da5c29d0] EllipsisNotation v1.8.0
   [4e289a0a] EnumX v1.0.4
@@ -206,7 +205,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [29a986be] FastLapackInterface v2.0.2
   [1a297f60] FillArrays v1.10.0
   [64ca27bc] FindFirstFunctions v1.2.0
-  [6a86dc24] FiniteDiff v2.23.0
+  [6a86dc24] FiniteDiff v2.23.1
   [53c48c17] FixedPointNumbers v0.8.4
   [1fa38f19] Format v1.3.7
   [f6369f11] ForwardDiff v0.10.36
@@ -237,12 +236,12 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [41ab1584] InvertedIndices v1.3.0
   [92d709cd] IrrationalConstants v0.2.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-⌃ [c3a54625] JET v0.8.22
+  [c3a54625] JET v0.8.29
   [27aeb0d3] JLArrays v0.1.4
   [1019f520] JLFzf v0.1.7
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
-⌃ [98e50ef6] JuliaFormatter v1.0.55
+  [98e50ef6] JuliaFormatter v1.0.56
   [aa1ae85d] JuliaInterpreter v0.9.31
   [ccbc3e58] JumpProcesses v9.11.1
   [ef3ab10e] KLU v0.6.0
@@ -252,7 +251,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b964fa9f] LaTeXStrings v1.3.1
   [2ee39098] LabelledArrays v1.15.1
   [984bce1d] LambertW v0.4.6
-  [23fbe1c1] Latexify v0.16.2
+  [23fbe1c1] Latexify v0.16.3
   [10f19ff3] LayoutPointers v0.1.15
   [5078a376] LazyArrays v1.9.1
   [2d8b4e74] LevyArea v1.0.0
@@ -261,30 +260,30 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2ab3a3ac] LogExpFunctions v0.3.27
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.169
-  [6f1432cf] LoweredCodeUtils v2.4.5
+⌅ [6f1432cf] LoweredCodeUtils v2.3.2
   [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.13
   [d125e4d3] ManualMemory v0.1.8
-⌃ [a3b82374] MatrixFactorizations v2.1.1
+  [a3b82374] MatrixFactorizations v2.2.0
   [bb5d69b7] MaybeInplace v0.1.2
   [739be429] MbedTLS v1.1.9
   [442fdcdd] Measures v0.3.2
   [e1d29d7a] Missings v1.2.0
-⌃ [961ee093] ModelingToolkit v9.9.0
+  [961ee093] ModelingToolkit v9.12.0
   [46d2c3a1] MuladdMacro v0.2.4
   [102ac46a] MultivariatePolynomials v0.5.4
   [ffc61752] Mustache v1.0.19
-  [d8a4904e] MutableArithmetics v1.4.2
+  [d8a4904e] MutableArithmetics v1.4.3
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [872c559c] NNlib v0.9.13
   [77ba4419] NaNMath v1.0.2
-  [8913a72c] NonlinearSolve v3.9.1
+  [8913a72c] NonlinearSolve v3.10.0
   [d8793406] ObjectFile v0.4.1
-  [6fe1bfb0] OffsetArrays v1.13.0
+  [6fe1bfb0] OffsetArrays v1.14.0
   [4d8831e6] OpenSSL v1.4.2
   [429524aa] Optim v1.9.4
-⌃ [3bd65402] Optimisers v0.3.2
+  [3bd65402] Optimisers v0.3.3
   [bac558e1] OrderedCollections v1.6.3
   [1dea7af3] OrdinaryDiffEq v6.74.1
   [90014a1f] PDMats v0.11.31
@@ -295,13 +294,13 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.1.0
   [995b91a9] PlotUtils v1.4.1
-⌃ [91a5bcdd] Plots v1.40.3
+  [91a5bcdd] Plots v1.40.4
   [e409e4f3] PoissonRandom v0.4.4
-  [f517fe37] Polyester v0.7.12
+  [f517fe37] Polyester v0.7.13
   [1d0040c9] PolyesterWeave v0.2.1
   [2dfb63ee] PooledArrays v1.4.3
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.20
+  [d236fae5] PreallocationTools v0.4.21
   [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.4.3
   [08abe8d2] PrettyTables v2.3.1
@@ -313,18 +312,18 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
   [731186ca] RecursiveArrayTools v3.13.0
-⌃ [f2c3362d] RecursiveFactorization v0.2.21
+  [f2c3362d] RecursiveFactorization v0.2.23
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
-  [37e2e3b7] ReverseDiff v1.15.1
+  [37e2e3b7] ReverseDiff v1.15.2
   [295af30f] Revise v3.5.14
   [79098fc4] Rmath v0.7.1
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.12
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.13
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.42
-⌃ [0bca4576] SciMLBase v2.31.0
+  [0bca4576] SciMLBase v2.33.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.8
   [1ed8b502] SciMLSensitivity v7.56.2
@@ -351,15 +350,15 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2913bbd2] StatsBase v0.34.3
   [4c63d2b9] StatsFuns v1.3.1
   [789caeaf] StochasticDiffEq v6.65.1
-⌃ [7792a7ef] StrideArraysCore v0.5.2
+  [7792a7ef] StrideArraysCore v0.5.5
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
   [09ab397b] StructArrays v0.6.18
   [53d494c1] StructIO v0.3.0
-⌃ [2efcf032] SymbolicIndexingInterface v0.3.15
+  [2efcf032] SymbolicIndexingInterface v0.3.16
   [19f23fe9] SymbolicLimits v0.2.0
   [d1185830] SymbolicUtils v1.5.1
-⌃ [0c5d862f] Symbolics v5.27.1
+  [0c5d862f] Symbolics v5.28.0
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
@@ -370,7 +369,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [0796e94c] Tokenize v0.5.28
   [9f7883ad] Tracker v0.2.33
   [3bb67fe8] TranscodingStreams v0.10.7
-  [d5829a12] TriangularSolve v0.1.21
+  [d5829a12] TriangularSolve v0.2.0
   [410a4b4d] Tricks v0.1.8
   [781d530d] TruncatedStacktraces v1.4.0
   [5c2747f8] URIs v1.5.1
@@ -382,7 +381,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [013be700] UnsafeAtomics v0.2.1
   [d80eeb9a] UnsafeAtomicsLLVM v0.1.3
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.65
+  [3d5dd08c] VectorizationBase v0.21.66
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
   [44d3d7a6] Weave v0.10.12
@@ -525,7 +524,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
 ```
 
