@@ -18,6 +18,13 @@ using Lux, Plots
 import ModelingToolkit: Interval, infimum, supremum
 ```
 
+```
+Error: Failed to precompile NeuralPDE [315f7962-48a3-4962-8226-d0f33b1235f0
+] to "/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/compiled/v1.10/NeuralPDE/jl_ALFuCc".
+```
+
+
 
 ```julia
 # Physical and numerical parameters (fixed)
@@ -125,7 +132,9 @@ end
 ```
 
 ```
-burgers (generic function with 1 method)
+Error: LoadError: UndefVarError: `@parameters` not defined
+in expression starting at /cache/build/exclusive-amdci1-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/PINNOptimizers/burgers_equation.jmd:4
 ```
 
 
@@ -164,15 +173,7 @@ minimizers_short_name = ["ADAM",
 ```
 
 ```
-8-element Vector{String}:
- "ADAM"
- "ADAM(0.000005)"
- "ADAM(0.0005)"
- "RMS"
- "RMS(0.00005)"
- "RMS(0.05)"
- "BFGS"
- "LBFGS"
+Error: UndefVarError: `NeuralPDE` not defined
 ```
 
 
@@ -200,7 +201,8 @@ end
 ```
 
 ```
-Starting run
+Starting run 
+Error: UndefVarError: `minimizers` not defined
 ```
 
 
@@ -223,7 +225,11 @@ plot!(error_iter, 1:length(error_res["18"]), error_res["18"], yaxis=:log10, labe
 Plots.plot(error_iter)
 ```
 
-![](figures/burgers_equation_6_1.png)
+```
+Error: KeyError: key "11" not found
+```
+
+
 
 ```julia
 #Use after having modified the analysis setting correctly --> Error vs iter: to compare different strategies, keeping the same minimizer
@@ -251,7 +257,11 @@ plot!(error_time, times["18"], error_res["18"], yaxis=:log10, label = string(min
 Plots.plot(error_time)
 ```
 
-![](figures/burgers_equation_8_1.png)
+```
+Error: KeyError: key "11" not found
+```
+
+
 
 ```julia
 #Use after having modified the analysis setting correctly --> Error vs time: to compare different strategies, keeping the same minimizer
@@ -280,15 +290,17 @@ SciMLBenchmarks.weave_file("benchmarks/PINNOptimizers","burgers_equation.jmd")
 Computer Information:
 
 ```
-Julia Version 1.8.5
-Commit 17cfb8e65ea (2023-01-08 06:45 UTC)
+Julia Version 1.10.3
+Commit 0b4590a5507 (2024-04-30 10:59 UTC)
+Build Info:
+  Official https://julialang.org/ release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
   CPU: 128 × AMD EPYC 7502 32-Core Processor
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-13.0.1 (ORCJIT, znver2)
-  Threads: 128 on 128 virtual cores
+  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -298,45 +310,45 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNOptimizers/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNOptimizers/Project.toml`
 ⌅ [b2108857] Lux v0.4.11
-⌃ [961ee093] ModelingToolkit v8.18.1
+⌅ [961ee093] ModelingToolkit v8.18.1
 ⌃ [315f7962] NeuralPDE v5.0.0
 ⌃ [7f7a1694] Optimization v3.8.1
 ⌃ [253f991c] OptimizationFlux v0.1.0
 ⌃ [36348300] OptimizationOptimJL v0.1.2
 ⌃ [91a5bcdd] Plots v1.31.4
 ⌃ [31c91b34] SciMLBenchmarks v0.1.0
-Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNOptimizers/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/PINNOptimizers/Manifest.toml`
 ⌅ [c3fe647b] AbstractAlgebra v0.27.1
 ⌃ [621f4979] AbstractFFTs v1.2.1
 ⌃ [1520ce14] AbstractTrees v0.4.2
 ⌃ [7d9f7c33] Accessors v0.1.18
-⌃ [79e6a3ab] Adapt v3.3.3
+⌅ [79e6a3ab] Adapt v3.3.3
   [dce04be8] ArgCheck v2.3.0
-  [ec485272] ArnoldiMethod v0.2.0
+⌅ [ec485272] ArnoldiMethod v0.2.0
 ⌅ [4fba245c] ArrayInterface v6.0.21
 ⌃ [30b0a656] ArrayInterfaceCore v0.1.15
 ⌃ [6ba088a2] ArrayInterfaceGPUArrays v0.2.1
 ⌃ [015c0d05] ArrayInterfaceOffsetArrays v0.1.6
 ⌃ [b0d46f97] ArrayInterfaceStaticArrays v0.1.4
 ⌃ [dd5226c6] ArrayInterfaceStaticArraysCore v0.1.0
-  [15f4f7f2] AutoHashEquals v0.2.0
+⌅ [15f4f7f2] AutoHashEquals v0.2.0
 ⌅ [ab4f0b2a] BFloat16s v0.2.0
-⌃ [198e06fe] BangBang v0.3.36
+⌅ [198e06fe] BangBang v0.3.36
   [9718e550] Baselet v0.1.1
-  [e2ed5e7c] Bijections v0.1.4
+⌃ [e2ed5e7c] Bijections v0.1.4
 ⌃ [62783981] BitTwiddlingConvenienceFunctions v0.1.4
-  [fa961155] CEnum v0.4.2
+⌅ [fa961155] CEnum v0.4.2
 ⌅ [2a0fbf3d] CPUSummary v0.1.25
-  [00ebfdb7] CSTParser v3.3.6
+⌃ [00ebfdb7] CSTParser v3.3.6
 ⌅ [052768ef] CUDA v3.12.0
   [49dc2e85] Calculus v0.5.1
 ⌃ [082447d4] ChainRules v1.39.1
@@ -345,7 +357,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [fb6a15b2] CloseOpenIntervals v0.1.10
 ⌃ [944b1d66] CodecZlib v0.7.0
 ⌃ [35d6a980] ColorSchemes v3.19.0
-  [3da002f7] ColorTypes v0.11.4
+⌃ [3da002f7] ColorTypes v0.11.4
 ⌅ [c3611d14] ColorVectorSpace v0.9.9
 ⌃ [5ae59095] Colors v0.12.8
   [861a8166] Combinatorics v1.0.2
@@ -360,7 +372,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [88cd18e8] ConsoleProgressMonitor v0.1.2
 ⌃ [187b0558] ConstructionBase v1.4.0
 ⌃ [6add18c4] ContextVariablesX v0.1.2
-  [d38c429a] Contour v0.6.2
+⌃ [d38c429a] Contour v0.6.2
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
   [667455a9] Cubature v1.5.1
@@ -368,9 +380,10 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [864edb3b] DataStructures v0.18.13
   [e2d170a0] DataValueInterfaces v1.0.0
   [244e2a9f] DefineSingletons v0.1.2
+  [8bb1440f] DelimitedFiles
   [b429d917] DensityInterface v0.4.0
 ⌅ [2b5f629d] DiffEqBase v6.94.4
-⌃ [459566f4] DiffEqCallbacks v2.23.1
+⌅ [459566f4] DiffEqCallbacks v2.23.1
 ⌃ [77a26b50] DiffEqNoiseProcess v5.12.0
 ⌃ [163ba53b] DiffResults v1.0.3
 ⌃ [b552c78f] DiffRules v1.11.0
@@ -390,24 +403,24 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [29a986be] FastLapackInterface v1.1.0
 ⌅ [1a297f60] FillArrays v0.13.2
 ⌃ [6a86dc24] FiniteDiff v2.13.1
-  [53c48c17] FixedPointNumbers v0.8.4
+⌃ [53c48c17] FixedPointNumbers v0.8.4
 ⌅ [587475ba] Flux v0.13.4
 ⌃ [9c68100b] FoldsThreads v0.1.1
-  [59287772] Formatting v0.4.2
+⌃ [59287772] Formatting v0.4.2
 ⌃ [f6369f11] ForwardDiff v0.10.30
 ⌃ [069b7b12] FunctionWrappers v1.1.2
 ⌅ [d9f16b24] Functors v0.2.8
-⌃ [0c68f7d7] GPUArrays v8.4.2
+⌅ [0c68f7d7] GPUArrays v8.4.2
 ⌅ [46192b85] GPUArraysCore v0.1.1
 ⌅ [61eb1bfa] GPUCompiler v0.16.2
 ⌅ [28b8d3ca] GR v0.66.0
-  [c145ed77] GenericSchur v0.5.3
+⌃ [c145ed77] GenericSchur v0.5.3
 ⌃ [5c1252a2] GeometryBasics v0.4.2
 ⌃ [d7ba0133] Git v1.2.1
 ⌃ [86223c79] Graphs v1.7.1
   [42e2da0e] Grisu v1.0.2
 ⌅ [0b43b601] Groebner v0.2.8
-  [d5909c97] GroupsCore v0.4.0
+⌅ [d5909c97] GroupsCore v0.4.0
 ⌃ [19dc6840] HCubature v1.5.0
 ⌃ [cd3eb016] HTTP v1.2.0
 ⌅ [eafb193a] Highlights v0.4.5
@@ -420,15 +433,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [83e8ac13] IniFile v0.5.1
   [22cec73e] InitialValues v0.3.1
 ⌃ [18e54dd8] IntegerMathUtils v0.1.0
-⌃ [de52edbc] Integrals v3.1.0
+⌅ [de52edbc] Integrals v3.1.0
 ⌃ [c31f79ba] IntegralsCubature v0.2.0
 ⌃ [8197267c] IntervalSets v0.7.1
 ⌃ [3587e190] InverseFunctions v0.1.7
 ⌅ [92d709cd] IrrationalConstants v0.1.1
 ⌃ [c8e1da08] IterTools v1.4.0
-  [42fd0dbc] IterativeSolvers v0.9.2
+⌃ [42fd0dbc] IterativeSolvers v0.9.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [692b3bcd] JLLWrappers v1.4.1
+⌃ [692b3bcd] JLLWrappers v1.4.1
 ⌃ [682c06a0] JSON v0.21.3
 ⌃ [98e50ef6] JuliaFormatter v1.0.7
   [b14d175d] JuliaVariables v0.2.4
@@ -437,7 +450,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [ba0b0d4f] Krylov v0.8.3
 ⌅ [0b1a1467] KrylovKit v0.5.4
 ⌅ [929cbde3] LLVM v4.14.0
-  [b964fa9f] LaTeXStrings v1.3.0
+⌃ [b964fa9f] LaTeXStrings v1.3.0
 ⌃ [2ee39098] LabelledArrays v1.11.1
 ⌅ [23fbe1c1] Latexify v0.15.16
 ⌃ [a5e1c1ea] LatinHypercubeSampling v1.8.0
@@ -457,9 +470,9 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [739be429] MbedTLS v1.1.1
 ⌃ [442fdcdd] Measures v0.3.1
 ⌅ [e9d8d322] Metatheory v1.3.4
-⌃ [128add7d] MicroCollections v0.1.2
+⌅ [128add7d] MicroCollections v0.1.2
 ⌃ [e1d29d7a] Missings v1.0.2
-⌃ [961ee093] ModelingToolkit v8.18.1
+⌅ [961ee093] ModelingToolkit v8.18.1
 ⌅ [4886b29c] MonteCarloIntegration v0.0.3
 ⌃ [46d2c3a1] MuladdMacro v0.2.2
 ⌅ [102ac46a] MultivariatePolynomials v0.4.6
@@ -475,7 +488,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [8913a72c] NonlinearSolve v0.3.21
 ⌃ [6fe1bfb0] OffsetArrays v1.12.7
 ⌃ [429524aa] Optim v1.7.1
-⌃ [3bd65402] Optimisers v0.2.8
+⌅ [3bd65402] Optimisers v0.2.8
 ⌃ [7f7a1694] Optimization v3.8.1
 ⌃ [253f991c] OptimizationFlux v0.1.0
 ⌃ [36348300] OptimizationOptimJL v0.1.2
@@ -496,19 +509,19 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8162dcfd] PrettyPrint v0.2.0
 ⌃ [27ebfcd6] Primes v0.5.3
   [33c8b6b6] ProgressLogging v0.1.4
-  [92933f4c] ProgressMeter v1.7.2
+⌃ [92933f4c] ProgressMeter v1.7.2
 ⌃ [1fd47b50] QuadGK v2.4.2
 ⌅ [8a4e6c94] QuasiMonteCarlo v0.2.9
 ⌃ [74087812] Random123 v1.5.0
-  [fb686558] RandomExtensions v0.4.3
+⌃ [fb686558] RandomExtensions v0.4.3
   [e6cf234a] RandomNumbers v1.5.3
   [c1ae055f] RealDot v0.1.0
 ⌃ [3cdcf5f2] RecipesBase v1.2.1
 ⌃ [01d81517] RecipesPipeline v0.6.2
-⌃ [731186ca] RecursiveArrayTools v2.31.2
+⌅ [731186ca] RecursiveArrayTools v2.31.2
 ⌃ [f2c3362d] RecursiveFactorization v0.2.11
   [189a3867] Reexport v1.2.2
-  [42d2dcc6] Referenceables v0.1.2
+⌃ [42d2dcc6] Referenceables v0.1.2
 ⌅ [05181044] RelocatableFolders v0.3.0
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
@@ -518,7 +531,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [3cdde19b] SIMDDualNumbers v0.1.1
   [94e857df] SIMDTypes v0.1.0
 ⌃ [476501e8] SLEEFPirates v0.6.33
-⌃ [0bca4576] SciMLBase v1.45.0
+⌅ [0bca4576] SciMLBase v1.45.0
 ⌃ [31c91b34] SciMLBenchmarks v0.1.0
 ⌃ [6c6a2e73] Scratch v1.1.1
 ⌅ [efcf1570] Setfield v0.8.2
@@ -532,7 +545,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [47a9eef4] SparseDiffTools v1.24.0
 ⌃ [276daf66] SpecialFunctions v2.1.7
 ⌃ [171d559e] SplittablesBase v0.1.14
-  [860ef19b] StableRNGs v1.0.0
+⌃ [860ef19b] StableRNGs v1.0.0
 ⌅ [aedffcd0] Static v0.7.6
 ⌃ [90137ffa] StaticArrays v1.5.2
 ⌃ [1e83bf80] StaticArraysCore v1.0.1
@@ -554,10 +567,10 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [ac1d9e8a] ThreadsX v0.1.10
 ⌃ [a759f4b9] TimerOutputs v0.5.20
 ⌃ [0796e94c] Tokenize v0.5.24
-⌃ [3bb67fe8] TranscodingStreams v0.9.6
+⌅ [3bb67fe8] TranscodingStreams v0.9.6
 ⌃ [28d57a85] Transducers v0.4.73
   [a2a6695c] TreeViews v0.3.0
-⌃ [d5829a12] TriangularSolve v0.1.12
+⌅ [d5829a12] TriangularSolve v0.1.12
 ⌃ [5c2747f8] URIs v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
@@ -571,15 +584,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [c2297ded] ZMQ v1.2.1
 ⌃ [e88e6eb3] Zygote v0.6.41
 ⌃ [700de1a5] ZygoteRules v0.2.2
-  [6e34b625] Bzip2_jll v1.0.8+0
-  [83423d85] Cairo_jll v1.16.1+1
+⌃ [6e34b625] Bzip2_jll v1.0.8+0
+⌃ [83423d85] Cairo_jll v1.16.1+1
   [7bc98958] Cubature_jll v1.0.5+0
 ⌃ [5ae413db] EarCut_jll v2.2.3+0
 ⌃ [2e619515] Expat_jll v2.4.8+0
-⌃ [b22a6f82] FFMPEG_jll v4.4.2+0
-  [a3f928ae] Fontconfig_jll v2.13.93+0
+⌅ [b22a6f82] FFMPEG_jll v4.4.2+0
+⌃ [a3f928ae] Fontconfig_jll v2.13.93+0
 ⌃ [d7e528f0] FreeType2_jll v2.10.4+0
-  [559328eb] FriBidi_jll v1.0.10+0
+⌃ [559328eb] FriBidi_jll v1.0.10+0
 ⌃ [0656b61e] GLFW_jll v3.3.6+0
 ⌅ [d2c73de3] GR_jll v0.66.0+0
   [78b55507] Gettext_jll v0.21.0+0
@@ -588,40 +601,40 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
 ⌃ [aacddb02] JpegTurbo_jll v2.1.2+0
-  [c1c5ebd0] LAME_jll v3.100.1+0
-  [88015f11] LERC_jll v3.0.0+1
+⌃ [c1c5ebd0] LAME_jll v3.100.1+0
+⌅ [88015f11] LERC_jll v3.0.0+1
 ⌅ [dad2f222] LLVMExtra_jll v0.0.16+0
-  [dd4b983a] LZO_jll v2.10.1+0
+⌃ [dd4b983a] LZO_jll v2.10.1+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
-  [d4300ac3] Libgcrypt_jll v1.8.7+0
+⌃ [d4300ac3] Libgcrypt_jll v1.8.7+0
 ⌃ [7e76a0d4] Libglvnd_jll v1.3.0+3
-  [7add5ba3] Libgpg_error_jll v1.42.0+0
+⌃ [7add5ba3] Libgpg_error_jll v1.42.0+0
 ⌃ [94ce4f54] Libiconv_jll v1.16.1+1
-  [4b2f31a3] Libmount_jll v2.35.0+0
+⌃ [4b2f31a3] Libmount_jll v2.35.0+0
 ⌅ [89763e89] Libtiff_jll v4.4.0+0
-  [38a345b3] Libuuid_jll v2.36.0+0
+⌃ [38a345b3] Libuuid_jll v2.36.0+0
   [e7412a2a] Ogg_jll v1.3.5+1
 ⌅ [458c3c95] OpenSSL_jll v1.1.17+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
-  [2f80f16e] PCRE_jll v8.44.0+0
+⌃ [2f80f16e] PCRE_jll v8.44.0+0
 ⌃ [30392449] Pixman_jll v0.40.1+0
 ⌃ [ea2cea3b] Qt5Base_jll v5.15.3+1
 ⌅ [f50d1b31] Rmath_jll v0.3.0+0
 ⌃ [a2964d1f] Wayland_jll v1.19.0+0
-  [2381bf8a] Wayland_protocols_jll v1.25.0+0
+⌃ [2381bf8a] Wayland_protocols_jll v1.25.0+0
 ⌃ [02c8fc9c] XML2_jll v2.9.14+0
   [aed1982a] XSLT_jll v1.1.34+0
 ⌃ [4f6342f7] Xorg_libX11_jll v1.6.9+4
 ⌃ [0c0b7dd1] Xorg_libXau_jll v1.0.9+4
   [935fb764] Xorg_libXcursor_jll v1.2.0+4
 ⌃ [a3789734] Xorg_libXdmcp_jll v1.1.3+4
-  [1082639a] Xorg_libXext_jll v1.3.4+4
+⌃ [1082639a] Xorg_libXext_jll v1.3.4+4
   [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
   [a51aa0fd] Xorg_libXi_jll v1.7.10+4
   [d1454406] Xorg_libXinerama_jll v1.1.4+4
   [ec84b674] Xorg_libXrandr_jll v1.5.2+4
-  [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
+⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
 ⌃ [14d82f49] Xorg_libpthread_stubs_jll v0.1.0+3
 ⌃ [c7cfdc94] Xorg_libxcb_jll v1.13.0+3
 ⌃ [cc61e674] Xorg_libxkbfile_jll v1.1.0+4
@@ -633,12 +646,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [35661453] Xorg_xkbcomp_jll v1.4.2+4
 ⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.27.0+4
 ⌃ [c5fb5394] Xorg_xtrans_jll v1.4.0+3
-  [8f1865be] ZeroMQ_jll v4.3.4+0
+⌃ [8f1865be] ZeroMQ_jll v4.3.4+0
 ⌃ [3161d3a3] Zstd_jll v1.5.2+0
-  [a4ae2306] libaom_jll v3.4.0+0
+⌃ [a4ae2306] libaom_jll v3.4.0+0
   [0ac62f75] libass_jll v0.15.1+0
   [f638f0a6] libfdk_aac_jll v2.0.2+0
-  [b53b4c65] libpng_jll v1.6.38+0
+⌃ [b53b4c65] libpng_jll v1.6.38+0
   [a9144af2] libsodium_jll v1.0.20+0
   [f27f6e37] libvorbis_jll v1.3.7+1
   [1270edf5] x264_jll v2021.5.5+0
@@ -648,7 +661,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [56f22d72] Artifacts
   [2a0f44e3] Base64
   [ade2ca70] Dates
-  [8bb1440f] DelimitedFiles
   [8ba89e20] Distributed
   [f43a241f] Downloads v1.6.0
   [7b1f6079] FileWatching
@@ -692,7 +704,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850b90] libblastrampoline_jll v5.1.0+0
   [8e850ede] nghttp2_jll v1.41.0+1
   [3f19e933] p7zip_jll v17.4.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
