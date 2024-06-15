@@ -4,6 +4,8 @@ using Pkg
 Pkg.add(Pkg.PackageSpec(;name="XSteam", rev="f2a1c589054cfd6bba307985a3a534b6f5a1863b"))
 
 using ModelingToolkit, JuliaSimCompiler, Symbolics, XSteam, Polynomials, BenchmarkTools, CairoMakie
+using OMJulia, OrdinaryDiffEq
+
 
 #          o  o  o  o  o  o  o < heat capacitors
 #          |  |  |  |  |  |  | < heat conductors
@@ -47,7 +49,7 @@ end
 #Taylor-aris dispersion model
 function Dxx_coeff(u, d, T)
   Re = abs(u) * d / kin_visc_T(T) + 0.1
-  if Re < 1000
+  if Re < 1000.0
     (d^2 / 4) * u^2 / 48 / 0.14e-6
   else
     d * u * (1.17e9 * Re^(-2.5) + 0.41)
@@ -57,9 +59,9 @@ end
 @register_symbolic Nusselt(Re, Pr, f)
 #Nusselt number model
 function Nusselt(Re, Pr, f)
-  if Re <= 2300
+  if Re <= 2300.0
     3.66
-  elseif Re <= 3100
+  elseif Re <= 3100.0
     3.5239 * (Re / 1000)^4 - 45.158 * (Re / 1000)^3 + 212.13 * (Re / 1000)^2 - 427.45 * (Re / 1000) + 316.08
   else
     f / 8 * ((Re - 1000) * Pr) / (1 + 12.7 * (f / 8)^(1 / 2) * (Pr^(2 / 3) - 1))
@@ -236,8 +238,6 @@ function TestBenchPreinsulated(; name, L=1.0, dn=0.05, t_layer=[0.0056, 0.013], 
   compose(ODESystem(eqs, t, [], []; name=name), subs)
 end
 
-
-
 function build_system(fsys, N)
   N >= 4 || throw("Problem sizes smaller than 4 not supported; received $N.")
   @named testbench = TestBenchPreinsulated(; L=470, N, dn=0.3127, t_layer=[0.0056, 0.058])
@@ -272,6 +272,29 @@ function build_run_problem(fsys, N; target=JuliaSimCompiler.JuliaTarget())
   t_ss, t_fode, t_run
 end
 
+function test_speed(fsys, N; solver=FBDF(), target=JuliaSimCompiler.JuliaTarget())
+    tspan = (0.0, 19*3600)
+    t_total = @elapsed begin
+        @named testbench = TestBenchPreinsulated(L=470, N=N, dn=0.3127, t_layer=[0.0056, 0.058])
+        sys = structural_simplify(fsys(testbench))
+        if target === JuliaSimCompiler.JuliaTarget()
+            prob = ODEProblem(sys, [], tspan, sparse=true)
+        else
+            prob = ODEProblem(sys, target, [], tspan, sparse=true)
+        end
+        prob.u0 .= 12.0
+        solve(prob, solver, reltol=1e-6, abstol=1e-6, saveat=100);
+    end
+end
+
+
+N_x = [5, 10, 20, 40, 60, 80, 160, 320, 480, 640, 800, 960, 1280];
+N_states = 4 .* N_x; # x-axis for plots
+ss_times = Matrix{Float64}(undef, length(N_x), 2);
+times = Matrix{NTuple{2,Float64}}(undef, length(N_x), 4);
+total_times = Matrix{Float64}(undef, length(N_x), 6);
+
+
 using JuliaSimCompiler: IRSystem
 const MTKSystem = identity
 const CBackend = JuliaSimCompiler.CTarget();
@@ -282,39 +305,102 @@ const LLVMBackend = JuliaSimCompiler.llvm.LLVMTarget();
 @time build_run_problem(IRSystem, 4; target=CBackend)
 @time build_run_problem(IRSystem, 4; target=LLVMBackend)
 
-N_x = [5, 10, 20, 40, 60, 80, 160, 320, 480, 640, 800, 960];
-N_states = 4 .* N_x; # x-axis for plots
+@show "Start Julia Timings"
 
-ss_times = Matrix{Float64}(undef, length(N_x), 2);
-times = Matrix{NTuple{2,Float64}}(undef, length(N_x), 4);
+
 for (i, N_x_i) in enumerate(N_x)
+  @show i
   ss_times[i, 1], sys_mtk = build_system(MTKSystem, N_x_i)
   ss_times[i, 2], sys_jsir = build_system(IRSystem, N_x_i)
   times[i, 1] = compile_run_problem(sys_mtk)
   times[i, 2] = compile_run_problem(sys_jsir)
   times[i, 3] = compile_run_problem(sys_jsir, target=CBackend)
   times[i, 4] = compile_run_problem(sys_jsir, target=LLVMBackend)
-  @show N_x_i, ss_times[i, :], times[i, :]
+
+  if N_x_i >= 480
+    total_times[i, 1] = NaN
+  else
+    total_times[i, 1] = test_speed(MTKSystem, N_x_i)
+  end
+  total_times[i, 2] = test_speed(IRSystem, N_x_i)
+  total_times[i, 3] = test_speed(IRSystem, N_x_i, target=CBackend)
+  total_times[i, 4] = test_speed(IRSystem, N_x_i, target=LLVMBackend)
+
+  @show N_x_i, ss_times[i, :], times[i, :], total_times[i, :]
 end
 
-f = Figure();
-let ax = Axis(f[1, 1]; title="Structural Simplify Time")
-  for (j, label) in enumerate(("MTK", "JSIR"))
-    ts = @view(ss_times[:, j])
-    lines!(N_states, ts; label)
+
+using OMJulia, CSV, DataFrames
+mod = OMJulia.OMCSession();
+OMJulia.sendExpression(mod, "getVersion()")
+OMJulia.sendExpression(mod, "installPackage(Modelica)")
+modelicafile = "../../benchmarks/ModelingToolkit/DhnControl.mo"
+resultfile = "modelica_res.csv"
+
+@show "Start OpenModelica Timings"
+
+for i in 1:length(N_x)
+    N = N_x[i]
+    @show N
+    totaltime = @elapsed res = begin
+        @sync ModelicaSystem(mod, modelicafile, "DhnControl.Test.test_preinsulated_470_$N")
+        sendExpression(mod, "simulate(DhnControl.Test.test_preinsulated_470_$N)")
+    end
+    #runtime = res["timeTotal"]
+    @assert res["messages"][1:11] == "LOG_SUCCESS"
+    total_times[i, 5] = totaltime
+end
+
+OMJulia.quit(mod)
+total_times[:, 5]
+
+
+translation_and_total_times = [1.802 1.921
+                               1.78 1.846
+                               1.84 1.877
+                               2.028 2.075
+                               2.221 2.283
+                               2.409 2.496
+                               3.189 3.427
+                               4.758 5.577
+                               6.39 8.128
+                               8.052 11.026
+                               9.707 14.393
+                               11.411 17.752
+                               15.094 27.268]
+total_times[:, 6] = translation_and_total_times[1:length(N_x),2]
+
+
+f = Figure(size = (800, 1200));
+let ax = Axis(f[1, 1]; yscale = log10, xscale = log10, title="Structural Simplify Time")
+  names = ["MTK", "JSIR"]
+  _lines = map(eachcol(ss_times)) do ts
+    lines!(N_states, ts)
   end
-  axislegend(ax)
+  Legend(f[1,2], _lines, names)
 end
 for (i, timecat) in enumerate(("ODEProblem + f!", "Run"))
   title = timecat * " Time"
-  ax = Axis(f[i+1, 1]; title)
-  for (j, label) in enumerate(("MTK", "JSIR - Julia", "JSIR - C", "JSIR - LLVM"))
-    ts = getindex.(@view(times[:, j]), i)
-    lines!(N_states, ts; label)
+  ax = Axis(f[i+1, 1]; yscale = log10, xscale = log10, title)
+  names = ["MTK", "JSIR - Julia", "JSIR - C", "JSIR - LLVM"]
+  _lines = map(eachcol(times)) do ts
+    lines!(N_states, getindex.(ts, i))
   end
-  axislegend(ax)
+  Legend(f[i+1,2], _lines, names)
 end
 f
+
+
+f2 = Figure(size = (800, 400));
+title = "Total Time: Thermal Fluid Benchmark"
+ax = Axis(f2[1, 1]; yscale = log10, xscale = log10, title)
+names = ["MTK", "JSIR - Julia", "JSIR - C", "JSIR - LLVM", "OpenModelica", "Dymola"]
+_lines = map(enumerate(names)) do (j, label)
+    ts = @view(total_times[:, j])
+    lines!(N_states, ts)
+end
+Legend(f2[1,2], _lines, names)
+f2
 
 
 using SciMLBenchmarks
