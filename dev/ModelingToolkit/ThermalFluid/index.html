@@ -318,91 +318,94 @@ for (i, N_x_i) in enumerate(N_x)
   total_times[i, 4] = test_speed(IRSystem, N_x_i, target=LLVMBackend)
 
   @show N_x_i, ss_times[i, :], times[i, :], total_times[i, :]
-end</code></pre><pre><code class="nohighlight hljs">32.906996 seconds (28.02 M allocations: 1.830 GiB, 13.72% gc time, 84.47% 
+end</code></pre><pre><code class="nohighlight hljs">33.169954 seconds (27.92 M allocations: 1.827 GiB, 14.43% gc time, 83.93% 
 compilation time: 16% of which was recompilation)
- 11.905079 seconds (1.87 M allocations: 117.244 MiB, 31.59% gc time, 59.77%
+ 12.086415 seconds (1.87 M allocations: 117.316 MiB, 32.97% gc time, 58.39%
  compilation time: 87% of which was recompilation)
-  6.624731 seconds (2.16 M allocations: 138.671 MiB, 56.96% gc time, 25.59%
+  6.782796 seconds (2.11 M allocations: 137.177 MiB, 58.26% gc time, 24.68%
  compilation time)
-  9.893920 seconds (7.27 M allocations: 513.647 MiB, 38.74% gc time, 50.43%
- compilation time: 25% of which was recompilation)
+ 10.038232 seconds (7.26 M allocations: 513.550 MiB, 40.01% gc time, 49.41%
+ compilation time: 26% of which was recompilation)
 &quot;Start Julia Timings&quot; = &quot;Start Julia Timings&quot;
 i = 1
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (5, [0.1975030899
-0478516, 0.0911409854888916], [(0.1882610321044922, 3.115311203319502e-7), 
-(0.10663199424743652, 3.2282832618025756e-7), (0.1112070083618164, 3.903415
-841584159e-7), (0.03363204002380371, 3.1837179487179485e-7)], [5.022943662,
- 4.529084398, 13.088013699, 12.49659304, 0.0, 0.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (5, [0.2012138366
+6992188, 0.09287405014038086], [(0.18792080879211426, 3.119917012448133e-7)
+, (0.10636687278747559, 3.1869130434782606e-7), (0.11159420013427734, 3.842
+0792079207925e-7), (0.03356504440307617, 3.189273504273504e-7)], [5.0019647
+88, 4.576216885, 9.733455666, 9.43432884, 6.93292061501944e-310, 6.93340785
+564324e-310])
 i = 2
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (10, [0.439917087
-55493164, 0.20849299430847168], [(0.24792194366455078, 3.432672811059908e-7
-), (0.14551615715026855, 3.5689999999999997e-7), (0.12726807594299316, 4.46
-86363636363635e-7), (0.043190956115722656, 3.4490277777777777e-7)], [1.1649
-49821, 3.186470492, 17.771075886, 0.253113124, 0.0, 0.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (10, [0.470169067
+3828125, 0.20865797996520996], [(0.2523069381713867, 3.3721004566210045e-7)
+, (0.14710402488708496, 3.571857142857143e-7), (0.12772488594055176, 4.6319
+28934010152e-7), (0.04335284233093262, 3.4522685185185186e-7)], [1.20445238
+8, 3.197643609, 16.179404701, 0.248151422, 6.933411200904e-310, 0.0])
 i = 3
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (20, [1.132699012
-7563477, 0.38318705558776855], [(0.3900768756866455, 4.187889447236181e-7),
- (0.22958993911743164, 4.38479797979798e-7), (0.15993690490722656, 6.480802
-469135802e-7), (0.06511616706848145, 4.3120100502512563e-7)], [2.573704376,
- 3.735243583, 37.702055184, 0.482179162, 0.0, 0.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (20, [1.131188154
+220581, 0.37914204597473145], [(0.3844470977783203, 4.1035e-7), (0.24100399
+017333984, 4.351515151515151e-7), (0.15948987007141113, 6.726217948717949e-
+7), (0.06598877906799316, 4.3064824120603016e-7)], [2.562285791, 3.73105159
+9, 38.564166915, 0.485403334, 6.93340785564324e-310, 0.0])
 i = 4
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (40, [3.249375104
-904175, 0.7953469753265381], [(0.7632949352264404, 5.840828729281768e-7), (
-0.43535494804382324, 6.029322033898305e-7), (0.24775314331054688, 1.066e-6)
-, (0.11891818046569824, 6.171618497109827e-7)], [7.427347548, 4.834283403, 
-1.130189144, 1.005905867, 0.0, 0.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (40, [3.267046928
+4057617, 0.784675121307373], [(0.756525993347168, 5.823149171270718e-7), (0
+.434053897857666, 6.023107344632768e-7), (0.2531588077545166, 1.096e-6), (0
+.11877107620239258, 6.177976878612717e-7)], [7.450869255, 4.855529544, 1.13
+4796316, 1.00911988, 6.933407855214e-310, 0.0])
 i = 5
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (60, [6.245239019
-393921, 1.2949421405792236], [(1.1854770183563232, 7.680990990990992e-7), (
-0.6605520248413086, 7.640619469026549e-7), (0.35413599014282227, 1.466e-6),
- (0.18616199493408203, 8.460675675675676e-7)], [12.739853625, 6.103305971, 
-134.498982163, 132.399209568, 0.0, 0.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (60, [6.254194974
+899292, 1.2957770824432373], [(1.1779258251190186, 7.733545454545455e-7), (
+0.6592729091644287, 7.590263157894737e-7), (0.35193800926208496, 1.4499e-6)
+, (0.18587613105773926, 8.338533333333334e-7)], [12.83635975, 6.119355755, 
+136.36926018, 1.660133076, 6.93340785564324e-310, 0.0])
 i = 6
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (80, [10.30247402
-1911621, 1.8424131870269775], [(1.7037041187286377, 9.356666666666666e-7), 
-(0.9531280994415283, 9.251212121212121e-7), (0.45555901527404785, 1.825e-6)
-, (0.2462449073791504, 1.024e-6)], [19.374498751, 7.53067837, 184.309623748
-, 187.281374439, 0.0, 0.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (80, [10.18599104
+8812866, 1.8312499523162842], [(1.741159200668335, 9.366333333333334e-7), (
+0.9456260204315186, 9.205714285714286e-7), (0.4559061527252197, 1.823e-6), 
+(0.24560093879699707, 1.024e-6)], [19.978706589, 7.591486942, 2.487890555, 
+2.263564842, 6.93292061503525e-310, 0.0])
 i = 7
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (160, [36.2955870
-6283569, 4.823446035385132], [(4.152837038040161, 1.9769e-6), (2.3164291381
-835938, 1.57e-6), (0.8578150272369385, 3.44375e-6), (0.5517921447753906, 1.
-7899e-6)], [64.980413187, 15.248611336, 369.401600304, 5.705904859, 0.0, 0.
-0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (160, [35.4164490
+6997681, 4.824951171875], [(3.9917471408843994, 1.978e-6), (2.2942850589752
+197, 1.569e-6), (0.8549749851226807, 3.362375e-6), (0.549868106842041, 1.79
+89e-6)], [63.477434074, 15.114320133, 6.018009394, 5.627342326, 6.932920615
+04157e-310, 0.0])
 i = 8
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (320, [134.468687
-05749512, 13.709656000137329], [(9.148340940475464, 3.731125e-6), (6.708739
-995956421, 2.8811111111111112e-6), (1.8238129615783691, 6.6918e-6), (1.2925
-90856552124, 2.9422222222222224e-6)], [232.614231251, 37.522447003, 708.104
-014101, 15.672748538, 0.0, 0.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (320, [130.688011
+88468933, 13.417443037033081], [(9.157923936843872, 3.7175e-6), (6.75036001
+2054443, 2.872222222222222e-6), (1.8190960884094238, 6.6898e-6), (1.2695951
+461791992, 2.7666666666666667e-6)], [225.376160136, 37.490679803, 691.16569
+5078, 15.751121688, 6.933411200904e-310, 0.0])
 i = 9
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (480, [289.499886
-9895935, 26.12455415725708], [(15.540345907211304, 4.957142857142857e-6), (
-13.654967069625854, 4.414285714285714e-6), (3.123401165008545, 1.048e-5), (
-2.0350289344787598, 3.99125e-6)], [NaN, 74.496868262, 1019.132778099, 29.39
-3975915, 0.0, 0.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (480, [287.543391
+9429779, 25.967813968658447], [(15.729976892471313, 5.008571428571429e-6), 
+(13.706848859786987, 4.202857142857143e-6), (3.1184518337249756, 1.067e-5),
+ (2.041027784347534, 3.807375e-6)], [NaN, 74.083536544, 1124.12989534, 29.6
+72775982, 6.93340785564324e-310, 0.0])
 i = 10
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (640, [509.362639
-9040222, 42.22642707824707], [(24.05473303794861, 6.8418e-6), (23.368275880
-8136, 5.575e-6), (4.7924699783325195, 1.398e-5), (3.154301881790161, 4.9884
-285714285715e-6)], [NaN, 129.040213618, 1417.789624887, 47.34372148, 0.0, 0
-.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (640, [505.415444
+1356659, 42.58011317253113], [(23.8085880279541, 7.235e-6), (23.20954608917
+2363, 5.543333333333333e-6), (4.765592098236084, 1.405e-5), (3.106063842773
+4375, 4.867142857142857e-6)], [NaN, 128.875196977, 50.47081678, 47.46351479
+, 6.93292885930157e-310, 0.0])
 i = 11
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (800, [805.937857
-1510315, 63.43535113334656], [(32.89255499839783, 9.53e-6), (34.83532094955
-444, 7.9475e-6), (6.813961982727051, 1.801e-5), (4.755764007568359, 6.124e-
-6)], [NaN, 199.941472818, 1668.026679541, 69.65302959, 0.0, 0.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (800, [790.740155
+9352875, 63.33401894569397], [(33.86630606651306, 8.753333333333333e-6), (3
+4.726746797561646, 7.2025e-6), (6.826775074005127, 1.8939e-5), (4.750951051
+712036, 6.0358e-6)], [NaN, 199.213984222, 73.178372499, 70.010584632, 6.932
+92885930157e-310, 0.0])
 i = 12
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (960, [1153.62579
-98943329, 87.65668392181396], [(45.437236070632935, 1.0989e-5), (49.7637848
-85406494, 8.506666666666666e-6), (9.157440900802612, 2.266e-5), (6.05051207
-5424194, 7.24725e-6)], [NaN, 288.214211957, 2300.042330477, 95.561478644, 0
-.0, 0.0])
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (960, [1182.72596
+00162506, 87.36770105361938], [(46.008294105529785, 1.028e-5), (49.95633387
+565613, 8.413e-6), (9.157351970672607, 2.229e-5), (5.986469030380249, 7.072
+5e-6)], [NaN, 286.433907765, 99.543006641, 95.52865317, 6.93292885930157e-3
+10, 0.0])
 i = 13
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (1280, [2110.2113
-17062378, 154.8036229610443], [(98.2301139831543, 1.548e-5), (87.4291980266
-571, 1.247e-5), (15.198065996170044, 3.283e-5), (9.495388984680176, 9.7e-6)
-], [NaN, 517.869309401, 168.224003154, 160.544748449, 0.0, 0.0])</code></pre><h2 id="Time-OpenModelica"><a class="docs-heading-anchor" href="#Time-OpenModelica">Time OpenModelica</a><a id="Time-OpenModelica-1"></a><a class="docs-heading-anchor-permalink" href="#Time-OpenModelica" title="Permalink"></a></h2><pre><code class="language-julia hljs">using OMJulia, CSV, DataFrames
+(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (1280, [2081.7286
+74888611, 149.68114018440247], [(80.78474998474121, 1.5e-5), (84.6537148952
+4841, 1.312e-5), (15.200731039047241, 3.121e-5), (9.591964960098267, 9.39e-
+6)], [NaN, 514.878249892, 2415.990648537, 161.98639423, 6.93292885930157e-3
+10, 0.0])</code></pre><h2 id="Time-OpenModelica"><a class="docs-heading-anchor" href="#Time-OpenModelica">Time OpenModelica</a><a id="Time-OpenModelica-1"></a><a class="docs-heading-anchor-permalink" href="#Time-OpenModelica" title="Permalink"></a></h2><pre><code class="language-julia hljs">using OMJulia, CSV, DataFrames
 mod = OMJulia.OMCSession();
 OMJulia.sendExpression(mod, &quot;getVersion()&quot;)
 OMJulia.sendExpression(mod, &quot;installPackage(Modelica)&quot;)
@@ -439,19 +442,19 @@ N = 800
 N = 960
 N = 1280
 13-element Vector{Float64}:
-   3.99423483
-   3.308105467
-   4.706554361
-   7.427430168
-  10.79646555
-  14.943083923
-  31.306508268
-  63.727349272
-  98.615241426
- 138.579467038
- 178.063988846
- 217.839062791
- 326.192014487</code></pre><h2 id="Time-Dymola"><a class="docs-heading-anchor" href="#Time-Dymola">Time Dymola</a><a id="Time-Dymola-1"></a><a class="docs-heading-anchor-permalink" href="#Time-Dymola" title="Permalink"></a></h2><p>Dymola requires a license server and thus cannot be hosted. This was run locally for the following times:</p><pre><code class="language-julia hljs">translation_and_total_times = [1.802 1.921
+   4.061331753
+   3.292081722
+   4.748625756
+   7.500634154
+  10.626450391
+  14.281581077
+  29.763898517
+  63.152113815
+  95.423511509
+ 134.849210707
+ 174.468341929
+ 216.715510548
+ 331.668169903</code></pre><h2 id="Time-Dymola"><a class="docs-heading-anchor" href="#Time-Dymola">Time Dymola</a><a id="Time-Dymola-1"></a><a class="docs-heading-anchor-permalink" href="#Time-Dymola" title="Permalink"></a></h2><p>Dymola requires a license server and thus cannot be hosted. This was run locally for the following times:</p><pre><code class="language-julia hljs">translation_and_total_times = [1.802 1.921
                                1.78 1.846
                                1.84 1.877
                                2.028 2.075
@@ -519,7 +522,7 @@ Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
   JULIA_PKG_SERVER = juliahub.com
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [336ed68f] CSV v0.10.14
 ⌅ [13f3f980] CairoMakie v0.11.11
@@ -530,13 +533,13 @@ Environment:
   [961ee093] ModelingToolkit v9.19.0
   [16a59e39] ModelingToolkitStandardLibrary v2.7.2
   [0f4fe800] OMJulia v0.3.2
-  [1dea7af3] OrdinaryDiffEq v6.83.1
+  [1dea7af3] OrdinaryDiffEq v6.83.2
   [f27b6e38] Polynomials v4.0.11
   [ba661fbb] PreferenceTools v0.1.2
   [31c91b34] SciMLBenchmarks v0.1.3
   [0c5d862f] Symbolics v5.30.3
   [95ff35a0] XSteam v0.3.0 `https://github.com/hzgzh/XSteam.jl.git#f2a1c58`
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
   [47edcb42] ADTypes v1.3.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -587,7 +590,7 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [864edb3b] DataStructures v0.18.20
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v1.0.3
-  [2b5f629d] DiffEqBase v6.151.3
+  [2b5f629d] DiffEqBase v6.151.4
   [459566f4] DiffEqCallbacks v3.6.2
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
@@ -706,7 +709,7 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [6fe1bfb0] OffsetArrays v1.14.0
   [52e1d378] OpenEXR v0.3.2
   [bac558e1] OrderedCollections v1.6.3
-  [1dea7af3] OrdinaryDiffEq v6.83.1
+  [1dea7af3] OrdinaryDiffEq v6.83.2
   [90014a1f] PDMats v0.11.31
   [f57f5aa1] PNGFiles v0.4.3
   [65ce6f38] PackageExtensionCompat v1.0.2
@@ -922,4 +925,4 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../RCCircuit/">« RC Circuit</a><a class="docs-footer-nextpage" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 15 June 2024 12:34">Saturday 15 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../RCCircuit/">« RC Circuit</a><a class="docs-footer-nextpage" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Sunday 16 June 2024 10:31">Sunday 16 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
