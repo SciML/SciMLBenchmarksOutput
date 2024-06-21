@@ -11,8 +11,8 @@ using Pkg
 # Rev fixes precompilation https://github.com/hzgzh/XSteam.jl/pull/2
 Pkg.add(Pkg.PackageSpec(;name="XSteam", rev="f2a1c589054cfd6bba307985a3a534b6f5a1863b"))
 
-using ModelingToolkit, JuliaSimCompiler, Symbolics, XSteam, Polynomials, BenchmarkTools, CairoMakie
-using OMJulia, OrdinaryDiffEq
+using ModelingToolkit, JuliaSimCompiler, Symbolics, XSteam, Polynomials, BenchmarkTools, CairoMakie, OrdinaryDiffEq
+using OMJulia
 ```
 
 
@@ -260,190 +260,107 @@ function build_system(fsys, N)
   return time() - t0, sys
 end
 
-function compile_run_problem(sys; target=JuliaSimCompiler.JuliaTarget())
+function compile_run_problem(sys; target=JuliaSimCompiler.JuliaTarget(), solver=FBDF(;autodiff = target===JuliaSimCompiler.JuliaTarget()), duref=nothing)
   tspan = (0.0, 19 * 3600.0)
   t0 = time()
-  if target === JuliaSimCompiler.JuliaTarget()
-    prob = ODEProblem(sys, [], tspan, sparse=true)
-    (; f, u0, p) = prob
-    ff = f.f
+  prob = if target === JuliaSimCompiler.JuliaTarget()
+    ODEProblem(sys, [], tspan; sparse = true)
   else
-    prob = ODEProblem(sys, target, [], tspan, sparse=true)
-    (; f, u0, p) = prob
-    ff = f
+    ODEProblem(sys, target, [], tspan; sparse = true)
   end
-  prob.u0 .= 12.0
+  (; f, u0, p) = prob
+  fill!(u0, 12.0)
+  ff = f.f
   du = similar(u0)
   ff(du, u0, p, 0.0)
   t_fode = time() - t0
+  duref === nothing || @assert duref ≈ du
   t_run = @belapsed $ff($du, $u0, $p, 0.0)
-  t_fode, t_run
+  t_solve = @elapsed sol = solve(prob, solver; reltol=1e-6, abstol=1e-6, saveat=100)
+  @assert SciMLBase.successful_retcode(sol)
+  (t_fode, t_run, t_solve), du
 end
 
-function build_run_problem(fsys, N; target=JuliaSimCompiler.JuliaTarget())
-  t_ss, sys = build_system(fsys, N)
-  t_fode, t_run = compile_run_problem(sys; target)
-  t_ss, t_fode, t_run
-end
+const C = JuliaSimCompiler.CTarget();
+const LLVM = JuliaSimCompiler.llvm.LLVMTarget();
 
-function test_speed(fsys, N; target=JuliaSimCompiler.JuliaTarget(), solver=FBDF(;autodiff = target===JuliaSimCompiler.JuliaTarget()))
-    tspan = (0.0, 19*3600)
-    t_total = @elapsed begin
-        @named testbench = TestBenchPreinsulated(L=470, N=N, dn=0.3127, t_layer=[0.0056, 0.058])
-        sys = structural_simplify(fsys(testbench))
-        if target === JuliaSimCompiler.JuliaTarget()
-            prob = ODEProblem(sys, [], tspan, sparse=true)
-        else
-            prob = ODEProblem(sys, target, [], tspan, sparse=true)
-        end
-        prob.u0 .= 12.0
-        solve(prob, solver, reltol=1e-6, abstol=1e-6, saveat=100);
-    end
-end
-```
-
-```
-test_speed (generic function with 1 method)
-```
-
-
-
-```julia
-N_x = [5, 10, 20, 40, 60, 80, 160, 320, 480, 640, 800, 960, 1280];
-N_states = 4 .* N_x; # x-axis for plots
-ss_times = Matrix{Float64}(undef, length(N_x), 2);
-times = Matrix{NTuple{2,Float64}}(undef, length(N_x), 4);
-total_times = Matrix{Float64}(undef, length(N_x), 6);
-```
-
-
-
-
-## Time Julia
-
-```julia
-using JuliaSimCompiler: IRSystem
-const MTKSystem = identity
-const CBackend = JuliaSimCompiler.CTarget();
-const LLVMBackend = JuliaSimCompiler.llvm.LLVMTarget();
-
-@time build_run_problem(MTKSystem, 4)
-@time build_run_problem(IRSystem, 4)
-@time build_run_problem(IRSystem, 4; target=CBackend)
-@time build_run_problem(IRSystem, 4; target=LLVMBackend)
-
-@show "Start Julia Timings"
-
-
-for (i, N_x_i) in enumerate(N_x)
-  @show i
-  ss_times[i, 1], sys_mtk = build_system(MTKSystem, N_x_i)
-  ss_times[i, 2], sys_jsir = build_system(IRSystem, N_x_i)
-  times[i, 1] = compile_run_problem(sys_mtk)
-  times[i, 2] = compile_run_problem(sys_jsir)
-  times[i, 3] = compile_run_problem(sys_jsir, target=CBackend)
-  times[i, 4] = compile_run_problem(sys_jsir, target=LLVMBackend)
-
-  if N_x_i >= 480
-    total_times[i, 1] = NaN
-  else
-    total_times[i, 1] = test_speed(MTKSystem, N_x_i)
+function run_and_time_julia!(ss_times, times, max_sizes, i, N)
+  @named testbench = TestBenchPreinsulated(L=470, N=N, dn=0.3127, t_layer=[0.0056, 0.058])
+  if N <= max_sizes[1]
+    ss_times[i, 1] = @elapsed sys_mtk = structural_simplify(testbench)
+    times[i, 1], _ = compile_run_problem(sys_mtk)
   end
-  total_times[i, 2] = test_speed(IRSystem, N_x_i)
-  total_times[i, 3] = test_speed(IRSystem, N_x_i, target=CBackend)
-  total_times[i, 4] = test_speed(IRSystem, N_x_i, target=LLVMBackend)
-
-  @show N_x_i, ss_times[i, :], times[i, :], total_times[i, :]
+  ss_times[i, 2] = @elapsed sys_jsir_scalar = structural_simplify(IRSystem(testbench), loop=false)
+  oderef = daeref = nothing
+  N <= max_sizes[2] && ((times[i, 2], oderef) = compile_run_problem(sys_jsir_scalar; duref = oderef))
+  N <= max_sizes[3] && ((times[i, 3], oderef) = compile_run_problem(sys_jsir_scalar; target=C, duref = oderef))
+  N <= max_sizes[4] && ((times[i, 4], oderef) = compile_run_problem(sys_jsir_scalar; target=LLVM, duref = oderef))
+  for j = 1:4
+    ss_time = ss_times[i, 1 + (j>1)] 
+    t_fode, t_run, t_solve = times[i, j]
+    total_times[i, j] = ss_time + t_fode + t_solve
+  end
 end
 ```
 
 ```
-33.198522 seconds (27.96 M allocations: 1.830 GiB, 14.32% gc time, 84.19% 
-compilation time: 16% of which was recompilation)
- 12.020686 seconds (1.87 M allocations: 117.287 MiB, 32.26% gc time, 59.17%
- compilation time: 87% of which was recompilation)
-  6.718405 seconds (2.11 M allocations: 137.180 MiB, 57.67% gc time, 25.10%
+run_and_time_julia! (generic function with 1 method)
+```
+
+
+
+```julia
+N = [5, 10, 20, 40, 60, 80, 160, 320, 480, 640, 800, 960, 1280];
+N_states = 4 .* N; # x-axis for plots
+# max size we test per method
+max_sizes = [480, last(N), last(N), last(N), last(N)];
+# NaN-initialize so Makie will ignore incomplete
+ss_times = fill(NaN, length(N), 2);
+times = fill((NaN,NaN,NaN), length(N), length(max_sizes) - 1);
+total_times = fill(NaN, length(N), length(max_sizes));
+```
+
+
+
+
+## Julia Timings
+
+```julia
+@time run_and_time_julia!(ss_times, times, max_sizes, 1, 4); # precompile
+for (i, n) in enumerate(N)
+  @time run_and_time_julia!(ss_times, times, max_sizes, i, n)
+end
+```
+
+```
+81.032078 seconds (74.71 M allocations: 4.944 GiB, 21.26% gc time, 75.68% 
+compilation time: 19% of which was recompilation)
+ 23.483636 seconds (6.95 M allocations: 456.538 MiB, 66.29% gc time, 15.49%
  compilation time)
-  9.986777 seconds (7.26 M allocations: 513.556 MiB, 39.53% gc time, 49.82%
- compilation time: 26% of which was recompilation)
-"Start Julia Timings" = "Start Julia Timings"
-i = 1
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (5, [0.1989490985
-8703613, 0.0926051139831543], [(0.18858098983764648, 3.111991701244813e-7),
- (0.11128997802734375, 3.226521739130435e-7), (0.11758708953857422, 3.84373
-13432835823e-7), (0.03362703323364258, 3.1837179487179485e-7)], [5.00289090
-3, 4.561241792, 3.299816437, 2.739431145, 3.6073928455e-313, NaN])
-i = 2
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (10, [0.474277019
-5007324, 0.211622953414917], [(0.24669098854064941, 3.394954128440367e-7), 
-(0.14435100555419922, 3.578047619047619e-7), (0.13306379318237305, 4.539543
-147208122e-7), (0.04325294494628906, 3.449490740740741e-7)], [1.168060164, 
-3.183172756, 0.348424098, 0.262952721, 3.6073928455e-313, NaN])
-i = 3
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (20, [1.215207815
-170288, 0.35616207122802734], [(0.40187692642211914, 4.117035175879397e-7),
- (0.22843503952026367, 4.355e-7), (0.15959906578063965, 6.456303030303031e-
-7), (0.06496787071228027, 5.632378378378378e-7)], [2.561281698, 3.834668884
-, 0.605316655, 0.499055566, 3.6073928455e-313, NaN])
-i = 4
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (40, [3.214808940
-887451, 0.8029677867889404], [(0.7080411911010742, 5.841933701657459e-7), (
-0.4376199245452881, 6.040056497175141e-7), (0.24638605117797852, 1.085e-6),
- (0.1181180477142334, 6.180346820809249e-7)], [6.658834541, 5.679809722, 1.
-183623124, 1.010304625, 3.6073928455e-313, -4.3625658594924623e307])
-i = 5
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (60, [6.144654989
-242554, 1.2864398956298828], [(1.1321220397949219, 7.71e-7), (0.67377805709
-83887, 7.654867256637168e-7), (0.34900403022766113, 1.469e-6), (0.185041904
-4494629, 8.347866666666667e-7)], [12.635938663, 6.071452608, 1.803702894, 1
-.625793694, 3.6073928455e-313, -2.052268307113775e-289])
-i = 6
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (80, [10.16492199
-8977661, 1.8065459728240967], [(1.6801879405975342, 9.362999999999999e-7), 
-(0.9385302066802979, 9.223529411764707e-7), (0.4512209892272949, 1.83690000
-00000001e-6), (0.2454218864440918, 1.0239e-6)], [19.657390277, 7.525165451,
- 2.537460171, 2.293641856, 3.6073928455e-313, NaN])
-i = 7
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (160, [35.7531259
-059906, 4.747786998748779], [(4.069071054458618, 1.972e-6), (2.308790922164
-917, 1.57e-6), (0.8529140949249268, 3.504875e-6), (0.5553121566772461, 1.78
-89000000000001e-6)], [61.78757596, 15.188500066, 6.051918921, 5.725248084, 
-2.970794107435e-312, -1.1049932511121723e301])
-i = 8
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (320, [131.980910
-06278992, 13.333730220794678], [(9.147820949554443, 3.79625e-6), (6.6845731
-73522949, 2.918777777777778e-6), (1.812615156173706, 6.404e-6), (1.27333307
-26623535, 2.773222222222222e-6)], [226.280278111, 37.310356764, 16.14947876
-1, 15.610087162, 2.94957415013e-312, 1.491667591244966e-154])
-i = 9
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (480, [285.943650
-96092224, 25.63252592086792], [(15.54723596572876, 4.954285714285715e-6), (
-13.541914939880371, 4.561428571428571e-6), (3.1213419437408447, 1.051e-5), 
-(2.0507469177246094, 3.938625e-6)], [NaN, 75.166221701, 30.549579703, 29.50
-0184011, 3.6073928455e-313, NaN])
-i = 10
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (640, [503.053776
-0257721, 42.23684215545654], [(24.205760955810547, 6.7898e-6), (23.21709990
-5014038, 5.741666666666667e-6), (4.771465063095093, 1.425e-5), (3.135158777
-2369385, 5.073333333333333e-6)], [NaN, 128.256425899, 49.728709926, 48.5624
-53469, 3.6073928455e-313, -2.436328502113458e289])
-i = 11
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (800, [778.517599
-105835, 61.73047614097595], [(32.78227400779724, 8.67e-6), (34.776195049285
-89, 7.1975e-6), (6.779656887054443, 1.828e-5), (4.709866046905518, 6.018333
-333333333e-6)], [NaN, 199.325448464, 72.230312995, 70.514090075, NaN, NaN])
-i = 12
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (960, [1148.80409
-59835052, 86.51736116409302], [(45.63860201835632, 1.022e-5), (49.560915946
-96045, 8.273333333333334e-6), (9.136137962341309, 2.273e-5), (5.99373602867
-1265, 7.8975e-6)], [NaN, 286.764650833, 99.483657274, 96.444589414, -3.9999
-999962783472, NaN])
-i = 13
-(N_x_i, ss_times[i, :], times[i, :], total_times[i, :]) = (1280, [2071.2985
-00061035, 148.6521279811859], [(88.26865601539612, 1.444e-5), (84.128849983
-21533, 1.14e-5), (15.107736825942993, 3.037e-5), (9.563118934631348, 1.077e
--5)], [NaN, 515.099579294, 166.951901634, 162.214001972, NaN, -4.4501477087
-33451e-308])
+ 24.644603 seconds (9.37 M allocations: 620.950 MiB, 63.63% gc time, 16.37%
+ compilation time)
+ 27.527477 seconds (15.03 M allocations: 933.326 MiB, 57.43% gc time, 18.56
+% compilation time)
+ 33.806188 seconds (29.87 M allocations: 1.937 GiB, 47.68% gc time, 23.01% 
+compilation time)
+ 41.703920 seconds (49.12 M allocations: 3.111 GiB, 41.45% gc time, 26.00% 
+compilation time)
+ 50.121150 seconds (72.88 M allocations: 4.888 GiB, 35.22% gc time, 29.09% 
+compilation time)
+108.102280 seconds (211.63 M allocations: 14.612 GiB, 18.74% gc time, 30.89
+% compilation time)
+308.358188 seconds (703.02 M allocations: 51.220 GiB, 8.62% gc time, 30.08%
+ compilation time)
+682.165613 seconds (1.48 G allocations: 93.242 GiB, 5.29% gc time, 38.92% c
+ompilation time)
+190.690741 seconds (129.33 M allocations: 8.192 GiB, 11.09% gc time, 56.11%
+ compilation time)
+279.200533 seconds (171.46 M allocations: 11.154 GiB, 8.73% gc time, 59.99%
+ compilation time)
+388.576759 seconds (217.13 M allocations: 14.236 GiB, 7.13% gc time, 62.60%
+ compilation time)
+660.484191 seconds (321.63 M allocations: 19.844 GiB, 4.79% gc time, 66.48%
+ compilation time)
 ```
 
 
@@ -462,8 +379,9 @@ resultfile = "modelica_res.csv"
 
 @show "Start OpenModelica Timings"
 
-for i in 1:length(N_x)
-    N = N_x[i]
+for i in 1:length(N)
+    N = N[i]
+    N > max_sizes[end] && break
     @show N
     totaltime = @elapsed res = begin
         @sync ModelicaSystem(mod, modelicafile, "DhnControl.Test.test_preinsulated_470_$N")
@@ -480,33 +398,7 @@ total_times[:, 5]
 
 ```
 "Start OpenModelica Timings" = "Start OpenModelica Timings"
-N = 5
-N = 10
-N = 20
-N = 40
-N = 60
-N = 80
-N = 160
-N = 320
-N = 480
-N = 640
-N = 800
-N = 960
-N = 1280
-13-element Vector{Float64}:
-   3.849348833
-   3.259036541
-   4.74488808
-   7.484547418
-  10.960451732
-  13.769452916
-  28.910636281
-  63.735067507
-  96.915945898
- 134.094504869
- 176.25995787
- 216.671297649
- 326.0734292
+Error: UndefVarError: `N` not defined
 ```
 
 
@@ -532,24 +424,12 @@ translation_and_total_times = [1.802 1.921
                                9.707 14.393
                                11.411 17.752
                                15.094 27.268]
-total_times[:, 6] = translation_and_total_times[1:length(N_x),2]
+total_times[:, 6] = translation_and_total_times[1:length(N),2]
 ```
 
 ```
-13-element Vector{Float64}:
-  1.921
-  1.846
-  1.877
-  2.075
-  2.283
-  2.496
-  3.427
-  5.577
-  8.128
- 11.026
- 14.393
- 17.752
- 27.268
+Error: BoundsError: attempt to access 13×5 Matrix{Float64} at index [1:13, 
+6]
 ```
 
 
@@ -559,27 +439,36 @@ total_times[:, 6] = translation_and_total_times[1:length(N_x),2]
 ## Generate Final Plots
 
 ```julia
-f = Figure(size = (800, 1200));
+f = Figure(size=(800,1200));
+ss_names = ["MTK", "JSIR-Scalar", "JSIR-Loop"];
 let ax = Axis(f[1, 1]; yscale = log10, xscale = log10, title="Structural Simplify Time")
-  names = ["MTK", "JSIR"]
   _lines = map(eachcol(ss_times)) do ts
-    lines!(N_states, ts)
+    lines!(N, ts)
   end
-  Legend(f[1,2], _lines, names)
+  Legend(f[1,2], _lines, ss_names)
 end
-for (i, timecat) in enumerate(("ODEProblem + f!", "Run"))
+method_names = ["MTK", "JSIR - Scalar - Julia", "JSIR - Scalar - C", "JSIR - Scalar - LLVM", "JSIR - Loop - Julia", "JSIR - Loop - C", "JSIR - Loop - LLVM"];
+for (i, timecat) in enumerate(("ODEProblem + f!", "Run", "Solve"))
   title = timecat * " Time"
   ax = Axis(f[i+1, 1]; yscale = log10, xscale = log10, title)
-  names = ["MTK", "JSIR - Julia", "JSIR - C", "JSIR - LLVM"]
   _lines = map(eachcol(times)) do ts
-    lines!(N_states, getindex.(ts, i))
+    lines!(N, getindex.(ts, i))
   end
-  Legend(f[i+1,2], _lines, names)
+  Legend(f[i+1, 2], _lines, method_names)
+end
+let method_names_m = vcat(method_names, "OpenModelica");
+  ax = Axis(f[5, 1]; yscale = log10, xscale = log10, title = "Total Time")
+  _lines = map(Base.Fix1(lines!, N), eachcol(total_times))
+  Legend(f[5, 2], _lines, method_names_m)
 end
 f
 ```
 
-![](figures/ThermalFluid_7_1.png)
+```
+Error: Number of elements not equal: 2 content elements and 3 labels.
+```
+
+
 
 ```julia
 f2 = Figure(size = (800, 400));
@@ -594,7 +483,12 @@ Legend(f2[1,2], _lines, names)
 f2
 ```
 
-![](figures/ThermalFluid_8_1.png)
+```
+Error: BoundsError: attempt to access 13×5 Matrix{Float64} at index [1:13, 
+6]
+```
+
+
 
 
 
@@ -636,7 +530,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [336ed68f] CSV v0.10.14
 ⌅ [13f3f980] CairoMakie v0.11.11
@@ -659,7 +553,7 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
   [47edcb42] ADTypes v1.4.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5

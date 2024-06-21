@@ -45,7 +45,8 @@ function compile_run_problem(sys, u0, ps; target=JuliaSimCompiler.JuliaTarget(),
   t_fode = time() - t0
   duref === nothing || @assert duref ≈ du
   t_run = @belapsed $ff($du, $u0, $p, 0.0)
-  t_solve = @elapsed solve(prob, Rodas5(autodiff = false))
+  t_solve = @elapsed sol = solve(prob, Rodas5(autodiff = false))
+  @assert SciMLBase.successful_retcode(sol)
   (t_fode, t_run, t_solve), du
 end
 
@@ -87,6 +88,9 @@ total_times = fill(NaN, length(N), length(max_sizes));
 
 
 @time run_and_time_julia!(ss_times, times, max_sizes, 1, 4); # precompile
+for (i, n) in enumerate(N)
+  @time run_and_time_julia!(ss_times, times, max_sizes, i, n)
+end
 
 
 # OMJ
@@ -106,9 +110,9 @@ end
 
 function run_and_time_om!(ss_times, times, max_sizes, i, n)
   run_and_time_julia!(ss_times, times, max_sizes, i, n)
-  if n <= max_sizes[8]
-    total_times[i, 8] = time_open_modelica(n)
-  end 
+  if n <= max_sizes[end]
+    total_times[i, end] = time_open_modelica(n)
+  end
   @views println("n = $(n)\nstructural_simplify_times = $(ss_times[i,:])\ncomponent times = $(times[i, :])\ntotal times = $(total_times[i, :])")
 end
 
@@ -120,17 +124,31 @@ OMJulia.quit(omod)
 
 
 translation_and_total_times = [
-7.027, 7.237
-11.295, 11.798
-16.681, 17.646
-22.125, 23.839
-27.529, 29.82
-33.282, 36.622
-39.007, 43.088
-44.825, 51.601
-50.281, 56.676
-] # TODO: I will add other times once the Dymola license server is back up.
-#total_times[:, 6] = translation_and_total_times[1:length(N_x),2]
+  5 2.428 2.458
+  10 2.727 2.757
+  20 1.764 1.797
+  40 1.849 1.885
+  60 1.953 1.995
+  80 2.041 2.089
+  160 2.422 2.485
+  320 3.157 3.258
+  480 3.943 4.092
+  640 4.718 4.912
+  800 5.531 5.773
+  1000 6.526 6.826
+  2000 11.467 12.056
+  3000 16.8 17.831
+  4000 22.355 24.043
+  5000 27.768 30.083
+  6000 33.561 36.758
+  7000 39.197 43.154
+  8000 45.194 52.153
+  9000 50.689 57.187
+  10000 NaN NaN
+  20000 NaN NaN
+]
+
+total_times[:, 9] = translation_and_total_times[:,3]
 
 
 f = Figure(size=(800,1200));
@@ -156,6 +174,18 @@ let method_names_m = vcat(method_names, "OpenModelica");
   Legend(f[5, 2], _lines, method_names_m)
 end
 f
+
+
+f2 = Figure(size = (800, 400));
+title = "Total Time: RC Circuit Benchmark"
+ax = Axis(f2[1, 1]; yscale = log10, xscale = log10, title)
+names = ["MTK", "JSIR - Scalar - Julia", "JSIR - Scalar - C", "JSIR - Scalar - LLVM", "JSIR - Loop - Julia", "JSIR - Loop - C", "JSIR - Loop - LLVM", "OpenModelica", "Dymola"]
+_lines = map(enumerate(names)) do (j, label)
+    ts = @view(total_times[:, j])
+    lines!(N_states, ts)
+end
+Legend(f2[1,2], _lines, names)
+f2
 
 
 using SciMLBenchmarks
