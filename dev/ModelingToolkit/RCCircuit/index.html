@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>RC Circuit · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/ModelingToolkit/RCCircuit/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li class="is-active"><a class="tocitem" href>RC Circuit</a><ul class="internal"><li><a class="tocitem" href="#Setup-Model-Code"><span>Setup Model Code</span></a></li><li><a class="tocitem" href="#Julia-Timings"><span>Julia Timings</span></a></li><li><a class="tocitem" href="#OpenModelica-Timings"><span>OpenModelica Timings</span></a></li><li><a class="tocitem" href="#Dymola-Timings"><span>Dymola Timings</span></a></li><li><a class="tocitem" href="#Results"><span>Results</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li><li><a class="tocitem" href="#Appendix-2"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</a></li><li class="is-active"><a href>RC Circuit</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>RC Circuit</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/ModelingToolkit/RCCircuit.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="RC-Circuit"><a class="docs-heading-anchor" href="#RC-Circuit">RC Circuit</a><a id="RC-Circuit-1"></a><a class="docs-heading-anchor-permalink" href="#RC-Circuit" title="Permalink"></a></h1><p>When a model is defined using repeated components, JuliaSimCompiler is able to take advantage of this  to scale efficiently by rerolling equations into loops. This option can be disabled by setting <code>loop=false</code>.  Here, we build an RC circuit model with variable numbers of components to show scaling of compile and  runtimes of MTK vs JuliaSimCompiler&#39;s three backends with and without loop rerolling.</p><h2 id="Setup-Model-Code"><a class="docs-heading-anchor" href="#Setup-Model-Code">Setup Model Code</a><a id="Setup-Model-Code-1"></a><a class="docs-heading-anchor-permalink" href="#Setup-Model-Code" title="Permalink"></a></h2><pre><code class="language-julia hljs">using JuliaSimCompiler, ModelingToolkit, OrdinaryDiffEq, BenchmarkTools, ModelingToolkitStandardLibrary, OMJulia, CairoMakie
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>RC Circuit · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/ModelingToolkit/RCCircuit/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li class="is-active"><a class="tocitem" href>RC Circuit</a><ul class="internal"><li><a class="tocitem" href="#Setup-Model-Code"><span>Setup Model Code</span></a></li><li><a class="tocitem" href="#Julia-Timings"><span>Julia Timings</span></a></li><li><a class="tocitem" href="#OpenModelica-Timings"><span>OpenModelica Timings</span></a></li><li><a class="tocitem" href="#Dymola-Timings"><span>Dymola Timings</span></a></li><li><a class="tocitem" href="#Results"><span>Results</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li><li><a class="tocitem" href="#Appendix-2"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</a></li><li class="is-active"><a href>RC Circuit</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>RC Circuit</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/ModelingToolkit/RCCircuit.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="RC-Circuit"><a class="docs-heading-anchor" href="#RC-Circuit">RC Circuit</a><a id="RC-Circuit-1"></a><a class="docs-heading-anchor-permalink" href="#RC-Circuit" title="Permalink"></a></h1><p>When a model is defined using repeated components, JuliaSimCompiler is able to take advantage of this to scale efficiently by rerolling equations into loops. This option can be disabled by setting <code>loop=false</code>. Here, we build an RC circuit model with variable numbers of components to show scaling of compile and runtimes of MTK vs JuliaSimCompiler&#39;s three backends with and without loop rerolling.</p><h2 id="Setup-Model-Code"><a class="docs-heading-anchor" href="#Setup-Model-Code">Setup Model Code</a><a id="Setup-Model-Code-1"></a><a class="docs-heading-anchor-permalink" href="#Setup-Model-Code" title="Permalink"></a></h2><pre><code class="language-julia hljs">using JuliaSimCompiler, ModelingToolkit, OrdinaryDiffEq, BenchmarkTools, ModelingToolkitStandardLibrary, OMJulia, CairoMakie
 using ModelingToolkitStandardLibrary.Blocks
 using ModelingToolkitStandardLibrary.Electrical</code></pre><pre><code class="language-julia hljs"># ModelingToolkit and JuliaSimCompiler
 const t = Blocks.t
@@ -42,7 +42,8 @@ function compile_run_problem(sys, u0, ps; target=JuliaSimCompiler.JuliaTarget(),
   t_fode = time() - t0
   duref === nothing || @assert duref ≈ du
   t_run = @belapsed $ff($du, $u0, $p, 0.0)
-  t_solve = @elapsed solve(prob, Rodas5(autodiff = false))
+  t_solve = @elapsed sol = solve(prob, Rodas5(autodiff = false))
+  @assert SciMLBase.successful_retcode(sol)
   (t_fode, t_run, t_solve), du
 end
 
@@ -77,8 +78,55 @@ max_sizes = [4_000, 8_000, 20_000, 20_000, 20_000, 20_000, 20_000, 9000];
 # NaN-initialize so Makie will ignore incomplete
 ss_times = fill(NaN, length(N), 3);
 times = fill((NaN,NaN,NaN), length(N), length(max_sizes) - 1);
-total_times = fill(NaN, length(N), length(max_sizes));</code></pre><h2 id="Julia-Timings"><a class="docs-heading-anchor" href="#Julia-Timings">Julia Timings</a><a id="Julia-Timings-1"></a><a class="docs-heading-anchor-permalink" href="#Julia-Timings" title="Permalink"></a></h2><pre><code class="language-julia hljs">@time run_and_time_julia!(ss_times, times, max_sizes, 1, 4); # precompile</code></pre><pre><code class="nohighlight hljs">95.546495 seconds (77.56 M allocations: 5.154 GiB, 29.70% gc time, 69.90% 
-compilation time: 17% of which was recompilation)</code></pre><h2 id="OpenModelica-Timings"><a class="docs-heading-anchor" href="#OpenModelica-Timings">OpenModelica Timings</a><a id="OpenModelica-Timings-1"></a><a class="docs-heading-anchor-permalink" href="#OpenModelica-Timings" title="Permalink"></a></h2><pre><code class="language-julia hljs"># OMJ
+total_times = fill(NaN, length(N), length(max_sizes));</code></pre><h2 id="Julia-Timings"><a class="docs-heading-anchor" href="#Julia-Timings">Julia Timings</a><a id="Julia-Timings-1"></a><a class="docs-heading-anchor-permalink" href="#Julia-Timings" title="Permalink"></a></h2><pre><code class="language-julia hljs">@time run_and_time_julia!(ss_times, times, max_sizes, 1, 4); # precompile
+for (i, n) in enumerate(N)
+  @time run_and_time_julia!(ss_times, times, max_sizes, i, n)
+end</code></pre><pre><code class="nohighlight hljs">95.060365 seconds (77.56 M allocations: 5.152 GiB, 29.31% gc time, 71.57% 
+compilation time: 17% of which was recompilation)
+ 34.067946 seconds (8.05 M allocations: 573.906 MiB, 75.79% gc time, 20.22%
+ compilation time)
+ 35.840852 seconds (8.95 M allocations: 638.196 MiB, 72.56% gc time, 21.58%
+ compilation time)
+ 39.226433 seconds (10.22 M allocations: 739.001 MiB, 66.74% gc time, 23.78
+% compilation time)
+ 43.565027 seconds (11.90 M allocations: 878.780 MiB, 60.74% gc time, 24.97
+% compilation time)
+ 42.456314 seconds (13.95 M allocations: 1.022 GiB, 62.44% gc time, 19.71% 
+compilation time)
+ 43.692318 seconds (16.43 M allocations: 1.218 GiB, 61.42% gc time, 20.23% 
+compilation time)
+ 51.663559 seconds (27.85 M allocations: 2.110 GiB, 53.96% gc time, 21.80% 
+compilation time)
+ 64.666327 seconds (58.94 M allocations: 4.868 GiB, 45.85% gc time, 29.77% 
+compilation time)
+ 86.456868 seconds (102.81 M allocations: 9.292 GiB, 36.51% gc time, 34.83%
+ compilation time)
+115.256269 seconds (157.19 M allocations: 15.093 GiB, 28.14% gc time, 38.62
+% compilation time)
+147.721987 seconds (227.45 M allocations: 24.855 GiB, 24.12% gc time, 40.36
+% compilation time)
+196.890289 seconds (337.69 M allocations: 44.832 GiB, 19.35% gc time, 42.91
+% compilation time)
+574.050074 seconds (1.21 G allocations: 231.227 GiB, 11.24% gc time, 41.16%
+ compilation time)
+1225.027705 seconds (2.68 G allocations: 582.995 GiB, 10.66% gc time, 41.62
+% compilation time)
+2188.420006 seconds (4.79 G allocations: 1.370 TiB, 9.48% gc time, 39.32% c
+ompilation time)
+478.164751 seconds (306.34 M allocations: 51.822 GiB, 10.64% gc time, 36.14
+% compilation time)
+667.145908 seconds (388.36 M allocations: 69.539 GiB, 8.77% gc time, 36.69%
+ compilation time)
+892.120137 seconds (480.67 M allocations: 90.071 GiB, 7.52% gc time, 37.06%
+ compilation time)
+1141.224521 seconds (584.19 M allocations: 112.767 GiB, 6.34% gc time, 38.0
+0% compilation time)
+812.579032 seconds (670.41 M allocations: 131.841 GiB, 8.18% gc time, 0.59%
+ compilation time)
+1020.240090 seconds (784.96 M allocations: 157.064 GiB, 7.47% gc time, 0.47
+% compilation time)
+4697.079714 seconds (2.38 G allocations: 550.116 GiB, 9.43% gc time, 0.11% 
+compilation time)</code></pre><h2 id="OpenModelica-Timings"><a class="docs-heading-anchor" href="#OpenModelica-Timings">OpenModelica Timings</a><a id="OpenModelica-Timings-1"></a><a class="docs-heading-anchor-permalink" href="#OpenModelica-Timings" title="Permalink"></a></h2><pre><code class="language-julia hljs"># OMJ
 const omod = OMJulia.OMCSession();
 OMJulia.sendExpression(omod, &quot;getVersion()&quot;)
 OMJulia.sendExpression(omod, &quot;installPackage(Modelica)&quot;)
@@ -95,9 +143,9 @@ end
 
 function run_and_time_om!(ss_times, times, max_sizes, i, n)
   run_and_time_julia!(ss_times, times, max_sizes, i, n)
-  if n &lt;= max_sizes[8]
-    total_times[i, 8] = time_open_modelica(n)
-  end 
+  if n &lt;= max_sizes[end]
+    total_times[i, end] = time_open_modelica(n)
+  end
   @views println(&quot;n = $(n)\nstructural_simplify_times = $(ss_times[i,:])\ncomponent times = $(times[i, :])\ntotal times = $(total_times[i, :])&quot;)
 end
 
@@ -106,296 +154,299 @@ for (i, n) in enumerate(N)
 end
 
 OMJulia.quit(omod)</code></pre><pre><code class="nohighlight hljs">n = 5
-structural_simplify_times = [0.05518826, 0.022739219, 0.041090126]
-component times = [(0.13246917724609375, 1.494889779559118e-8, 0.286530282)
-, (0.07136702537536621, 1.4958917835671342e-8, 2.478129788), (0.10112714767
-456055, 9.588588588588589e-9, 0.003792798), (0.007173061370849609, 9.758758
-758758759e-9, 0.003732299), (0.15090489387512207, 1.5269539078156315e-8, 3.
-491980435), (0.09948515892028809, 9.188188188188188e-9, 0.00817041), (0.009
-956121444702148, 8.097097097097096e-9, 0.00813101)]
-total times = [0.47418771924609376, 2.572236032375366, 0.12765916467456057,
- 0.03364457937084961, 3.683975454875122, 0.14874569492028808, 0.05917725744
-470215, 2.954400141]
- 39.279630 seconds (8.78 M allocations: 624.386 MiB, 70.40% gc time, 19.08%
- compilation time)
+structural_simplify_times = [0.033981386, 0.02310792, 0.02058203]
+component times = [(0.006783008575439453, 1.494889779559118e-8, 0.004071979
+), (0.0008909702301025391, 1.4958917835671342e-8, 0.003950999), (0.10380101
+203918457, 9.708708708708709e-9, 0.003776771), (0.008275985717773438, 9.758
+758758758759e-9, 0.003607362), (0.00131988525390625, 1.5269539078156315e-8,
+ 0.008569614), (0.11103200912475586, 9.248248248248248e-9, 0.007982528), (0
+.011085987091064453, 8.107107107107107e-9, 0.008003467)]
+total times = [0.04483637357543946, 0.02794988923010254, 0.1306857030391846
+, 0.034991267717773444, 0.03047152925390625, 0.13959656712475585, 0.0396714
+84091064455, 3.21979717]
+ 42.347309 seconds (2.12 M allocations: 177.688 MiB, 87.36% gc time, 2.18% 
+compilation time)
 n = 10
-structural_simplify_times = [0.215591517, 0.038588966, 0.049542295]
-component times = [(0.17216110229492188, 2.9878391959799e-8, 0.332115756), 
-(0.08027100563049316, 2.9878391959799e-8, 2.49637388), (0.10598206520080566
-, 1.494889779559118e-8, 0.004028766), (0.008874893188476562, 1.294589178356
-7135e-8, 0.003943327), (0.15511393547058105, 3.3795568982880166e-8, 4.22995
-1702), (0.10334897041320801, 1.1991991991991992e-8, 0.010618744), (0.012449
-979782104492, 1.1981981981981982e-8, 0.010329637)]
-total times = [0.7198683752949219, 2.615233851630493, 0.14859979720080566, 
-0.05140718618847656, 4.434607932470581, 0.16351000941320804, 0.072321911782
-1045, 1.982799094]
- 39.601548 seconds (8.95 M allocations: 638.508 MiB, 70.12% gc time, 19.62%
- compilation time)
+structural_simplify_times = [0.057422783, 0.038911857, 0.029218082]
+component times = [(0.009752988815307617, 2.9878391959799e-8, 0.005239519),
+ (0.0013549327850341797, 2.9878391959799e-8, 0.004295087), (0.1138339042663
+5742, 1.494889779559118e-8, 0.004055619), (0.009258031845092773, 1.31663326
+6533066e-8, 0.003982429), (0.0014889240264892578, 3.4681772406847937e-8, 0.
+011279342), (0.11723589897155762, 1.198098098098098e-8, 0.010578988), (0.01
+3159990310668945, 1.198098098098098e-8, 0.01033385)]
+total times = [0.07241529081530762, 0.044561876785034184, 0.156801380266357
+43, 0.05215231784509278, 0.041986348026489255, 0.15703296897155763, 0.05271
+192231066894, 2.182626895]
+ 40.687446 seconds (1.71 M allocations: 154.413 MiB, 89.08% gc time, 0.38% 
+compilation time)
 n = 20
-structural_simplify_times = [1.065358344, 0.069613048, 0.066062828]
-component times = [(0.17611098289489746, 5.972505091649695e-8, 0.422378079)
-, (0.10022306442260742, 7.226002055498458e-8, 2.462756953), (0.106279850006
-10352, 2.3904618473895583e-8, 0.004893077), (0.011860847473144531, 1.793486
-973947896e-8, 0.004886566), (0.16359901428222656, 5.945926680244399e-8, 4.1
-37942112), (0.10674214363098145, 2.572334004024145e-8, 0.698927481), (0.014
-166116714477539, 2.541608040201005e-8, 0.015723649)]
-total times = [1.6638474058948975, 2.6325930654226073, 0.18078597500610352,
- 0.08636046147314452, 4.3676039542822265, 0.8717324526309815, 0.09595259371
-447754, 2.583098313]
- 43.425232 seconds (10.22 M allocations: 738.993 MiB, 64.33% gc time, 21.18
-% compilation time)
+structural_simplify_times = [0.139670103, 0.071317175, 0.046861776]
+component times = [(0.017641067504882812, 5.972403258655804e-8, 0.006682497
+), (0.002317190170288086, 7.226002055498458e-8, 0.005922893), (0.1120231151
+5808105, 2.3904618473895583e-8, 0.00511391), (0.012360811233520508, 1.78446
+89378757514e-8, 0.005596776), (0.0018188953399658203, 5.976476578411406e-8,
+ 0.018757914), (0.11292290687561035, 2.6281407035175878e-8, 0.016175734), (
+0.015657901763916016, 2.621105527638191e-8, 0.016512892)]
+total times = [0.1639936675048828, 0.07955725817028808, 0.18845420015808106
+, 0.0892747622335205, 0.06743858533996583, 0.17596041687561034, 0.079032569
+76391601, 2.783421487]
+ 43.166292 seconds (2.41 M allocations: 219.954 MiB, 84.53% gc time, 0.35% 
+compilation time)
 n = 40
-structural_simplify_times = [3.138969731, 0.135922912, 0.100936142]
-component times = [(0.23941993713378906, 1.1943674367436743e-7, 0.643281981
-), (0.14612412452697754, 1.5077615571776156e-7, 2.449591466), (0.1206099987
-0300293, 3.8829637096774194e-8, 0.006635768), (0.01755690574645996, 3.22726
-3581488933e-8, 0.007097583), (0.16363191604614258, 1.0900860215053764e-7, 4
-.119402996), (0.11011409759521484, 4.153279515640767e-8, 0.024781301), (0.0
-17561912536621094, 4.6194331983805666e-8, 0.025353535)]
-total times = [4.021671649133789, 2.7316385025269776, 0.2631686787030029, 0
-.16057740074645996, 4.3839710540461425, 0.23583154059521486, 0.143851589536
-6211, 3.835601392]
- 49.034253 seconds (11.90 M allocations: 879.139 MiB, 57.53% gc time, 21.92
-% compilation time)
+structural_simplify_times = [0.269374843, 0.138668011, 0.081837073]
+component times = [(0.033735036849975586, 1.1943784378437845e-7, 0.01215796
+5), (0.0045490264892578125, 1.492931873479319e-7, 0.007154914), (0.12576198
+57788086, 3.8829637096774194e-8, 0.006763558), (0.018291950225830078, 3.212
+1730382293764e-8, 0.007007175), (0.0025119781494140625, 1.0694098712446352e
+-7, 0.035672902), (0.1134030818939209, 4.077699293642785e-8, 0.028691946), 
+(0.018354177474975586, 4.614271255060729e-8, 0.028933205)]
+total times = [0.31526784484997555, 0.15037195148925783, 0.2711935547788086
+3, 0.1639671362258301, 0.12002195314941405, 0.22393210089392088, 0.12912445
+547497559, 3.633088578]
+ 46.313295 seconds (3.92 M allocations: 356.028 MiB, 78.25% gc time, 0.32% 
+compilation time)
 n = 60
-structural_simplify_times = [0.419843596, 0.203308751, 0.135503864]
-component times = [(0.3083639144897461, 1.8214306569343066e-7, 0.899335723)
-, (0.20055890083312988, 2.292923076923077e-7, 2.493266269), (0.141886949539
-18457, 5.375532994923858e-8, 0.008593798), (0.02448105812072754, 4.66016177
-95753284e-8, 0.008900434), (0.16384601593017578, 1.5857070707070707e-7, 4.1
-32249319), (0.11400604248046875, 6.124260958205912e-8, 0.035768105), (0.019
-985198974609375, 6.479979570990806e-8, 0.03427044)]
-total times = [1.627543233489746, 2.89713392083313, 0.35378949853918457, 0.
-23669024312072756, 4.431599198930176, 0.2852780114804688, 0.189759502974609
-36, 4.687076965]
- 48.840495 seconds (13.97 M allocations: 1.023 GiB, 57.94% gc time, 16.90% 
+structural_simplify_times = [0.424783903, 0.206617111, 0.118076321]
+component times = [(0.04959702491760254, 1.8214452554744525e-7, 0.019114611
+), (0.006783962249755859, 2.292945054945055e-7, 0.009472386), (0.1442639827
+7282715, 5.375532994923858e-8, 0.008777471), (0.025300025939941406, 4.66016
+17795753284e-8, 0.008900871), (0.0030770301818847656, 1.585719696969697e-7,
+ 0.052170494), (0.11850905418395996, 6.124387755102042e-8, 0.037831015), (0
+.020692110061645508, 6.479979570990806e-8, 0.037349469)]
+total times = [0.49349553891760256, 0.22287345924975585, 0.3596585647728271
+5, 0.2408180079399414, 0.17332384518188476, 0.27441639018395997, 0.17611790
+00616455, 4.911054312]
+ 49.017502 seconds (5.60 M allocations: 508.304 MiB, 74.07% gc time, 0.31% 
 compilation time)
 n = 80
-structural_simplify_times = [0.597569411, 0.268343916, 0.169688916]
-component times = [(0.40868186950683594, 2.465518134715026e-7, 1.236240549)
-, (0.2605311870574951, 3.069595141700405e-7, 2.4486737), (0.152465105056762
-7, 6.867725409836065e-8, 0.010294249), (0.031223058700561523, 6.18236493374
-108e-8, 0.01018612), (0.1647341251373291, 2.0399655172413793e-7, 4.18765054
-3), (0.1150820255279541, 8.215440414507772e-8, 0.045598892), (0.01859998703
-0029297, 8.064012409513961e-8, 0.044964999)]
-total times = [2.242491829506836, 2.9775488030574953, 0.4311032700567627, 0
-.30975309470056156, 4.522073584137329, 0.3303698335279541, 0.23325390203002
-93, 5.862800556]
- 51.326561 seconds (16.43 M allocations: 1.217 GiB, 55.92% gc time, 16.98% 
+structural_simplify_times = [0.614942272, 0.27734528, 0.157855621]
+component times = [(0.06767797470092773, 2.4670725388601034e-7, 0.03089117)
+, (0.009732961654663086, 3.069595141700405e-7, 0.01416167), (0.163599967956
+54297, 6.867725409836065e-8, 0.011889507), (0.03313899040222168, 6.13751274
+2099898e-8, 0.011768338), (0.0039060115814208984, 2.028188034188034e-7, 0.0
+57304074), (0.11437082290649414, 8.18538860103627e-8, 0.050866464), (0.0190
+5202865600586, 7.960599793174768e-8, 0.051238691)]
+total times = [0.7135114167009277, 0.30123991165466313, 0.452834754956543, 
+0.3222526084022217, 0.2190657065814209, 0.32309290790649414, 0.228146340656
+00586, 5.845899975]
+ 50.643142 seconds (7.50 M allocations: 680.032 MiB, 72.09% gc time, 0.30% 
 compilation time)
 n = 160
-structural_simplify_times = [1.624325623, 0.565483012, 0.332116414]
-component times = [(0.8655838966369629, 5.810939226519336e-7, 2.997950519),
- (0.532310962677002, 6.171560693641618e-7, 2.468828061), (0.291132211685180
-66, 1.2837612612612614e-7, 0.018024688), (0.06329989433288574, 1.2092707182
-32044e-7, 0.018856509), (0.17552900314331055, 4.1130150753768847e-7, 4.2168
-20959), (0.13750100135803223, 1.4487799043062202e-7, 0.088198452), (0.03262
-901306152344, 1.5708634020618555e-7, 0.098586752)]
-total times = [5.487860038636963, 3.566622035677002, 0.8746399116851806, 0.
-6476394153328857, 4.72446637614331, 0.5578158673580322, 0.46333217906152346
-, 9.980749618]
- 62.527646 seconds (27.90 M allocations: 2.114 GiB, 46.28% gc time, 17.72% 
-compilation time)
+structural_simplify_times = [1.669808116, 0.584487598, 0.354976106]
+component times = [(0.1398458480834961, 5.80767955801105e-7, 0.085661622), 
+(0.021522045135498047, 6.171618497109827e-7, 0.020482801), (0.2953460216522
+217, 1.2838851351351352e-7, 0.01924388), (0.06477499008178711, 1.2092707182
+32044e-7, 0.020166793), (0.0064928531646728516, 4.05845e-7, 0.162307146), (
+0.1280829906463623, 1.4814234016887817e-7, 0.147307333), (0.033468961715698
+24, 1.6490666666666667e-7, 0.146338109)]
+total times = [1.895315586083496, 0.6264924441354981, 0.8990774996522217, 0
+.6694293810817872, 0.5237761051646729, 0.6303664296463624, 0.53478317671569
+83, 10.598486605]
+ 60.381242 seconds (16.57 M allocations: 1.447 GiB, 61.05% gc time, 0.25% c
+ompilation time)
 n = 320
-structural_simplify_times = [5.89501311, 1.274740935, 1.419513605]
-component times = [(2.2326488494873047, 1.2659e-6, 8.796096988), (1.3927078
-247070312, 1.2429e-6, 2.48997457), (0.4974689483642578, 3.702864077669903e-
-7, 0.029798685), (0.13277316093444824, 2.403863080684597e-7, 0.029513639), 
-(0.1746218204498291, 7.941134020618557e-7, 4.477697392), (0.146022081375122
-07, 2.7854827586206895e-7, 0.207517753), (0.03171992301940918, 2.9393560606
-060605e-7, 0.20608165)]
-total times = [16.923758947487308, 5.157423329707031, 1.802008568364258, 1.
-4370277349344482, 6.071832817449828, 1.773053439375122, 1.657315178019409, 
-19.700193116]
- 85.834373 seconds (59.05 M allocations: 4.875 GiB, 36.64% gc time, 22.00% 
-compilation time)
+structural_simplify_times = [5.282423512, 1.292588281, 0.678365755]
+component times = [(0.2915670871734619, 1.2669e-6, 0.232844167), (0.0578269
+95849609375, 1.2439e-6, 0.03844887), (0.4976370334625244, 3.702864077669903
+e-7, 0.03216337), (0.13651299476623535, 2.468435207823961e-7, 0.032262809),
+ (0.011306047439575195, 7.95041237113402e-7, 0.329729812), (0.1401879787445
+0684, 2.794103448275862e-7, 0.310024484), (0.03231096267700195, 2.942386363
+636364e-7, 0.310474521)]
+total times = [5.806834766173462, 1.3888641468496095, 1.8223886844625243, 1
+.4613640847662355, 1.0194016144395752, 1.1285782177445067, 1.02115123867700
+19, 21.33876508]
+ 75.091643 seconds (43.15 M allocations: 3.993 GiB, 49.74% gc time, 0.20% c
+ompilation time)
 n = 480
-structural_simplify_times = [11.903967083, 2.22706488, 1.098359761]
-component times = [(4.610155820846558, 2.0276666666666667e-6, 17.16104471),
- (2.624868869781494, 1.8669e-6, 2.501528533), (0.75229811668396, 7.01878378
-3783783e-7, 0.054781568), (0.21060395240783691, 3.599e-7, 0.053433253), (0.
-18068909645080566, 1.1979e-6, 4.514903994), (0.17043590545654297, 4.2421608
-040201003e-7, 0.360230808), (0.0383908748626709, 4.3736868686868687e-7, 0.3
-66627195)]
-total times = [33.675167613846554, 7.353462282781495, 3.03414456468396, 2.4
-91102085407837, 5.793952851450806, 1.629026474456543, 1.5033778308626708, 3
-0.631878948]
-117.876938 seconds (102.96 M allocations: 9.302 GiB, 27.95% gc time, 25.03%
- compilation time)
+structural_simplify_times = [11.101114201, 2.109274013, 1.036267725]
+component times = [(0.44783496856689453, 2.0276666666666667e-6, 0.594032052
+), (0.1135869026184082, 1.868e-6, 0.070588159), (0.7518398761749268, 6.9310
+13513513514e-7, 0.060438669), (0.21352505683898926, 3.599043062200957e-7, 0
+.059182612), (0.017043113708496094, 1.197e-6, 0.420707365), (0.157953023910
+52246, 4.196934673366834e-7, 0.385001951), (0.038710832595825195, 4.3847979
+7979798e-7, 0.385783115)]
+total times = [12.142981221566894, 2.293449074618408, 2.9215525581749264, 2
+.381981681838989, 1.4740182037084961, 1.5792226999105226, 1.460761672595825
+2, 34.629143146]
+ 98.114210 seconds (82.22 M allocations: 8.192 GiB, 39.01% gc time, 0.16% c
+ompilation time)
 n = 640
-structural_simplify_times = [20.810703875, 3.17111107, 1.432467692]
-component times = [(5.983338117599487, 2.6643333333333335e-6, 27.281326802)
-, (4.481451988220215, 2.5654444444444444e-6, 2.986079437), (1.0307090282440
-186, 1.0999e-6, 0.061684246), (0.2972700595855713, 4.855846153846154e-7, 0.
-059667717), (0.18858003616333008, 1.628e-6, 5.391790123), (0.19306206703186
-035, 6.372831325301205e-7, 1.16234752), (0.04333209991455078, 5.98870786516
-854e-7, 1.160895503)]
-total times = [54.075368794599484, 10.638642495220214, 4.263504344244019, 3
-.528048846585571, 7.012837851163329, 2.7878772790318602, 2.636695294914551,
- 46.042096734]
-162.369060 seconds (157.41 M allocations: 15.107 GiB, 21.32% gc time, 26.76
-% compilation time)
+structural_simplify_times = [19.359268858, 2.991614593, 1.541657987]
+component times = [(0.5791299343109131, 2.661e-6, 0.966915426), (0.19509601
+593017578, 2.4933333333333333e-6, 0.075387776), (1.0374150276184082, 1.105e
+-6, 0.063831136), (0.3025028705596924, 4.849179487179487e-7, 0.062359867), 
+(0.02333998680114746, 1.6299e-6, 1.244681844), (0.17233896255493164, 6.2573
+37278106508e-7, 1.227606986), (0.04414510726928711, 6.169884393063583e-7, 1
+.203463322)]
+total times = [20.905314218310913, 3.2620983849301757, 4.092860756618408, 3
+.3564773305596924, 2.8096798178011477, 2.941603935554932, 2.789266416269287
+, 48.617584213]
+127.005846 seconds (133.22 M allocations: 13.831 GiB, 31.07% gc time, 0.12%
+ compilation time)
 n = 800
-structural_simplify_times = [32.343664354, 4.202615398, 1.862044729]
-component times = [(9.226897954940796, 3.541125e-6, 39.041811091), (6.40599
-7037887573, 3.14125e-6, 2.546670778), (1.4051671028137207, 1.503e-6, 0.0682
-74004), (0.3932759761810303, 5.986966292134831e-7, 0.080219865), (0.1972999
-5727539062, 2.077777777777778e-6, 5.543345002), (0.21622490882873535, 7.900
-909090909091e-7, 1.117402209), (0.04918503761291504, 7.945729166666666e-7, 
-1.145638176)]
-total times = [80.6123733999408, 13.155283213887571, 5.676056504813721, 4.6
-7611123918103, 7.60268968827539, 3.195671846828735, 3.0568679426129153, 59.
-972617934]
-208.482062 seconds (227.74 M allocations: 24.875 GiB, 17.93% gc time, 28.46
-% compilation time)
+structural_simplify_times = [30.447668641, 4.024442346, 1.981982087]
+component times = [(0.7527458667755127, 3.54125e-6, 1.509378738), (0.281142
+9500579834, 3.154875e-6, 0.082553828), (1.395035982131958, 1.56090000000000
+02e-6, 0.077407969), (0.3784501552581787, 5.987022471910112e-7, 0.086522848
+), (0.02772212028503418, 2.068888888888889e-6, 1.204924875), (0.19809389114
+379883, 8.134767441860465e-7, 1.16424651), (0.04885292053222656, 7.91606060
+6060606e-7, 1.13725896)]
+total times = [32.709793245775515, 4.388139124057983, 5.496886297131958, 4.
+489415349258179, 3.2146290822850343, 3.3443224881437987, 3.1680939675322266
+, 60.443555436]
+154.552537 seconds (198.93 M allocations: 23.396 GiB, 26.61% gc time, 0.10%
+ compilation time)
 n = 1000
-structural_simplify_times = [50.889884932, 5.44317998, 2.59732945]
-component times = [(12.69747805595398, 4.741285714285715e-6, 58.770838045),
- (9.167510986328125, 4.019857142857142e-6, 2.586753251), (1.931828975677490
-2, 2.021111111111111e-6, 0.103741744), (0.508033037185669, 7.48917355371900
-8e-7, 0.101922897), (0.20104098320007324, 2.5898888888888886e-6, 6.32691415
-9), (0.24306511878967285, 1.0349e-6, 1.453108379), (0.05367088317871094, 9.
-945454545454546e-7, 1.444705269)]
-total times = [122.35820103295399, 17.197444217328126, 7.47875069967749, 6.
-053135914185669, 9.125284592200074, 4.293502947789673, 4.095705602178711, 7
-7.751756397]
-277.196470 seconds (338.02 M allocations: 44.854 GiB, 14.96% gc time, 30.03
-% compilation time)
+structural_simplify_times = [48.863202795, 5.290044567, 2.550387364]
+component times = [(1.0274229049682617, 4.741285714285715e-6, 2.179279622),
+ (0.43495607376098633, 4.021285714285714e-6, 0.132107923), (1.9038259983062
+744, 2.021111111111111e-6, 0.115981808), (0.49754786491394043, 7.5099166666
+66666e-7, 0.112945892), (0.034693002700805664, 2.5876666666666664e-6, 1.546
+746018), (0.23567700386047363, 9.99e-7, 1.462648782), (0.05429410934448242,
+ 9.833333333333334e-7, 1.436319167)]
+total times = [52.069905321968264, 5.8571085637609865, 7.309852373306274, 5
+.90053832391394, 4.131826384700806, 4.248713149860474, 4.041000640344483, 7
+6.500739115]
+194.914693 seconds (300.93 M allocations: 42.986 GiB, 21.95% gc time, 0.08%
+ compilation time)
 n = 2000
-structural_simplify_times = [220.874326634, 15.792124276, 7.373540614]
-component times = [(35.42388391494751, 9.449e-6, 176.250931615), (30.187686
-920166016, 8.713333333333333e-6, 2.773495157), (5.895612001419067, 4.748571
-428571429e-6, 0.194124184), (1.296724796295166, 1.513e-6, 0.169815683), (0.
-24277806282043457, 5.16e-6, 7.886863064), (0.37900781631469727, 2.017777777
-777778e-6, 3.466340749), (0.09320712089538574, 2.3554444444444443e-6, 3.501
-025407)]
-total times = [432.5491421639475, 48.75330635316601, 21.881860461419066, 17
-.258664755295165, 15.503181740820434, 11.218889179314697, 10.96777314189538
-5, 170.924909486]
-740.800559 seconds (1.21 G allocations: 231.271 GiB, 9.09% gc time, 31.93% 
+structural_simplify_times = [221.025125368, 15.346487861, 6.404196214]
+component times = [(3.573401927947998, 9.5e-6, 7.642603622), (1.59603905677
+7954, 8.603333333333335e-6, 0.239089567), (5.927300930023193, 4.6e-6, 0.215
+70178), (1.20278000831604, 1.5109e-6, 0.191021141), (0.07593202590942383, 5
+.145e-6, 3.409717714), (0.3573329448699951, 2.015555555555556e-6, 3.5622269
+46), (0.09829115867614746, 2.006666666666667e-6, 3.462238293)]
+total times = [232.241130917948, 17.181616484777955, 21.489490571023193, 16
+.74028901031604, 9.889845953909424, 10.323756104869995, 9.964725665676147, 
+165.614917471]
+502.045916 seconds (1.14 G allocations: 228.186 GiB, 13.09% gc time, 0.03% 
 compilation time)
 n = 3000
-structural_simplify_times = [537.889957817, 27.95505477, 13.537150026]
-component times = [(69.86440706253052, 1.531e-5, 393.524210178), (62.728893
-995285034, 1.327e-5, 2.970961395), (12.35828185081482, 6.856e-6, 0.34468647
-5), (2.242448091506958, 2.2598888888888887e-6, 0.326374591), (0.27985095977
-783203, 7.7375e-6, 11.684307367), (0.5808379650115967, 3.012375e-6, 6.78342
-8452), (0.16399312019348145, 3.03625e-6, 7.416144533)]
-total times = [1001.2785750575305, 93.65491016028504, 40.658023095814826, 3
-0.52387745250696, 25.501308352777833, 20.9014164430116, 21.11728767919348, 
-274.876588248]
-1494.121708 seconds (2.68 G allocations: 583.069 GiB, 8.87% gc time, 33.67%
- compilation time)
+structural_simplify_times = [532.683551648, 27.485157631, 11.169579168]
+component times = [(6.5608439445495605, 1.534e-5, 19.000910495), (3.5233170
+986175537, 1.332e-5, 0.37833182), (12.473193883895874, 7.13e-6, 0.340015559
+), (2.10502290725708, 2.339888888888889e-6, 0.335554994), (0.10830593109130
+86, 7.74e-6, 7.038402713), (0.5682981014251709, 3.0125e-6, 7.167054916), (0
+.13175487518310547, 3.055e-6, 7.080463409)]
+total times = [558.2453060875496, 31.386806549617553, 40.298367073895875, 2
+9.92573553225708, 18.31628781209131, 18.90493218542517, 18.381797452183108,
+ 264.805815615]
+973.835534 seconds (2.59 G allocations: 578.526 GiB, 9.48% gc time, 0.02% c
+ompilation time)
 n = 4000
-structural_simplify_times = [1045.341356004, 45.327920025, 20.196669251]
-component times = [(118.8598039150238, 2.111e-5, 663.142445236), (109.19558
-310508728, 1.799e-5, 3.050708869), (23.38352918624878, 1.014e-5, 0.42250194
-8), (3.574467182159424, 3.109875e-6, 0.434997497), (0.32120299339294434, 1.
-0369e-5, 22.01702986), (0.7862927913665771, 4.137e-6, 14.246735406), (0.201
-29179954528809, 7.1e-6, 16.853046654)]
-total times = [1827.3436051550239, 157.57421199908728, 69.13395115924878, 4
-9.33738470415942, 42.53490210439294, 35.22969744836658, 37.25100770454529, 
-386.504505106]
-2554.872684 seconds (4.79 G allocations: 1.370 TiB, 8.28% gc time, 33.38% c
+structural_simplify_times = [1141.532344323, 43.495822851, 17.463902844]
+component times = [(8.691088914871216, 2.1049e-5, 30.686265275), (5.6627590
+65628052, 1.797e-5, 0.477115347), (23.280557870864868, 9.49e-6, 0.432926589
+), (3.2567288875579834, 3.003625e-6, 0.440089371), (0.14641404151916504, 1.
+037e-5, 14.224420861), (0.8042140007019043, 4.054285714285714e-6, 15.406244
+825), (0.202437162399292, 4.1671428571428566e-6, 15.82855452)]
+total times = [1180.9096985128713, 49.63569726362805, 67.20930731086487, 47
+.19264110955798, 31.834737746519167, 33.6743616697019, 33.49489452639929, 3
+69.673304099]
+1770.507574 seconds (4.66 G allocations: 1.364 TiB, 12.51% gc time, 0.01% c
 ompilation time)
 n = 5000
-structural_simplify_times = [NaN, 67.519246382, 25.193888121]
-component times = [(NaN, NaN, NaN), (164.35363602638245, 2.302e-5, 3.043156
-42), (39.25832509994507, 1.203e-5, 0.462431937), (5.1279401779174805, 3.772
-375e-6, 0.463606508), (0.3564591407775879, 1.315e-5, 33.951314135), (0.8966
-259956359863, 5.04e-6, 31.893306081), (0.25438594818115234, 9.026e-6, 31.61
-7868971)]
-total times = [NaN, 234.91603882838245, 107.24000341894508, 73.110793067917
-48, 59.501661396777585, 57.983820197635985, 57.06614304018115, 520.99425323
-1]
-999.008094 seconds (307.99 M allocations: 51.932 GiB, 5.87% gc time, 16.28%
- compilation time)
+structural_simplify_times = [NaN, 61.912915944, 26.500846759]
+component times = [(NaN, NaN, NaN), (8.7880220413208, 2.375e-5, 0.546165651
+), (39.76599383354187, 1.2269e-5, 0.478385559), (4.700058221817017, 3.75e-6
+, 0.448681644), (0.18330001831054688, 1.3129e-5, 29.584489914), (0.85990309
+715271, 5.136666666666667e-6, 30.736650508), (0.25026583671569824, 5.138333
+333333333e-6, 32.05843833)]
+total times = [NaN, 71.24710363632079, 102.15729533654186, 67.0616558098170
+1, 56.26863669131055, 58.09740036415271, 58.8095509257157, 524.21961732]
+832.739474 seconds (294.49 M allocations: 51.163 GiB, 6.64% gc time, 0.02% 
+compilation time)
 n = 6000
-structural_simplify_times = [NaN, 91.683304207, 34.635309612]
-component times = [(NaN, NaN, NaN), (240.40730094909668, 2.748e-5, 3.125669
-927), (66.60277795791626, 1.488e-5, 0.561400873), (7.5638649463653564, 4.63
-1428571428571e-6, 0.541670955), (0.3872509002685547, 1.559e-5, 49.492943169
-), (0.9743750095367432, 6.2e-6, 45.109522085), (0.287473201751709, 6.218e-6
-, 44.64719772)]
-total times = [NaN, 335.21627508309666, 158.84748303791625, 99.788840108365
-36, 84.51550368126856, 80.71920670653674, 79.5699805337517, 711.617251365]
-1375.427394 seconds (390.34 M allocations: 69.668 GiB, 4.82% gc time, 17.09
-% compilation time)
+structural_simplify_times = [NaN, 84.283625039, 34.602120192]
+component times = [(NaN, NaN, NaN), (12.47948694229126, 2.753e-5, 0.6373699
+25), (66.93686103820801, 1.53e-5, 0.551393797), (6.567423105239868, 4.50285
+71428571434e-6, 0.527551518), (0.2154998779296875, 1.571e-5, 45.575738059),
+ (0.9927558898925781, 6.3258000000000005e-6, 46.235440869), (0.300415039062
+5, 6.456e-6, 47.724724693)]
+total times = [NaN, 97.40048190629126, 151.77187987420803, 91.3785996622398
+6, 80.39335812892969, 81.83031695089258, 82.6272599240625, 709.690143288]
+1135.016983 seconds (375.39 M allocations: 68.828 GiB, 5.65% gc time, 0.01%
+ compilation time)
 n = 7000
-structural_simplify_times = [NaN, 120.426794977, 44.377308373]
-component times = [(NaN, NaN, NaN), (316.5990569591522, 3.356e-5, 3.3854543
-79), (107.53122019767761, 1.982e-5, 0.71733064), (10.695920944213867, 5.248
-166666666667e-6, 0.743320954), (0.4663851261138916, 1.826e-5, 65.840244517)
-, (1.1562230587005615, 7.475e-6, 61.312887947), (0.2777900695800781, 7.825e
--6, 59.832287609)]
-total times = [NaN, 440.4113063151522, 228.6753458146776, 131.8660368752138
-7, 110.6839380161139, 106.84641937870056, 104.48738605158007, 971.520876081
-]
-1850.367421 seconds (483.06 M allocations: 90.232 GiB, 4.33% gc time, 16.55
-% compilation time)
+structural_simplify_times = [NaN, 111.799071199, 51.418812394]
+component times = [(NaN, NaN, NaN), (19.023529052734375, 3.225e-5, 0.799892
+103), (107.98412418365479, 1.755e-5, 0.726035852), (9.29972505569458, 5.246
+666666666667e-6, 0.751041902), (0.2598299980163574, 1.834e-5, 59.528222065)
+, (1.0888619422912598, 7.3675e-6, 62.107857077), (0.2705960273742676, 7.39e
+-6, 60.831327375)]
+total times = [NaN, 131.62249235473436, 220.50923123465478, 121.84983815669
+457, 111.20686445701637, 114.61553141329125, 112.52073579637427, 984.898208
+449]
+1553.118518 seconds (466.66 M allocations: 89.322 GiB, 5.40% gc time, 0.01%
+ compilation time)
 n = 8000
-structural_simplify_times = [NaN, 145.911983008, 67.006205845]
-component times = [(NaN, NaN, NaN), (418.21771812438965, 3.7459e-5, 3.58348
-1315), (165.7471580505371, 2.274e-5, 0.841470316), (15.204627990722656, 6.6
-178e-6, 0.825112933), (0.5190660953521729, 2.099e-5, 73.748209539), (1.3023
-350238800049, 8.476666666666666e-6, 72.888767827), (0.4053640365600586, 8.6
-86666666666666e-6, 70.430841259)]
-total times = [NaN, 567.7131824473896, 312.50061137453713, 161.941723931722
-66, 141.27348147935217, 141.19730869588, 137.84241114056005, 1300.583276042
-]
-2428.513258 seconds (586.83 M allocations: 112.939 GiB, 4.43% gc time, 16.4
-4% compilation time)
+structural_simplify_times = [NaN, 143.256798398, 78.710770915]
+component times = [(NaN, NaN, NaN), (26.334485054016113, 3.948e-5, 0.955326
+011), (164.8936059474945, 2.019e-5, 0.864694953), (12.81539797782898, 6.007
+8e-6, 0.806872734), (0.37008118629455566, 2.1009e-5, 67.012533441), (1.2679
+920196533203, 8.483333333333334e-6, 71.266065058), (0.33418703079223633, 8.
+356666666666666e-6, 76.398424837)]
+total times = [NaN, 170.54660946301613, 309.01509929849453, 156.87906910982
+898, 146.09338554229456, 151.2448279926533, 155.44338278279224, 1219.317590
+136]
+1954.432368 seconds (568.98 M allocations: 111.955 GiB, 5.76% gc time, 0.01
+% compilation time)
 n = 9000
-structural_simplify_times = [NaN, 177.088137549, 92.509073163]
-component times = [(NaN, NaN, NaN), (NaN, NaN, NaN), (233.3150269985199, 2.
-298e-5, 0.902238758), (16.525126934051514, 7.34475e-6, 1.116083825), (0.521
-4459896087646, 2.3559e-5, 88.011456831), (1.399533987045288, 9.8e-6, 79.704
-357009), (0.41392993927001953, 9.76e-6, 81.676320756)]
-total times = [NaN, NaN, 411.3054033055199, 194.72934830805153, 181.0419759
-8360878, 173.6129641590453, 174.59932385827, 1605.607525693]
-2458.333735 seconds (673.38 M allocations: 132.035 GiB, 4.69% gc time, 0.18
+structural_simplify_times = [NaN, 181.435447308, 132.474405985]
+component times = [(NaN, NaN, NaN), (NaN, NaN, NaN), (234.0702769756317, 2.
+4009e-5, 0.889693657), (16.160140991210938, 6.774e-6, 1.070875489), (0.3708
+51993560791, 2.363e-5, 80.036668976), (1.4198670387268066, 9.88e-6, 81.0187
+01228), (0.38471198081970215, 9.67e-6, 80.954473196)]
+total times = [NaN, NaN, 416.3954179406317, 198.66646378821093, 212.8819269
+545608, 214.9129742517268, 213.81359116181972, 1540.61913613]
+2431.298175 seconds (669.08 M allocations: 131.743 GiB, 6.35% gc time, 0.00
 % compilation time)
 n = 10000
-structural_simplify_times = [NaN, 236.297023307, 172.386631467]
-component times = [(NaN, NaN, NaN), (NaN, NaN, NaN), (307.291296005249, 2.8
-26e-5, 1.023961255), (20.568137884140015, 8.416666666666667e-6, 0.942808997
-), (0.6258459091186523, 2.635e-5, 88.35763041), (1.5679700374603271, 1.099e
--5, 83.546391706), (0.48456287384033203, 1.096e-5, 86.660297125)]
-total times = [NaN, NaN, 544.6122805672491, 257.80797018814, 261.3701077861
-1864, 257.5009932104603, 259.5314914658403, NaN]
-1085.687220 seconds (784.96 M allocations: 157.058 GiB, 18.64% gc time, 0.4
-6% compilation time)
+structural_simplify_times = [NaN, 239.646586513, 162.779812406]
+component times = [(NaN, NaN, NaN), (NaN, NaN, NaN), (310.49526810646057, 2
+.598e-5, 1.397213955), (22.367241144180298, 7.83475e-6, 1.42640671), (2.134
+7239017486572, 2.642e-5, 87.43908718), (1.5311260223388672, 1.778e-5, 91.92
+9685284), (0.4064350128173828, 1.09e-5, 92.149186395)]
+total times = [NaN, NaN, 551.5390685744605, 263.44023436718027, 252.3536234
+8774865, 256.24062371233885, 255.33543381381736, NaN]
+1099.059683 seconds (780.66 M allocations: 156.771 GiB, 19.47% gc time, 0.0
+1% compilation time)
 n = 20000
-structural_simplify_times = [NaN, 1427.818443366, 992.204607994]
-component times = [(NaN, NaN, NaN), (NaN, NaN, NaN), (1620.857882976532, 5.
-446e-5, 8.7844907), (286.16503286361694, 2.359e-5, 5.832236774), (3.1412730
-21697998, 5.351e-5, 266.505783308), (4.262267827987671, 2.27e-5, 246.032427
-563), (1.4358210563659668, 2.302e-5, 246.924437952)]
-total times = [NaN, NaN, 3057.4608170425317, 1719.815713003617, 1261.851664
-323698, 1242.4993033849876, 1240.5648670023659, NaN]
-5214.522824 seconds (2.38 G allocations: 550.116 GiB, 14.20% gc time, 0.09%
+structural_simplify_times = [NaN, 1538.397234518, 971.591408402]
+component times = [(NaN, NaN, NaN), (NaN, NaN, NaN), (1615.6314418315887, 5
+.495e-5, 8.862258218), (319.22835397720337, 2.2449e-5, 5.794852361), (2.920
+3879833221436, 5.3509e-5, 250.873855853), (6.23363184928894, 2.252e-5, 260.
+414485992), (3.0547780990600586, 2.231e-5, 242.272883297)]
+total times = [NaN, NaN, 3162.890934567589, 1863.4204408562034, 1225.385652
+238322, 1238.2395262432888, 1216.91906979806, NaN]
+5329.637855 seconds (2.38 G allocations: 549.829 GiB, 17.71% gc time, 0.00%
  compilation time)</code></pre><h2 id="Dymola-Timings"><a class="docs-heading-anchor" href="#Dymola-Timings">Dymola Timings</a><a id="Dymola-Timings-1"></a><a class="docs-heading-anchor-permalink" href="#Dymola-Timings" title="Permalink"></a></h2><p>Dymola requires a license server and thus cannot be hosted. This was run locally for the following times:</p><pre><code class="language-julia hljs">translation_and_total_times = [
-7.027, 7.237
-11.295, 11.798
-16.681, 17.646
-22.125, 23.839
-27.529, 29.82
-33.282, 36.622
-39.007, 43.088
-44.825, 51.601
-50.281, 56.676
-] # TODO: I will add other times once the Dymola license server is back up.
-#total_times[:, 6] = translation_and_total_times[1:length(N_x),2]</code></pre><pre><code class="nohighlight hljs">Error: ParseError:
-# Error @ /cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/
-benchmarks/ModelingToolkit/RCCircuit.jmd:4:1
-7.027, 7.237
-┌─────────────
-11.295, 11.798
-16.681, 17.646
-⋮
-44.825, 51.601
-50.281, 56.676
-#────────────┘ ── Expected `]`</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><pre><code class="language-julia hljs">f = Figure(size=(800,1200));
+  5 2.428 2.458
+  10 2.727 2.757
+  20 1.764 1.797
+  40 1.849 1.885
+  60 1.953 1.995
+  80 2.041 2.089
+  160 2.422 2.485
+  320 3.157 3.258
+  480 3.943 4.092
+  640 4.718 4.912
+  800 5.531 5.773
+  1000 6.526 6.826
+  2000 11.467 12.056
+  3000 16.8 17.831
+  4000 22.355 24.043
+  5000 27.768 30.083
+  6000 33.561 36.758
+  7000 39.197 43.154
+  8000 45.194 52.153
+  9000 50.689 57.187
+  10000 NaN NaN
+  20000 NaN NaN
+]
+
+total_times[:, 9] = translation_and_total_times[:,3]</code></pre><pre><code class="nohighlight hljs">Error: BoundsError: attempt to access 22×8 Matrix{Float64} at index [1:22, 
+9]</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><pre><code class="language-julia hljs">f = Figure(size=(800,1200));
 ss_names = [&quot;MTK&quot;, &quot;JSIR-Scalar&quot;, &quot;JSIR-Loop&quot;];
 let ax = Axis(f[1, 1]; yscale = log10, xscale = log10, title=&quot;Structural Simplify Time&quot;)
   _lines = map(eachcol(ss_times)) do ts
@@ -417,7 +468,16 @@ let method_names_m = vcat(method_names, &quot;OpenModelica&quot;);
   _lines = map(Base.Fix1(lines!, N), eachcol(total_times))
   Legend(f[5, 2], _lines, method_names_m)
 end
-f</code></pre><p><img src="../figures/RCCircuit_7_1.png" alt/></p><p>All three backends compiled more quickly with loops, but the C and LLVM backends are so much quicker to compile than the Julia backend that this made much less difference for them. The impact on runtime was more varied.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+f</code></pre><p><img src="../figures/RCCircuit_7_1.png" alt/></p><pre><code class="language-julia hljs">f2 = Figure(size = (800, 400));
+title = &quot;Total Time: RC Circuit Benchmark&quot;
+ax = Axis(f2[1, 1]; yscale = log10, xscale = log10, title)
+names = [&quot;MTK&quot;, &quot;JSIR - Scalar - Julia&quot;, &quot;JSIR - Scalar - C&quot;, &quot;JSIR - Scalar - LLVM&quot;, &quot;JSIR - Loop - Julia&quot;, &quot;JSIR - Loop - C&quot;, &quot;JSIR - Loop - LLVM&quot;, &quot;OpenModelica&quot;, &quot;Dymola&quot;]
+_lines = map(enumerate(names)) do (j, label)
+    ts = @view(total_times[:, j])
+    lines!(N_states, ts)
+end
+Legend(f2[1,2], _lines, names)
+f2</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `N_states` not defined</code></pre><p>All three backends compiled more quickly with loops, but the C and LLVM backends are so much quicker to compile than the Julia backend that this made much less difference for them. The impact on runtime was more varied.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/ModelingToolkit&quot;,&quot;RCCircuit.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.4
 Commit 48d4fd48430 (2024-06-04 10:41 UTC)
 Build Info:
@@ -433,7 +493,7 @@ Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
   JULIA_PKG_SERVER = juliahub.com
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [336ed68f] CSV v0.10.14
 ⌅ [13f3f980] CairoMakie v0.11.11
@@ -449,7 +509,7 @@ Environment:
   [ba661fbb] PreferenceTools v0.1.2
   [31c91b34] SciMLBenchmarks v0.1.3
   [0c5d862f] Symbolics v5.30.3
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
   [47edcb42] ADTypes v1.4.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -834,4 +894,4 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../NonStiffBVP/orbital/">« Orbital Dynamics BVP Benchmark</a><a class="docs-footer-nextpage" href="../ThermalFluid/">Thermal Fluid ODE Compilation and Perf »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Wednesday 19 June 2024 21:30">Wednesday 19 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Multibody_Robot/">« Multibody Robot, compilation and simulation performance</a><a class="docs-footer-nextpage" href="../ThermalFluid/">Thermal Fluid ODE Compilation and Perf »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 21 June 2024 11:06">Friday 21 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
