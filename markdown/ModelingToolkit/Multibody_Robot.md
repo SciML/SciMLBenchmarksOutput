@@ -191,7 +191,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [336ed68f] CSV v0.10.14
 ⌅ [13f3f980] CairoMakie v0.11.11
@@ -207,14 +207,15 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ba661fbb] PreferenceTools v0.1.2
   [31c91b34] SciMLBenchmarks v0.1.3
   [0c5d862f] Symbolics v5.30.3
+  [de0858da] Printf
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
-  [47edcb42] ADTypes v1.4.0
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
+  [47edcb42] ADTypes v1.5.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.36
@@ -276,7 +277,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [7c1d4256] DynamicPolynomials v0.5.7
 ⌅ [06fc5a27] DynamicQuantities v0.13.2
   [4e289a0a] EnumX v1.0.4
-  [f151be2c] EnzymeCore v0.7.5
+  [f151be2c] EnzymeCore v0.7.6
   [429591f6] ExactPredicates v2.2.8
   [d4d017d3] ExponentialUtilities v1.26.1
   [e2ba6199] ExprTools v0.1.10
@@ -350,7 +351,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [984bce1d] LambertW v0.4.6
   [23fbe1c1] Latexify v0.16.3
   [10f19ff3] LayoutPointers v0.1.15
-  [5078a376] LazyArrays v2.0.4
+  [5078a376] LazyArrays v2.0.5
   [8cdb02fc] LazyModules v0.3.1
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0

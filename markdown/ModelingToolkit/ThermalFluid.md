@@ -313,7 +313,7 @@ run_and_time_julia! (generic function with 1 method)
 N = [5, 10, 20, 40, 60, 80, 160, 320, 480, 640, 800, 960, 1280];
 N_states = 4 .* N; # x-axis for plots
 # max size we test per method
-max_sizes = [480, last(N), last(N), last(N), last(N)];
+max_sizes = [480, last(N), last(N), last(N), last(N), last(N)];
 # NaN-initialize so Makie will ignore incomplete
 ss_times = fill(NaN, length(N), 2);
 times = fill((NaN,NaN,NaN), length(N), length(max_sizes) - 1);
@@ -333,33 +333,33 @@ end
 ```
 
 ```
-81.032078 seconds (74.71 M allocations: 4.944 GiB, 21.26% gc time, 75.68% 
+80.486862 seconds (74.53 M allocations: 4.939 GiB, 21.08% gc time, 74.85% 
 compilation time: 19% of which was recompilation)
- 23.483636 seconds (6.95 M allocations: 456.538 MiB, 66.29% gc time, 15.49%
+ 23.815589 seconds (6.95 M allocations: 456.359 MiB, 66.93% gc time, 15.09%
  compilation time)
- 24.644603 seconds (9.37 M allocations: 620.950 MiB, 63.63% gc time, 16.37%
+ 24.889533 seconds (9.37 M allocations: 620.855 MiB, 64.05% gc time, 16.19%
  compilation time)
- 27.527477 seconds (15.03 M allocations: 933.326 MiB, 57.43% gc time, 18.56
+ 27.743762 seconds (15.04 M allocations: 934.693 MiB, 58.02% gc time, 18.35
 % compilation time)
- 33.806188 seconds (29.87 M allocations: 1.937 GiB, 47.68% gc time, 23.01% 
+ 34.114391 seconds (29.87 M allocations: 1.937 GiB, 48.22% gc time, 22.86% 
 compilation time)
- 41.703920 seconds (49.12 M allocations: 3.111 GiB, 41.45% gc time, 26.00% 
+ 41.904641 seconds (49.12 M allocations: 3.111 GiB, 42.00% gc time, 25.91% 
 compilation time)
- 50.121150 seconds (72.88 M allocations: 4.888 GiB, 35.22% gc time, 29.09% 
+ 50.246314 seconds (72.88 M allocations: 4.888 GiB, 35.70% gc time, 28.87% 
 compilation time)
-108.102280 seconds (211.63 M allocations: 14.612 GiB, 18.74% gc time, 30.89
+107.173753 seconds (211.62 M allocations: 14.610 GiB, 19.21% gc time, 31.22
 % compilation time)
-308.358188 seconds (703.02 M allocations: 51.220 GiB, 8.62% gc time, 30.08%
+303.441688 seconds (703.02 M allocations: 51.219 GiB, 8.91% gc time, 30.49%
  compilation time)
-682.165613 seconds (1.48 G allocations: 93.242 GiB, 5.29% gc time, 38.92% c
+669.479753 seconds (1.48 G allocations: 93.243 GiB, 5.53% gc time, 39.21% c
 ompilation time)
-190.690741 seconds (129.33 M allocations: 8.192 GiB, 11.09% gc time, 56.11%
+189.473522 seconds (129.33 M allocations: 8.192 GiB, 11.39% gc time, 56.10%
  compilation time)
-279.200533 seconds (171.46 M allocations: 11.154 GiB, 8.73% gc time, 59.99%
+278.416530 seconds (171.46 M allocations: 11.154 GiB, 8.79% gc time, 60.22%
  compilation time)
-388.576759 seconds (217.13 M allocations: 14.236 GiB, 7.13% gc time, 62.60%
+387.099705 seconds (217.12 M allocations: 14.236 GiB, 7.17% gc time, 62.91%
  compilation time)
-660.484191 seconds (321.63 M allocations: 19.844 GiB, 4.79% gc time, 66.48%
+662.352038 seconds (321.64 M allocations: 19.844 GiB, 4.86% gc time, 66.88%
  compilation time)
 ```
 
@@ -380,12 +380,12 @@ resultfile = "modelica_res.csv"
 @show "Start OpenModelica Timings"
 
 for i in 1:length(N)
-    N = N[i]
-    N > max_sizes[end] && break
-    @show N
+    _N = N[i]
+    _N > max_sizes[end] && break
+    @show _N
     totaltime = @elapsed res = begin
-        @sync ModelicaSystem(mod, modelicafile, "DhnControl.Test.test_preinsulated_470_$N")
-        sendExpression(mod, "simulate(DhnControl.Test.test_preinsulated_470_$N)")
+        @sync ModelicaSystem(mod, modelicafile, "DhnControl.Test.test_preinsulated_470_$(_N)")
+        sendExpression(mod, "simulate(DhnControl.Test.test_preinsulated_470_$(_N))")
     end
     #runtime = res["timeTotal"]
     @assert res["messages"][1:11] == "LOG_SUCCESS"
@@ -398,7 +398,33 @@ total_times[:, 5]
 
 ```
 "Start OpenModelica Timings" = "Start OpenModelica Timings"
-Error: UndefVarError: `N` not defined
+_N = 5
+_N = 10
+_N = 20
+_N = 40
+_N = 60
+_N = 80
+_N = 160
+_N = 320
+_N = 480
+_N = 640
+_N = 800
+_N = 960
+_N = 1280
+13-element Vector{Float64}:
+   3.729103188
+   3.521139208
+   4.737292557
+   7.613921743
+  10.672295223
+  13.906261689
+  28.105796592
+  62.865075594
+  96.790252241
+ 136.998925758
+ 175.09251794
+ 219.28177967
+ 334.435488391
 ```
 
 
@@ -428,8 +454,20 @@ total_times[:, 6] = translation_and_total_times[1:length(N),2]
 ```
 
 ```
-Error: BoundsError: attempt to access 13×5 Matrix{Float64} at index [1:13, 
-6]
+13-element Vector{Float64}:
+  1.921
+  1.846
+  1.877
+  2.075
+  2.283
+  2.496
+  3.427
+  5.577
+  8.128
+ 11.026
+ 14.393
+ 17.752
+ 27.268
 ```
 
 
@@ -456,11 +494,6 @@ for (i, timecat) in enumerate(("ODEProblem + f!", "Run", "Solve"))
   end
   Legend(f[i+1, 2], _lines, method_names)
 end
-let method_names_m = vcat(method_names, "OpenModelica");
-  ax = Axis(f[5, 1]; yscale = log10, xscale = log10, title = "Total Time")
-  _lines = map(Base.Fix1(lines!, N), eachcol(total_times))
-  Legend(f[5, 2], _lines, method_names_m)
-end
 f
 ```
 
@@ -483,12 +516,7 @@ Legend(f2[1,2], _lines, names)
 f2
 ```
 
-```
-Error: BoundsError: attempt to access 13×5 Matrix{Float64} at index [1:13, 
-6]
-```
-
-
+![](figures/ThermalFluid_8_1.png)
 
 
 
@@ -530,7 +558,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [336ed68f] CSV v0.10.14
 ⌅ [13f3f980] CairoMakie v0.11.11
@@ -547,14 +575,15 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [31c91b34] SciMLBenchmarks v0.1.3
   [0c5d862f] Symbolics v5.30.3
   [95ff35a0] XSteam v0.3.0 `https://github.com/hzgzh/XSteam.jl.git#f2a1c58`
+  [de0858da] Printf
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
-  [47edcb42] ADTypes v1.4.0
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
+  [47edcb42] ADTypes v1.5.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.36
@@ -616,7 +645,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [7c1d4256] DynamicPolynomials v0.5.7
 ⌅ [06fc5a27] DynamicQuantities v0.13.2
   [4e289a0a] EnumX v1.0.4
-  [f151be2c] EnzymeCore v0.7.5
+  [f151be2c] EnzymeCore v0.7.6
   [429591f6] ExactPredicates v2.2.8
   [d4d017d3] ExponentialUtilities v1.26.1
   [e2ba6199] ExprTools v0.1.10
@@ -690,7 +719,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [984bce1d] LambertW v0.4.6
   [23fbe1c1] Latexify v0.16.3
   [10f19ff3] LayoutPointers v0.1.15
-  [5078a376] LazyArrays v2.0.4
+  [5078a376] LazyArrays v2.0.5
   [8cdb02fc] LazyModules v0.3.1
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
