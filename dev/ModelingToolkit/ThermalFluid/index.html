@@ -286,40 +286,40 @@ function run_and_time_julia!(ss_times, times, max_sizes, i, N)
 end</code></pre><pre><code class="nohighlight hljs">run_and_time_julia! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">N = [5, 10, 20, 40, 60, 80, 160, 320, 480, 640, 800, 960, 1280];
 N_states = 4 .* N; # x-axis for plots
 # max size we test per method
-max_sizes = [480, last(N), last(N), last(N), last(N)];
+max_sizes = [480, last(N), last(N), last(N), last(N), last(N)];
 # NaN-initialize so Makie will ignore incomplete
 ss_times = fill(NaN, length(N), 2);
 times = fill((NaN,NaN,NaN), length(N), length(max_sizes) - 1);
 total_times = fill(NaN, length(N), length(max_sizes));</code></pre><h2 id="Julia-Timings"><a class="docs-heading-anchor" href="#Julia-Timings">Julia Timings</a><a id="Julia-Timings-1"></a><a class="docs-heading-anchor-permalink" href="#Julia-Timings" title="Permalink"></a></h2><pre><code class="language-julia hljs">@time run_and_time_julia!(ss_times, times, max_sizes, 1, 4); # precompile
 for (i, n) in enumerate(N)
   @time run_and_time_julia!(ss_times, times, max_sizes, i, n)
-end</code></pre><pre><code class="nohighlight hljs">81.032078 seconds (74.71 M allocations: 4.944 GiB, 21.26% gc time, 75.68% 
+end</code></pre><pre><code class="nohighlight hljs">80.486862 seconds (74.53 M allocations: 4.939 GiB, 21.08% gc time, 74.85% 
 compilation time: 19% of which was recompilation)
- 23.483636 seconds (6.95 M allocations: 456.538 MiB, 66.29% gc time, 15.49%
+ 23.815589 seconds (6.95 M allocations: 456.359 MiB, 66.93% gc time, 15.09%
  compilation time)
- 24.644603 seconds (9.37 M allocations: 620.950 MiB, 63.63% gc time, 16.37%
+ 24.889533 seconds (9.37 M allocations: 620.855 MiB, 64.05% gc time, 16.19%
  compilation time)
- 27.527477 seconds (15.03 M allocations: 933.326 MiB, 57.43% gc time, 18.56
+ 27.743762 seconds (15.04 M allocations: 934.693 MiB, 58.02% gc time, 18.35
 % compilation time)
- 33.806188 seconds (29.87 M allocations: 1.937 GiB, 47.68% gc time, 23.01% 
+ 34.114391 seconds (29.87 M allocations: 1.937 GiB, 48.22% gc time, 22.86% 
 compilation time)
- 41.703920 seconds (49.12 M allocations: 3.111 GiB, 41.45% gc time, 26.00% 
+ 41.904641 seconds (49.12 M allocations: 3.111 GiB, 42.00% gc time, 25.91% 
 compilation time)
- 50.121150 seconds (72.88 M allocations: 4.888 GiB, 35.22% gc time, 29.09% 
+ 50.246314 seconds (72.88 M allocations: 4.888 GiB, 35.70% gc time, 28.87% 
 compilation time)
-108.102280 seconds (211.63 M allocations: 14.612 GiB, 18.74% gc time, 30.89
+107.173753 seconds (211.62 M allocations: 14.610 GiB, 19.21% gc time, 31.22
 % compilation time)
-308.358188 seconds (703.02 M allocations: 51.220 GiB, 8.62% gc time, 30.08%
+303.441688 seconds (703.02 M allocations: 51.219 GiB, 8.91% gc time, 30.49%
  compilation time)
-682.165613 seconds (1.48 G allocations: 93.242 GiB, 5.29% gc time, 38.92% c
+669.479753 seconds (1.48 G allocations: 93.243 GiB, 5.53% gc time, 39.21% c
 ompilation time)
-190.690741 seconds (129.33 M allocations: 8.192 GiB, 11.09% gc time, 56.11%
+189.473522 seconds (129.33 M allocations: 8.192 GiB, 11.39% gc time, 56.10%
  compilation time)
-279.200533 seconds (171.46 M allocations: 11.154 GiB, 8.73% gc time, 59.99%
+278.416530 seconds (171.46 M allocations: 11.154 GiB, 8.79% gc time, 60.22%
  compilation time)
-388.576759 seconds (217.13 M allocations: 14.236 GiB, 7.13% gc time, 62.60%
+387.099705 seconds (217.12 M allocations: 14.236 GiB, 7.17% gc time, 62.91%
  compilation time)
-660.484191 seconds (321.63 M allocations: 19.844 GiB, 4.79% gc time, 66.48%
+662.352038 seconds (321.64 M allocations: 19.844 GiB, 4.86% gc time, 66.88%
  compilation time)</code></pre><h2 id="Time-OpenModelica"><a class="docs-heading-anchor" href="#Time-OpenModelica">Time OpenModelica</a><a id="Time-OpenModelica-1"></a><a class="docs-heading-anchor-permalink" href="#Time-OpenModelica" title="Permalink"></a></h2><pre><code class="language-julia hljs">using OMJulia, CSV, DataFrames
 mod = OMJulia.OMCSession();
 OMJulia.sendExpression(mod, &quot;getVersion()&quot;)
@@ -330,12 +330,12 @@ resultfile = &quot;modelica_res.csv&quot;
 @show &quot;Start OpenModelica Timings&quot;
 
 for i in 1:length(N)
-    N = N[i]
-    N &gt; max_sizes[end] &amp;&amp; break
-    @show N
+    _N = N[i]
+    _N &gt; max_sizes[end] &amp;&amp; break
+    @show _N
     totaltime = @elapsed res = begin
-        @sync ModelicaSystem(mod, modelicafile, &quot;DhnControl.Test.test_preinsulated_470_$N&quot;)
-        sendExpression(mod, &quot;simulate(DhnControl.Test.test_preinsulated_470_$N)&quot;)
+        @sync ModelicaSystem(mod, modelicafile, &quot;DhnControl.Test.test_preinsulated_470_$(_N)&quot;)
+        sendExpression(mod, &quot;simulate(DhnControl.Test.test_preinsulated_470_$(_N))&quot;)
     end
     #runtime = res[&quot;timeTotal&quot;]
     @assert res[&quot;messages&quot;][1:11] == &quot;LOG_SUCCESS&quot;
@@ -344,7 +344,33 @@ end
 
 OMJulia.quit(mod)
 total_times[:, 5]</code></pre><pre><code class="nohighlight hljs">&quot;Start OpenModelica Timings&quot; = &quot;Start OpenModelica Timings&quot;
-Error: UndefVarError: `N` not defined</code></pre><h2 id="Time-Dymola"><a class="docs-heading-anchor" href="#Time-Dymola">Time Dymola</a><a id="Time-Dymola-1"></a><a class="docs-heading-anchor-permalink" href="#Time-Dymola" title="Permalink"></a></h2><p>Dymola requires a license server and thus cannot be hosted. This was run locally for the following times:</p><pre><code class="language-julia hljs">translation_and_total_times = [1.802 1.921
+_N = 5
+_N = 10
+_N = 20
+_N = 40
+_N = 60
+_N = 80
+_N = 160
+_N = 320
+_N = 480
+_N = 640
+_N = 800
+_N = 960
+_N = 1280
+13-element Vector{Float64}:
+   3.729103188
+   3.521139208
+   4.737292557
+   7.613921743
+  10.672295223
+  13.906261689
+  28.105796592
+  62.865075594
+  96.790252241
+ 136.998925758
+ 175.09251794
+ 219.28177967
+ 334.435488391</code></pre><h2 id="Time-Dymola"><a class="docs-heading-anchor" href="#Time-Dymola">Time Dymola</a><a id="Time-Dymola-1"></a><a class="docs-heading-anchor-permalink" href="#Time-Dymola" title="Permalink"></a></h2><p>Dymola requires a license server and thus cannot be hosted. This was run locally for the following times:</p><pre><code class="language-julia hljs">translation_and_total_times = [1.802 1.921
                                1.78 1.846
                                1.84 1.877
                                2.028 2.075
@@ -357,8 +383,20 @@ Error: UndefVarError: `N` not defined</code></pre><h2 id="Time-Dymola"><a class=
                                9.707 14.393
                                11.411 17.752
                                15.094 27.268]
-total_times[:, 6] = translation_and_total_times[1:length(N),2]</code></pre><pre><code class="nohighlight hljs">Error: BoundsError: attempt to access 13×5 Matrix{Float64} at index [1:13, 
-6]</code></pre><h2 id="Generate-Final-Plots"><a class="docs-heading-anchor" href="#Generate-Final-Plots">Generate Final Plots</a><a id="Generate-Final-Plots-1"></a><a class="docs-heading-anchor-permalink" href="#Generate-Final-Plots" title="Permalink"></a></h2><pre><code class="language-julia hljs">f = Figure(size=(800,1200));
+total_times[:, 6] = translation_and_total_times[1:length(N),2]</code></pre><pre><code class="nohighlight hljs">13-element Vector{Float64}:
+  1.921
+  1.846
+  1.877
+  2.075
+  2.283
+  2.496
+  3.427
+  5.577
+  8.128
+ 11.026
+ 14.393
+ 17.752
+ 27.268</code></pre><h2 id="Generate-Final-Plots"><a class="docs-heading-anchor" href="#Generate-Final-Plots">Generate Final Plots</a><a id="Generate-Final-Plots-1"></a><a class="docs-heading-anchor-permalink" href="#Generate-Final-Plots" title="Permalink"></a></h2><pre><code class="language-julia hljs">f = Figure(size=(800,1200));
 ss_names = [&quot;MTK&quot;, &quot;JSIR-Scalar&quot;, &quot;JSIR-Loop&quot;];
 let ax = Axis(f[1, 1]; yscale = log10, xscale = log10, title=&quot;Structural Simplify Time&quot;)
   _lines = map(eachcol(ss_times)) do ts
@@ -375,11 +413,6 @@ for (i, timecat) in enumerate((&quot;ODEProblem + f!&quot;, &quot;Run&quot;, &qu
   end
   Legend(f[i+1, 2], _lines, method_names)
 end
-let method_names_m = vcat(method_names, &quot;OpenModelica&quot;);
-  ax = Axis(f[5, 1]; yscale = log10, xscale = log10, title = &quot;Total Time&quot;)
-  _lines = map(Base.Fix1(lines!, N), eachcol(total_times))
-  Legend(f[5, 2], _lines, method_names_m)
-end
 f</code></pre><pre><code class="nohighlight hljs">Error: Number of elements not equal: 2 content elements and 3 labels.</code></pre><pre><code class="language-julia hljs">f2 = Figure(size = (800, 400));
 title = &quot;Total Time: Thermal Fluid Benchmark&quot;
 ax = Axis(f2[1, 1]; yscale = log10, xscale = log10, title)
@@ -389,8 +422,7 @@ _lines = map(enumerate(names)) do (j, label)
     lines!(N_states, ts)
 end
 Legend(f2[1,2], _lines, names)
-f2</code></pre><pre><code class="nohighlight hljs">Error: BoundsError: attempt to access 13×5 Matrix{Float64} at index [1:13, 
-6]</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+f2</code></pre><p><img src="../figures/ThermalFluid_8_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/ModelingToolkit&quot;,&quot;ThermalFluid.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.4
 Commit 48d4fd48430 (2024-06-04 10:41 UTC)
 Build Info:
@@ -406,7 +438,7 @@ Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
   JULIA_PKG_SERVER = juliahub.com
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [336ed68f] CSV v0.10.14
 ⌅ [13f3f980] CairoMakie v0.11.11
@@ -423,8 +455,9 @@ Environment:
   [31c91b34] SciMLBenchmarks v0.1.3
   [0c5d862f] Symbolics v5.30.3
   [95ff35a0] XSteam v0.3.0 `https://github.com/hzgzh/XSteam.jl.git#f2a1c58`
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
-  [47edcb42] ADTypes v1.4.0
+  [de0858da] Printf
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
+  [47edcb42] ADTypes v1.5.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.36
@@ -486,7 +519,7 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
 ⌅ [7c1d4256] DynamicPolynomials v0.5.7
 ⌅ [06fc5a27] DynamicQuantities v0.13.2
   [4e289a0a] EnumX v1.0.4
-  [f151be2c] EnzymeCore v0.7.5
+  [f151be2c] EnzymeCore v0.7.6
   [429591f6] ExactPredicates v2.2.8
   [d4d017d3] ExponentialUtilities v1.26.1
   [e2ba6199] ExprTools v0.1.10
@@ -560,7 +593,7 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [984bce1d] LambertW v0.4.6
   [23fbe1c1] Latexify v0.16.3
   [10f19ff3] LayoutPointers v0.1.15
-  [5078a376] LazyArrays v2.0.4
+  [5078a376] LazyArrays v2.0.5
   [8cdb02fc] LazyModules v0.3.1
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
@@ -809,4 +842,4 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../RCCircuit/">« RC Circuit</a><a class="docs-footer-nextpage" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 21 June 2024 11:06">Friday 21 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../RCCircuit/">« RC Circuit</a><a class="docs-footer-nextpage" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Sunday 23 June 2024 18:56">Sunday 23 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
