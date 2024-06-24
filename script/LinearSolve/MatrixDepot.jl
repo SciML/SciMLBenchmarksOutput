@@ -17,6 +17,7 @@ algs = [
     SparspakFactorization(),
 ]
 algnames = ["UMFPACK", "KLU", "Pardiso", "Sparspak"]
+algnames_transpose = reshape(algnames, 1, length(algnames))
 
 cols = [:red, :blue, :green, :magenta, :turqoise] # one color per alg
 
@@ -25,6 +26,8 @@ matrices = ["HB/1138_bus", "HB/494_bus", "HB/662_bus", "HB/685_bus", "HB/bcsstk0
             "HB/bcsstk13", "HB/bcsstk14", "HB/bcsstk15", "HB/bcsstk16"]
 
 times = fill(NaN, length(matrices), length(algs))
+percentage_sparsity = fill(NaN, length(matrices))
+matrix_size = fill(NaN, length(matrices))
 
 
 for z in 1:length(matrices)
@@ -33,6 +36,8 @@ for z in 1:length(matrices)
         A = mdopen(matrices[z]).A
         A = convert(SparseMatrixCSC, A)
         n = size(A, 1)
+        matrix_size[z] = n
+        percentage_sparsity[z] = length(nonzeros(A)) / n^2
         @info "$n × $n"
         b = rand(rng, n)
         u0 = rand(rng, n)
@@ -63,6 +68,26 @@ p = bar(algnames, meantimes;
     ylabel = "Time/s",
     yscale = :log10,
     title = "Mean factorization time",
+    legend = :outertopright)
+
+
+p = scatter(percentage_sparsity, times;
+    ylabel = "Time/s",
+    yscale = :log10,
+    xlabel = "Percentage Sparsity",
+    xscale = :log10,
+    label = algnames_transpose,
+    title = "Factorization Time vs Percentage Sparsity",
+    legend = :outertopright)
+
+
+p = scatter(matrix_size, times;
+    ylabel = "Time/s",
+    yscale = :log10,
+    xlabel = "Matrix Size",
+    xscale = :log10,
+    label = algnames_transpose,
+    title = "Factorization Time vs Matrix Size",
     legend = :outertopright)
 
 

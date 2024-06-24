@@ -21,6 +21,7 @@ algs = [
     SparspakFactorization(),
 ]
 algnames = ["UMFPACK", "KLU", "Pardiso", "Sparspak"]
+algnames_transpose = reshape(algnames, 1, length(algnames))
 
 cols = [:red, :blue, :green, :magenta, :turqoise] # one color per alg
 
@@ -29,30 +30,32 @@ matrices = ["HB/1138_bus", "HB/494_bus", "HB/662_bus", "HB/685_bus", "HB/bcsstk0
             "HB/bcsstk13", "HB/bcsstk14", "HB/bcsstk15", "HB/bcsstk16"]
 
 times = fill(NaN, length(matrices), length(algs))
+percentage_sparsity = fill(NaN, length(matrices))
+matrix_size = fill(NaN, length(matrices))
 ```
 
 ```
-20×4 Matrix{Float64}:
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
+20-element Vector{Float64}:
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
 ```
 
 
@@ -64,6 +67,8 @@ for z in 1:length(matrices)
         A = mdopen(matrices[z]).A
         A = convert(SparseMatrixCSC, A)
         n = size(A, 1)
+        matrix_size[z] = n
+        percentage_sparsity[z] = length(nonzeros(A)) / n^2
         @info "$n × $n"
         b = rand(rng, n)
         u0 = rand(rng, n)
@@ -121,6 +126,32 @@ p = bar(algnames, meantimes;
 
 ![](figures/MatrixDepot_3_1.png)
 
+```julia
+p = scatter(percentage_sparsity, times;
+    ylabel = "Time/s",
+    yscale = :log10,
+    xlabel = "Percentage Sparsity",
+    xscale = :log10,
+    label = algnames_transpose,
+    title = "Factorization Time vs Percentage Sparsity",
+    legend = :outertopright)
+```
+
+![](figures/MatrixDepot_4_1.png)
+
+```julia
+p = scatter(matrix_size, times;
+    ylabel = "Time/s",
+    yscale = :log10,
+    xlabel = "Matrix Size",
+    xscale = :log10,
+    label = algnames_transpose,
+    title = "Factorization Time vs Matrix Size",
+    legend = :outertopright)
+```
+
+![](figures/MatrixDepot_5_1.png)
+
 
 
 ## Appendix
@@ -150,7 +181,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
