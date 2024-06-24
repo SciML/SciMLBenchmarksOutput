@@ -3,7 +3,7 @@ author: "Jürgen Fuhrmann, Anastasia Dunca"
 title: "Suite Sparse Matrix Jacobian Factorization Benchmarks"
 ---
 ```julia
-using BenchmarkTools, Random, VectorizationBase
+using BenchmarkTools, Random, VectorizationBase, Statistics
 using LinearAlgebra, SparseArrays, LinearSolve, Sparspak
 import Pardiso
 using Plots
@@ -20,163 +20,106 @@ algs = [
     MKLPardisoFactorize(),
     SparspakFactorization(),
 ]
+algnames = ["UMFPACK", "KLU", "Pardiso", "Sparspak"]
+
 cols = [:red, :blue, :green, :magenta, :turqoise] # one color per alg
 
 matrices = ["HB/1138_bus", "HB/494_bus", "HB/662_bus", "HB/685_bus", "HB/bcsstk01", "HB/bcsstk02", "HB/bcsstk03", "HB/bcsstk04", 
             "HB/bcsstk05", "HB/bcsstk06", "HB/bcsstk07", "HB/bcsstk08", "HB/bcsstk09", "HB/bcsstk10", "HB/bcsstk11", "HB/bcsstk12",
             "HB/bcsstk13", "HB/bcsstk14", "HB/bcsstk15", "HB/bcsstk16"]
-                
-__parameterless_type(T) = Base.typename(T).wrapper
-parameterless_type(x) = __parameterless_type(typeof(x))
-parameterless_type(::Type{T}) where {T} = __parameterless_type(T)
 
-#
-# kmax=12 gives ≈ 40_000 unknowns max, can be watched in real time
-# kmax=15 gives ≈ 328_000 unknows, you can go make a coffee.
-# Main culprit is KLU factorization in 3D.
-#
-function run_and_plot(dim; kmax = 12)
-    ns = [10 * 2^k for k in 0:kmax]
+times = fill(NaN, length(matrices), length(algs))
+```
 
-    res = [Float64[] for i in 1:length(algs)]
+```
+20×4 Matrix{Float64}:
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+ NaN  NaN  NaN  NaN
+```
 
-    
-    for z in 1:length(matrices)
-        try
-            for i in 1:length(ns)
-                rng = MersenneTwister(123)
-                A = mdopen(matrices[z]).A
-                A = convert(SparseMatrixCSC, A)
-                n = size(A, 1)
-                @info "dim=$(dim): $n × $n"
-                b = rand(rng, n)
-                u0 = rand(rng, n)
 
-                for j in 1:length(algs)
-                    bt = @belapsed solve(prob, $(algs[j])).u setup=(prob = LinearProblem(copy($A),
-                        copy($b);
-                        u0 = copy($u0),
-                        alias_A = true,
-                        alias_b = true))
-                    push!(res[j], bt)
-                end
-            end
 
-            p = plot(;
-                ylabel = "Time/s",
-                xlabel = "N",
-                yscale = :log10,
-                xscale = :log10,
-                title = "Time for NxN  sparse LU Factorization $(dim)D",
-                label = string(Symbol(parameterless_type(algs[1]))),
-                legend = :outertopright)
+```julia
+for z in 1:length(matrices)
+    try
+        rng = MersenneTwister(123)
+        A = mdopen(matrices[z]).A
+        A = convert(SparseMatrixCSC, A)
+        n = size(A, 1)
+        @info "$n × $n"
+        b = rand(rng, n)
+        u0 = rand(rng, n)
 
-            for i in 1:length(algs)
-                plot!(p, ns, res[i];
-                    linecolor = cols[i],
-                    label = "$(string(Symbol(parameterless_type(algs[i]))))")
-            end
-            display(p)
-        catch
-            println(matrices[z])
+        for j in 1:length(algs)
+            bt = @belapsed solve(prob, $(algs[j])).u setup=(prob = LinearProblem(copy($A),
+                copy($b);
+                u0 = copy($u0),
+                alias_A = true,
+                alias_b = true))
+            times[z,j] = bt
         end
-        end
-       
+        p = bar(algnames, times[z, :];
+            ylabel = "Time/s",
+            yscale = :log10,
+            title = "Time on $(matrices[z])",
+            legend = :outertopright)
+        display(p)
+    catch e
+        println("$(matrices[z]) failed to factorize.")
+        println(e)
+    end
 end
 ```
 
-```
-run_and_plot (generic function with 1 method)
-```
-
-
-
-```julia
-run_and_plot(1)
-```
-
-```
-HB/494_bus
-HB/662_bus
-HB/685_bus
-HB/bcsstk01
-HB/bcsstk02
-HB/bcsstk03
-HB/bcsstk04
-HB/bcsstk05
-HB/bcsstk06
-HB/bcsstk07
-HB/bcsstk08
-HB/bcsstk09
-HB/bcsstk10
-HB/bcsstk11
-HB/bcsstk12
-HB/bcsstk13
-HB/bcsstk14
-HB/bcsstk15
-HB/bcsstk16
-```
-
-
 ![](figures/MatrixDepot_2_1.png)
+![](figures/MatrixDepot_2_2.png)
+![](figures/MatrixDepot_2_3.png)
+![](figures/MatrixDepot_2_4.png)
+![](figures/MatrixDepot_2_5.png)
+![](figures/MatrixDepot_2_6.png)
+![](figures/MatrixDepot_2_7.png)
+![](figures/MatrixDepot_2_8.png)
+![](figures/MatrixDepot_2_9.png)
+![](figures/MatrixDepot_2_10.png)
+![](figures/MatrixDepot_2_11.png)
+![](figures/MatrixDepot_2_12.png)
+![](figures/MatrixDepot_2_13.png)
+![](figures/MatrixDepot_2_14.png)
+![](figures/MatrixDepot_2_15.png)
+![](figures/MatrixDepot_2_16.png)
+![](figures/MatrixDepot_2_17.png)
+![](figures/MatrixDepot_2_18.png)
+![](figures/MatrixDepot_2_19.png)
+![](figures/MatrixDepot_2_20.png)
 
 ```julia
-run_and_plot(2)
+meantimes = vec(mean(times, dims=1))
+p = bar(algnames, meantimes;
+    ylabel = "Time/s",
+    yscale = :log10,
+    title = "Mean factorization time",
+    legend = :outertopright)
 ```
-
-```
-HB/494_bus
-HB/662_bus
-HB/685_bus
-HB/bcsstk01
-HB/bcsstk02
-HB/bcsstk03
-HB/bcsstk04
-HB/bcsstk05
-HB/bcsstk06
-HB/bcsstk07
-HB/bcsstk08
-HB/bcsstk09
-HB/bcsstk10
-HB/bcsstk11
-HB/bcsstk12
-HB/bcsstk13
-HB/bcsstk14
-HB/bcsstk15
-HB/bcsstk16
-```
-
 
 ![](figures/MatrixDepot_3_1.png)
-
-```julia
-run_and_plot(3)
-```
-
-```
-HB/494_bus
-HB/662_bus
-HB/685_bus
-HB/bcsstk01
-HB/bcsstk02
-HB/bcsstk03
-HB/bcsstk04
-HB/bcsstk05
-HB/bcsstk06
-HB/bcsstk07
-HB/bcsstk08
-HB/bcsstk09
-HB/bcsstk10
-HB/bcsstk11
-HB/bcsstk12
-HB/bcsstk13
-HB/bcsstk14
-HB/bcsstk15
-HB/bcsstk16
-```
-
-
-![](figures/MatrixDepot_4_1.png)
 
 
 
@@ -207,7 +150,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -217,7 +160,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Project.toml`
 ⌃ [6e4b80f9] BenchmarkTools v1.3.2
 ⌃ [7ed4a6bd] LinearSolve v2.5.0
 ⌃ [b51810bb] MatrixDepot v1.0.11
@@ -231,6 +174,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [44cfe95a] Pkg v1.10.0
   [9a3f8284] Random
   [2f01184e] SparseArrays v1.10.0
+  [10745b16] Statistics v1.10.0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
@@ -238,7 +182,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Manifest.toml`
 ⌅ [47edcb42] ADTypes v0.1.6
 ⌅ [79e6a3ab] Adapt v3.6.2
 ⌃ [4fba245c] ArrayInterface v7.4.11
