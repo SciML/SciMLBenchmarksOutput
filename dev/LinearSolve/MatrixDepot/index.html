@@ -17,6 +17,7 @@ algs = [
     SparspakFactorization(),
 ]
 algnames = [&quot;UMFPACK&quot;, &quot;KLU&quot;, &quot;Pardiso&quot;, &quot;Sparspak&quot;]
+algnames_transpose = reshape(algnames, 1, length(algnames))
 
 cols = [:red, :blue, :green, :magenta, :turqoise] # one color per alg
 
@@ -24,32 +25,36 @@ matrices = [&quot;HB/1138_bus&quot;, &quot;HB/494_bus&quot;, &quot;HB/662_bus&qu
             &quot;HB/bcsstk05&quot;, &quot;HB/bcsstk06&quot;, &quot;HB/bcsstk07&quot;, &quot;HB/bcsstk08&quot;, &quot;HB/bcsstk09&quot;, &quot;HB/bcsstk10&quot;, &quot;HB/bcsstk11&quot;, &quot;HB/bcsstk12&quot;,
             &quot;HB/bcsstk13&quot;, &quot;HB/bcsstk14&quot;, &quot;HB/bcsstk15&quot;, &quot;HB/bcsstk16&quot;]
 
-times = fill(NaN, length(matrices), length(algs))</code></pre><pre><code class="nohighlight hljs">20×4 Matrix{Float64}:
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN
- NaN  NaN  NaN  NaN</code></pre><pre><code class="language-julia hljs">for z in 1:length(matrices)
+times = fill(NaN, length(matrices), length(algs))
+percentage_sparsity = fill(NaN, length(matrices))
+matrix_size = fill(NaN, length(matrices))</code></pre><pre><code class="nohighlight hljs">20-element Vector{Float64}:
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN
+ NaN</code></pre><pre><code class="language-julia hljs">for z in 1:length(matrices)
     try
         rng = MersenneTwister(123)
         A = mdopen(matrices[z]).A
         A = convert(SparseMatrixCSC, A)
         n = size(A, 1)
+        matrix_size[z] = n
+        percentage_sparsity[z] = length(nonzeros(A)) / n^2
         @info &quot;$n × $n&quot;
         b = rand(rng, n)
         u0 = rand(rng, n)
@@ -77,7 +82,21 @@ p = bar(algnames, meantimes;
     ylabel = &quot;Time/s&quot;,
     yscale = :log10,
     title = &quot;Mean factorization time&quot;,
-    legend = :outertopright)</code></pre><p><img src="../figures/MatrixDepot_3_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+    legend = :outertopright)</code></pre><p><img src="../figures/MatrixDepot_3_1.png" alt/></p><pre><code class="language-julia hljs">p = scatter(percentage_sparsity, times;
+    ylabel = &quot;Time/s&quot;,
+    yscale = :log10,
+    xlabel = &quot;Percentage Sparsity&quot;,
+    xscale = :log10,
+    label = algnames_transpose,
+    title = &quot;Factorization Time vs Percentage Sparsity&quot;,
+    legend = :outertopright)</code></pre><p><img src="../figures/MatrixDepot_4_1.png" alt/></p><pre><code class="language-julia hljs">p = scatter(matrix_size, times;
+    ylabel = &quot;Time/s&quot;,
+    yscale = :log10,
+    xlabel = &quot;Matrix Size&quot;,
+    xscale = :log10,
+    label = algnames_transpose,
+    title = &quot;Factorization Time vs Matrix Size&quot;,
+    legend = :outertopright)</code></pre><p><img src="../figures/MatrixDepot_5_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/LinearSolve&quot;,&quot;MatrixDepot.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.4
 Commit 48d4fd48430 (2024-06-04 10:41 UTC)
 Build Info:
@@ -88,7 +107,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -373,4 +392,4 @@ Warning The project dependencies or compat requirements have changed since the m
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../LUFactorization/">« LU Factorization Benchmarks</a><a class="docs-footer-nextpage" href="../SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 24 June 2024 16:21">Monday 24 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../LUFactorization/">« LU Factorization Benchmarks</a><a class="docs-footer-nextpage" href="../SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 24 June 2024 16:50">Monday 24 June 2024</span>. Using Julia version 1.10.4.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
