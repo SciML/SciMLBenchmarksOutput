@@ -1,6 +1,6 @@
 ---
 author: "Jürgen Fuhrmann, Anastasia Dunca"
-title: "Finite Difference Sparse PDE Jacobian Factorization Benchmarks"
+title: "Suite Sparse Matrix Jacobian Factorization Benchmarks"
 ---
 ```julia
 using BenchmarkTools, Random, VectorizationBase
@@ -22,6 +22,10 @@ algs = [
 ]
 cols = [:red, :blue, :green, :magenta, :turqoise] # one color per alg
 
+matrices = ["HB/1138_bus", "HB/494_bus", "HB/662_bus", "HB/685_bus", "HB/bcsstk01", "HB/bcsstk02", "HB/bcsstk03", "HB/bcsstk04", 
+            "HB/bcsstk05", "HB/bcsstk06", "HB/bcsstk07", "HB/bcsstk08", "HB/bcsstk09", "HB/bcsstk10", "HB/bcsstk11", "HB/bcsstk12",
+            "HB/bcsstk13", "HB/bcsstk14", "HB/bcsstk15", "HB/bcsstk16"]
+                
 __parameterless_type(T) = Base.typename(T).wrapper
 parameterless_type(x) = __parameterless_type(typeof(x))
 parameterless_type(::Type{T}) where {T} = __parameterless_type(T)
@@ -36,40 +40,48 @@ function run_and_plot(dim; kmax = 12)
 
     res = [Float64[] for i in 1:length(algs)]
 
-    for i in 1:length(ns)
-        rng = MersenneTwister(123)
-        A = mdopen("HB/1138_bus").A
-        A = convert(SparseMatrixCSC, A)
-        n = size(A, 1)
-        @info "dim=$(dim): $n × $n"
-        b = rand(rng, n)
-        u0 = rand(rng, n)
+    
+    for z in 1:length(matrices)
+        try
+            for i in 1:length(ns)
+                rng = MersenneTwister(123)
+                A = mdopen(matrices[z]).A
+                A = convert(SparseMatrixCSC, A)
+                n = size(A, 1)
+                @info "dim=$(dim): $n × $n"
+                b = rand(rng, n)
+                u0 = rand(rng, n)
 
-        for j in 1:length(algs)
-            bt = @belapsed solve(prob, $(algs[j])).u setup=(prob = LinearProblem(copy($A),
-                copy($b);
-                u0 = copy($u0),
-                alias_A = true,
-                alias_b = true))
-            push!(res[j], bt)
+                for j in 1:length(algs)
+                    bt = @belapsed solve(prob, $(algs[j])).u setup=(prob = LinearProblem(copy($A),
+                        copy($b);
+                        u0 = copy($u0),
+                        alias_A = true,
+                        alias_b = true))
+                    push!(res[j], bt)
+                end
+            end
+
+            p = plot(;
+                ylabel = "Time/s",
+                xlabel = "N",
+                yscale = :log10,
+                xscale = :log10,
+                title = "Time for NxN  sparse LU Factorization $(dim)D",
+                label = string(Symbol(parameterless_type(algs[1]))),
+                legend = :outertopright)
+
+            for i in 1:length(algs)
+                plot!(p, ns, res[i];
+                    linecolor = cols[i],
+                    label = "$(string(Symbol(parameterless_type(algs[i]))))")
+            end
+            display(p)
+        catch
+            println(matrices[z])
         end
-    end
-
-    p = plot(;
-        ylabel = "Time/s",
-        xlabel = "N",
-        yscale = :log10,
-        xscale = :log10,
-        title = "Time for NxN  sparse LU Factorization $(dim)D",
-        label = string(Symbol(parameterless_type(algs[1]))),
-        legend = :outertopright)
-
-    for i in 1:length(algs)
-        plot!(p, ns, res[i];
-            linecolor = cols[i],
-            label = "$(string(Symbol(parameterless_type(algs[i]))))")
-    end
-    p
+        end
+       
 end
 ```
 
@@ -83,17 +95,86 @@ run_and_plot (generic function with 1 method)
 run_and_plot(1)
 ```
 
+```
+HB/494_bus
+HB/662_bus
+HB/685_bus
+HB/bcsstk01
+HB/bcsstk02
+HB/bcsstk03
+HB/bcsstk04
+HB/bcsstk05
+HB/bcsstk06
+HB/bcsstk07
+HB/bcsstk08
+HB/bcsstk09
+HB/bcsstk10
+HB/bcsstk11
+HB/bcsstk12
+HB/bcsstk13
+HB/bcsstk14
+HB/bcsstk15
+HB/bcsstk16
+```
+
+
 ![](figures/MatrixDepot_2_1.png)
 
 ```julia
 run_and_plot(2)
 ```
 
+```
+HB/494_bus
+HB/662_bus
+HB/685_bus
+HB/bcsstk01
+HB/bcsstk02
+HB/bcsstk03
+HB/bcsstk04
+HB/bcsstk05
+HB/bcsstk06
+HB/bcsstk07
+HB/bcsstk08
+HB/bcsstk09
+HB/bcsstk10
+HB/bcsstk11
+HB/bcsstk12
+HB/bcsstk13
+HB/bcsstk14
+HB/bcsstk15
+HB/bcsstk16
+```
+
+
 ![](figures/MatrixDepot_3_1.png)
 
 ```julia
 run_and_plot(3)
 ```
+
+```
+HB/494_bus
+HB/662_bus
+HB/685_bus
+HB/bcsstk01
+HB/bcsstk02
+HB/bcsstk03
+HB/bcsstk04
+HB/bcsstk05
+HB/bcsstk06
+HB/bcsstk07
+HB/bcsstk08
+HB/bcsstk09
+HB/bcsstk10
+HB/bcsstk11
+HB/bcsstk12
+HB/bcsstk13
+HB/bcsstk14
+HB/bcsstk15
+HB/bcsstk16
+```
+
 
 ![](figures/MatrixDepot_4_1.png)
 
@@ -116,8 +197,8 @@ SciMLBenchmarks.weave_file("benchmarks/LinearSolve","MatrixDepot.jmd")
 Computer Information:
 
 ```
-Julia Version 1.10.2
-Commit bd47eca2c8a (2024-03-01 10:14 UTC)
+Julia Version 1.10.4
+Commit 48d4fd48430 (2024-06-04 10:41 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -126,7 +207,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -136,10 +217,10 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Project.toml`
 ⌃ [6e4b80f9] BenchmarkTools v1.3.2
 ⌃ [7ed4a6bd] LinearSolve v2.5.0
-  [b51810bb] MatrixDepot v1.0.11
+⌃ [b51810bb] MatrixDepot v1.0.11
 ⌃ [46dd5b70] Pardiso v0.5.4
 ⌃ [91a5bcdd] Plots v1.38.17
   [31c91b34] SciMLBenchmarks v0.1.3
@@ -157,7 +238,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Manifest.toml`
 ⌅ [47edcb42] ADTypes v0.1.6
 ⌅ [79e6a3ab] Adapt v3.6.2
 ⌃ [4fba245c] ArrayInterface v7.4.11
@@ -173,7 +254,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [35d6a980] ColorSchemes v3.23.0
 ⌃ [3da002f7] ColorTypes v0.11.4
   [c3611d14] ColorVectorSpace v0.10.0
-  [5ae59095] Colors v0.12.10
+⌃ [5ae59095] Colors v0.12.10
   [38540f10] CommonSolve v0.2.4
 ⌃ [34da2185] Compat v4.9.0
 ⌃ [f0e56b4a] ConcurrentUtilities v2.2.1
@@ -193,7 +274,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e2ba6199] ExprTools v0.1.10
   [c87230d0] FFMPEG v0.4.1
 ⌃ [29a986be] FastLapackInterface v2.0.0
-  [53c48c17] FixedPointNumbers v0.8.4
+⌃ [53c48c17] FixedPointNumbers v0.8.4
 ⌃ [59287772] Formatting v0.4.2
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
@@ -203,11 +284,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [42e2da0e] Grisu v1.0.2
   [f67ccb44] HDF5 v0.17.2
 ⌃ [cd3eb016] HTTP v1.9.14
-  [eafb193a] Highlights v0.5.2
+⌃ [eafb193a] Highlights v0.5.2
   [3e5b6fbb] HostCPUFeatures v0.1.16
   [7073ff75] IJulia v1.24.2
   [615f187c] IfElse v0.1.1
-  [842dd82b] InlineStrings v1.4.0
+⌃ [842dd82b] InlineStrings v1.4.0
   [41ab1584] InvertedIndices v1.3.0
   [92d709cd] IrrationalConstants v0.2.2
   [82899510] IteratorInterfaceExtensions v1.0.0
@@ -224,11 +305,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [2ab3a3ac] LogExpFunctions v0.3.26
 ⌃ [e6f89c97] LoggingExtras v1.0.1
 ⌃ [bdcacae8] LoopVectorization v0.12.165
-  [23992714] MAT v0.10.6
-  [3da0fdf6] MPIPreferences v0.1.10
+⌃ [23992714] MAT v0.10.6
+⌃ [3da0fdf6] MPIPreferences v0.1.10
 ⌃ [1914dd2f] MacroTools v0.5.11
   [d125e4d3] ManualMemory v0.1.8
-  [b51810bb] MatrixDepot v1.0.11
+⌃ [b51810bb] MatrixDepot v1.0.11
 ⌃ [739be429] MbedTLS v1.1.7
   [442fdcdd] Measures v0.3.2
 ⌃ [e1d29d7a] Missings v1.1.0
@@ -240,7 +321,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [46dd5b70] Pardiso v0.5.4
 ⌃ [69de0a69] Parsers v2.7.2
   [b98c9c47] Pipe v1.3.0
-  [ccf2f8ad] PlotThemes v3.1.0
+⌃ [ccf2f8ad] PlotThemes v3.1.0
 ⌃ [995b91a9] PlotUtils v1.3.5
 ⌃ [91a5bcdd] Plots v1.38.17
 ⌃ [f517fe37] Polyester v0.7.5
@@ -248,7 +329,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2dfb63ee] PooledArrays v1.4.3
 ⌃ [aea7be01] PrecompileTools v1.2.0
 ⌃ [21216c6a] Preferences v1.4.0
-  [08abe8d2] PrettyTables v2.3.1
+⌃ [08abe8d2] PrettyTables v2.3.1
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
 ⌅ [731186ca] RecursiveArrayTools v2.38.7
@@ -263,7 +344,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [31c91b34] SciMLBenchmarks v0.1.3
 ⌃ [c0aeaf25] SciMLOperators v0.3.6
 ⌃ [6c6a2e73] Scratch v1.2.0
-  [91c51154] SentinelArrays v1.4.1
+⌃ [91c51154] SentinelArrays v1.4.1
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
@@ -273,7 +354,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e56a9233] Sparspak v0.3.9
 ⌃ [aedffcd0] Static v0.8.8
 ⌃ [0d7ed370] StaticArrayInterface v1.4.0
-  [1e83bf80] StaticArraysCore v1.4.2
+⌃ [1e83bf80] StaticArraysCore v1.4.2
 ⌃ [82ae8749] StatsAPI v1.6.0
 ⌃ [2913bbd2] StatsBase v0.34.0
 ⌅ [7792a7ef] StrideArraysCore v0.4.17
@@ -297,16 +378,16 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [3d5dd08c] VectorizationBase v0.21.64
   [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.9
-  [c2297ded] ZMQ v1.2.2
+⌃ [ddb6d928] YAML v0.4.9
+⌃ [c2297ded] ZMQ v1.2.2
 ⌃ [6e34b625] Bzip2_jll v1.0.8+0
 ⌃ [83423d85] Cairo_jll v1.16.1+1
   [2702e6a9] EpollShim_jll v0.0.20230411+0
-  [2e619515] Expat_jll v2.5.0+0
+⌃ [2e619515] Expat_jll v2.5.0+0
 ⌅ [b22a6f82] FFMPEG_jll v4.4.2+2
-  [a3f928ae] Fontconfig_jll v2.13.93+0
-  [d7e528f0] FreeType2_jll v2.13.1+0
-  [559328eb] FriBidi_jll v1.0.10+0
+⌃ [a3f928ae] Fontconfig_jll v2.13.93+0
+⌃ [d7e528f0] FreeType2_jll v2.13.1+0
+⌃ [559328eb] FriBidi_jll v1.0.10+0
 ⌃ [0656b61e] GLFW_jll v3.3.8+0
 ⌅ [d2c73de3] GR_jll v0.72.9+1
   [78b55507] Gettext_jll v0.21.0+0
@@ -317,14 +398,14 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
 ⌅ [1d5cc7b8] IntelOpenMP_jll v2023.2.0+0
 ⌃ [aacddb02] JpegTurbo_jll v2.1.91+0
-  [c1c5ebd0] LAME_jll v3.100.1+0
-  [88015f11] LERC_jll v3.0.0+1
+⌃ [c1c5ebd0] LAME_jll v3.100.1+0
+⌅ [88015f11] LERC_jll v3.0.0+1
 ⌃ [1d63c593] LLVMOpenMP_jll v15.0.4+0
-  [dd4b983a] LZO_jll v2.10.1+0
+⌃ [dd4b983a] LZO_jll v2.10.1+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
-  [d4300ac3] Libgcrypt_jll v1.8.7+0
+⌃ [d4300ac3] Libgcrypt_jll v1.8.7+0
   [7e76a0d4] Libglvnd_jll v1.6.0+0
-  [7add5ba3] Libgpg_error_jll v1.42.0+0
+⌃ [7add5ba3] Libgpg_error_jll v1.42.0+0
 ⌃ [94ce4f54] Libiconv_jll v1.16.1+2
 ⌃ [4b2f31a3] Libmount_jll v2.35.0+0
 ⌅ [89763e89] Libtiff_jll v4.5.1+1
@@ -333,7 +414,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e7412a2a] Ogg_jll v1.3.5+1
 ⌅ [458c3c95] OpenSSL_jll v1.1.22+0
   [91d4177d] Opus_jll v1.3.2+0
-  [30392449] Pixman_jll v0.42.2+0
+⌃ [30392449] Pixman_jll v0.42.2+0
 ⌅ [c0090381] Qt6Base_jll v6.4.2+3
 ⌃ [a2964d1f] Wayland_jll v1.21.0+0
 ⌃ [2381bf8a] Wayland_protocols_jll v1.25.0+0
@@ -344,12 +425,12 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
   [935fb764] Xorg_libXcursor_jll v1.2.0+4
   [a3789734] Xorg_libXdmcp_jll v1.1.4+0
-  [1082639a] Xorg_libXext_jll v1.3.4+4
+⌃ [1082639a] Xorg_libXext_jll v1.3.4+4
   [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
   [a51aa0fd] Xorg_libXi_jll v1.7.10+4
   [d1454406] Xorg_libXinerama_jll v1.1.4+4
   [ec84b674] Xorg_libXrandr_jll v1.5.2+4
-  [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
+⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
   [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
   [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
   [cc61e674] Xorg_libxkbfile_jll v1.1.2+0
@@ -364,7 +445,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [8f1865be] ZeroMQ_jll v4.3.4+0
 ⌃ [3161d3a3] Zstd_jll v1.5.5+0
 ⌅ [214eeab7] fzf_jll v0.29.0+0
-  [a4ae2306] libaom_jll v3.4.0+0
+⌃ [a4ae2306] libaom_jll v3.4.0+0
   [0ac62f75] libass_jll v0.15.1+0
   [f638f0a6] libfdk_aac_jll v2.0.2+0
 ⌃ [b53b4c65] libpng_jll v1.6.38+0
