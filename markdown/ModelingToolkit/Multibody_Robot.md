@@ -191,7 +191,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [336ed68f] CSV v0.10.14
 ⌅ [13f3f980] CairoMakie v0.11.11
@@ -206,7 +206,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [f27b6e38] Polynomials v4.0.11
   [ba661fbb] PreferenceTools v0.1.2
   [31c91b34] SciMLBenchmarks v0.1.3
-  [0c5d862f] Symbolics v5.30.3
+  [0c5d862f] Symbolics v5.30.4
   [de0858da] Printf
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
 ```
@@ -214,7 +214,7 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
   [47edcb42] ADTypes v1.5.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -462,7 +462,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2efcf032] SymbolicIndexingInterface v0.3.22
   [19f23fe9] SymbolicLimits v0.2.1
   [d1185830] SymbolicUtils v2.0.2
-  [0c5d862f] Symbolics v5.30.3
+  [0c5d862f] Symbolics v5.30.4
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
@@ -471,7 +471,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [731e570b] TiffImages v0.10.0
   [a759f4b9] TimerOutputs v0.5.24
   [0796e94c] Tokenize v0.5.29
-  [3bb67fe8] TranscodingStreams v0.10.9
+  [3bb67fe8] TranscodingStreams v0.10.10
   [d5829a12] TriangularSolve v0.2.0
   [410a4b4d] Tricks v0.1.8
   [981d1d27] TriplotBase v0.1.0

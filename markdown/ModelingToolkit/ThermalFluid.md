@@ -317,7 +317,7 @@ max_sizes = [480, last(N), last(N), last(N), last(N), last(N)];
 # NaN-initialize so Makie will ignore incomplete
 ss_times = fill(NaN, length(N), 2);
 times = fill((NaN,NaN,NaN), length(N), length(max_sizes) - 1);
-total_times = fill(NaN, length(N), length(max_sizes));
+total_times = fill(NaN, length(N), length(max_sizes)+1); # +1 for Dymola
 ```
 
 
@@ -333,33 +333,33 @@ end
 ```
 
 ```
-80.486862 seconds (74.53 M allocations: 4.939 GiB, 21.08% gc time, 74.85% 
+82.147320 seconds (74.72 M allocations: 4.946 GiB, 20.79% gc time, 75.11% 
 compilation time: 19% of which was recompilation)
- 23.815589 seconds (6.95 M allocations: 456.359 MiB, 66.93% gc time, 15.09%
+ 23.991357 seconds (6.95 M allocations: 456.611 MiB, 66.90% gc time, 15.30%
  compilation time)
- 24.889533 seconds (9.37 M allocations: 620.855 MiB, 64.05% gc time, 16.19%
+ 25.199581 seconds (9.37 M allocations: 620.982 MiB, 64.02% gc time, 16.44%
  compilation time)
- 27.743762 seconds (15.04 M allocations: 934.693 MiB, 58.02% gc time, 18.35
+ 27.992674 seconds (15.03 M allocations: 933.370 MiB, 58.03% gc time, 18.51
 % compilation time)
- 34.114391 seconds (29.87 M allocations: 1.937 GiB, 48.22% gc time, 22.86% 
+ 34.423945 seconds (29.87 M allocations: 1.937 GiB, 48.29% gc time, 23.10% 
 compilation time)
- 41.904641 seconds (49.12 M allocations: 3.111 GiB, 42.00% gc time, 25.91% 
+ 42.316425 seconds (49.12 M allocations: 3.111 GiB, 42.05% gc time, 25.84% 
 compilation time)
- 50.246314 seconds (72.88 M allocations: 4.888 GiB, 35.70% gc time, 28.87% 
+ 50.829278 seconds (72.88 M allocations: 4.888 GiB, 35.85% gc time, 28.72% 
 compilation time)
-107.173753 seconds (211.62 M allocations: 14.610 GiB, 19.21% gc time, 31.22
+107.716549 seconds (211.63 M allocations: 14.612 GiB, 19.31% gc time, 31.11
 % compilation time)
-303.441688 seconds (703.02 M allocations: 51.219 GiB, 8.91% gc time, 30.49%
+306.945176 seconds (703.02 M allocations: 51.220 GiB, 8.84% gc time, 30.19%
  compilation time)
-669.479753 seconds (1.48 G allocations: 93.243 GiB, 5.53% gc time, 39.21% c
+678.544559 seconds (1.48 G allocations: 93.242 GiB, 5.60% gc time, 38.92% c
 ompilation time)
-189.473522 seconds (129.33 M allocations: 8.192 GiB, 11.39% gc time, 56.10%
+191.507572 seconds (129.32 M allocations: 8.192 GiB, 11.36% gc time, 55.88%
  compilation time)
-278.416530 seconds (171.46 M allocations: 11.154 GiB, 8.79% gc time, 60.22%
+279.501420 seconds (171.46 M allocations: 11.154 GiB, 8.90% gc time, 59.93%
  compilation time)
-387.099705 seconds (217.12 M allocations: 14.236 GiB, 7.17% gc time, 62.91%
+388.096977 seconds (217.13 M allocations: 14.236 GiB, 7.18% gc time, 62.64%
  compilation time)
-662.352038 seconds (321.64 M allocations: 19.844 GiB, 4.86% gc time, 66.88%
+661.552733 seconds (321.63 M allocations: 19.844 GiB, 4.92% gc time, 66.49%
  compilation time)
 ```
 
@@ -379,13 +379,13 @@ resultfile = "modelica_res.csv"
 
 @show "Start OpenModelica Timings"
 
-for i in 1:length(N)
-    _N = N[i]
-    _N > max_sizes[end] && break
-    @show _N
+for i in eachindex(N)
+    n = N[i]
+    n > max_sizes[end] && break
+    @show n
     totaltime = @elapsed res = begin
-        @sync ModelicaSystem(mod, modelicafile, "DhnControl.Test.test_preinsulated_470_$(_N)")
-        sendExpression(mod, "simulate(DhnControl.Test.test_preinsulated_470_$(_N))")
+        @sync ModelicaSystem(mod, modelicafile, "DhnControl.Test.test_preinsulated_470_$n")
+        sendExpression(mod, "simulate(DhnControl.Test.test_preinsulated_470_$n)")
     end
     #runtime = res["timeTotal"]
     @assert res["messages"][1:11] == "LOG_SUCCESS"
@@ -398,33 +398,33 @@ total_times[:, 5]
 
 ```
 "Start OpenModelica Timings" = "Start OpenModelica Timings"
-_N = 5
-_N = 10
-_N = 20
-_N = 40
-_N = 60
-_N = 80
-_N = 160
-_N = 320
-_N = 480
-_N = 640
-_N = 800
-_N = 960
-_N = 1280
+n = 5
+n = 10
+n = 20
+n = 40
+n = 60
+n = 80
+n = 160
+n = 320
+n = 480
+n = 640
+n = 800
+n = 960
+n = 1280
 13-element Vector{Float64}:
-   3.729103188
-   3.521139208
-   4.737292557
-   7.613921743
-  10.672295223
-  13.906261689
-  28.105796592
-  62.865075594
-  96.790252241
- 136.998925758
- 175.09251794
- 219.28177967
- 334.435488391
+   3.832369152
+   3.099279181
+   4.399327895
+   7.091813433
+  10.020715487
+  13.066996366
+  25.91054912
+  53.148060826
+  82.966684326
+ 117.968090939
+ 150.807198633
+ 188.246518218
+ 289.37014038
 ```
 
 
@@ -485,7 +485,7 @@ let ax = Axis(f[1, 1]; yscale = log10, xscale = log10, title="Structural Simplif
   end
   Legend(f[1,2], _lines, ss_names)
 end
-method_names = ["MTK", "JSIR - Scalar - Julia", "JSIR - Scalar - C", "JSIR - Scalar - LLVM", "JSIR - Loop - Julia", "JSIR - Loop - C", "JSIR - Loop - LLVM"];
+method_names = ["MTK", "JSIR - Julia", "JSIR - C", "JSIR - LLVM"];
 for (i, timecat) in enumerate(("ODEProblem + f!", "Run", "Solve"))
   title = timecat * " Time"
   ax = Axis(f[i+1, 1]; yscale = log10, xscale = log10, title)
@@ -558,7 +558,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Project.toml`
   [6e4b80f9] BenchmarkTools v1.5.0
   [336ed68f] CSV v0.10.14
 ⌅ [13f3f980] CairoMakie v0.11.11
@@ -573,7 +573,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [f27b6e38] Polynomials v4.0.11
   [ba661fbb] PreferenceTools v0.1.2
   [31c91b34] SciMLBenchmarks v0.1.3
-  [0c5d862f] Symbolics v5.30.3
+  [0c5d862f] Symbolics v5.30.4
   [95ff35a0] XSteam v0.3.0 `https://github.com/hzgzh/XSteam.jl.git#f2a1c58`
   [de0858da] Printf
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
@@ -582,8 +582,8 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
-  [47edcb42] ADTypes v1.5.0
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ModelingToolkit/Manifest.toml`
+⌃ [47edcb42] ADTypes v1.5.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.36
@@ -592,7 +592,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [27a7e980] Animations v0.4.1
   [ec485272] ArnoldiMethod v0.4.0
   [4fba245c] ArrayInterface v7.11.0
-  [4c555306] ArrayLayouts v1.9.4
+⌃ [4c555306] ArrayLayouts v1.9.4
   [67c07d97] Automa v1.0.3
   [13072b0f] AxisAlgorithms v1.1.0
   [39de3d68] AxisArrays v0.4.7
@@ -719,7 +719,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [984bce1d] LambertW v0.4.6
   [23fbe1c1] Latexify v0.16.3
   [10f19ff3] LayoutPointers v0.1.15
-  [5078a376] LazyArrays v2.0.5
+⌃ [5078a376] LazyArrays v2.0.5
   [8cdb02fc] LazyModules v0.3.1
   [9c8b4983] LightXML v0.9.1
   [d3d80556] LineSearches v7.2.0
@@ -829,8 +829,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [09ab397b] StructArrays v0.6.18
   [2efcf032] SymbolicIndexingInterface v0.3.22
   [19f23fe9] SymbolicLimits v0.2.1
-  [d1185830] SymbolicUtils v2.0.2
-  [0c5d862f] Symbolics v5.30.3
+⌃ [d1185830] SymbolicUtils v2.0.2
+  [0c5d862f] Symbolics v5.30.4
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
   [62fd8b95] TensorCore v0.1.1
@@ -839,7 +839,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [731e570b] TiffImages v0.10.0
   [a759f4b9] TimerOutputs v0.5.24
   [0796e94c] Tokenize v0.5.29
-  [3bb67fe8] TranscodingStreams v0.10.9
+  [3bb67fe8] TranscodingStreams v0.10.10
   [d5829a12] TriangularSolve v0.2.0
   [410a4b4d] Tricks v0.1.8
   [981d1d27] TriplotBase v0.1.0
