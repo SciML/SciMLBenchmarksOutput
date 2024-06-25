@@ -181,7 +181,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -191,7 +191,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Project.toml`
 ⌃ [6e4b80f9] BenchmarkTools v1.3.2
 ⌃ [7ed4a6bd] LinearSolve v2.5.0
 ⌃ [b51810bb] MatrixDepot v1.0.11
@@ -213,7 +213,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/LinearSolve/Manifest.toml`
 ⌅ [47edcb42] ADTypes v0.1.6
 ⌅ [79e6a3ab] Adapt v3.6.2
 ⌃ [4fba245c] ArrayInterface v7.4.11
