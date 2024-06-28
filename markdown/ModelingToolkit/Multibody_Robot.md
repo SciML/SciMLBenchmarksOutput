@@ -5,6 +5,7 @@ title: "Multibody Robot, compilation and simulation performance"
 
 
 This is a Multibody.jl model of a 6-axis industrial robot with 6 revolute joints. The first three joints are modeled as flexible. The robot is tracking a smooth, predefined reference trajectory.
+
 ```julia
 cd(@__DIR__)
 using Pkg
@@ -17,61 +18,136 @@ using JuliaSimCompiler
 using OrdinaryDiffEq
 using CairoMakie
 using Printf
+```
 
+
+
+
+## Setup
+
+```julia
 time_instantiate = @elapsed @named robot = Robot6DOF()
 robot = complete(robot)
 time_simplify = @elapsed ssys = structural_simplify(IRSystem(robot))
-time_prob = @elapsed prob = ODEProblem(ssys, [
-    robot.mechanics.r1.phi => deg2rad(-60)
-    robot.mechanics.r2.phi => deg2rad(20)
-    robot.mechanics.r3.phi => deg2rad(90)
-    robot.mechanics.r4.phi => deg2rad(0)
-    robot.mechanics.r5.phi => deg2rad(-110)
-    robot.mechanics.r6.phi => deg2rad(0)
-    robot.axis1.motor.Jmotor.phi => deg2rad(-60) * (-105) 
-    robot.axis2.motor.Jmotor.phi => deg2rad(20) * (210)
-    robot.axis3.motor.Jmotor.phi => deg2rad(90) * (60)
-], (0.0, 4.0))
-time_solve = @elapsed sol = solve(prob, Rodas5P(autodiff=false)); # With autodiff=true this takes over 150 seconds
-
-tv = 0:0.01:4
-time_extract_data = @elapsed data = sol(tv, idxs=[
-    robot.pathPlanning.controlBus.axisControlBus1.angle
-    robot.pathPlanning.controlBus.axisControlBus2.angle
-    robot.pathPlanning.controlBus.axisControlBus3.angle
-    robot.pathPlanning.controlBus.axisControlBus4.angle
-    robot.pathPlanning.controlBus.axisControlBus5.angle
-    robot.pathPlanning.controlBus.axisControlBus6.angle
-    robot.mechanics.r1.phi
-    robot.mechanics.r2.phi
-    robot.mechanics.r3.phi
-    robot.mechanics.r4.phi
-    robot.mechanics.r5.phi
-    robot.mechanics.r6.phi
-    robot.axis1.controller.feedback1.output.u
-    robot.axis2.controller.feedback1.output.u
-    robot.axis3.controller.feedback1.output.u
-    robot.axis4.controller.feedback1.output.u
-    robot.axis5.controller.feedback1.output.u
-    robot.axis6.controller.feedback1.output.u
-]);
-
+const C = JuliaSimCompiler.CTarget();
+const LLVM = JuliaSimCompiler.llvm.LLVMTarget();
 labels = ["Instantiate", "Simplify", "Problem creation", "Solve", "Extract data"]
-timings = [time_instantiate, time_simplify, time_prob, time_solve, time_extract_data]
+const u0 = [
+        robot.mechanics.r1.phi => deg2rad(-60)
+        robot.mechanics.r2.phi => deg2rad(20)
+        robot.mechanics.r3.phi => deg2rad(90)
+        robot.mechanics.r4.phi => deg2rad(0)
+        robot.mechanics.r5.phi => deg2rad(-110)
+        robot.mechanics.r6.phi => deg2rad(0)
+        robot.axis1.motor.Jmotor.phi => deg2rad(-60) * (-105) 
+        robot.axis2.motor.Jmotor.phi => deg2rad(20) * (210)
+        robot.axis3.motor.Jmotor.phi => deg2rad(90) * (60)
+    ]
+const tspan = (0.0, 4.0)
+```
+
+```
+(0.0, 4.0)
+```
+
+
+
+
+
+## Backend Benchmark Definition
+
+```julia
+function julia_multibody_timings(ssys, target)
+    time_prob = @elapsed prob = if target === JuliaSimCompiler.JuliaTarget()
+        ODEProblem(ssys, u0, tspan)
+    else
+        ODEProblem(ssys, target, u0, tspan)
+    end
+    time_solve = @elapsed sol = solve(prob, Rodas5P(autodiff=false)); # With autodiff=true this takes over 150 seconds
+    
+    tv = 0:0.01:4
+    time_extract_data = @elapsed data = sol(tv, idxs=[
+        robot.pathPlanning.controlBus.axisControlBus1.angle
+        robot.pathPlanning.controlBus.axisControlBus2.angle
+        robot.pathPlanning.controlBus.axisControlBus3.angle
+        robot.pathPlanning.controlBus.axisControlBus4.angle
+        robot.pathPlanning.controlBus.axisControlBus5.angle
+        robot.pathPlanning.controlBus.axisControlBus6.angle
+        robot.mechanics.r1.phi
+        robot.mechanics.r2.phi
+        robot.mechanics.r3.phi
+        robot.mechanics.r4.phi
+        robot.mechanics.r5.phi
+        robot.mechanics.r6.phi
+        robot.axis1.controller.feedback1.output.u
+        robot.axis2.controller.feedback1.output.u
+        robot.axis3.controller.feedback1.output.u
+        robot.axis4.controller.feedback1.output.u
+        robot.axis5.controller.feedback1.output.u
+        robot.axis6.controller.feedback1.output.u
+    ]);
+    timings = [time_instantiate, time_simplify, time_prob, time_solve, time_extract_data]
+end
+```
+
+```
+julia_multibody_timings (generic function with 1 method)
+```
+
+
+
+```julia
+julia_timings = julia_multibody_timings(ssys, JuliaSimCompiler.JuliaTarget())
+
 f = Figure()
 xs = 1:length(labels)
-points = Makie.Point.(xs .- 0.25, timings .+ 1)
-anns = [@sprintf("%3.3g", t) for t in timings]
-barplot(f[1,1], timings, axis=(; title="Timings", xticks = (xs, labels), limits = (nothing, (0, maximum(timings)*1.2 + 2))))
-
+points = Makie.Point.(xs .- 0.25, julia_timings .+ 1)
+anns = [@sprintf("%3.3g", t) for t in julia_timings]
+barplot(f[1,1], julia_timings, axis=(; title="Julia Backend Timings", xticks = (xs, labels), limits = (nothing, (0, maximum(julia_timings)*1.2 + 2))))
 annotations!(f[1,1], anns, points)
-barplot(f[2,1], timings, axis=(; title="Log Timings", xticks = (xs, labels), yscale=log10))
+barplot(f[2,1], julia_timings, axis=(; title="Log Timings", xticks = (xs, labels), yscale=log10))
 f
 ```
 
-![](figures/Multibody_Robot_1_1.png)
+![](figures/Multibody_Robot_4_1.png)
+
+```julia
+llvm_timings = julia_multibody_timings(ssys, LLVM)
+
+f = Figure()
+xs = 1:length(labels)
+points = Makie.Point.(xs .- 0.25, llvm_timings .+ 1)
+anns = [@sprintf("%3.3g", t) for t in llvm_timings]
+barplot(f[1,1], llvm_timings, axis=(; title="LLVM Backend Timings", xticks = (xs, labels), limits = (nothing, (0, maximum(llvm_timings)*1.2 + 2))))
+annotations!(f[1,1], anns, points)
+barplot(f[2,1], llvm_timings, axis=(; title="Log Timings", xticks = (xs, labels), yscale=log10))
+f
+```
+
+![](figures/Multibody_Robot_5_1.png)
+
+```julia
+c_timings = julia_multibody_timings(ssys, C)
+
+f = Figure()
+xs = 1:length(labels)
+points = Makie.Point.(xs .- 0.25, c_timings .+ 1)
+anns = [@sprintf("%3.3g", t) for t in c_timings]
+barplot(f[1,1], c_timings, axis=(; title="C Backend Timings", xticks = (xs, labels), limits = (nothing, (0, maximum(c_timings)*1.2 + 2))))
+annotations!(f[1,1], anns, points)
+barplot(f[2,1], c_timings, axis=(; title="Log Timings", xticks = (xs, labels), yscale=log10))
+f
+```
+
+```
+Error: AssertionError: _is_scalar(x) && _is_scalar(y)
+```
 
 
+
+
+
+Since the C backend currently errors, it's omitted from the total timings.
 
 ## OpenModelica
 
@@ -104,26 +180,37 @@ OMJulia.quit(mod)
 ```julia
 colors = Makie.wong_colors()
 labels = ["Build", "Simulate", "Total"]
-julia_build = time_instantiate + time_simplify + time_prob
-julia_sim = time_solve + time_extract_data
+julia_build = sum(julia_timings[1:3])
+julia_sim = sum(julia_timings[4:5])
 julia_total = julia_build + julia_sim
+
+llvm_build = sum(llvm_timings[1:3])
+llvm_sim = sum(llvm_timings[4:5])
+llvm_total = llvm_build + llvm_sim
+
+# c_build = sum(c_timings[1:3])
+# c_sim = sum(c_timings[4:5])
+# c_total = c_build + c_sim
+
 dymola_build = sum([5.075, 3.912, 4.024])/3
 dymola_total = sum([5.267, 4.112, 4.255])/3
 dymola_sim = dymola_total - dymola_build
 
 data = [
     julia_build julia_sim julia_total
+    llvm_build llvm_sim llvm_total
+    # c_build c_sim c_total
     om_build om_sim om_total
     dymola_build dymola_sim dymola_total
 ]
 
-xs = repeat(1:length(labels), inner=3)
-group = repeat([1,2,3], outer=3)
+xs = repeat(1:length(labels), inner=4)
+group = repeat([1,2,3,4], outer=3)
 fig = Figure()
 barplot(fig[1,1], xs, vec(data), dodge=group, color=colors[group], axis=(; title="Timings", xticks = ([1,2,3], labels)))
 
 # Legend
-legendentries = ["Julia", "OpenModelica", "Dymola"]
+legendentries = ["Julia Backend", "LLVM Backend", #= "C Backend", =# "OpenModelica", "Dymola"]
 elements = [PolyElement(polycolor = colors[i]) for i in 1:length(legendentries)]
 title = "Contestants"
 
@@ -131,7 +218,7 @@ Legend(fig[1,2], elements, legendentries, title)
 fig
 ```
 
-![](figures/Multibody_Robot_3_1.png)
+![](figures/Multibody_Robot_8_1.png)
 
 
 
@@ -214,7 +301,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [39de3d68] AxisArrays v0.4.7
   [6e4b80f9] BenchmarkTools v1.5.0
   [e2ed5e7c] Bijections v0.1.7
-  [62783981] BitTwiddlingConvenienceFunctions v0.1.5
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.6
   [00ebfdb7] CSTParser v3.4.3
@@ -224,7 +311,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [49dc2e85] Calculus v0.5.1
   [082447d4] ChainRules v1.69.0
   [d360d2e6] ChainRulesCore v1.24.0
-  [fb6a15b2] CloseOpenIntervals v0.1.12
+  [fb6a15b2] CloseOpenIntervals v0.1.13
   [944b1d66] CodecZlib v0.7.4
   [a2cac450] ColorBrewer v0.4.0
   [35d6a980] ColorSchemes v3.25.0
@@ -255,7 +342,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [459566f4] DiffEqCallbacks v3.6.2
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
-  [a0c0ee7d] DifferentiationInterface v0.5.6
+  [a0c0ee7d] DifferentiationInterface v0.5.7
   [31c24e10] Distributions v0.25.109
   [ffbed154] DocStringExtensions v0.9.3
   [5b8099bc] DomainSets v0.7.14
@@ -270,7 +357,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [6b7a57c9] Expronicon v0.8.5
   [411431e0] Extents v0.1.3
   [7a1cc6ca] FFTW v1.8.0
-  [7034ab61] FastBroadcast v0.3.3
+  [7034ab61] FastBroadcast v0.3.4
   [9aa1b823] FastClosures v0.3.2
   [29a986be] FastLapackInterface v2.0.4
   [5789e2e9] FileIO v1.16.3
@@ -288,7 +375,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [d9f16b24] Functors v0.4.11
   [46192b85] GPUArraysCore v0.1.6
-  [61eb1bfa] GPUCompiler v0.26.5
+⌃ [61eb1bfa] GPUCompiler v0.26.5
   [c145ed77] GenericSchur v0.5.4
   [cf35fbd7] GeoInterface v1.3.4
   [5c1252a2] GeometryBasics v0.4.11
@@ -299,7 +386,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [3955a311] GridLayoutBase v0.10.2
   [42e2da0e] Grisu v1.0.2
   [eafb193a] Highlights v0.5.3
-  [3e5b6fbb] HostCPUFeatures v0.1.16
+  [3e5b6fbb] HostCPUFeatures v0.1.17
   [34004b35] HypergeometricFunctions v0.3.23
   [7073ff75] IJulia v1.25.0
   [615f187c] IfElse v0.1.1
@@ -343,7 +430,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d3d80556] LineSearches v7.2.0
   [7ed4a6bd] LinearSolve v2.30.2
   [2ab3a3ac] LogExpFunctions v0.3.28
-  [bdcacae8] LoopVectorization v0.12.170
+  [bdcacae8] LoopVectorization v0.12.171
   [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.13
 ⌅ [ee78f7c6] Makie v0.20.10
@@ -384,7 +471,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [995b91a9] PlotUtils v1.4.1
   [e409e4f3] PoissonRandom v0.4.4
   [f517fe37] Polyester v0.7.15
-  [1d0040c9] PolyesterWeave v0.2.1
+  [1d0040c9] PolyesterWeave v0.2.2
   [647866c9] PolygonOps v0.1.2
   [f27b6e38] Polynomials v4.0.11
   [2dfb63ee] PooledArrays v1.4.3
@@ -403,7 +490,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c84ed2f1] Ratios v0.4.5
   [c1ae055f] RealDot v0.1.0
   [3cdcf5f2] RecipesBase v1.3.4
-⌃ [731186ca] RecursiveArrayTools v3.23.1
+  [731186ca] RecursiveArrayTools v3.23.1
   [f2c3362d] RecursiveFactorization v0.2.23
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
@@ -414,11 +501,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7e49a35a] RuntimeGeneratedFunctions v0.5.13
   [fdea26ae] SIMD v3.5.0
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.42
+  [476501e8] SLEEFPirates v0.6.43
   [0bca4576] SciMLBase v2.41.3
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.8
-  [53ae85a6] SciMLStructures v1.3.0
+  [53ae85a6] SciMLStructures v1.4.1
   [6c6a2e73] Scratch v1.2.1
   [91c51154] SentinelArrays v1.4.3
   [efcf1570] Setfield v1.1.1
@@ -440,12 +527,12 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [cae243ae] StackViews v0.1.1
 ⌅ [aedffcd0] Static v0.8.10
   [0d7ed370] StaticArrayInterface v1.5.1
-  [90137ffa] StaticArrays v1.9.5
+  [90137ffa] StaticArrays v1.9.6
   [1e83bf80] StaticArraysCore v1.4.3
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.3
   [4c63d2b9] StatsFuns v1.3.1
-  [7792a7ef] StrideArraysCore v0.5.6
+  [7792a7ef] StrideArraysCore v0.5.7
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
   [09ab397b] StructArrays v0.6.18
@@ -471,7 +558,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [1cfade01] UnicodeFun v0.4.1
   [1986cc42] Unitful v1.20.0
   [a7c27f48] Unityper v0.1.6
-  [3d5dd08c] VectorizationBase v0.21.69
+  [3d5dd08c] VectorizationBase v0.21.70
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
   [ea10d353] WeakRefStrings v1.4.2
