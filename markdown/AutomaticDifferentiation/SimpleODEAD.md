@@ -510,12 +510,12 @@ end
 
 ```
 6-element Vector{Float64}:
- 9.9659e-5
- 4.896e-5
- 0.000416098
- 0.000517046
- 0.000277418
- 0.000242498
+ 8.0729e-5
+ 3.653e-5
+ 0.000305358
+ 0.000453736
+ 0.000241389
+ 0.000200159
 ```
 
 
@@ -555,24 +555,24 @@ end
 ```
 
 ```
-4.877368 seconds (6.04 M allocations: 435.400 MiB, 4.27% gc time, 89.68% 
+3.749383 seconds (6.04 M allocations: 435.540 MiB, 4.98% gc time, 89.75% 
 compilation time)
- 18.517568 seconds (15.83 M allocations: 1.009 GiB, 2.63% gc time, 87.64% c
+ 13.953951 seconds (15.77 M allocations: 1.007 GiB, 2.57% gc time, 87.70% c
 ompilation time)
- 95.205672 seconds (5.12 M allocations: 727.250 MiB, 0.14% gc time, 6.34% c
+ 84.209333 seconds (5.12 M allocations: 726.804 MiB, 0.92% gc time, 5.54% c
 ompilation time)
-110.279794 seconds (6.97 M allocations: 1.015 GiB, 1.52% gc time, 4.14% com
+ 93.060921 seconds (6.98 M allocations: 1.015 GiB, 2.06% gc time, 5.02% com
 pilation time)
- 64.547324 seconds (3.72 M allocations: 796.703 MiB, 1.46% gc time, 3.83% c
+ 59.076356 seconds (3.72 M allocations: 796.750 MiB, 2.80% gc time, 3.59% c
 ompilation time)
 
 6-element Vector{Float64}:
-  60.66195867
-   2.292023871
- 100.303755632
-  87.692736845
-  86.284205943
-   0.47370784
+ 54.405050578
+  1.66918238
+ 89.344801835
+ 72.176688702
+ 74.293097627
+  0.357333712
 ```
 
 
@@ -602,11 +602,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.009863205
- 0.453869899
- 0.540315161
- 0.503371944
- 0.008403034
+ 0.00748818
+ 0.399688358
+ 0.44971438
+ 0.415693399
+ 0.006326528
 ```
 
 
@@ -641,11 +641,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.002168016
- 0.008730283
- 0.006959405
- 0.009329469
- 0.008823762
+ 0.001742748
+ 0.006532635
+ 0.005162896
+ 0.007122722
+ 0.006624466
 ```
 
 
@@ -658,24 +658,24 @@ display(forward_timings)
 
 ```
 6×5 DataFrame
- Row │ methods                    LV           Bruss       Pollution   PKPD
+ Row │ methods                    LV           Bruss      Pollution   PKPD 
     ⋯
-     │ String                     Float64      Float64     Float64     Floa
-t64 ⋯
+     │ String                     Float64      Float64    Float64     Float
+64  ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ Compile-time CSA           9.9659e-5     60.662     0.0         0.0 
+   1 │ Compile-time CSA           8.0729e-5    54.4051    0.0         0.0  
     ⋯
-   2 │ DSA                        4.896e-5       2.29202   0.0098632   0.00
-216
-   3 │ CSA user-Jacobian          0.000416098  100.304     0.45387     0.00
-873
-   4 │ AD-Jacobian                0.000517046   87.6927    0.540315    0.00
-695
-   5 │ AD-Jv seeding              0.000277418   86.2842    0.503372    0.00
-932 ⋯
-   6 │ Numerical Differentiation  0.000242498    0.473708  0.00840303  0.00
-882
+   2 │ DSA                        3.653e-5      1.66918   0.00748818  0.001
+742
+   3 │ CSA user-Jacobian          0.000305358  89.3448    0.399688    0.006
+532
+   4 │ AD-Jacobian                0.000453736  72.1767    0.449714    0.005
+162
+   5 │ AD-Jv seeding              0.000241389  74.2931    0.415693    0.007
+122 ⋯
+   6 │ Numerical Differentiation  0.000200159   0.357334  0.00632653  0.006
+624
                                                                 1 column om
 itted
 ```
@@ -716,27 +716,27 @@ end
 ```
 
 ```
-3.012670 seconds (4.18 M allocations: 276.690 MiB, 2.47% gc time, 99.94% 
+2.538755 seconds (4.09 M allocations: 274.056 MiB, 3.43% gc time, 99.94% 
 compilation time)
-  4.940968 seconds (5.26 M allocations: 344.697 MiB, 3.62% gc time, 99.77% 
+  4.127228 seconds (5.24 M allocations: 343.021 MiB, 5.45% gc time, 99.82% 
 compilation time)
- 90.373078 seconds (82.72 M allocations: 5.489 GiB, 3.77% gc time, 99.94% c
+ 74.804749 seconds (80.70 M allocations: 5.356 GiB, 4.35% gc time, 99.92% c
 ompilation time: <1% of which was recompilation)
-  0.659541 seconds (781.64 k allocations: 52.730 MiB, 99.67% compilation ti
+  0.561017 seconds (785.68 k allocations: 53.014 MiB, 99.56% compilation ti
 me)
 12-element Vector{Float64}:
- 0.000134539
- 0.005683592
- 0.000602516
- 0.000717536
- 0.000430557
- 0.00149815
- 0.00158552
- 0.002291965
- 0.001052863
- 0.001251891
- 0.000681985
- 0.000759285
+ 9.758e-5
+ 0.004362001
+ 0.000456157
+ 0.000572096
+ 0.000331448
+ 0.001109903
+ 0.001225182
+ 0.001798168
+ 0.000781965
+ 0.000944884
+ 0.000509517
+ 0.000614966
 ```
 
 
@@ -779,25 +779,25 @@ end
 ```
 
 ```
-17.743092 seconds (14.19 M allocations: 944.570 MiB, 2.41% gc time, 86.69%
+14.601530 seconds (14.12 M allocations: 941.858 MiB, 3.16% gc time, 88.25%
  compilation time)
- 93.746635 seconds (56.31 M allocations: 3.774 GiB, 1.50% gc time, 86.53% c
+ 75.250089 seconds (56.22 M allocations: 3.770 GiB, 2.04% gc time, 87.50% c
 ompilation time)
-  3.903263 seconds (2.15 M allocations: 205.033 MiB, 1.77% gc time, 65.29% 
+  3.053242 seconds (2.16 M allocations: 205.225 MiB, 2.92% gc time, 65.05% 
 compilation time)
 12-element Vector{Float64}:
-   2.248190341
+   1.685640905
  NaN
-   3.847808315
-   1.915873231
-   0.145545731
-   0.230059054
-   0.339471812
-   0.077835497
+   2.883965573
+   1.441583609
+   0.109336892
+   0.174303044
+   0.255529927
+   0.065749106
  NaN
  NaN
  NaN
-   1.27574396
+   0.971662287
 ```
 
 
@@ -838,25 +838,25 @@ end
 ```
 
 ```
-17.502701 seconds (14.41 M allocations: 927.087 MiB, 2.26% gc time, 99.96%
+14.996043 seconds (14.33 M allocations: 924.189 MiB, 7.08% gc time, 99.96%
  compilation time)
- 75.794327 seconds (58.28 M allocations: 3.339 GiB, 1.54% gc time, 91.04% c
+ 61.186772 seconds (58.19 M allocations: 3.334 GiB, 2.12% gc time, 91.52% c
 ompilation time)
-  2.438882 seconds (2.00 M allocations: 138.498 MiB, 99.17% compilation tim
+  2.017444 seconds (2.01 M allocations: 138.676 MiB, 99.19% compilation tim
 e)
 12-element Vector{Float64}:
-   0.00607943
+   0.004622589
  NaN
-   1.116849552
-   1.726047282
-   0.266299304
-   0.261025748
-   0.770748685
-   0.497505838
+   0.853039043
+   1.318715369
+   0.195860408
+   0.199614133
+   0.577498053
+   0.360889864
  NaN
  NaN
  NaN
-   0.019306603
+   0.014664511
 ```
 
 
@@ -897,27 +897,27 @@ end
 ```
 
 ```
-3.442100 seconds (3.57 M allocations: 238.427 MiB, 2.46% gc time, 99.80% 
+2.850788 seconds (3.50 M allocations: 235.139 MiB, 3.71% gc time, 99.83% 
 compilation time)
-  3.781076 seconds (4.76 M allocations: 250.020 MiB, 2.52% gc time, 92.85% 
+  3.108603 seconds (4.73 M allocations: 247.997 MiB, 2.19% gc time, 95.06% 
 compilation time)
- 32.007291 seconds (29.09 M allocations: 1.870 GiB, 2.27% gc time, 99.63% c
+ 26.258040 seconds (29.03 M allocations: 1.867 GiB, 3.17% gc time, 99.75% c
 ompilation time)
-  0.282388 seconds (437.60 k allocations: 33.480 MiB, 92.05% compilation ti
+  0.235426 seconds (439.31 k allocations: 33.605 MiB, 91.80% compilation ti
 me)
 12-element Vector{Float64}:
-   0.00306601
-   0.154733209
-   0.008753542
-   0.006665795
-   0.002274355
-   0.008311835
-   0.007765708
-   0.007880528
+   0.002274604
+   0.141858522
+   0.006624506
+   0.005024056
+   0.001753398
+   0.006274928
+   0.005759621
+   0.0059208
  NaN
  NaN
  NaN
-   0.020950532
+   0.015911993
 ```
 
 
@@ -935,18 +935,18 @@ Markdown.parse(PrettyTables.pretty_table(String, adjoint_timings; backend=Val(:m
 
 |                   **methods** |      **LV** | **Bruss** | **Pollution** |   **PKPD** |
 | -----------------------------:| -----------:| ---------:| -------------:| ----------:|
-|                   ForwardDiff | 0.000134539 |   2.24819 |    0.00607943 | 0.00306601 |
-|                   ReverseDiff |  0.00568359 |       NaN |           NaN |   0.154733 |
-| InterpolatingAdjoint User Jac | 0.000602516 |   3.84781 |       1.11685 | 0.00875354 |
-|   InterpolatingAdjoint AD Jac | 0.000717536 |   1.91587 |       1.72605 |  0.0066658 |
-|      InterpolatingAdjoint v'J | 0.000430557 |  0.145546 |      0.266299 | 0.00227436 |
-|    QuadratureAdjoint User Jac |  0.00149815 |  0.230059 |      0.261026 | 0.00831184 |
-|      QuadratureAdjoint AD Jac |  0.00158552 |  0.339472 |      0.770749 | 0.00776571 |
-|         QuadratureAdjoint v'J |  0.00229196 | 0.0778355 |      0.497506 | 0.00788053 |
-|     BacksolveAdjoint User Jac |  0.00105286 |       NaN |           NaN |        NaN |
-|       BacksolveAdjoint AD Jac |  0.00125189 |       NaN |           NaN |        NaN |
-|          BacksolveAdjoint v'J | 0.000681985 |       NaN |           NaN |        NaN |
-|     Numerical Differentiation | 0.000759285 |   1.27574 |     0.0193066 |  0.0209505 |
+|                   ForwardDiff |    9.758e-5 |   1.68564 |    0.00462259 |  0.0022746 |
+|                   ReverseDiff |    0.004362 |       NaN |           NaN |   0.141859 |
+| InterpolatingAdjoint User Jac | 0.000456157 |   2.88397 |      0.853039 | 0.00662451 |
+|   InterpolatingAdjoint AD Jac | 0.000572096 |   1.44158 |       1.31872 | 0.00502406 |
+|      InterpolatingAdjoint v'J | 0.000331448 |  0.109337 |       0.19586 |  0.0017534 |
+|    QuadratureAdjoint User Jac |   0.0011099 |  0.174303 |      0.199614 | 0.00627493 |
+|      QuadratureAdjoint AD Jac |  0.00122518 |   0.25553 |      0.577498 | 0.00575962 |
+|         QuadratureAdjoint v'J |  0.00179817 | 0.0657491 |       0.36089 |  0.0059208 |
+|     BacksolveAdjoint User Jac | 0.000781965 |       NaN |           NaN |        NaN |
+|       BacksolveAdjoint AD Jac | 0.000944884 |       NaN |           NaN |        NaN |
+|          BacksolveAdjoint v'J | 0.000509517 |       NaN |           NaN |        NaN |
+|     Numerical Differentiation | 0.000614966 |  0.971662 |     0.0146645 |   0.015912 |
 
 
 
@@ -968,8 +968,8 @@ SciMLBenchmarks.weave_file("benchmarks/AutomaticDifferentiation","SimpleODEAD.jm
 Computer Information:
 
 ```
-Julia Version 1.10.2
-Commit bd47eca2c8a (2024-03-01 10:14 UTC)
+Julia Version 1.10.4
+Commit 48d4fd48430 (2024-06-04 10:41 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -997,68 +997,69 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [7da242da] Enzyme v0.11.20
   [6a86dc24] FiniteDiff v2.23.1
   [f6369f11] ForwardDiff v0.10.36
-  [1dea7af3] OrdinaryDiffEq v6.74.1
+⌃ [1dea7af3] OrdinaryDiffEq v6.74.1
   [65888b18] ParameterizedFunctions v5.17.0
   [91a5bcdd] Plots v1.40.4
-  [08abe8d2] PrettyTables v2.3.1
-  [37e2e3b7] ReverseDiff v1.15.2
+⌃ [08abe8d2] PrettyTables v2.3.1
+⌃ [37e2e3b7] ReverseDiff v1.15.2
   [31c91b34] SciMLBenchmarks v0.1.3
-  [1ed8b502] SciMLSensitivity v7.56.2
-  [90137ffa] StaticArrays v1.9.3
-  [07d77754] Tapir v0.1.2
-  [9f7883ad] Tracker v0.2.33
-  [e88e6eb3] Zygote v0.6.69
+⌃ [1ed8b502] SciMLSensitivity v7.56.2
+⌃ [90137ffa] StaticArrays v1.9.3
+⌅ [07d77754] Tapir v0.1.2
+⌃ [9f7883ad] Tracker v0.2.33
+⌃ [e88e6eb3] Zygote v0.6.69
   [37e2e46d] LinearAlgebra
   [d6f4376e] Markdown
   [de0858da] Printf
   [8dfed614] Test
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
-  [47edcb42] ADTypes v0.2.7
+⌅ [47edcb42] ADTypes v0.2.7
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.36
   [79e6a3ab] Adapt v4.0.4
   [ec485272] ArnoldiMethod v0.4.0
-  [4fba245c] ArrayInterface v7.9.0
-  [4c555306] ArrayLayouts v1.9.2
+⌃ [4fba245c] ArrayInterface v7.9.0
+⌃ [4c555306] ArrayLayouts v1.9.2
   [a9b6321e] Atomix v0.1.0
   [6e4b80f9] BenchmarkTools v1.5.0
-  [e2ed5e7c] Bijections v0.1.6
-  [d1d4a3ce] BitFlags v0.1.8
-  [62783981] BitTwiddlingConvenienceFunctions v0.1.5
+⌃ [e2ed5e7c] Bijections v0.1.6
+⌃ [d1d4a3ce] BitFlags v0.1.8
+⌃ [62783981] BitTwiddlingConvenienceFunctions v0.1.5
   [fa961155] CEnum v0.5.0
-  [2a0fbf3d] CPUSummary v0.2.4
-  [00ebfdb7] CSTParser v3.4.2
+⌃ [2a0fbf3d] CPUSummary v0.2.4
+⌃ [00ebfdb7] CSTParser v3.4.2
   [49dc2e85] Calculus v0.5.1
   [7057c7e9] Cassette v0.3.13
   [8be319e6] Chain v0.6.0
-  [082447d4] ChainRules v1.64.0
-  [d360d2e6] ChainRulesCore v1.23.0
+⌃ [082447d4] ChainRules v1.64.0
+⌃ [d360d2e6] ChainRulesCore v1.23.0
   [0ca39b1e] Chairmarks v1.2.1
-  [fb6a15b2] CloseOpenIntervals v0.1.12
+⌃ [fb6a15b2] CloseOpenIntervals v0.1.12
   [da1fd8a2] CodeTracking v1.3.5
   [944b1d66] CodecZlib v0.7.4
-  [35d6a980] ColorSchemes v3.24.0
+⌃ [35d6a980] ColorSchemes v3.24.0
   [3da002f7] ColorTypes v0.11.5
   [c3611d14] ColorVectorSpace v0.10.0
-  [5ae59095] Colors v0.12.10
+⌃ [5ae59095] Colors v0.12.10
   [861a8166] Combinatorics v1.0.2
   [a80b9123] CommonMark v0.8.12
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v4.14.0
-  [b0b7db55] ComponentArrays v0.15.11
+⌃ [34da2185] Compat v4.14.0
+⌃ [b0b7db55] ComponentArrays v0.15.11
   [b152e2b5] CompositeTypes v0.1.4
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.3
   [f0e56b4a] ConcurrentUtilities v2.4.1
-  [8f4d0f93] Conda v1.10.0
+⌃ [8f4d0f93] Conda v1.10.0
   [187b0558] ConstructionBase v1.5.5
   [d38c429a] Contour v0.6.3
   [adafc99b] CpuId v0.3.1
@@ -1069,8 +1070,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [864edb3b] DataStructures v0.18.20
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.149.0
-  [459566f4] DiffEqCallbacks v3.6.1
+⌃ [2b5f629d] DiffEqBase v6.149.0
+⌃ [459566f4] DiffEqCallbacks v3.6.1
   [77a26b50] DiffEqNoiseProcess v5.21.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
@@ -1078,12 +1079,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [a0c0ee7d] DifferentiationInterface v0.2.1 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterface#main`
   [a82114a7] DifferentiationInterfaceTest v0.2.1 `https://github.com/gdalle/DifferentiationInterface.jl:DifferentiationInterfaceTest#main`
   [b4f34e82] Distances v0.10.11
-  [31c24e10] Distributions v0.25.107
+⌃ [31c24e10] Distributions v0.25.107
   [ffbed154] DocStringExtensions v0.9.3
-  [5b8099bc] DomainSets v0.7.12
+⌃ [5b8099bc] DomainSets v0.7.12
   [fa6b7ba4] DualNumbers v0.6.8
-  [7c1d4256] DynamicPolynomials v0.5.6
-  [06fc5a27] DynamicQuantities v0.13.2
+⌅ [7c1d4256] DynamicPolynomials v0.5.6
+⌅ [06fc5a27] DynamicQuantities v0.13.2
   [da5c29d0] EllipsisNotation v1.8.0
   [4e289a0a] EnumX v1.0.4
 ⌅ [7da242da] Enzyme v0.11.20
@@ -1092,110 +1093,110 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d4d017d3] ExponentialUtilities v1.26.1
   [e2ba6199] ExprTools v0.1.10
   [c87230d0] FFMPEG v0.4.1
-  [7034ab61] FastBroadcast v0.2.8
+⌅ [7034ab61] FastBroadcast v0.2.8
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v2.0.2
-  [1a297f60] FillArrays v1.10.0
+⌃ [29a986be] FastLapackInterface v2.0.2
+⌃ [1a297f60] FillArrays v1.10.0
   [64ca27bc] FindFirstFunctions v1.2.0
   [6a86dc24] FiniteDiff v2.23.1
-  [53c48c17] FixedPointNumbers v0.8.4
+⌃ [53c48c17] FixedPointNumbers v0.8.4
   [1fa38f19] Format v1.3.7
   [f6369f11] ForwardDiff v0.10.36
   [f62d2435] FunctionProperties v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
-  [d9f16b24] Functors v0.4.10
-  [0c68f7d7] GPUArrays v10.1.0
+⌃ [d9f16b24] Functors v0.4.10
+⌃ [0c68f7d7] GPUArrays v10.1.0
   [46192b85] GPUArraysCore v0.1.6
 ⌅ [61eb1bfa] GPUCompiler v0.25.0
-  [28b8d3ca] GR v0.73.3
+⌃ [28b8d3ca] GR v0.73.3
   [c145ed77] GenericSchur v0.5.4
   [d7ba0133] Git v1.3.1
   [c27321d9] Glob v1.3.1
-  [86223c79] Graphs v1.10.0
+⌃ [86223c79] Graphs v1.10.0
   [42e2da0e] Grisu v1.0.2
-  [cd3eb016] HTTP v1.10.5
-  [eafb193a] Highlights v0.5.2
-  [3e5b6fbb] HostCPUFeatures v0.1.16
+⌃ [cd3eb016] HTTP v1.10.5
+⌃ [eafb193a] Highlights v0.5.2
+⌃ [3e5b6fbb] HostCPUFeatures v0.1.16
   [34004b35] HypergeometricFunctions v0.3.23
-  [7073ff75] IJulia v1.24.2
-  [7869d1d1] IRTools v0.4.12
+⌃ [7073ff75] IJulia v1.24.2
+⌃ [7869d1d1] IRTools v0.4.12
   [615f187c] IfElse v0.1.1
-  [d25df0c9] Inflate v0.1.4
-  [842dd82b] InlineStrings v1.4.0
+⌃ [d25df0c9] Inflate v0.1.4
+⌃ [842dd82b] InlineStrings v1.4.0
   [8197267c] IntervalSets v0.7.10
-  [3587e190] InverseFunctions v0.1.13
+⌃ [3587e190] InverseFunctions v0.1.13
   [41ab1584] InvertedIndices v1.3.0
   [92d709cd] IrrationalConstants v0.2.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [c3a54625] JET v0.8.29
-  [27aeb0d3] JLArrays v0.1.4
+⌅ [c3a54625] JET v0.8.29
+⌃ [27aeb0d3] JLArrays v0.1.4
   [1019f520] JLFzf v0.1.7
   [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
   [98e50ef6] JuliaFormatter v1.0.56
-  [aa1ae85d] JuliaInterpreter v0.9.31
+⌃ [aa1ae85d] JuliaInterpreter v0.9.31
   [ccbc3e58] JumpProcesses v9.11.1
   [ef3ab10e] KLU v0.6.0
-  [63c18a36] KernelAbstractions v0.9.18
-  [ba0b0d4f] Krylov v0.9.5
-  [929cbde3] LLVM v6.6.3
+⌃ [63c18a36] KernelAbstractions v0.9.18
+⌃ [ba0b0d4f] Krylov v0.9.5
+⌅ [929cbde3] LLVM v6.6.3
   [b964fa9f] LaTeXStrings v1.3.1
-  [2ee39098] LabelledArrays v1.15.1
+⌃ [2ee39098] LabelledArrays v1.15.1
   [984bce1d] LambertW v0.4.6
   [23fbe1c1] Latexify v0.16.3
-  [10f19ff3] LayoutPointers v0.1.15
-  [5078a376] LazyArrays v1.9.1
+⌃ [10f19ff3] LayoutPointers v0.1.15
+⌅ [5078a376] LazyArrays v1.9.1
   [2d8b4e74] LevyArea v1.0.0
   [d3d80556] LineSearches v7.2.0
-  [7ed4a6bd] LinearSolve v2.28.0
-  [2ab3a3ac] LogExpFunctions v0.3.27
+⌃ [7ed4a6bd] LinearSolve v2.28.0
+⌃ [2ab3a3ac] LogExpFunctions v0.3.27
   [e6f89c97] LoggingExtras v1.0.3
-  [bdcacae8] LoopVectorization v0.12.169
+⌃ [bdcacae8] LoopVectorization v0.12.169
 ⌅ [6f1432cf] LoweredCodeUtils v2.3.2
   [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.13
   [d125e4d3] ManualMemory v0.1.8
-  [a3b82374] MatrixFactorizations v2.2.0
-  [bb5d69b7] MaybeInplace v0.1.2
+⌅ [a3b82374] MatrixFactorizations v2.2.0
+⌃ [bb5d69b7] MaybeInplace v0.1.2
   [739be429] MbedTLS v1.1.9
   [442fdcdd] Measures v0.3.2
   [e1d29d7a] Missings v1.2.0
-  [961ee093] ModelingToolkit v9.12.0
+⌃ [961ee093] ModelingToolkit v9.12.0
   [46d2c3a1] MuladdMacro v0.2.4
-  [102ac46a] MultivariatePolynomials v0.5.4
+⌃ [102ac46a] MultivariatePolynomials v0.5.4
   [ffc61752] Mustache v1.0.19
-  [d8a4904e] MutableArithmetics v1.4.3
+⌃ [d8a4904e] MutableArithmetics v1.4.3
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
-  [872c559c] NNlib v0.9.13
+⌃ [872c559c] NNlib v0.9.13
   [77ba4419] NaNMath v1.0.2
-  [8913a72c] NonlinearSolve v3.10.0
+⌃ [8913a72c] NonlinearSolve v3.10.0
   [d8793406] ObjectFile v0.4.1
   [6fe1bfb0] OffsetArrays v1.14.0
-  [4d8831e6] OpenSSL v1.4.2
+⌃ [4d8831e6] OpenSSL v1.4.2
   [429524aa] Optim v1.9.4
   [3bd65402] Optimisers v0.3.3
   [bac558e1] OrderedCollections v1.6.3
-  [1dea7af3] OrdinaryDiffEq v6.74.1
+⌃ [1dea7af3] OrdinaryDiffEq v6.74.1
   [90014a1f] PDMats v0.11.31
   [65ce6f38] PackageExtensionCompat v1.0.2
   [65888b18] ParameterizedFunctions v5.17.0
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.8.1
   [b98c9c47] Pipe v1.3.0
-  [ccf2f8ad] PlotThemes v3.1.0
+⌃ [ccf2f8ad] PlotThemes v3.1.0
   [995b91a9] PlotUtils v1.4.1
   [91a5bcdd] Plots v1.40.4
   [e409e4f3] PoissonRandom v0.4.4
-  [f517fe37] Polyester v0.7.13
-  [1d0040c9] PolyesterWeave v0.2.1
+⌃ [f517fe37] Polyester v0.7.13
+⌃ [1d0040c9] PolyesterWeave v0.2.1
   [2dfb63ee] PooledArrays v1.4.3
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.21
+⌃ [d236fae5] PreallocationTools v0.4.21
   [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.4.3
-  [08abe8d2] PrettyTables v2.3.1
+⌃ [08abe8d2] PrettyTables v2.3.1
   [92933f4c] ProgressMeter v1.10.0
   [1fd47b50] QuadGK v2.9.4
   [74087812] Random123 v1.7.0
@@ -1203,143 +1204,143 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c1ae055f] RealDot v0.1.0
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v3.13.0
+⌃ [731186ca] RecursiveArrayTools v3.13.0
   [f2c3362d] RecursiveFactorization v0.2.23
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
-  [37e2e3b7] ReverseDiff v1.15.2
+⌃ [37e2e3b7] ReverseDiff v1.15.2
   [295af30f] Revise v3.5.14
   [79098fc4] Rmath v0.7.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.13
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.42
-  [0bca4576] SciMLBase v2.33.1
+⌃ [476501e8] SLEEFPirates v0.6.42
+⌃ [0bca4576] SciMLBase v2.33.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [c0aeaf25] SciMLOperators v0.3.8
-  [1ed8b502] SciMLSensitivity v7.56.2
-  [53ae85a6] SciMLStructures v1.1.0
+⌃ [1ed8b502] SciMLSensitivity v7.56.2
+⌃ [53ae85a6] SciMLStructures v1.1.0
   [6c6a2e73] Scratch v1.2.1
-  [91c51154] SentinelArrays v1.4.1
+⌃ [91c51154] SentinelArrays v1.4.1
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
-  [727e6d20] SimpleNonlinearSolve v1.7.0
+⌃ [727e6d20] SimpleNonlinearSolve v1.7.0
   [699a6c99] SimpleTraits v0.9.4
   [ce78b400] SimpleUnPack v1.1.0
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.2.1
-  [47a9eef4] SparseDiffTools v2.17.0
+⌃ [47a9eef4] SparseDiffTools v2.17.0
   [dc90abb0] SparseInverseSubset v0.1.2
   [e56a9233] Sparspak v0.3.9
-  [276daf66] SpecialFunctions v2.3.1
-  [aedffcd0] Static v0.8.10
-  [0d7ed370] StaticArrayInterface v1.5.0
-  [90137ffa] StaticArrays v1.9.3
-  [1e83bf80] StaticArraysCore v1.4.2
+⌃ [276daf66] SpecialFunctions v2.3.1
+⌅ [aedffcd0] Static v0.8.10
+⌃ [0d7ed370] StaticArrayInterface v1.5.0
+⌃ [90137ffa] StaticArrays v1.9.3
+⌃ [1e83bf80] StaticArraysCore v1.4.2
   [82ae8749] StatsAPI v1.7.0
   [2913bbd2] StatsBase v0.34.3
   [4c63d2b9] StatsFuns v1.3.1
   [789caeaf] StochasticDiffEq v6.65.1
-  [7792a7ef] StrideArraysCore v0.5.5
+⌃ [7792a7ef] StrideArraysCore v0.5.5
   [69024149] StringEncodings v0.3.7
   [892a3eda] StringManipulation v0.3.4
   [09ab397b] StructArrays v0.6.18
   [53d494c1] StructIO v0.3.0
-  [2efcf032] SymbolicIndexingInterface v0.3.16
-  [19f23fe9] SymbolicLimits v0.2.0
-  [d1185830] SymbolicUtils v1.5.1
-  [0c5d862f] Symbolics v5.28.0
+⌃ [2efcf032] SymbolicIndexingInterface v0.3.16
+⌃ [19f23fe9] SymbolicLimits v0.2.0
+⌅ [d1185830] SymbolicUtils v1.5.1
+⌃ [0c5d862f] Symbolics v5.28.0
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.11.1
-  [07d77754] Tapir v0.1.2
+⌅ [07d77754] Tapir v0.1.2
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.2
-  [a759f4b9] TimerOutputs v0.5.23
-  [0796e94c] Tokenize v0.5.28
-  [9f7883ad] Tracker v0.2.33
-  [3bb67fe8] TranscodingStreams v0.10.7
+⌃ [a759f4b9] TimerOutputs v0.5.23
+⌃ [0796e94c] Tokenize v0.5.28
+⌃ [9f7883ad] Tracker v0.2.33
+⌃ [3bb67fe8] TranscodingStreams v0.10.7
   [d5829a12] TriangularSolve v0.2.0
   [410a4b4d] Tricks v0.1.8
   [781d530d] TruncatedStacktraces v1.4.0
   [5c2747f8] URIs v1.5.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.19.0
+⌃ [1986cc42] Unitful v1.19.0
   [45397f5d] UnitfulLatexify v1.6.3
   [a7c27f48] Unityper v0.1.6
   [013be700] UnsafeAtomics v0.2.1
-  [d80eeb9a] UnsafeAtomicsLLVM v0.1.3
+⌃ [d80eeb9a] UnsafeAtomicsLLVM v0.1.3
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.66
+⌃ [3d5dd08c] VectorizationBase v0.21.66
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.9
-  [c2297ded] ZMQ v1.2.2
-  [e88e6eb3] Zygote v0.6.69
+⌃ [ddb6d928] YAML v0.4.9
+⌃ [c2297ded] ZMQ v1.2.2
+⌃ [e88e6eb3] Zygote v0.6.69
   [700de1a5] ZygoteRules v0.2.5
   [6e34b625] Bzip2_jll v1.0.8+1
-  [83423d85] Cairo_jll v1.18.0+1
+⌃ [83423d85] Cairo_jll v1.18.0+1
 ⌅ [7cc45869] Enzyme_jll v0.0.102+0
   [2702e6a9] EpollShim_jll v0.0.20230411+0
-  [2e619515] Expat_jll v2.5.0+0
+⌃ [2e619515] Expat_jll v2.5.0+0
 ⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
-  [a3f928ae] Fontconfig_jll v2.13.93+0
-  [d7e528f0] FreeType2_jll v2.13.1+0
-  [559328eb] FriBidi_jll v1.0.10+0
+⌃ [a3f928ae] Fontconfig_jll v2.13.93+0
+⌃ [d7e528f0] FreeType2_jll v2.13.1+0
+⌃ [559328eb] FriBidi_jll v1.0.10+0
   [0656b61e] GLFW_jll v3.3.9+0
-  [d2c73de3] GR_jll v0.73.3+0
+⌅ [d2c73de3] GR_jll v0.73.3+0
   [78b55507] Gettext_jll v0.21.0+0
   [f8c6e375] Git_jll v2.44.0+2
-  [7746bdde] Glib_jll v2.80.0+0
+⌃ [7746bdde] Glib_jll v2.80.0+0
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
-  [1d5cc7b8] IntelOpenMP_jll v2024.0.2+0
-  [aacddb02] JpegTurbo_jll v3.0.2+0
-  [c1c5ebd0] LAME_jll v3.100.1+0
-  [88015f11] LERC_jll v3.0.0+1
-  [dad2f222] LLVMExtra_jll v0.0.29+0
+⌃ [1d5cc7b8] IntelOpenMP_jll v2024.0.2+0
+⌃ [aacddb02] JpegTurbo_jll v3.0.2+0
+⌃ [c1c5ebd0] LAME_jll v3.100.1+0
+⌅ [88015f11] LERC_jll v3.0.0+1
+⌅ [dad2f222] LLVMExtra_jll v0.0.29+0
   [1d63c593] LLVMOpenMP_jll v15.0.7+0
-  [dd4b983a] LZO_jll v2.10.1+0
+⌃ [dd4b983a] LZO_jll v2.10.1+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
-  [d4300ac3] Libgcrypt_jll v1.8.7+0
+⌃ [d4300ac3] Libgcrypt_jll v1.8.7+0
   [7e76a0d4] Libglvnd_jll v1.6.0+0
-  [7add5ba3] Libgpg_error_jll v1.42.0+0
+⌃ [7add5ba3] Libgpg_error_jll v1.42.0+0
   [94ce4f54] Libiconv_jll v1.17.0+0
-  [4b2f31a3] Libmount_jll v2.39.3+0
+⌃ [4b2f31a3] Libmount_jll v2.39.3+0
 ⌅ [89763e89] Libtiff_jll v4.5.1+1
-  [38a345b3] Libuuid_jll v2.39.3+1
-  [856f044c] MKL_jll v2024.0.0+0
+⌃ [38a345b3] Libuuid_jll v2.39.3+1
+⌃ [856f044c] MKL_jll v2024.0.0+0
   [e7412a2a] Ogg_jll v1.3.5+1
-  [458c3c95] OpenSSL_jll v3.0.13+1
+⌃ [458c3c95] OpenSSL_jll v3.0.13+1
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
-  [30392449] Pixman_jll v0.42.2+0
-  [c0090381] Qt6Base_jll v6.5.3+1
-  [f50d1b31] Rmath_jll v0.4.0+0
+⌃ [30392449] Pixman_jll v0.42.2+0
+⌅ [c0090381] Qt6Base_jll v6.5.3+1
+⌃ [f50d1b31] Rmath_jll v0.4.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.21.0+1
   [2381bf8a] Wayland_protocols_jll v1.31.0+0
-  [02c8fc9c] XML2_jll v2.12.6+0
+⌃ [02c8fc9c] XML2_jll v2.12.6+0
   [aed1982a] XSLT_jll v1.1.34+0
   [ffd25f8a] XZ_jll v5.4.6+0
-  [f67eecfb] Xorg_libICE_jll v1.0.10+1
-  [c834827a] Xorg_libSM_jll v1.2.3+0
+⌃ [f67eecfb] Xorg_libICE_jll v1.0.10+1
+⌃ [c834827a] Xorg_libSM_jll v1.2.3+0
   [4f6342f7] Xorg_libX11_jll v1.8.6+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
   [935fb764] Xorg_libXcursor_jll v1.2.0+4
   [a3789734] Xorg_libXdmcp_jll v1.1.4+0
-  [1082639a] Xorg_libXext_jll v1.3.4+4
+⌃ [1082639a] Xorg_libXext_jll v1.3.4+4
   [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
   [a51aa0fd] Xorg_libXi_jll v1.7.10+4
   [d1454406] Xorg_libXinerama_jll v1.1.4+4
   [ec84b674] Xorg_libXrandr_jll v1.5.2+4
-  [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
+⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
   [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
-  [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
+⌃ [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
   [cc61e674] Xorg_libxkbfile_jll v1.1.2+0
   [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.4+0
   [12413925] Xorg_xcb_util_image_jll v0.4.0+1
@@ -1355,7 +1356,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [35ca27e7] eudev_jll v3.2.9+0
 ⌅ [214eeab7] fzf_jll v0.43.0+0
   [1a1c6b14] gperf_jll v3.1.1+0
-  [a4ae2306] libaom_jll v3.4.0+0
+⌃ [a4ae2306] libaom_jll v3.4.0+0
   [0ac62f75] libass_jll v0.15.1+0
   [2db6ffa8] libevdev_jll v1.11.0+0
   [f638f0a6] libfdk_aac_jll v2.0.2+0
@@ -1416,6 +1417,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
