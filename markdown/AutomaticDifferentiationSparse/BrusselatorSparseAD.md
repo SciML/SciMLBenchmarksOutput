@@ -105,7 +105,7 @@ println("Sparsity detection with SparseConnectivityTracer: $td1 s")
 ```
 
 ```
-Sparsity detection with SparseConnectivityTracer: 0.002155013 s
+Sparsity detection with SparseConnectivityTracer: 0.002072293 s
 ```
 
 
@@ -116,7 +116,7 @@ println("Sparsity detection with Symbolics: $td2 s")
 ```
 
 ```
-Sparsity detection with Symbolics: 0.232376725 s
+Sparsity detection with Symbolics: 0.232188341 s
 ```
 
 
@@ -126,8 +126,8 @@ println("Speedup from new sparsity detection method (>1 is better): $(td2 / td1)
 ```
 
 ```
-Speedup from new sparsity detection method (>1 is better): 107.830776426870
-76
+Speedup from new sparsity detection method (>1 is better): 112.044166051808
+32
 ```
 
 
@@ -155,7 +155,7 @@ println("Coloring with SparseMatrixColorings: $tc1 s")
 ```
 
 ```
-Coloring with SparseMatrixColorings: 0.000193699 s
+Coloring with SparseMatrixColorings: 0.000192009 s
 ```
 
 
@@ -166,7 +166,7 @@ println("Coloring with SDT: $tc2 s")
 ```
 
 ```
-Coloring with SDT: 0.003937237 s
+Coloring with SDT: 0.004009597 s
 ```
 
 
@@ -176,7 +176,7 @@ println("Speedup from new coloring method (>1 is better): $(tc2 / tc1)")
 ```
 
 ```
-Speedup from new coloring method (>1 is better): 20.326573704562232
+Speedup from new coloring method (>1 is better): 20.8823388486998
 ```
 
 
@@ -222,7 +222,7 @@ println("Jacobian with DifferentiationInterface: $tj1 s")
 ```
 
 ```
-Jacobian with DifferentiationInterface: 0.000226128 s
+Jacobian with DifferentiationInterface: 0.000215049 s
 ```
 
 
@@ -239,7 +239,7 @@ println("Jacobian with SparseDiffTools: $tj2 s")
 ```
 
 ```
-Jacobian with SparseDiffTools: 0.000153469 s
+Jacobian with SparseDiffTools: 0.000152929 s
 ```
 
 
@@ -249,7 +249,7 @@ println("Speedup from new differentiation method (>1 is better): $(tj2 / tj1)")
 ```
 
 ```
-Speedup from new differentiation method (>1 is better): 0.6786819854241845
+Speedup from new differentiation method (>1 is better): 0.7111356016535766
 ```
 
 
