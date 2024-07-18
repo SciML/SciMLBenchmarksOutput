@@ -19,8 +19,7 @@ eqs = [
 @mtkbuild sys = ODESystem(eqs,t)
 mtkprob = ODEProblem(sys,[],(0.0,1e5))
 daeprob = DAEProblem(sys,[D(y₁)=>-0.04,
-                              D(y₂)=>0.04,
-                              D(y₃)=>0.0],[],(0.0,1e5))
+                              D(y₂)=>0.04],[],(0.0,1e5))
 odaeprob = ODAEProblem(sys,[],(0.0,1e5))
 
 ref_sol = solve(daeprob,IDA(),abstol=1/10^14,reltol=1/10^14);
@@ -263,7 +262,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -469,7 +468,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.2.1
   [47a9eef4] SparseDiffTools v2.19.0
-  [0a514795] SparseMatrixColorings v0.3.4
+⌃ [0a514795] SparseMatrixColorings v0.3.4
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.4.0
   [aedffcd0] Static v1.1.1
@@ -485,7 +484,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c3572dad] Sundials v4.24.0
   [2efcf032] SymbolicIndexingInterface v0.3.26
   [19f23fe9] SymbolicLimits v0.2.1
-  [d1185830] SymbolicUtils v2.1.1
+  [d1185830] SymbolicUtils v2.1.2
   [0c5d862f] Symbolics v5.33.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.0
@@ -647,6 +646,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 ```
 
