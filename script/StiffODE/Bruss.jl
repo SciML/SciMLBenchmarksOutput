@@ -44,7 +44,7 @@ u0 = init_brusselator_2d(xyd_brusselator)
 prob = ODEProblem(f,u0,(0.,11.5),p);
 
 
-prob_mtk = ODEProblem(modelingtoolkitize(prob),[],(0.0,11.5),jac=true,sparse=true);
+prob_mtk = ODEProblem(complete(modelingtoolkitize(prob)),[],(0.0,11.5),jac=true,sparse=true);
 
 
 using MethodOfLines, DomainSets
@@ -234,10 +234,10 @@ test_sol = [sol,sol2,sol,sol3]
 probs = [prob,prob_mtk,fastprob,prob_mol];
 
 
-plot(sol,vars = 1)
+plot(sol, idxs = 1)
 
 
-plot(sol,vars = 10)
+plot(sol, idxs = 10)
 
 
 function incompletelu(W,du,u,p,t,newW,Plprev,Prprev,solverdata)

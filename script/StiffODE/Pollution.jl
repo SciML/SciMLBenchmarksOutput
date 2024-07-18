@@ -1,5 +1,5 @@
 
-using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODE, ODEInterfaceDiffEq, LSODA, LinearSolve
+using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA, LinearSolve
 using ProfileSVG, BenchmarkTools, Profile
 gr() # gr(fmt=:png)
 using LinearAlgebra
@@ -265,7 +265,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>Rodas4()),
           Dict(:alg=>lsoda()),
           Dict(:alg=>radau())]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=false,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 
@@ -275,7 +275,7 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;dense = false,verbose = false,
 plot(wp)
 
 
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=false,
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2,numruns=10)
 plot(wp)
 
@@ -288,7 +288,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>ARKODE()),
           Dict(:alg=>ARKODE(order=3))]
 names = ["Rosenbrock23" "KenCarp5" "KenCarp4" "KenCarp3" "ARKODE5" "ARKODE4" "ARKODE3"]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=false,
                       names=names,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 
@@ -305,7 +305,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           #Dict(:alg=>Exprb43()), #matrix contains Infs or NaNs
           #Dict(:alg=>Exprb32()), #matrix contains Infs or NaNs
 ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=false,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
 plot(wp)
 
@@ -321,7 +321,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           #Dict(:alg=>Exprb43()), #matrix contains Infs or NaNs
           #Dict(:alg=>Exprb32()), #matrix contains Infs or NaNs
 ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=false,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
 plot(wp)
 
@@ -370,7 +370,7 @@ setups = [Dict(:alg=>GRK4A()),
           Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
           Dict(:alg=>ImplicitHairerWannerExtrapolation()),
           ]
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=false,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 
@@ -380,7 +380,7 @@ wp = WorkPrecisionSet(prob,abstols,reltols,setups;verbose=false,
 plot(wp)
 
 
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=false,
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2,numruns=10)
 plot(wp)
 
@@ -422,7 +422,7 @@ setups = [
 solnames = ["CVODE_BDF","KenCarp4","Rodas4","Rodas5","Rodas5P","QNDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
             "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
 
-wp = WorkPrecisionSet(prob,abstols,reltols,setups;
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=false,
                     names = solnames,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 
 plot(wp, title = "Implicit Methods: POLLUTION",legend=:outertopleft,size = (1000,500),

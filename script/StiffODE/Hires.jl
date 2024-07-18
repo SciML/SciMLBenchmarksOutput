@@ -1,5 +1,5 @@
 
-using OrdinaryDiffEq, ParameterizedFunctions, Plots, ODE, ODEInterfaceDiffEq, LSODA, DiffEqDevTools, Sundials
+using OrdinaryDiffEq, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA, DiffEqDevTools, Sundials
 using LinearAlgebra, StaticArrays
 
 gr() #gr(fmt=:png)
@@ -68,7 +68,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>ROS34PW1a()),
           Dict(:alg=>lsoda()),
           ]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups; verbose=false, dense=false,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 plot(wp)
 
@@ -78,7 +78,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;dense = false,verbose=false,
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -92,7 +92,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>KenCarp3()),
     # Dict(:alg=>SDIRK2()), # Removed because it's bad
           Dict(:alg=>radau())]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
 plot(wp)
 
@@ -102,7 +102,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;dense = false,verbose=false,
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -116,8 +116,8 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>ARKODE(order=5)),
           Dict(:alg=>ARKODE()),
           Dict(:alg=>ARKODE(order=3))]
-names = ["Rosenbrock23" "Rosenbrock23 Static" "KenCarp5" "KenCarp4" "KenCarp3" "ARKODE5" "ARKODE4" "ARKODE3"]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+names = ["Rosenbrock23" "Rosenbrock23 Static" "KenCarp5" "KenCarp4" "KenCarp4 Static" "KenCarp3" "ARKODE5" "ARKODE4" "ARKODE3"]
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                       names=names,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
 plot(wp)
 
@@ -139,7 +139,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
           Dict(:alg=>Exprb43()),
           Dict(:alg=>Exprb32()),
 ]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
 plot(wp)
 
@@ -162,7 +162,7 @@ setups = [
           Dict(:alg=>lsoda()),
           Dict(:alg=>RadauIIA5()),
 ]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
 plot(wp)
 
@@ -172,7 +172,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false,
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -191,7 +191,7 @@ setups = [Dict(:alg=>GRK4A()),
           Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
           Dict(:alg=>ImplicitHairerWannerExtrapolation()),
           ]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                       save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
 plot(wp)
 
@@ -201,7 +201,7 @@ wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false,
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                       appxsol=test_sol,maxiters=Int(1e5),error_estimate=:L2)
 plot(wp)
 
@@ -216,7 +216,7 @@ setups = [Dict(:alg=>Rodas5()),
           Dict(:alg=>ARKODE()),
           Dict(:alg=>ARKODE(order=3))]
 names = ["Rodas5" "Rodas5 Static" "KenCarp5" "KenCarp4" "KenCarp4 Static" "KenCarp3" "ARKODE5" "ARKODE4" "ARKODE3"]
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                       names=names,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
 plot(wp)
 
@@ -266,7 +266,7 @@ setups = [
 solnames = ["CVODE_BDF","KenCarp4","Rodas4","Rodas4 Static","Rodas5P","Rodas5P Static","QNDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
             "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
 
-wp = WorkPrecisionSet(probs,abstols,reltols,setups;
+wp = WorkPrecisionSet(probs,abstols,reltols,setups;verbose=false, dense=false,
                     names = solnames,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
 
 plot(wp, title = "Implicit Methods: HIRES",legend=:outertopleft,size = (1000,500),

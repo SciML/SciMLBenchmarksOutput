@@ -50,7 +50,7 @@ prob = ODEProblem(f,u0,(0.,11.5),p);
 
 
 ```julia
-prob_mtk = ODEProblem(modelingtoolkitize(prob),[],(0.0,11.5),jac=true,sparse=true);
+prob_mtk = ODEProblem(complete(modelingtoolkitize(prob)),[],(0.0,11.5),jac=true,sparse=true);
 ```
 
 
@@ -300,28 +300,28 @@ sol3 = solve(prob_mol,CVODE_BDF(linear_solver = :KLU),abstol=1/10^14,reltol=1/10
 ```
 retcode: Success
 Interpolation: 3rd order Hermite
-t: 7100-element Vector{Float64}:
+t: 7088-element Vector{Float64}:
   0.0
   1.4238870862469186e-15
   1.4240294749555432e-11
   1.5662900337424728e-10
   2.9901771199893913e-10
-  5.160801983204045e-10
-  8.725711850742434e-10
-  1.4781897823229784e-9
-  2.5196750517210653e-9
-  4.3190349441260325e-9
+  5.160801983264086e-10
+  8.725711849204022e-10
+  1.4781897844618872e-9
+  2.519675048784877e-9
+  4.3190349346343956e-9
   ⋮
- 11.495766698882717
- 11.496356788238053
- 11.49694687759339
- 11.497536966948726
- 11.498127056304062
- 11.498717145659398
- 11.499307235014735
- 11.499897324370071
+ 11.495686108181351
+ 11.496274749829004
+ 11.496863391476657
+ 11.49745203312431
+ 11.498040674771962
+ 11.498629316419615
+ 11.499217958067268
+ 11.49980659971492
  11.5
-u: 7100-element Vector{Vector{Float64}}:
+u: 7088-element Vector{Vector{Float64}}:
  [0.7957923865311465, 0.7957923865311465, 0.7957923865311465, 0.79579238653
 11465, 0.7957923865311465, 0.7957923865311465, 0.7957923865311465, 0.795792
 3865311465, 1.7861773953054048, 1.7861773953054048  …  0.9766542925609525, 
@@ -354,88 +354,88 @@ u: 7100-element Vector{Vector{Float64}}:
  [0.7957924498316827, 0.7957924502289312, 0.7957924505137483, 0.79579245061
 55252, 0.7957924505137483, 0.7957924502289312, 0.7957924498316827, 0.795792
 4495124866, 1.7861773007917632, 1.7861773027930594  …  0.9766543725177618, 
-6.465570447920121e-7, 0.9766543714406037, 2.1921266897062024, 3.06359015723
+6.465570447995342e-7, 0.9766543714406037, 2.1921266897062024, 3.06359015723
 39215, 3.37499979428819, 3.0635901572339215, 2.1921266897062024, 0.97665437
-14406037, 6.451606907013214e-7]
- [0.7957924935576395, 0.7957924942292941, 0.7957924947108534, 0.79579249488
-29346, 0.7957924947108534, 0.7957924942292941, 0.7957924935576395, 0.795792
-4930179534, 1.786177235504911, 1.7861772388886359  …  0.9766544277493292, 1
-.0931768705887272e-6, 0.9766544259281074, 2.1921266112191384, 3.06359002945
-5275, 3.3749996521893415, 3.063590029455275, 2.1921266112191384, 0.97665442
-59281074, 1.0908159628395709e-6]
- [0.795792567840841, 0.795792568978666, 0.795792569794458, 0.79579257008597
-43, 0.795792569794458, 0.795792568978666, 0.795792567840841, 0.795792566926
-5791, 1.7861771245934988, 1.7861771303257374  …  0.9766545215786647, 1.8519
-088912978322e-6, 0.9766545184934048, 2.1921264778827814, 3.0635898123807337
-, 3.3749994107871664, 3.0635898123807337, 2.1921264778827814, 0.97665451849
-34048, 1.8479093703449485e-6]
- [0.7957926955863507, 0.7957926975258524, 0.795792698916427, 0.795792699413
-3366, 0.795792698916427, 0.7957926975258524, 0.7957926955863507, 0.79579269
-40279291, 1.7861769338587061, 1.7861769436296935  …  0.9766546829378294, 3.
-156702860790371e-6, 0.976654677678803, 2.192126248583728, 3.063589439076638
-5, 3.3749989956467106, 3.0635894390766385, 2.192126248583728, 0.97665467767
-8803, 3.149885415261503e-6]
- [0.7957929162914915, 0.7957929196160424, 0.7957929219996638, 0.79579292285
-14298, 0.7957929219996638, 0.7957929196160424, 0.7957929162914915, 0.795792
-913620164, 1.7861766043291254, 1.7861766210777965  …  0.9766549617170396, 5
-.410974011550959e-6, 0.976654952702444, 2.192125852427278, 3.06358879412441
-75, 3.374998278414351, 3.0635887941244175, 2.192125852427278, 0.97665495270
-2444, 5.399288095789355e-6]
+14406037, 6.451606907088272e-7]
+ [0.7957924935576395, 0.795792494229294, 0.7957924947108534, 0.795792494882
+9345, 0.7957924947108534, 0.795792494229294, 0.7957924935576395, 0.79579249
+30179533, 1.7861772355049113, 1.7861772388886359  …  0.9766544277493292, 1.
+0931768703959916e-6, 0.9766544259281074, 2.1921266112191384, 3.063590029455
+275, 3.3749996521893415, 3.063590029455275, 2.1921266112191384, 0.976654425
+9281074, 1.0908159626472516e-6]
+ [0.7957925678408412, 0.7957925689786661, 0.7957925697944583, 0.79579257008
+59744, 0.7957925697944583, 0.7957925689786661, 0.7957925678408412, 0.795792
+5669265793, 1.7861771245934985, 1.786177130325737  …  0.9766545215786651, 1
+.8519088939775023e-6, 0.9766545184934051, 2.192126477882781, 3.063589812380
+733, 3.3749994107871655, 3.063589812380733, 2.192126477882781, 0.9766545184
+934051, 1.8479093730188316e-6]
+ [0.7957926955863502, 0.7957926975258519, 0.7957926989164267, 0.79579269941
+33361, 0.7957926989164267, 0.7957926975258519, 0.7957926955863502, 0.795792
+6940279286, 1.7861769338587068, 1.786176943629694  …  0.976654682937829, 3.
+1567028571118565e-6, 0.9766546776788025, 2.1921262485837283, 3.063589439076
+6394, 3.374998995646712, 3.0635894390766394, 2.1921262485837283, 0.97665467
+76788025, 3.149885411590933e-6]
+ [0.7957929162914903, 0.795792919616041, 0.7957929219996626, 0.795792922851
+4283, 0.7957929219996626, 0.795792919616041, 0.7957929162914903, 0.79579291
+36201628, 1.7861766043291272, 1.786176621077798  …  0.9766549617170381, 5.4
+10973999659674e-6, 0.9766549527024425, 2.19212585242728, 3.0635887941244206
+, 3.374998278414355, 3.0635887941244206, 2.19212585242728, 0.97665495270244
+25, 5.3992880839237515e-6]
  ⋮
- [4.073775795169845, 4.0739119022402885, 4.0739119022402885, 4.073775795169
-845, 4.07360292677613, 4.073490352688726, 4.073490352688725, 4.073602926776
-13, 4.073918637302626, 4.074103890415941  …  1.1847223169188434, 1.18471668
-81291311, 1.1847174434111514, 1.1847126190524446, 1.1847126190524444, 1.184
-7174434111511, 1.1847238062798366, 1.1847280710843193, 1.1847280710843193, 
-1.1847238062798369]
- [4.075470508367493, 4.07560659910549, 4.07560659910549, 4.075470508367493,
- 4.075297662038831, 4.075185102981661, 4.075185102981661, 4.075297662038831
-, 4.075613336376429, 4.075798570413612  …  1.1813051411720268, 1.1812995346
-73785, 1.1813002870054663, 1.1812954817855528, 1.1812954817855525, 1.181300
-287005466, 1.18130662458721, 1.1813108724199792, 1.1813108724199792, 1.1813
-066245872101]
- [4.07713704005818, 4.077273114556696, 4.077273114556696, 4.07713704005818,
- 4.076964215668887, 4.07685167155629, 4.07685167155629, 4.0769642156688874,
- 4.077279854023378, 4.0774650690928045  …  1.1779151552745553, 1.1779095709
-412886, 1.1779103203392371, 1.1779055341494007, 1.1779055341494007, 1.17791
-0320339237, 1.1779166327778257, 1.1779208637354608, 1.1779208637354608, 1.1
-779166327778257]
- [4.078775519288571, 4.078911577640698, 4.078911577640698, 4.07877551928857
-1, 4.0786027167127905, 4.078490187458987, 4.078490187458987, 4.078602716712
-7905, 4.0789183192902545, 4.079103515500452  …  1.1745522467712588, 1.17454
-66844762906, 1.1745474309571382, 1.1745426636885088, 1.1745426636885088, 1.
-1745474309571382, 1.1745537183965602, 1.1745579325757753, 1.174557932575775
-3, 1.1745537183965602]
- [4.080386076181861, 4.0805221184808085, 4.0805221184808085, 4.080386076181
-8616, 4.080213295293583, 4.08010078081269, 4.08010078081269, 4.080213295293
-582, 4.080528862300358, 4.08071403975999  …  1.1712163020539625, 1.17121076
-1670455, 1.1712115052508563, 1.171206756794426, 1.171206756794426, 1.171211
-5052508563, 1.1712177678352804, 1.1712219653329095, 1.1712219653329095, 1.1
-712177678352806]
- [4.08196884190317, 4.082104868242247, 4.082104868242248, 4.081968841903171
-, 4.081796082576247, 4.08168358278229, 4.081683582782289, 4.081796082576247
-, 4.082111614218899, 4.082296773036751  …  1.1679072063954714, 1.1679016877
-96444, 1.1679024284930737, 1.1678976987397138, 1.1678976987397138, 1.167902
-4284930737, 1.1679086663668272, 1.1679128472798093, 1.167912847279809, 1.16
-79086663668274]
- [4.083523948625205, 4.083659959097808, 4.083659959097809, 4.08352394862520
-55, 4.083351210733373, 4.083238725540298, 4.083238725540297, 4.083351210733
-373, 4.083666707218661, 4.083851847503623  …  1.1646248439833002, 1.1646193
-470416486, 1.1646200848712, 1.164615373711677, 1.164615373711677, 1.1646200
-848711998, 1.164626298178746, 1.164630462604111, 1.1646304626041108, 1.1646
-262981787463]
- [4.085051529494204, 4.085187524193804, 4.085187524193804, 4.08505152949420
-5, 4.084878812911104, 4.08476634223279, 4.08476634223279, 4.084878812911104
-, 4.085194274445952, 4.085379396306998  …  1.1613690979531432, 1.1613636225
-416584, 1.16136435752084, 1.1613596648458318, 1.1613596648458318, 1.1613643
-5752084, 1.1613705464067576, 1.1613746944416117, 1.1613746944416117, 1.1613
-705464067576]
- [4.085314527250261, 4.085450519214907, 4.085450519214907, 4.08531452725026
-2, 4.085141814361971, 4.085029346200427, 4.085029346200426, 4.0851418143619
-71, 4.085457269836582, 4.085642388503001  …  1.1608053075274634, 1.16079983
-5849231, 1.1608005703341557, 1.160795880864284, 1.160795880864284, 1.160800
-5703341557, 1.1608067549854808, 1.1608109001783067, 1.1608109001783067, 1.1
-608067549854808]
+ [4.073542147517943, 4.073678256826177, 4.073678256826177, 4.07354214751794
+25, 4.073369276100977, 4.073256699954195, 4.073256699954196, 4.073369276100
+977, 4.073684991585881, 4.073870247312897  …  1.1851911298275786, 1.1851854
+979836303, 1.185186253669876, 1.1851814266888845, 1.1851814266888845, 1.185
+186253669876, 1.1851926200032414, 1.185196887133102, 1.185196887133102, 1.1
+851926200032414]
+ [4.075236586856852, 4.075372679859942, 4.075372679859942, 4.07523658685685
+2, 4.075063737468067, 4.07495117632641, 4.074951176326411, 4.07506373746806
+7, 4.075379416824593, 4.075564653507394  …  1.1817785913918286, 1.181772981
+8020342, 1.1817737345428994, 1.1817689266686777, 1.1817689266686775, 1.1817
+737345428994, 1.1817800756316128, 1.1817843258181333, 1.1817843258181333, 1
+.1817800756316128]
+ [4.076902965031779, 4.077039041822214, 4.077039041822214, 4.07690296503177
+85, 4.076730137546133, 4.076617591324378, 4.076617591324378, 4.076730137546
+133, 4.077045780979023, 4.077230998725429  …  1.1783931250209605, 1.1783875
+375594715, 1.1783882873714766, 1.1783834984958645, 1.1783834984958643, 1.17
+83882873714766, 1.1783946033585904, 1.178398836697857, 1.178398836697857, 1
+.1783946033585904]
+ [4.0785414099893, 4.078677470659699, 4.078677470659699, 4.078541409989299,
+ 4.078368604281576, 4.078256072894378, 4.078256072894378, 4.078368604281576
+, 4.078684211995861, 4.078869410913847  …  1.1750346192486743, 1.1750290537
+894597, 1.1750298006891513, 1.1750250307038326, 1.1750250307038328, 1.17502
+98006891513, 1.1750360917179217, 1.1750403083061565, 1.1750403083061562, 1.
+1750360917179214]
+ [4.0801520507468645, 4.080288095389964, 4.080288095389964, 4.0801520507468
+64, 4.079979266691691, 4.079866750053601, 4.079866750053601, 4.079979266691
+691, 4.080294838892661, 4.080480019090341  …  1.1717029614621586, 1.1716974
+178790238, 1.1716981618829718, 1.1716934106794916, 1.1716934106794918, 1.17
+16981618829718, 1.1717044280968363, 1.1717086280303821, 1.171708628030382, 
+1.1717044280968363]
+ [4.081735017358575, 4.0818710460672145, 4.0818710460672145, 4.081735017358
+575, 4.081562254830442, 4.081449752855921, 4.081449752855921, 4.08156225483
+0442, 4.0818777917236195, 4.082062953309229  …  1.168398037935694, 1.168392
+5161023, 1.168393257227095, 1.1683885246968762, 1.1683885246968762, 1.16839
+32572270952, 1.1683994987696518, 1.168403682144958, 1.168403682144958, 1.16
+83994987696518]
+ [4.08329044088123, 4.083426453748336, 4.083426453748336, 4.08329044088123,
+ 4.083117699754509, 4.083005212357935, 4.083005212357935, 4.083117699754509
+, 4.0834332015456125, 4.083618344627493  …  1.1651197338640091, 1.165114233
+653892, 1.1651149719161427, 1.165110257950501, 1.165110257950501, 1.1651149
+719161427, 1.165121188931128, 1.1651253558447368, 1.165125355844737, 1.1651
+211889311281]
+ [4.084818453340643, 4.0849544504592155, 4.084954450459216, 4.0848184533406
+42, 4.084645733489605, 4.08453326058529, 4.08453326058529, 4.08464573348960
+6, 4.084961200384522, 4.085146325071104  …  1.1618679333953803, 1.161862454
+6819691, 1.1618631900983, 1.1618584945884618, 1.1618584945884618, 1.1618631
+900982999, 1.161869382729568, 1.1618735332780994, 1.1618735332780996, 1.161
+869382729568]
+ [4.085314527232731, 4.085450519197376, 4.0854505191973765, 4.0853145272327
+3, 4.085141814344439, 4.085029346182895, 4.085029346182895, 4.0851418143444
+4, 4.0854572698190506, 4.0856423884854705  …  1.1608053075612759, 1.1607998
+358830436, 1.160800570367968, 1.160795880898096, 1.160795880898096, 1.16080
+0570367968, 1.1608067550192933, 1.1608109002121196, 1.1608109002121196, 1.1
+608067550192935]
 ```
 
 
@@ -447,13 +447,13 @@ probs = [prob,prob_mtk,fastprob,prob_mol];
 
 
 ```julia
-plot(sol,vars = 1)
+plot(sol, idxs = 1)
 ```
 
 ![](figures/Bruss_7_1.png)
 
 ```julia
-plot(sol,vars = 10)
+plot(sol, idxs = 10)
 ```
 
 ![](figures/Bruss_8_1.png)
@@ -723,8 +723,8 @@ SciMLBenchmarks.weave_file("benchmarks/StiffODE","Bruss.jmd")
 Computer Information:
 
 ```
-Julia Version 1.9.3
-Commit bed2cd540a1 (2023-08-24 14:43 UTC)
+Julia Version 1.10.4
+Commit 48d4fd48430 (2024-06-04 10:41 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -732,378 +732,387 @@ Platform Info:
   CPU: 128 × AMD EPYC 7502 32-Core Processor
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-14.0.6 (ORCJIT, znver2)
-  Threads: 128 on 128 virtual cores
+  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-  JULIA_IMAGE_THREADS = 1
 
 ```
 
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
-⌃ [2169fc97] AlgebraicMultigrid v0.5.1
-  [6e4b80f9] BenchmarkTools v1.3.2
-⌃ [f3b72e0c] DiffEqDevTools v2.35.0
-  [5b8099bc] DomainSets v0.6.7
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Project.toml`
+  [2169fc97] AlgebraicMultigrid v0.6.0
+  [6e4b80f9] BenchmarkTools v1.5.0
+  [f3b72e0c] DiffEqDevTools v2.44.4
+  [5b8099bc] DomainSets v0.7.14
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.5
   [40713840] IncompleteLU v0.2.1
-⌃ [7f56f5a3] LSODA v0.7.4
-⌃ [7ed4a6bd] LinearSolve v2.4.2
-⌃ [94925ecb] MethodOfLines v0.9.5
-⌃ [961ee093] ModelingToolkit v8.64.0
-  [c030b06c] ODE v2.15.0
-⌃ [09606e27] ODEInterfaceDiffEq v3.13.2
-⌃ [1dea7af3] OrdinaryDiffEq v6.53.4
-⌃ [65888b18] ParameterizedFunctions v5.15.0
-⌃ [91a5bcdd] Plots v1.38.17
-  [132c30aa] ProfileSVG v0.2.1
+  [7f56f5a3] LSODA v0.7.5
+  [7ed4a6bd] LinearSolve v2.30.2
+  [94925ecb] MethodOfLines v0.11.1
+  [961ee093] ModelingToolkit v9.24.0
+  [09606e27] ODEInterfaceDiffEq v3.13.3
+  [1dea7af3] OrdinaryDiffEq v6.86.0
+  [65888b18] ParameterizedFunctions v5.17.0
+  [91a5bcdd] Plots v1.40.5
+  [132c30aa] ProfileSVG v0.2.2
   [31c91b34] SciMLBenchmarks v0.1.3
-⌃ [90137ffa] StaticArrays v1.6.2
-⌃ [c3572dad] Sundials v4.19.3
-⌃ [0c5d862f] Symbolics v5.5.1
-  [a759f4b9] TimerOutputs v0.5.23
+  [90137ffa] StaticArrays v1.9.7
+  [c3572dad] Sundials v4.24.0
+  [0c5d862f] Symbolics v5.33.0
+  [a759f4b9] TimerOutputs v0.5.24
   [37e2e46d] LinearAlgebra
-  [2f01184e] SparseArrays
-Info Packages marked with ⌃ have new versions available and may be upgradable.
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
+  [2f01184e] SparseArrays v1.10.0
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
-⌅ [47edcb42] ADTypes v0.1.6
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/StiffODE/Manifest.toml`
+  [47edcb42] ADTypes v1.6.1
   [a4c015fc] ANSIColoredPrinters v0.0.1
-⌅ [c3fe647b] AbstractAlgebra v0.31.0
   [621f4979] AbstractFFTs v1.5.0
-⌅ [1520ce14] AbstractTrees v0.3.4
-  [79e6a3ab] Adapt v3.6.2
-⌃ [2169fc97] AlgebraicMultigrid v0.5.1
+  [1520ce14] AbstractTrees v0.4.5
+  [7d9f7c33] Accessors v0.1.36
+  [79e6a3ab] Adapt v4.0.4
+  [2169fc97] AlgebraicMultigrid v0.6.0
+  [66dad0bd] AliasTables v1.1.3
 ⌅ [4c88cf16] Aqua v0.5.6
-  [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v7.4.11
-  [30b0a656] ArrayInterfaceCore v0.1.29
-⌃ [4c555306] ArrayLayouts v1.1.1
-  [13072b0f] AxisAlgorithms v1.0.1
-⌃ [aae01518] BandedMatrices v0.17.34
-  [6e4b80f9] BenchmarkTools v1.3.2
-⌃ [e2ed5e7c] Bijections v0.1.4
-  [d1d4a3ce] BitFlags v0.1.7
-  [62783981] BitTwiddlingConvenienceFunctions v0.1.5
-⌃ [8e7c35d0] BlockArrays v0.16.36
-  [fa961155] CEnum v0.4.2
-⌃ [2a0fbf3d] CPUSummary v0.2.3
-  [00ebfdb7] CSTParser v3.3.6
+  [ec485272] ArnoldiMethod v0.4.0
+  [4fba245c] ArrayInterface v7.12.0
+  [4c555306] ArrayLayouts v1.10.2
+⌃ [13072b0f] AxisAlgorithms v1.0.1
+  [aae01518] BandedMatrices v1.7.2
+  [6e4b80f9] BenchmarkTools v1.5.0
+  [e2ed5e7c] Bijections v0.1.7
+  [d1d4a3ce] BitFlags v0.1.9
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
+  [8e7c35d0] BlockArrays v1.1.0
+  [fa961155] CEnum v0.5.0
+  [2a0fbf3d] CPUSummary v0.2.6
+  [00ebfdb7] CSTParser v3.4.3
   [49dc2e85] Calculus v0.5.1
-  [d360d2e6] ChainRulesCore v1.16.0
-  [fb6a15b2] CloseOpenIntervals v0.1.12
-  [944b1d66] CodecZlib v0.7.2
-⌃ [35d6a980] ColorSchemes v3.22.0
-  [3da002f7] ColorTypes v0.11.4
+  [d360d2e6] ChainRulesCore v1.24.0
+  [fb6a15b2] CloseOpenIntervals v0.1.13
+  [944b1d66] CodecZlib v0.7.5
+  [35d6a980] ColorSchemes v3.25.0
+  [3da002f7] ColorTypes v0.11.5
   [c3611d14] ColorVectorSpace v0.10.0
-  [5ae59095] Colors v0.12.10
+  [5ae59095] Colors v0.12.11
   [861a8166] Combinatorics v1.0.2
   [a80b9123] CommonMark v0.8.12
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.0
-⌃ [a09551c4] CompactBasisFunctions v0.2.8
-⌃ [34da2185] Compat v4.8.0
-  [b152e2b5] CompositeTypes v0.1.3
-  [f0e56b4a] ConcurrentUtilities v2.2.1
-  [8f4d0f93] Conda v1.9.1
-⌃ [187b0558] ConstructionBase v1.5.3
-⌅ [7ae1f121] ContinuumArrays v0.14.1
-  [d38c429a] Contour v0.6.2
+  [f70d9fcc] CommonWorldInvalidations v1.0.0
+  [a09551c4] CompactBasisFunctions v0.2.12
+  [34da2185] Compat v4.15.0
+  [b152e2b5] CompositeTypes v0.1.4
+  [a33af91c] CompositionsBase v0.1.2
+  [2569d6c7] ConcreteStructs v0.2.3
+  [f0e56b4a] ConcurrentUtilities v2.4.2
+  [8f4d0f93] Conda v1.10.2
+  [187b0558] ConstructionBase v1.5.5
+  [7ae1f121] ContinuumArrays v0.18.3
+  [d38c429a] Contour v0.6.3
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
-⌃ [717857b8] DSP v0.7.8
-  [9a962f9c] DataAPI v1.15.0
-⌃ [864edb3b] DataStructures v0.18.14
+  [717857b8] DSP v0.7.9
+  [9a962f9c] DataAPI v1.16.0
+  [864edb3b] DataStructures v0.18.20
   [e2d170a0] DataValueInterfaces v1.0.0
   [55939f99] DecFP v1.3.2
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v6.127.0
-⌃ [459566f4] DiffEqCallbacks v2.27.0
-⌃ [f3b72e0c] DiffEqDevTools v2.35.0
-⌃ [77a26b50] DiffEqNoiseProcess v5.18.0
+  [2b5f629d] DiffEqBase v6.151.5
+  [459566f4] DiffEqCallbacks v3.6.2
+  [f3b72e0c] DiffEqDevTools v2.44.4
+  [77a26b50] DiffEqNoiseProcess v5.22.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
-  [b4f34e82] Distances v0.10.9
-⌃ [31c24e10] Distributions v0.25.98
+  [a0c0ee7d] DifferentiationInterface v0.5.9
+  [b4f34e82] Distances v0.10.11
+  [31c24e10] Distributions v0.25.109
   [ffbed154] DocStringExtensions v0.9.3
 ⌅ [e30172f5] Documenter v0.27.25
-  [5b8099bc] DomainSets v0.6.7
+  [5b8099bc] DomainSets v0.7.14
   [fa6b7ba4] DualNumbers v0.6.8
-⌃ [7c1d4256] DynamicPolynomials v0.5.2
+⌅ [7c1d4256] DynamicPolynomials v0.5.7
+⌅ [06fc5a27] DynamicQuantities v0.13.2
   [4e289a0a] EnumX v1.0.4
-  [460bff9d] ExceptionUnwrapping v0.1.9
-⌃ [d4d017d3] ExponentialUtilities v1.24.0
+  [f151be2c] EnzymeCore v0.7.7
+  [460bff9d] ExceptionUnwrapping v0.1.10
+  [d4d017d3] ExponentialUtilities v1.26.1
   [e2ba6199] ExprTools v0.1.10
   [c87230d0] FFMPEG v0.4.1
-  [7a1cc6ca] FFTW v1.7.1
-  [7034ab61] FastBroadcast v0.2.6
+  [7a1cc6ca] FFTW v1.8.0
+  [7034ab61] FastBroadcast v0.3.4
   [9aa1b823] FastClosures v0.3.2
-  [442a2c76] FastGaussQuadrature v0.5.1
-  [29a986be] FastLapackInterface v2.0.0
-⌃ [057dd010] FastTransforms v0.15.6
-  [5789e2e9] FileIO v1.16.1
-⌃ [1a297f60] FillArrays v1.5.0
-  [6a86dc24] FiniteDiff v2.21.1
-  [53c48c17] FixedPointNumbers v0.8.4
-⌅ [08572546] FlameGraphs v0.2.10
-  [59287772] Formatting v0.4.2
-⌃ [f6369f11] ForwardDiff v0.10.35
+  [442a2c76] FastGaussQuadrature v1.0.2
+  [29a986be] FastLapackInterface v2.0.4
+  [057dd010] FastTransforms v0.16.4
+  [5789e2e9] FileIO v1.16.3
+  [1a297f60] FillArrays v1.11.0
+  [64ca27bc] FindFirstFunctions v1.2.0
+  [6a86dc24] FiniteDiff v2.23.1
+  [53c48c17] FixedPointNumbers v0.8.5
+  [08572546] FlameGraphs v1.0.0
+  [1fa38f19] Format v1.3.7
+  [f6369f11] ForwardDiff v0.10.36
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
-  [46192b85] GPUArraysCore v0.1.5
-⌃ [28b8d3ca] GR v0.72.9
-  [a8297547] GenericFFT v0.1.4
+  [d9f16b24] Functors v0.4.11
+  [46192b85] GPUArraysCore v0.1.6
+  [28b8d3ca] GR v0.73.6
+  [a8297547] GenericFFT v0.1.6
   [14197337] GenericLinearAlgebra v0.3.11
-  [c145ed77] GenericSchur v0.5.3
+  [c145ed77] GenericSchur v0.5.4
 ⌅ [9a0b12b7] GeometricBase v0.2.6
 ⌅ [c85262ba] GeometricEquations v0.2.1
 ⌅ [dcce2d33] GeometricIntegrators v0.9.2
   [5a33fad7] GeometricIntegratorsDiffEq v0.2.5
-  [d7ba0133] Git v1.3.0
+  [d7ba0133] Git v1.3.1
   [c27321d9] Glob v1.3.1
-  [86223c79] Graphs v1.8.0
+  [86223c79] Graphs v1.11.2
   [42e2da0e] Grisu v1.0.2
-⌃ [0b43b601] Groebner v0.4.2
-  [d5909c97] GroupsCore v0.4.0
-⌅ [f67ccb44] HDF5 v0.16.15
-⌃ [cd3eb016] HTTP v1.9.14
-  [eafb193a] Highlights v0.5.2
-⌃ [3e5b6fbb] HostCPUFeatures v0.1.15
+⌅ [f67ccb44] HDF5 v0.16.16
+  [cd3eb016] HTTP v1.10.8
+  [eafb193a] Highlights v0.5.3
+  [3e5b6fbb] HostCPUFeatures v0.1.17
   [34004b35] HypergeometricFunctions v0.3.23
-  [7073ff75] IJulia v1.24.2
-  [b5f81e59] IOCapture v0.2.3
+  [7073ff75] IJulia v1.25.0
+  [b5f81e59] IOCapture v0.2.5
   [615f187c] IfElse v0.1.1
   [40713840] IncompleteLU v0.2.1
   [9b13fd28] IndirectArrays v1.0.0
-⌃ [4858937d] InfiniteArrays v0.13.0
-  [e1ba4f0e] Infinities v0.1.7
-  [d25df0c9] Inflate v0.1.3
-  [18e54dd8] IntegerMathUtils v0.1.2
-  [a98d9a8b] Interpolations v0.14.7
-  [8197267c] IntervalSets v0.7.7
+  [4858937d] InfiniteArrays v0.14.1
+  [e1ba4f0e] Infinities v0.1.8
+  [d25df0c9] Inflate v0.1.5
+⌅ [a98d9a8b] Interpolations v0.14.0
+  [8197267c] IntervalSets v0.7.10
+  [3587e190] InverseFunctions v0.1.15
   [92d709cd] IrrationalConstants v0.2.2
-  [c8e1da08] IterTools v1.8.0
+  [c8e1da08] IterTools v1.10.0
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [1019f520] JLFzf v0.1.5
-⌃ [692b3bcd] JLLWrappers v1.4.1
+  [1019f520] JLFzf v0.1.7
+  [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
-⌃ [98e50ef6] JuliaFormatter v1.0.34
-⌃ [ccbc3e58] JumpProcesses v9.7.2
-⌃ [ef3ab10e] KLU v0.4.0
-⌃ [ba0b0d4f] Krylov v0.9.2
-⌃ [7f56f5a3] LSODA v0.7.4
-  [b964fa9f] LaTeXStrings v1.3.0
-  [2ee39098] LabelledArrays v1.14.0
+  [98e50ef6] JuliaFormatter v1.0.57
+  [ccbc3e58] JumpProcesses v9.11.1
+  [ef3ab10e] KLU v0.6.0
+  [ba0b0d4f] Krylov v0.9.6
+  [7f56f5a3] LSODA v0.7.5
+  [b964fa9f] LaTeXStrings v1.3.1
+  [2ee39098] LabelledArrays v1.16.0
   [984bce1d] LambertW v0.4.6
-⌅ [23fbe1c1] Latexify v0.15.21
-  [10f19ff3] LayoutPointers v0.1.14
-  [50d2b5c4] Lazy v0.15.1
-⌃ [5078a376] LazyArrays v1.5.2
-⌅ [1d6d02ad] LeftChildRightSiblingTrees v0.1.3
+  [23fbe1c1] Latexify v0.16.4
+  [10f19ff3] LayoutPointers v0.1.17
+  [5078a376] LazyArrays v2.1.9
+  [1d6d02ad] LeftChildRightSiblingTrees v0.2.0
   [d3d80556] LineSearches v7.2.0
-⌃ [7ed4a6bd] LinearSolve v2.4.2
-⌃ [2ab3a3ac] LogExpFunctions v0.3.24
-⌃ [e6f89c97] LoggingExtras v1.0.0
-  [bdcacae8] LoopVectorization v0.12.165
+  [7ed4a6bd] LinearSolve v2.30.2
+  [2ab3a3ac] LogExpFunctions v0.3.28
+  [e6f89c97] LoggingExtras v1.0.3
+  [bdcacae8] LoopVectorization v0.12.171
   [d8e11817] MLStyle v0.4.17
-⌃ [1914dd2f] MacroTools v0.5.10
+  [3da0fdf6] MPIPreferences v0.1.11
+  [1914dd2f] MacroTools v0.5.13
   [d125e4d3] ManualMemory v0.1.8
-⌃ [a3b82374] MatrixFactorizations v2.0.1
-  [739be429] MbedTLS v1.1.7
+  [bb5d69b7] MaybeInplace v0.1.3
+  [739be429] MbedTLS v1.1.9
   [442fdcdd] Measures v0.3.2
-⌃ [94925ecb] MethodOfLines v0.9.5
-  [e1d29d7a] Missings v1.1.0
-⌃ [961ee093] ModelingToolkit v8.64.0
+  [94925ecb] MethodOfLines v0.11.1
+  [e1d29d7a] Missings v1.2.0
+  [961ee093] ModelingToolkit v9.24.0
   [46d2c3a1] MuladdMacro v0.2.4
-⌃ [102ac46a] MultivariatePolynomials v0.5.1
-  [ffc61752] Mustache v1.0.17
-⌃ [d8a4904e] MutableArithmetics v1.3.0
+  [102ac46a] MultivariatePolynomials v0.5.6
+  [ffc61752] Mustache v1.0.19
+  [d8a4904e] MutableArithmetics v1.4.5
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
-⌃ [8913a72c] NonlinearSolve v1.9.0
-  [c030b06c] ODE v2.15.0
+  [8913a72c] NonlinearSolve v3.13.1
   [54ca160b] ODEInterface v0.5.0
-⌃ [09606e27] ODEInterfaceDiffEq v3.13.2
-  [6fe1bfb0] OffsetArrays v1.12.10
-  [4d8831e6] OpenSSL v1.4.1
-⌃ [429524aa] Optim v1.7.6
-  [bac558e1] OrderedCollections v1.6.2
-⌃ [1dea7af3] OrdinaryDiffEq v6.53.4
-  [a7812802] PDEBase v0.1.4
-⌃ [90014a1f] PDMats v0.11.17
-⌃ [65ce6f38] PackageExtensionCompat v1.0.0
-⌃ [65888b18] ParameterizedFunctions v5.15.0
+  [09606e27] ODEInterfaceDiffEq v3.13.3
+  [6fe1bfb0] OffsetArrays v1.14.1
+  [4d8831e6] OpenSSL v1.4.3
+  [429524aa] Optim v1.9.4
+  [bac558e1] OrderedCollections v1.6.3
+  [1dea7af3] OrdinaryDiffEq v6.86.0
+  [a7812802] PDEBase v0.1.12
+  [90014a1f] PDMats v0.11.31
+  [65ce6f38] PackageExtensionCompat v1.0.2
+  [65888b18] ParameterizedFunctions v5.17.0
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.7.2
+  [69de0a69] Parsers v2.8.1
   [b98c9c47] Pipe v1.3.0
-  [ccf2f8ad] PlotThemes v3.1.0
-  [995b91a9] PlotUtils v1.3.5
-⌃ [91a5bcdd] Plots v1.38.17
+  [ccf2f8ad] PlotThemes v3.2.0
+  [995b91a9] PlotUtils v1.4.1
+  [91a5bcdd] Plots v1.40.5
   [e409e4f3] PoissonRandom v0.4.4
-⌃ [f517fe37] Polyester v0.7.5
-  [1d0040c9] PolyesterWeave v0.2.1
+  [f517fe37] Polyester v0.7.15
+  [1d0040c9] PolyesterWeave v0.2.2
 ⌅ [f27b6e38] Polynomials v3.2.13
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.12
-⌃ [aea7be01] PrecompileTools v1.1.2
-⌃ [21216c6a] Preferences v1.4.0
-  [08abe8d2] PrettyTables v2.2.7
-  [27ebfcd6] Primes v0.5.4
-  [132c30aa] ProfileSVG v0.2.1
-⌃ [92933f4c] ProgressMeter v1.7.2
-⌃ [1fd47b50] QuadGK v2.8.2
-⌃ [a08977f5] QuadratureRules v0.1.4
-⌃ [c4ea9172] QuasiArrays v0.11.0
-  [74087812] Random123 v1.6.1
-  [fb686558] RandomExtensions v0.4.3
+  [d236fae5] PreallocationTools v0.4.22
+  [aea7be01] PrecompileTools v1.2.1
+  [21216c6a] Preferences v1.4.3
+  [08abe8d2] PrettyTables v2.3.2
+  [132c30aa] ProfileSVG v0.2.2
+  [92933f4c] ProgressMeter v1.10.1
+  [43287f4e] PtrArrays v1.2.0
+  [1fd47b50] QuadGK v2.9.4
+  [a08977f5] QuadratureRules v0.1.6
+  [c4ea9172] QuasiArrays v0.11.6
+  [74087812] Random123 v1.7.0
   [e6cf234a] RandomNumbers v1.5.3
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-⌃ [731186ca] RecursiveArrayTools v2.38.7
-⌃ [f2c3362d] RecursiveFactorization v0.2.18
+  [731186ca] RecursiveArrayTools v3.26.0
+  [f2c3362d] RecursiveFactorization v0.2.23
   [189a3867] Reexport v1.2.2
-  [05181044] RelocatableFolders v1.0.0
+  [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
   [79098fc4] Rmath v0.7.1
-  [47965b36] RootedTrees v2.19.2
+  [47965b36] RootedTrees v2.23.0
 ⌅ [fb486d5c] RungeKutta v0.4.6
-⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.11
-  [fdea26ae] SIMD v3.4.5
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.13
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.39
-⌅ [0bca4576] SciMLBase v1.94.0
+  [476501e8] SLEEFPirates v0.6.43
+  [0bca4576] SciMLBase v2.42.0
   [31c91b34] SciMLBenchmarks v0.1.3
-⌃ [e9a6253c] SciMLNLSolve v0.1.8
-  [c0aeaf25] SciMLOperators v0.3.6
-  [6c6a2e73] Scratch v1.2.0
+  [c0aeaf25] SciMLOperators v0.3.8
+  [53ae85a6] SciMLStructures v1.4.1
+  [6c6a2e73] Scratch v1.2.1
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.1.0
-⌃ [727e6d20] SimpleNonlinearSolve v0.1.19
+  [727e6d20] SimpleNonlinearSolve v1.10.1
 ⌅ [36b790f5] SimpleSolvers v0.2.4
   [699a6c99] SimpleTraits v0.9.4
   [ce78b400] SimpleUnPack v1.1.0
-  [66db9d55] SnoopPrecompile v1.0.3
   [b85f4697] SoftGlobalScope v1.1.0
-  [a2af1166] SortingAlgorithms v1.1.1
-⌃ [47a9eef4] SparseDiffTools v2.4.1
+  [a2af1166] SortingAlgorithms v1.2.1
+  [47a9eef4] SparseDiffTools v2.19.0
+  [0a514795] SparseMatrixColorings v0.3.5
   [e56a9233] Sparspak v0.3.9
-⌃ [276daf66] SpecialFunctions v2.3.0
-  [aedffcd0] Static v0.8.8
-⌃ [0d7ed370] StaticArrayInterface v1.4.0
-⌃ [90137ffa] StaticArrays v1.6.2
-  [1e83bf80] StaticArraysCore v1.4.2
-⌃ [82ae8749] StatsAPI v1.6.0
-⌃ [2913bbd2] StatsBase v0.34.0
-  [4c63d2b9] StatsFuns v1.3.0
-  [7792a7ef] StrideArraysCore v0.4.17
+  [276daf66] SpecialFunctions v2.4.0
+  [aedffcd0] Static v1.1.1
+  [0d7ed370] StaticArrayInterface v1.5.1
+  [90137ffa] StaticArrays v1.9.7
+  [1e83bf80] StaticArraysCore v1.4.3
+  [82ae8749] StatsAPI v1.7.0
+  [2913bbd2] StatsBase v0.34.3
+  [4c63d2b9] StatsFuns v1.3.1
+  [7792a7ef] StrideArraysCore v0.5.7
   [69024149] StringEncodings v0.3.7
-⌃ [892a3eda] StringManipulation v0.3.0
-⌃ [c3572dad] Sundials v4.19.3
-  [2efcf032] SymbolicIndexingInterface v0.2.2
-⌃ [d1185830] SymbolicUtils v1.2.0
-⌃ [0c5d862f] Symbolics v5.5.1
+  [892a3eda] StringManipulation v0.3.4
+  [09ab397b] StructArrays v0.6.18
+  [c3572dad] Sundials v4.24.0
+  [2efcf032] SymbolicIndexingInterface v0.3.26
+  [19f23fe9] SymbolicLimits v0.2.1
+  [d1185830] SymbolicUtils v2.1.2
+  [0c5d862f] Symbolics v5.33.0
   [3783bdb8] TableTraits v1.0.1
-⌃ [bd369af6] Tables v1.10.1
+  [bd369af6] Tables v1.12.0
   [62fd8b95] TensorCore v0.1.1
-  [8ea1fca8] TermInterface v0.3.3
+⌅ [8ea1fca8] TermInterface v0.4.1
   [8290d209] ThreadingUtilities v0.5.2
-  [a759f4b9] TimerOutputs v0.5.23
-  [c751599d] ToeplitzMatrices v0.8.2
-  [0796e94c] Tokenize v0.5.25
-  [3bb67fe8] TranscodingStreams v0.9.13
-  [a2a6695c] TreeViews v0.3.0
-  [d5829a12] TriangularSolve v0.1.19
-  [410a4b4d] Tricks v0.1.7
+  [a759f4b9] TimerOutputs v0.5.24
+  [c751599d] ToeplitzMatrices v0.8.3
+  [0796e94c] Tokenize v0.5.29
+  [3bb67fe8] TranscodingStreams v0.11.0
+  [d5829a12] TriangularSolve v0.2.1
+  [410a4b4d] Tricks v0.1.8
   [781d530d] TruncatedStacktraces v1.4.0
-⌃ [5c2747f8] URIs v1.4.2
+  [5c2747f8] URIs v1.5.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-⌃ [1986cc42] Unitful v1.16.0
-  [45397f5d] UnitfulLatexify v1.6.3
-  [a7c27f48] Unityper v0.1.5
+  [1986cc42] Unitful v1.20.0
+  [45397f5d] UnitfulLatexify v1.6.4
+  [a7c27f48] Unityper v0.1.6
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.64
+  [3d5dd08c] VectorizationBase v0.21.70
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
   [44d3d7a6] Weave v0.10.12
-  [efce3f68] WoodburyMatrices v0.5.5
-  [ddb6d928] YAML v0.4.9
-  [c2297ded] ZMQ v1.2.2
-  [700de1a5] ZygoteRules v0.2.3
-  [6e34b625] Bzip2_jll v1.0.8+0
-  [83423d85] Cairo_jll v1.16.1+1
+⌅ [efce3f68] WoodburyMatrices v0.5.6
+  [ddb6d928] YAML v0.4.11
+  [c2297ded] ZMQ v1.2.6
+  [6e34b625] Bzip2_jll v1.0.8+1
+  [83423d85] Cairo_jll v1.18.0+2
   [47200ebd] DecFP_jll v2.0.3+1
-  [2e619515] Expat_jll v2.5.0+0
-⌃ [b22a6f82] FFMPEG_jll v4.4.2+2
+  [2702e6a9] EpollShim_jll v0.0.20230411+0
+  [2e619515] Expat_jll v2.6.2+0
+⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
   [f5851436] FFTW_jll v3.3.10+0
   [34b6f7d7] FastTransforms_jll v0.6.2+0
-  [a3f928ae] Fontconfig_jll v2.13.93+0
-  [d7e528f0] FreeType2_jll v2.13.1+0
-  [559328eb] FriBidi_jll v1.0.10+0
-  [0656b61e] GLFW_jll v3.3.8+0
-⌅ [d2c73de3] GR_jll v0.72.9+0
+  [a3f928ae] Fontconfig_jll v2.13.96+0
+  [d7e528f0] FreeType2_jll v2.13.2+0
+  [559328eb] FriBidi_jll v1.0.14+0
+  [0656b61e] GLFW_jll v3.4.0+0
+  [d2c73de3] GR_jll v0.73.6+0
   [78b55507] Gettext_jll v0.21.0+0
-  [f8c6e375] Git_jll v2.36.1+2
-⌃ [7746bdde] Glib_jll v2.74.0+2
+  [f8c6e375] Git_jll v2.44.0+2
+  [7746bdde] Glib_jll v2.80.2+0
   [3b182d85] Graphite2_jll v1.3.14+0
-⌃ [0234f1f7] HDF5_jll v1.12.2+2
+⌃ [0234f1f7] HDF5_jll v1.14.2+1
   [2e76f6c2] HarfBuzz_jll v2.8.1+1
-⌃ [1d5cc7b8] IntelOpenMP_jll v2023.1.0+0
-  [aacddb02] JpegTurbo_jll v2.1.91+0
-  [c1c5ebd0] LAME_jll v3.100.1+0
-  [88015f11] LERC_jll v3.0.0+1
-  [1d63c593] LLVMOpenMP_jll v15.0.4+0
+  [e33a78d0] Hwloc_jll v2.11.1+0
+  [1d5cc7b8] IntelOpenMP_jll v2024.2.0+0
+  [aacddb02] JpegTurbo_jll v3.0.3+0
+  [c1c5ebd0] LAME_jll v3.100.2+0
+⌅ [88015f11] LERC_jll v3.0.0+1
+  [1d63c593] LLVMOpenMP_jll v15.0.7+0
   [aae0fff6] LSODA_jll v0.1.2+0
-  [dd4b983a] LZO_jll v2.10.1+0
+  [dd4b983a] LZO_jll v2.10.2+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
-  [d4300ac3] Libgcrypt_jll v1.8.7+0
+  [d4300ac3] Libgcrypt_jll v1.8.11+0
   [7e76a0d4] Libglvnd_jll v1.6.0+0
-  [7add5ba3] Libgpg_error_jll v1.42.0+0
-⌃ [94ce4f54] Libiconv_jll v1.16.1+2
-  [4b2f31a3] Libmount_jll v2.35.0+0
-  [89763e89] Libtiff_jll v4.5.1+1
-  [38a345b3] Libuuid_jll v2.36.0+0
-⌃ [856f044c] MKL_jll v2023.1.0+0
+  [7add5ba3] Libgpg_error_jll v1.49.0+0
+  [94ce4f54] Libiconv_jll v1.17.0+0
+  [4b2f31a3] Libmount_jll v2.40.1+0
+⌅ [89763e89] Libtiff_jll v4.5.1+1
+  [38a345b3] Libuuid_jll v2.40.1+0
+  [856f044c] MKL_jll v2024.2.0+0
+  [7cb0a576] MPICH_jll v4.2.2+0
+  [f1f71cc9] MPItrampoline_jll v5.4.0+0
+  [9237b28f] MicrosoftMPI_jll v10.1.4+2
   [c771fb93] ODEInterface_jll v0.0.1+0
   [e7412a2a] Ogg_jll v1.3.5+1
-⌅ [458c3c95] OpenSSL_jll v1.1.21+0
+  [fe0851c0] OpenMPI_jll v5.0.3+0
+  [458c3c95] OpenSSL_jll v3.0.14+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
   [91d4177d] Opus_jll v1.3.2+0
-  [30392449] Pixman_jll v0.42.2+0
-⌅ [c0090381] Qt6Base_jll v6.4.2+3
-  [f50d1b31] Rmath_jll v0.4.0+0
-⌅ [fb77eaff] Sundials_jll v5.2.1+0
-⌃ [a2964d1f] Wayland_jll v1.21.0+0
-  [2381bf8a] Wayland_protocols_jll v1.25.0+0
-⌃ [02c8fc9c] XML2_jll v2.10.3+0
-  [aed1982a] XSLT_jll v1.1.34+0
-⌃ [ffd25f8a] XZ_jll v5.4.3+1
+  [30392449] Pixman_jll v0.43.4+0
+  [c0090381] Qt6Base_jll v6.7.1+1
+  [f50d1b31] Rmath_jll v0.4.2+0
+⌅ [fb77eaff] Sundials_jll v5.2.2+0
+  [a44049a8] Vulkan_Loader_jll v1.3.243+0
+  [a2964d1f] Wayland_jll v1.21.0+1
+  [2381bf8a] Wayland_protocols_jll v1.31.0+0
+  [02c8fc9c] XML2_jll v2.13.1+0
+  [aed1982a] XSLT_jll v1.1.41+0
+  [ffd25f8a] XZ_jll v5.4.6+0
+  [f67eecfb] Xorg_libICE_jll v1.1.1+0
+  [c834827a] Xorg_libSM_jll v1.2.4+0
   [4f6342f7] Xorg_libX11_jll v1.8.6+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
   [935fb764] Xorg_libXcursor_jll v1.2.0+4
   [a3789734] Xorg_libXdmcp_jll v1.1.4+0
-  [1082639a] Xorg_libXext_jll v1.3.4+4
+  [1082639a] Xorg_libXext_jll v1.3.6+0
   [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
   [a51aa0fd] Xorg_libXi_jll v1.7.10+4
   [d1454406] Xorg_libXinerama_jll v1.1.4+4
   [ec84b674] Xorg_libXrandr_jll v1.5.2+4
-  [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
+  [ea2f1a96] Xorg_libXrender_jll v0.9.11+0
   [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
-  [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.0+0
   [cc61e674] Xorg_libxkbfile_jll v1.1.2+0
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.4+0
   [12413925] Xorg_xcb_util_image_jll v0.4.0+1
   [2def613f] Xorg_xcb_util_jll v0.4.0+1
   [975044d2] Xorg_xcb_util_keysyms_jll v0.4.0+1
@@ -1112,18 +1121,25 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [35661453] Xorg_xkbcomp_jll v1.4.6+0
   [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
   [c5fb5394] Xorg_xtrans_jll v1.5.0+0
-  [8f1865be] ZeroMQ_jll v4.3.4+0
-  [3161d3a3] Zstd_jll v1.5.5+0
-⌅ [214eeab7] fzf_jll v0.29.0+0
-  [a4ae2306] libaom_jll v3.4.0+0
+  [8f1865be] ZeroMQ_jll v4.3.5+0
+  [3161d3a3] Zstd_jll v1.5.6+0
+  [35ca27e7] eudev_jll v3.2.9+0
+⌅ [214eeab7] fzf_jll v0.43.0+0
+  [1a1c6b14] gperf_jll v3.1.1+0
+  [477f73a3] libaec_jll v1.1.2+0
+  [a4ae2306] libaom_jll v3.9.0+0
   [0ac62f75] libass_jll v0.15.1+0
+  [2db6ffa8] libevdev_jll v1.11.0+0
   [f638f0a6] libfdk_aac_jll v2.0.2+0
-  [b53b4c65] libpng_jll v1.6.38+0
+  [36db933b] libinput_jll v1.18.0+0
+  [b53b4c65] libpng_jll v1.6.43+1
   [a9144af2] libsodium_jll v1.0.20+0
   [f27f6e37] libvorbis_jll v1.3.7+1
+  [009596ad] mtdev_jll v1.1.6+0
+  [1317d2d5] oneTBB_jll v2021.12.0+0
   [1270edf5] x264_jll v2021.5.5+0
   [dfaa095f] x265_jll v3.5.0+0
-⌃ [d8fb68d0] xkbcommon_jll v1.4.1+0
+  [d8fb68d0] xkbcommon_jll v1.4.1+1
   [0dad84c5] ArgTools v1.1.1
   [56f22d72] Artifacts
   [2a0f44e3] Base64
@@ -1134,7 +1150,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9fa8497b] Future
   [b77e0a4c] InteractiveUtils
   [4af54fe1] LazyArtifacts
-  [b27032c2] LibCURL v0.6.3
+  [b27032c2] LibCURL v0.6.4
   [76f85450] LibGit2
   [8f399da3] Libdl
   [37e2e46d] LinearAlgebra
@@ -1142,7 +1158,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d6f4376e] Markdown
   [a63ad114] Mmap
   [ca575930] NetworkOptions v1.2.0
-  [44cfe95a] Pkg v1.9.0
+  [44cfe95a] Pkg v1.10.0
   [de0858da] Printf
   [9abbd945] Profile
   [3fa0cd96] REPL
@@ -1151,30 +1167,30 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9e88b42a] Serialization
   [1a1011a3] SharedArrays
   [6462fe0b] Sockets
-  [2f01184e] SparseArrays
-  [10745b16] Statistics v1.9.0
+  [2f01184e] SparseArrays v1.10.0
+  [10745b16] Statistics v1.10.0
   [4607b0f0] SuiteSparse
   [fa267f1f] TOML v1.0.3
   [a4e569a6] Tar v1.10.0
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v1.0.2+0
-  [781609d7] GMP_jll v6.2.1+2
-  [deac9b47] LibCURL_jll v7.84.0+0
-  [29816b5a] LibSSH2_jll v1.10.2+0
-  [3a97d323] MPFR_jll v4.1.1+4
-  [c8ffd9c3] MbedTLS_jll v2.28.2+0
-  [14a3606d] MozillaCACerts_jll v2022.10.11
-  [4536629a] OpenBLAS_jll v0.3.21+4
-  [05823500] OpenLibm_jll v0.8.1+0
-  [efcefdf7] PCRE2_jll v10.42.0+0
-  [bea87d4a] SuiteSparse_jll v5.10.1+6
-  [83775a58] Zlib_jll v1.2.13+0
-  [8e850b90] libblastrampoline_jll v5.8.0+0
-  [8e850ede] nghttp2_jll v1.48.0+0
-  [3f19e933] p7zip_jll v17.4.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
+  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
+  [781609d7] GMP_jll v6.2.1+6
+  [deac9b47] LibCURL_jll v8.4.0+0
+  [e37daf67] LibGit2_jll v1.6.4+0
+  [29816b5a] LibSSH2_jll v1.11.0+1
+  [3a97d323] MPFR_jll v4.2.0+1
+  [c8ffd9c3] MbedTLS_jll v2.28.2+1
+  [14a3606d] MozillaCACerts_jll v2023.1.10
+  [4536629a] OpenBLAS_jll v0.3.23+4
+  [05823500] OpenLibm_jll v0.8.1+2
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.2.1+1
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.8.0+1
+  [8e850ede] nghttp2_jll v1.52.0+1
+  [3f19e933] p7zip_jll v17.4.0+2
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 ```
 
