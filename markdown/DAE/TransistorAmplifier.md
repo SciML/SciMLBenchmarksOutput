@@ -40,12 +40,12 @@ end
       y₆(t)  = 3.0
       y₇(t)  = 6.0
       y₈(t)  = 0.0
-      tmp1(t) = 0.0
-      tmp2(t) = 0.0
-      tmp3(t) = 0.0
-      tmp4(t) = 0.0
-      tmp5(t) = 0.0
-      tmp6(t) = 0.0
+      tmp1(t)
+      tmp2(t)
+      tmp3(t)
+      tmp4(t)
+      tmp5(t)
+      tmp6(t)
 end
 
 Uₑ = 0.1sin(200π * t)
@@ -81,12 +81,12 @@ u0 = [y₁  => 0.0
 @mtkbuild sys = ODESystem(eqs, t)
 tspan = (0.0, 0.2)
 mtkprob   = ODEProblem(sys, u0, tspan)
-ref_sol = solve(mtkprob, Rodas5P(), abstol = 1e-10, reltol = 1e-14)
+ref_sol = solve(mtkprob, Rodas5P(), abstol = 1e-10, reltol = 1e-10)
 
 du = mtkprob.f(mtkprob.u0, mtkprob.p, 0.0)
 du0 = D.(unknowns(sys)) .=> du
 daeprob = DAEProblem(sys, du0, [], tspan)
-dae_ref_sol = solve(daeprob, IDA(), abstol = 1/10^8, reltol = 1/10^8)
+dae_ref_sol = solve(daeprob, IDA(), abstol = 1/10^7, reltol = 1/10^7)
 
 function transamp(du, u, p, t)
     y₁, y₂, y₃, y₄, y₅, y₆, y₇, y₈ = u
@@ -142,31 +142,18 @@ probs = [mtkprob,daeprob,mmprob]
 refs = [ref_sol,ref_sol,mm_refsol];
 ```
 
-```
-Error: UndefVarError: `tmp3ˍt(t)` not defined
-```
-
-
 
 ```julia
 plot(ref_sol, idxs = [y₁,y₂,y₃,y₄,y₅,y₆,y₇,y₈])
 ```
 
-```
-Error: UndefVarError: `ref_sol` not defined
-```
-
-
+![](figures/TransistorAmplifier_2_1.png)
 
 ```julia
 plot(mm_refsol)
 ```
 
-```
-Error: UndefVarError: `mm_refsol` not defined
-```
-
-
+![](figures/TransistorAmplifier_3_1.png)
 
 
 
@@ -183,7 +170,6 @@ reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:prob_choice => 1, :alg=>Rodas4()),
           Dict(:prob_choice => 1, :alg=>FBDF()),
           Dict(:prob_choice => 1, :alg=>QNDF()),
-          Dict(:prob_choice => 1, :alg=>rodas()),
           Dict(:prob_choice => 1, :alg=>radau()),
           Dict(:prob_choice => 1, :alg=>RadauIIA5()),
           Dict(:prob_choice => 2, :alg=>DFBDF()),
@@ -196,10 +182,18 @@ plot(wp)
 ```
 
 ```
-Error: UndefVarError: `refs` not defined
+EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   9.8813129168249309E-324
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.9762625833649862E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
 ```
 
 
+![](figures/TransistorAmplifier_4_1.png)
 
 ```julia
 abstols = 1.0 ./ 10.0 .^ (6:8)
@@ -209,6 +203,7 @@ setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
           Dict(:prob_choice => 2, :alg=>IDA()),
           Dict(:prob_choice => 3, :alg=>Rodas5P()),
           Dict(:prob_choice => 3, :alg=>Rodas4()),
+          Dict(:prob_choice => 3, :alg=>rodas()),
           Dict(:prob_choice => 3, :alg=>FBDF()),
           Dict(:prob_choice => 2, :alg=>IDA()),
           Dict(:prob_choice => 2, :alg=>DASKR.daskr()),
@@ -219,10 +214,24 @@ plot(wp)
 ```
 
 ```
-Error: UndefVarError: `refs` not defined
+DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.1049635569445D-15
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN                 
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.1679416911111D-15
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN                 
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.6717667644445D-16
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN
 ```
 
 
+![](figures/TransistorAmplifier_5_1.png)
 
 
 
@@ -235,7 +244,6 @@ setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
           Dict(:prob_choice => 1, :alg=>Rodas4()),
           Dict(:prob_choice => 1, :alg=>FBDF()),
           Dict(:prob_choice => 1, :alg=>QNDF()),
-          Dict(:prob_choice => 1, :alg=>rodas()),
           Dict(:prob_choice => 1, :alg=>radau()),
           Dict(:prob_choice => 1, :alg=>RadauIIA5()),
           Dict(:prob_choice => 2, :alg=>DFBDF()),
@@ -247,10 +255,18 @@ plot(wp)
 ```
 
 ```
-Error: UndefVarError: `refs` not defined
+EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   9.8813129168249309E-324
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.9762625833649862E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
 ```
 
 
+![](figures/TransistorAmplifier_6_1.png)
 
 ```julia
 abstols = 1.0 ./ 10.0 .^ (6:8)
@@ -260,6 +276,7 @@ setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
           Dict(:prob_choice => 2, :alg=>IDA()),
           Dict(:prob_choice => 3, :alg=>Rodas5P()),
           Dict(:prob_choice => 3, :alg=>Rodas4()),
+          Dict(:prob_choice => 3, :alg=>rodas()),
           Dict(:prob_choice => 3, :alg=>FBDF()),
           Dict(:prob_choice => 2, :alg=>IDA()),
           Dict(:prob_choice => 2, :alg=>DASKR.daskr()),
@@ -270,10 +287,24 @@ plot(wp)
 ```
 
 ```
-Error: UndefVarError: `refs` not defined
+DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.1049635569445D-15
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN                 
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.1679416911111D-15
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN                 
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.6717667644445D-16
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN
 ```
 
 
+![](figures/TransistorAmplifier_7_1.png)
 
 
 
@@ -304,10 +335,59 @@ plot(wp)
 ```
 
 ```
-Error: UndefVarError: `refs` not defined
+EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   9.8813129168249309E-324
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.1679416822793D-15
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN                 
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.6717667291172D-16
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN                 
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.1074826766588D-15
+ DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE                              
+      
+ DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN                                   
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.1719722826540D-15
+ DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE                              
+      
+ DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN                                   
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.6878891306160D-16
+ DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE                              
+      
+ DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN                                   
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.2751556522464D-16
+ DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE                              
+      
+ DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN
 ```
 
 
+![](figures/TransistorAmplifier_8_1.png)
 
 ```julia
 wp = WorkPrecisionSet(probs,abstols,reltols,setups;error_estimate = :l2,
@@ -316,10 +396,59 @@ plot(wp)
 ```
 
 ```
-Error: UndefVarError: `refs` not defined
+EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   9.8813129168249309E-324
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ EXIT OF RADAU AT X=        0.0000E+00
+  STEP SIZE T0O SMALL, H=   1.4821969375237396E-323
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.1679416822793D-15
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN                 
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.6717667291172D-16
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN                 
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.1074826766588D-15
+ DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE                              
+      
+ DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN                                   
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.1719722826540D-15
+ DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE                              
+      
+ DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN                                   
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.6878891306160D-16
+ DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE                              
+      
+ DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN                                   
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.2751556522464D-16
+ DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE                              
+      
+ DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN
 ```
 
 
+![](figures/TransistorAmplifier_9_1.png)
 
 
 
@@ -350,7 +479,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -556,7 +685,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.2.1
   [47a9eef4] SparseDiffTools v2.19.0
-  [0a514795] SparseMatrixColorings v0.3.4
+⌃ [0a514795] SparseMatrixColorings v0.3.4
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.4.0
   [aedffcd0] Static v1.1.1
@@ -572,7 +701,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c3572dad] Sundials v4.24.0
   [2efcf032] SymbolicIndexingInterface v0.3.26
   [19f23fe9] SymbolicLimits v0.2.1
-  [d1185830] SymbolicUtils v2.1.1
+  [d1185830] SymbolicUtils v2.1.2
   [0c5d862f] Symbolics v5.33.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.0
@@ -734,6 +863,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850b90] libblastrampoline_jll v5.8.0+1
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 ```
 
