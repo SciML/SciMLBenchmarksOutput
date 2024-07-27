@@ -1,5 +1,5 @@
 
-using OrdinaryDiffEq, ParameterizedFunctions, ODE, ODEInterface,
+using OrdinaryDiffEq, ParameterizedFunctions, ODEInterface,
       ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools,
       StaticArrays
 using Plots; gr()

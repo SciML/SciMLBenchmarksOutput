@@ -1,5 +1,5 @@
 
-using OrdinaryDiffEq, Sundials, DiffEqDevTools, Plots, ODEInterfaceDiffEq, ODE, LSODA
+using OrdinaryDiffEq, Sundials, DiffEqDevTools, Plots, ODEInterfaceDiffEq, LSODA
 using Random
 Random.seed!(123)
 gr()

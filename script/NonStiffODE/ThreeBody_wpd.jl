@@ -1,5 +1,5 @@
 
-using OrdinaryDiffEq, ODE, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools, StaticArrays
+using OrdinaryDiffEq, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools, StaticArrays
 using Plots; gr()
 
 ## Define the ThreeBody Problem

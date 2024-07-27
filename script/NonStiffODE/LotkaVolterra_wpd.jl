@@ -1,5 +1,5 @@
 
-using OrdinaryDiffEq, ParameterizedFunctions, ODE, ODEInterfaceDiffEq, LSODA,
+using OrdinaryDiffEq, ParameterizedFunctions, ODEInterfaceDiffEq, LSODA,
       Sundials, DiffEqDevTools, StaticArrays
 
 f = @ode_def LotkaVolterra begin

@@ -1,5 +1,5 @@
 
-using OrdinaryDiffEq, ODE, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools
+using OrdinaryDiffEq, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools
 
 f = (du,u,p,t) -> begin
   @inbounds begin
