@@ -78,70 +78,174 @@ u0: 6-element Vector{Float64}:
 ```
 
 ```
-9.767 s (271864850 allocations: 8.87 GiB)
-retcode: MaxIters
-Interpolation: specialized 4th order "free" interpolation
-t: 597-element Vector{Float64}:
- 2.037093879958655e9
- 2.0370938799622977e9
- 2.0370938799987223e9
- 2.0370938803629692e9
- 2.037093884005438e9
- 2.0370938890873458e9
- 2.03709389546286e9
- 2.0370939024988694e9
- 2.0370939099517152e9
- 2.0370939175970695e9
- ⋮
- 2.0370978542279081e9
- 2.0370978607705305e9
- 2.037097867387156e9
- 2.0370978740753317e9
- 2.0370978808328161e9
- 2.0370978876575065e9
- 2.0370978945474555e9
- 2.037097901500842e9
- 2.0370979028324845e9
-u: 597-element Vector{Vector{Float64}}:
- [-4.776316976285399e6, -383863.9870444152, -5.350018393313232e6, -5528.612
-563131059, 1216.844236158524, 4845.114447868596]
- [-4.77633711405097e6, -383859.5547243374, -5.350000745096112e6, -5528.5938
-87445432, 1216.8457370778892, 4845.135420386226]
- [-4.776538487965223e6, -383815.2312228838, -5.349824258723416e6, -5528.407
-126238267, 1216.8607453199836, 4845.345141780103]
- [-4.778551852902747e6, -383371.9661535982, -5.348058974897674e6, -5526.539
-079130501, 1217.0107325805616, 4847.441977415121]
- [-4.79864802319921e6, -378936.32281508803, -5.33036417780586e6, -5507.8151
-581240045, 1218.5010846666296, 4868.372441826212]
- [-4.826571583990289e6, -372738.78855618887, -5.305549594173777e6, -5481.56
-0247393949, 1220.551444320358, 4897.458720261269]
- [-4.86141379061026e6, -364949.0695039659, -5.27420995050537e6, -5448.40625
-572443, 1223.075941847303, 4933.757460009457]
- [-4.899619302616308e6, -356333.87416909187, -5.239355781758246e6, -5411.54
-0315888837, 1225.8001177308527, 4973.567526515767]
- [-4.939804187099205e6, -347187.64117364015, -5.202132299252132e6, -5372.17
-5157344959, 1228.6147371926625, 5015.448621990125]
- [-4.980720938554404e6, -337783.6504205913, -5.163624168182001e6, -5331.458
-688215044, 1231.4260409005406, 5058.101630739833]
- ⋮
- [7.109033523333406e6, -748210.6568061096, -837179.6570194897, -974.6743068
-149754, -1013.5002623133091, -7306.80857481939]
- [7.102493770741549e6, -754824.4133920531, -884965.7508691706, -1024.440881
-8853058, -1008.2368654432507, -7300.7625224396925]
- [7.095549052690655e6, -761477.7997669737, -933250.9953676062, -1074.723125
-757611, -1002.8668944382293, -7294.306917660723]
- [7.088191289422171e6, -768166.8647894585, -982013.8106573044, -1125.498415
-1746946, -997.3910362163293, -7287.433138057781]
- [7.080412568718434e6, -774887.8893992639, -1.0312340623652438e6, -1176.745
-6360545077, -991.8098745700049, -7280.132754525507]
- [7.072205195586522e6, -781637.3103360656, -1.0808925254399125e6, -1228.444
-6248447714, -986.1239455917315, -7272.397574765741]
- [7.06356164595553e6, -788411.7357021254, -1.1309710145915258e6, -1280.5763
-040478375, -980.3337189473176, -7264.219597537158]
- [7.05447457808568e6, -795207.912410005, -1.1814521611918462e6, -1333.12244
-96677469, -974.4396195194423, -7255.591021233254]
- [7.052692640363215e6, -796504.7623123724, -1.1911128864298302e6, -1343.177
-819382454, -973.3050714432662, -7253.895584392121]
+Error: MethodError: no method matching Float64(::ForwardDiff.Dual{ForwardDi
+ff.Tag{SciMLBase.JacobianWrapper{true, SciMLBase.NonlinearFunction{true, Sc
+iMLBase.FullSpecialize, BoundaryValueDiffEq.var"#106#112"{OrdinaryDiffEqCor
+e.ODEIntegrator{OrdinaryDiffEqLowOrderRK.DP5{typeof(OrdinaryDiffEqCore.triv
+ial_limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}, 
+true, Vector{Float64}, Nothing, Float64, SciMLBase.NullParameters, Float64,
+ Float64, Float64, Float64, Vector{Vector{Float64}}, SciMLBase.ODESolution{
+Float64, 2, Vector{Vector{Float64}}, Nothing, Nothing, Vector{Float64}, Vec
+tor{Vector{Vector{Float64}}}, Nothing, SciMLBase.ODEProblem{Vector{Float64}
+, Tuple{Float64, Float64}, true, SciMLBase.NullParameters, SciMLBase.ODEFun
+ction{true, SciMLBase.AutoSpecialize, SciMLBase.BVPFunction{true, SciMLBase
+.FullSpecialize, false, typeof(Main.var"##WeaveSandBox#225".orbital), Main.
+var"##WeaveSandBox#225".var"#1#2", LinearAlgebra.UniformScaling{Bool}, Noth
+ing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing
+, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), N
+othing, Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, No
+thing, Nothing, Dict{Any, Any}}}, LinearAlgebra.UniformScaling{Bool}, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing,
+ Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, SymbolicInd
+exingInterface.SymbolCache{Nothing, Nothing, Nothing, Nothing, Dict{Any, An
+y}}, Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}
+, SciMLBase.StandardODEProblem}, OrdinaryDiffEqLowOrderRK.DP5{typeof(Ordina
+ryDiffEqCore.trivial_limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!)
+, Static.False}, OrdinaryDiffEqCore.InterpolationData{SciMLBase.ODEFunction
+{true, SciMLBase.AutoSpecialize, SciMLBase.BVPFunction{true, SciMLBase.Full
+Specialize, false, typeof(Main.var"##WeaveSandBox#225".orbital), Main.var"#
+#WeaveSandBox#225".var"#1#2", LinearAlgebra.UniformScaling{Bool}, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothin
+g, Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing
+, Nothing, Dict{Any, Any}}}, LinearAlgebra.UniformScaling{Bool}, Nothing, N
+othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
+ing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, SymbolicIndexing
+Interface.SymbolCache{Nothing, Nothing, Nothing, Nothing, Dict{Any, Any}}, 
+Nothing, Nothing}, Vector{Vector{Float64}}, Vector{Float64}, Vector{Vector{
+Vector{Float64}}}, Nothing, OrdinaryDiffEqLowOrderRK.DP5Cache{Vector{Float6
+4}, Vector{Float64}, Vector{Float64}, typeof(OrdinaryDiffEqCore.trivial_lim
+iter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}, Nothing
+}, SciMLBase.DEStats, Nothing, Nothing, Nothing}, SciMLBase.ODEFunction{tru
+e, SciMLBase.AutoSpecialize, SciMLBase.BVPFunction{true, SciMLBase.FullSpec
+ialize, false, typeof(Main.var"##WeaveSandBox#225".orbital), Main.var"##Wea
+veSandBox#225".var"#1#2", LinearAlgebra.UniformScaling{Bool}, Nothing, Noth
+ing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing
+, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, N
+othing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing, No
+thing, Dict{Any, Any}}}, LinearAlgebra.UniformScaling{Bool}, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing,
+ Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, SymbolicIndexingInte
+rface.SymbolCache{Nothing, Nothing, Nothing, Nothing, Dict{Any, Any}}, Noth
+ing, Nothing}, OrdinaryDiffEqLowOrderRK.DP5Cache{Vector{Float64}, Vector{Fl
+oat64}, Vector{Float64}, typeof(OrdinaryDiffEqCore.trivial_limiter!), typeo
+f(OrdinaryDiffEqCore.trivial_limiter!), Static.False}, OrdinaryDiffEqCore.D
+EOptions{Float64, Float64, Float64, Float64, OrdinaryDiffEqCore.PIControlle
+r{Rational{Int64}}, typeof(DiffEqBase.ODE_DEFAULT_NORM), typeof(LinearAlgeb
+ra.opnorm), Nothing, SciMLBase.CallbackSet{Tuple{}, Tuple{}}, typeof(DiffEq
+Base.ODE_DEFAULT_ISOUTOFDOMAIN), typeof(DiffEqBase.ODE_DEFAULT_PROG_MESSAGE
+), typeof(DiffEqBase.ODE_DEFAULT_UNSTABLE_CHECK), DataStructures.BinaryHeap
+{Float64, DataStructures.FasterForward}, DataStructures.BinaryHeap{Float64,
+ DataStructures.FasterForward}, Nothing, Nothing, Int64, Tuple{}, Tuple{}, 
+Tuple{}}, Vector{Float64}, Float64, Nothing, OrdinaryDiffEqCore.DefaultInit
+, Nothing}, Main.var"##WeaveSandBox#225".var"#1#2", Tuple{Int64}, SciMLBase
+.BVProblem{Vector{Float64}, Tuple{Float64, Float64}, true, Nothing, SciMLBa
+se.NullParameters, SciMLBase.BVPFunction{true, SciMLBase.FullSpecialize, fa
+lse, typeof(Main.var"##WeaveSandBox#225".orbital), Main.var"##WeaveSandBox#
+225".var"#1#2", LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing,
+ Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Sy
+mbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing, Nothing, Dic
+t{Any, Any}}}, SciMLBase.StandardBVProblem, Base.Pairs{Symbol, Union{}, Tup
+le{}, @NamedTuple{}}}, Tuple{Int64}}, Nothing, Nothing, Nothing, BoundaryVa
+lueDiffEq.var"#110#116"{SparseDiffTools.ForwardDiffJacobianCache{SparseDiff
+Tools.NoMatrixColoring, ForwardDiff.JacobianConfig{Nothing, Float64, 6, Tup
+le{Vector{ForwardDiff.Dual{Nothing, Float64, 6}}, Vector{ForwardDiff.Dual{N
+othing, Float64, 6}}}}, Nothing, Vector{Float64}, Vector{Float64}}, Boundar
+yValueDiffEq.Shooting{BoundaryValueDiffEq.BVPJacobianAlgorithm{Nothing, Not
+hing, ADTypes.AutoForwardDiff{nothing, Nothing}}, OrdinaryDiffEqLowOrderRK.
+DP5{typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(OrdinaryDiffEqCore.
+trivial_limiter!), Static.False}, Nothing}, BoundaryValueDiffEq.var"#108#11
+4"{SciMLBase.BVProblem{Vector{Float64}, Tuple{Float64, Float64}, true, Noth
+ing, SciMLBase.NullParameters, SciMLBase.BVPFunction{true, SciMLBase.FullSp
+ecialize, false, typeof(Main.var"##WeaveSandBox#225".orbital), Main.var"##W
+eaveSandBox#225".var"#1#2", LinearAlgebra.UniformScaling{Bool}, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothi
+ng, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing,
+ Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing, 
+Nothing, Dict{Any, Any}}}, SciMLBase.StandardBVProblem, Base.Pairs{Symbol, 
+Union{}, Tuple{}, @NamedTuple{}}}, OrdinaryDiffEqCore.ODEIntegrator{Ordinar
+yDiffEqLowOrderRK.DP5{typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(O
+rdinaryDiffEqCore.trivial_limiter!), Static.False}, true, Vector{ForwardDif
+f.Dual{Nothing, Float64, 6}}, Nothing, ForwardDiff.Dual{Nothing, Float64, 6
+}, SciMLBase.NullParameters, ForwardDiff.Dual{Nothing, Float64, 6}, Float64
+, Float64, ForwardDiff.Dual{Nothing, Float64, 6}, Vector{Vector{ForwardDiff
+.Dual{Nothing, Float64, 6}}}, SciMLBase.ODESolution{ForwardDiff.Dual{Nothin
+g, Float64, 6}, 2, Vector{Vector{ForwardDiff.Dual{Nothing, Float64, 6}}}, N
+othing, Nothing, Vector{ForwardDiff.Dual{Nothing, Float64, 6}}, Vector{Vect
+or{Vector{ForwardDiff.Dual{Nothing, Float64, 6}}}}, Nothing, SciMLBase.ODEP
+roblem{Vector{ForwardDiff.Dual{Nothing, Float64, 6}}, Tuple{ForwardDiff.Dua
+l{Nothing, Float64, 6}, ForwardDiff.Dual{Nothing, Float64, 6}}, true, SciML
+Base.NullParameters, SciMLBase.ODEFunction{true, SciMLBase.AutoSpecialize, 
+SciMLBase.BVPFunction{true, SciMLBase.FullSpecialize, false, typeof(Main.va
+r"##WeaveSandBox#225".orbital), Main.var"##WeaveSandBox#225".var"#1#2", Lin
+earAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
+typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, SymbolicIndexingInter
+face.SymbolCache{Nothing, Nothing, Nothing, Nothing, Dict{Any, Any}}}, Line
+arAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing
+, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DE
+FAULT_OBSERVED), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, No
+thing, Nothing, Nothing, Dict{Any, Any}}, Nothing, Nothing}, Base.Pairs{Sym
+bol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.StandardODEProblem}, Ordin
+aryDiffEqLowOrderRK.DP5{typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof
+(OrdinaryDiffEqCore.trivial_limiter!), Static.False}, OrdinaryDiffEqCore.In
+terpolationData{SciMLBase.ODEFunction{true, SciMLBase.AutoSpecialize, SciML
+Base.BVPFunction{true, SciMLBase.FullSpecialize, false, typeof(Main.var"##W
+eaveSandBox#225".orbital), Main.var"##WeaveSandBox#225".var"#1#2", LinearAl
+gebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeo
+f(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, SymbolicIndexingInterface.
+SymbolCache{Nothing, Nothing, Nothing, Nothing, Dict{Any, Any}}}, LinearAlg
+ebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT
+_OBSERVED), Nothing, SymbolicIndexingInterface.SymbolCache{Nothing, Nothing
+, Nothing, Nothing, Dict{Any, Any}}, Nothing, Nothing}, Vector{Vector{Forwa
+rdDiff.Dual{Nothing, Float64, 6}}}, Vector{ForwardDiff.Dual{Nothing, Float6
+4, 6}}, Vector{Vector{Vector{ForwardDiff.Dual{Nothing, Float64, 6}}}}, Noth
+ing, OrdinaryDiffEqLowOrderRK.DP5Cache{Vector{ForwardDiff.Dual{Nothing, Flo
+at64, 6}}, Vector{ForwardDiff.Dual{Nothing, Float64, 6}}, Vector{ForwardDif
+f.Dual{Nothing, Float64, 6}}, typeof(OrdinaryDiffEqCore.trivial_limiter!), 
+typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}, Nothing}, SciML
+Base.DEStats, Nothing, Nothing, Nothing}, SciMLBase.ODEFunction{true, SciML
+Base.AutoSpecialize, SciMLBase.BVPFunction{true, SciMLBase.FullSpecialize, 
+false, typeof(Main.var"##WeaveSandBox#225".orbital), Main.var"##WeaveSandBo
+x#225".var"#1#2", LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
+g, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, 
+SymbolicIndexingInterface.SymbolCache{Nothing, Nothing, Nothing, Nothing, D
+ict{Any, Any}}}, LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Noth
+ing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing
+, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, SymbolicIndexingInterface.Sy
+mbolCache{Nothing, Nothing, Nothing, Nothing, Dict{Any, Any}}, Nothing, Not
+hing}, OrdinaryDiffEqLowOrderRK.DP5Cache{Vector{ForwardDiff.Dual{Nothing, F
+loat64, 6}}, Vector{ForwardDiff.Dual{Nothing, Float64, 6}}, Vector{ForwardD
+iff.Dual{Nothing, Float64, 6}}, typeof(OrdinaryDiffEqCore.trivial_limiter!)
+, typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}, OrdinaryDiffE
+qCore.DEOptions{Float64, Float64, Float64, ForwardDiff.Dual{Nothing, Float6
+4, 6}, OrdinaryDiffEqCore.PIController{Rational{Int64}}, typeof(DiffEqBase.
+ODE_DEFAULT_NORM), typeof(LinearAlgebra.opnorm), Nothing, SciMLBase.Callbac
+kSet{Tuple{}, Tuple{}}, typeof(DiffEqBase.ODE_DEFAULT_ISOUTOFDOMAIN), typeo
+f(DiffEqBase.ODE_DEFAULT_PROG_MESSAGE), typeof(DiffEqBase.ODE_DEFAULT_UNSTA
+BLE_CHECK), DataStructures.BinaryHeap{ForwardDiff.Dual{Nothing, Float64, 6}
+, DataStructures.FasterForward}, DataStructures.BinaryHeap{ForwardDiff.Dual
+{Nothing, Float64, 6}, DataStructures.FasterForward}, Nothing, Nothing, Int
+64, Tuple{}, Tuple{}, Tuple{}}, Vector{ForwardDiff.Dual{Nothing, Float64, 6
+}}, ForwardDiff.Dual{Nothing, Float64, 6}, Nothing, OrdinaryDiffEqCore.Defa
+ultInit, Nothing}, Main.var"##WeaveSandBox#225".var"#1#2", Tuple{Int64}, Tu
+ple{Int64}}, Vector{Float64}}, Nothing, Nothing, Matrix{Float64}, Nothing, 
+Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Vector{Float64}}, Sci
+MLBase.NullParameters}, Float64}, Float64, 1})
+
+Closest candidates are:
+  (::Type{T})(::Real, !Matched::RoundingMode) where T<:AbstractFloat
+   @ Base rounding.jl:207
+  (::Type{T})(::T) where T<:Number
+   @ Core boot.jl:792
+  Float64(!Matched::IrrationalConstants.Sqrt3)
+   @ IrrationalConstants /cache/julia-buildkite-plugin/depots/5b300254-1738
+-4989-ae0a-f4d2d937f953/packages/IrrationalConstants/vp5v4/src/macro.jl:112
+  ...
 ```
 
 
@@ -215,8 +319,8 @@ SciMLBenchmarks.weave_file("benchmarks/NonStiffBVP","orbital.jmd")
 Computer Information:
 
 ```
-Julia Version 1.10.2
-Commit bd47eca2c8a (2024-03-01 10:14 UTC)
+Julia Version 1.10.5
+Commit 6f3fdf7b362 (2024-08-27 14:19 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -236,264 +340,393 @@ Package Information:
 
 ```
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffBVP/Project.toml`
-  [ded0fc24] BVProblemLibrary v0.1.4
+  [ded0fc24] BVProblemLibrary v0.1.5
   [6e4b80f9] BenchmarkTools v1.5.0
-  [764a87c0] BoundaryValueDiffEq v5.7.1
-  [f3b72e0c] DiffEqDevTools v2.44.2
+  [764a87c0] BoundaryValueDiffEq v5.10.0
+  [13f3f980] CairoMakie v0.12.12
+  [f3b72e0c] DiffEqDevTools v2.45.0
   [54ca160b] ODEInterface v0.5.0
-  [1dea7af3] OrdinaryDiffEq v6.74.1
-  [91a5bcdd] Plots v1.40.2
+  [1dea7af3] OrdinaryDiffEq v6.89.0
+  [91a5bcdd] Plots v1.40.8
   [31c91b34] SciMLBenchmarks v0.1.3 `../..`
+  [be0294bd] SimpleBoundaryValueDiffEq v1.0.0
 ```
 
 And the full manifest:
 
 ```
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffBVP/Manifest.toml`
-  [47edcb42] ADTypes v0.2.7
+⌃ [47edcb42] ADTypes v1.8.1
+  [621f4979] AbstractFFTs v1.5.0
+  [1520ce14] AbstractTrees v0.4.5
+  [7d9f7c33] Accessors v0.1.38
   [79e6a3ab] Adapt v4.0.4
-⌅ [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v7.9.0
-  [4c555306] ArrayLayouts v1.8.0
-  [ded0fc24] BVProblemLibrary v0.1.4
-  [aae01518] BandedMatrices v1.6.1
+  [35492f91] AdaptivePredicates v1.2.0
+  [66dad0bd] AliasTables v1.1.3
+  [27a7e980] Animations v0.4.1
+  [ec485272] ArnoldiMethod v0.4.0
+  [4fba245c] ArrayInterface v7.16.0
+  [4c555306] ArrayLayouts v1.10.3
+  [67c07d97] Automa v1.0.4
+  [13072b0f] AxisAlgorithms v1.1.0
+  [39de3d68] AxisArrays v0.4.7
+  [ded0fc24] BVProblemLibrary v0.1.5
+  [aae01518] BandedMatrices v1.7.5
   [6e4b80f9] BenchmarkTools v1.5.0
-  [d1d4a3ce] BitFlags v0.1.8
-  [62783981] BitTwiddlingConvenienceFunctions v0.1.5
-  [764a87c0] BoundaryValueDiffEq v5.7.1
-  [2a0fbf3d] CPUSummary v0.2.4
-  [49dc2e85] Calculus v0.5.1
-  [d360d2e6] ChainRulesCore v1.23.0
-  [fb6a15b2] CloseOpenIntervals v0.1.12
-  [944b1d66] CodecZlib v0.7.4
-  [35d6a980] ColorSchemes v3.24.0
-  [3da002f7] ColorTypes v0.11.4
+  [d1d4a3ce] BitFlags v0.1.9
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
+  [764a87c0] BoundaryValueDiffEq v5.10.0
+  [fa961155] CEnum v0.5.0
+  [2a0fbf3d] CPUSummary v0.2.6
+  [336ed68f] CSV v0.10.14
+  [159f3aea] Cairo v1.1.0
+  [13f3f980] CairoMakie v0.12.12
+  [d360d2e6] ChainRulesCore v1.25.0
+  [fb6a15b2] CloseOpenIntervals v0.1.13
+  [944b1d66] CodecZlib v0.7.6
+  [a2cac450] ColorBrewer v0.4.0
+  [35d6a980] ColorSchemes v3.26.0
+  [3da002f7] ColorTypes v0.11.5
   [c3611d14] ColorVectorSpace v0.10.0
-  [5ae59095] Colors v0.12.10
+  [5ae59095] Colors v0.12.11
   [38540f10] CommonSolve v0.2.4
-  [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v4.14.0
+  [bbf7d656] CommonSubexpressions v0.3.1
+  [f70d9fcc] CommonWorldInvalidations v1.0.0
+  [34da2185] Compat v4.16.0
+  [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.3
-  [f0e56b4a] ConcurrentUtilities v2.4.1
-  [8f4d0f93] Conda v1.10.0
-  [187b0558] ConstructionBase v1.5.5
-  [d38c429a] Contour v0.6.2
+  [f0e56b4a] ConcurrentUtilities v2.4.2
+  [8f4d0f93] Conda v1.10.2
+  [187b0558] ConstructionBase v1.5.8
+  [d38c429a] Contour v0.6.3
   [adafc99b] CpuId v0.3.1
+  [a8cc5b0e] Crayons v4.1.1
   [9a962f9c] DataAPI v1.16.0
-  [864edb3b] DataStructures v0.18.18
+  [a93c6f00] DataFrames v1.7.0
+  [864edb3b] DataStructures v0.18.20
   [e2d170a0] DataValueInterfaces v1.0.0
+  [927a84f5] DelaunayTriangulation v1.6.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.148.0
-  [f3b72e0c] DiffEqDevTools v2.44.2
-  [77a26b50] DiffEqNoiseProcess v5.21.0
+⌃ [2b5f629d] DiffEqBase v6.155.1
+  [f3b72e0c] DiffEqDevTools v2.45.0
+  [77a26b50] DiffEqNoiseProcess v5.23.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
+⌅ [a0c0ee7d] DifferentiationInterface v0.5.17
   [b4f34e82] Distances v0.10.11
-  [31c24e10] Distributions v0.25.107
+⌃ [31c24e10] Distributions v0.25.111
   [ffbed154] DocStringExtensions v0.9.3
-  [fa6b7ba4] DualNumbers v0.6.8
   [4e289a0a] EnumX v1.0.4
-⌃ [f151be2c] EnzymeCore v0.6.5
+⌅ [f151be2c] EnzymeCore v0.7.8
+  [429591f6] ExactPredicates v2.2.8
   [460bff9d] ExceptionUnwrapping v0.1.10
   [d4d017d3] ExponentialUtilities v1.26.1
   [e2ba6199] ExprTools v0.1.10
-  [c87230d0] FFMPEG v0.4.1
-  [9d29842c] FastAlmostBandedMatrices v0.1.1
-  [7034ab61] FastBroadcast v0.2.8
+⌅ [6b7a57c9] Expronicon v0.8.5
+  [411431e0] Extents v0.1.4
+  [c87230d0] FFMPEG v0.4.2
+  [7a1cc6ca] FFTW v1.8.0
+⌃ [9d29842c] FastAlmostBandedMatrices v0.1.3
+  [7034ab61] FastBroadcast v0.3.5
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v2.0.2
-  [1a297f60] FillArrays v1.9.3
-  [6a86dc24] FiniteDiff v2.23.0
-  [53c48c17] FixedPointNumbers v0.8.4
+  [29a986be] FastLapackInterface v2.0.4
+  [5789e2e9] FileIO v1.16.3
+  [8fc22ac5] FilePaths v0.8.3
+  [48062228] FilePathsBase v0.9.22
+  [1a297f60] FillArrays v1.13.0
+⌃ [6a86dc24] FiniteDiff v2.24.0
+  [53c48c17] FixedPointNumbers v0.8.5
   [1fa38f19] Format v1.3.7
   [f6369f11] ForwardDiff v0.10.36
+  [b38be410] FreeType v4.1.1
+  [663a7486] FreeTypeAbstraction v0.10.3
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [46192b85] GPUArraysCore v0.1.6
-  [28b8d3ca] GR v0.73.3
+  [28b8d3ca] GR v0.73.7
   [c145ed77] GenericSchur v0.5.4
+  [68eda718] GeoFormatTypes v0.4.2
+  [cf35fbd7] GeoInterface v1.3.7
+  [5c1252a2] GeometryBasics v0.4.11
   [d7ba0133] Git v1.3.1
-  [86223c79] Graphs v1.9.0
+  [a2bd30eb] Graphics v1.1.2
+⌃ [86223c79] Graphs v1.11.2
+  [3955a311] GridLayoutBase v0.11.0
   [42e2da0e] Grisu v1.0.2
-  [cd3eb016] HTTP v1.10.5
-  [eafb193a] Highlights v0.5.2
-  [3e5b6fbb] HostCPUFeatures v0.1.16
-  [34004b35] HypergeometricFunctions v0.3.23
-  [7073ff75] IJulia v1.24.2
+  [cd3eb016] HTTP v1.10.8
+  [eafb193a] Highlights v0.5.3
+  [3e5b6fbb] HostCPUFeatures v0.1.17
+  [34004b35] HypergeometricFunctions v0.3.24
+  [7073ff75] IJulia v1.25.0
   [615f187c] IfElse v0.1.1
-  [d25df0c9] Inflate v0.1.4
+  [2803e5a7] ImageAxes v0.6.11
+  [c817782e] ImageBase v0.1.7
+  [a09fc81d] ImageCore v0.10.2
+  [82e4d734] ImageIO v0.6.8
+  [bc367c6b] ImageMetadata v0.9.9
+  [9b13fd28] IndirectArrays v1.0.0
+  [d25df0c9] Inflate v0.1.5
+  [842dd82b] InlineStrings v1.4.2
+  [a98d9a8b] Interpolations v0.15.1
+  [d1acc4aa] IntervalArithmetic v0.22.17
+  [8197267c] IntervalSets v0.7.10
+  [3587e190] InverseFunctions v0.1.17
+  [41ab1584] InvertedIndices v1.3.0
   [92d709cd] IrrationalConstants v0.2.2
+  [f1662d9f] Isoband v0.1.1
+  [c8e1da08] IterTools v1.10.0
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [1019f520] JLFzf v0.1.7
-  [692b3bcd] JLLWrappers v1.5.0
+  [1019f520] JLFzf v0.1.8
+  [692b3bcd] JLLWrappers v1.6.0
   [682c06a0] JSON v0.21.4
+  [b835a17e] JpegTurbo v0.1.5
   [ef3ab10e] KLU v0.6.0
-  [ba0b0d4f] Krylov v0.9.5
+  [5ab0869b] KernelDensity v0.6.9
+  [ba0b0d4f] Krylov v0.9.6
   [b964fa9f] LaTeXStrings v1.3.1
-  [23fbe1c1] Latexify v0.16.2
-  [10f19ff3] LayoutPointers v0.1.15
-  [5078a376] LazyArrays v1.8.3
-  [d3d80556] LineSearches v7.2.0
-  [7ed4a6bd] LinearSolve v2.28.0
-  [2ab3a3ac] LogExpFunctions v0.3.27
+  [23fbe1c1] Latexify v0.16.5
+  [10f19ff3] LayoutPointers v0.1.17
+  [5078a376] LazyArrays v2.2.1
+  [8cdb02fc] LazyModules v0.3.1
+  [9c8b4983] LightXML v0.9.1
+  [d3d80556] LineSearches v7.3.0
+⌃ [7ed4a6bd] LinearSolve v2.34.0
+  [2ab3a3ac] LogExpFunctions v0.3.28
   [e6f89c97] LoggingExtras v1.0.3
-  [bdcacae8] LoopVectorization v0.12.166
+  [bdcacae8] LoopVectorization v0.12.171
+  [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.13
+  [ee78f7c6] Makie v0.21.12
+  [20f20a25] MakieCore v0.8.8
   [d125e4d3] ManualMemory v0.1.8
-  [a3b82374] MatrixFactorizations v2.1.0
-  [bb5d69b7] MaybeInplace v0.1.1
+  [dbb5928d] MappedArrays v0.4.2
+  [0a4f8689] MathTeXEngine v0.6.1
+  [a3b82374] MatrixFactorizations v3.0.1
+  [bb5d69b7] MaybeInplace v0.1.4
   [739be429] MbedTLS v1.1.9
   [442fdcdd] Measures v0.3.2
-  [e1d29d7a] Missings v1.1.0
+  [e1d29d7a] Missings v1.2.0
+  [e94cdb99] MosaicViews v0.3.4
   [46d2c3a1] MuladdMacro v0.2.4
-  [ffc61752] Mustache v1.0.19
+  [ffc61752] Mustache v1.0.20
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
-  [8913a72c] NonlinearSolve v3.8.3
+  [f09324ee] Netpbm v1.1.1
+⌃ [8913a72c] NonlinearSolve v3.14.0
   [54ca160b] ODEInterface v0.5.0
-  [6fe1bfb0] OffsetArrays v1.13.0
-  [4d8831e6] OpenSSL v1.4.2
-  [429524aa] Optim v1.9.3
+  [0f4fe800] OMJulia v0.3.2
+  [510215fc] Observables v0.5.5
+  [6fe1bfb0] OffsetArrays v1.14.1
+  [52e1d378] OpenEXR v0.3.2
+  [4d8831e6] OpenSSL v1.4.3
+  [429524aa] Optim v1.9.4
   [bac558e1] OrderedCollections v1.6.3
-  [1dea7af3] OrdinaryDiffEq v6.74.1
+  [1dea7af3] OrdinaryDiffEq v6.89.0
+  [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.1.0
+  [6ad6398a] OrdinaryDiffEqBDF v1.1.2
+  [bbf590c4] OrdinaryDiffEqCore v1.6.0
+  [50262376] OrdinaryDiffEqDefault v1.1.0
+  [4302a76b] OrdinaryDiffEqDifferentiation v1.1.0
+  [9286f039] OrdinaryDiffEqExplicitRK v1.1.0
+  [e0540318] OrdinaryDiffEqExponentialRK v1.1.0
+  [becaefa8] OrdinaryDiffEqExtrapolation v1.1.0
+  [5960d6e9] OrdinaryDiffEqFIRK v1.1.1
+  [101fe9f7] OrdinaryDiffEqFeagin v1.1.0
+  [d3585ca7] OrdinaryDiffEqFunctionMap v1.1.1
+  [d28bc4f8] OrdinaryDiffEqHighOrderRK v1.1.0
+  [9f002381] OrdinaryDiffEqIMEXMultistep v1.1.0
+  [521117fe] OrdinaryDiffEqLinear v1.1.0
+  [1344f307] OrdinaryDiffEqLowOrderRK v1.2.0
+  [b0944070] OrdinaryDiffEqLowStorageRK v1.2.1
+  [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.2.1
+  [c9986a66] OrdinaryDiffEqNordsieck v1.1.0
+  [5dd0a6cf] OrdinaryDiffEqPDIRK v1.1.0
+  [5b33eab2] OrdinaryDiffEqPRK v1.1.0
+  [04162be5] OrdinaryDiffEqQPRK v1.1.0
+  [af6ede74] OrdinaryDiffEqRKN v1.1.0
+  [43230ef6] OrdinaryDiffEqRosenbrock v1.2.0
+  [2d112036] OrdinaryDiffEqSDIRK v1.1.0
+  [669c94d9] OrdinaryDiffEqSSPRK v1.2.0
+  [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.1.0
+  [358294b1] OrdinaryDiffEqStabilizedRK v1.1.0
+  [fa646aed] OrdinaryDiffEqSymplecticRK v1.1.0
+  [b1df2697] OrdinaryDiffEqTsit5 v1.1.0
+  [79d7bb75] OrdinaryDiffEqVerner v1.1.1
   [90014a1f] PDMats v0.11.31
+  [f57f5aa1] PNGFiles v0.4.3
   [65ce6f38] PackageExtensionCompat v1.0.2
+  [19eb6ba3] Packing v0.5.0
+  [5432bcbf] PaddedViews v0.5.12
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.8.1
   [b98c9c47] Pipe v1.3.0
-  [ccf2f8ad] PlotThemes v3.1.0
+  [eebad327] PkgVersion v0.3.3
+  [ccf2f8ad] PlotThemes v3.2.0
   [995b91a9] PlotUtils v1.4.1
-  [91a5bcdd] Plots v1.40.2
+  [91a5bcdd] Plots v1.40.8
   [e409e4f3] PoissonRandom v0.4.4
-  [f517fe37] Polyester v0.7.10
-  [1d0040c9] PolyesterWeave v0.2.1
+  [f517fe37] Polyester v0.7.16
+  [1d0040c9] PolyesterWeave v0.2.2
+  [647866c9] PolygonOps v0.1.2
+  [2dfb63ee] PooledArrays v1.4.3
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.20
+  [d236fae5] PreallocationTools v0.4.24
   [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.4.3
-  [1fd47b50] QuadGK v2.9.4
+⌃ [08abe8d2] PrettyTables v2.3.2
+  [92933f4c] ProgressMeter v1.10.2
+  [43287f4e] PtrArrays v1.2.1
+  [4b34888f] QOI v1.0.0
+  [1fd47b50] QuadGK v2.11.1
   [74087812] Random123 v1.7.0
-  [e6cf234a] RandomNumbers v1.5.3
+  [e6cf234a] RandomNumbers v1.6.0
+  [b3c3ace0] RangeArrays v0.3.2
+  [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v3.13.0
-  [f2c3362d] RecursiveFactorization v0.2.21
+  [731186ca] RecursiveArrayTools v3.27.0
+  [f2c3362d] RecursiveFactorization v0.2.23
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
-  [79098fc4] Rmath v0.7.1
-  [47965b36] RootedTrees v2.21.0
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.12
+  [79098fc4] Rmath v0.8.0
+  [47965b36] RootedTrees v2.23.1
+  [5eaf0fd0] RoundingEmulator v0.2.1
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.13
+  [fdea26ae] SIMD v3.6.0
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.42
-  [0bca4576] SciMLBase v2.31.0
+  [476501e8] SLEEFPirates v0.6.43
+⌃ [0bca4576] SciMLBase v2.54.0
   [31c91b34] SciMLBenchmarks v0.1.3 `../..`
-  [c0aeaf25] SciMLOperators v0.3.8
-  [53ae85a6] SciMLStructures v1.1.0
+  [c0aeaf25] SciMLOperators v0.3.10
+  [53ae85a6] SciMLStructures v1.5.0
   [6c6a2e73] Scratch v1.2.1
+  [91c51154] SentinelArrays v1.4.5
   [efcf1570] Setfield v1.1.1
+  [65257c39] ShaderAbstractions v0.4.1
   [992d4aef] Showoff v1.0.3
-  [777ac1f9] SimpleBufferStream v1.1.0
-  [727e6d20] SimpleNonlinearSolve v1.6.0
+  [73760f76] SignedDistanceFields v0.4.0
+  [be0294bd] SimpleBoundaryValueDiffEq v1.0.0
+  [777ac1f9] SimpleBufferStream v1.2.0
+⌃ [727e6d20] SimpleNonlinearSolve v1.12.2
   [699a6c99] SimpleTraits v0.9.4
   [ce78b400] SimpleUnPack v1.1.0
+  [45858cf5] Sixel v0.1.3
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.2.1
-  [47a9eef4] SparseDiffTools v2.17.0
+⌃ [47a9eef4] SparseDiffTools v2.20.0
+⌃ [0a514795] SparseMatrixColorings v0.4.0
   [e56a9233] Sparspak v0.3.9
-  [276daf66] SpecialFunctions v2.3.1
-  [aedffcd0] Static v0.8.10
-  [0d7ed370] StaticArrayInterface v1.5.0
-  [90137ffa] StaticArrays v1.9.3
-  [1e83bf80] StaticArraysCore v1.4.2
+  [276daf66] SpecialFunctions v2.4.0
+  [cae243ae] StackViews v0.1.1
+  [aedffcd0] Static v1.1.1
+  [0d7ed370] StaticArrayInterface v1.8.0
+  [90137ffa] StaticArrays v1.9.7
+  [1e83bf80] StaticArraysCore v1.4.3
   [82ae8749] StatsAPI v1.7.0
-  [2913bbd2] StatsBase v0.34.2
-  [4c63d2b9] StatsFuns v1.3.1
-  [7792a7ef] StrideArraysCore v0.5.2
+  [2913bbd2] StatsBase v0.34.3
+  [4c63d2b9] StatsFuns v1.3.2
+  [7792a7ef] StrideArraysCore v0.5.7
   [69024149] StringEncodings v0.3.7
+⌅ [892a3eda] StringManipulation v0.3.4
   [09ab397b] StructArrays v0.6.18
-  [2efcf032] SymbolicIndexingInterface v0.3.13
+⌃ [2efcf032] SymbolicIndexingInterface v0.3.30
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.11.1
+  [bd369af6] Tables v1.12.0
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.2
-  [a759f4b9] TimerOutputs v0.5.23
-  [3bb67fe8] TranscodingStreams v0.10.6
-  [d5829a12] TriangularSolve v0.1.20
-  [410a4b4d] Tricks v0.1.8
+  [731e570b] TiffImages v0.10.0
+  [a759f4b9] TimerOutputs v0.5.24
+⌃ [3bb67fe8] TranscodingStreams v0.11.2
+  [d5829a12] TriangularSolve v0.2.1
+  [410a4b4d] Tricks v0.1.9
+  [981d1d27] TriplotBase v0.1.0
   [781d530d] TruncatedStacktraces v1.4.0
   [5c2747f8] URIs v1.5.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.19.0
-  [45397f5d] UnitfulLatexify v1.6.3
+  [1986cc42] Unitful v1.21.0
+  [45397f5d] UnitfulLatexify v1.6.4
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.65
+  [3d5dd08c] VectorizationBase v0.21.70
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
+  [ea10d353] WeakRefStrings v1.4.2
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.9
-  [c2297ded] ZMQ v1.2.2
+  [efce3f68] WoodburyMatrices v1.0.0
+  [76eceee3] WorkerUtilities v1.6.1
+  [ddb6d928] YAML v0.4.12
+  [c2297ded] ZMQ v1.3.0
   [6e34b625] Bzip2_jll v1.0.8+1
-  [83423d85] Cairo_jll v1.18.0+1
+  [4e9b3aee] CRlibm_jll v1.0.1+0
+⌃ [83423d85] Cairo_jll v1.18.0+2
+  [ee1fde0b] Dbus_jll v1.14.10+0
+  [5ae413db] EarCut_jll v2.2.4+0
   [2702e6a9] EpollShim_jll v0.0.20230411+0
-  [2e619515] Expat_jll v2.5.0+0
+  [2e619515] Expat_jll v2.6.2+0
 ⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
-  [a3f928ae] Fontconfig_jll v2.13.93+0
-  [d7e528f0] FreeType2_jll v2.13.1+0
-  [559328eb] FriBidi_jll v1.0.10+0
-  [0656b61e] GLFW_jll v3.3.9+0
-  [d2c73de3] GR_jll v0.73.3+0
+  [f5851436] FFTW_jll v3.3.10+1
+  [a3f928ae] Fontconfig_jll v2.13.96+0
+  [d7e528f0] FreeType2_jll v2.13.2+0
+  [559328eb] FriBidi_jll v1.0.14+0
+  [0656b61e] GLFW_jll v3.4.0+1
+  [d2c73de3] GR_jll v0.73.7+0
   [78b55507] Gettext_jll v0.21.0+0
-  [f8c6e375] Git_jll v2.44.0+1
-  [7746bdde] Glib_jll v2.80.0+0
+⌃ [f8c6e375] Git_jll v2.44.0+2
+⌃ [7746bdde] Glib_jll v2.80.2+0
   [3b182d85] Graphite2_jll v1.3.14+0
-  [2e76f6c2] HarfBuzz_jll v2.8.1+1
-  [1d5cc7b8] IntelOpenMP_jll v2024.0.2+0
-  [aacddb02] JpegTurbo_jll v3.0.2+0
-  [c1c5ebd0] LAME_jll v3.100.1+0
-  [88015f11] LERC_jll v3.0.0+1
-  [1d63c593] LLVMOpenMP_jll v15.0.7+0
-  [dd4b983a] LZO_jll v2.10.1+0
+  [2e76f6c2] HarfBuzz_jll v8.3.1+0
+  [905a6f67] Imath_jll v3.1.11+0
+  [1d5cc7b8] IntelOpenMP_jll v2024.2.1+0
+⌃ [aacddb02] JpegTurbo_jll v3.0.3+0
+  [c1c5ebd0] LAME_jll v3.100.2+0
+⌅ [88015f11] LERC_jll v3.0.0+1
+  [1d63c593] LLVMOpenMP_jll v18.1.7+0
+⌃ [dd4b983a] LZO_jll v2.10.2+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
-  [d4300ac3] Libgcrypt_jll v1.8.7+0
+  [d4300ac3] Libgcrypt_jll v1.8.11+0
   [7e76a0d4] Libglvnd_jll v1.6.0+0
-  [7add5ba3] Libgpg_error_jll v1.42.0+0
+  [7add5ba3] Libgpg_error_jll v1.49.0+0
   [94ce4f54] Libiconv_jll v1.17.0+0
-  [4b2f31a3] Libmount_jll v2.39.3+0
+  [4b2f31a3] Libmount_jll v2.40.1+0
 ⌅ [89763e89] Libtiff_jll v4.5.1+1
-  [38a345b3] Libuuid_jll v2.39.3+1
-  [856f044c] MKL_jll v2024.0.0+0
+  [38a345b3] Libuuid_jll v2.40.1+0
+  [856f044c] MKL_jll v2024.2.0+0
   [c771fb93] ODEInterface_jll v0.0.1+0
   [e7412a2a] Ogg_jll v1.3.5+1
-  [458c3c95] OpenSSL_jll v3.0.13+0
+  [18a262bb] OpenEXR_jll v3.2.4+0
+  [458c3c95] OpenSSL_jll v3.0.15+1
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
-  [91d4177d] Opus_jll v1.3.2+0
-  [30392449] Pixman_jll v0.42.2+0
-  [c0090381] Qt6Base_jll v6.5.3+1
-  [f50d1b31] Rmath_jll v0.4.0+0
+  [91d4177d] Opus_jll v1.3.3+0
+  [36c8627f] Pango_jll v1.54.1+0
+  [30392449] Pixman_jll v0.43.4+0
+  [c0090381] Qt6Base_jll v6.7.1+1
+  [629bc702] Qt6Declarative_jll v6.7.1+2
+  [ce943373] Qt6ShaderTools_jll v6.7.1+1
+  [e99dba38] Qt6Wayland_jll v6.7.1+1
+  [f50d1b31] Rmath_jll v0.5.1+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.21.0+1
   [2381bf8a] Wayland_protocols_jll v1.31.0+0
-  [02c8fc9c] XML2_jll v2.12.5+0
-  [aed1982a] XSLT_jll v1.1.34+0
-  [ffd25f8a] XZ_jll v5.6.1+0
-  [f67eecfb] Xorg_libICE_jll v1.0.10+1
-  [c834827a] Xorg_libSM_jll v1.2.3+0
+  [02c8fc9c] XML2_jll v2.13.3+0
+  [aed1982a] XSLT_jll v1.1.41+0
+  [ffd25f8a] XZ_jll v5.4.6+0
+  [f67eecfb] Xorg_libICE_jll v1.1.1+0
+  [c834827a] Xorg_libSM_jll v1.2.4+0
   [4f6342f7] Xorg_libX11_jll v1.8.6+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
   [935fb764] Xorg_libXcursor_jll v1.2.0+4
   [a3789734] Xorg_libXdmcp_jll v1.1.4+0
-  [1082639a] Xorg_libXext_jll v1.3.4+4
+  [1082639a] Xorg_libXext_jll v1.3.6+0
   [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
   [a51aa0fd] Xorg_libXi_jll v1.7.10+4
   [d1454406] Xorg_libXinerama_jll v1.1.4+4
   [ec84b674] Xorg_libXrandr_jll v1.5.2+4
-  [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
+  [ea2f1a96] Xorg_libXrender_jll v0.9.11+0
   [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
-  [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.0+0
   [cc61e674] Xorg_libxkbfile_jll v1.1.2+0
   [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.4+0
   [12413925] Xorg_xcb_util_image_jll v0.4.0+1
@@ -505,25 +738,30 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
   [c5fb5394] Xorg_xtrans_jll v1.5.0+0
   [8f1865be] ZeroMQ_jll v4.3.5+0
-  [3161d3a3] Zstd_jll v1.5.5+0
+⌃ [3161d3a3] Zstd_jll v1.5.6+0
   [35ca27e7] eudev_jll v3.2.9+0
-  [214eeab7] fzf_jll v0.43.0+0
+  [214eeab7] fzf_jll v0.53.0+0
   [1a1c6b14] gperf_jll v3.1.1+0
-  [a4ae2306] libaom_jll v3.4.0+0
-  [0ac62f75] libass_jll v0.15.1+0
+  [9a68df92] isoband_jll v0.2.3+0
+  [a4ae2306] libaom_jll v3.9.0+0
+  [0ac62f75] libass_jll v0.15.2+0
+  [1183f4f0] libdecor_jll v0.2.2+0
   [2db6ffa8] libevdev_jll v1.11.0+0
-  [f638f0a6] libfdk_aac_jll v2.0.2+0
+  [f638f0a6] libfdk_aac_jll v2.0.3+0
   [36db933b] libinput_jll v1.18.0+0
-  [b53b4c65] libpng_jll v1.6.43+1
-  [a9144af2] libsodium_jll v1.0.20+0
-  [f27f6e37] libvorbis_jll v1.3.7+1
+⌃ [b53b4c65] libpng_jll v1.6.43+1
+  [075b6546] libsixel_jll v1.10.3+1
+⌃ [a9144af2] libsodium_jll v1.0.20+0
+  [f27f6e37] libvorbis_jll v1.3.7+2
   [009596ad] mtdev_jll v1.1.6+0
-  [1270edf5] x264_jll v2021.5.5+0
-  [dfaa095f] x265_jll v3.5.0+0
+  [1317d2d5] oneTBB_jll v2021.12.0+0
+⌅ [1270edf5] x264_jll v2021.5.5+0
+⌅ [dfaa095f] x265_jll v3.5.0+0
   [d8fb68d0] xkbcommon_jll v1.4.1+1
   [0dad84c5] ArgTools v1.1.1
   [56f22d72] Artifacts
   [2a0f44e3] Base64
+  [8bf52ea8] CRC32c
   [ade2ca70] Dates
   [8ba89e20] Distributed
   [f43a241f] Downloads v1.6.0
@@ -556,7 +794,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v1.1.0+0
+  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
   [deac9b47] LibCURL_jll v8.4.0+0
   [e37daf67] LibGit2_jll v1.6.4+0
   [29816b5a] LibSSH2_jll v1.11.0+1
@@ -567,7 +805,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [efcefdf7] PCRE2_jll v10.42.0+1
   [bea87d4a] SuiteSparse_jll v7.2.1+1
   [83775a58] Zlib_jll v1.2.13+1
-  [8e850b90] libblastrampoline_jll v5.8.0+1
+  [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
