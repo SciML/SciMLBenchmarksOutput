@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>AstroChem Work-Precision Diagrams · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/AstroChem/astrochem/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li class="is-active"><a class="tocitem" href>AstroChem Work-Precision Diagrams</a><ul class="internal"><li><a class="tocitem" href="#Without-Temperature-Dynamics"><span>Without Temperature Dynamics</span></a></li><li><a class="tocitem" href="#With-Temperature-Dynamics"><span>With Temperature Dynamics</span></a></li></ul></li><li><a class="tocitem" href="../nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li></ul></li><li><span class="tocitem">Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Astrochemistry Differential Equations</a></li><li class="is-active"><a href>AstroChem Work-Precision Diagrams</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>AstroChem Work-Precision Diagrams</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/AstroChem/astrochem.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="AstroChem-Work-Precision-Diagrams"><a class="docs-heading-anchor" href="#AstroChem-Work-Precision-Diagrams">AstroChem Work-Precision Diagrams</a><a id="AstroChem-Work-Precision-Diagrams-1"></a><a class="docs-heading-anchor-permalink" href="#AstroChem-Work-Precision-Diagrams" title="Permalink"></a></h1><pre><code class="language-julia hljs">using Catalyst
+using OrdinaryDiffEq
+using Plots
+using Symbolics
+using DiffEqDevTools
+using Sundials, ODEInterface, ODEInterfaceDiffEq, LSODA</code></pre><h2 id="Without-Temperature-Dynamics"><a class="docs-heading-anchor" href="#Without-Temperature-Dynamics">Without Temperature Dynamics</a><a id="Without-Temperature-Dynamics-1"></a><a class="docs-heading-anchor-permalink" href="#Without-Temperature-Dynamics" title="Permalink"></a></h2><pre><code class="language-julia hljs"># Some basic astrochemistry constants:
+# u_vec = [H2 O C O⁺ OH⁺ H H2O⁺ H3O⁺ E H2O OH C⁺ CO CO⁺ H⁺ HCO⁺ T]
+# println(u_vec)
+# @species 
+kboltzmann = 1.38064852e-16  # erg / K
+pmass = 1.6726219e-24  # g
+# dust2gas = 1e-2 # ratio
+mu = 2.34
+seconds_per_year = 3600 * 24 * 365
+gamma_ad = 1.4
+gnot = 1e1
+# Simulation parameters:
+number_density = 1e5
+# dust2gas = 0.01
+minimum_fractional_density = 1e-30 * number_density
+
+# @register_symbolic get_heating(H, H2, E, tgas, ntot, dust2gas)
+function get_heating(H, H2, E, tgas, ntot, dust2gas)
+    &quot;&quot;&quot;
+       get_heating(x, tgas, cr_rate, gnot)
+
+    Calculate the total heating rate based on various processes.
+
+    ## Arguments
+    - `x`: Dict{String, Float64} — A dictionary containing the abundances of different species:
+        - `&quot;H&quot;`: Abundance of hydrogen
+        - `&quot;H2&quot;`: Abundance of molecular hydrogen
+        - `&quot;E&quot;`: Abundance of electrons
+        - `&quot;dust2gas&quot;`: Dust-to-gas ratio
+    - `tgas`: Float64 — Gas temperature
+    - `cr_rate`: Float64 — Cosmic ray ionization rate
+    - `gnot`: Float64 — Scaling factor for cosmic ray ionization rate
+
+    ## Returns
+    - Float64 — Total heating rate considering cosmic ray ionization and photoelectric heating processes.
+    &quot;&quot;&quot;
+
+    rate_H2 = 5.68e-11 * gnot
+    heats = [
+        cosmic_ionisation_rate * (5.5e-12 * H + 2.5e-11 * H2),
+        get_photoelectric_heating(H, E, tgas, gnot, ntot, dust2gas),
+        6.4e-13 * rate_H2 * H2,
+    ]
+
+    return sum(heats)
+end
+
+# @register_symbolic get_photoelectric_heating(H, E, tgas, gnot, ntot, dust2gas)
+function get_photoelectric_heating(H, E, tgas, gnot, ntot, dust2gas)
+    &quot;&quot;&quot;
+       get_photoelectric_heating(x, tgas, gnot)
+
+    Calculate the photoelectric heating rate due to dust grains.
+
+    ## Arguments
+    - `x`: Dict{String, Float64} — A dictionary containing the abundances of different species:
+        - `&quot;H&quot;`: Abundance of hydrogen
+        - `&quot;H2&quot;`: Abundance of molecular hydrogen
+        - `&quot;E&quot;`: Abundance of electrons
+    - `tgas`: Float64 — Gas temperature
+    - `gnot`: Float64 — Scaling factor for cosmic ray ionization rate
+
+    ## Returns
+    - Float64 — Photoelectric heating rate based on dust recombination and ionization processes.
+    &quot;&quot;&quot;
+    # ntot = sum(x)
+    bet = 0.735 * tgas^(-0.068)
+    psi = (E&gt;0) * gnot * sqrt(tgas) / E
+
+    # grains recombination cooling
+    recomb_cool = 4.65e-30 * tgas^0.94 * psi^bet * E * H
+
+    eps = 4.9e-2 / (1 + 4e-3 * psi^0.73) + 3.7e-2 * (tgas * 1e-4)^0.7 / (1 + 2e-4 * psi)
+
+    # net photoelectric heating
+    return (1.3e-24 * eps * gnot * ntot - recomb_cool) * dust2gas
+end
+
+# @register_symbolic get_cooling(H, H2, O, E, tgas)
+function get_cooling(H, H2, O, E, tgas)
+    &quot;&quot;&quot;
+       get_cooling(x, tgas)
+
+    Calculate the total cooling rate based on various processes.
+
+    ## Arguments
+    - `x`: Dict{String, Float64} — A dictionary containing the abundances of different species:
+        - `&quot;H&quot;`: Abundance of hydrogen
+        - `&quot;E&quot;`: Abundance of electrons
+        - `&quot;O&quot;`: Abundance of oxygen
+        - `&quot;H2&quot;`: Abundance of molecular hydrogen
+    - `tgas`: Float64 — Gas temperature
+
+    ## Returns
+    - Float64 — Total cooling rate considering Lyman-alpha, OI 630nm, and H2 cooling processes.
+    &quot;&quot;&quot;
+
+    cool = 7.3e-19 * H * E * exp(-118400.0 / tgas)  # Ly-alpha
+    cool += 1.8e-24 * O * E * exp(-22800 / tgas)  # OI 630nm
+    cool += cooling_H2(H, H2, tgas) # H2 cooling by dissacoiation and recombination
+    return cool
+end
+
+@register_symbolic cooling_H2(H, H2, temp)
+function cooling_H2(H, H2, temp)
+    &quot;&quot;&quot;
+       cooling_H2(x, temp)
+
+    Calculate the cooling rate for molecular hydrogen (H2) at a given temperature.
+
+    ## Arguments
+    - `x`: Dict{String, Float64} — A dictionary containing the abundances of different species:
+        - `&quot;H&quot;`: Abundance of hydrogen
+        - `&quot;H2&quot;`: Abundance of molecular hydrogen
+    - `temp`: Float64 — Gas temperature
+
+    ## Returns
+    - Float64 — Cooling rate due to molecular hydrogen (H2) dissociation and recombination processes.
+    &quot;&quot;&quot;
+    t3 = temp * 1e-3  # (T/1000)
+    logt3 = log10(t3)
+
+    logt32 = logt3 * logt3
+    logt33 = logt32 * logt3
+    logt34 = logt33 * logt3
+    logt35 = logt34 * logt3
+    logt36 = logt35 * logt3
+    logt37 = logt36 * logt3
+    logt38 = logt37 * logt3
+
+    if temp &lt; 2e3
+        HDLR = (9.5e-22 * t3^3.76) / (1.0 + 0.12 * t3^2.1) * exp(-((0.13 / t3)^3)) + 3.0e-24 * exp(-0.51 / t3)
+        HDLV = 6.7e-19 * exp(-5.86 / t3) + 1.6e-18 * exp(-11.7 / t3)
+        HDL = HDLR + HDLV
+    elseif 2e3 &lt;= temp &lt;= 1e4
+        HDL = 1e1^(
+            -2.0584225e1
+            +
+            5.0194035 * logt3
+            -
+            1.5738805 * logt32
+            -
+            4.7155769 * logt33
+            + 2.4714161 * logt34
+            + 5.4710750 * logt35
+            -
+            3.9467356 * logt36
+            -
+            2.2148338 * logt37
+            +
+            1.8161874 * logt38
+        )
+    else
+        HDL = 5.531333679406485e-19
+    end
+
+    if temp &lt;= 1e2
+        f = 1e1^(
+            -16.818342e0
+            + 3.7383713e1 * logt3
+            + 5.8145166e1 * logt32
+            + 4.8656103e1 * logt33
+            + 2.0159831e1 * logt34
+            + 3.8479610e0 * logt35
+        )
+    elseif 1e2 &lt; temp &lt;= 1e3
+        f = 1e1^(
+            -2.4311209e1
+            +
+            3.5692468e0 * logt3
+            -
+            1.1332860e1 * logt32
+            -
+            2.7850082e1 * logt33
+            -
+            2.1328264e1 * logt34
+            -
+            4.2519023e0 * logt35
+        )
+    elseif 1e3 &lt; temp &lt;= 6e3
+        f = 1e1^(
+            -2.4311209e1
+            +
+            4.6450521e0 * logt3
+            -
+            3.7209846e0 * logt32
+            +
+            5.9369081e0 * logt33
+            -
+            5.5108049e0 * logt34
+            +
+            1.5538288e0 * logt35
+        )
+    else
+        f = 1.862314467912518e-22
+    end
+
+    LDL = f * H
+
+    if LDL * HDL == 0.0
+        return 0.0
+    end
+
+    cool = H2 / (1.0 / HDL + 1.0 / LDL)
+
+    return cool
+end
+
+function get_heating_cooling(T, H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺, dust2gas)
+    ntot = get_ntot(H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺)
+    return (gamma_ad - 1e0) * (get_heating(H, H2, E, T, ntot, dust2gas) - get_cooling(H, H2, O, E, T)) / kboltzmann / ntot
+end
+
+function get_ntot(H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺)
+    return sum([H2 O C O⁺ OH⁺ H H2O⁺ H3O⁺ E H2O OH C⁺ CO CO⁺ H⁺ HCO⁺])
+end
+
+ka_reaction(Tgas, α=1.0, β=1.0, γ=0.0) = α*(Tgas/300)^β*exp(−γ / Tgas)
+
+
+# CONTINUE HERE
+# Try this: https://docs.sciml.ai/Catalyst/stable/catalyst_functionality/constraint_equations/#Coupling-ODE-constraints-via-directly-building-a-ReactionSystem
+
+
+@variables t T(t) = 100.0 # Define the variables before the species!
+@species H2(t) O(t) C(t) O⁺(t) OH⁺(t) H(t) H2O⁺(t) H3O⁺(t) E(t) H2O(t) OH(t) C⁺(t) CO(t) CO⁺(t) H⁺(t) HCO⁺(t)
+@parameters cosmic_ionisation_rate radiation_field dust2gas
+
+D = Differential(t)
+reaction_equations = [
+	(@reaction 1.6e-9, $O⁺ + $H2 --&gt; $OH⁺ + $H),
+	(@reaction 1e-9, $OH⁺ + $H2 --&gt; $H2O⁺ + $H),
+	(@reaction 6.1e-10, $H2O⁺ + $H2 --&gt; $H3O⁺ + $H),
+	(@reaction ka_reaction(T, 1.1e-7, -1/2), $H3O⁺ + $E --&gt; $H2O + $H),
+	(@reaction ka_reaction(T, 8.6e-8, -1/2), $H2O⁺ + $E --&gt; $OH + $H),
+	(@reaction ka_reaction(T, 3.9e-8, -1/2), $H2O⁺ + $E --&gt; $O + $H2),
+	(@reaction ka_reaction(T, 6.3e-9, -0.48), $OH⁺ + $E --&gt; $O + $H),
+	(@reaction ka_reaction(T, 3.4e-12, -0.63), $O⁺ + $E --&gt; $O),
+	(@reaction 2.8 * cosmic_ionisation_rate, $O --&gt; $O⁺ + $E),
+	(@reaction 2.62 * cosmic_ionisation_rate, $C --&gt; $C⁺ + $E),
+	(@reaction 5.0 * cosmic_ionisation_rate, $CO --&gt; $C + $O),
+	(@reaction ka_reaction(T, 4.4e-12, -0.61), $C⁺ + $E --&gt; $C),
+	(@reaction ka_reaction(T, 1.15e-10, -0.339), $C⁺ + $OH --&gt; CO + $H),
+	(@reaction 9.15e-10 * (0.62 + 0.4767 * 5.5 * sqrt(300 / T)), $C⁺ + $OH --&gt; $CO⁺ + $H),
+	(@reaction 4e-10, $CO⁺ + $H --&gt; $CO + $H⁺),
+	(@reaction 7.28e-10, $CO⁺ + $H2 --&gt; $HCO⁺ + $H),
+	(@reaction ka_reaction(T, 2.8e-7, -0.69), $HCO⁺ + $E --&gt; $CO + $H),
+	(@reaction ka_reaction(T, 3.5e-12, -0.7), $H⁺ + $E --&gt; $H),
+	(@reaction 2.121e-17 * dust2gas / 1e-2, $H + $H --&gt; $H2),
+    (@reaction 1e-1 * cosmic_ionisation_rate, $H2 --&gt; $H + $H),
+	(@reaction 3.39e-10 * radiation_field, $C --&gt; $C⁺ + $E),
+	(@reaction 2.43e-10 * radiation_field, $CO --&gt; $C + $O),
+	(@reaction 7.72e-10 * radiation_field, $H2O --&gt; $OH + $H),
+    # (D(T) ~ get_heating_cooling(T, H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺, dust2gas)) 
+]
+
+@named system = ReactionSystem(reaction_equations, t)
+
+u0 = [:H2 =&gt; number_density, :O =&gt; number_density*2e-4, :C =&gt; number_density*1e-4, :O⁺=&gt;minimum_fractional_density, :OH⁺=&gt;minimum_fractional_density, :H=&gt; minimum_fractional_density, :H2O⁺=&gt; minimum_fractional_density, :H3O⁺=&gt;minimum_fractional_density, :E=&gt;minimum_fractional_density, :H2O=&gt;minimum_fractional_density, :OH=&gt;minimum_fractional_density, :C⁺=&gt;minimum_fractional_density, :CO=&gt;minimum_fractional_density, :CO⁺=&gt;minimum_fractional_density, :H⁺=&gt;minimum_fractional_density, :HCO⁺=&gt; minimum_fractional_density, :T=&gt; 100.0]
+
+odesys = convert(ODESystem, complete(system))
+
+setdefaults!(system, u0)
+
+tspan = (0.0, 1e6*seconds_per_year)
+
+params = [dust2gas =&gt; 0.01, radiation_field =&gt; 1e-1, cosmic_ionisation_rate =&gt; 1e-17]
+
+println(&quot;Lets try to solve the ODE:&quot;)
+
+sys = convert(ODESystem, complete(system))
+# oprob = ODEProblemExpr(sys, [], tspan, params)
+
+ssys = structural_simplify(sys)</code></pre><pre><code class="nohighlight hljs">Lets try to solve the ODE:
+Model system with 16 equations
+Unknowns (16):
+  O⁺(t) [defaults to 1.0e-25]
+  H2(t) [defaults to 100000.0]
+  OH⁺(t) [defaults to 1.0e-25]
+  H(t) [defaults to 1.0e-25]
+⋮
+Parameters (4):
+  T [defaults to 100.0]
+  cosmic_ionisation_rate
+  dust2gas
+  radiation_field
+Incidence matrix:16×32 SparseArrays.SparseMatrixCSC{Symbolics.Num, Int64} w
+ith 104 stored entries:
+⎡⣿⣖⣂⣇⡈⢀⢐⣀⠑⢄⠀⠀⠀⠀⠀⠀⎤
+⎢⠜⠅⢷⣇⠠⠤⠀⠤⠀⠀⠑⢄⠀⠀⠀⠀⎥
+⎢⠂⠂⠃⡏⡑⣬⠆⠀⠀⠀⠀⠀⠑⢄⠀⠀⎥
+⎣⢐⠸⠀⡅⠃⠘⢹⢌⠀⠀⠀⠀⠀⠀⠑⢄⎦</code></pre><pre><code class="language-julia hljs">oprob = ODEProblem(ssys, [], tspan, params)
+println(&quot;Created the ODEproblem.&quot;)
+sol = solve(oprob, Rodas5()) # Rodas5()) # Tsit5()
+
+# Generate a solution using high precision arithmetic
+bigprob = remake(oprob, u0 = big.(oprob.u0), tspan = big.(oprob.tspan))
+refsol = solve(bigprob, Rodas5P(), abstol=1e-18, reltol=1e-18)</code></pre><pre><code class="nohighlight hljs">Created the ODEproblem.
+retcode: Success
+Interpolation: specialized 4rd order &quot;free&quot; stiffness-aware interpolation
+t: 27802-element Vector{BigFloat}:
+   0.0
+   0.0096402838648433527057776499724454198934143206938668186531709043919416
+32438005805
+   0.0704367431812720082580605955595532356372891905957290080551670469015235
+8894488428
+   0.3667096889444340465836993746086480098558965181834160928345363191398580
+944497282
+   1.5233946664813871087027940334585344681536242235467819819896181950660981
+02722892
+   5.2552446508744650812996589665240599474060373005994081512292668543337657
+88775903
+  15.4743317873351098224685165955287089048654671916609919946298606030447347
+136332
+  39.7771054444836996971957245681225534012346131806055739925930263689940058
+416199
+  90.9712167676055412560648572178554648850168125478005668788394114001997264
+4126203
+ 188.1313015409635499597942319739748290104823196819667864039657300109800622
+826094
+   ⋮
+   3.1489046840981978345335209319413888075349007901759885855127036768185025
+36659353e+13
+   3.1495205108912086969932836306488570360248617257681174933033480215824407
+90621389e+13
+   3.1501364426571918055258352081832631413666122458372170883309003719030627
+89480996e+13
+   3.1507524793732352518509771651127571663694288507041202191916675242651846
+89315767e+13
+   3.1513686210980341302410264710514936958487504494204953376528836091076374
+25120135e+13
+   3.1519848678494880860096782716899045989692245775964958141410674507180253
+95391868e+13
+   3.1526012196046734938025121724870076015923116958672533506197393006862864
+84569208e+13
+   3.1532176764223154643692000318999310927022200840108649589614336977115738
+58979612e+13
+   3.1536e+13
+u: 27802-element Vector{Vector{BigFloat}}:
+ [1.00000000000000003849486974919183908137198936159133830139612764350035781
+9184021e-25, 100000.0, 1.00000000000000003849486974919183908137198936159133
+8301396127643500357819184021e-25, 1.000000000000000038494869749191839081371
+989361591338301396127643500357819184021e-25, 1.0000000000000000384948697491
+91839081371989361591338301396127643500357819184021e-25, 1.00000000000000003
+8494869749191839081371989361591338301396127643500357819184021e-25, 1.000000
+000000000038494869749191839081371989361591338301396127643500357819184021e-2
+5, 1.0000000000000000384948697491918390813719893615913383013961276435003578
+19184021e-25, 1.00000000000000003849486974919183908137198936159133830139612
+7643500357819184021e-25, 20.0, 10.0, 1.000000000000000038494869749191839081
+371989361591338301396127643500357819184021e-25, 1.0000000000000000384948697
+49191839081371989361591338301396127643500357819184021e-25, 1.00000000000000
+0038494869749191839081371989361591338301396127643500357819184021e-25, 1.000
+000000000000038494869749191839081371989361591338301396127643500357819184021
+e-25, 1.0000000000000000384948697491918390813719893615913383013961276435003
+57819184021e-25]
+ [5.39855490082302599412709545058288824036510451596406524070917786597132149
+5276407e-18, 99999.99999999999999903597160935216801959540842278818727200316
+63104363322876503, 4.263487849447848101325708175913338467064000190457641955
+623095654844090632161445e-24, 1.9280567772321731137543243642140480229655369
+1840924204185922430296352574638606e-15, 1.000013755040126265963261413174613
+160171458952370273885299121498443507451138688e-25, 1.0000005880593932553808
+30794103155757840948358802344885473727909389605924665961e-25, 3.26806415449
+4819152174045371915200354588155676308360509152583600231438482354512e-12, 9.
+999999999992558085835053765941077209825484313247935129955720893608661414952
+701e-26, 1.0000000000007442684115048170220210008848554014814737011127917175
+2062044290506e-25, 19.99999999999999999460144103568769024809629242470582935
+421822690423966654431752, 9.99999999999673194124406424516013570657864809893
+6458621579413416598050115835894, 3.2680587559358548398642934447816885358003
+7981260836959230572905267757699622668e-12, 9.999999999997657791243553964216
+308375594590181510134342422387965741504221993646e-26, 9.9999929818758094834
+56718616993382652779226593649614105645497206970952524728826e-26, 1.00000000
+0000000038494869633948591871500416807234240902734019116523258437348456e-25,
+ 1.000000701812419128634729148632467004788672210400494141687074249062675705
+583357e-25]
+ [3.94443540145478165470495301200388157012562509244254722926821490604749544
+953503e-17, 99999.999999999999992956325459605268088833693495418196884309724
+49988740667854483, 2.223664421809401014981594764183480728954380556530262437
+744206738437860678379493e-22, 1.4087348858621975573107181517261583028960803
+34796902570292360076354909648391859e-14, 1.00522132415924498661485484358752
+8491228341237836357657917981776741070315201196e-25, 1.000004302252830490491
+949880527116130849879720324413553549804245480496825963888e-25, 2.3878113837
+42584157805988547891279543604665897372358703107372241359498608560132e-11, 9
+.99999999994562322081512928107415346674268765933013456941319432228292127807
+8821e-26, 1.000000000005437755189863809257744168554745583426939062938244856
+130485660637852e-25, 19.999999999999999960555423818487439871812601017291360
+54988075387150644657628972, 9.999999999976121925607150439934500243050813234
+161420268741631269154968972901417, 2.38780743928496600654997571203522530284
+458825291420095614528787176674972303134e-11, 9.9999999999828842261637709407
+715555500783867175102873939485808100152235783581e-26, 9.9999487221824355968
+06110013232213823382223715519099338400559337945958641743081e-26, 1.00000000
+0000000038494863596935564652380588272188230223654002495065202604358224e-25,
+ 1.000005127781756516810592239854271655354732184546223970425172458982637480
+4722e-25]
+ [2.05351401502084180658144475497320646768284358682735668435719702715877861
+3134191e-16, 99999.99999999999996332902508107592327324169972226838450630462
+84638608518417519, 6.024433156480528601285414304226630813416059665340417139
+376665251032510127758506e-21, 7.3341943813467704394346583485171617908409181
+04957759405493820198314321079291243e-14, 1.73640981371182535248901462270225
+9749941387080825760312130480268349634744740345e-25, 1.000026487636603235695
+772982638272320837309597691511676336089442647176345570112e-25, 1.2431488598
+67555962747772081552682885408539084746715057214299052058870637298711e-10, 9
+.99999999971690054851620888760364080062645337845216335614751193181786666980
+5279e-26, 1.000000000028310030764947117867342971957160641988625822711467129
+692052721203234e-25, 19.999999999999999794642574191115708679302501171696182
+51830155729797598185481015, 9.999999999875685319370670312609514114324444908
+708134598993801562533399453770947, 1.24314680629329787390485886566665307313
+6079193099020716991762933410857353389534e-10, 9.999999999910889883424443424
+033763282531403064913332497837892234534388623009977e-26, 9.9997330389099234
+3793531797506810500586997300871611808638530901882933812431444e-26, 1.000000
+000000000038494702993428014988091593196524459659605742349269673143222113e-2
+5, 1.0000266961090077196832854316741324603054940815312883378118735562981338
+02187145e-25]
+ [8.52997053013585323266268981490275201636150799384896184959388622666750208
+2758797e-16, 99999.99999999999984766042938626521546023479053987038349711797
+04552876226980612, 1.039551369887634829438749006313631866064799218770621547
+896543125374585693144014e-19, 3.0467903726197442175247671646518648481909211
+33410629468836890958494799976904697e-13, 5.37887583674267961883580536292541
+2895479680358160598181956369764612308538959403e-24, 1.001319334663134561636
+717612942133884164308428951455602663773512774960649354702e-25, 5.1643204415
+42742309284791704853739823010017278923648962635515463114684509722171e-10, 9
+.99999999882394045231076168501448695299816318013835160452996729558073647035
+4437e-26, 1.000000000117607400682376244144307442767814776537507788139323670
+462880234958724e-25, 19.999999999999999146898986770418143045495803579317113
+6718750707394471246387538, 9.9999999994835688089467390986533777914223790086
+59462676377249009892763952985205, 5.164311910532610013466222122794813049517
+067065374580532072375151563068960303772e-10, 9.9999999996298170706726526028
+10273337026846475951741860787978579345625795081277e-26, 9.99889103017805171
+3792774377420939837238425069553208647271106784771405676964463e-26, 1.000000
+000000000038491991941758509327978768779667355664699554800034301336600879e-2
+5, 1.0001108969821946723968246049150879374304302771334436950669875388292453
+11525252e-25]
+ [2.94170008298190344341696892989283352268073842061384767668241687676896293
+2998919e-15, 99999.99999999999947447429777426075966044641365784025876722454
+716960011217900398, 1.23670504352551915906120507117679750603116580375664190
+5408997790494428711307735e-18, 1.051050167313288943086408264604616443020677
+673625330917737254770680024611353139e-12, 2.1674689269741555763592654742760
+06507982212770445604236333709393965893182653119e-22, 1.17396142628564074236
+9769756335342750218497813562093702151461236120195523921477e-25, 1.781532256
+298865182495050492657727339473130340106861094035057935000433743972407e-09, 
+9.9999999959429609556155787793253741737209230396987437309718501923360174696
+56757e-26, 1.00000000040630990703668376852915615164857484167614780878900696
+5847190536040958e-25, 19.99999999999999705706299551028219739255784619778987
+693119039944312541919646803, 9.99999999821847068663813940722275214026409721
+866544955644945501766772852434678, 1.78152931336186069277724787250617511904
+8440845945420302260868945513734593310719e-09, 9.999999998723001294512388084
+867180293764022954110108140760796522164558020406024e-26, 9.9961749136450517
+51547176987093062015827722399065617202550704573764652119458088e-26, 1.00000
+0000000000038460622533013419130311594249510165895473582899691525134337671e-
+25, 1.000382508635492125996383585547383341329496936349173609508921265570265
+270213793e-25]
+ [8.65490706747536856249421482057098301964590492843252332381821617630472811
+2520917e-15, 99999.99999999999845255609700379949304798157079714070705148890
+775582966036576037, 1.07132057892628702276045993851005636264644643367410722
+538972745547837185050947e-17, 3.0948770817298208880042528392699850636915993
+23393622345282596554167220402021951e-12, 5.52663848935984194568319171318670
+365877790967655483064408703061094310863444617e-21, 1.4045905734243409760495
+60222980265457951184531576185878440554579720378518118408e-24, 5.24581119443
+1440921436597296824754009201195895909772454712047496481321352126148e-09, 9.
+999999988054231318695201355775243919317419333028618636665867151163433650031
+322e-26, 1.0000000013283007373199152541766686317256329045513341775996547561
+26522486002462e-25, 19.9999999999999913343741990922886340361242407436268677
+007561022333547531589874, 9.99999999475419747119436008627476872888159009173
+48986895031183369422230634527, 5.245802528805640013725231308721097520757626
+347046374206280815564228767355070175e-09, 9.9999999962399728045138190446707
+54341069645841196017337123573958862980877219844e-26, 9.98874102944120156558
+473157586020105452498391135710426173290170480746963764832e-26, 1.0000000000
+00000038197928775104412707465353575436122939392289810214943751249113e-25, 1
+.00112589705585584084469868434876586049626408483322399657984658630519685827
+3673e-25]
+ [2.22044458136076948538235412188625278470720479222216575381503020447213182
+3390157e-14, 99999.99999999999602221862851743921507028155573283607033735897
+186198776430578261, 7.06394936061338336716975694185738395862968650498421525
+1363939142947971147447673e-17, 7.955491915931054866244203446477379819482517
+416371129537922509087161802364461505e-12, 9.3685131210249836980456192705088
+33390069956648884270103684864278118622922893314e-20, 5.69659533740794039143
+9269233456209228591492582279894116763995211065699385156874e-23, 1.348447143
+336921243946325173848191123591481433464747921559049842949989511583368e-08, 
+9.9999999693897260811006561412432366595047572663997558807605954862979524579
+91995e-26, 1.00000001804885196965604694860250160496710352640521663713235071
+8241284025797824e-25, 19.99999999999997772482095108900768718625284039653106
+245777393501199441101583946, 9.99999998651555084180983657152905976978374464
+7483692850155132515707533361608064, 1.3484449158190163528470940326874693144
+72286083871956165496447832700115165612882e-08, 9.99999999033574995637920676
+7966913238234449009880206641768095449053900172521901e-26, 9.971084154309192
+212301794251656716076226810543060109006223762564341557111603184e-26, 1.0000
+00000000000036532733683777321416934067581303710804103510538723206257296955e
+-25, 1.00289158456892155918931335791624645233511137418522834911775592120858
+2681226761e-25]
+ [5.05749195374937303805005460862244994564524445714327634256015604740594120
+3666149e-14, 99999.99999999999090250824219507670994756706338182150291282613
+019266700095328246, 3.67844211345052666044554881037316793329191725842565929
+1693160280028211705676807e-16, 1.819461343456563232925775394383769785219220
+573957403945860630121015477591713358e-11, 1.1160906931305024210919617720218
+02641176453625269572194478271958597794684310099e-18, 1.55072742566699184865
+4236928846887012124773852501516229889965586129672994922793e-21, 3.083931721
+500562984922199353932317033459255466443708838388630025793083142194343e-08, 
+9.9999999436199808991811755617315293546077211668651402996743130776017389394
+89717e-26, 1.00000094096843220652425631962294094525385222710722962588408865
+8893787596474695e-25, 19.99999999999994905611861014066069072997523568572658
+850750029834496765948729229, 9.99999996916073372887576011011722263969472198
+2858736011792115683796457441183036, 3.0839266271124239989882777581365107370
+43726478922290572109038411139931893503498e-08, 9.99999997790237056389757873
+3541714328317741587050402005677231333917677009600194e-26, 9.933991771951464
+430400018331652009948622752790773478681347011624244664597400655e-26, 1.0000
+00000000000028231136704789178808662205375762015063840048199843032213343003e
+-25, 1.00660082280401836101675928223783368374503959305713900786626271808748
+0642608329e-25]
+ [1.03783695759942155100052595620430947808363096769282720431119060555783516
+3319e-13, 99999.99999999998118529016179120781545265862954392466301604466415
+469293551237418, 1.56001027976360794547925610060225999972536565578655836864
+081091523747273742375e-15, 3.7627839992305359878777395481303581544349342789
+01383972701846795199370385105828e-11, 9.79463774283694118717382825199534206
+5591801375641088258993382081820473712730515e-18, 2.818589128156664256709826
+112999765960178717260203161947431208707031593715005236e-20, 6.3776665662944
+40923711106666231740912127727059418826957144582323129175942097638e-08, 1.00
+000009314953868626950462832217245589038859963946731627179759380850719082077
+3e-25, 1.000035112937356198023946158280344547317411697797026142370416395231
+106963628787e-25, 19.999999999999894646471137060114926486874956225342266911
+24429753235467455872478, 9.999999936223439690584453802770487156073488599842
+600996041215539759874028219796, 6.37765603094155462972295133010835843537430
+1779319125524490206911682464841151963e-08, 9.999999954320183786006755042071
+575750890020578494135653201224336054509557623168e-26, 9.8639740417329858226
+53955458135834219246577890642274552184188411721700088893065e-26, 9.99999999
+9999999945928192338483694639255584416219857945495521057407521361672374e-26,
+ 1.013602595823112463577551758854290620627678168001266706648890635953141242
+660286e-25]
+ ⋮
+ [3.50010653410523268195669945785260791345068028467812618752022927901226793
+9313908e-12, 99996.78630683674416735904977924512268071116473400699339710364
+87764241826016867, 5.597415856026813880568935895917999610117763501980677343
+95544825212358577626891e-12, 6.42737203199228031538357084087557389082092555
+2883004171669307531722444713732759, 9.0283638970917492593846503692644585938
+27995907906193485224116303168739124997349e-12, 6.27008733578219736663748731
+9438201125621837168001804382813829476087652264884914e-10, 4.609969272790192
+75961169936109016545172496784908310068245343423546022151712111, 7.133581598
+227642293142410199800688055425267815178538705592135083980167141796919e-06, 
+2.4711093307249642003860126701418479876524609834469269123870440776097237957
+79656e-08, 19.9999699227118058407584412768344392838332132486398252565379880
+7052374250494439, 5.3906061649649866018980022271764817364014846812137308690
+39923820034311415039664, 4.609370916684645393617817228413943067205099800463
+224961081243715798357791958513, 2.29181477169432122385360179355204997221937
+6438350565847718332404629141371108527e-05, 7.388746046804077012230453219818
+485519940746963014369730918389404804755371171554e-12, 5.4515254437263572642
+85447289152644084427159599820491190923139189206856329924021e-10, 1.95262315
+2251383313794092226738902369866195939929734599081107487146161019616553e-10]
+ [3.50010655604076222503692534318698567278047983958441703223893883687339168
+8856675e-12, 99996.78568014613022256857943879490612651352703250326147178158
+610930221891600299, 5.59741589104371268060456999937159623988984351457202376
+993966138329819358801992e-12, 6.4286254132200687084738342349176085451773125
+98407520354566389645183217459442237, 9.028363950263055487922641694235663791
+839622795666843421245904671219499093638792e-12, 6.2700872299533434315579055
+85923254595832140608298263697897962182135414135267114e-10, 4.60996934885756
+707173361448039995777128872317213397679884917216901858133332734, 7.13358159
+5532963172969203566708004703314033868413606700242439051398681532055128e-06,
+ 2.471109352397960387176042419437457586068495957491511608424142442463134959
+330719e-08, 19.999969922711811182317135767490633354566776996909008560192046
+34196070839836928, 5.390606205964628363323474440928935867367910232112280967
+583266221530641257676589, 4.60937087568500648532911954107504308520724639736
+8404992190705415129082891456674, 2.2918147714094671935436899840173094489500
+61244711641768041699383683843565329847e-05, 7.38874604130615933227836962910
+2187526613594479655956144212025146384139590490249e-12, 5.452589410496018902
+148567835185997172591744326800634686668655771455585553983966e-10, 1.9526231
+06341648217639025047012670803281530060643245389979716238160779434240086e-10
+]
+ [3.50010657797999415940933801751232602082969033120882114856093111282672440
+4227995e-12, 99996.78505334974807510290245663832512100089615706925443118246
+912283133276711974, 5.59741592606652173493728367990521984971673108294766027
+4599580969039245696316443e-12, 6.429879005984262434909531381257834956000804
+765743874097437822514625425362302522, 9.02836400344333201998001298957400737
+209501296530984301608698277257031096792013e-12, 6.2700871241064539807294518
+4850955130293742048284662686047478105908439478773833e-10, 4.609969424937908
+186368562417281151858712405750515913905532829941431233289700055, 7.13358159
+2837825927912261753320398510932977748116850875667992141110701629701438e-06,
+ 2.471109374074651188643963904020085000174008854071784725044462914120409069
+688349e-08, 19.999969922711816524783860930755120781947973232002201710780567
+73503435481110368, 5.390606246971258387024314284306850554003798206134139135
+128105986063500399265978, 4.60937083467837931525012119113693440808146339668
+7408119965772991899669468852859, 2.2918147711245647346458709404551649282997
+95924679520950295942984712337939870919e-05, 7.38874603580731262368098234670
+030210075488029423178124751299428859039900736634e-12, 5.4536535567988829791
+19149930783663013538941454056566480629405322517608881993237e-10, 1.95262306
+0424111532231295039187704950663507461380188301552146507445613586364329e-10]
+ [3.50010659992292764306649432138996113845636337425550977454199236524200546
+9175728e-12, 99996.78442644762178480498290676586060761917728232117541490757
+456052997764020815, 5.59741596109523969936957648746045126185156998957920582
+2742362485126939114376755e-12, 6.431132810236741808766405350303961837363814
+280561547453630681612860914242183019, 9.02836405663257681158521318416426137
+5348979895772052381447142117301578723091528e-12, 6.270087018241532953744112
+620981987334502465132912869646713244396464516713466949e-10, 4.6099695010312
+13273658367590330155053147580144780292538658137007413843211900143, 7.133581
+590142230659085219797794008215094178832448632910758691080707244405430874e-0
+6, 2.4711093957550357986069261538795512575752591032693826929374871593258448
+98598644e-08, 19.9999699227118218681584162668383518531275333814721429720213
+8230052563548760222, 5.3906062879848751473590293822385304230435497573205883
+32957729725430660923538341, 4.609370793664765409022207495417313308978905453
+874006951021743309816302005527706, 2.29181477083961385784870106719938430292
+2848060372039724910888440228428803813153e-05, 7.388746030307537096719494340
+02236849709542000120909747002660721806640412006542e-12, 5.45471788259408383
+7834272285248307426821715094547610150200435656147940253274985e-10, 1.952623
+014498774982367647797945085897756052523577013071943528159592302415571304e-1
+0]
+ [3.50010662186956474079111740144988442857312945393929482843677355927333758
+9399887e-12, 99996.78379943969236551508098274845433152490923334282026275053
+566907574396632993, 5.59741599612986986997378384461566390025883160326187328
+5120689471613182385181053e-12, 6.432386826095479149514551133239518987728486
+356023913859304674032924712593313092, 9.02836410983079486476823108745594660
+6526112374316385520710497320842305671980914e-12, 6.270086912358570266162202
+795383924532616465244887766044895177552945409071439794e-10, 4.6099695771374
+89583901474929578443402040302670692376787452871600597676666707264, 7.133581
+587446177110513910178281845381167652570136262987119313527967469889225382e-0
+6, 2.4711094174391162829044687467589229299022913949481411183016812767821716
+32655024e-08, 19.9999699227118272124413091173002060209079218647064029454564
+787698601317189423, 5.39060632900548255180107003319486012756259157610499583
+2739476873126028488342941, 4.6093707526441608591721991831519650546518354560
+3902120046215367119354888588416, 2.2918147705546145360930512344667636467826
+35653410566276942958659142334847081164e-05, 7.38874602480683223311703069039
+1600325926004230773061507371865160841973693005175e-12, 5.455782387981747526
+308897270796676618315322843648160691534211366982309464992025e-10, 1.9526229
+68565634209077131194587289391214225336404595133822039737949847599229255e-10
+]
+ [3.50010664381990606423316594787884413240189821484044222239038573326288841
+9450166e-12, 99996.78317232594234658329490213238395843208954036686904107302
+253187466762317715, 5.59741603117041322310602573473643504374247830074653512
+6896528713248712657183753e-12, 6.433641053595415756954719025622335524936124
+143409085764544824004138278419879911, 9.02836416303798765919134862452970674
+9141459513969680095459702492003482584078363e-12, 6.270086806457562844177874
+881379626536876722132322072482433539388216115621446307e-10, 4.6099696532567
+39328312819739373364252346199434717397787987907065093253231187743, 7.133581
+584749665204733647720141032937076887037565559166075334289613898545960037e-0
+6, 2.4711094391268932716484646078795524851210678868480684949847133597771943
+1222043e-08, 19.99996992271183255763269297119015179575441987654295178426509
+945378617254693556, 5.39060637003308179180233296609906670404070566170218250
+3837023814891972753736322, 4.6093707116165644742482815465877693399872645351
+1656916781014988376904276497656, 2.2918147702695667611899965555291820594118
+18080193448447287675575244194361291098e-05, 7.38874601930519787880928318069
+519047301120543908772276094671322876398004067472e-12, 5.4568470729915169456
+60106816550026096314002178277869017320887025912301486113137e-10, 1.95262292
+2624687894687993809707558924753348651648982506180299626461753492189828e-10]
+ [3.50010666577395077093100482834167611776956508791236608258607609648898324
+1206445e-12, 99996.78254510639580083177825418589038554422602536195838492633
+39758157017734045, 5.597416066216868413843673003411883928492943796551495747
+488262689919656834260829e-12, 6.4348954926884059867836236457382354762399233
+7371064869643023221152506356722768, 9.0283642162541531497778769733736684857
+51518365211355342859781470992147082323296e-12, 6.27008670053851462939893515
+2341925415426581357927416512666944876212175835716934e-10, 4.609969729388959
+675587115887414931225048416847096824753670310141784741523539033, 7.13358158
+2052695042910569372294399095694551858978163351450215222752027251269005e-06,
+ 2.471109460818365958243893154892873698737344998491859326482598488244318706
+355004e-08, 19.999969922711837903732367224550795167131158420930427856797635
+80932348166513441, 5.390606411067671340941045934614315553757989468494954032
+516163778944341190179108, 4.60937067058197778067211971821922952674030215700
+0580354486292927865295921651003, 2.2918147699844705438336432885718912323761
+73806760241897704376432871118277430326e-05, 7.38874601380263424419019597887
+6739957569465469759472325297065116639591570114455e-12, 5.457911937582504388
+808583203178836034544139301137791520724202164071622379434078e-10, 1.9526228
+76675937764893790046105232707567282218444393258964817484018716308860335e-10
+]
+ [3.50010668773170092668506109743913989576218367301558558687057663781765386
+7889336e-12, 99996.78191778099371303154435603729111668124439058896474061061
+625223289576767474, 5.59741610126923873988357018977194664766929461076394365
+6572084032455513271080282e-12, 6.436150143492480296965108188057037392754338
+202970486419366294180434630090996393, 9.02836426947929634101883102932209093
+9035292486344371598668611590447800435671886e-12, 6.270086594601415532231236
+286373498024688991210397512659950118527459956484705067e-10, 4.6099698055341
+57879730841396535724280910888910222465044775247339118119994600111, 7.133581
+579355266368940876705113497193692642279134562640315146871745361285136909e-0
+6, 2.4711094825135364095869730928501627468933716587733715298734740463291578
+60457454e-08, 19.9999699227118432507408394757720980577629379007684523168702
+5459126003707752593, 5.3906064521092551086886656977109002917873412643473110
+16012676344389820439884705, 4.609370629540396868972528104038344898928281530
+51362831904426834159427117564764, 2.291814769699325856951158815170920611970
+929849997032928811499367841948032523473e-05, 7.3887460082991408107262961359
+56066934943705967629072075025733724940327375228022e-12, 5.45897698185488522
+7944191671581295959395026246646259105506908905024816328062314e-10, 1.952622
+830719379458518768039423168268535166653817706757429488677936458319193973e-1
+0]
+ [3.50010670134977433355775456005478224306259351273474437228037905277657076
+638088e-12, 99996.781528717304209209539221983435904299089352501970657753915
+30531980947287076, 5.597416123008522042576239213619059791013181408450990835
+634487285673363945973212e-12, 6.4369282708714251213139242524284506836635193
+61855534027908842411661141377899683, 9.028364302489229289948559522662384326
+541124264790667114881482585203064150236152e-12, 6.2700865288997339872534284
+55791412956492773819796331737957401952033019117864108e-10, 4.60996985275904
+6812548215107533921171980838456420857414667932898075294992572029, 7.1335815
+77682334580483508798515573361335222213401101843423257130306945621129781e-06
+, 2.47110949596877776741655217120826584804760648675113913545590081882598888
+2417978e-08, 19.99996992271184656692873603212054996204796836545531231354490
+064915186747943953, 5.39060647756304934403973310253745148517750681725201324
+9520773256648075435108747, 4.6093706040866044049281815116488441034019396384
+76597017883431060443786288009608, 2.291814769522480546454413344802155450439
+011490287520667847539011220793521124291e-05, 7.3887460048859045370073754111
+08692801297230677418306126737503486470361116610822e-12, 5.45963751631051825
+5748710654771171024313409454281030973942268573909409480818349e-10, 1.952622
+802217353371432490144549558593030893034473314501870332019911629372449325e-1
+0]</code></pre><pre><code class="language-julia hljs">abstols = 1.0 ./ 10.0 .^ (7:13)
+reltols = 1.0 ./ 10.0 .^ (4:10)
+
+setups = [
+          Dict(:alg=&gt;FBDF()),
+          Dict(:alg=&gt;QNDF()),
+          Dict(:alg=&gt;Rodas4P()),
+          Dict(:alg=&gt;CVODE_BDF()),
+          #Dict(:alg=&gt;ddebdf()),
+          Dict(:alg=&gt;Rodas4()),
+          Dict(:alg=&gt;Rodas5P()),
+          #Dict(:alg=&gt;rodas()),
+          #Dict(:alg=&gt;radau()),
+          Dict(:alg=&gt;lsoda()),
+          #Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = OrdinaryDiffEqCore.PolyesterThreads())),
+          Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = false)),
+          #Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = OrdinaryDiffEqCore.PolyesterThreads())),
+          Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = false)),
+          ]
+wp = WorkPrecisionSet(oprob,abstols,reltols,setups;verbose=false,
+                      save_everystep=false,appxsol=refsol,maxiters=Int(1e5),numruns=10)
+plot(wp)</code></pre><p><img src="../figures/astrochem_4_1.png" alt/></p><h2 id="With-Temperature-Dynamics"><a class="docs-heading-anchor" href="#With-Temperature-Dynamics">With Temperature Dynamics</a><a id="With-Temperature-Dynamics-1"></a><a class="docs-heading-anchor-permalink" href="#With-Temperature-Dynamics" title="Permalink"></a></h2><pre><code class="language-julia hljs">reaction_equations = [
+	(@reaction 1.6e-9, $O⁺ + $H2 --&gt; $OH⁺ + $H),
+	(@reaction 1e-9, $OH⁺ + $H2 --&gt; $H2O⁺ + $H),
+	(@reaction 6.1e-10, $H2O⁺ + $H2 --&gt; $H3O⁺ + $H),
+	(@reaction ka_reaction(T, 1.1e-7, -1/2), $H3O⁺ + $E --&gt; $H2O + $H),
+	(@reaction ka_reaction(T, 8.6e-8, -1/2), $H2O⁺ + $E --&gt; $OH + $H),
+	(@reaction ka_reaction(T, 3.9e-8, -1/2), $H2O⁺ + $E --&gt; $O + $H2),
+	(@reaction ka_reaction(T, 6.3e-9, -0.48), $OH⁺ + $E --&gt; $O + $H),
+	(@reaction ka_reaction(T, 3.4e-12, -0.63), $O⁺ + $E --&gt; $O),
+	(@reaction 2.8 * cosmic_ionisation_rate, $O --&gt; $O⁺ + $E),
+	(@reaction 2.62 * cosmic_ionisation_rate, $C --&gt; $C⁺ + $E),
+	(@reaction 5.0 * cosmic_ionisation_rate, $CO --&gt; $C + $O),
+	(@reaction ka_reaction(T, 4.4e-12, -0.61), $C⁺ + $E --&gt; $C),
+	(@reaction ka_reaction(T, 1.15e-10, -0.339), $C⁺ + $OH --&gt; CO + $H),
+	(@reaction 9.15e-10 * (0.62 + 0.4767 * 5.5 * sqrt(300 / T)), $C⁺ + $OH --&gt; $CO⁺ + $H),
+	(@reaction 4e-10, $CO⁺ + $H --&gt; $CO + $H⁺),
+	(@reaction 7.28e-10, $CO⁺ + $H2 --&gt; $HCO⁺ + $H),
+	(@reaction ka_reaction(T, 2.8e-7, -0.69), $HCO⁺ + $E --&gt; $CO + $H),
+	(@reaction ka_reaction(T, 3.5e-12, -0.7), $H⁺ + $E --&gt; $H),
+	(@reaction 2.121e-17 * dust2gas / 1e-2, $H + $H --&gt; $H2),
+    (@reaction 1e-1 * cosmic_ionisation_rate, $H2 --&gt; $H + $H),
+	(@reaction 3.39e-10 * radiation_field, $C --&gt; $C⁺ + $E),
+	(@reaction 2.43e-10 * radiation_field, $CO --&gt; $C + $O),
+	(@reaction 7.72e-10 * radiation_field, $H2O --&gt; $OH + $H),
+    (D(T) ~ get_heating_cooling(T, H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺, dust2gas)) 
+]
+
+@named system = ReactionSystem(reaction_equations, t)
+
+u0 = [:H2 =&gt; number_density, :O =&gt; number_density*2e-4, :C =&gt; number_density*1e-4, :O⁺=&gt;minimum_fractional_density, :OH⁺=&gt;minimum_fractional_density, :H=&gt; minimum_fractional_density, :H2O⁺=&gt; minimum_fractional_density, :H3O⁺=&gt;minimum_fractional_density, :E=&gt;minimum_fractional_density, :H2O=&gt;minimum_fractional_density, :OH=&gt;minimum_fractional_density, :C⁺=&gt;minimum_fractional_density, :CO=&gt;minimum_fractional_density, :CO⁺=&gt;minimum_fractional_density, :H⁺=&gt;minimum_fractional_density, :HCO⁺=&gt; minimum_fractional_density, :T=&gt; 100.0]
+
+odesys = convert(ODESystem, complete(system))
+
+setdefaults!(system, u0)
+
+tspan = (0.0, 1e6*seconds_per_year)
+
+params = [dust2gas =&gt; 0.01, radiation_field =&gt; 1e-1, cosmic_ionisation_rate =&gt; 1e-17]
+
+println(&quot;Lets try to solve the ODE:&quot;)
+
+sys = convert(ODESystem, complete(system))
+# oprob = ODEProblemExpr(sys, [], tspan, params)
+
+ssys = structural_simplify(sys)
+
+oprob = ODEProblem(ssys, [], tspan, params)
+println(&quot;Created the ODEproblem.&quot;)
+refsol = solve(oprob, Rodas5P(), abstol=1e-14, reltol=1e-14)</code></pre><pre><code class="nohighlight hljs">Lets try to solve the ODE:
+Created the ODEproblem.
+retcode: Success
+Interpolation: specialized 4rd order &quot;free&quot; stiffness-aware interpolation
+t: 7193-element Vector{Float64}:
+    0.0
+    0.03306297961107439
+    0.12617703659004254
+    1.057317606379724
+    6.218181023481151
+   26.886414680625336
+   91.84161244905712
+  260.1677111559438
+  634.5735388102987
+ 1375.2481645328469
+    ⋮
+    3.150506803955759e13
+    3.1509183529230355e13
+    3.151329901890312e13
+    3.1517414508575887e13
+    3.1521529998248652e13
+    3.1525645487921418e13
+    3.1529760977594184e13
+    3.153387646726695e13
+    3.1536e13
+u: 7193-element Vector{Vector{Float64}}:
+ [1.0e-25, 100000.0, 1.0e-25, 1.0e-25, 1.0e-25, 1.0e-25, 1.0e-25, 1.0e-25, 
+1.0e-25, 20.0, 10.0, 1.0e-25, 1.0e-25, 1.0e-25, 1.0e-25, 1.0e-25, 100.0]
+ [1.8515219708691698e-17, 100000.0, 4.9073455676965074e-23, 6.6125959712884
+17e-15, 1.000541025692682e-25, 1.0000020171151974e-25, 1.120837726591729e-1
+1, 9.999999999974476e-26, 1.0000000000025525e-25, 20.0, 9.999999999988791, 
+1.1208358750648699e-11, 9.999999999991965e-26, 9.999975930179811e-26, 1.0e-
+25, 1.000002406982019e-25, 100.00000003481105]
+ [7.065842735034582e-17, 100000.0, 7.133370776348749e-22, 2.523540803135172
+e-14, 1.0300029921361903e-25, 1.0000077545405695e-25, 4.277411912145751e-11
+, 9.999999999902592e-26, 1.0000000000097409e-25, 20.0, 9.999999999957225, 4
+.277404846231705e-11, 9.999999999969339e-26, 9.999908143539246e-26, 1.0e-25
+, 1.0000091856460755e-25, 100.00000013284813]
+ [5.920477796573746e-16, 100000.0, 5.0078350276614934e-20, 2.11463571357829
+2e-13, 1.8649699545406613e-24, 1.0003490872739731e-25, 3.584315376713818e-1
+0, 9.999999999183752e-26, 1.0000000000816251e-25, 19.999999999999996, 9.999
+999999641567, 3.5843094557352097e-10, 9.999999999743072e-26, 9.999230302405
+795e-26, 1.0e-25, 1.0000769697594205e-25, 100.00000111321911]
+ [3.4804497208450483e-15, 100000.0, 1.7312936061515155e-18, 1.2436379367076
+777e-12, 3.5896422066126486e-22, 1.3407144057973177e-25, 2.1079684780827632
+e-9, 9.999999995199578e-26, 1.0000000004814461e-25, 19.999999999999993, 9.9
+99999997892033, 2.1079649959013897e-9, 9.999999998489017e-26, 9.99547418867
+2428e-26, 1.0e-25, 1.0004525811327536e-25, 100.00000654694298]
+ [1.5024053617166943e-14, 99999.99999999999, 3.23096309738413e-17, 5.377315
+303714361e-12, 2.896142961038802e-20, 1.1979950502783707e-23, 9.11451667321
+122e-9, 9.999999979253262e-26, 1.0000000041907071e-25, 19.999999999999982, 
+9.999999990885495, 9.114501616818972e-9, 9.99999999346732e-26, 9.9804458333
+43592e-26, 1.0e-25, 1.0019554166655684e-25, 100.0000283079286]
+ [5.105526444047115e-14, 99999.99999999997, 3.7488856689117246e-16, 1.83686
+99679917818e-11, 1.1483536708503735e-18, 1.6108390798570994e-21, 3.11343820
+6556868e-8, 9.999999943827874e-26, 1.0000009864933192e-25, 19.9999999999999
+43, 9.999999968865666, 3.113433063426579e-8, 9.999999977691025e-26, 9.93336
+2326436466e-26, 1.0e-25, 1.0066637673555026e-25, 100.00009669737824]
+ [1.4270317197408348e-13, 99999.99999999994, 2.9648887830432145e-15, 5.2036
+55893756444e-11, 2.5754879142977278e-17, 1.026114589934827e-19, 8.819706755
+078919e-8, 1.0000007319373751e-25, 1.0001766806916264e-25, 19.9999999999998
+5, 9.999999911803075, 8.819692185687103e-8, 9.999999936848552e-26, 9.812380
+293268125e-26, 1.0e-25, 1.0187619706663006e-25, 100.00027392306072]
+ [3.3791632131072826e-13, 99999.99999999991, 1.7078616172010327e-14, 1.2693
+252241254815e-10, 3.6269843752736923e-16, 3.545813891242758e-18, 2.15120948
+96229693e-7, 1.0001548280898075e-25, 1.0148746016919388e-25, 19.99999999999
+964, 9.999999784879407, 2.1512059360111492e-7, 9.999999846218631e-26, 9.548
+538817363524e-26, 9.999999999999996e-26, 1.0451461182219518e-25, 100.000668
+12413169]
+ [6.912957326625471e-13, 99999.99999999985, 7.528806624617462e-14, 2.751321
+0594045817e-10, 3.480552047283399e-15, 7.46211825458411e-17, 4.662102473630
+64e-7, 1.0153971603478572e-25, 1.677049024612035e-25, 19.99999999999923, 9.
+999999533790522, 4.662094772240912e-7, 9.999999667853434e-26, 9.04730593467
+4184e-26, 9.999999999999977e-26, 1.0952694063305035e-25, 100.00144795903142
+]
+ ⋮
+ [3.5001065911723432e-12, 99996.78467645966, 5.597415947126199e-12, 6.43063
+2793404025, 9.02836403542137e-12, 6.270087060460914e-10, 4.609969470685371,
+ 7.133581591218007e-6, 2.4711093871092295e-8, 19.999969922713987, 5.3906062
+71628704, 4.609370810020877, 2.2918147709535012e-5, 7.38874603250138e-12, 5
+.454293429728739e-10, 1.9526230328139363e-10, 3757.3817024703985]
+ [3.5001066058315104e-12, 99996.78425765227, 5.597415970527437e-12, 6.43147
+0408197171, 9.028364070954904e-12, 6.270086989736885e-10, 4.609969521520201
+, 7.1335815894171915e-6, 2.4711094015930088e-8, 19.99996992271399, 5.390606
+299028225, 4.609370782621357, 2.291814770763137e-5, 7.388746028827207e-12, 
+5.455004461786714e-10, 1.9526230021331017e-10, 3757.21389319689]
+ [3.500106620490661e-12, 99996.78383884534, 5.597415993928649e-12, 6.432308
+022046374, 9.028364106488398e-12, 6.270086919012857e-10, 4.60996957235503, 
+7.1335815876163766e-6, 2.471109416076789e-8, 19.999969922713994, 5.39060632
+6427746, 4.609370755221836, 2.291814770572773e-5, 7.388746025153037e-12, 5.
+455715493027666e-10, 1.9526229714522782e-10, 3757.0461167323915]
+ [3.500106635149795e-12, 99996.78342003888, 5.597416017329837e-12, 6.433145
+634951512, 9.028364142021852e-12, 6.270086848288835e-10, 4.609969623189858,
+ 7.133581585815561e-6, 2.471109430560569e-8, 19.999969922713998, 5.39060635
+3827268, 4.609370727822316, 2.2918147703824093e-5, 7.388746021478875e-12, 5
+.456426523451492e-10, 1.952622940771466e-10, 3756.878373065675]
+ [3.500106649808913e-12, 99996.78300123289, 5.597416040730996e-12, 6.433983
+246912466, 9.028364177555261e-12, 6.270086777564811e-10, 4.609969674024689,
+ 7.133581584014746e-6, 2.4711094450443494e-8, 19.999969922714, 5.3906063812
+26788, 4.609370700422796, 2.2918147701920457e-5, 7.388746017804712e-12, 5.4
+5713755305809e-10, 1.9526229100906633e-10, 3756.7106621856233]
+ [3.500106664468015e-12, 99996.78258242738, 5.597416064132132e-12, 6.434820
+857929113, 9.028364213088632e-12, 6.27008670684079e-10, 4.609969724859519, 
+7.133581582213932e-6, 2.4711094595281294e-8, 19.999969922714005, 5.39060640
+8626309, 4.609370673023277, 2.2918147700016825e-5, 7.388746014130555e-12, 5
+.457848581847355e-10, 1.9526228794098724e-10, 3756.5429840812603]
+ [3.5001066791271004e-12, 99996.78216362232, 5.59741608753324e-12, 6.435658
+468001331, 9.02836424862196e-12, 6.270086636116772e-10, 4.609969775694348, 
+7.133581580413119e-6, 2.4711094740119108e-8, 19.99996992271401, 5.390606436
+025831, 4.609370645623758, 2.2918147698113186e-5, 7.388746010456406e-12, 5.
+458559609819185e-10, 1.9526228487290928e-10, 3756.3753387412307]
+ [3.500106693786169e-12, 99996.78174481775, 5.597416110934322e-12, 6.436496
+077128999, 9.028364284155245e-12, 6.270086565392753e-10, 4.609969826529179,
+ 7.133581578612303e-6, 2.4711094884956904e-8, 19.999969922714012, 5.3906064
+63425351, 4.609370618224239, 2.291814769620955e-5, 7.38874600678225e-12, 5.
+459270636973479e-10, 1.9526228180483218e-10, 3756.2077261544605]
+ [3.500106701350028e-12, 99996.7815287209, 5.597416123008927e-12, 6.4369282
+7087045, 9.028364302489882e-12, 6.270086528900189e-10, 4.609969852759211, 7
+.1335815776831085e-6, 2.4711094959691084e-8, 19.999969922714012, 5.39060647
+7563105, 4.609370604086486, 2.2918147695227305e-5, 7.388746004886438e-12, 5
+.459637516309891e-10, 1.9526228022174947e-10, 3756.121253307444]</code></pre><pre><code class="language-julia hljs">refsol = solve(oprob, Rodas5P(), abstol=1e-13, reltol=1e-13)
+
+solve(oprob, RadauIIA9(), abstol=1e-9, reltol=1e-9)
+
+# Run Benchmark
+
+abstols = 1.0 ./ 10.0 .^ (9:10)
+reltols = 1.0 ./ 10.0 .^ (9:10)
+
+setups = [
+          Dict(:alg=&gt;FBDF()),
+          Dict(:alg=&gt;QNDF()),
+          #Dict(:alg=&gt;Rodas4P()),
+          Dict(:alg=&gt;CVODE_BDF()),
+          #Dict(:alg=&gt;ddebdf()),
+          #Dict(:alg=&gt;Rodas4()),
+          Dict(:alg=&gt;Rodas5P()),
+          Dict(:alg=&gt;KenCarp4()),
+          Dict(:alg=&gt;KenCarp47()),
+          Dict(:alg=&gt;RadauIIA9()),
+          #Dict(:alg=&gt;rodas()),
+          #Dict(:alg=&gt;radau()),
+          #Dict(:alg=&gt;lsoda()),
+          #Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = OrdinaryDiffEqCore.PolyesterThreads())),
+          #Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = false)),
+          #Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = OrdinaryDiffEqCore.PolyesterThreads())),
+          #Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = false)),
+          ]
+wp = WorkPrecisionSet(oprob,abstols,reltols,setups;verbose=false,
+                      save_everystep=false,appxsol=refsol,maxiters=Int(1e5),numruns=10,
+                      print_names = true)
+plot(wp)</code></pre><pre><code class="nohighlight hljs">FBDF
+QNDF
+CVODE_BDF
+Rodas5P
+KenCarp4
+KenCarp47
+RadauIIA9</code></pre><p><img src="../figures/astrochem_6_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Bio/multistate/">« Multistate Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../nelson/">Nelson Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Wednesday 9 October 2024 21:48">Wednesday 9 October 2024</span>. Using Julia version 1.11.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
