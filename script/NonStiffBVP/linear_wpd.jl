@@ -4,26 +4,25 @@ using BoundaryValueDiffEq, SimpleBoundaryValueDiffEq, OrdinaryDiffEq, ODEInterfa
 
 
 solvers_all = [
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK3",                solver = Dict(:alg => MIRK3(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK4",                solver = Dict(:alg => MIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK5",                solver = Dict(:alg => MIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK6",                solver = Dict(:alg => MIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "RadauIIa3",            solver = Dict(:alg => RadauIIa3(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "RadauIIa5",            solver = Dict(:alg => RadauIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "RadauIIa7",            solver = Dict(:alg => RadauIIa7(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIa4",         solver = Dict(:alg => LobattoIIIa4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIa5",         solver = Dict(:alg => LobattoIIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIb4",         solver = Dict(:alg => LobattoIIIb4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIb5",         solver = Dict(:alg => LobattoIIIb5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIc4",         solver = Dict(:alg => LobattoIIIc4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIc5",         solver = Dict(:alg => LobattoIIIc5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :shooting,     name = "Single Shooting",      solver = Dict(:alg => Shooting(Tsit5(), NewtonRaphson()), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :shooting,     name = "Multiple Shooting",    solver = Dict(:alg => MultipleShooting(10, Tsit5()), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,   name = "SimpleMIRK4",          solver = Dict(:alg => SimpleMIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,   name = "SimpleMIRK5",          solver = Dict(:alg => SimpleMIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,   name = "SimpleMIRK6",          solver = Dict(:alg => SimpleMIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :wrapper,                      type = :general,      name = "BVPM2",                solver = Dict(:alg => BVPM2(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :wrapper,                      type = :general,      name = "COLNEW",               solver = Dict(:alg => COLNEW(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :mirk,              name = "MIRK4",                solver = Dict(:alg => MIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :mirk,              name = "MIRK5",                solver = Dict(:alg => MIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :mirk,              name = "MIRK6",                solver = Dict(:alg => MIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "RadauIIa3",            solver = Dict(:alg => RadauIIa3(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "RadauIIa5",            solver = Dict(:alg => RadauIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "RadauIIa7",            solver = Dict(:alg => RadauIIa7(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIa4",         solver = Dict(:alg => LobattoIIIa4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIa5",         solver = Dict(:alg => LobattoIIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIb4",         solver = Dict(:alg => LobattoIIIb4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIb5",         solver = Dict(:alg => LobattoIIIb5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIc4",         solver = Dict(:alg => LobattoIIIc4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIc5",         solver = Dict(:alg => LobattoIIIc5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :shooting,          name = "Single Shooting",      solver = Dict(:alg => Shooting(Tsit5(), NewtonRaphson()), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :shooting,          name = "Multiple Shooting",    solver = Dict(:alg => MultipleShooting(10, Tsit5()), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,        name = "SimpleMIRK4",          solver = Dict(:alg => SimpleMIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,        name = "SimpleMIRK5",          solver = Dict(:alg => SimpleMIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,        name = "SimpleMIRK6",          solver = Dict(:alg => SimpleMIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :wrapper,                      type = :general,           name = "BVPM2",                solver = Dict(:alg => BVPM2(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :wrapper,                      type = :general,           name = "COLNEW",               solver = Dict(:alg => COLNEW(), :dts=>1.0 ./ 10.0 .^ (1:4))),
 ];
 
 solver_tracker = [];
@@ -180,7 +179,6 @@ plot_wpd(wps)
 
 
 prob_18 = BVProblemLibrary.prob_bvp_linear_18
-
 wps = benchmark(prob_18)
 plot_wpd(wps)
 
@@ -225,7 +223,7 @@ fig = begin
                 errs = getindex.(wpᵢ.errors, :l∞)
                 times = wpᵢ.times
 
-                l = lines!(ax, errs, times; color = colors[idx], linewidth = 5,
+                l = lines!(ax, errs, times; color = colors[idx], linewidth = 3,
                     linestyle = LINESTYLES[solvers_all[idx].pkg], alpha = 0.8,
                     label = wpᵢ.name)
                 sc = scatter!(ax, errs, times; color = colors[idx], markersize = 16,

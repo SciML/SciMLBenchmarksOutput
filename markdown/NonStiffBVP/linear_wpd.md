@@ -9,7 +9,8 @@ The testing BVPs are a set of standard BVP test problems as described [here](htt
 The problems are implemented in [BVProblemLibrary.jl](https://github.com/SciML/DiffEqProblemLibrary.jl/blob/master/lib/BVProblemLibrary/src/BVProblemLibrary.jl), where you can find the problem function declarations.
 For each problem, we test the following solvers:
 
-- BoundaryValueDiffEq.jl's MIRK methods(including `MIRK3`, `MIRK4`, `MIRK5`, `MIRK6`).
+- BoundaryValueDiffEq.jl's MIRK methods(including `MIRK4`, `MIRK5`, `MIRK6`).
+- BoundaryValueDiffEq.jl's Shooting methods(including `Shooting`, `MultipleShooting`).
 - BoundaryValueDiffEq.jl's FIRK methods(including `RadauIIa3`, `RadauIIa5`, `RadauIIa7`, `LobattoIIIa4`, `LobattoIIIa5`, `LobattoIIIb4`, `LobattoIIIb5`, `LobattoIIIc4`, `LobattoIIIc5`).
 - SimpleBoundaryValueDiffEq.jl's MIRK methods(including `SimpleMIRK4`, `SimpleMIRK5`, `SimpleMIRK6`).
 - FORTRAN BVP solvers from ODEInterface.jl(including `BVPM2` and `COLNEW`).
@@ -30,26 +31,25 @@ Set up the benchmarked solvers.
 
 ```julia
 solvers_all = [
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK3",                solver = Dict(:alg => MIRK3(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK4",                solver = Dict(:alg => MIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK5",                solver = Dict(:alg => MIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK6",                solver = Dict(:alg => MIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "RadauIIa3",            solver = Dict(:alg => RadauIIa3(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "RadauIIa5",            solver = Dict(:alg => RadauIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "RadauIIa7",            solver = Dict(:alg => RadauIIa7(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIa4",         solver = Dict(:alg => LobattoIIIa4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIa5",         solver = Dict(:alg => LobattoIIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIb4",         solver = Dict(:alg => LobattoIIIb4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIb5",         solver = Dict(:alg => LobattoIIIb5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIc4",         solver = Dict(:alg => LobattoIIIc4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIc5",         solver = Dict(:alg => LobattoIIIc5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :shooting,     name = "Single Shooting",      solver = Dict(:alg => Shooting(Tsit5(), NewtonRaphson()), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :shooting,     name = "Multiple Shooting",    solver = Dict(:alg => MultipleShooting(10, Tsit5()), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,   name = "SimpleMIRK4",          solver = Dict(:alg => SimpleMIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,   name = "SimpleMIRK5",          solver = Dict(:alg => SimpleMIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,   name = "SimpleMIRK6",          solver = Dict(:alg => SimpleMIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :wrapper,                      type = :general,      name = "BVPM2",                solver = Dict(:alg => BVPM2(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :wrapper,                      type = :general,      name = "COLNEW",               solver = Dict(:alg => COLNEW(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :mirk,              name = "MIRK4",                solver = Dict(:alg => MIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :mirk,              name = "MIRK5",                solver = Dict(:alg => MIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :mirk,              name = "MIRK6",                solver = Dict(:alg => MIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "RadauIIa3",            solver = Dict(:alg => RadauIIa3(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "RadauIIa5",            solver = Dict(:alg => RadauIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "RadauIIa7",            solver = Dict(:alg => RadauIIa7(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIa4",         solver = Dict(:alg => LobattoIIIa4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIa5",         solver = Dict(:alg => LobattoIIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIb4",         solver = Dict(:alg => LobattoIIIb4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIb5",         solver = Dict(:alg => LobattoIIIb5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIc4",         solver = Dict(:alg => LobattoIIIc4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIc5",         solver = Dict(:alg => LobattoIIIc5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :shooting,          name = "Single Shooting",      solver = Dict(:alg => Shooting(Tsit5(), NewtonRaphson()), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :shooting,          name = "Multiple Shooting",    solver = Dict(:alg => MultipleShooting(10, Tsit5()), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,        name = "SimpleMIRK4",          solver = Dict(:alg => SimpleMIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,        name = "SimpleMIRK5",          solver = Dict(:alg => SimpleMIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,        name = "SimpleMIRK6",          solver = Dict(:alg => SimpleMIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :wrapper,                      type = :general,           name = "BVPM2",                solver = Dict(:alg => BVPM2(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :wrapper,                      type = :general,           name = "COLNEW",               solver = Dict(:alg => COLNEW(), :dts=>1.0 ./ 10.0 .^ (1:4))),
 ];
 
 solver_tracker = [];
@@ -352,7 +352,6 @@ plot_wpd(wps)
 
 ```julia
 prob_18 = BVProblemLibrary.prob_bvp_linear_18
-
 wps = benchmark(prob_18)
 plot_wpd(wps)
 ```
@@ -404,7 +403,7 @@ fig = begin
                 errs = getindex.(wpᵢ.errors, :l∞)
                 times = wpᵢ.times
 
-                l = lines!(ax, errs, times; color = colors[idx], linewidth = 5,
+                l = lines!(ax, errs, times; color = colors[idx], linewidth = 3,
                     linestyle = LINESTYLES[solvers_all[idx].pkg], alpha = 0.8,
                     label = wpᵢ.name)
                 sc = scatter!(ax, errs, times; color = colors[idx], markersize = 16,
@@ -478,21 +477,21 @@ Package Information:
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffBVP/Project.toml`
   [ded0fc24] BVProblemLibrary v0.1.5
   [6e4b80f9] BenchmarkTools v1.5.0
-  [764a87c0] BoundaryValueDiffEq v5.10.0
-  [13f3f980] CairoMakie v0.12.12
-  [f3b72e0c] DiffEqDevTools v2.45.0
+  [764a87c0] BoundaryValueDiffEq v5.11.0
+  [13f3f980] CairoMakie v0.12.14
+  [f3b72e0c] DiffEqDevTools v2.45.1
   [54ca160b] ODEInterface v0.5.0
   [1dea7af3] OrdinaryDiffEq v6.89.0
   [91a5bcdd] Plots v1.40.8
   [31c91b34] SciMLBenchmarks v0.1.3 `../..`
-  [be0294bd] SimpleBoundaryValueDiffEq v1.0.0
+  [be0294bd] SimpleBoundaryValueDiffEq v1.1.0
 ```
 
 And the full manifest:
 
 ```
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffBVP/Manifest.toml`
-⌃ [47edcb42] ADTypes v1.8.1
+  [47edcb42] ADTypes v1.9.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.38
@@ -511,12 +510,12 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [6e4b80f9] BenchmarkTools v1.5.0
   [d1d4a3ce] BitFlags v0.1.9
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
-  [764a87c0] BoundaryValueDiffEq v5.10.0
+  [764a87c0] BoundaryValueDiffEq v5.11.0
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.6
   [336ed68f] CSV v0.10.14
   [159f3aea] Cairo v1.1.0
-  [13f3f980] CairoMakie v0.12.12
+  [13f3f980] CairoMakie v0.12.14
   [d360d2e6] ChainRulesCore v1.25.0
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [944b1d66] CodecZlib v0.7.6
@@ -543,17 +542,17 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v1.6.0
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v6.155.1
-  [f3b72e0c] DiffEqDevTools v2.45.0
+  [2b5f629d] DiffEqBase v6.158.1
+  [f3b72e0c] DiffEqDevTools v2.45.1
   [77a26b50] DiffEqNoiseProcess v5.23.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
-⌅ [a0c0ee7d] DifferentiationInterface v0.5.17
+⌃ [a0c0ee7d] DifferentiationInterface v0.6.13
   [b4f34e82] Distances v0.10.11
-⌃ [31c24e10] Distributions v0.25.111
+  [31c24e10] Distributions v0.25.112
   [ffbed154] DocStringExtensions v0.9.3
   [4e289a0a] EnumX v1.0.4
-⌅ [f151be2c] EnzymeCore v0.7.8
+  [f151be2c] EnzymeCore v0.8.4
   [429591f6] ExactPredicates v2.2.8
   [460bff9d] ExceptionUnwrapping v0.1.10
   [d4d017d3] ExponentialUtilities v1.26.1
@@ -562,15 +561,15 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [411431e0] Extents v0.1.4
   [c87230d0] FFMPEG v0.4.2
   [7a1cc6ca] FFTW v1.8.0
-⌃ [9d29842c] FastAlmostBandedMatrices v0.1.3
+  [9d29842c] FastAlmostBandedMatrices v0.1.4
   [7034ab61] FastBroadcast v0.3.5
   [9aa1b823] FastClosures v0.3.2
   [29a986be] FastLapackInterface v2.0.4
-  [5789e2e9] FileIO v1.16.3
+  [5789e2e9] FileIO v1.16.4
   [8fc22ac5] FilePaths v0.8.3
   [48062228] FilePathsBase v0.9.22
   [1a297f60] FillArrays v1.13.0
-⌃ [6a86dc24] FiniteDiff v2.24.0
+  [6a86dc24] FiniteDiff v2.26.0
   [53c48c17] FixedPointNumbers v0.8.5
   [1fa38f19] Format v1.3.7
   [f6369f11] ForwardDiff v0.10.36
@@ -579,14 +578,14 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [46192b85] GPUArraysCore v0.1.6
-  [28b8d3ca] GR v0.73.7
+  [28b8d3ca] GR v0.73.8
   [c145ed77] GenericSchur v0.5.4
   [68eda718] GeoFormatTypes v0.4.2
   [cf35fbd7] GeoInterface v1.3.7
   [5c1252a2] GeometryBasics v0.4.11
   [d7ba0133] Git v1.3.1
   [a2bd30eb] Graphics v1.1.2
-⌃ [86223c79] Graphs v1.11.2
+  [86223c79] Graphs v1.12.0
   [3955a311] GridLayoutBase v0.11.0
   [42e2da0e] Grisu v1.0.2
   [cd3eb016] HTTP v1.10.8
@@ -613,27 +612,28 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c8e1da08] IterTools v1.10.0
   [82899510] IteratorInterfaceExtensions v1.0.0
   [1019f520] JLFzf v0.1.8
-  [692b3bcd] JLLWrappers v1.6.0
+  [692b3bcd] JLLWrappers v1.6.1
   [682c06a0] JSON v0.21.4
   [b835a17e] JpegTurbo v0.1.5
   [ef3ab10e] KLU v0.6.0
   [5ab0869b] KernelDensity v0.6.9
   [ba0b0d4f] Krylov v0.9.6
-  [b964fa9f] LaTeXStrings v1.3.1
+  [b964fa9f] LaTeXStrings v1.4.0
   [23fbe1c1] Latexify v0.16.5
   [10f19ff3] LayoutPointers v0.1.17
   [5078a376] LazyArrays v2.2.1
   [8cdb02fc] LazyModules v0.3.1
   [9c8b4983] LightXML v0.9.1
+  [87fe0de2] LineSearch v0.1.3
   [d3d80556] LineSearches v7.3.0
-⌃ [7ed4a6bd] LinearSolve v2.34.0
+  [7ed4a6bd] LinearSolve v2.35.0
   [2ab3a3ac] LogExpFunctions v0.3.28
   [e6f89c97] LoggingExtras v1.0.3
   [bdcacae8] LoopVectorization v0.12.171
   [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.13
-  [ee78f7c6] Makie v0.21.12
-  [20f20a25] MakieCore v0.8.8
+  [ee78f7c6] Makie v0.21.14
+  [20f20a25] MakieCore v0.8.9
   [d125e4d3] ManualMemory v0.1.8
   [dbb5928d] MappedArrays v0.4.2
   [0a4f8689] MathTeXEngine v0.6.1
@@ -649,7 +649,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
   [f09324ee] Netpbm v1.1.1
-⌃ [8913a72c] NonlinearSolve v3.14.0
+  [8913a72c] NonlinearSolve v3.15.1
   [54ca160b] ODEInterface v0.5.0
   [0f4fe800] OMJulia v0.3.2
   [510215fc] Observables v0.5.5
@@ -661,7 +661,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [1dea7af3] OrdinaryDiffEq v6.89.0
   [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.1.0
   [6ad6398a] OrdinaryDiffEqBDF v1.1.2
-  [bbf590c4] OrdinaryDiffEqCore v1.6.0
+  [bbf590c4] OrdinaryDiffEqCore v1.7.1
   [50262376] OrdinaryDiffEqDefault v1.1.0
   [4302a76b] OrdinaryDiffEqDifferentiation v1.1.0
   [9286f039] OrdinaryDiffEqExplicitRK v1.1.0
@@ -710,7 +710,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d236fae5] PreallocationTools v0.4.24
   [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.4.3
-⌃ [08abe8d2] PrettyTables v2.3.2
+  [08abe8d2] PrettyTables v2.4.0
   [92933f4c] ProgressMeter v1.10.2
   [43287f4e] PtrArrays v1.2.1
   [4b34888f] QOI v1.0.0
@@ -734,8 +734,9 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [fdea26ae] SIMD v3.6.0
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.43
-⌃ [0bca4576] SciMLBase v2.54.0
+  [0bca4576] SciMLBase v2.56.1
   [31c91b34] SciMLBenchmarks v0.1.3 `../..`
+  [19f34311] SciMLJacobianOperators v0.1.0
   [c0aeaf25] SciMLOperators v0.3.10
   [53ae85a6] SciMLStructures v1.5.0
   [6c6a2e73] Scratch v1.2.1
@@ -744,16 +745,17 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [65257c39] ShaderAbstractions v0.4.1
   [992d4aef] Showoff v1.0.3
   [73760f76] SignedDistanceFields v0.4.0
-  [be0294bd] SimpleBoundaryValueDiffEq v1.0.0
+  [be0294bd] SimpleBoundaryValueDiffEq v1.1.0
   [777ac1f9] SimpleBufferStream v1.2.0
-⌃ [727e6d20] SimpleNonlinearSolve v1.12.2
+  [727e6d20] SimpleNonlinearSolve v1.12.3
   [699a6c99] SimpleTraits v0.9.4
   [ce78b400] SimpleUnPack v1.1.0
   [45858cf5] Sixel v0.1.3
   [b85f4697] SoftGlobalScope v1.1.0
   [a2af1166] SortingAlgorithms v1.2.1
-⌃ [47a9eef4] SparseDiffTools v2.20.0
-⌃ [0a514795] SparseMatrixColorings v0.4.0
+  [9f842d2f] SparseConnectivityTracer v0.6.7
+  [47a9eef4] SparseDiffTools v2.23.0
+  [0a514795] SparseMatrixColorings v0.4.7
   [e56a9233] Sparspak v0.3.9
   [276daf66] SpecialFunctions v2.4.0
   [cae243ae] StackViews v0.1.1
@@ -766,18 +768,17 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [4c63d2b9] StatsFuns v1.3.2
   [7792a7ef] StrideArraysCore v0.5.7
   [69024149] StringEncodings v0.3.7
-⌅ [892a3eda] StringManipulation v0.3.4
+  [892a3eda] StringManipulation v0.4.0
   [09ab397b] StructArrays v0.6.18
-⌃ [2efcf032] SymbolicIndexingInterface v0.3.30
+⌃ [2efcf032] SymbolicIndexingInterface v0.3.32
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.0
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.2
-  [731e570b] TiffImages v0.10.0
-  [a759f4b9] TimerOutputs v0.5.24
-⌃ [3bb67fe8] TranscodingStreams v0.11.2
+  [731e570b] TiffImages v0.10.2
+  [a759f4b9] TimerOutputs v0.5.25
+  [3bb67fe8] TranscodingStreams v0.11.3
   [d5829a12] TriangularSolve v0.2.1
-  [410a4b4d] Tricks v0.1.9
   [981d1d27] TriplotBase v0.1.0
   [781d530d] TruncatedStacktraces v1.4.0
   [5c2747f8] URIs v1.5.1
@@ -797,7 +798,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c2297ded] ZMQ v1.3.0
   [6e34b625] Bzip2_jll v1.0.8+1
   [4e9b3aee] CRlibm_jll v1.0.1+0
-⌃ [83423d85] Cairo_jll v1.18.0+2
+  [83423d85] Cairo_jll v1.18.2+1
   [ee1fde0b] Dbus_jll v1.14.10+0
   [5ae413db] EarCut_jll v2.2.4+0
   [2702e6a9] EpollShim_jll v0.0.20230411+0
@@ -808,26 +809,26 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d7e528f0] FreeType2_jll v2.13.2+0
   [559328eb] FriBidi_jll v1.0.14+0
   [0656b61e] GLFW_jll v3.4.0+1
-  [d2c73de3] GR_jll v0.73.7+0
+  [d2c73de3] GR_jll v0.73.8+0
   [78b55507] Gettext_jll v0.21.0+0
-⌃ [f8c6e375] Git_jll v2.44.0+2
-⌃ [7746bdde] Glib_jll v2.80.2+0
+  [f8c6e375] Git_jll v2.46.2+0
+  [7746bdde] Glib_jll v2.80.5+0
   [3b182d85] Graphite2_jll v1.3.14+0
   [2e76f6c2] HarfBuzz_jll v8.3.1+0
   [905a6f67] Imath_jll v3.1.11+0
   [1d5cc7b8] IntelOpenMP_jll v2024.2.1+0
-⌃ [aacddb02] JpegTurbo_jll v3.0.3+0
+  [aacddb02] JpegTurbo_jll v3.0.4+0
   [c1c5ebd0] LAME_jll v3.100.2+0
-⌅ [88015f11] LERC_jll v3.0.0+1
+  [88015f11] LERC_jll v4.0.0+0
   [1d63c593] LLVMOpenMP_jll v18.1.7+0
-⌃ [dd4b983a] LZO_jll v2.10.2+0
+  [dd4b983a] LZO_jll v2.10.2+1
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
   [d4300ac3] Libgcrypt_jll v1.8.11+0
   [7e76a0d4] Libglvnd_jll v1.6.0+0
   [7add5ba3] Libgpg_error_jll v1.49.0+0
   [94ce4f54] Libiconv_jll v1.17.0+0
   [4b2f31a3] Libmount_jll v2.40.1+0
-⌅ [89763e89] Libtiff_jll v4.5.1+1
+  [89763e89] Libtiff_jll v4.7.0+0
   [38a345b3] Libuuid_jll v2.40.1+0
   [856f044c] MKL_jll v2024.2.0+0
   [c771fb93] ODEInterface_jll v0.0.1+0
@@ -874,7 +875,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
   [c5fb5394] Xorg_xtrans_jll v1.5.0+0
   [8f1865be] ZeroMQ_jll v4.3.5+0
-⌃ [3161d3a3] Zstd_jll v1.5.6+0
+  [3161d3a3] Zstd_jll v1.5.6+1
   [35ca27e7] eudev_jll v3.2.9+0
   [214eeab7] fzf_jll v0.53.0+0
   [1a1c6b14] gperf_jll v3.1.1+0
@@ -885,9 +886,9 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2db6ffa8] libevdev_jll v1.11.0+0
   [f638f0a6] libfdk_aac_jll v2.0.3+0
   [36db933b] libinput_jll v1.18.0+0
-⌃ [b53b4c65] libpng_jll v1.6.43+1
+  [b53b4c65] libpng_jll v1.6.44+0
   [075b6546] libsixel_jll v1.10.3+1
-⌃ [a9144af2] libsodium_jll v1.0.20+0
+  [a9144af2] libsodium_jll v1.0.20+1
   [f27f6e37] libvorbis_jll v1.3.7+2
   [009596ad] mtdev_jll v1.1.6+0
   [1317d2d5] oneTBB_jll v2021.12.0+0
