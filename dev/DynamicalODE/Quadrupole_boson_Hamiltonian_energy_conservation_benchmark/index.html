@@ -100,459 +100,475 @@ function compare(mode=:inplace, all=true, plt=nothing; tmax=1e2)
     (mode == :inplace &amp;&amp; all) &amp;&amp; plot!(sol6.t, energy_err(sol6), label=&quot;TaylorMethod&quot;)
 
     return plt
-end</code></pre><pre><code class="nohighlight hljs">compare (generic function with 4 methods)</code></pre><p>The <code>mode</code> argument choses between the in place approach and the out of place one. The <code>all</code> parameter is used to compare only the integrators that support both the in place and the out of place versions (we reffer here only to the 6 high order methods chosen bellow). The <code>plt</code> argument can be used to overlay the results over a previous plot and the <code>tmax</code> keyword determines the simulation time.</p><p>Note:</p><ol><li>The <code>Vern9</code> method is used with <code>ODEProblem</code> because of performance issues with <code>ArrayPartition</code> indexing which manifest for <code>DynamicalODEProblem</code>.</li><li>The <code>NLsolve</code> call used by <code>ManifoldProjection</code> was modified to use <code>ftol=1e-13</code> in order to obtain a very low energy error.</li></ol><p>Here are the results of the comparisons between the in place methods:</p><pre><code class="language-julia hljs">compare(tmax=1e2)</code></pre><pre><code class="nohighlight hljs">68.819458 seconds (113.68 M allocations: 6.829 GiB, 3.57% gc time, 99.91% 
-compilation time: 2% of which was recompilation)
-  1.716124 seconds (2.73 M allocations: 176.020 MiB, 99.54% compilation tim
+end</code></pre><pre><code class="nohighlight hljs">compare (generic function with 4 methods)</code></pre><p>The <code>mode</code> argument choses between the in place approach and the out of place one. The <code>all</code> parameter is used to compare only the integrators that support both the in place and the out of place versions (we reffer here only to the 6 high order methods chosen bellow). The <code>plt</code> argument can be used to overlay the results over a previous plot and the <code>tmax</code> keyword determines the simulation time.</p><p>Note:</p><ol><li>The <code>Vern9</code> method is used with <code>ODEProblem</code> because of performance issues with <code>ArrayPartition</code> indexing which manifest for <code>DynamicalODEProblem</code>.</li><li>The <code>NLsolve</code> call used by <code>ManifoldProjection</code> was modified to use <code>ftol=1e-13</code> in order to obtain a very low energy error.</li></ol><p>Here are the results of the comparisons between the in place methods:</p><pre><code class="language-julia hljs">compare(tmax=1e2)</code></pre><pre><code class="nohighlight hljs">56.015599 seconds (147.97 M allocations: 8.592 GiB, 9.55% gc time, 99.58% 
+compilation time)
+  1.918938 seconds (2.83 M allocations: 185.085 MiB, 99.59% compilation tim
 e)
-  2.173060 seconds (2.95 M allocations: 186.984 MiB, 99.49% compilation tim
+  1.838182 seconds (2.45 M allocations: 158.349 MiB, 99.40% compilation tim
 e)
- 40.608482 seconds (52.18 M allocations: 3.152 GiB, 2.82% gc time, 99.96% c
-ompilation time)
-  3.606012 seconds (3.43 M allocations: 210.628 MiB, 99.90% compilation tim
+ 29.339098 seconds (91.76 M allocations: 5.512 GiB, 12.70% gc time, 99.95% 
+compilation time)
+  2.816406 seconds (2.58 M allocations: 166.237 MiB, 99.87% compilation tim
 e)
-  1.347402 seconds (2.46 M allocations: 312.242 MiB, 85.67% compilation tim
+  1.873957 seconds (3.23 M allocations: 367.795 MiB, 90.55% compilation tim
 e)
-Vern9 + ManifoldProjection max energy error:	1.7053025658242404e-13	in	9733
+Vern9 + ManifoldProjection max energy error:	1.8474111129762605e-13	in	9731
 	steps.
 KahanLi8 max energy error:			5.5706550483591855e-12	in	10001	steps.
 SofSpa10 max energy error:			3.836930773104541e-12	in	10001	steps.
-Vern9 max energy error:				8.384404281969182e-13	in	4866	steps.
-DPRKN12 max energy error:			4.689582056016661e-13	in	2195	steps.
-TaylorMethod max energy error:			4.689582056016661e-13	in	509	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_3_1.png" alt/></p><pre><code class="language-julia hljs">compare(tmax=1e3)</code></pre><pre><code class="nohighlight hljs">0.664765 seconds (5.34 M allocations: 363.117 MiB, 14.96% gc time)
-  0.081122 seconds (700.10 k allocations: 61.899 MiB)
-  0.123311 seconds (700.10 k allocations: 61.901 MiB)
-  0.177481 seconds (1.70 M allocations: 105.993 MiB)
-  0.033091 seconds (415.76 k allocations: 18.250 MiB)
-  1.889070 seconds (7.90 M allocations: 1.972 GiB, 11.70% gc time)
-Vern9 + ManifoldProjection max energy error:	1.7053025658242404e-13	in	9724
-1	steps.
+Vern9 max energy error:				1.6626700016786344e-12	in	4866	steps.
+DPRKN12 max energy error:			6.252776074688882e-13	in	2195	steps.
+TaylorMethod max energy error:			4.689582056016661e-13	in	509	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_3_1.png" alt/></p><pre><code class="language-julia hljs">compare(tmax=1e3)</code></pre><pre><code class="nohighlight hljs">1.048999 seconds (5.39 M allocations: 364.561 MiB, 54.87% gc time)
+  0.086250 seconds (700.10 k allocations: 61.899 MiB)
+  0.123679 seconds (700.10 k allocations: 61.901 MiB)
+  0.174536 seconds (1.75 M allocations: 106.737 MiB)
+  0.032064 seconds (437.69 k allocations: 18.586 MiB)
+  1.777831 seconds (7.90 M allocations: 1.972 GiB, 10.21% gc time)
+Vern9 + ManifoldProjection max energy error:	1.8474111129762605e-13	in	9723
+7	steps.
 KahanLi8 max energy error:			1.0530243343964685e-11	in	100002	steps.
 SofSpa10 max energy error:			1.5077716852829326e-11	in	100002	steps.
-Vern9 max energy error:				4.050093593832571e-12	in	48622	steps.
-DPRKN12 max energy error:			1.2789769243681803e-12	in	21872	steps.
-TaylorMethod max energy error:			1.6342482922482304e-12	in	5082	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_4_1.png" alt/></p><pre><code class="language-julia hljs">compare(tmax=1e4)</code></pre><pre><code class="nohighlight hljs">8.060884 seconds (53.42 M allocations: 3.515 GiB, 25.29% gc time)
-  0.841127 seconds (7.00 M allocations: 579.841 MiB)
-  1.198436 seconds (7.00 M allocations: 579.843 MiB)
-  2.531760 seconds (17.02 M allocations: 1.020 GiB, 30.26% gc time)
-  0.334868 seconds (4.15 M allocations: 178.278 MiB)
- 20.418407 seconds (78.97 M allocations: 19.713 GiB, 9.26% gc time)
+Vern9 max energy error:				4.163780431554187e-12	in	48623	steps.
+DPRKN12 max energy error:			3.197442310920451e-12	in	21875	steps.
+TaylorMethod max energy error:			1.9326762412674725e-12	in	5082	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_4_1.png" alt/></p><pre><code class="language-julia hljs">compare(tmax=1e4)</code></pre><pre><code class="nohighlight hljs">12.555931 seconds (53.92 M allocations: 3.529 GiB, 59.95% gc time)
+  1.564704 seconds (7.00 M allocations: 579.841 MiB, 44.56% gc time)
+  1.620314 seconds (7.00 M allocations: 579.843 MiB, 26.45% gc time)
+  7.304546 seconds (17.50 M allocations: 1.027 GiB, 77.03% gc time)
+  0.308386 seconds (4.37 M allocations: 181.619 MiB)
+ 18.164379 seconds (78.97 M allocations: 19.713 GiB, 33.57% gc time)
 Vern9 + ManifoldProjection max energy error:	2.1316282072803006e-13	in	9723
-77	steps.
+79	steps.
 KahanLi8 max energy error:			4.3968384488835e-11	in	1000001	steps.
 SofSpa10 max energy error:			6.492939519375795e-11	in	1000001	steps.
-Vern9 max energy error:				6.355094228638336e-11	in	486179	steps.
-DPRKN12 max energy error:			2.2154722500999924e-11	in	218670	steps.
-TaylorMethod max energy error:			4.078515303262975e-12	in	50814	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_5_1.png" alt/></p><pre><code class="language-julia hljs">compare(tmax=2e4)</code></pre><pre><code class="nohighlight hljs">16.498163 seconds (106.81 M allocations: 7.024 GiB, 26.95% gc time)
-  1.688319 seconds (14.00 M allocations: 1.171 GiB)
-  2.409050 seconds (14.00 M allocations: 1.171 GiB)
-  4.814327 seconds (34.03 M allocations: 2.037 GiB, 28.14% gc time)
-  0.653838 seconds (8.31 M allocations: 354.210 MiB)
- 40.691501 seconds (157.93 M allocations: 39.426 GiB, 9.69% gc time)
-Vern9 + ManifoldProjection max energy error:	2.2737367544323206e-13	in	1944
-731	steps.
+Vern9 max energy error:				5.356071142159635e-11	in	486191	steps.
+DPRKN12 max energy error:			1.496403001510771e-11	in	218676	steps.
+TaylorMethod max energy error:			7.702283255639486e-12	in	50814	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_5_1.png" alt/></p><pre><code class="language-julia hljs">compare(tmax=2e4)</code></pre><pre><code class="nohighlight hljs">26.588195 seconds (107.82 M allocations: 7.050 GiB, 62.46% gc time)
+  5.363378 seconds (14.00 M allocations: 1.171 GiB, 67.40% gc time)
+  6.993015 seconds (14.00 M allocations: 1.171 GiB, 65.60% gc time)
+ 14.525068 seconds (35.01 M allocations: 2.052 GiB, 76.77% gc time)
+  0.626950 seconds (8.75 M allocations: 360.885 MiB)
+ 39.895249 seconds (157.93 M allocations: 39.426 GiB, 39.52% gc time)
+Vern9 + ManifoldProjection max energy error:	2.1316282072803006e-13	in	1944
+701	steps.
 KahanLi8 max energy error:			1.0363976343796821e-10	in	2000002	steps.
 SofSpa10 max energy error:			9.750067420100095e-11	in	2000002	steps.
-Vern9 max energy error:				1.3086776107229525e-10	in	972353	steps.
-DPRKN12 max energy error:			4.675371201301459e-11	in	437331	steps.
-TaylorMethod max energy error:			6.977529665164184e-12	in	101627	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_6_1.png" alt/></p><p>As we can see from the above plots, we can achieve a very low energy error for long time simulation by manifold projection and with very high order Taylor methods. In comparison with the Hénon-Heiles system we see that as the Hamiltonian got more complex, the energy error for the other integration methods increased significantly.</p><p>We will now compare the in place with the out of place versions. In the plots bellow we will use a dashed line for the out of place versions.</p><pre><code class="language-julia hljs">function in_vs_out(;all=false, tmax=1e2)
+Vern9 max energy error:				1.0747669421107275e-10	in	972377	steps.
+DPRKN12 max energy error:			4.125411123823142e-11	in	437335	steps.
+TaylorMethod max energy error:			1.3926637620897964e-11	in	101627	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_6_1.png" alt/></p><p>As we can see from the above plots, we can achieve a very low energy error for long time simulation by manifold projection and with very high order Taylor methods. In comparison with the Hénon-Heiles system we see that as the Hamiltonian got more complex, the energy error for the other integration methods increased significantly.</p><p>We will now compare the in place with the out of place versions. In the plots bellow we will use a dashed line for the out of place versions.</p><pre><code class="language-julia hljs">function in_vs_out(;all=false, tmax=1e2)
     println(&quot;In place versions:&quot;)
     plt = compare(:inplace, all, tmax=tmax)
     println(&quot;\nOut of place versions:&quot;)
     plt = compare(:oop, false, plt; tmax=tmax)
 end</code></pre><pre><code class="nohighlight hljs">in_vs_out (generic function with 1 method)</code></pre><p>First, here is a summary of all the available methods for <code>tmax = 1e3</code>:</p><pre><code class="language-julia hljs">in_vs_out(all=true, tmax=1e3)</code></pre><pre><code class="nohighlight hljs">In place versions:
-  0.651684 seconds (5.34 M allocations: 363.117 MiB, 9.65% gc time)
-  0.079376 seconds (700.10 k allocations: 61.899 MiB)
-  0.122741 seconds (700.10 k allocations: 61.901 MiB)
-  0.178829 seconds (1.70 M allocations: 105.993 MiB)
-  0.033615 seconds (415.76 k allocations: 18.250 MiB)
-  1.961943 seconds (7.90 M allocations: 1.972 GiB, 11.44% gc time)
-Vern9 + ManifoldProjection max energy error:	1.7053025658242404e-13	in	9724
-1	steps.
+  0.703995 seconds (5.39 M allocations: 364.561 MiB, 33.91% gc time)
+  0.085383 seconds (700.10 k allocations: 61.899 MiB)
+  0.123378 seconds (700.10 k allocations: 61.901 MiB)
+  0.174956 seconds (1.75 M allocations: 106.737 MiB)
+  0.032828 seconds (437.69 k allocations: 18.586 MiB)
+  1.805899 seconds (7.90 M allocations: 1.972 GiB, 9.37% gc time)
+Vern9 + ManifoldProjection max energy error:	1.8474111129762605e-13	in	9723
+7	steps.
 KahanLi8 max energy error:			1.0530243343964685e-11	in	100002	steps.
 SofSpa10 max energy error:			1.5077716852829326e-11	in	100002	steps.
-Vern9 max energy error:				4.050093593832571e-12	in	48622	steps.
-DPRKN12 max energy error:			1.2789769243681803e-12	in	21872	steps.
-TaylorMethod max energy error:			1.6342482922482304e-12	in	5082	steps.
+Vern9 max energy error:				4.163780431554187e-12	in	48623	steps.
+DPRKN12 max energy error:			3.197442310920451e-12	in	21875	steps.
+TaylorMethod max energy error:			1.9326762412674725e-12	in	5082	steps.
 
 Out of place versions:
-  0.713084 seconds (1.21 M allocations: 91.429 MiB, 95.44% compilation time
-)
-  0.753483 seconds (1.23 M allocations: 90.849 MiB, 93.80% compilation time
-)
-  1.383869 seconds (2.82 M allocations: 164.595 MiB, 98.07% compilation tim
+  1.164456 seconds (2.30 M allocations: 169.320 MiB, 97.25% compilation tim
 e)
-  1.014337 seconds (1.23 M allocations: 79.147 MiB, 98.82% compilation time
-)
+  0.646646 seconds (961.33 k allocations: 75.989 MiB, 92.79% compilation ti
+me)
+  1.336217 seconds (2.70 M allocations: 161.919 MiB, 97.87% compilation tim
+e)
+  0.788716 seconds (926.47 k allocations: 61.964 MiB, 98.81% compilation ti
+me)
 KahanLi8 max energy error:			1.0530243343964685e-11	in	100002	steps.
 SofSpa10 max energy error:			1.5077716852829326e-11	in	100002	steps.
 Vern9 max energy error:				9.450218385609332e-12	in	48622	steps.
-DPRKN12 max energy error:			1.2789769243681803e-12	in	21872	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_8_1.png" alt/></p><p>Now we will compare the in place and the out of place versions, but only for the integrators that are compatible with <code>StaticArrays</code></p><pre><code class="language-julia hljs">in_vs_out(tmax=1e2)</code></pre><pre><code class="nohighlight hljs">In place versions:
-  0.008108 seconds (70.09 k allocations: 5.806 MiB)
-  0.010438 seconds (70.09 k allocations: 5.808 MiB)
-  0.015078 seconds (170.49 k allocations: 10.858 MiB)
-  0.003193 seconds (41.89 k allocations: 1.907 MiB)
+DPRKN12 max energy error:			1.5774048733874224e-12	in	21876	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_8_1.png" alt/></p><p>Now we will compare the in place and the out of place versions, but only for the integrators that are compatible with <code>StaticArrays</code></p><pre><code class="language-julia hljs">in_vs_out(tmax=1e2)</code></pre><pre><code class="nohighlight hljs">In place versions:
+  0.007561 seconds (70.09 k allocations: 5.806 MiB)
+  0.010596 seconds (70.09 k allocations: 5.808 MiB)
+  0.014456 seconds (175.35 k allocations: 10.932 MiB)
+  0.003077 seconds (44.08 k allocations: 1.939 MiB)
 KahanLi8 max energy error:			5.5706550483591855e-12	in	10001	steps.
 SofSpa10 max energy error:			3.836930773104541e-12	in	10001	steps.
-Vern9 max energy error:				8.384404281969182e-13	in	4866	steps.
-DPRKN12 max energy error:			4.689582056016661e-13	in	2195	steps.
+Vern9 max energy error:				1.6626700016786344e-12	in	4866	steps.
+DPRKN12 max energy error:			6.252776074688882e-13	in	2195	steps.
 
 Out of place versions:
-  0.002926 seconds (10.02 k allocations: 1.682 MiB)
-  0.004520 seconds (10.02 k allocations: 1.682 MiB)
-  0.002320 seconds (4.90 k allocations: 2.760 MiB)
-  0.001404 seconds (2.23 k allocations: 604.531 KiB)
+  0.003117 seconds (10.02 k allocations: 1.681 MiB)
+  0.004602 seconds (10.02 k allocations: 1.682 MiB)
+  0.002448 seconds (4.90 k allocations: 2.760 MiB)
+  0.001153 seconds (2.23 k allocations: 604.469 KiB)
 KahanLi8 max energy error:			5.5706550483591855e-12	in	10001	steps.
 SofSpa10 max energy error:			3.836930773104541e-12	in	10001	steps.
 Vern9 max energy error:				5.542233338928781e-13	in	4864	steps.
-DPRKN12 max energy error:			4.689582056016661e-13	in	2195	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_9_1.png" alt/></p><pre><code class="language-julia hljs">in_vs_out(tmax=1e3)</code></pre><pre><code class="nohighlight hljs">In place versions:
-  0.072695 seconds (700.10 k allocations: 61.899 MiB)
-  0.108870 seconds (700.10 k allocations: 61.901 MiB)
-  0.176306 seconds (1.70 M allocations: 105.993 MiB)
-  0.033471 seconds (415.76 k allocations: 18.250 MiB)
+DPRKN12 max energy error:			9.663381206337363e-13	in	2195	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_9_1.png" alt/></p><pre><code class="language-julia hljs">in_vs_out(tmax=1e3)</code></pre><pre><code class="nohighlight hljs">In place versions:
+  0.072797 seconds (700.10 k allocations: 61.899 MiB)
+  0.105353 seconds (700.10 k allocations: 61.901 MiB)
+  0.160814 seconds (1.75 M allocations: 106.737 MiB)
+  0.031757 seconds (437.69 k allocations: 18.586 MiB)
 KahanLi8 max energy error:			1.0530243343964685e-11	in	100002	steps.
 SofSpa10 max energy error:			1.5077716852829326e-11	in	100002	steps.
-Vern9 max energy error:				4.050093593832571e-12	in	48622	steps.
-DPRKN12 max energy error:			1.2789769243681803e-12	in	21872	steps.
+Vern9 max energy error:				4.163780431554187e-12	in	48623	steps.
+DPRKN12 max energy error:			3.197442310920451e-12	in	21875	steps.
 
 Out of place versions:
-  0.031754 seconds (100.03 k allocations: 21.886 MiB)
-  0.047150 seconds (100.03 k allocations: 21.887 MiB)
-  0.026442 seconds (48.66 k allocations: 23.949 MiB)
-  0.012164 seconds (21.91 k allocations: 4.989 MiB)
+  0.028769 seconds (100.03 k allocations: 21.886 MiB)
+  0.045072 seconds (100.03 k allocations: 21.887 MiB)
+  0.022205 seconds (48.66 k allocations: 23.949 MiB)
+  0.009535 seconds (21.91 k allocations: 4.990 MiB)
 KahanLi8 max energy error:			1.0530243343964685e-11	in	100002	steps.
 SofSpa10 max energy error:			1.5077716852829326e-11	in	100002	steps.
 Vern9 max energy error:				9.450218385609332e-12	in	48622	steps.
-DPRKN12 max energy error:			1.2789769243681803e-12	in	21872	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_10_1.png" alt/></p><pre><code class="language-julia hljs">in_vs_out(tmax=1e4)</code></pre><pre><code class="nohighlight hljs">In place versions:
-  1.188501 seconds (7.00 M allocations: 579.841 MiB, 28.26% gc time)
-  1.388139 seconds (7.00 M allocations: 579.843 MiB, 12.75% gc time)
-  2.001769 seconds (17.02 M allocations: 1.020 GiB, 13.07% gc time)
-  0.336599 seconds (4.15 M allocations: 178.278 MiB)
+DPRKN12 max energy error:			1.5774048733874224e-12	in	21876	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_10_1.png" alt/></p><pre><code class="language-julia hljs">in_vs_out(tmax=1e4)</code></pre><pre><code class="nohighlight hljs">In place versions:
+  0.844546 seconds (7.00 M allocations: 579.841 MiB)
+  1.212944 seconds (7.00 M allocations: 579.843 MiB)
+  3.575912 seconds (17.50 M allocations: 1.027 GiB, 52.26% gc time)
+  0.321867 seconds (4.37 M allocations: 181.619 MiB)
 KahanLi8 max energy error:			4.3968384488835e-11	in	1000001	steps.
 SofSpa10 max energy error:			6.492939519375795e-11	in	1000001	steps.
-Vern9 max energy error:				6.355094228638336e-11	in	486179	steps.
-DPRKN12 max energy error:			2.2154722500999924e-11	in	218670	steps.
+Vern9 max energy error:				5.356071142159635e-11	in	486191	steps.
+DPRKN12 max energy error:			1.496403001510771e-11	in	218676	steps.
 
 Out of place versions:
-  0.357590 seconds (1.00 M allocations: 167.850 MiB, 9.49% gc time)
-  0.471227 seconds (1.00 M allocations: 167.850 MiB)
-  0.353095 seconds (486.25 k allocations: 215.756 MiB, 23.61% gc time)
-  0.117954 seconds (218.72 k allocations: 43.322 MiB)
+  0.821575 seconds (1.00 M allocations: 167.849 MiB, 62.69% gc time)
+  0.484976 seconds (1.00 M allocations: 167.850 MiB)
+  0.287405 seconds (486.25 k allocations: 215.756 MiB)
+  0.102764 seconds (218.72 k allocations: 43.323 MiB)
 KahanLi8 max energy error:			4.3968384488835e-11	in	1000001	steps.
 SofSpa10 max energy error:			6.492939519375795e-11	in	1000001	steps.
 Vern9 max energy error:				5.697131655324483e-11	in	486200	steps.
-DPRKN12 max energy error:			2.2154722500999924e-11	in	218670	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_11_1.png" alt/></p><pre><code class="language-julia hljs">in_vs_out(tmax=2e4)</code></pre><pre><code class="nohighlight hljs">In place versions:
-  2.177032 seconds (14.00 M allocations: 1.162 GiB, 20.39% gc time)
-  3.648194 seconds (14.00 M allocations: 1.171 GiB, 34.45% gc time)
-  4.429977 seconds (34.03 M allocations: 2.037 GiB, 21.37% gc time)
-  0.651140 seconds (8.31 M allocations: 354.210 MiB)
+DPRKN12 max energy error:			1.7323031897831243e-11	in	218674	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_11_1.png" alt/></p><pre><code class="language-julia hljs">in_vs_out(tmax=2e4)</code></pre><pre><code class="nohighlight hljs">In place versions:
+  2.927490 seconds (14.00 M allocations: 1.171 GiB, 41.45% gc time)
+  4.481849 seconds (14.00 M allocations: 1.171 GiB, 46.53% gc time)
+  6.306112 seconds (35.01 M allocations: 2.052 GiB, 46.23% gc time)
+  0.640007 seconds (8.75 M allocations: 360.885 MiB)
 KahanLi8 max energy error:			1.0363976343796821e-10	in	2000002	steps.
 SofSpa10 max energy error:			9.750067420100095e-11	in	2000002	steps.
-Vern9 max energy error:				1.3086776107229525e-10	in	972353	steps.
-DPRKN12 max energy error:			4.675371201301459e-11	in	437331	steps.
+Vern9 max energy error:				1.0747669421107275e-10	in	972377	steps.
+DPRKN12 max energy error:			4.125411123823142e-11	in	437335	steps.
 
 Out of place versions:
-  0.759931 seconds (2.00 M allocations: 395.141 MiB, 9.87% gc time)
-  0.985422 seconds (2.00 M allocations: 395.141 MiB, 5.13% gc time)
-  0.521499 seconds (972.44 k allocations: 428.589 MiB)
-  0.234661 seconds (437.38 k allocations: 83.674 MiB)
+  1.732731 seconds (2.00 M allocations: 395.140 MiB, 61.85% gc time)
+  0.989233 seconds (2.00 M allocations: 395.141 MiB)
+  0.554683 seconds (972.44 k allocations: 428.588 MiB)
+  0.201855 seconds (437.38 k allocations: 83.674 MiB)
 KahanLi8 max energy error:			1.0363976343796821e-10	in	2000002	steps.
 SofSpa10 max energy error:			9.750067420100095e-11	in	2000002	steps.
 Vern9 max energy error:				1.2643397440115223e-10	in	972386	steps.
-DPRKN12 max energy error:			4.675371201301459e-11	in	437331	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_12_1.png" alt/></p><p>As we see from the above comparisons, the <code>StaticArray</code> versions are significantly faster and use less memory. The speedup provided for the out of place version is more proeminent at larger values for <code>tmax</code>. We can see again that if the simulation time is increased, the energy error of the symplectic methods is less noticeable compared to the rest of the methods. In comparison with the Henon-Heiles case, we see that the symplectic methods are more competitive with <code>DPRKN12</code>.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
-SciMLBenchmarks.weave_file(&quot;benchmarks/DynamicalODE&quot;,&quot;Quadrupole_boson_Hamiltonian_energy_conservation_benchmark.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.9.2
-Commit e4ee485e909 (2023-07-05 09:39 UTC)
+DPRKN12 max energy error:			2.3604229681950528e-11	in	437330	steps.</code></pre><p><img src="../figures/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark_12_1.png" alt/></p><p>As we see from the above comparisons, the <code>StaticArray</code> versions are significantly faster and use less memory. The speedup provided for the out of place version is more proeminent at larger values for <code>tmax</code>. We can see again that if the simulation time is increased, the energy error of the symplectic methods is less noticeable compared to the rest of the methods. In comparison with the Henon-Heiles case, we see that the symplectic methods are more competitive with <code>DPRKN12</code>.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+SciMLBenchmarks.weave_file(&quot;benchmarks/DynamicalODE&quot;,&quot;Quadrupole_boson_Hamiltonian_energy_conservation_benchmark.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.5
+Commit 6f3fdf7b362 (2024-08-27 14:19 UTC)
+Build Info:
+  Official https://julialang.org/ release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
   CPU: 128 × AMD EPYC 7502 32-Core Processor
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-14.0.6 (ORCJIT, znver2)
-  Threads: 128 on 128 virtual cores
+  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-  JULIA_IMAGE_THREADS = 1
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DynamicalODE/Project.toml`
-  [459566f4] DiffEqCallbacks v2.27.0
-  [055956cb] DiffEqPhysics v3.11.0
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DynamicalODE/Project.toml`
+⌅ [459566f4] DiffEqCallbacks v2.36.1
+⌃ [055956cb] DiffEqPhysics v3.12.0
   [b305315f] Elliptic v1.0.1
-  [1dea7af3] OrdinaryDiffEq v6.53.4
-  [65888b18] ParameterizedFunctions v5.15.0
-  [91a5bcdd] Plots v1.38.17
-  [d330b81b] PyPlot v2.11.1
+⌃ [1dea7af3] OrdinaryDiffEq v6.66.0
+⌃ [65888b18] ParameterizedFunctions v5.16.0
+⌃ [91a5bcdd] Plots v1.40.4
+⌃ [d330b81b] PyPlot v2.11.2
   [31c91b34] SciMLBenchmarks v0.1.3
-  [90137ffa] StaticArrays v1.6.2
-  [92b13dbe] TaylorIntegration v0.14.2
+⌃ [90137ffa] StaticArrays v1.9.5
+⌃ [92b13dbe] TaylorIntegration v0.15.2
   [37e2e46d] LinearAlgebra
   [de0858da] Printf
-  [10745b16] Statistics v1.9.0</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DynamicalODE/Manifest.toml`
-  [47edcb42] ADTypes v0.1.6
-  [c3fe647b] AbstractAlgebra v0.31.0
-  [1520ce14] AbstractTrees v0.4.4
-  [79e6a3ab] Adapt v3.6.2
-  [ec485272] ArnoldiMethod v0.2.0
-  [4fba245c] ArrayInterface v7.4.11
-  [30b0a656] ArrayInterfaceCore v0.1.29
-  [6e4b80f9] BenchmarkTools v1.3.2
-  [e2ed5e7c] Bijections v0.1.4
-  [d1d4a3ce] BitFlags v0.1.7
-  [62783981] BitTwiddlingConvenienceFunctions v0.1.5
-  [2a0fbf3d] CPUSummary v0.2.3
-  [00ebfdb7] CSTParser v3.3.6
+  [10745b16] Statistics v1.10.0
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DynamicalODE/Manifest.toml`
+⌅ [47edcb42] ADTypes v0.2.7
+⌅ [c3fe647b] AbstractAlgebra v0.34.7
+  [1520ce14] AbstractTrees v0.4.5
+⌃ [7d9f7c33] Accessors v0.1.36
+⌅ [79e6a3ab] Adapt v3.7.2
+  [66dad0bd] AliasTables v1.1.3
+  [ec485272] ArnoldiMethod v0.4.0
+⌃ [4fba245c] ArrayInterface v7.7.1
+⌃ [4c555306] ArrayLayouts v1.9.4
+⌃ [e2ed5e7c] Bijections v0.1.6
+⌃ [d1d4a3ce] BitFlags v0.1.8
+⌃ [62783981] BitTwiddlingConvenienceFunctions v0.1.5
+⌃ [2a0fbf3d] CPUSummary v0.2.5
+  [00ebfdb7] CSTParser v3.4.3
   [49dc2e85] Calculus v0.5.1
-  [d360d2e6] ChainRulesCore v1.16.0
-  [fb6a15b2] CloseOpenIntervals v0.1.12
-  [944b1d66] CodecZlib v0.7.2
-  [35d6a980] ColorSchemes v3.22.0
-  [3da002f7] ColorTypes v0.11.4
+⌃ [d360d2e6] ChainRulesCore v1.24.0
+⌃ [fb6a15b2] CloseOpenIntervals v0.1.12
+⌃ [944b1d66] CodecZlib v0.7.4
+⌃ [35d6a980] ColorSchemes v3.25.0
+  [3da002f7] ColorTypes v0.11.5
   [c3611d14] ColorVectorSpace v0.10.0
-  [5ae59095] Colors v0.12.10
+  [5ae59095] Colors v0.12.11
   [861a8166] Combinatorics v1.0.2
-  [a80b9123] CommonMark v0.8.12
+⌃ [a80b9123] CommonMark v0.8.12
   [38540f10] CommonSolve v0.2.4
-  [bbf7d656] CommonSubexpressions v0.3.0
-  [34da2185] Compat v4.8.0
-  [b152e2b5] CompositeTypes v0.1.3
-  [f0e56b4a] ConcurrentUtilities v2.2.1
-  [8f4d0f93] Conda v1.9.1
-  [187b0558] ConstructionBase v1.5.3
-  [d38c429a] Contour v0.6.2
+⌃ [bbf7d656] CommonSubexpressions v0.3.0
+⌃ [34da2185] Compat v4.15.0
+  [b152e2b5] CompositeTypes v0.1.4
+  [a33af91c] CompositionsBase v0.1.2
+  [2569d6c7] ConcreteStructs v0.2.3
+⌃ [f0e56b4a] ConcurrentUtilities v2.4.1
+⌃ [8f4d0f93] Conda v1.10.0
+⌅ [187b0558] ConstructionBase v1.5.5
+  [d38c429a] Contour v0.6.3
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.1.1
-  [9a962f9c] DataAPI v1.15.0
-  [864edb3b] DataStructures v0.18.14
+  [9a962f9c] DataAPI v1.16.0
+  [864edb3b] DataStructures v0.18.20
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.127.0
-  [459566f4] DiffEqCallbacks v2.27.0
-  [055956cb] DiffEqPhysics v3.11.0
+⌃ [2b5f629d] DiffEqBase v6.145.2
+⌅ [459566f4] DiffEqCallbacks v2.36.1
+⌃ [055956cb] DiffEqPhysics v3.12.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
-  [b4f34e82] Distances v0.10.9
-  [31c24e10] Distributions v0.25.98
+  [b4f34e82] Distances v0.10.11
+⌃ [31c24e10] Distributions v0.25.109
   [ffbed154] DocStringExtensions v0.9.3
-  [5b8099bc] DomainSets v0.6.7
+⌅ [5b8099bc] DomainSets v0.6.7
   [fa6b7ba4] DualNumbers v0.6.8
-  [7c1d4256] DynamicPolynomials v0.5.2
+⌅ [7c1d4256] DynamicPolynomials v0.5.7
   [b305315f] Elliptic v1.0.1
   [4e289a0a] EnumX v1.0.4
-  [6912e4f1] Espresso v0.6.1
-  [460bff9d] ExceptionUnwrapping v0.1.9
-  [d4d017d3] ExponentialUtilities v1.24.0
+⌅ [f151be2c] EnzymeCore v0.6.6
+⌃ [6912e4f1] Espresso v0.6.1
+  [460bff9d] ExceptionUnwrapping v0.1.10
+  [d4d017d3] ExponentialUtilities v1.26.1
   [e2ba6199] ExprTools v0.1.10
-  [c87230d0] FFMPEG v0.4.1
-  [7034ab61] FastBroadcast v0.2.6
+⌃ [c87230d0] FFMPEG v0.4.1
+⌅ [7034ab61] FastBroadcast v0.2.8
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v2.0.0
-  [1a297f60] FillArrays v1.5.0
-  [6a86dc24] FiniteDiff v2.21.1
-  [53c48c17] FixedPointNumbers v0.8.4
-  [59287772] Formatting v0.4.2
-  [f6369f11] ForwardDiff v0.10.35
+  [29a986be] FastLapackInterface v2.0.4
+⌃ [1a297f60] FillArrays v1.11.0
+⌃ [6a86dc24] FiniteDiff v2.23.1
+  [53c48c17] FixedPointNumbers v0.8.5
+  [1fa38f19] Format v1.3.7
+  [f6369f11] ForwardDiff v0.10.36
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
-  [46192b85] GPUArraysCore v0.1.5
-  [28b8d3ca] GR v0.72.9
-  [c145ed77] GenericSchur v0.5.3
-  [d7ba0133] Git v1.3.0
+⌃ [d9f16b24] Functors v0.4.11
+⌅ [46192b85] GPUArraysCore v0.1.5
+⌃ [28b8d3ca] GR v0.73.5
+  [c145ed77] GenericSchur v0.5.4
+  [d7ba0133] Git v1.3.1
   [c27321d9] Glob v1.3.1
-  [86223c79] Graphs v1.8.0
+⌃ [86223c79] Graphs v1.11.1
   [42e2da0e] Grisu v1.0.2
-  [0b43b601] Groebner v0.4.2
-  [d5909c97] GroupsCore v0.4.0
-  [cd3eb016] HTTP v1.9.14
-  [eafb193a] Highlights v0.5.2
-  [3e5b6fbb] HostCPUFeatures v0.1.15
-  [34004b35] HypergeometricFunctions v0.3.23
-  [7073ff75] IJulia v1.24.2
+⌅ [0b43b601] Groebner v0.5.1
+⌅ [d5909c97] GroupsCore v0.4.2
+  [cd3eb016] HTTP v1.10.8
+  [eafb193a] Highlights v0.5.3
+⌃ [3e5b6fbb] HostCPUFeatures v0.1.16
+⌃ [34004b35] HypergeometricFunctions v0.3.23
+⌃ [7073ff75] IJulia v1.24.2
   [615f187c] IfElse v0.1.1
-  [d25df0c9] Inflate v0.1.3
+  [d25df0c9] Inflate v0.1.5
   [18e54dd8] IntegerMathUtils v0.1.2
-  [8197267c] IntervalSets v0.7.7
+  [8197267c] IntervalSets v0.7.10
+⌃ [3587e190] InverseFunctions v0.1.14
   [92d709cd] IrrationalConstants v0.2.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [1019f520] JLFzf v0.1.5
-  [692b3bcd] JLLWrappers v1.4.1
+⌃ [1019f520] JLFzf v0.1.7
+⌃ [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
-  [98e50ef6] JuliaFormatter v1.0.34
-  [ccbc3e58] JumpProcesses v9.7.2
-  [ef3ab10e] KLU v0.4.0
-  [ba0b0d4f] Krylov v0.9.2
-  [b964fa9f] LaTeXStrings v1.3.0
-  [2ee39098] LabelledArrays v1.14.0
-  [984bce1d] LambertW v0.4.6
-⌅ [23fbe1c1] Latexify v0.15.21
-  [10f19ff3] LayoutPointers v0.1.14
-  [50d2b5c4] Lazy v0.15.1
-  [1d6d02ad] LeftChildRightSiblingTrees v0.2.0
-  [d3d80556] LineSearches v7.2.0
-  [7ed4a6bd] LinearSolve v2.4.2
-  [2ab3a3ac] LogExpFunctions v0.3.24
-  [e6f89c97] LoggingExtras v1.0.0
-  [bdcacae8] LoopVectorization v0.12.165
+⌃ [98e50ef6] JuliaFormatter v1.0.56
+⌃ [ccbc3e58] JumpProcesses v9.10.1
+⌅ [ef3ab10e] KLU v0.4.1
+⌃ [ba0b0d4f] Krylov v0.9.6
+⌃ [b964fa9f] LaTeXStrings v1.3.1
+⌃ [2ee39098] LabelledArrays v1.15.1
+⌅ [984bce1d] LambertW v0.4.6
+⌃ [23fbe1c1] Latexify v0.16.3
+  [73f95e8e] LatticeRules v0.0.1
+⌃ [10f19ff3] LayoutPointers v0.1.15
+⌅ [5078a376] LazyArrays v1.10.0
+⌃ [d3d80556] LineSearches v7.2.0
+⌃ [7ed4a6bd] LinearSolve v2.22.1
+  [2ab3a3ac] LogExpFunctions v0.3.28
+  [e6f89c97] LoggingExtras v1.0.3
+⌃ [bdcacae8] LoopVectorization v0.12.170
   [d8e11817] MLStyle v0.4.17
-  [1914dd2f] MacroTools v0.5.10
+  [1914dd2f] MacroTools v0.5.13
   [d125e4d3] ManualMemory v0.1.8
-  [739be429] MbedTLS v1.1.7
+⌅ [a3b82374] MatrixFactorizations v2.2.0
+⌃ [bb5d69b7] MaybeInplace v0.1.3
+  [739be429] MbedTLS v1.1.9
   [442fdcdd] Measures v0.3.2
-  [e1d29d7a] Missings v1.1.0
-  [961ee093] ModelingToolkit v8.64.0
+  [e1d29d7a] Missings v1.2.0
+⌅ [961ee093] ModelingToolkit v8.73.2
   [46d2c3a1] MuladdMacro v0.2.4
-  [102ac46a] MultivariatePolynomials v0.5.1
-  [ffc61752] Mustache v1.0.17
-  [d8a4904e] MutableArithmetics v1.3.0
+⌃ [102ac46a] MultivariatePolynomials v0.5.6
+⌃ [ffc61752] Mustache v1.0.19
+⌃ [d8a4904e] MutableArithmetics v1.4.5
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
-  [8913a72c] NonlinearSolve v1.9.0
-  [6fe1bfb0] OffsetArrays v1.12.10
-  [4d8831e6] OpenSSL v1.4.1
-  [bac558e1] OrderedCollections v1.6.2
-  [1dea7af3] OrdinaryDiffEq v6.53.4
-  [90014a1f] PDMats v0.11.17
-  [65ce6f38] PackageExtensionCompat v1.0.0
-  [65888b18] ParameterizedFunctions v5.15.0
+⌃ [8913a72c] NonlinearSolve v3.1.0
+⌃ [6fe1bfb0] OffsetArrays v1.14.0
+  [4d8831e6] OpenSSL v1.4.3
+  [bac558e1] OrderedCollections v1.6.3
+⌃ [1dea7af3] OrdinaryDiffEq v6.66.0
+  [90014a1f] PDMats v0.11.31
+  [65ce6f38] PackageExtensionCompat v1.0.2
+⌃ [65888b18] ParameterizedFunctions v5.16.0
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.7.2
+  [69de0a69] Parsers v2.8.1
   [b98c9c47] Pipe v1.3.0
-  [32113eaa] PkgBenchmark v0.2.12
-  [ccf2f8ad] PlotThemes v3.1.0
-  [995b91a9] PlotUtils v1.3.5
-  [91a5bcdd] Plots v1.38.17
+  [ccf2f8ad] PlotThemes v3.2.0
+⌃ [995b91a9] PlotUtils v1.4.1
+⌃ [91a5bcdd] Plots v1.40.4
   [e409e4f3] PoissonRandom v0.4.4
-  [f517fe37] Polyester v0.7.5
-  [1d0040c9] PolyesterWeave v0.2.1
-  [d236fae5] PreallocationTools v0.4.12
-  [aea7be01] PrecompileTools v1.1.2
-  [21216c6a] Preferences v1.4.0
-  [27ebfcd6] Primes v0.5.4
-  [33c8b6b6] ProgressLogging v0.1.4
-  [438e738f] PyCall v1.96.1
-  [d330b81b] PyPlot v2.11.1
-  [1fd47b50] QuadGK v2.8.2
-  [fb686558] RandomExtensions v0.4.3
-  [e6cf234a] RandomNumbers v1.5.3
+⌃ [f517fe37] Polyester v0.7.14
+⌃ [1d0040c9] PolyesterWeave v0.2.1
+⌃ [d236fae5] PreallocationTools v0.4.22
+  [aea7be01] PrecompileTools v1.2.1
+  [21216c6a] Preferences v1.4.3
+⌃ [08abe8d2] PrettyTables v2.3.2
+  [27ebfcd6] Primes v0.5.6
+⌃ [43287f4e] PtrArrays v1.2.0
+  [438e738f] PyCall v1.96.4
+⌃ [d330b81b] PyPlot v2.11.2
+⌃ [1fd47b50] QuadGK v2.9.4
+  [8a4e6c94] QuasiMonteCarlo v0.3.3
+  [fb686558] RandomExtensions v0.4.4
+⌃ [e6cf234a] RandomNumbers v1.5.3
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v2.38.7
-  [f2c3362d] RecursiveFactorization v0.2.18
+⌅ [731186ca] RecursiveArrayTools v2.38.10
+  [f2c3362d] RecursiveFactorization v0.2.23
   [189a3867] Reexport v1.2.2
-  [05181044] RelocatableFolders v1.0.0
+  [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.0
-  [79098fc4] Rmath v0.7.1
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.11
-  [fdea26ae] SIMD v3.4.5
+⌅ [79098fc4] Rmath v0.7.1
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.13
+⌃ [fdea26ae] SIMD v3.5.0
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.39
-  [0bca4576] SciMLBase v1.94.0
+⌃ [476501e8] SLEEFPirates v0.6.42
+⌃ [0bca4576] SciMLBase v2.10.0
   [31c91b34] SciMLBenchmarks v0.1.3
-  [e9a6253c] SciMLNLSolve v0.1.8
-  [c0aeaf25] SciMLOperators v0.3.6
-  [6c6a2e73] Scratch v1.2.0
+⌃ [c0aeaf25] SciMLOperators v0.3.8
+  [6c6a2e73] Scratch v1.2.1
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
-  [777ac1f9] SimpleBufferStream v1.1.0
-  [727e6d20] SimpleNonlinearSolve v0.1.19
+⌃ [777ac1f9] SimpleBufferStream v1.1.0
+⌃ [727e6d20] SimpleNonlinearSolve v1.4.0
   [699a6c99] SimpleTraits v0.9.4
   [ce78b400] SimpleUnPack v1.1.0
-  [66db9d55] SnoopPrecompile v1.0.3
+  [ed01d8cd] Sobol v1.5.0
   [b85f4697] SoftGlobalScope v1.1.0
-  [a2af1166] SortingAlgorithms v1.1.1
-  [47a9eef4] SparseDiffTools v2.4.1
+  [a2af1166] SortingAlgorithms v1.2.1
+⌃ [47a9eef4] SparseDiffTools v2.18.0
   [e56a9233] Sparspak v0.3.9
-  [276daf66] SpecialFunctions v2.3.0
-  [aedffcd0] Static v0.8.8
-  [0d7ed370] StaticArrayInterface v1.4.0
-  [90137ffa] StaticArrays v1.6.2
-  [1e83bf80] StaticArraysCore v1.4.2
-  [82ae8749] StatsAPI v1.6.0
-  [2913bbd2] StatsBase v0.34.0
-  [4c63d2b9] StatsFuns v1.3.0
-  [7792a7ef] StrideArraysCore v0.4.17
+  [276daf66] SpecialFunctions v2.4.0
+⌅ [aedffcd0] Static v0.8.10
+⌃ [0d7ed370] StaticArrayInterface v1.5.0
+⌃ [90137ffa] StaticArrays v1.9.5
+  [1e83bf80] StaticArraysCore v1.4.3
+  [82ae8749] StatsAPI v1.7.0
+  [2913bbd2] StatsBase v0.34.3
+⌃ [4c63d2b9] StatsFuns v1.3.1
+⌃ [7792a7ef] StrideArraysCore v0.5.6
   [69024149] StringEncodings v0.3.7
-  [2efcf032] SymbolicIndexingInterface v0.2.2
-  [d1185830] SymbolicUtils v1.2.0
-  [0c5d862f] Symbolics v5.5.1
+⌅ [892a3eda] StringManipulation v0.3.4
+⌅ [2efcf032] SymbolicIndexingInterface v0.2.2
+⌅ [d1185830] SymbolicUtils v1.4.0
+⌅ [0c5d862f] Symbolics v5.11.0
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.10.1
-  [92b13dbe] TaylorIntegration v0.14.2
-  [6aa5eb33] TaylorSeries v0.15.2
+⌃ [bd369af6] Tables v1.11.1
+⌃ [92b13dbe] TaylorIntegration v0.15.2
+⌅ [6aa5eb33] TaylorSeries v0.17.7
   [62fd8b95] TensorCore v0.1.1
-  [5d786b92] TerminalLoggers v0.1.7
   [8290d209] ThreadingUtilities v0.5.2
-  [a759f4b9] TimerOutputs v0.5.23
-  [0796e94c] Tokenize v0.5.25
-  [3bb67fe8] TranscodingStreams v0.9.13
-  [a2a6695c] TreeViews v0.3.0
-  [d5829a12] TriangularSolve v0.1.19
-  [410a4b4d] Tricks v0.1.7
+⌃ [a759f4b9] TimerOutputs v0.5.24
+  [0796e94c] Tokenize v0.5.29
+⌅ [3bb67fe8] TranscodingStreams v0.10.9
+⌃ [d5829a12] TriangularSolve v0.2.0
+⌃ [410a4b4d] Tricks v0.1.8
   [781d530d] TruncatedStacktraces v1.4.0
-  [5c2747f8] URIs v1.4.2
+  [5c2747f8] URIs v1.5.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.16.0
-  [45397f5d] UnitfulLatexify v1.6.3
-  [a7c27f48] Unityper v0.1.5
+⌃ [1986cc42] Unitful v1.20.0
+⌃ [45397f5d] UnitfulLatexify v1.6.3
+  [a7c27f48] Unityper v0.1.6
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.64
+⌃ [3d5dd08c] VectorizationBase v0.21.68
   [81def892] VersionParsing v1.3.0
   [19fa3120] VertexSafeGraphs v0.2.0
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.9
-  [c2297ded] ZMQ v1.2.2
-  [700de1a5] ZygoteRules v0.2.3
-  [6e34b625] Bzip2_jll v1.0.8+0
-  [83423d85] Cairo_jll v1.16.1+1
-  [2e619515] Expat_jll v2.5.0+0
-⌃ [b22a6f82] FFMPEG_jll v4.4.2+2
-  [a3f928ae] Fontconfig_jll v2.13.93+0
-  [d7e528f0] FreeType2_jll v2.13.1+0
-  [559328eb] FriBidi_jll v1.0.10+0
-  [0656b61e] GLFW_jll v3.3.8+0
-  [d2c73de3] GR_jll v0.72.9+0
+⌃ [ddb6d928] YAML v0.4.11
+⌃ [c2297ded] ZMQ v1.2.6
+⌃ [6e34b625] Bzip2_jll v1.0.8+1
+⌃ [83423d85] Cairo_jll v1.18.0+2
+  [2702e6a9] EpollShim_jll v0.0.20230411+0
+  [2e619515] Expat_jll v2.6.2+0
+⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
+  [a3f928ae] Fontconfig_jll v2.13.96+0
+  [d7e528f0] FreeType2_jll v2.13.2+0
+  [559328eb] FriBidi_jll v1.0.14+0
+⌃ [0656b61e] GLFW_jll v3.3.9+0
+⌅ [d2c73de3] GR_jll v0.73.5+0
   [78b55507] Gettext_jll v0.21.0+0
-  [f8c6e375] Git_jll v2.36.1+2
-  [7746bdde] Glib_jll v2.74.0+2
+⌃ [f8c6e375] Git_jll v2.44.0+2
+⌃ [7746bdde] Glib_jll v2.80.2+0
   [3b182d85] Graphite2_jll v1.3.14+0
-  [2e76f6c2] HarfBuzz_jll v2.8.1+1
-  [aacddb02] JpegTurbo_jll v2.1.91+0
-  [c1c5ebd0] LAME_jll v3.100.1+0
-  [88015f11] LERC_jll v3.0.0+1
-  [1d63c593] LLVMOpenMP_jll v15.0.4+0
-  [dd4b983a] LZO_jll v2.10.1+0
+⌅ [2e76f6c2] HarfBuzz_jll v2.8.1+1
+⌃ [1d5cc7b8] IntelOpenMP_jll v2024.1.0+0
+⌃ [aacddb02] JpegTurbo_jll v3.0.3+0
+  [c1c5ebd0] LAME_jll v3.100.2+0
+⌅ [88015f11] LERC_jll v3.0.0+1
+⌃ [1d63c593] LLVMOpenMP_jll v15.0.7+0
+⌃ [dd4b983a] LZO_jll v2.10.2+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
-  [d4300ac3] Libgcrypt_jll v1.8.7+0
+  [d4300ac3] Libgcrypt_jll v1.8.11+0
   [7e76a0d4] Libglvnd_jll v1.6.0+0
-  [7add5ba3] Libgpg_error_jll v1.42.0+0
-  [94ce4f54] Libiconv_jll v1.16.1+2
-  [4b2f31a3] Libmount_jll v2.35.0+0
-  [89763e89] Libtiff_jll v4.5.1+1
-  [38a345b3] Libuuid_jll v2.36.0+0
+  [7add5ba3] Libgpg_error_jll v1.49.0+0
+  [94ce4f54] Libiconv_jll v1.17.0+0
+  [4b2f31a3] Libmount_jll v2.40.1+0
+⌅ [89763e89] Libtiff_jll v4.5.1+1
+  [38a345b3] Libuuid_jll v2.40.1+0
+⌃ [856f044c] MKL_jll v2024.1.0+0
   [e7412a2a] Ogg_jll v1.3.5+1
-⌅ [458c3c95] OpenSSL_jll v1.1.21+0
+⌃ [458c3c95] OpenSSL_jll v3.0.14+0
   [efe28fd5] OpenSpecFun_jll v0.5.5+0
-  [91d4177d] Opus_jll v1.3.2+0
-  [30392449] Pixman_jll v0.42.2+0
-  [c0090381] Qt6Base_jll v6.4.2+3
-  [f50d1b31] Rmath_jll v0.4.0+0
-  [a2964d1f] Wayland_jll v1.21.0+0
-  [2381bf8a] Wayland_protocols_jll v1.25.0+0
-  [02c8fc9c] XML2_jll v2.10.3+0
-  [aed1982a] XSLT_jll v1.1.34+0
-  [ffd25f8a] XZ_jll v5.4.3+1
+⌃ [91d4177d] Opus_jll v1.3.2+0
+  [30392449] Pixman_jll v0.43.4+0
+⌅ [c0090381] Qt6Base_jll v6.5.3+1
+⌅ [f50d1b31] Rmath_jll v0.4.2+0
+  [a44049a8] Vulkan_Loader_jll v1.3.243+0
+  [a2964d1f] Wayland_jll v1.21.0+1
+  [2381bf8a] Wayland_protocols_jll v1.31.0+0
+⌃ [02c8fc9c] XML2_jll v2.12.7+0
+⌃ [aed1982a] XSLT_jll v1.1.34+0
+  [ffd25f8a] XZ_jll v5.4.6+0
+  [f67eecfb] Xorg_libICE_jll v1.1.1+0
+  [c834827a] Xorg_libSM_jll v1.2.4+0
   [4f6342f7] Xorg_libX11_jll v1.8.6+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
   [935fb764] Xorg_libXcursor_jll v1.2.0+4
   [a3789734] Xorg_libXdmcp_jll v1.1.4+0
-  [1082639a] Xorg_libXext_jll v1.3.4+4
+  [1082639a] Xorg_libXext_jll v1.3.6+0
   [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
   [a51aa0fd] Xorg_libXi_jll v1.7.10+4
   [d1454406] Xorg_libXinerama_jll v1.1.4+4
   [ec84b674] Xorg_libXrandr_jll v1.5.2+4
-  [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
+  [ea2f1a96] Xorg_libXrender_jll v0.9.11+0
   [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
-  [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
+⌃ [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
   [cc61e674] Xorg_libxkbfile_jll v1.1.2+0
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.4+0
   [12413925] Xorg_xcb_util_image_jll v0.4.0+1
   [2def613f] Xorg_xcb_util_jll v0.4.0+1
   [975044d2] Xorg_xcb_util_keysyms_jll v0.4.0+1
@@ -561,18 +577,24 @@ Environment:
   [35661453] Xorg_xkbcomp_jll v1.4.6+0
   [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
   [c5fb5394] Xorg_xtrans_jll v1.5.0+0
-  [8f1865be] ZeroMQ_jll v4.3.4+0
-  [3161d3a3] Zstd_jll v1.5.5+0
-⌅ [214eeab7] fzf_jll v0.29.0+0
-  [a4ae2306] libaom_jll v3.4.0+0
-  [0ac62f75] libass_jll v0.15.1+0
-  [f638f0a6] libfdk_aac_jll v2.0.2+0
-  [b53b4c65] libpng_jll v1.6.38+0
-  [a9144af2] libsodium_jll v1.0.20+0
-  [f27f6e37] libvorbis_jll v1.3.7+1
-  [1270edf5] x264_jll v2021.5.5+0
-  [dfaa095f] x265_jll v3.5.0+0
-  [d8fb68d0] xkbcommon_jll v1.4.1+0
+⌃ [8f1865be] ZeroMQ_jll v4.3.5+0
+⌃ [3161d3a3] Zstd_jll v1.5.6+0
+  [35ca27e7] eudev_jll v3.2.9+0
+⌅ [214eeab7] fzf_jll v0.43.0+0
+  [1a1c6b14] gperf_jll v3.1.1+0
+  [a4ae2306] libaom_jll v3.9.0+0
+⌃ [0ac62f75] libass_jll v0.15.1+0
+  [2db6ffa8] libevdev_jll v1.11.0+0
+⌃ [f638f0a6] libfdk_aac_jll v2.0.2+0
+  [36db933b] libinput_jll v1.18.0+0
+⌃ [b53b4c65] libpng_jll v1.6.43+1
+⌃ [a9144af2] libsodium_jll v1.0.20+0
+⌃ [f27f6e37] libvorbis_jll v1.3.7+1
+  [009596ad] mtdev_jll v1.1.6+0
+  [1317d2d5] oneTBB_jll v2021.12.0+0
+⌅ [1270edf5] x264_jll v2021.5.5+0
+⌅ [dfaa095f] x265_jll v3.5.0+0
+  [d8fb68d0] xkbcommon_jll v1.4.1+1
   [0dad84c5] ArgTools v1.1.1
   [56f22d72] Artifacts
   [2a0f44e3] Base64
@@ -582,7 +604,8 @@ Environment:
   [7b1f6079] FileWatching
   [9fa8497b] Future
   [b77e0a4c] InteractiveUtils
-  [b27032c2] LibCURL v0.6.3
+  [4af54fe1] LazyArtifacts
+  [b27032c2] LibCURL v0.6.4
   [76f85450] LibGit2
   [8f399da3] Libdl
   [37e2e46d] LinearAlgebra
@@ -590,34 +613,35 @@ Environment:
   [d6f4376e] Markdown
   [a63ad114] Mmap
   [ca575930] NetworkOptions v1.2.0
-  [44cfe95a] Pkg v1.9.0
+  [44cfe95a] Pkg v1.10.0
   [de0858da] Printf
-  [9abbd945] Profile
   [3fa0cd96] REPL
   [9a3f8284] Random
   [ea8e919c] SHA v0.7.0
   [9e88b42a] Serialization
   [1a1011a3] SharedArrays
   [6462fe0b] Sockets
-  [2f01184e] SparseArrays
-  [10745b16] Statistics v1.9.0
+  [2f01184e] SparseArrays v1.10.0
+  [10745b16] Statistics v1.10.0
   [4607b0f0] SuiteSparse
   [fa267f1f] TOML v1.0.3
   [a4e569a6] Tar v1.10.0
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v1.0.2+0
-  [deac9b47] LibCURL_jll v7.84.0+0
-  [29816b5a] LibSSH2_jll v1.10.2+0
-  [c8ffd9c3] MbedTLS_jll v2.28.2+0
-  [14a3606d] MozillaCACerts_jll v2022.10.11
-  [4536629a] OpenBLAS_jll v0.3.21+4
-  [05823500] OpenLibm_jll v0.8.1+0
-  [efcefdf7] PCRE2_jll v10.42.0+0
-  [bea87d4a] SuiteSparse_jll v5.10.1+6
-  [83775a58] Zlib_jll v1.2.13+0
-  [8e850b90] libblastrampoline_jll v5.8.0+0
-  [8e850ede] nghttp2_jll v1.48.0+0
-  [3f19e933] p7zip_jll v17.4.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Henon-Heiles_energy_conservation_benchmark/">« Hénon-Heiles Energy Conservation</a><a class="docs-footer-nextpage" href="../single_pendulums/">Single Pedulum Comparison »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Wednesday 16 October 2024 22:32">Wednesday 16 October 2024</span>. Using Julia version 1.11.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
+  [deac9b47] LibCURL_jll v8.4.0+0
+  [e37daf67] LibGit2_jll v1.6.4+0
+  [29816b5a] LibSSH2_jll v1.11.0+1
+  [c8ffd9c3] MbedTLS_jll v2.28.2+1
+  [14a3606d] MozillaCACerts_jll v2023.1.10
+  [4536629a] OpenBLAS_jll v0.3.23+4
+  [05823500] OpenLibm_jll v0.8.1+2
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.2.1+1
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.8.0+1
+  [8e850ede] nghttp2_jll v1.52.0+1
+  [3f19e933] p7zip_jll v17.4.0+2
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Henon-Heiles_energy_conservation_benchmark/">« Hénon-Heiles Energy Conservation</a><a class="docs-footer-nextpage" href="../single_pendulums/">Single Pedulum Comparison »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 19 October 2024 22:48">Saturday 19 October 2024</span>. Using Julia version 1.11.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
