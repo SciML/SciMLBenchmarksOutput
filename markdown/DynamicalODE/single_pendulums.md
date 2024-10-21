@@ -194,7 +194,7 @@ singlependulum(k, integrator, Δt, t0=-20.0, t1=20.0)
 ```
 
 ```
-VelocityVerlet(;):         0.000239 seconds (2.89 k allocations: 205.438 Ki
+VelocityVerlet(;):         0.000377 seconds (2.89 k allocations: 205.438 Ki
 B)
 ```
 
@@ -236,7 +236,7 @@ plotsolenergy(H, integrator, Δt, sol)
 ```
 
 ```
-0.000904 seconds (13.70 k allocations: 1.295 MiB)
+0.001242 seconds (13.70 k allocations: 1.295 MiB)
 ```
 
 
@@ -275,39 +275,39 @@ end
 ```
 
 ```
-SymplecticEuler(;):        0.000466 seconds (7.09 k allocations: 505.250 Ki
+SymplecticEuler(;):        0.000489 seconds (7.09 k allocations: 505.250 Ki
 B)
-VelocityVerlet(;):         0.000446 seconds (7.09 k allocations: 505.438 Ki
+VelocityVerlet(;):         0.000451 seconds (7.09 k allocations: 505.438 Ki
 B)
-VerletLeapfrog(;):         0.000600 seconds (7.09 k allocations: 505.500 Ki
+VerletLeapfrog(;):         0.000597 seconds (7.09 k allocations: 505.500 Ki
 B)
-PseudoVerletLeapfrog(;):   0.000579 seconds (7.09 k allocations: 505.500 Ki
+PseudoVerletLeapfrog(;):   0.000616 seconds (7.09 k allocations: 505.500 Ki
 B)
-McAte2(;):                 0.000578 seconds (7.09 k allocations: 505.500 Ki
+McAte2(;):                 0.000593 seconds (7.09 k allocations: 505.500 Ki
 B)
-Ruth3(;):                  0.000627 seconds (7.09 k allocations: 505.672 Ki
+Ruth3(;):                  0.000656 seconds (7.09 k allocations: 505.672 Ki
 B)
-McAte3(;):                 0.000633 seconds (7.09 k allocations: 505.672 Ki
+McAte3(;):                 0.000817 seconds (7.09 k allocations: 505.672 Ki
 B)
-CandyRoz4(;):              0.000675 seconds (7.09 k allocations: 505.766 Ki
+CandyRoz4(;):              0.000696 seconds (7.09 k allocations: 505.766 Ki
 B)
-McAte4(;):                 0.000654 seconds (7.09 k allocations: 505.766 Ki
+McAte4(;):                 0.000689 seconds (7.09 k allocations: 505.766 Ki
 B)
-CalvoSanz4(;):             0.000892 seconds (7.09 k allocations: 506.000 Ki
+CalvoSanz4(;):             0.000695 seconds (7.09 k allocations: 506.000 Ki
 B)
-McAte42(;):                0.000720 seconds (7.09 k allocations: 506.000 Ki
+McAte42(;):                0.000746 seconds (7.09 k allocations: 506.000 Ki
 B)
-McAte5(;):                 0.000798 seconds (7.09 k allocations: 506.031 Ki
+McAte5(;):                 0.346911 seconds (7.09 k allocations: 506.031 Ki
+B, 99.74% gc time)
+Yoshida6(;):               0.000832 seconds (7.09 k allocations: 506.328 Ki
 B)
-Yoshida6(;):               0.000971 seconds (7.09 k allocations: 506.328 Ki
+KahanLi6(;):               0.000985 seconds (7.09 k allocations: 506.516 Ki
 B)
-KahanLi6(;):               0.000918 seconds (7.09 k allocations: 506.516 Ki
+McAte8(;):                 0.001191 seconds (7.09 k allocations: 507.344 Ki
 B)
-McAte8(;):                 0.001245 seconds (7.09 k allocations: 507.344 Ki
+KahanLi8(;):               0.001263 seconds (7.09 k allocations: 507.594 Ki
 B)
-KahanLi8(;):               0.001258 seconds (7.09 k allocations: 507.594 Ki
-B)
-SofSpa10(;):               0.002079 seconds (7.09 k allocations: 509.953 Ki
+SofSpa10(;):               0.002216 seconds (7.09 k allocations: 509.953 Ki
 B)
 ```
 
@@ -322,13 +322,13 @@ end
 ```
 
 ```
-SymplecticEuler(;):        0.003970 seconds (70.09 k allocations: 4.888 MiB
+SymplecticEuler(;):        0.004140 seconds (70.09 k allocations: 4.888 MiB
 )
-VelocityVerlet(;):         0.004599 seconds (70.09 k allocations: 4.888 MiB
+VelocityVerlet(;):         0.004930 seconds (70.09 k allocations: 4.888 MiB
 )
-VerletLeapfrog(;):         0.005267 seconds (70.09 k allocations: 4.888 MiB
+VerletLeapfrog(;):         0.005430 seconds (70.09 k allocations: 4.888 MiB
 )
-PseudoVerletLeapfrog(;):   0.008005 seconds (70.09 k allocations: 4.888 MiB
+PseudoVerletLeapfrog(;):   0.005107 seconds (70.09 k allocations: 4.888 MiB
 )
 ```
 
@@ -341,8 +341,8 @@ singlependulum(k, SymplecticEuler(), Δt)
 ```
 
 ```
-SymplecticEuler(;):        0.044525 seconds (700.09 k allocations: 48.833 M
-iB)
+SymplecticEuler(;):        0.096515 seconds (700.09 k allocations: 48.833 M
+iB, 48.06% gc time)
 ```
 
 
@@ -355,8 +355,8 @@ singlependulum(k, SymplecticEuler(), Δt)
 ```
 
 ```
-SymplecticEuler(;):        1.404225 seconds (7.00 M allocations: 488.286 Mi
-B, 62.66% gc time)
+SymplecticEuler(;):        1.430374 seconds (7.00 M allocations: 488.286 Mi
+B, 62.05% gc time)
 ```
 
 
@@ -433,12 +433,12 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [62783981] BitTwiddlingConvenienceFunctions v0.1.5
 ⌃ [2a0fbf3d] CPUSummary v0.2.5
   [00ebfdb7] CSTParser v3.4.3
-  [49dc2e85] Calculus v0.5.1
+⌃ [49dc2e85] Calculus v0.5.1
 ⌃ [d360d2e6] ChainRulesCore v1.24.0
 ⌃ [fb6a15b2] CloseOpenIntervals v0.1.12
 ⌃ [944b1d66] CodecZlib v0.7.4
 ⌃ [35d6a980] ColorSchemes v3.25.0
-  [3da002f7] ColorTypes v0.11.5
+⌅ [3da002f7] ColorTypes v0.11.5
   [c3611d14] ColorVectorSpace v0.10.0
   [5ae59095] Colors v0.12.11
   [861a8166] Combinatorics v1.0.2

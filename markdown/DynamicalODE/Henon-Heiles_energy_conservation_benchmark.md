@@ -155,17 +155,17 @@ compare(tmax=1e2)
 ```
 
 ```
-58.546840 seconds (147.79 M allocations: 8.576 GiB, 8.16% gc time, 99.98% 
+58.599117 seconds (147.81 M allocations: 8.578 GiB, 7.62% gc time, 99.98% 
 compilation time)
-  2.001076 seconds (2.86 M allocations: 187.401 MiB, 99.63% compilation tim
+  1.971581 seconds (2.86 M allocations: 187.369 MiB, 99.61% compilation tim
 e)
-  1.961803 seconds (2.47 M allocations: 159.314 MiB, 99.48% compilation tim
+  1.946768 seconds (2.47 M allocations: 159.276 MiB, 99.46% compilation tim
 e)
- 33.035525 seconds (91.62 M allocations: 5.503 GiB, 10.60% gc time, 99.99% 
+ 33.037299 seconds (91.62 M allocations: 5.503 GiB, 10.62% gc time, 99.99% 
 compilation time)
-  3.121536 seconds (2.54 M allocations: 164.655 MiB, 99.97% compilation tim
+  3.107463 seconds (2.54 M allocations: 164.625 MiB, 99.94% compilation tim
 e)
-  1.550368 seconds (2.07 M allocations: 141.264 MiB, 99.95% compilation tim
+  1.511297 seconds (2.07 M allocations: 141.281 MiB, 99.94% compilation tim
 e)
 Vern9 + ManifoldProjection max energy error:	3.3306690738754696e-16	in	1881
 	steps.
@@ -184,12 +184,12 @@ compare(tmax=1e3)
 ```
 
 ```
-0.071345 seconds (1.03 M allocations: 68.887 MiB)
-  0.071897 seconds (700.10 k allocations: 61.899 MiB)
-  0.100565 seconds (700.10 k allocations: 61.901 MiB)
-  0.033733 seconds (336.05 k allocations: 20.400 MiB)
-  0.005638 seconds (75.92 k allocations: 3.178 MiB)
-  0.000551 seconds (2.02 k allocations: 759.797 KiB)
+0.073168 seconds (1.03 M allocations: 68.887 MiB)
+  0.072437 seconds (700.10 k allocations: 61.899 MiB)
+  0.101448 seconds (700.10 k allocations: 61.901 MiB)
+  0.034935 seconds (336.05 k allocations: 20.400 MiB)
+  0.005663 seconds (75.92 k allocations: 3.178 MiB)
+  0.000563 seconds (2.02 k allocations: 759.797 KiB)
 Vern9 + ManifoldProjection max energy error:	4.191091917959966e-15	in	18659
 	steps.
 KahanLi8 max energy error:			1.815214645262131e-14	in	100002	steps.
@@ -207,12 +207,12 @@ compare(tmax=1e4)
 ```
 
 ```
-0.839558 seconds (10.25 M allocations: 684.202 MiB)
-  0.812455 seconds (7.00 M allocations: 579.841 MiB)
-  1.120870 seconds (7.00 M allocations: 579.843 MiB)
-  0.323428 seconds (3.36 M allocations: 204.601 MiB)
-  0.047611 seconds (756.45 k allocations: 33.046 MiB)
-  0.000566 seconds (2.02 k allocations: 759.797 KiB)
+0.856765 seconds (10.25 M allocations: 684.202 MiB)
+  0.826368 seconds (7.00 M allocations: 579.841 MiB)
+  1.126439 seconds (7.00 M allocations: 579.843 MiB)
+  0.331307 seconds (3.36 M allocations: 204.601 MiB)
+  0.048788 seconds (756.45 k allocations: 33.046 MiB)
+  0.000611 seconds (2.02 k allocations: 759.797 KiB)
 Vern9 + ManifoldProjection max energy error:	4.565792188770956e-14	in	18642
 9	steps.
 KahanLi8 max energy error:			3.161360062620133e-14	in	1000001	steps.
@@ -230,13 +230,13 @@ compare(tmax=5e4)
 ```
 
 ```
-9.537368 seconds (51.42 M allocations: 3.332 GiB, 54.79% gc time, 1.16% c
+9.608670 seconds (51.42 M allocations: 3.332 GiB, 54.21% gc time, 1.10% c
 ompilation time)
- 16.939749 seconds (35.00 M allocations: 2.831 GiB, 75.51% gc time)
- 30.364258 seconds (35.00 M allocations: 2.831 GiB, 81.54% gc time)
-  8.093822 seconds (16.78 M allocations: 1009.011 MiB, 79.91% gc time)
-  0.250544 seconds (3.78 M allocations: 158.555 MiB)
-  0.000572 seconds (2.02 k allocations: 759.797 KiB)
+ 16.983753 seconds (35.00 M allocations: 2.831 GiB, 75.21% gc time)
+ 30.374835 seconds (35.00 M allocations: 2.831 GiB, 81.43% gc time)
+  8.069185 seconds (16.78 M allocations: 1009.011 MiB, 79.27% gc time)
+  0.254919 seconds (3.78 M allocations: 158.555 MiB)
+  0.000601 seconds (2.02 k allocations: 759.797 KiB)
 Vern9 + ManifoldProjection max energy error:	1.0000333894311098e-13	in	9320
 89	steps.
 KahanLi8 max energy error:			1.2331802246023926e-13	in	5000001	steps.
@@ -286,12 +286,12 @@ in_vs_out(all=true, tmax=1e3)
 
 ```
 In place versions:
-  0.084471 seconds (1.03 M allocations: 68.887 MiB, 17.42% gc time)
-  0.071290 seconds (700.10 k allocations: 61.899 MiB)
-  0.100508 seconds (700.10 k allocations: 61.901 MiB)
-  0.032952 seconds (336.05 k allocations: 20.400 MiB)
-  0.005559 seconds (75.92 k allocations: 3.178 MiB)
-  0.000583 seconds (2.02 k allocations: 759.797 KiB)
+  0.086406 seconds (1.03 M allocations: 68.887 MiB, 17.03% gc time)
+  0.071712 seconds (700.10 k allocations: 61.899 MiB)
+  0.102319 seconds (700.10 k allocations: 61.901 MiB)
+  0.034977 seconds (336.05 k allocations: 20.400 MiB)
+  0.005709 seconds (75.92 k allocations: 3.178 MiB)
+  0.000608 seconds (2.02 k allocations: 759.797 KiB)
 Vern9 + ManifoldProjection max energy error:	4.191091917959966e-15	in	18659
 	steps.
 KahanLi8 max energy error:			1.815214645262131e-14	in	100002	steps.
@@ -301,13 +301,13 @@ DPRKN12 max energy error:			8.604228440844963e-16	in	3787	steps.
 TaylorMethod max energy error:			0.0	in	2	steps.
 
 Out of place versions:
-  1.210670 seconds (2.26 M allocations: 167.566 MiB, 97.91% compilation tim
+  1.182459 seconds (2.28 M allocations: 169.606 MiB, 97.95% compilation tim
 e)
-  0.629731 seconds (891.40 k allocations: 73.518 MiB, 94.38% compilation ti
+  0.617718 seconds (891.40 k allocations: 73.523 MiB, 94.37% compilation ti
 me)
-  1.231011 seconds (2.57 M allocations: 139.247 MiB, 99.74% compilation tim
+  1.230327 seconds (2.57 M allocations: 139.220 MiB, 99.69% compilation tim
 e)
-  0.755808 seconds (865.35 k allocations: 56.240 MiB, 99.78% compilation ti
+  0.739266 seconds (865.35 k allocations: 56.226 MiB, 99.78% compilation ti
 me)
 KahanLi8 max energy error:			1.815214645262131e-14	in	100002	steps.
 SofSpa10 max energy error:			2.8033131371785203e-14	in	100002	steps.
@@ -329,20 +329,20 @@ in_vs_out(tmax=1e2)
 
 ```
 In place versions:
-  0.007174 seconds (70.09 k allocations: 5.806 MiB)
-  0.009835 seconds (70.09 k allocations: 5.808 MiB)
-  0.002916 seconds (34.04 k allocations: 2.090 MiB)
-  0.000601 seconds (7.88 k allocations: 357.234 KiB)
+  0.007368 seconds (70.09 k allocations: 5.806 MiB)
+  0.009903 seconds (70.09 k allocations: 5.808 MiB)
+  0.003046 seconds (34.04 k allocations: 2.090 MiB)
+  0.000639 seconds (7.88 k allocations: 357.234 KiB)
 KahanLi8 max energy error:			4.9404924595819466e-15	in	10001	steps.
 SofSpa10 max energy error:			5.440092820663267e-15	in	10001	steps.
 Vern9 max energy error:				3.3306690738754696e-16	in	941	steps.
 DPRKN12 max energy error:			1.942890293094024e-16	in	385	steps.
 
 Out of place versions:
-  0.002656 seconds (10.02 k allocations: 1.681 MiB)
-  0.003554 seconds (10.02 k allocations: 1.682 MiB)
-  0.000564 seconds (971 allocations: 500.484 KiB)
-  0.000247 seconds (412 allocations: 99.281 KiB)
+  0.002612 seconds (10.02 k allocations: 1.681 MiB)
+  0.003530 seconds (10.02 k allocations: 1.682 MiB)
+  0.000627 seconds (971 allocations: 500.484 KiB)
+  0.000249 seconds (412 allocations: 99.281 KiB)
 KahanLi8 max energy error:			4.9404924595819466e-15	in	10001	steps.
 SofSpa10 max energy error:			5.440092820663267e-15	in	10001	steps.
 Vern9 max energy error:				3.3306690738754696e-16	in	941	steps.
@@ -358,20 +358,20 @@ in_vs_out(tmax=1e3)
 
 ```
 In place versions:
-  0.069461 seconds (700.10 k allocations: 61.899 MiB)
-  0.097867 seconds (700.10 k allocations: 61.901 MiB)
-  0.026797 seconds (336.05 k allocations: 20.400 MiB)
-  0.004716 seconds (75.92 k allocations: 3.178 MiB)
+  0.070691 seconds (700.10 k allocations: 61.899 MiB)
+  0.098528 seconds (700.10 k allocations: 61.901 MiB)
+  0.027531 seconds (336.05 k allocations: 20.400 MiB)
+  0.004810 seconds (75.92 k allocations: 3.178 MiB)
 KahanLi8 max energy error:			1.815214645262131e-14	in	100002	steps.
 SofSpa10 max energy error:			2.8033131371785203e-14	in	100002	steps.
 Vern9 max energy error:				4.191091917959966e-15	in	9330	steps.
 DPRKN12 max energy error:			8.604228440844963e-16	in	3787	steps.
 
 Out of place versions:
-  0.025062 seconds (100.03 k allocations: 21.886 MiB)
-  0.035032 seconds (100.03 k allocations: 21.887 MiB)
-  0.003396 seconds (9.37 k allocations: 4.464 MiB)
-  0.001789 seconds (3.82 k allocations: 803.469 KiB)
+  0.024196 seconds (100.03 k allocations: 21.886 MiB)
+  0.034301 seconds (100.03 k allocations: 21.887 MiB)
+  0.004190 seconds (9.37 k allocations: 4.464 MiB)
+  0.001827 seconds (3.82 k allocations: 803.469 KiB)
 KahanLi8 max energy error:			1.815214645262131e-14	in	100002	steps.
 SofSpa10 max energy error:			2.8033131371785203e-14	in	100002	steps.
 Vern9 max energy error:				4.496403249731884e-15	in	9330	steps.
@@ -387,20 +387,20 @@ in_vs_out(tmax=1e4)
 
 ```
 In place versions:
-  0.804157 seconds (7.00 M allocations: 579.841 MiB)
-  1.130151 seconds (7.00 M allocations: 579.843 MiB)
-  0.321504 seconds (3.36 M allocations: 204.601 MiB)
-  0.048060 seconds (756.45 k allocations: 33.046 MiB)
+  0.832300 seconds (7.00 M allocations: 579.841 MiB)
+  1.138956 seconds (7.00 M allocations: 579.843 MiB)
+  0.331806 seconds (3.36 M allocations: 204.601 MiB)
+  0.049617 seconds (756.45 k allocations: 33.046 MiB)
 KahanLi8 max energy error:			3.161360062620133e-14	in	1000001	steps.
 SofSpa10 max energy error:			1.136590821460004e-13	in	1000001	steps.
 Vern9 max energy error:				4.565792188770956e-14	in	93215	steps.
 DPRKN12 max energy error:			8.465450562766819e-15	in	37813	steps.
 
 Out of place versions:
-  0.264740 seconds (1.00 M allocations: 167.849 MiB)
-  0.390170 seconds (1.00 M allocations: 167.850 MiB)
-  0.043994 seconds (93.26 k allocations: 45.374 MiB)
-  0.017244 seconds (37.85 k allocations: 10.021 MiB)
+  0.267690 seconds (1.00 M allocations: 167.849 MiB)
+  0.386506 seconds (1.00 M allocations: 167.850 MiB)
+  0.049576 seconds (93.26 k allocations: 45.374 MiB)
+  0.017160 seconds (37.85 k allocations: 10.021 MiB)
 KahanLi8 max energy error:			3.161360062620133e-14	in	1000001	steps.
 SofSpa10 max energy error:			1.136590821460004e-13	in	1000001	steps.
 Vern9 max energy error:				4.4797499043625066e-14	in	93215	steps.
@@ -416,20 +416,20 @@ in_vs_out(tmax=5e4)
 
 ```
 In place versions:
- 10.397498 seconds (35.00 M allocations: 2.831 GiB, 60.21% gc time)
- 20.513824 seconds (35.00 M allocations: 2.831 GiB, 72.58% gc time)
-  6.801577 seconds (16.78 M allocations: 1009.011 MiB, 76.28% gc time)
-  0.269833 seconds (3.78 M allocations: 158.555 MiB)
+ 10.499914 seconds (35.00 M allocations: 2.831 GiB, 59.88% gc time)
+ 20.590111 seconds (35.00 M allocations: 2.831 GiB, 72.43% gc time)
+  6.980141 seconds (16.78 M allocations: 1009.011 MiB, 75.64% gc time)
+  0.256393 seconds (3.78 M allocations: 158.555 MiB)
 KahanLi8 max energy error:			1.2331802246023926e-13	in	5000001	steps.
 SofSpa10 max energy error:			1.5035195310986182e-13	in	5000001	steps.
 Vern9 max energy error:				2.179090241583026e-13	in	466046	steps.
 DPRKN12 max energy error:			3.5388358909926865e-14	in	189039	steps.
 
 Out of place versions:
-  2.213061 seconds (5.00 M allocations: 839.236 MiB, 35.13% gc time)
-  2.283410 seconds (5.00 M allocations: 839.237 MiB, 14.62% gc time)
-  0.202858 seconds (466.10 k allocations: 208.068 MiB)
-  0.083438 seconds (189.09 k allocations: 39.705 MiB)
+  2.180047 seconds (5.00 M allocations: 839.236 MiB, 35.58% gc time)
+  2.236438 seconds (5.00 M allocations: 839.237 MiB, 14.78% gc time)
+  0.232605 seconds (466.10 k allocations: 208.068 MiB)
+  0.082445 seconds (189.09 k allocations: 39.705 MiB)
 KahanLi8 max energy error:			1.2331802246023926e-13	in	5000001	steps.
 SofSpa10 max energy error:			1.5035195310986182e-13	in	5000001	steps.
 Vern9 max energy error:				2.246258734572848e-13	in	466047	steps.
@@ -519,12 +519,12 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [62783981] BitTwiddlingConvenienceFunctions v0.1.5
 ⌃ [2a0fbf3d] CPUSummary v0.2.5
   [00ebfdb7] CSTParser v3.4.3
-  [49dc2e85] Calculus v0.5.1
+⌃ [49dc2e85] Calculus v0.5.1
 ⌃ [d360d2e6] ChainRulesCore v1.24.0
 ⌃ [fb6a15b2] CloseOpenIntervals v0.1.12
 ⌃ [944b1d66] CodecZlib v0.7.4
 ⌃ [35d6a980] ColorSchemes v3.25.0
-  [3da002f7] ColorTypes v0.11.5
+⌅ [3da002f7] ColorTypes v0.11.5
   [c3611d14] ColorVectorSpace v0.10.0
   [5ae59095] Colors v0.12.11
   [861a8166] Combinatorics v1.0.2
