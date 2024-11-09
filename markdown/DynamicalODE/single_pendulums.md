@@ -194,7 +194,7 @@ singlependulum(k, integrator, Δt, t0=-20.0, t1=20.0)
 ```
 
 ```
-VelocityVerlet(;):         0.000377 seconds (2.89 k allocations: 205.438 Ki
+VelocityVerlet(;):         0.000239 seconds (2.89 k allocations: 205.438 Ki
 B)
 ```
 
@@ -236,7 +236,7 @@ plotsolenergy(H, integrator, Δt, sol)
 ```
 
 ```
-0.001242 seconds (13.70 k allocations: 1.295 MiB)
+0.001138 seconds (13.70 k allocations: 1.295 MiB)
 ```
 
 
@@ -275,39 +275,39 @@ end
 ```
 
 ```
-SymplecticEuler(;):        0.000489 seconds (7.09 k allocations: 505.250 Ki
+SymplecticEuler(;):        0.000533 seconds (7.09 k allocations: 505.250 Ki
 B)
-VelocityVerlet(;):         0.000451 seconds (7.09 k allocations: 505.438 Ki
+VelocityVerlet(;):         0.000449 seconds (7.09 k allocations: 505.438 Ki
 B)
-VerletLeapfrog(;):         0.000597 seconds (7.09 k allocations: 505.500 Ki
+VerletLeapfrog(;):         0.000587 seconds (7.09 k allocations: 505.500 Ki
 B)
-PseudoVerletLeapfrog(;):   0.000616 seconds (7.09 k allocations: 505.500 Ki
+PseudoVerletLeapfrog(;):   0.000610 seconds (7.09 k allocations: 505.500 Ki
 B)
-McAte2(;):                 0.000593 seconds (7.09 k allocations: 505.500 Ki
+McAte2(;):                 0.000601 seconds (7.09 k allocations: 505.500 Ki
 B)
-Ruth3(;):                  0.000656 seconds (7.09 k allocations: 505.672 Ki
+Ruth3(;):                  0.000643 seconds (7.09 k allocations: 505.672 Ki
 B)
-McAte3(;):                 0.000817 seconds (7.09 k allocations: 505.672 Ki
+McAte3(;):                 0.000665 seconds (7.09 k allocations: 505.672 Ki
 B)
-CandyRoz4(;):              0.000696 seconds (7.09 k allocations: 505.766 Ki
+CandyRoz4(;):              0.000678 seconds (7.09 k allocations: 505.766 Ki
 B)
-McAte4(;):                 0.000689 seconds (7.09 k allocations: 505.766 Ki
+McAte4(;):                 0.000693 seconds (7.09 k allocations: 505.766 Ki
 B)
-CalvoSanz4(;):             0.000695 seconds (7.09 k allocations: 506.000 Ki
+CalvoSanz4(;):             0.000793 seconds (7.09 k allocations: 506.000 Ki
 B)
-McAte42(;):                0.000746 seconds (7.09 k allocations: 506.000 Ki
+McAte42(;):                0.000771 seconds (7.09 k allocations: 506.000 Ki
 B)
-McAte5(;):                 0.346911 seconds (7.09 k allocations: 506.031 Ki
-B, 99.74% gc time)
-Yoshida6(;):               0.000832 seconds (7.09 k allocations: 506.328 Ki
+McAte5(;):                 0.000795 seconds (7.09 k allocations: 506.031 Ki
 B)
-KahanLi6(;):               0.000985 seconds (7.09 k allocations: 506.516 Ki
+Yoshida6(;):               0.000936 seconds (7.09 k allocations: 506.328 Ki
 B)
-McAte8(;):                 0.001191 seconds (7.09 k allocations: 507.344 Ki
+KahanLi6(;):               0.000932 seconds (7.09 k allocations: 506.516 Ki
 B)
-KahanLi8(;):               0.001263 seconds (7.09 k allocations: 507.594 Ki
+McAte8(;):                 0.001388 seconds (7.09 k allocations: 507.344 Ki
 B)
-SofSpa10(;):               0.002216 seconds (7.09 k allocations: 509.953 Ki
+KahanLi8(;):               0.001311 seconds (7.09 k allocations: 507.594 Ki
+B)
+SofSpa10(;):               0.002058 seconds (7.09 k allocations: 509.953 Ki
 B)
 ```
 
@@ -322,14 +322,14 @@ end
 ```
 
 ```
-SymplecticEuler(;):        0.004140 seconds (70.09 k allocations: 4.888 MiB
+SymplecticEuler(;):        0.004416 seconds (70.09 k allocations: 4.888 MiB
 )
-VelocityVerlet(;):         0.004930 seconds (70.09 k allocations: 4.888 MiB
+VelocityVerlet(;):         0.004299 seconds (70.09 k allocations: 4.888 MiB
 )
-VerletLeapfrog(;):         0.005430 seconds (70.09 k allocations: 4.888 MiB
+VerletLeapfrog(;):         0.005110 seconds (70.09 k allocations: 4.888 MiB
 )
-PseudoVerletLeapfrog(;):   0.005107 seconds (70.09 k allocations: 4.888 MiB
-)
+PseudoVerletLeapfrog(;):   0.037468 seconds (70.09 k allocations: 4.888 MiB
+, 78.44% gc time)
 ```
 
 
@@ -341,8 +341,8 @@ singlependulum(k, SymplecticEuler(), Δt)
 ```
 
 ```
-SymplecticEuler(;):        0.096515 seconds (700.09 k allocations: 48.833 M
-iB, 48.06% gc time)
+SymplecticEuler(;):        0.047981 seconds (700.09 k allocations: 48.833 M
+iB)
 ```
 
 
@@ -355,8 +355,8 @@ singlependulum(k, SymplecticEuler(), Δt)
 ```
 
 ```
-SymplecticEuler(;):        1.430374 seconds (7.00 M allocations: 488.286 Mi
-B, 62.05% gc time)
+SymplecticEuler(;):        0.565755 seconds (7.00 M allocations: 488.286 Mi
+B)
 ```
 
 
@@ -377,8 +377,8 @@ SciMLBenchmarks.weave_file("benchmarks/DynamicalODE","single_pendulums.jmd")
 Computer Information:
 
 ```
-Julia Version 1.10.5
-Commit 6f3fdf7b362 (2024-08-27 14:19 UTC)
+Julia Version 1.10.6
+Commit 67dffc4a8ae (2024-10-28 12:23 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -439,8 +439,8 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [944b1d66] CodecZlib v0.7.4
 ⌃ [35d6a980] ColorSchemes v3.25.0
 ⌅ [3da002f7] ColorTypes v0.11.5
-  [c3611d14] ColorVectorSpace v0.10.0
-  [5ae59095] Colors v0.12.11
+⌅ [c3611d14] ColorVectorSpace v0.10.0
+⌅ [5ae59095] Colors v0.12.11
   [861a8166] Combinatorics v1.0.2
 ⌃ [a80b9123] CommonMark v0.8.12
   [38540f10] CommonSolve v0.2.4
@@ -464,7 +464,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [055956cb] DiffEqPhysics v3.12.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
-  [b4f34e82] Distances v0.10.11
+⌃ [b4f34e82] Distances v0.10.11
 ⌃ [31c24e10] Distributions v0.25.109
   [ffbed154] DocStringExtensions v0.9.3
 ⌅ [5b8099bc] DomainSets v0.6.7
@@ -485,10 +485,10 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [6a86dc24] FiniteDiff v2.23.1
   [53c48c17] FixedPointNumbers v0.8.5
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v0.10.36
+⌃ [f6369f11] ForwardDiff v0.10.36
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
-⌃ [d9f16b24] Functors v0.4.11
+⌅ [d9f16b24] Functors v0.4.11
 ⌅ [46192b85] GPUArraysCore v0.1.5
 ⌃ [28b8d3ca] GR v0.73.5
   [c145ed77] GenericSchur v0.5.4
@@ -498,7 +498,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [42e2da0e] Grisu v1.0.2
 ⌅ [0b43b601] Groebner v0.5.1
 ⌅ [d5909c97] GroupsCore v0.4.2
-  [cd3eb016] HTTP v1.10.8
+⌃ [cd3eb016] HTTP v1.10.8
   [eafb193a] Highlights v0.5.3
 ⌃ [3e5b6fbb] HostCPUFeatures v0.1.16
 ⌃ [34004b35] HypergeometricFunctions v0.3.23
@@ -527,7 +527,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [d3d80556] LineSearches v7.2.0
 ⌃ [7ed4a6bd] LinearSolve v2.22.1
   [2ab3a3ac] LogExpFunctions v0.3.28
-  [e6f89c97] LoggingExtras v1.0.3
+⌃ [e6f89c97] LoggingExtras v1.0.3
 ⌃ [bdcacae8] LoopVectorization v0.12.170
   [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.13
@@ -545,7 +545,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
   [77ba4419] NaNMath v1.0.2
-⌃ [8913a72c] NonlinearSolve v3.1.0
+⌅ [8913a72c] NonlinearSolve v3.1.0
 ⌃ [6fe1bfb0] OffsetArrays v1.14.0
   [4d8831e6] OpenSSL v1.4.3
   [bac558e1] OrderedCollections v1.6.3
@@ -556,7 +556,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.8.1
   [b98c9c47] Pipe v1.3.0
-  [ccf2f8ad] PlotThemes v3.2.0
+⌃ [ccf2f8ad] PlotThemes v3.2.0
 ⌃ [995b91a9] PlotUtils v1.4.1
 ⌃ [91a5bcdd] Plots v1.40.4
   [e409e4f3] PoissonRandom v0.4.4
@@ -593,7 +593,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
 ⌃ [777ac1f9] SimpleBufferStream v1.1.0
-⌃ [727e6d20] SimpleNonlinearSolve v1.4.0
+⌅ [727e6d20] SimpleNonlinearSolve v1.4.0
   [699a6c99] SimpleTraits v0.9.4
   [ce78b400] SimpleUnPack v1.1.0
   [ed01d8cd] Sobol v1.5.0
@@ -662,10 +662,10 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [1d63c593] LLVMOpenMP_jll v15.0.7+0
 ⌃ [dd4b983a] LZO_jll v2.10.2+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
-  [d4300ac3] Libgcrypt_jll v1.8.11+0
+⌃ [d4300ac3] Libgcrypt_jll v1.8.11+0
   [7e76a0d4] Libglvnd_jll v1.6.0+0
-  [7add5ba3] Libgpg_error_jll v1.49.0+0
-  [94ce4f54] Libiconv_jll v1.17.0+0
+⌃ [7add5ba3] Libgpg_error_jll v1.49.0+0
+⌃ [94ce4f54] Libiconv_jll v1.17.0+0
   [4b2f31a3] Libmount_jll v2.40.1+0
 ⌅ [89763e89] Libtiff_jll v4.5.1+1
   [38a345b3] Libuuid_jll v2.40.1+0
@@ -682,7 +682,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2381bf8a] Wayland_protocols_jll v1.31.0+0
 ⌃ [02c8fc9c] XML2_jll v2.12.7+0
 ⌃ [aed1982a] XSLT_jll v1.1.34+0
-  [ffd25f8a] XZ_jll v5.4.6+0
+⌃ [ffd25f8a] XZ_jll v5.4.6+0
   [f67eecfb] Xorg_libICE_jll v1.1.1+0
   [c834827a] Xorg_libSM_jll v1.2.4+0
   [4f6342f7] Xorg_libX11_jll v1.8.6+0
