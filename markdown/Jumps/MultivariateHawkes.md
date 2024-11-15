@@ -511,415 +511,320 @@ end
 ```
 
 ```
-Collecting package metadata (current_repodata.json): ...working... done
-Solving environment: ...working... failed with initial frozen solve. Retryi
-ng with flexible solve.
-Solving environment: ...working... failed with repodata from current_repoda
-ta.json, will retry with next repodata source.
+Channels:
+ - conda-forge
+Platform: linux-64
 Collecting package metadata (repodata.json): ...working... done
-Solving environment: ...working... done
-
-## Package Plan ##
-
-  environment location: /cache/julia-buildkite-plugin/depots/5b300254-1738-
-4989-ae0a-f4d2d937f953/conda/3/x86_64
-
-  added / updated specs:
-    - python=3.8
-
-
-The following packages will be downloaded:
-
-    package                    |            build
-    ---------------------------|-----------------
-    brotli-python-1.1.0        |   py38h17151c0_1         343 KB  conda-for
-ge
-    cffi-1.16.0                |   py38h6d47a40_0         234 KB  conda-for
-ge
-    conda-23.3.1               |   py38h578d9bd_0         932 KB  conda-for
-ge
-    cryptography-41.0.7        |   py38he241bfc_1         1.9 MB  conda-for
-ge
-    jsonpointer-2.4            |   py38h578d9bd_3          16 KB  conda-for
-ge
-    libmambapy-1.4.2           |   py38h7fa060d_0         261 KB  conda-for
-ge
-    mamba-1.4.2                |   py38haad2881_0          49 KB  conda-for
-ge
-    numpy-1.24.4               |   py38h59b608b_0         6.4 MB  conda-for
-ge
-    pycosat-0.6.6              |   py38h01eb140_0          83 KB  conda-for
-ge
-    python-3.8.18              |hd12c33a_0_cpython        23.3 MB  conda-fo
-rge
-    python_abi-3.8             |           4_cp38           6 KB  conda-for
-ge
-    ruamel-1.0                 |   py38h578d9bd_8           7 KB  conda-for
-ge
-    ruamel.yaml-0.16.0         |   py38h516909a_1         172 KB  conda-for
-ge
-    zstandard-0.22.0           |   py38ha98ab4e_0         393 KB  conda-for
-ge
-    ------------------------------------------------------------
-                                           Total:        34.0 MB
-
-The following NEW packages will be INSTALLED:
-
-  ruamel             conda-forge/linux-64::ruamel-1.0-py38h578d9bd_8 
-
-The following packages will be REMOVED:
-
-  ruamel.yaml.clib-0.2.7-py310h2372a71_2
-
-The following packages will be DOWNGRADED:
-
-  brotli-python                       1.1.0-py310hc6cd4ac_1 --> 1.1.0-py38h
-17151c0_1 
-  cffi                               1.16.0-py310h2fee648_0 --> 1.16.0-py38
-h6d47a40_0 
-  conda                              23.3.1-py310hff52083_0 --> 23.3.1-py38
-h578d9bd_0 
-  cryptography                       41.0.7-py310hb8475ec_1 --> 41.0.7-py38
-he241bfc_1 
-  jsonpointer                           2.4-py310hff52083_3 --> 2.4-py38h57
-8d9bd_3 
-  libmambapy                          1.4.2-py310h1428755_0 --> 1.4.2-py38h
-7fa060d_0 
-  mamba                               1.4.2-py310h51d5547_0 --> 1.4.2-py38h
-aad2881_0 
-  numpy                              1.26.2-py310hb13e2d6_0 --> 1.24.4-py38
-h59b608b_0 
-  pycosat                             0.6.6-py310h2372a71_0 --> 0.6.6-py38h
-01eb140_0 
-  python                         3.10.12-hd12c33a_0_cpython --> 3.8.18-hd12
-c33a_0_cpython 
-  python_abi                                   3.10-4_cp310 --> 3.8-4_cp38 
-  ruamel.yaml                       0.17.40-py310h2372a71_0 --> 0.16.0-py38
-h516909a_1 
-  zstandard                          0.22.0-py310h1275a96_0 --> 0.22.0-py38
-ha98ab4e_0 
-
-
-Preparing transaction: ...working... done
-Verifying transaction: ...working... done
-Executing transaction: ...working... done
-Collecting package metadata (current_repodata.json): ...working... done
-Solving environment: ...working... done
-
-# All requested packages already installed.
-
-Collecting tick
-  Downloading tick-0.7.0.1-cp38-cp38-manylinux2014_x86_64.whl (10.8 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.8/10.8 MB 12.3 MB/s eta 0:
-00:00
-Requirement already satisfied: numpy in /cache/julia-buildkite-plugin/depot
-s/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3.8/site-pa
-ckages (from tick) (1.24.4)
-Collecting scipy (from tick)
-  Downloading scipy-1.10.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x8
-6_64.whl (34.5 MB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 34.5/34.5 MB 79.3 MB/s eta 0:
-00:00
-Collecting numpydoc (from tick)
-  Obtaining dependency information for numpydoc from https://files.pythonho
-sted.org/packages/9c/94/09c437fd4a5fb5adf0468c0865c781dbc11d399544b55f1163d
-5d4414afb/numpydoc-1.6.0-py3-none-any.whl.metadata
-  Downloading numpydoc-1.6.0-py3-none-any.whl.metadata (4.2 kB)
-Collecting matplotlib (from tick)
-  Obtaining dependency information for matplotlib from https://files.python
-hosted.org/packages/3c/25/c63fb77ceece3fbd85142381f97c7aeae6aeaf9a2993a2032
-2fc9ae1ca7b/matplotlib-3.7.4-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_
-x86_64.whl.metadata
-  Downloading matplotlib-3.7.4-cp38-cp38-manylinux_2_12_x86_64.manylinux201
-0_x86_64.whl.metadata (5.7 kB)
-Collecting sphinx (from tick)
-  Obtaining dependency information for sphinx from https://files.pythonhost
-ed.org/packages/48/17/325cf6a257d84751a48ae90752b3d8fe0be8f9535b6253add61c4
-9d0d9bc/sphinx-7.1.2-py3-none-any.whl.metadata
-  Downloading sphinx-7.1.2-py3-none-any.whl.metadata (5.8 kB)
-Collecting pandas (from tick)
-  Obtaining dependency information for pandas from https://files.pythonhost
-ed.org/packages/f8/7f/5b047effafbdd34e52c9e2d7e44f729a0655efafb22198c45cf69
-2cdc157/pandas-2.0.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.w
-hl.metadata
-  Downloading pandas-2.0.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x8
-6_64.whl.metadata (18 kB)
-Collecting dill (from tick)
-  Obtaining dependency information for dill from https://files.pythonhosted
-.org/packages/f5/3a/74a29b11cf2cdfcd6ba89c0cecd70b37cd1ba7b77978ce611eb7a14
-6a832/dill-0.3.7-py3-none-any.whl.metadata
-  Downloading dill-0.3.7-py3-none-any.whl.metadata (9.9 kB)
-Collecting scikit-learn (from tick)
-  Obtaining dependency information for scikit-learn from https://files.pyth
-onhosted.org/packages/3f/48/6fdd99f5717045f9984616b5c2ec683d6286d30c0ac2345
-63062132b83ab/scikit_learn-1.3.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2
-014_x86_64.whl.metadata
-  Downloading scikit_learn-1.3.2-cp38-cp38-manylinux_2_17_x86_64.manylinux2
-014_x86_64.whl.metadata (11 kB)
-Collecting contourpy>=1.0.1 (from matplotlib->tick)
-  Obtaining dependency information for contourpy>=1.0.1 from https://files.
-pythonhosted.org/packages/8e/71/7f20855592cc929bc206810432b991ec4c702dc26b0
-567b132e52c85536f/contourpy-1.1.1-cp38-cp38-manylinux_2_17_x86_64.manylinux
-2014_x86_64.whl.metadata
-  Downloading contourpy-1.1.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014
-_x86_64.whl.metadata (5.9 kB)
-Collecting cycler>=0.10 (from matplotlib->tick)
-  Obtaining dependency information for cycler>=0.10 from https://files.pyth
-onhosted.org/packages/e7/05/c19819d5e3d95294a6f5947fb9b9629efb316b96de511b4
-18c53d245aae6/cycler-0.12.1-py3-none-any.whl.metadata
-  Downloading cycler-0.12.1-py3-none-any.whl.metadata (3.8 kB)
-Collecting fonttools>=4.22.0 (from matplotlib->tick)
-  Obtaining dependency information for fonttools>=4.22.0 from https://files
-.pythonhosted.org/packages/68/d9/8a3d067a681d37c3f83f8cce96ecdb414bf4b1b627
-b5cf0a39ec80dff6c5/fonttools-4.46.0-cp38-cp38-manylinux_2_17_x86_64.manylin
-ux2014_x86_64.whl.metadata
-  Downloading fonttools-4.46.0-cp38-cp38-manylinux_2_17_x86_64.manylinux201
-4_x86_64.whl.metadata (156 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 156.2/156.2 kB 79.4 MB/s eta 0:
-00:00
-Collecting kiwisolver>=1.0.1 (from matplotlib->tick)
-  Obtaining dependency information for kiwisolver>=1.0.1 from https://files
-.pythonhosted.org/packages/d2/55/7021ffcc8cb26a520bb051aa0a3d08daf200cde945
-e5863d5768161e2d3d/kiwisolver-1.4.5-cp38-cp38-manylinux_2_5_x86_64.manylinu
-x1_x86_64.whl.metadata
-  Downloading kiwisolver-1.4.5-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x8
-6_64.whl.metadata (6.4 kB)
-Requirement already satisfied: packaging>=20.0 in /cache/julia-buildkite-pl
-ugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3
-.8/site-packages (from matplotlib->tick) (23.2)
-Collecting pillow>=6.2.0 (from matplotlib->tick)
-  Obtaining dependency information for pillow>=6.2.0 from https://files.pyt
-honhosted.org/packages/1e/74/638f982ab43fb3b19c8a151b1a0065cafefe436f8590c1
-c57d5fdf2475f1/Pillow-10.1.0-cp38-cp38-manylinux_2_28_x86_64.whl.metadata
-  Downloading Pillow-10.1.0-cp38-cp38-manylinux_2_28_x86_64.whl.metadata (9
-.5 kB)
-Collecting pyparsing>=2.3.1 (from matplotlib->tick)
-  Obtaining dependency information for pyparsing>=2.3.1 from https://files.
-pythonhosted.org/packages/39/92/8486ede85fcc088f1b3dba4ce92dd29d126fd96b000
-8ea213167940a2475/pyparsing-3.1.1-py3-none-any.whl.metadata
-  Downloading pyparsing-3.1.1-py3-none-any.whl.metadata (5.1 kB)
-Collecting python-dateutil>=2.7 (from matplotlib->tick)
-  Downloading python_dateutil-2.8.2-py2.py3-none-any.whl (247 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 247.7/247.7 kB 96.8 MB/s eta 0:
-00:00
-Collecting importlib-resources>=3.2.0 (from matplotlib->tick)
-  Obtaining dependency information for importlib-resources>=3.2.0 from http
-s://files.pythonhosted.org/packages/93/e8/facde510585869b5ec694e8e0363ffe4e
-ba067cb357a8398a55f6a1f8023/importlib_resources-6.1.1-py3-none-any.whl.meta
-data
-  Downloading importlib_resources-6.1.1-py3-none-any.whl.metadata (4.1 kB)
-Collecting Jinja2>=2.10 (from numpydoc->tick)
-  Downloading Jinja2-3.1.2-py3-none-any.whl (133 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 133.1/133.1 kB 74.1 MB/s eta 0:
-00:00
-Collecting tabulate>=0.8.10 (from numpydoc->tick)
-  Downloading tabulate-0.9.0-py3-none-any.whl (35 kB)
-Collecting tomli>=1.1.0 (from numpydoc->tick)
-  Downloading tomli-2.0.1-py3-none-any.whl (12 kB)
-Collecting sphinxcontrib-applehelp (from sphinx->tick)
-  Downloading sphinxcontrib_applehelp-1.0.4-py3-none-any.whl (120 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 120.6/120.6 kB 70.2 MB/s eta 0:
-00:00
-Collecting sphinxcontrib-devhelp (from sphinx->tick)
-  Downloading sphinxcontrib_devhelp-1.0.2-py2.py3-none-any.whl (84 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 84.7/84.7 kB 54.3 MB/s eta 0:
-00:00
-Collecting sphinxcontrib-jsmath (from sphinx->tick)
-  Downloading sphinxcontrib_jsmath-1.0.1-py2.py3-none-any.whl (5.1 kB)
-Collecting sphinxcontrib-htmlhelp>=2.0.0 (from sphinx->tick)
-  Downloading sphinxcontrib_htmlhelp-2.0.1-py3-none-any.whl (99 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 99.8/99.8 kB 61.3 MB/s eta 0:
-00:00
-Collecting sphinxcontrib-serializinghtml>=1.1.5 (from sphinx->tick)
-  Downloading sphinxcontrib_serializinghtml-1.1.5-py2.py3-none-any.whl (94 
-kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 94.0/94.0 kB 60.2 MB/s eta 0:
-00:00
-Collecting sphinxcontrib-qthelp (from sphinx->tick)
-  Downloading sphinxcontrib_qthelp-1.0.3-py2.py3-none-any.whl (90 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 90.6/90.6 kB 55.3 MB/s eta 0:
-00:00
-Collecting Pygments>=2.13 (from sphinx->tick)
-  Obtaining dependency information for Pygments>=2.13 from https://files.py
-thonhosted.org/packages/97/9c/372fef8377a6e340b1704768d20daaded98bf13282b53
-27beb2e2fe2c7ef/pygments-2.17.2-py3-none-any.whl.metadata
-  Downloading pygments-2.17.2-py3-none-any.whl.metadata (2.6 kB)
-Collecting docutils<0.21,>=0.18.1 (from sphinx->tick)
-  Obtaining dependency information for docutils<0.21,>=0.18.1 from https://
-files.pythonhosted.org/packages/26/87/f238c0670b94533ac0353a4e2a1a771a0cc73
-277b88bff23d3ae35a256c1/docutils-0.20.1-py3-none-any.whl.metadata
-  Downloading docutils-0.20.1-py3-none-any.whl.metadata (2.8 kB)
-Collecting snowballstemmer>=2.0 (from sphinx->tick)
-  Downloading snowballstemmer-2.2.0-py2.py3-none-any.whl (93 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 93.0/93.0 kB 57.9 MB/s eta 0:
-00:00
-Collecting babel>=2.9 (from sphinx->tick)
-  Obtaining dependency information for babel>=2.9 from https://files.python
-hosted.org/packages/86/14/5dc2eb02b7cc87b2f95930310a2cc5229198414919a116b56
-4832c747bc1/Babel-2.13.1-py3-none-any.whl.metadata
-  Downloading Babel-2.13.1-py3-none-any.whl.metadata (1.6 kB)
-Collecting alabaster<0.8,>=0.7 (from sphinx->tick)
-  Downloading alabaster-0.7.13-py3-none-any.whl (13 kB)
-Collecting imagesize>=1.3 (from sphinx->tick)
-  Downloading imagesize-1.4.1-py2.py3-none-any.whl (8.8 kB)
-Requirement already satisfied: requests>=2.25.0 in /cache/julia-buildkite-p
-lugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python
-3.8/site-packages (from sphinx->tick) (2.31.0)
-Collecting importlib-metadata>=4.8 (from sphinx->tick)
-  Obtaining dependency information for importlib-metadata>=4.8 from https:/
-/files.pythonhosted.org/packages/73/26/9777cfe0cdc8181a32eaf542f4a2a435e5ab
-a5dd38f41cfc0a532dc51027/importlib_metadata-7.0.0-py3-none-any.whl.metadata
-  Downloading importlib_metadata-7.0.0-py3-none-any.whl.metadata (4.9 kB)
-Collecting pytz>=2020.1 (from pandas->tick)
-  Obtaining dependency information for pytz>=2020.1 from https://files.pyth
-onhosted.org/packages/32/4d/aaf7eff5deb402fd9a24a1449a8119f00d74ae9c2efa79f
-8ef9994261fc2/pytz-2023.3.post1-py2.py3-none-any.whl.metadata
-  Downloading pytz-2023.3.post1-py2.py3-none-any.whl.metadata (22 kB)
-Collecting tzdata>=2022.1 (from pandas->tick)
-  Downloading tzdata-2023.3-py2.py3-none-any.whl (341 kB)
-     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 341.8/341.8 kB 120.8 MB/s eta 0:
-00:00
-Collecting joblib>=1.1.1 (from scikit-learn->tick)
-  Obtaining dependency information for joblib>=1.1.1 from https://files.pyt
-honhosted.org/packages/10/40/d551139c85db202f1f384ba8bcf96aca2f329440a844f9
-24c8a0040b6d02/joblib-1.3.2-py3-none-any.whl.metadata
-  Downloading joblib-1.3.2-py3-none-any.whl.metadata (5.4 kB)
-Collecting threadpoolctl>=2.0.0 (from scikit-learn->tick)
-  Obtaining dependency information for threadpoolctl>=2.0.0 from https://fi
-les.pythonhosted.org/packages/81/12/fd4dea011af9d69e1cad05c75f3f7202cdcbeac
-9b712eea58ca779a72865/threadpoolctl-3.2.0-py3-none-any.whl.metadata
-  Downloading threadpoolctl-3.2.0-py3-none-any.whl.metadata (10.0 kB)
-Collecting zipp>=0.5 (from importlib-metadata>=4.8->sphinx->tick)
-  Obtaining dependency information for zipp>=0.5 from https://files.pythonh
-osted.org/packages/d9/66/48866fc6b158c81cc2bfecc04c480f105c6040e8b077bc54c6
-34b4a67926/zipp-3.17.0-py3-none-any.whl.metadata
-  Downloading zipp-3.17.0-py3-none-any.whl.metadata (3.7 kB)
-Collecting MarkupSafe>=2.0 (from Jinja2>=2.10->numpydoc->tick)
-  Obtaining dependency information for MarkupSafe>=2.0 from https://files.p
-ythonhosted.org/packages/de/e2/32c14301bb023986dff527a49325b6259cab4ebb4633
-f69de54af312fc45/MarkupSafe-2.1.3-cp38-cp38-manylinux_2_17_x86_64.manylinux
-2014_x86_64.whl.metadata
-  Downloading MarkupSafe-2.1.3-cp38-cp38-manylinux_2_17_x86_64.manylinux201
-4_x86_64.whl.metadata (3.0 kB)
-Collecting six>=1.5 (from python-dateutil>=2.7->matplotlib->tick)
-  Downloading six-1.16.0-py2.py3-none-any.whl (11 kB)
-Requirement already satisfied: charset-normalizer<4,>=2 in /cache/julia-bui
-ldkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/li
-b/python3.8/site-packages (from requests>=2.25.0->sphinx->tick) (3.3.2)
-Requirement already satisfied: idna<4,>=2.5 in /cache/julia-buildkite-plugi
-n/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/python3.8/
-site-packages (from requests>=2.25.0->sphinx->tick) (3.6)
-Requirement already satisfied: urllib3<3,>=1.21.1 in /cache/julia-buildkite
--plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/pyth
-on3.8/site-packages (from requests>=2.25.0->sphinx->tick) (2.1.0)
-Requirement already satisfied: certifi>=2017.4.17 in /cache/julia-buildkite
--plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/lib/pyth
-on3.8/site-packages (from requests>=2.25.0->sphinx->tick) (2023.11.17)
-Downloading dill-0.3.7-py3-none-any.whl (115 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 115.3/115.3 kB 63.8 MB/s eta 0:
-00:00
-Downloading matplotlib-3.7.4-cp38-cp38-manylinux_2_12_x86_64.manylinux2010_
-x86_64.whl (9.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 9.2/9.2 MB 145.3 MB/s eta 0:00:
-00
-Downloading numpydoc-1.6.0-py3-none-any.whl (61 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 61.7/61.7 kB 40.2 MB/s eta 0:00
-:00
-Downloading sphinx-7.1.2-py3-none-any.whl (3.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 64.3 MB/s eta 0:00:0
-0
-Downloading pandas-2.0.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_
-64.whl (12.4 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 12.4/12.4 MB 105.2 MB/s eta 0:0
-0:00
-Downloading scikit_learn-1.3.2-cp38-cp38-manylinux_2_17_x86_64.manylinux201
-4_x86_64.whl (11.1 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 11.1/11.1 MB 141.2 MB/s eta 0:0
-0:00
-Downloading Babel-2.13.1-py3-none-any.whl (10.1 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 10.1/10.1 MB 156.8 MB/s eta 0:0
-0:00
-Downloading contourpy-1.1.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x
-86_64.whl (301 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 301.1/301.1 kB 112.3 MB/s eta 0:
-00:00
-Downloading cycler-0.12.1-py3-none-any.whl (8.3 kB)
-Downloading docutils-0.20.1-py3-none-any.whl (572 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 572.7/572.7 kB 143.8 MB/s eta 0:
-00:00
-Downloading fonttools-4.46.0-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_
-x86_64.whl (4.7 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 158.4 MB/s eta 0:00:
-00
-Downloading importlib_metadata-7.0.0-py3-none-any.whl (23 kB)
-Downloading importlib_resources-6.1.1-py3-none-any.whl (33 kB)
-Downloading joblib-1.3.2-py3-none-any.whl (302 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 302.2/302.2 kB 115.4 MB/s eta 0:
-00:00
-Downloading kiwisolver-1.4.5-cp38-cp38-manylinux_2_5_x86_64.manylinux1_x86_
-64.whl (1.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 146.0 MB/s eta 0:00:
-00
-Downloading Pillow-10.1.0-cp38-cp38-manylinux_2_28_x86_64.whl (3.6 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.6/3.6 MB 154.9 MB/s eta 0:00:
-00
-Downloading pygments-2.17.2-py3-none-any.whl (1.2 MB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.2/1.2 MB 155.4 MB/s eta 0:00:
-00
-Downloading pyparsing-3.1.1-py3-none-any.whl (103 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 103.1/103.1 kB 65.4 MB/s eta 0:
-00:00
-Downloading pytz-2023.3.post1-py2.py3-none-any.whl (502 kB)
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 502.5/502.5 kB 139.2 MB/s eta 0:
-00:00
-Downloading threadpoolctl-3.2.0-py3-none-any.whl (15 kB)
-Downloading MarkupSafe-2.1.3-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_
-x86_64.whl (25 kB)
-Downloading zipp-3.17.0-py3-none-any.whl (7.4 kB)
-Installing collected packages: snowballstemmer, pytz, zipp, tzdata, tomli, 
-threadpoolctl, tabulate, sphinxcontrib-serializinghtml, sphinxcontrib-qthel
-p, sphinxcontrib-jsmath, sphinxcontrib-htmlhelp, sphinxcontrib-devhelp, sph
-inxcontrib-applehelp, six, scipy, pyparsing, Pygments, pillow, MarkupSafe, 
-kiwisolver, joblib, imagesize, fonttools, docutils, dill, cycler, contourpy
-, babel, alabaster, scikit-learn, python-dateutil, Jinja2, importlib-resour
-ces, importlib-metadata, sphinx, pandas, matplotlib, numpydoc, tick
-Successfully installed Jinja2-3.1.2 MarkupSafe-2.1.3 Pygments-2.17.2 alabas
-ter-0.7.13 babel-2.13.1 contourpy-1.1.1 cycler-0.12.1 dill-0.3.7 docutils-0
-.20.1 fonttools-4.46.0 imagesize-1.4.1 importlib-metadata-7.0.0 importlib-r
-esources-6.1.1 joblib-1.3.2 kiwisolver-1.4.5 matplotlib-3.7.4 numpydoc-1.6.
-0 pandas-2.0.3 pillow-10.1.0 pyparsing-3.1.1 python-dateutil-2.8.2 pytz-202
-3.3.post1 scikit-learn-1.3.2 scipy-1.10.1 six-1.16.0 snowballstemmer-2.2.0 
-sphinx-7.1.2 sphinxcontrib-applehelp-1.0.4 sphinxcontrib-devhelp-1.0.2 sphi
-nxcontrib-htmlhelp-2.0.1 sphinxcontrib-jsmath-1.0.1 sphinxcontrib-qthelp-1.
-0.3 sphinxcontrib-serializinghtml-1.1.5 tabulate-0.9.0 threadpoolctl-3.2.0 
-tick-0.7.0.1 tomli-2.0.1 tzdata-2023.3 zipp-3.17.0
-8-element Vector{Tuple{Any, Any, Bool, String}}:
- (JumpProcesses.Direct(), Tsit5(; stage_limiter! = trivial_limiter!, step_l
-imiter! = trivial_limiter!, thread = static(false),), 0, "Direct (brute-for
-ce)")
- (JumpProcesses.Coevolve(), JumpProcesses.SSAStepper(), 0, "Coevolve (brute
--force)")
- (JumpProcesses.Direct(), Tsit5(; stage_limiter! = trivial_limiter!, step_l
-imiter! = trivial_limiter!, thread = static(false),), 1, "Direct (recursive
-)")
- (JumpProcesses.Coevolve(), JumpProcesses.SSAStepper(), 1, "Coevolve (recur
-sive)")
- (Main.var"##WeaveSandBox#349".PDMPCHVSimple(), PiecewiseDeterministicMarko
-vProcesses.CHV{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_limiter!)
-, typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}}(Tsit5(; stage_lim
-iter! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static
-(false),)), 0, "PDMPCHVSimple (brute-force)")
- (Main.var"##WeaveSandBox#349".PDMPCHVSimple(), PiecewiseDeterministicMarko
-vProcesses.CHV{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_limiter!)
-, typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}}(Tsit5(; stage_lim
-iter! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static
-(false),)), 1, "PDMPCHVSimple (recursive)")
- (Main.var"##WeaveSandBox#349".PDMPCHVFull(), PiecewiseDeterministicMarkovP
-rocesses.CHV{OrdinaryDiffEq.Tsit5{typeof(OrdinaryDiffEq.trivial_limiter!), 
-typeof(OrdinaryDiffEq.trivial_limiter!), Static.False}}(Tsit5(; stage_limit
-er! = trivial_limiter!, step_limiter! = trivial_limiter!, thread = static(f
-alse),)), 1, "PDMPCHVFull")
- (Main.var"##WeaveSandBox#349".PyTick(), nothing, 1, "PyTick")
+Solving environment: ...working... failed
+Error: failed process: Process(setenv(`/cache/julia-buildkite-plugin/depots
+/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/bin/conda install -q -
+y python=3.8`,["DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/21581/bus", "B
+UILDKITE_PULL_REQUEST_REPO=", "BUILDKITE_SOURCE=webhook", "BUILDKITE_PLUGIN
+_COPPERMIND_INPUTS_0=benchmarks/Jumps", "BUILDKITE_GIT_CLONE_FLAGS=-v", "BU
+ILDKITE_PLUGIN_CRYPTIC_BASE64_AGENT_PUBLIC_KEY_SECRET=LS0tLS1CRUdJTiBQVUJMS
+UMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF0
+WHNKMzFGbTFKN29IYzlveGZaWQpKY3FxRk5yaXRMUUhxaDVJUHNGS3YySis1K1FVQkZNYURjMHI
+3czZ3NDNSMDFobkVNT1lYNDAreUVDT3h5bHErClo3dHdxWlNxS2U1MThwc0RyeWRna0xJNzRnQU
+VZWWNTZGdvTGt4YWpWNy9rb0hFTDgrczRKdFRVNUJ6d1RFdXAKTllTZGNQOFhQSmJLekY1RE5qd
+WJmeFA5ZjdSN2x6SUx2NWl2Z2lxZTVtbUxGd1lwb0hTRVFVNXRlT09IQStLYwpjUDZ3K2d1Q0Vx
+MUZFb0N2MDRyaTFXaWpVZXorMytEWVM4UCtROGRxMGJYUWZUS1Vyc0thMkdnLzVmZ0h5Z0R1CmR
+HT2ZsdzUvVEljR3VVbGNsd1hZb2tTRkpSWUJFa2pUOXBCZ2JNNEcyL2tXNGFmZ3d4bHNuN3VsUW
+5QNDZVLzEKZFFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==", "BUILDKITE_ENV
+_FILE=/tmp/job-env-01932c0f-c8f9-4d0e-9298-a730caee04f11669525855", "BUILDK
+ITE_BUILD_NUMBER=2992", "BUILDKITE_GIT_CLONE_MIRROR_FLAGS=-v", "BUILDKITE_A
+GENT_DEBUG=false", "BUILDKITE_AGENT_META_DATA_QUEUE=juliaecosystem", "BUILD
+KITE_PLUGINS_PATH=/etc/buildkite-agent/plugins", "BUILDKITE_COMMAND_EVAL=tr
+ue", "BUILDKITE_AGENT_META_DATA_SANDBOX_CAPABLE=true", "BUILDKITE_ORGANIZAT
+ION_SLUG=julialang", "BUILDKITE_PLUGIN_COPPERMIND_INPUTS_1=src/**/*.jl", "B
+UILDKITE_PIPELINE_PROVIDER=github", "BUILDKITE_AGENT_EXPERIMENT=resolve-com
+mit-after-checkout", "BUILDKITE_CONFIG_PATH=/etc/buildkite-agent/buildkite-
+agent.cfg", "BUILDKITE_PIPELINE_TEAMS=sciml-full-access", "BUILDKITE_AGENT_
+META_DATA_CRYPTIC_CAPABLE=true", "BUILDKITE_AGENT_ACCESS_TOKEN=bkaj_eyJhbGc
+iOiJIUzUxMiJ9.eyJzdWIiOiIwMTkzMmMwZi1jOGY5LTRkMGUtOTI5OC1hNzMwY2FlZTA0ZjEiL
+CJhdWQiOiIwMTkzMmMwZi1lMjljLTQxNjgtODAxYS1iYTJiOTNmZGIzOWQiLCJpc3MiOiJidWls
+ZGtpdGUiLCJleHAiOjE3MzIyMTk0NjksImlhdCI6MTczMTYxMTA2OX0.UjzPVJwQuujMelPKGde
+dsRg3LWIUzgTWBiyjb-nW-P608INjk0EmcFMFAJ7e-EfEji5QZ9J6Ph2u3u3spOotbw", "BUIL
+DKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET=FcrpZjWNYOhL50TDbfl6lfndP0
+Hb140fEjruCqoscrSm+b2r/xcL0FuuKw4sWFXqDNtpNubXYVH/xgK6BCHVvLGxyekfysWDdcDLw
+oF0UXUzT1wMK+9ItWfUcOhMofMBYuhndkL/Lu5GdCdid3chkLa/qsgNhUoTT5yESXAgrNDUirkV
+PeGB4IGMtoRH5DmY+d6f6ZW2i3CQUpj/Wu3dwTmEPfbN1HYCi4q1mSruqHn0L/ITj2UW9e0g2Nf
+rUr2Q+6ek/NrcjR86oq5l3dDO0P7lAQMLZm51G/BMaMejdLUORYGirO9QTlGoa6x0hPUv+j/liq
+o47ptkWx4HlxzmeQ==", "BUILDKITE_PLUGIN_COPPERMIND_S3_PREFIX=s3://julialang-
+buildkite-artifacts/scimlbenchmarks", "BUILDKITE_BUILD_CREATOR_EMAIL=accoun
+ts@chrisrackauckas.com", "XKB_CONFIG_ROOT=/cache/julia-buildkite-plugin/dep
+ots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/f8b49c7c45b400e3f5c4002d
+19645d4b88712c0c/share/X11/xkb", "BUILDKITE_SSH_KEYSCAN=true", "BUILDKITE_P
+ROJECT_SLUG=julialang/scimlbenchmarks-dot-jl", "BUILDKITE_INITIAL_JOB_ID=01
+932a9f-f85d-4a88-9013-67267301d144", "BUILDKITE_BIN_PATH=/usr/bin", "PWD=/c
+ache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl", "GRDIR=/ca
+che/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/arti
+facts/231c36cbc48a78caf7818ee7f4cd260eb3d642e3", "BUILDKITE_GIT_CHECKOUT_FL
+AGS=-f", "BUILDKITE_COMPUTE_TYPE=self-hosted", "BUILDKITE_GIT_SUBMODULES=tr
+ue", "BUILDKITE_AGENT_META_DATA_OS=linux", "CI=true", "BUILDKITE_STEP_KEY=b
+enchmark-benchmarks-Jumps", "BUILDKITE_STEP_IDENTIFIER=benchmark-benchmarks
+-Jumps", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_0=markdown/**/figures/*.png",
+ "CONDA_PREFIX=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a
+-f4d2d937f953/conda/3/x86_64", "BUILDKITE_PLUGIN_COPPERMIND_INPUTS_2=./*.to
+ml", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_3=markdown/**/*.svg", "BUILDKITE_
+AGENT_PID=2", "BUILDKITE_LAST_HOOK_EXIT_STATUS=0", "BUILDKITE_AGENT_META_DA
+TA_EXCLUSIVE=true", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_6=script/**/*.jl",
+ "BUILDKITE_BUILD_CREATOR=Christopher Rackauckas", "BUILDKITE_REBUILT_FROM_
+BUILD_ID=", "OPENBLAS_DEFAULT_NUM_THREADS=1", "BUILDKITE_BRANCH=master", "J
+ULIA_DEPOT_PATH=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0
+a-f4d2d937f953", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_5=pdf/**/*.pdf", "BUI
+LDKITE_AGENT_DEBUG_HTTP=false", "SHELL=/shells/bash", "BUILDKITE=true", "BU
+ILDKITE_PLUGIN_CRYPTIC_PRIVILEGED=true", "BUILDKITE_HOOKS_PATH=/hooks", "BU
+ILDKITE_PIPELINE_DEFAULT_BRANCH=master", "BUILDKITE_PLUGIN_NAME=COPPERMIND"
+, "BUILDKITE_REBUILT_FROM_BUILD_NUMBER=", "HOME=/root", "BUILDKITE_PLUGIN_C
+OPPERMIND_OUTPUTS_4=notebook/**/*.ipynb", "BUILDKITE_S3_DEFAULT_REGION=us-e
+ast-1", "BUILDKITE_TRIGGERED_FROM_BUILD_PIPELINE_SLUG=", "BUILDKITE_BUILD_C
+HECKOUT_PATH=/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-
+jl", "BUILDKITE_SCRIPT_PATH=# Clear out these secrets as they're not needed
+ during the actual build\nBUILDKITE_S3_ACCESS_KEY_ID=\"\" BUILDKITE_S3_SECR
+ET_ACCESS_KEY=\"\" ./.buildkite/build_benchmark.sh \"benchmarks/Jumps\"\n",
+ "INVOCATION_ID=29966b88abb442929836d952ccb5d133", "BUILDKITE_PLUGIN_COPPER
+MIND_OUTPUTS_2=markdown/**/*.pdf", "LANG=en_US.UTF-8", "BUILDKITE_PIPELINE_
+NAME=SciMLBenchmarks.jl", "SHLVL=3", "XDG_RUNTIME_DIR=/run/user/21581", "OL
+DPWD=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f
+953", "FONTCONFIG_FILE=/cache/julia-buildkite-plugin/depots/5b300254-1738-4
+989-ae0a-f4d2d937f953/artifacts/558980a93131f08be5335521b84e137ee3172296/et
+c/fonts/fonts.conf", "BUILDKITE_PLUGIN_CONFIGURATION={\"inputs\":[\"benchma
+rks/Jumps\",\"src/**/*.jl\",\"./*.toml\"],\"outputs\":[\"markdown/**/figure
+s/*.png\",\"markdown/**/*.md\",\"markdown/**/*.pdf\",\"markdown/**/*.svg\",
+\"notebook/**/*.ipynb\",\"pdf/**/*.pdf\",\"script/**/*.jl\"],\"s3_prefix\":
+\"s3://julialang-buildkite-artifacts/scimlbenchmarks\"}", "BUILDKITE_BUILD_
+PATH=/cache/build", "BUILDKITE_BUILD_AUTHOR_EMAIL=accounts@chrisrackauckas.
+com", "BUILDKITE_TIMEOUT=10080", "BUILDKITE_GIT_MIRRORS_PATH=/cache/repos",
+ "BUILDKITE_STRICT_SINGLE_HOOKS=false", "BUILDKITE_LABEL=:hammer: benchmark
+s/Jumps", "FONTCONFIG_PATH=/cache/julia-buildkite-plugin/depots/5b300254-17
+38-4989-ae0a-f4d2d937f953/artifacts/558980a93131f08be5335521b84e137ee317229
+6/etc/fonts", "JOURNAL_STREAM=8:665652457", "BUILDKITE_AGENT_META_DATA_SAND
+BOX_JL=true", "BUILDKITE_BUILD_CREATOR_TEAMS=juliagpu-full-access:sciml-ful
+l-access", "BUILDKITE_PROJECT_PROVIDER=github", "QT_ACCESSIBILITY=1", "BUIL
+DKITE_S3_SECRET_ACCESS_KEY=", "GKS_USE_CAIRO_PNG=true", "BUILDKITE_REPO_MIR
+ROR=/cache/repos/https---github-com-SciML-SciMLBenchmarks-jl-git", "GIT_TER
+MINAL_PROMPT=0", "BUILDKITE_JOB_ID=01932c0f-c8f9-4d0e-9298-a730caee04f1", "
+SYSTEMD_EXEC_PID=2037392", "BUILDKITE_REDACTED_VARS=*_PASSWORD,*_SECRET,*_T
+OKEN,*_PRIVATE_KEY,*_ACCESS_KEY,*_SECRET_KEY,*_CONNECTION_STRING", "BUILDKI
+TE_BUILD_AUTHOR=Christopher Rackauckas", "USER=sabae", "GKSwstype=100", "BU
+ILDKITE_REPO=https://github.com/SciML/SciMLBenchmarks.jl.git", "BUILDKITE_G
+IT_FETCH_FLAGS=-v --prune --tags", "BUILDKITE_LOCAL_HOOKS_ENABLED=true", "M
+ANAGERPID=59175", "BUILDKITE_S3_ACCESS_KEY_ID=", "BUILDKITE_GIT_MIRRORS_LOC
+K_TIMEOUT=300", "BUILDKITE_AGENT_ID=01932c0f-e29c-4168-801a-ba2b93fdb39d", 
+"BUILDKITE_GIT_MIRRORS_SKIP_UPDATE=false", "BUILDKITE_ARTIFACT_PATHS=", "BU
+ILDKITE_BUILD_URL=https://buildkite.com/julialang/scimlbenchmarks-dot-jl/bu
+ilds/2992", "BUILDKITE_MESSAGE=Merge pull request #1118 from vyudu/bump-fro
+m-master\n\nbump Jumps to Catalyst v14, MTK v9", "BUILDKITE_RETRY_COUNT=0",
+ "LOGNAME=sabae", "JULIA_CPU_THREADS=128", "BUILDKITE_PLUGIN_JULIA_CACHE_DI
+R=/cache/julia-buildkite-plugin", "BUILDKITE_PLUGIN_COPPERMIND_INPUT_HASH=8
+fc44555206ed51dae31cc3691aa0f1881935a8c065d3945f1e0700f64d8f0b1", "BUILDKIT
+E_PLUGIN_CRYPTIC_BASE64_AGENT_PRIVATE_KEY_SECRET=LS0tLS1CRUdJTiBSU0EgUFJJVk
+FURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBdFhzSjMxRm0xSjdvSGM5b3hmWllKY3FxRk5ya
+XRMUUhxaDVJUHNGS3YySis1K1FVCkJGTWFEYzByN3M2dzQzUjAxaG5FTU9ZWDQwK3lFQ094eWxx
+K1o3dHdxWlNxS2U1MThwc0RyeWRna0xJNzRnQUUKWVljU2Rnb0xreGFqVjcva29IRUw4K3M0SnR
+UVTVCendURXVwTllTZGNQOFhQSmJLekY1RE5qdWJmeFA5ZjdSNwpseklMdjVpdmdpcWU1bW1MRn
+dZcG9IU0VRVTV0ZU9PSEErS2NjUDZ3K2d1Q0VxMUZFb0N2MDRyaTFXaWpVZXorCjMrRFlTOFArU
+ThkcTBiWFFmVEtVcnNLYTJHZy81ZmdIeWdEdWRHT2ZsdzUvVEljR3VVbGNsd1hZb2tTRkpSWUIK
+RWtqVDlwQmdiTTRHMi9rVzRhZmd3eGxzbjd1bFFuUDQ2VS8xZFFJREFRQUJBb0lCQVFDTU5sVjR
+UbUlPWC8raQpHSDh3ZzVXekRSTy9MU1greXlFbzFHQ282NW9lcDdDNDVNUjZXdUpFUzRKbjdSVk
+poczVHSkg0cDhYdi9TYkdmCk9wVEFiTCt6VVdSSUFPNC9tMWRSYTJhN1NzY1d4RDN6N0dOMkhtK
+3E5elBlSHAxd3pIZU5aZ29BR0htM3RyUU0KMGpidUczN09OSG1YdGQ1MEYyVHo1TmcwN0hURkJw
+V3hMMjJwNm9aZzgyUEk0OXIrdUpWWmZ5MU5HZVRnaFA4cgp2dVRVTVJIcldZa25YbUR1eDVSMHN
+IdDFoU2FvTXBFbSsrMWc1V09rSzZDTGFJbEV0ZitWVVBvR0piYlNYRzNJCmo5N1h5a3NGUDhGZ2
+4wMWx4ZktGV1p4MXlnTVdsUm00SFNCTWVkc1FpWStqeG5Sd3BtRnh5L2pIOVhFTUppT0wKQSsvV
+FdCbUJBb0dCQU52cXROQjRuVS9zODIxTU9oalRPTmtFOGNJOENxV1BRRTZXcEFOYVY5UkVVcGVC
+ZzhmMgpjTXg2VFMweE9EU0JRUk9PRnNEUG9pc1E0VVRGQmFialBLTU41d2IzNFVKYmN4V0ZwcGl
+LUHJMa09Zdmtqb01VCkNSb1pKK05Lb253RWh5bWJ0TG0yMHhmUUZCamY1R1QvMHJZUWcxUkN1OV
+llSmE0Z3NWYWtSNGh4QW9HQkFOTkIKMzhxenJhTTBDeHhrSnZkVmlTY3g2MFowN2g4OHFISy9SV
+2dVK3ZZaitwZy9ibXBwMmdiUXZkYTJxaS84UEl2OApSb0JwcmY2Y285TmdSa2JmY05xZmFnM1Z5
+SDhBNW1iUE1nK0s4YmFuKzlwU003WkREVW1sdU03R3ZRSW5OVnBCCnBJcE1uWEk5eDZSSFlpOFF
+2MHhXOXcyUmpmS09TbElYZFlITjZwOUZBb0dCQUp0NXdwMkVPRXR5VE9NZnVnOGsKL1pMSVlSY2
+VGYlRZb3ZFc3BRWE4wRHc4bFZ1UmNCWmx6M2R3bTdGd2s3ampESndEbjJodklzcHBvNmxYMVZnW
+QpYUjAxemZocU5QSVI3em52QkVuaHF0UVViKzdNQmtqN1dEZ0FRdWY1TXdpVXR1NGVxOVdFUUpj
+Y1A2a2FXTUZpCjc1aFI4bGNXMnU5VTN2VE5Iak1QNzVheEFvR0JBSm5HdExsZlMwQ21USVF4SHZ
+BaE1rSDJvMVZaSGxCY25oMVEKdjV3QTBhRkVGVkNuczU4QVNEVjMwd2d0VlBxeTkvdkoraVBWU1
+ZNeUFFcUlKUC9IKytVWDcySDh3UUk1ekh6Lwp5MmZtOHdYTGg1ZW5DSDllbFppTGFsZ1I4RmxWN
+Hc4OUF5R3NuVnNnUDJlRWtxTEI1UTRUcTZnVDBLakVETE51CjRobEhvOGFsQW9HQUhBVGltTGRk
+S0JFTkN2MXZyNnZ0d3JCZGRCbWlGSWFwaVcvMk5acWxCTFp1bEp6MEwzdCsKM3FvSUF0Uisxd2x
+pWkQwZGJnRGdVeVRMcnN5Y1RDSkZIczNIZTFXb3NCSzcxTmlncFZhWEVzWnFpOHNENjlvUQo2Qk
+FnaEdvbnNGbTEydzhhRGNDdm92WUxLTlhVV1BFT1c0akdvd2k0Tmx4NGZidHlkYXpIUEdnPQotL
+S0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=", "BUILDKITE_PIPELINE_SLUG=scimlben
+chmarks-dot-jl", "BUILDKITE_SHELL=/bin/bash -e -c", "BUILDKITE_PLUGINS_ENAB
+LED=true", "LANGUAGE=en_US", "GKS_FONTPATH=/cache/julia-buildkite-plugin/de
+pots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/231c36cbc48a78caf7818ee
+7f4cd260eb3d642e3", "BUILDKITE_AGENT_NAME=exclusive-amdci1.0", "BUILDKITE_S
+TEP_ID=01932c0f-c852-4546-99ae-4f7dfa9978b5", "BUILDKITE_PLUGIN_COPPERMIND_
+OUTPUTS_1=markdown/**/*.md", "BUILDKITE_TAG=", "OPENBLAS_MAIN_FREE=1", "PAT
+H=/cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia-1.1
+0-latest-linux-x86_64/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/bin:/usr/local/bin:/
+usr/bin:/bin", "GKS_ENCODING=utf8", "BUILDKITE_AGENT_META_DATA_NUM_CPUS=128
+", "BUILDKITE_TRIGGERED_FROM_BUILD_NUMBER=", "BUILDKITE_AGENT_META_DATA_CON
+FIG_GITSHA=2a413ab3", "BUILDKITE_COMMAND=# Clear out these secrets as they'
+re not needed during the actual build\nBUILDKITE_S3_ACCESS_KEY_ID=\"\" BUIL
+DKITE_S3_SECRET_ACCESS_KEY=\"\" ./.buildkite/build_benchmark.sh \"benchmark
+s/Jumps\"\n", "LIBDECOR_PLUGIN_DIR=/cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/artifacts/38e215c51e5c0f77bc7a8813ba45866
+32a8fc750/lib/libdecor/plugins-1", "BUILDKITE_PLUGIN_VALIDATION=false", "BU
+ILDKITE_AGENT_META_DATA_ARCH=x86_64", "CONDARC=/cache/julia-buildkite-plugi
+n/depots/5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/condarc-julia.
+yml", "FORCE_SANDBOX_MODE=unprivileged", "BUILDKITE_TRIGGERED_FROM_BUILD_ID
+=", "TERM=xterm-256color", "PYTHONIOENCODING=UTF-8", "BUILDKITE_PULL_REQUES
+T_BASE_BRANCH=", "BUILDKITE_PIPELINE_ID=5b300254-1738-4989-ae0a-f4d2d937f95
+3", "_=/cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/juli
+a-1.10-latest-linux-x86_64/bin/julia", "BUILDKITE_BUILD_ID=01932a9f-f83d-41
+89-a228-5ba7eda1c9a4", "BUILDKITE_AGENT_ENDPOINT=https://agent.buildkite.co
+m/v3", "BUILDKITE_PLUGINS=[{\"github.com/staticfloat/cryptic-buildkite-plug
+in#v2\":{\"files\":[\".buildkite/secrets/token.toml\"],\"variables\":[\"BUI
+LDKITE_S3_ACCESS_KEY_ID=\\\"U2FsdGVkX1+x3xs1ZRRZRt3FmwFQmYYKnpV7o8xKkX5Ib6y
+0o5fv0+rskVAj+JKu\\\"\",\"BUILDKITE_S3_SECRET_ACCESS_KEY=\\\"U2FsdGVkX1+LWh
+1yX7LsMBlecEJLc08eJrgOhurhd47CY1/jS3wCGVCQmS1t6f2j70spBoFdfc9kn2naj8HH5A==\
+\\"\",\"BUILDKITE_S3_DEFAULT_REGION=\\\"U2FsdGVkX18ccoE9FmtkwsCm1x0MLMBlN/F
+LcAyKkY4=\\\"\"]}},{\"github.com/JuliaCI/julia-buildkite-plugin#v1\":{\"ver
+sion\":\"1.10\"}},{\"github.com/staticfloat/sandbox-buildkite-plugin\":{\"g
+id\":1000,\"uid\":1000,\"rootfs_url\":\"https://github.com/thazhemadam/open
+modelica-rootfs-image/releases/download/v1.23.0/rootfs-openmodelica-v1.23.0
+.amd64.tar.gz\",\"workspaces\":[\"/cache/julia-buildkite-plugin:/cache/juli
+a-buildkite-plugin\"],\"rootfs_treehash\":\"82970243dc4f188e599a976abc20951
+f4aba2912\"}},{\"github.com/staticfloat/coppermind-buildkite-plugin#v1\":{\
+"inputs\":[\"benchmarks/Jumps\",\"src/**/*.jl\",\"./*.toml\"],\"outputs\":[
+\"markdown/**/figures/*.png\",\"markdown/**/*.md\",\"markdown/**/*.pdf\",\"
+markdown/**/*.svg\",\"notebook/**/*.ipynb\",\"pdf/**/*.pdf\",\"script/**/*.
+jl\"],\"s3_prefix\":\"s3://julialang-buildkite-artifacts/scimlbenchmarks\"}
+}]", "BUILDKITE_SOCKETS_PATH=/root/.buildkite-agent/sockets", "SANDBOX_PERS
+ISTENCE_DIR=/cache/sandbox_persistence", "BUILDKITE_GIT_CLEAN_FLAGS=-ffxdq"
+, "BUILDKITE_COMMIT=a12642c0a0a805b4a25c02875c200aec928ca53c", "BUILDKITE_P
+ULL_REQUEST=false", "BUILDKITE_ORGANIZATION_ID=d409823c-5fa7-41c8-9033-7269
+c5fde4f3", "GKS_QT=env LD_LIBRARY_PATH=/cache/julia-buildkite-plugin/depots
+/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/f839432e3d2904a5c847b217ef0
+c0f489377ecc5/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-a
+e0a-f4d2d937f953/artifacts/2def0eca464bd6d89ccac85338474402359d4930/lib:/ca
+che/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/arti
+facts/d00220164876dea2cb19993200662745eed5e2db/lib:/cache/julia-buildkite-p
+lugin/julia_installs/bin/linux/x64/1.10/julia-1.10-latest-linux-x86_64/bin/
+../lib/julia:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f
+4d2d937f953/artifacts/cb697355f42d1d0c8f70b15c0c3dc28952f774b4/lib:/cache/j
+ulia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts
+/dc526f26fb179a3f68eb13fcbe5d2d2a5aa7eeac/lib:/cache/julia-buildkite-plugin
+/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/c9fd7a94d3c09eac4f3c
+a94d21bf40ccf65eccf5/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738
+-4989-ae0a-f4d2d937f953/artifacts/b757190a3c47fcb65f573f631fdd549b98fcf2e4/
+lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f9
+53/artifacts/b3ddd583e7aec92a77cf5961fad01fd7063c1d40/lib:/cache/julia-buil
+dkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/7099954f
+fb0b6e1641832a06a08e479498ce479f/lib:/cache/julia-buildkite-plugin/depots/5
+b300254-1738-4989-ae0a-f4d2d937f953/artifacts/0803f8d074309498cdf55effdb9c5
+5bc3ef88dde/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0
+a-f4d2d937f953/artifacts/f92cfdafb94fa8c50330be3684c9aeb80bd14750/lib:/cach
+e/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifa
+cts/1308e48c3f4f2fd9adaa56b9bd4a86a995d50abd/lib:/cache/julia-buildkite-plu
+gin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/558980a93131f08be
+5335521b84e137ee3172296/lib:/cache/julia-buildkite-plugin/depots/5b300254-1
+738-4989-ae0a-f4d2d937f953/artifacts/d75cfbd8954fdbc933ebead40a9c8b91513c02
+3a/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d93
+7f953/artifacts/9cfb24edca23321a2dcebb63b4e196181359ecd6/lib:/cache/julia-b
+uildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/aae09
+3c71ea1b1dc04c457afcae880d26c532115/lib:/cache/julia-buildkite-plugin/depot
+s/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/bd965e3c7f9460155f06361da3
+80c63fa0351ef6/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-
+ae0a-f4d2d937f953/artifacts/060cf7829c3363638c29228ea4ab0bd033d8eab0/lib:/c
+ache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/art
+ifacts/77d0e7c90e6a2fd6f2f8457bbb7b86ed86d140d9/lib:/cache/julia-buildkite-
+plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/1e69ef9fbf05e2
+896d3cb70eac8080c4d10f8696/lib:/cache/julia-buildkite-plugin/depots/5b30025
+4-1738-4989-ae0a-f4d2d937f953/artifacts/e200b9737b27598b95b404cbc34e74f95b2
+bf5d0/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2
+d937f953/artifacts/a8e2d77aed043a035fd970326d8f070080efa8fa/lib:/cache/juli
+a-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/6f
+98018cad6a09e91f90658f188c6be47e48a0c7/lib:/cache/julia-buildkite-plugin/de
+pots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/d4f3ff9736df0dda120f8dc
+1d27174b0d5696fb1/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-49
+89-ae0a-f4d2d937f953/artifacts/2ab21f29b30c228bd0e5215585f822730cad5a72/lib
+:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/
+artifacts/62c010876222f83fe8878bf2af0e362083d20ee3/lib:/cache/julia-buildki
+te-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/75b657b8767
+88e58671ab6b88e49019aa36b67cd/lib:/cache/julia-buildkite-plugin/depots/5b30
+0254-1738-4989-ae0a-f4d2d937f953/artifacts/bd1f25e7053ebc00ee7d82f3c5ec4cf1
+e9a51e17/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f
+4d2d937f953/artifacts/cf5d5f8a6109be3f9c460a39768f57a3e53ff11d/lib:/cache/j
+ulia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts
+/c8a20a2030f10b70947d8d2a6bff7f8b5f343fe9/lib:/cache/julia-buildkite-plugin
+/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/0631e2a6a31b5692eec7
+a575836451b16b734ec0/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738
+-4989-ae0a-f4d2d937f953/artifacts/4abd0521d210cb9e48ea5e711873ba34dc05fc70/
+lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f9
+53/artifacts/1cf7375e8ec1bbe1219934488737c12237ba2012/lib:/cache/julia-buil
+dkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/587de110
+e5f58fd435dc35b294df31bb7a75f692/lib:/cache/julia-buildkite-plugin/depots/5
+b300254-1738-4989-ae0a-f4d2d937f953/artifacts/fc239b3ff5739aeab252bd154fa4d
+d045fefe629/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0
+a-f4d2d937f953/artifacts/c951fb23b5652def1dea483af7095a38f3b3cefd/lib:/cach
+e/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifa
+cts/85dab0a3f6b9cc2e5d61165ee376bf46260812a4/lib:/cache/julia-buildkite-plu
+gin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/5b83972689fb7dea5
+e89326f1c0ba60d68e962fb/lib:/cache/julia-buildkite-plugin/depots/5b300254-1
+738-4989-ae0a-f4d2d937f953/artifacts/9d7f5887309a96013a2c75f48b5e137e60ccae
+8f/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d93
+7f953/artifacts/74fd55820a62aa47ebf4d942aa59096980a1851d/lib:/cache/julia-b
+uildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/aa526
+99bd1491b7de9c72fc1eab21e2e4bd649e2/lib:/cache/julia-buildkite-plugin/depot
+s/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/951960aa7e4599865406f43215
+1003dd82cde65d/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-
+ae0a-f4d2d937f953/artifacts/37dda4e57d9de95c99d1f8c6b3d8f4eca88c39a2/lib:/c
+ache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/art
+ifacts/136b88dafbb4b6b7bfa6d4cff225f7d697015bd1/lib:/cache/julia-buildkite-
+plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/38e215c51e5c0f
+77bc7a8813ba4586632a8fc750/lib:/cache/julia-buildkite-plugin/depots/5b30025
+4-1738-4989-ae0a-f4d2d937f953/artifacts/f0d193662fead3500b523f94b4f1878daab
+59a93/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2
+d937f953/artifacts/05616da88f6b36c7c94164d4070776aef18ce46b/lib:/cache/juli
+a-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/2d
+f316da869cd97f7d70029428ee1e2e521407cd/lib:/cache/julia-buildkite-plugin/de
+pots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/7190f0cb0832b80761cc6d5
+13dd9b935f3e26358/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-49
+89-ae0a-f4d2d937f953/artifacts/4daa3879a820580557ef34945e2ae243dfcbba11/lib
+:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/
+artifacts/3643539f491c217e13c1595daad81dd1426fba07/lib:/cache/julia-buildki
+te-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/71f3593804f
+b3a115f7fcb71b20c4e1f9b32290f/lib:/cache/julia-buildkite-plugin/depots/5b30
+0254-1738-4989-ae0a-f4d2d937f953/artifacts/fbef68f6f587b5d3709af5b95701b92e
+3b890e4b/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f
+4d2d937f953/artifacts/0ef7836563e0bb993333653a46424119858e5f1d/lib:/cache/j
+ulia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts
+/4c45bf9c8292490acd9463bbfbf168277d9720b6/lib:/cache/julia-buildkite-plugin
+/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/2efdb7b239e9f244a3a9
+33925294ea27cc6a61c2/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738
+-4989-ae0a-f4d2d937f953/artifacts/872754c2f795d19a3e2e205b2bbaea659f28d11e/
+lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f9
+53/artifacts/7da37be2742b3d1cfe1c14bf5bbd85aed4887f46/lib:/cache/julia-buil
+dkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/c35cb3f6
+f3043a4e962fd56b61ad91b4adb557f7/lib:/cache/julia-buildkite-plugin/depots/5
+b300254-1738-4989-ae0a-f4d2d937f953/artifacts/13befbe35cffe7da192c7001ece18
+b4be3aa3720/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0
+a-f4d2d937f953/artifacts/cacd8c147f866d6672e1aca9bb01fb919a81e96a/lib:/cach
+e/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifa
+cts/b7dc5dce963737414a564aca8d4b82ee388f4fa1/lib:/cache/julia-buildkite-plu
+gin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/0d364e900393f710a
+03a5bafe2852d76e4d2c2cd/lib:/cache/julia-buildkite-plugin/depots/5b300254-1
+738-4989-ae0a-f4d2d937f953/artifacts/1a2adcee7d99fea18ead33c350332626b262e2
+9a/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d93
+7f953/artifacts/40eea58ff37ecc8fb6f21f41079a33b511b3ff92/lib:/cache/julia-b
+uildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/79cc5
+446ced978de84b6e673e01da0ebfdd6e4a5/lib:/cache/julia-buildkite-plugin/depot
+s/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/fce445d991cf502908d681348e
+ec2174c5e31ba8/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-
+ae0a-f4d2d937f953/artifacts/b0d2538004dda9eb6449b72b0b85703aeac30a66/lib:/c
+ache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/art
+ifacts/f03dd5ac03468009d5a99bbfcdf336c2dc372de4/lib:/cache/julia-buildkite-
+plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/eae77862e95d04
+dfafb9fbe9ae39e688b35d756a/lib:/cache/julia-buildkite-plugin/depots/5b30025
+4-1738-4989-ae0a-f4d2d937f953/artifacts/231c36cbc48a78caf7818ee7f4cd260eb3d
+642e3/lib:/cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/j
+ulia-1.10-latest-linux-x86_64/bin/../lib/julia:/cache/julia-buildkite-plugi
+n/julia_installs/bin/linux/x64/1.10/julia-1.10-latest-linux-x86_64/bin/../l
+ib /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f95
+3/artifacts/231c36cbc48a78caf7818ee7f4cd260eb3d642e3/bin/gksqt"]), ProcessE
+xited(1)) [1]
 ```
 
 
@@ -1002,27 +907,27 @@ end
 ```
 
 ```
-10-element Vector{Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vec
+10-element Vector{Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vec
 tor{Int64}}, Tuple{Float64, Float64, Float64}}}:
- (::Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
- (::Main.var"##WeaveSandBox#349".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
+ (::Main.var"##WeaveSandBox#225".var"#Λ#33"{Int64, Vector{Vector{Int64}}, T
 uple{Float64, Float64, Float64}}) (generic function with 1 method)
 ```
 
@@ -1391,96 +1296,85 @@ end
 ```
 
 ```
-algo=Direct (brute-force), V = 1, length = 50, median time = 74.075 μs
-algo=Direct (brute-force), V = 10, length = 50, median time = 9.975 ms
-algo=Direct (brute-force), V = 20, length = 50, median time = 89.599 ms
-algo=Direct (brute-force), V = 30, length = 37, median time = 274.177 ms
-algo=Direct (brute-force), V = 40, length = 7, median time = 1.862 s
-algo=Direct (brute-force), V = 50, length = 3, median time = 3.594 s
-algo=Direct (brute-force), V = 60, length = 2, median time = 6.865 s
-algo=Direct (brute-force), V = 70, length = 1, median time = 10.648 s
-algo=Direct (brute-force), V = 80, length = 1, median time = 15.462 s
-algo=Direct (brute-force), V = 90, length = 1, median time = 27.859 s
-algo=Coevolve (brute-force), V = 1, length = 50, median time = 4.895 μs
-algo=Coevolve (brute-force), V = 10, length = 50, median time = 205.198 μs
-algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.454 ms
-algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.250 ms
-algo=Coevolve (brute-force), V = 40, length = 50, median time = 8.374 ms
-algo=Coevolve (brute-force), V = 50, length = 50, median time = 16.775 ms
-algo=Coevolve (brute-force), V = 60, length = 50, median time = 36.906 ms
-algo=Coevolve (brute-force), V = 70, length = 50, median time = 58.521 ms
-algo=Coevolve (brute-force), V = 80, length = 50, median time = 83.251 ms
-algo=Coevolve (brute-force), V = 90, length = 50, median time = 138.815 ms
-algo=Direct (recursive), V = 1, length = 50, median time = 76.619 μs
-algo=Direct (recursive), V = 10, length = 50, median time = 3.816 ms
-algo=Direct (recursive), V = 20, length = 50, median time = 16.157 ms
-algo=Direct (recursive), V = 30, length = 50, median time = 45.741 ms
-algo=Direct (recursive), V = 40, length = 9, median time = 1.187 s
-algo=Direct (recursive), V = 50, length = 5, median time = 2.417 s
-algo=Direct (recursive), V = 60, length = 3, median time = 4.135 s
-algo=Direct (recursive), V = 70, length = 2, median time = 6.771 s
-algo=Direct (recursive), V = 80, length = 1, median time = 10.589 s
-algo=Direct (recursive), V = 90, length = 1, median time = 16.992 s
-algo=Coevolve (recursive), V = 1, length = 50, median time = 5.015 μs
-algo=Coevolve (recursive), V = 10, length = 50, median time = 73.460 μs
-algo=Coevolve (recursive), V = 20, length = 50, median time = 265.759 μs
-algo=Coevolve (recursive), V = 30, length = 50, median time = 502.033 μs
-algo=Coevolve (recursive), V = 40, length = 50, median time = 913.460 μs
-algo=Coevolve (recursive), V = 50, length = 50, median time = 1.512 ms
-algo=Coevolve (recursive), V = 60, length = 50, median time = 2.184 ms
-algo=Coevolve (recursive), V = 70, length = 50, median time = 3.047 ms
-algo=Coevolve (recursive), V = 80, length = 50, median time = 4.006 ms
-algo=Coevolve (recursive), V = 90, length = 50, median time = 5.344 ms
-algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 203.078
- μs
-algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 5.124 
+algo=Direct (brute-force), V = 1, length = 50, median time = 88.794 μs
+algo=Direct (brute-force), V = 10, length = 50, median time = 10.740 ms
+algo=Direct (brute-force), V = 20, length = 1, median time = 89.599 ms
+algo=Direct (brute-force), V = 30, length = 1, median time = 254.719 ms
+algo=Direct (brute-force), V = 40, length = 1, median time = 1.680 s
+algo=Direct (brute-force), V = 50, length = 1, median time = 3.240 s
+algo=Direct (brute-force), V = 60, length = 1, median time = 5.744 s
+algo=Direct (brute-force), V = 70, length = 1, median time = 9.486 s
+algo=Direct (brute-force), V = 80, length = 1, median time = 15.459 s
+algo=Direct (brute-force), V = 90, length = 1, median time = 23.377 s
+algo=Coevolve (brute-force), V = 1, length = 50, median time = 4.480 μs
+algo=Coevolve (brute-force), V = 10, length = 50, median time = 218.244 μs
+algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.326 ms
+algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.271 ms
+algo=Coevolve (brute-force), V = 40, length = 50, median time = 8.327 ms
+algo=Coevolve (brute-force), V = 50, length = 50, median time = 16.669 ms
+algo=Coevolve (brute-force), V = 60, length = 50, median time = 29.502 ms
+algo=Coevolve (brute-force), V = 70, length = 50, median time = 50.410 ms
+algo=Coevolve (brute-force), V = 80, length = 50, median time = 77.171 ms
+algo=Coevolve (brute-force), V = 90, length = 50, median time = 121.249 ms
+algo=Direct (recursive), V = 1, length = 50, median time = 97.629 μs
+algo=Direct (recursive), V = 10, length = 50, median time = 4.831 ms
+algo=Direct (recursive), V = 20, length = 1, median time = 23.309 ms
+algo=Direct (recursive), V = 30, length = 1, median time = 63.943 ms
+algo=Direct (recursive), V = 40, length = 1, median time = 1.094 s
+algo=Direct (recursive), V = 50, length = 1, median time = 2.101 s
+algo=Direct (recursive), V = 60, length = 1, median time = 3.595 s
+algo=Direct (recursive), V = 70, length = 1, median time = 5.605 s
+algo=Direct (recursive), V = 80, length = 1, median time = 9.526 s
+algo=Direct (recursive), V = 90, length = 1, median time = 13.272 s
+algo=Coevolve (recursive), V = 1, length = 50, median time = 4.845 μs
+algo=Coevolve (recursive), V = 10, length = 50, median time = 72.394 μs
+algo=Coevolve (recursive), V = 20, length = 50, median time = 245.483 μs
+algo=Coevolve (recursive), V = 30, length = 50, median time = 465.017 μs
+algo=Coevolve (recursive), V = 40, length = 50, median time = 854.604 μs
+algo=Coevolve (recursive), V = 50, length = 50, median time = 1.456 ms
+algo=Coevolve (recursive), V = 60, length = 50, median time = 2.173 ms
+algo=Coevolve (recursive), V = 70, length = 50, median time = 3.073 ms
+algo=Coevolve (recursive), V = 80, length = 50, median time = 3.970 ms
+algo=Coevolve (recursive), V = 90, length = 50, median time = 5.462 ms
+algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 59.594 
+μs
+algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 5.293 
 ms
-algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 48.864
+algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 41.880
  ms
-algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 129.48
+algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 115.63
+6 ms
+algo=PDMPCHVSimple (brute-force), V = 40, length = 33, median time = 305.12
 2 ms
-algo=PDMPCHVSimple (brute-force), V = 40, length = 31, median time = 320.76
-4 ms
-algo=PDMPCHVSimple (brute-force), V = 50, length = 15, median time = 680.96
-8 ms
-algo=PDMPCHVSimple (brute-force), V = 60, length = 8, median time = 1.291 s
-algo=PDMPCHVSimple (brute-force), V = 70, length = 5, median time = 2.163 s
-algo=PDMPCHVSimple (brute-force), V = 80, length = 4, median time = 3.303 s
-algo=PDMPCHVSimple (brute-force), V = 90, length = 2, median time = 5.613 s
-algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 201.489 μ
-s
-algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 471.597 
+algo=PDMPCHVSimple (brute-force), V = 50, length = 15, median time = 644.45
+0 ms
+algo=PDMPCHVSimple (brute-force), V = 60, length = 8, median time = 1.112 s
+algo=PDMPCHVSimple (brute-force), V = 70, length = 5, median time = 1.904 s
+algo=PDMPCHVSimple (brute-force), V = 80, length = 2, median time = 3.270 s
+algo=PDMPCHVSimple (brute-force), V = 90, length = 2, median time = 5.238 s
+algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 60.960 μs
+algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 334.538 
 μs
-algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 964.129 
+algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 819.379 
 μs
-algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.643 ms
-algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.572 ms
-algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.640 ms
-algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 5.074 ms
-algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 6.917 ms
-algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 9.098 ms
-algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 11.781 m
+algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.593 ms
+algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.477 ms
+algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.679 ms
+algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 5.193 ms
+algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 7.151 ms
+algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 9.497 ms
+algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 12.471 m
 s
-algo=PDMPCHVFull, V = 1, length = 50, median time = 197.889 μs
-algo=PDMPCHVFull, V = 10, length = 50, median time = 607.301 μs
-algo=PDMPCHVFull, V = 20, length = 50, median time = 902.315 μs
-algo=PDMPCHVFull, V = 30, length = 50, median time = 1.327 ms
-algo=PDMPCHVFull, V = 40, length = 50, median time = 1.630 ms
-algo=PDMPCHVFull, V = 50, length = 50, median time = 1.978 ms
-algo=PDMPCHVFull, V = 60, length = 50, median time = 2.560 ms
-algo=PDMPCHVFull, V = 70, length = 50, median time = 2.976 ms
-algo=PDMPCHVFull, V = 80, length = 50, median time = 3.185 ms
-algo=PDMPCHVFull, V = 90, length = 50, median time = 3.918 ms
-algo=PyTick, V = 1, length = 50, median time = 30.725 μs
-algo=PyTick, V = 10, length = 50, median time = 175.734 μs
-algo=PyTick, V = 20, length = 50, median time = 1.247 ms
-algo=PyTick, V = 30, length = 50, median time = 3.685 ms
-algo=PyTick, V = 40, length = 50, median time = 9.340 ms
-algo=PyTick, V = 50, length = 50, median time = 21.650 ms
-algo=PyTick, V = 60, length = 50, median time = 46.895 ms
-algo=PyTick, V = 70, length = 50, median time = 89.545 ms
-algo=PyTick, V = 80, length = 50, median time = 147.136 ms
-algo=PyTick, V = 90, length = 43, median time = 233.441 ms
+algo=PDMPCHVFull, V = 1, length = 50, median time = 59.025 μs
+algo=PDMPCHVFull, V = 10, length = 50, median time = 466.091 μs
+algo=PDMPCHVFull, V = 20, length = 50, median time = 749.215 μs
+algo=PDMPCHVFull, V = 30, length = 50, median time = 1.224 ms
+algo=PDMPCHVFull, V = 40, length = 50, median time = 1.532 ms
+algo=PDMPCHVFull, V = 50, length = 50, median time = 1.899 ms
+algo=PDMPCHVFull, V = 60, length = 50, median time = 2.501 ms
+algo=PDMPCHVFull, V = 70, length = 50, median time = 3.052 ms
+algo=PDMPCHVFull, V = 80, length = 50, median time = 3.643 ms
+algo=PDMPCHVFull, V = 90, length = 50, median time = 4.366 ms
 ```
 
 
