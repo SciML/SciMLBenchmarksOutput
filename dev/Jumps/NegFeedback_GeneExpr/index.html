@@ -39,9 +39,9 @@ for i in 1:length(methods)
     avgtimes[i] = mean(benchmarks[i])
     stdtimes[i] = std(benchmarks[i])
 end
-println(medtimes/medtimes[1])</code></pre><pre><code class="nohighlight hljs">[1.0, 1.4315186029264488, 1.119171867979581, 2.125096763366878, 2.228707999
-2854393, 2.213932300829864, 4.247137699007736, 2.812698601735515, 2.4216392
-66168279]</code></pre><pre><code class="language-julia hljs">using DataFrames
+println(medtimes/medtimes[1])</code></pre><pre><code class="nohighlight hljs">[1.0, 1.4291869538035167, 1.1439834148427415, 2.007310135403952, 2.18685366
+4675618, 2.2844186669625723, 4.242119479169768, 2.8501192193500717, 2.35397
+72711895144]</code></pre><pre><code class="language-julia hljs">using DataFrames
 df = DataFrame(names=shortlabels, medtimes=medtimes, relmedtimes=(medtimes/medtimes[1]),
                avgtimes=avgtimes, std=stdtimes, cv=stdtimes./avgtimes)
 sa = [text(string(round(mt,sigdigits=2),&quot;s&quot;),:center,10) for mt in df.medtimes]
@@ -84,7 +84,8 @@ Environment:
   [37e2e46d] LinearAlgebra
   [9a3f8284] Random
   [10745b16] Statistics v1.10.0
-Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Manifest.toml`
+Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.9.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.38
@@ -209,7 +210,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [2d8b4e74] LevyArea v1.0.0
   [87fe0de2] LineSearch v0.1.4
   [d3d80556] LineSearches v7.3.0
-  [7ed4a6bd] LinearSolve v2.36.2
+⌃ [7ed4a6bd] LinearSolve v2.36.2
   [2ab3a3ac] LogExpFunctions v0.3.28
   [e6f89c97] LoggingExtras v1.1.0
   [bdcacae8] LoopVectorization v0.12.171
@@ -509,4 +510,5 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../MultivariateHawkes/">« Multivariate Hawkes Model</a><a class="docs-footer-nextpage" href="../NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 15 November 2024 08:27">Friday 15 November 2024</span>. Using Julia version 1.11.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../MultivariateHawkes/">« Multivariate Hawkes Model</a><a class="docs-footer-nextpage" href="../NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 15 November 2024 23:04">Friday 15 November 2024</span>. Using Julia version 1.11.1.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
