@@ -105,24 +105,24 @@ df = DataFrame(names=shortlabels, medtimes=medtimes, relmedtimes=(medtimes/medti
 4   ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ Direct          4.06949     1.0         4.06961   0.0120111   0.0029
-514 ⋯
-   2 │ FRM            14.1394      3.4745     14.1616    0.113256    0.0079
-973
-   3 │ SortingDirect   1.03345     0.253951    1.03336   0.00327681  0.0031
-710
-   4 │ NRM             0.707326    0.173812    0.708545  0.00337415  0.0047
-620
-   5 │ DirectCR        0.44364     0.109016    0.444389  0.00288501  0.0064
-920 ⋯
-   6 │ RSSA            1.41262     0.347126    1.41303   0.00272575  0.0019
-290
-   7 │ RSSACR          0.403519    0.0991571   0.403615  0.00195249  0.0048
-375
-   8 │ Coevolve        0.844111    0.207424    0.852073  0.0194282   0.0228
-011
-   9 │ RDirect         0.387022    0.0951034   0.39269   0.0138091   0.0351
-654 ⋯
+   1 │ Direct          4.08828     1.0         4.08938   0.00838576  0.0020
+506 ⋯
+   2 │ FRM            14.0876      3.44584    14.1125    0.0899605   0.0063
+745
+   3 │ SortingDirect   1.03336     0.252762    1.03342   0.00356214  0.0034
+469
+   4 │ NRM             0.705773    0.172633    0.707095  0.00678188  0.0095
+911
+   5 │ DirectCR        0.448221    0.109636    0.450863  0.010943    0.0242
+712 ⋯
+   6 │ RSSA            1.40556     0.343802    1.40669   0.00616751  0.0043
+844
+   7 │ RSSACR          0.402901    0.0985503   0.403398  0.00310435  0.0076
+955
+   8 │ Coevolve        0.855035    0.209143    0.856768  0.00596123  0.0069
+578
+   9 │ RDirect         0.399783    0.0977878   0.400331  0.00201685  0.0050
+379 ⋯
                                                                 1 column om
 itted
 ```
@@ -199,6 +199,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9a3f8284] Random
   [10745b16] Statistics v1.10.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -329,7 +330,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2d8b4e74] LevyArea v1.0.0
   [87fe0de2] LineSearch v0.1.4
   [d3d80556] LineSearches v7.3.0
-  [7ed4a6bd] LinearSolve v2.36.2
+⌃ [7ed4a6bd] LinearSolve v2.36.2
   [2ab3a3ac] LogExpFunctions v0.3.28
   [e6f89c97] LoggingExtras v1.1.0
   [bdcacae8] LoopVectorization v0.12.171
@@ -630,5 +631,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

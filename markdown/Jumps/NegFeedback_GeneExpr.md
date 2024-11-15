@@ -99,9 +99,9 @@ println(medtimes/medtimes[1])
 ```
 
 ```
-[1.0, 1.4315186029264488, 1.119171867979581, 2.125096763366878, 2.228707999
-2854393, 2.213932300829864, 4.247137699007736, 2.812698601735515, 2.4216392
-66168279]
+[1.0, 1.4291869538035167, 1.1439834148427415, 2.007310135403952, 2.18685366
+4675618, 2.2844186669625723, 4.242119479169768, 2.8501192193500717, 2.35397
+72711895144]
 ```
 
 
@@ -176,6 +176,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9a3f8284] Random
   [10745b16] Statistics v1.10.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -306,7 +307,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2d8b4e74] LevyArea v1.0.0
   [87fe0de2] LineSearch v0.1.4
   [d3d80556] LineSearches v7.3.0
-  [7ed4a6bd] LinearSolve v2.36.2
+⌃ [7ed4a6bd] LinearSolve v2.36.2
   [2ab3a3ac] LogExpFunctions v0.3.28
   [e6f89c97] LoggingExtras v1.1.0
   [bdcacae8] LoopVectorization v0.12.171
@@ -607,5 +608,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
