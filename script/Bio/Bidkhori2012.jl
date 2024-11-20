@@ -704,11 +704,6 @@ const to = TimerOutput()
 show(to)
 
 
-@show numspecies(sys) # Number of ODEs
-@show numreactions(sys) # Apprx. number of terms in the ODE
-@show length(parameters(sys)) # Number of Parameters
-
-
 sol = solve(oprob, CVODE_BDF())
 plot(sol, legend=false, fmt=:png)
 
