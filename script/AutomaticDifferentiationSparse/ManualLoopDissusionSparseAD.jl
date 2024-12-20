@@ -5,6 +5,7 @@ using LinearAlgebra
 using SparseConnectivityTracer: TracerSparsityDetector
 using SparseMatrixColorings
 import Enzyme,ForwardDiff,Mooncake
+import Markdown, PrettyTables, Printf
 
 
 bcks = [
@@ -60,4 +61,13 @@ scenarios = [ Scenario{:jacobian,:out}(Diffusion,u,res1=DDiffusion(u))];
 
 
 df = benchmark_differentiation(bcks, scenarios)
+table = PrettyTables.pretty_table(
+    String,
+    df;
+    backend=Val(:markdown),
+    header=names(df),
+    formatters=PrettyTables.ft_printf("%.1e"),
+)
+
+Markdown.parse(table)
 
