@@ -871,7 +871,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ComplicatedPDE/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ComplicatedPDE/Project.toml`
   [f3b72e0c] DiffEqDevTools v2.45.1
   [e4b2fa32] GaussianRandomFields v2.2.5
   [7073ff75] IJulia v1.26.0
@@ -894,7 +894,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ComplicatedPDE/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ComplicatedPDE/Manifest.toml`
   [47edcb42] ADTypes v1.11.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
