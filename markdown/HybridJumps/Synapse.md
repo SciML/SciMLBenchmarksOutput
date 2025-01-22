@@ -15,7 +15,7 @@ const fmt = :png
 Error: Failed to precompile PiecewiseDeterministicMarkovProcesses [86206cdf
 -4603-54e0-bd58-22a2dcbf57aa] to "/cache/julia-buildkite-plugin/depots/5b30
 0254-1738-4989-ae0a-f4d2d937f953/compiled/v1.10/PiecewiseDeterministicMarko
-vProcesses/jl_KvapZc".
+vProcesses/jl_jbGKkl".
 ```
 
 
