@@ -1,134 +1,112 @@
 ---
-author: "Samuel Isaacson, Chris Rackauckas"
-title: "Negative Feedback Marchetti Model"
+author: ~
+title: "EGFR Network Benchmark"
 ---
 ```julia
-using OrdinaryDiffEq, Catalyst, JumpProcesses, JumpProblemLibrary, Plots, Statistics
-fmt = :png
-```
-
-```
-:png
+using JumpProcesses, Plots, StableRNGs, BenchmarkTools, ReactionNetworkImporters, StatsPlots, Catalyst
 ```
 
 
 
 
+We will benchmark the aggregators of JumpProcesses on a epidermal growth factor receptor signaling network (356 species, 3749 reactions).[^1]
 
-# Model and example solutions
-Here we implement the gene expression model from appendix A.6 of Marchetti,
-Priami and Thanh, *Simulation Algorithms for Comptuational Systems Biology*,
-Springer (2017).
+Let's first look at how the model equilibriates to make sure we get consistent results for all the methods. Let's plot the dimer concentration as a function of time using each of the different stochastic simulation algorithms.
 
 ```julia
-jprob = JumpProblemLibrary.prob_jump_dnadimer_repressor
-rnpar = jprob.rates
-u0 = jprob.u0
-tf = jprob.tstop
-rn = jprob.network
-reactions(rn)
-```
+tf = 12.
+rng = StableRNG(53124)
+algs = [NRM(), CCNRM(), DirectCR(), RSSACR()]
+egfr_net = loadrxnetwork(BNGNetwork(), joinpath(@__DIR__, "Data/egfr_net.net"));
+dprob = DiscreteProblem(complete(egfr_net.rn), egfr_net.u0, (0., tf), egfr_net.p)
+dprob = remake(dprob,u0=Int64.(dprob.u0))
 
-```
-8-element Vector{Catalyst.Reaction}:
- c1, G --> G + M
- c2, M --> M + P
- c3, M --> ∅
- c4, P --> ∅
- c5, 2*P --> P2
- c6, P2 --> 2*P
- c7, P2 + G --> P2G
- c8, P2G --> P2 + G
-```
-
-
-
-```julia
-u0f = [1000., 0., 0., 0., 0.]
-odeprob = ODEProblem(rn, u0f, (0.,tf), rnpar)
-solution = solve(odeprob, Tsit5())
-plot(solution, format=fmt)
-```
-
-![](figures/NegFeedback_GeneExpr_Marchetti_3_1.png)
-
-```julia
-tf = 4000.
-methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR(), Coevolve(), RDirect())
-shortlabels = [string(leg)[15:end-2] for leg in methods]
-prob = prob = DiscreteProblem(rn, u0, (0.0, tf), rnpar)
-ploth = plot(reuse=false)
-p = []
-for (i,method) in enumerate(methods)
-    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
-    sol = solve(jump_prob, SSAStepper(), saveat=tf/1000.)
-    plot!(ploth, sol.t, sol[3,:], label=shortlabels[i], format=fmt)
-    push!(p, plot(sol, title=shortlabels[i], format=fmt))
+plt = plot(title="Dimer concentrations")
+for alg in algs
+    jprob = JumpProblem(complete(egfr_net.rn), dprob, alg)
+    sol = solve(jprob, SSAStepper(), saveat = tf/200)
+    plot!(plt, sol, idxs = :Dimers, label="$alg")
 end
-plot(ploth, title="Protein level", xlabel="time", format=fmt)
+plot!(plt)
 ```
 
-![](figures/NegFeedback_GeneExpr_Marchetti_4_1.png)
-
-```julia
-plot(p[end])
+```
+Parsing parameters...done
+Creating parameters...done
+Parsing species...done
+Creating species...done
+Creating species and parameters for evaluating expressions...done
+Parsing and adding reactions...done
+Parsing groups...done
 ```
 
-![](figures/NegFeedback_GeneExpr_Marchetti_5_1.png)
+
+![](figures/EGFR_Benchmark_2_1.png)
 
 
+These results seem pretty reasonable - it seems like we're getting the same dimer
+concentration curve for each method.
 
-# Benchmarking performance of the methods
+
+# Model Benchmark
+We define a function to benchmark the model and then plot the results in a benchmark. The goal is to see how the SSAs perform relative to each other. 
 
 ```julia
-function run_benchmark!(t, jump_prob, stepper)
-    sol = solve(jump_prob, stepper)
-    @inbounds for i in 1:length(t)
-        t[i] = @elapsed (sol = solve(jump_prob, stepper))
+function benchmark_and_bar_plot(model, end_time, algs)
+    times = Vector{Float64}()
+    alg_names = ["$s"[15:end-2] for s in algs]
+
+    benchmarks = Vector{BenchmarkTools.Trial}(undef, length(algs))
+    for (i, alg) in enumerate(algs)
+        alg_name = alg_names[i]
+        println("Benchmarking $alg_name")
+        dprob = DiscreteProblem(complete(model.rn), model.u0, (0., end_time), model.p)
+        dprob = remake(dprob,u0 = Int64.(dprob.u0))
+        jprob = JumpProblem(complete(model.rn), dprob, alg; rng, save_positions = (false, false))
+
+        b = @benchmarkable solve($jprob; saveat = $end_time) samples = 5 seconds = 7200
+        bm = run(b)
+        push!(times, median(bm).time/1e9)
     end
+
+    bar(alg_names, times, xlabel = "Algorithm", ylabel = "Average Time (s)", title = "SSA Runtime for EGFR network", legend = false)
 end
 ```
 
 ```
-run_benchmark! (generic function with 1 method)
+benchmark_and_bar_plot (generic function with 1 method)
 ```
 
 
 
+
+
+Now we benchmark the EGFR network on the four algorithms and plot the results. 
 ```julia
-nsims = 200
-benchmarks = Vector{Vector{Float64}}()
-for method in methods
-    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
-    stepper = SSAStepper()
-    t = Vector{Float64}(undef, nsims)
-    run_benchmark!(t, jump_prob, stepper)
-    push!(benchmarks, t)
-end
+tf = 12. 
+rng = StableRNG(53124)
+algs = [NRM(), CCNRM(), DirectCR(), RSSACR()]
+
+plt = benchmark_and_bar_plot(egfr_net, tf, algs)
+plt
+```
+
+```
+Benchmarking NRM
+Benchmarking CCNRM
+Benchmarking DirectCR
+Benchmarking RSSACR
 ```
 
 
-```julia
-medtimes = Vector{Float64}(undef, length(methods))
-stdtimes = Vector{Float64}(undef, length(methods))
-avgtimes = Vector{Float64}(undef, length(methods))
-for i in 1:length(methods)
-    medtimes[i] = median(benchmarks[i])
-    avgtimes[i] = mean(benchmarks[i])
-    stdtimes[i] = std(benchmarks[i])
-end
+![](figures/EGFR_Benchmark_4_1.png)
 
-using DataFrames
-df = DataFrame(names=shortlabels, medtimes=medtimes, relmedtimes=(medtimes/medtimes[1]),
-               avgtimes=avgtimes, std=stdtimes, cv=stdtimes./avgtimes)
-sa = [text(string(round(mt,digits=3),"s"),:center,12) for mt in df.medtimes]
-bar(df.names,df.relmedtimes,legend=:false, fmt=fmt)
-scatter!(df.names, .05 .+ df.relmedtimes, markeralpha=0, series_annotations=sa, fmt=fmt)
-ylabel!("median relative to Direct")
-title!("Marchetti Gene Expression Model")
-```
 
-![](figures/NegFeedback_GeneExpr_Marchetti_8_1.png)
+
+### References
+[^1]: Blinov ML, Faeder JR, Goldstein B, Hlavacek WS. A network model of early events in epidermal growth factor receptor signaling that accounts for combinatorial complexity.
+[^2]: Loman TE, Ma Y, Ilin V, et al. Catalyst: Fast and flexible modeling of reaction networks.
+
 
 
 ## Appendix
@@ -139,7 +117,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/Jumps","NegFeedback_GeneExpr_Marchetti.jmd")
+SciMLBenchmarks.weave_file("benchmarks/Jumps","EGFR_Benchmark.jmd")
 ```
 
 Computer Information:
