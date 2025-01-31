@@ -1,6 +1,7 @@
 
 using ParameterizedFunctions, OrdinaryDiffEq, DiffEqParamEstim, Optimization
 using OptimizationBBO, OptimizationNLopt, Plots, ForwardDiff, BenchmarkTools
+using ModelingToolkit: t_nounits as t, D_nounits as D
 gr(fmt=:png)
 
 
@@ -12,11 +13,25 @@ GloIniPar = [0.0, 0.5, 0.1] # for global optimizations
 LocIniPar = [9.0, 20.0, 2.0] # for local optimization
 
 
-g1 = @ode_def LorenzExample begin
-  dx = σ*(y-x)
-  dy = x*(ρ-z) - y
-  dz = x*y - β*z
-end σ ρ β
+@mtkmodel LorenzExample begin
+  @parameters begin
+      σ = 10.0  # Parameter: Prandtl number
+      ρ = 28.0  # Parameter: Rayleigh number
+      β = 8/3   # Parameter: Geometric factor
+  end
+  @variables begin
+      x(t) = 1.0  # Initial condition for x
+      y(t) = 1.0  # Initial condition for y
+      z(t) = 1.0  # Initial condition for z
+  end
+  @equations begin
+      D(x) ~ σ * (y - x)
+      D(y) ~ x * (ρ - z) - y
+      D(z) ~ x * y - β * z
+  end
+end
+  
+@mtkbuild g1 = LorenzExample()
 p = [10.0,28.0,2.66] # Parameters used to construct the dataset
 r0 = [1.0; 0.0; 0.0]                #[-11.8,-5.1,37.5] PODES Initial values of the system in space # [0.1, 0.0, 0.0]
 tspan = (0.0, 30.0)                 # PODES sample of 3000 observations over the (0,30) timespan
@@ -28,7 +43,7 @@ prob_short = ODEProblem(g1, r0, tspan2,p)
 dt = 30.0/3000
 tf = 30.0
 tinterval = 0:dt:tf
-t  = collect(tinterval)
+time_points  = collect(tinterval)
 
 
 h = 0.01
@@ -42,7 +57,7 @@ t_short = collect(tinterval_short)
 # Generate Data
 data_sol_short = solve(prob_short,Vern9(),saveat=t_short,reltol=1e-9,abstol=1e-9)
 data_short = convert(Array, data_sol_short) # This operation produces column major dataset obs as columns, equations as rows
-data_sol = solve(prob,Vern9(),saveat=t,reltol=1e-9,abstol=1e-9)
+data_sol = solve(prob,Vern9(),saveat=time_points,reltol=1e-9,abstol=1e-9)
 data = convert(Array, data_sol)
 
 
@@ -150,7 +165,7 @@ opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 3)
 
 
 # BB with Vern9 converges very slowly. The final values are within the NarrowBounds.
-obj = build_loss_objective(prob,Vern9(),L2Loss(t,data),tstops=t,reltol=1e-9,abstol=1e-9)
+obj = build_loss_objective(prob,Vern9(),L2Loss(time_points,data),tstops=time_points,reltol=1e-9,abstol=1e-9)
 optprob = OptimizationProblem(obj, GloIniPar, lb = first.(LooserBounds), ub = last.(LooserBounds))
 @btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 4e3) # Default adaptive_de_rand_1_bin_radiuslimited 33 sec [10.2183, 24.6711, 2.28969]
 #@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :adaptive_de_rand_1_bin, MaxSteps = 4e3) # Method 32 sec [13.2222, 25.8589, 2.56176]

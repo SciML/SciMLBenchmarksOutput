@@ -1,6 +1,7 @@
 
 using ParameterizedFunctions, OrdinaryDiffEq, DiffEqParamEstim, Optimization
 using OptimizationBBO, OptimizationNLopt, ForwardDiff, Plots, BenchmarkTools 
+using ModelingToolkit: t_nounits as t, D_nounits as D
 gr(fmt=:png)
 
 
@@ -10,10 +11,24 @@ loc_init = [0.5,0.5,0.5,0.5]
 glo_init = [2.5,2.5,2.5,2.5]
 
 
-fitz = @ode_def FitzhughNagumo begin
-  dv = v - v^3/3 -w + l
-  dw = τinv*(v +  a - b*w)
-end a b τinv l
+@mtkmodel FitzHughNagumo begin
+    @parameters begin
+        a = 0.7      # Parameter for excitability
+        b = 0.8      # Recovery rate parameter
+        τinv = 0.08  # Inverse of the time constant
+        l = 0.5      # External stimulus
+    end
+    @variables begin
+        v(t) = 1.0  # Membrane potential with initial condition
+        w(t) = 1.0  # Recovery variable with initial condition
+    end
+    @equations begin
+        D(v) ~ v - v^3 / 3 - w + l
+        D(w) ~ τinv * (v + a - b * w)
+    end
+end
+
+@mtkbuild fitz = FitzHughNagumo()
 
 
 p = [0.7,0.8,0.08,0.5]              # Parameters used to construct the dataset
@@ -27,7 +42,7 @@ prob_short = ODEProblem(fitz, r0, tspan2,p)
 dt = 30.0/3000
 tf = 30.0
 tinterval = 0:dt:tf
-t  = collect(tinterval)
+time_points  = collect(tinterval)
 
 
 h = 0.01
@@ -41,7 +56,7 @@ t_short = collect(tinterval_short)
 #Generate Data
 data_sol_short = solve(prob_short,Vern9(),saveat=t_short,reltol=1e-9,abstol=1e-9)
 data_short = convert(Array, data_sol_short) # This operation produces column major dataset obs as columns, equations as rows
-data_sol = solve(prob,Vern9(),saveat=t,reltol=1e-9,abstol=1e-9)
+data_sol = solve(prob,Vern9(),saveat=time_points,reltol=1e-9,abstol=1e-9)
 data = convert(Array, data_sol)
 
 
@@ -125,7 +140,7 @@ opt = Opt(:LD_MMA, 4)
 @btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
 
 
-obj = build_loss_objective(prob,Vern9(),L2Loss(t,data),Optimization.AutoForwardDiff(),tstops=t,reltol=1e-9,abstol=1e-9)
+obj = build_loss_objective(prob,Vern9(),L2Loss(time_points,data),Optimization.AutoForwardDiff(),tstops=time_points,reltol=1e-9,abstol=1e-9)
 optprob = OptimizationProblem(obj, glo_init, lb = first.(glo_bounds), ub = last.(glo_bounds))
 @btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 4e3)
 
