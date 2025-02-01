@@ -211,13 +211,13 @@ optprob = OptimizationProblem(obj_short, glo_init, lb = first.(glo_bounds), ub =
 ```
 
 ```
-1.229 s (2621704 allocations: 366.30 MiB)
+1.220 s (2613395 allocations: 365.08 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.6798421849836658
- 0.8017622271075465
- 0.07693848252787228
- 0.505516445155573
+ 0.730888485425845
+ 0.7963565229452242
+ 0.08612502917863797
+ 0.4905545481958748
 ```
 
 
@@ -230,13 +230,13 @@ optprob = OptimizationProblem(obj_short, glo_init, lb = first.(glo_bounds), ub =
 ```
 
 ```
-1.231 s (2617988 allocations: 365.74 MiB)
+1.227 s (2623084 allocations: 366.50 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.7056310713831809
- 0.7997203369306086
- 0.08142386413477322
- 0.4989502392751768
+ 0.7053804421638876
+ 0.8037178491123477
+ 0.08680545199446664
+ 0.5036533213738775
 ```
 
 
@@ -249,13 +249,13 @@ optprob = OptimizationProblem(obj_short, glo_init, lb = first.(glo_bounds), ub =
 ```
 
 ```
-1.792 s (2651106 allocations: 369.65 MiB)
+1.793 s (2649044 allocations: 369.34 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.6809380945838296
- 0.8002344893406501
- 0.07363420880332773
- 0.5028643875329218
+ 0.6945549696084196
+ 0.797653445476125
+ 0.07472517615753799
+ 0.49778264795471483
 ```
 
 
@@ -324,13 +324,13 @@ opt = Opt(:GN_CRS2_LM, 4)
 ```
 
 ```
-2.526 s (3760138 allocations: 517.13 MiB)
+2.530 s (3760138 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.7000000002804582
- 0.8000000000187877
- 0.08000000009805089
- 0.4999999999592438
+ 0.7000000002032964
+ 0.8000000000096223
+ 0.08000000005534422
+ 0.49999999995793565
 ```
 
 
@@ -341,13 +341,13 @@ opt = Opt(:GN_ISRES, 4)
 ```
 
 ```
-2.532 s (3760130 allocations: 517.13 MiB)
+2.543 s (3760130 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.264265665433527
- 0.8066945211915784
- 0.27917462452238084
- 0.43294626917248846
+ 3.179527676150764
+ 0.8176711171215492
+ 0.960744996131161
+ 0.30631094834223194
 ```
 
 
@@ -358,13 +358,13 @@ opt = Opt(:GN_ESCH, 4)
 ```
 
 ```
-2.530 s (3760130 allocations: 517.13 MiB)
+2.528 s (3760130 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 3.6905163089061164
- 0.7269795920976627
- 0.530734182025446
- 0.18537241063479254
+ 4.540686477793296
+ 0.698314309029967
+ 0.21724279529730148
+ 0.1311006399237789
 ```
 
 
@@ -395,7 +395,7 @@ opt = Opt(:LN_BOBYQA, 4)
 ```
 
 ```
-79.059 ms (119092 allocations: 16.36 MiB)
+78.999 ms (119092 allocations: 16.36 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  0.7000000002743006
@@ -412,7 +412,7 @@ opt = Opt(:LN_NELDERMEAD, 4)
 ```
 
 ```
-156.369 ms (237532 allocations: 32.65 MiB)
+156.865 ms (237532 allocations: 32.65 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  0.7000000002744104
@@ -429,7 +429,7 @@ opt = Opt(:LD_SLSQP, 4)
 ```
 
 ```
-28.879 ms (31756 allocations: 5.14 MiB)
+26.437 ms (31756 allocations: 5.14 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  0.7000000002745831
@@ -446,7 +446,7 @@ opt = Opt(:LN_COBYLA, 4)
 ```
 
 ```
-2.544 s (3760144 allocations: 517.13 MiB)
+2.536 s (3760144 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  0.8450409658220658
@@ -463,7 +463,7 @@ opt = Opt(:LN_NEWUOA_BOUND, 4)
 ```
 
 ```
-267.660 ms (147912 allocations: 20.33 MiB)
+267.284 ms (147912 allocations: 20.33 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  0.7006462276521443
@@ -480,13 +480,13 @@ opt = Opt(:LN_PRAXIS, 4)
 ```
 
 ```
-19.515 ms (36038 allocations: 5.17 MiB)
+19.557 ms (36037 allocations: 5.17 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
- 0.7000000002746058
- 0.8000000000190206
- 0.08000000009663769
- 0.4999999999603895
+ 0.7000000002747397
+ 0.8000000000190317
+ 0.08000000009668427
+ 0.4999999999603765
 ```
 
 
@@ -497,7 +497,7 @@ opt = Opt(:LN_SBPLX, 4)
 ```
 
 ```
-2.523 s (3760136 allocations: 517.13 MiB)
+2.554 s (3760136 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  0.6884688704363328
@@ -514,7 +514,7 @@ opt = Opt(:LD_MMA, 4)
 ```
 
 ```
-7.119 s (7390358 allocations: 1.20 GiB)
+7.125 s (7390358 allocations: 1.20 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  0.701543355241287
@@ -539,13 +539,13 @@ optprob = OptimizationProblem(obj, glo_init, lb = first.(glo_bounds), ub = last.
 ```
 
 ```
-10.459 s (12655856 allocations: 1.65 GiB)
+10.502 s (12695788 allocations: 1.65 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.7131787815658618
- 0.8258773114167716
- 0.0870108649145131
- 0.5031467996718044
+ 0.6987390807176773
+ 0.8160569591862917
+ 0.10185869070460248
+ 0.4943544482478647
 ```
 
 
@@ -556,7 +556,7 @@ opt = Opt(:GN_ORIG_DIRECT_L, 4)
 ```
 
 ```
-4.612 s (5578156 allocations: 742.84 MiB)
+4.830 s (5578156 allocations: 742.84 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  0.8001828989453803
@@ -573,13 +573,13 @@ opt = Opt(:GN_CRS2_LM, 4)
 ```
 
 ```
-17.835 s (21569516 allocations: 2.81 GiB)
-retcode: Failure
+50.911 s (61600144 allocations: 8.01 GiB)
+retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.6999999999993928
- 0.8000000000069889
- 0.0799999999954461
- 0.4999999999912592
+ 0.6388027936953207
+ 0.7786222014688468
+ 0.0
+ 0.4959263562620576
 ```
 
 
@@ -590,13 +590,13 @@ opt = Opt(:GN_ISRES, 4)
 ```
 
 ```
-127.533 s (154000136 allocations: 20.03 GiB)
+127.352 s (154000136 allocations: 20.03 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.7000000000146983
- 0.8000000000015032
- 0.0799999999656722
- 0.5000000000023358
+ 0.6999999999584616
+ 0.8000000000572192
+ 0.07999999994924463
+ 0.49999999998683525
 ```
 
 
@@ -607,13 +607,13 @@ opt = Opt(:GN_ESCH, 4)
 ```
 
 ```
-50.800 s (61600136 allocations: 8.01 GiB)
+50.821 s (61600136 allocations: 8.01 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.4686212965962011
- 0.7107989511201003
- 0.03700213712279173
- 0.44106446215649864
+ 0.5244580862192728
+ 0.7550110603158986
+ 0.017492677022028523
+ 0.45979256706393107
 ```
 
 
@@ -639,7 +639,7 @@ opt = Opt(:LN_BOBYQA, 4)
 ```
 
 ```
-79.054 ms (119092 allocations: 16.36 MiB)
+79.042 ms (119092 allocations: 16.36 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  0.7000000002743006
@@ -656,7 +656,7 @@ opt = Opt(:LN_NELDERMEAD, 4)
 ```
 
 ```
-130.573 ms (198428 allocations: 27.27 MiB)
+131.395 ms (198428 allocations: 27.27 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  0.7000000009461755
@@ -673,7 +673,7 @@ opt = Opt(:LD_SLSQP, 4)
 ```
 
 ```
-28.859 ms (31756 allocations: 5.14 MiB)
+26.421 ms (31756 allocations: 5.14 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  0.7000000002745831
@@ -743,6 +743,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [731186ca] RecursiveArrayTools v3.27.4
   [31c91b34] SciMLBenchmarks v0.1.3
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -824,7 +825,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [a4df4552] FastPower v1.1.1
   [1a297f60] FillArrays v1.13.0
   [64ca27bc] FindFirstFunctions v1.4.1
-  [6a86dc24] FiniteDiff v2.26.2
+⌃ [6a86dc24] FiniteDiff v2.26.2
   [53c48c17] FixedPointNumbers v0.8.5
   [1fa38f19] Format v1.3.7
   [f6369f11] ForwardDiff v0.10.38
@@ -883,7 +884,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [d8a4904e] MutableArithmetics v1.6.2
   [d41bc354] NLSolversBase v7.8.3
   [76087f3c] NLopt v1.1.2
-  [77ba4419] NaNMath v1.1.1
+⌃ [77ba4419] NaNMath v1.1.1
   [8913a72c] NonlinearSolve v4.3.0
   [be0214bd] NonlinearSolveBase v1.4.0
   [5959db7a] NonlinearSolveFirstOrder v1.2.0
@@ -965,7 +966,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9dfe8606] SCCNonlinearSolve v1.0.0
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.43
-  [0bca4576] SciMLBase v2.72.1
+⌃ [0bca4576] SciMLBase v2.72.1
   [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.1
   [c0aeaf25] SciMLOperators v0.3.12
@@ -997,7 +998,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [69024149] StringEncodings v0.3.7
   [2efcf032] SymbolicIndexingInterface v0.3.37
   [19f23fe9] SymbolicLimits v0.2.2
-  [d1185830] SymbolicUtils v3.11.0
+⌃ [d1185830] SymbolicUtils v3.11.0
 ⌃ [0c5d862f] Symbolics v6.25.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.0
@@ -1026,7 +1027,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.12
   [c2297ded] ZMQ v1.4.0
-  [6e34b625] Bzip2_jll v1.0.8+4
+⌃ [6e34b625] Bzip2_jll v1.0.8+4
   [83423d85] Cairo_jll v1.18.2+1
   [ee1fde0b] Dbus_jll v1.14.10+0
   [cd4c43a9] Dierckx_jll v0.2.0+0
@@ -1170,5 +1171,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
