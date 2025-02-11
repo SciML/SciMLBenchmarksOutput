@@ -1,7 +1,7 @@
 
 using ApproxFun, OrdinaryDiffEq, Sundials, LinearSolve
 using DiffEqDevTools
-using LinearAlgebra
+using LinearAlgebra, RecursiveFactorization
 using Plots; gr()
 
 
