@@ -1,6 +1,6 @@
 
 using OrdinaryDiffEq, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA, DiffEqDevTools, Sundials
-using LinearAlgebra, StaticArrays
+using LinearAlgebra, StaticArrays, RecursiveFactorization
 
 gr() #gr(fmt=:png)
 

@@ -2,7 +2,7 @@
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA, LinearSolve
 using ProfileSVG, BenchmarkTools, Profile
 gr() # gr(fmt=:png)
-using LinearAlgebra
+using LinearAlgebra, RecursiveFactorization
 
 const k1=.35e0
 const k2=.266e2

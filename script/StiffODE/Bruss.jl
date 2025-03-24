@@ -1,7 +1,8 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots,
       ODEInterfaceDiffEq, LSODA, SparseArrays, LinearSolve,
-      LinearAlgebra, IncompleteLU, AlgebraicMultigrid, Symbolics, ModelingToolkit
+      LinearAlgebra, IncompleteLU, AlgebraicMultigrid, Symbolics, ModelingToolkit,
+      RecursiveFactorization
 gr()
 
 const N = 8

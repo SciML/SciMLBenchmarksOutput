@@ -1,7 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA, Sundials
 gr() #gr(fmt=:png)
-using LinearAlgebra, StaticArrays
+using LinearAlgebra, StaticArrays, RecursiveFactorization
 
 f = @ode_def Orego begin
   dy1 = p1*(y2+y1*(1-p2*y1-y2))

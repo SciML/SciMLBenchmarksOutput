@@ -1,7 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA
 gr()
-using LinearAlgebra, StaticArrays
+using LinearAlgebra, StaticArrays, RecursiveFactorization
 
 rober = @ode_def begin
   dy₁ = -k₁*y₁+k₃*y₂*y₃

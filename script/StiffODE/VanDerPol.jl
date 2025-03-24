@@ -1,7 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA
 gr()
-using LinearAlgebra, StaticArrays
+using LinearAlgebra, StaticArrays, RecursiveFactorization
 
 van = @ode_def begin
   dy = μ*((1-x^2)*y - x)
