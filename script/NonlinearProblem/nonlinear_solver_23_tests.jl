@@ -1,6 +1,7 @@
 
 using NonlinearSolve, LinearSolve, StaticArrays, Sundials, Setfield,
-    BenchmarkTools, LinearAlgebra, DiffEqDevTools, NonlinearProblemLibrary, CairoMakie
+    BenchmarkTools, LinearAlgebra, DiffEqDevTools, NonlinearProblemLibrary, CairoMakie,
+    RecursiveFactorization
 import PolyesterForwardDiff, MINPACK, NLsolve
 
 const RUS = RadiusUpdateSchemes;

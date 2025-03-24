@@ -1,6 +1,7 @@
 
 using NonlinearSolve, LinearSolve, StaticArrays, Sundials, SpeedMapping,
-    BenchmarkTools, LinearAlgebra, DiffEqDevTools, PolyesterForwardDiff, CairoMakie
+    BenchmarkTools, LinearAlgebra, DiffEqDevTools, PolyesterForwardDiff, CairoMakie,
+    RecursiveFactorization
 import MINPACK, NLsolve
 import LineSearches
 

@@ -1,6 +1,6 @@
 
 using NonlinearSolve, StaticArrays, DiffEqDevTools, Sundials, CairoMakie, LinearSolve,
-    LinearAlgebra, StableRNGs, BenchmarkTools, Setfield
+    LinearAlgebra, StableRNGs, BenchmarkTools, Setfield, RecursiveFactorization
 import PolyesterForwardDiff, MINPACK, NLsolve, SpeedMapping
 
 const RUS = RadiusUpdateSchemes;

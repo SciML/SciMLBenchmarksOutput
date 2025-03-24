@@ -2,7 +2,7 @@
 using NonlinearSolve, SparseDiffTools, LinearAlgebra, SparseArrays, DiffEqDevTools,
     CairoMakie, Symbolics, BenchmarkTools, PolyesterForwardDiff, LinearSolve, Sundials,
     Enzyme, SparseConnectivityTracer, DifferentiationInterface
-import NLsolve, MINPACK, PETSc
+import NLsolve, MINPACK, PETSc, RecursiveFactorization
 
 const RUS = RadiusUpdateSchemes;
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 0.2;
