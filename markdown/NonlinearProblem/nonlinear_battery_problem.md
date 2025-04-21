@@ -329,11 +329,11 @@ wp_set, successful_solvers = generate_wpset(testcase, solvers_all);
 [Info] Solver Newton Raphson successfully solved the problem (norm = 6.8732
 63901879305e-7).
 [Warn] Solver Newton Raphson (HagerZhang LineSearch) returned retcode MaxIt
-ers with an residual norm = 196.34346036740192.
+ers with an residual norm = 196.34346044235267.
 [Warn] Solver Newton Raphson (MoreThuente LineSearch) returned retcode MaxI
 ters with an residual norm = 208.5652309391303.
 [Warn] Solver Newton Raphson (BackTracking LineSearch) returned retcode Max
-Iters with an residual norm = 205.06578079222734.
+Iters with an residual norm = 205.06578104308738.
 [Warn] Solver Newton Krylov with GMRES returned retcode Unstable with an re
 sidual norm = 292.3000724036127.
 [Warn] Solver DFSane returned retcode Stalled with an residual norm = 292.3
@@ -347,7 +347,7 @@ sidual norm = 292.3000724036127.
 [Info] Solver Trust Region (Hei) successfully solved the problem (norm = 7.
 519526738477069e-7).
 [Warn] Solver Trust Region (Yuan) returned retcode MaxIters with an residua
-l norm = 113.84632713639361.
+l norm = 125.22758373604927.
 [Info] Solver Trust Region (Bastin) successfully solved the problem (norm =
  7.519429969828888e-7).
 [Info] Solver Trust Region (Fan) successfully solved the problem (norm = 7.
@@ -587,7 +587,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -628,6 +628,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c3572dad] Sundials v4.28.0
   [0c5d862f] Symbolics v6.38.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -856,7 +857,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.43
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.84.0
+⌃ [0bca4576] SciMLBase v2.84.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.2
   [c0aeaf25] SciMLOperators v0.3.13
@@ -1047,5 +1048,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

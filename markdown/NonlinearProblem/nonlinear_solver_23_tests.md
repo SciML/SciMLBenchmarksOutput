@@ -501,8 +501,8 @@ orm = 6.226019699795415e-12.
  norm = 3.1642466424841587e-12.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 1.3
 68238855548043e-12.
-[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 1.
-768529767076643e-11.
+[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 7.
+930323064897493e-13.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 1.3252288155740644e-11.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 1.3
@@ -693,8 +693,8 @@ orm = 8.439615672983791e-11.
  norm = 2.0650148258027912e-13.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 7.1
 03206911551752e-13.
-[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 9.
-547918011776346e-15.
+[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 4.
+9960036108132044e-15.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 2.6645352591003757e-15.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 8.3
@@ -1012,8 +1012,8 @@ orm = 7.077671781985373e-15.
 5415051797022).
 [Warn] Solver TR (Hei) had a very large residual (norm = 0.0042954155544357
 58).
-[Warn] Solver TR (Yuan) had a very large residual (norm = 0.004295419924452
-051).
+[Warn] Solver TR (Yuan) had a very large residual (norm = 0.004295419303280
+812).
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 8.486950447972319e-10.
 [Warn] Solver TR (Fan) had a very large residual (norm = 0.0042954173747542
@@ -1269,7 +1269,7 @@ orm = 1.1102230246251565e-16.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 9.9
 99902617651876e-9.
 [Info] Solver TR (Yuan) returned retcode MaxIters with an residual norm = 9
-.029195475382273e-8.
+.0466025916777e-8.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 1.5627499294623703e-12.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 9.9
@@ -2668,7 +2668,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -2709,6 +2709,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c3572dad] Sundials v4.28.0
   [0c5d862f] Symbolics v6.38.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -2937,7 +2938,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.43
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.84.0
+⌃ [0bca4576] SciMLBase v2.84.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.2
   [c0aeaf25] SciMLOperators v0.3.13
@@ -3128,5 +3129,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

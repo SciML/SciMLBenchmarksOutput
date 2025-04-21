@@ -265,22 +265,22 @@ nothing
 ```
 
 ```
-2         1.948e-5        1.451e-5        1.634e-5        1.624e-5
-       1.0419e-5        1.228e-5        1.191e-5
-         4        7.2799e-5        5.257e-5        5.543e-5        6.518e-5
-        3.999e-5       4.3579e-5       6.9509e-5
-         8      0.000277287     0.000216747     0.000209978     0.000349197
-     0.000243398     0.000237577     0.000211168
-        16      0.001094779     0.000930871     0.000862062      0.00295241
-     0.002287236     0.002094868     0.007915839
-        32      0.004546024     0.003951289     0.003526274     0.036619796
-     0.029734497     0.026168994     0.010644612
-        64      0.022095126     0.020143375     0.018914487     0.565416471
-     0.463717527     0.414553668     0.170012849
-       128      0.307658826     0.293348723     0.274631222    12.892225506
-     7.416623677     6.634982724     7.127184688
-       256      2.684697741     2.486317135     2.453638856   194.000301367
-   116.047485445    99.260692344   127.200112855
+2         1.974e-5        1.468e-5        1.609e-5        1.653e-5
+        1.022e-5        1.167e-5        1.229e-5
+         4         7.208e-5       5.1469e-5        5.451e-5       6.5759e-5
+        4.002e-5        4.252e-5       5.0959e-5
+         8      0.000271307     0.000211768     0.000204228     0.000333017
+     0.000241027     0.000229338     0.000660294
+        16      0.001048481     0.000876253     0.000823662     0.002903635
+      0.00234182     0.002141462     0.010793776
+        32      0.004439542     0.003891686     0.003448811     0.036322325
+     0.030441757     0.027064646     0.179627387
+        64      0.021031659     0.019135955      0.01737604      0.56334806
+     0.464029669     0.417120924     2.896505444
+       128      0.233382383     0.212826621     0.202984315    12.376377912
+      7.18849567     6.669337492    47.365001664
+       256      2.805276774     2.798079127     2.730241304    190.48951247
+   114.533257835   104.573494343  1110.189320069
 ```
 
 
@@ -817,7 +817,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -827,7 +827,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [2169fc97] AlgebraicMultigrid v1.0.0
   [6e4b80f9] BenchmarkTools v1.6.0
   [13f3f980] CairoMakie v0.13.4
@@ -858,12 +858,13 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c3572dad] Sundials v4.28.0
   [0c5d862f] Symbolics v6.38.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
   [47edcb42] ADTypes v1.14.0
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
@@ -1086,7 +1087,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.43
   [322a6be2] Sass v0.2.0
-  [0bca4576] SciMLBase v2.84.0
+⌃ [0bca4576] SciMLBase v2.84.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.2
   [c0aeaf25] SciMLOperators v0.3.13
@@ -1277,5 +1278,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
