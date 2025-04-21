@@ -1,5 +1,4 @@
 ---
-priority: 10000000
 author: "Avik Pal"
 title: "Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)"
 ---
