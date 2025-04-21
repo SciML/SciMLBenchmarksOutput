@@ -1,5 +1,4 @@
 ---
-priority: 1
 author: "Avik Pal"
 title: "Quadratic Nonlinear Rootfinding Benchmark"
 ---
@@ -661,7 +660,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -678,7 +677,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2b5f629d] DiffEqBase v6.167.2
   [f3b72e0c] DiffEqDevTools v2.48.0
   [a0c0ee7d] DifferentiationInterface v0.6.52
-  [7da242da] Enzyme v0.13.37
+⌃ [7da242da] Enzyme v0.13.37
   [40713840] IncompleteLU v0.2.1
   [b964fa9f] LaTeXStrings v1.4.0
   [d3d80556] LineSearches v7.3.0
@@ -701,6 +700,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [90137ffa] StaticArrays v1.9.13
   [c3572dad] Sundials v4.28.0
   [0c5d862f] Symbolics v6.38.0
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
@@ -774,7 +774,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [5b8099bc] DomainSets v0.7.15
   [7c1d4256] DynamicPolynomials v0.6.1
   [4e289a0a] EnumX v1.0.5
-  [7da242da] Enzyme v0.13.37
+⌃ [7da242da] Enzyme v0.13.37
   [f151be2c] EnzymeCore v0.8.8
   [429591f6] ExactPredicates v2.2.8
   [460bff9d] ExceptionUnwrapping v0.1.11
