@@ -1,5 +1,4 @@
 ---
-priority: 1000000
 author: "Avik Pal"
 title: "Ill-Conditioned Nonlinear System Work-Precision Diagrams"
 ---
@@ -266,22 +265,22 @@ nothing
 ```
 
 ```
-2        1.9419e-5        1.428e-5        1.592e-5        1.605e-5
-        1.024e-5         1.18e-5        1.176e-5
-         4         7.108e-5        5.159e-5       5.3769e-5       6.4509e-5
-        4.014e-5        4.248e-5        5.214e-5
-         8      0.000267367     0.000209768     0.000199148     0.000336387
-     0.000240398     0.000229368     0.000660834
-        16      0.001039101     0.000863353     0.000810403     0.002968924
-       0.0023345     0.002136312     0.010796625
-        32        0.0044309     0.003852796      0.00343603     0.037425562
-     0.030542652     0.027291911     0.179219778
-        64      0.021259933     0.019226981     0.017699374     0.575017146
-     0.466706676     0.428670909     2.871535729
-       128       0.23709393     0.210077377     0.200269763    12.741968261
-     7.237861722     6.368063549    47.137811617
-       256      2.709332248     2.729361345     2.654045386   192.483320111
-   115.558773442   102.396363802  1107.944896334
+2         1.948e-5        1.451e-5        1.634e-5        1.624e-5
+       1.0419e-5        1.228e-5        1.191e-5
+         4        7.2799e-5        5.257e-5        5.543e-5        6.518e-5
+        3.999e-5       4.3579e-5       6.9509e-5
+         8      0.000277287     0.000216747     0.000209978     0.000349197
+     0.000243398     0.000237577     0.000211168
+        16      0.001094779     0.000930871     0.000862062      0.00295241
+     0.002287236     0.002094868     0.007915839
+        32      0.004546024     0.003951289     0.003526274     0.036619796
+     0.029734497     0.026168994     0.010644612
+        64      0.022095126     0.020143375     0.018914487     0.565416471
+     0.463717527     0.414553668     0.170012849
+       128      0.307658826     0.293348723     0.274631222    12.892225506
+     7.416623677     6.634982724     7.127184688
+       256      2.684697741     2.486317135     2.453638856   194.000301367
+   116.047485445    99.260692344   127.200112855
 ```
 
 
@@ -818,7 +817,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -828,14 +827,14 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Project.toml`
   [2169fc97] AlgebraicMultigrid v1.0.0
   [6e4b80f9] BenchmarkTools v1.6.0
   [13f3f980] CairoMakie v0.13.4
   [2b5f629d] DiffEqBase v6.167.2
   [f3b72e0c] DiffEqDevTools v2.48.0
   [a0c0ee7d] DifferentiationInterface v0.6.52
-  [7da242da] Enzyme v0.13.37
+⌃ [7da242da] Enzyme v0.13.37
   [40713840] IncompleteLU v0.2.1
   [b964fa9f] LaTeXStrings v1.4.0
   [d3d80556] LineSearches v7.3.0
@@ -858,12 +857,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [90137ffa] StaticArrays v1.9.13
   [c3572dad] Sundials v4.28.0
   [0c5d862f] Symbolics v6.38.0
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonlinearProblem/Manifest.toml`
   [47edcb42] ADTypes v1.14.0
   [a4c015fc] ANSIColoredPrinters v0.0.1
   [621f4979] AbstractFFTs v1.5.0
@@ -931,7 +931,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [5b8099bc] DomainSets v0.7.15
   [7c1d4256] DynamicPolynomials v0.6.1
   [4e289a0a] EnumX v1.0.5
-  [7da242da] Enzyme v0.13.37
+⌃ [7da242da] Enzyme v0.13.37
   [f151be2c] EnzymeCore v0.8.8
   [429591f6] ExactPredicates v2.2.8
   [460bff9d] ExceptionUnwrapping v0.1.11
