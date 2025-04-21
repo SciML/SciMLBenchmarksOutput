@@ -1,5 +1,4 @@
 ---
-priority: 1000
 author: "Torkel Loman & Avik Pal"
 title: "Nonlinear Solver 23 Test Problems"
 ---
@@ -502,8 +501,8 @@ orm = 6.226019699795415e-12.
  norm = 3.1642466424841587e-12.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 1.3
 68238855548043e-12.
-[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 7.
-930323064897493e-13.
+[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 1.
+768529767076643e-11.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 1.3252288155740644e-11.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 1.3
@@ -694,8 +693,8 @@ orm = 8.439615672983791e-11.
  norm = 2.0650148258027912e-13.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 7.1
 03206911551752e-13.
-[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 4.
-9960036108132044e-15.
+[Info] Solver TR (Yuan) returned retcode Success with an residual norm = 9.
+547918011776346e-15.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 2.6645352591003757e-15.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 8.3
@@ -1013,8 +1012,8 @@ orm = 7.077671781985373e-15.
 5415051797022).
 [Warn] Solver TR (Hei) had a very large residual (norm = 0.0042954155544357
 58).
-[Warn] Solver TR (Yuan) had a very large residual (norm = 0.004295419303280
-812).
+[Warn] Solver TR (Yuan) had a very large residual (norm = 0.004295419924452
+051).
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 8.486950447972319e-10.
 [Warn] Solver TR (Fan) had a very large residual (norm = 0.0042954173747542
@@ -1270,7 +1269,7 @@ orm = 1.1102230246251565e-16.
 [Info] Solver TR (Hei) returned retcode Success with an residual norm = 9.9
 99902617651876e-9.
 [Info] Solver TR (Yuan) returned retcode MaxIters with an residual norm = 9
-.0466025916777e-8.
+.029195475382273e-8.
 [Info] Solver TR (Bastin) returned retcode Success with an residual norm = 
 1.5627499294623703e-12.
 [Info] Solver TR (Fan) returned retcode Success with an residual norm = 9.9
@@ -2669,7 +2668,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -2686,7 +2685,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2b5f629d] DiffEqBase v6.167.2
   [f3b72e0c] DiffEqDevTools v2.48.0
   [a0c0ee7d] DifferentiationInterface v0.6.52
-  [7da242da] Enzyme v0.13.37
+⌃ [7da242da] Enzyme v0.13.37
   [40713840] IncompleteLU v0.2.1
   [b964fa9f] LaTeXStrings v1.4.0
   [d3d80556] LineSearches v7.3.0
@@ -2709,6 +2708,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [90137ffa] StaticArrays v1.9.13
   [c3572dad] Sundials v4.28.0
   [0c5d862f] Symbolics v6.38.0
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
@@ -2782,7 +2782,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [5b8099bc] DomainSets v0.7.15
   [7c1d4256] DynamicPolynomials v0.6.1
   [4e289a0a] EnumX v1.0.5
-  [7da242da] Enzyme v0.13.37
+⌃ [7da242da] Enzyme v0.13.37
   [f151be2c] EnzymeCore v0.8.8
   [429591f6] ExactPredicates v2.2.8
   [460bff9d] ExceptionUnwrapping v0.1.11
