@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Bruss Scaling PDE Differentaition Benchmarks · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/AutomaticDifferentiation/BrussScaling/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li class="is-active"><a class="tocitem" href>Bruss Scaling PDE Differentaition Benchmarks</a><ul class="internal"><li><a class="tocitem" href="#Setup-AutoDiff"><span>Setup AutoDiff</span></a></li><li><a class="tocitem" href="#AD-Choice-Benchmarks"><span>AD Choice Benchmarks</span></a></li><li><a class="tocitem" href="#VJP-Choice-Benchmarks"><span>VJP Choice Benchmarks</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li><li><a class="tocitem" href="#Appendix-2"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Automatic Differentiation</a></li><li class="is-active"><a href>Bruss Scaling PDE Differentaition Benchmarks</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Bruss Scaling PDE Differentaition Benchmarks</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/AutomaticDifferentiation/BrussScaling.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Bruss-Scaling-PDE-Differentaition-Benchmarks"><a class="docs-heading-anchor" href="#Bruss-Scaling-PDE-Differentaition-Benchmarks">Bruss Scaling PDE Differentaition Benchmarks</a><a id="Bruss-Scaling-PDE-Differentaition-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Bruss-Scaling-PDE-Differentaition-Benchmarks" title="Permalink"></a></h1><p>From the paper <a href="https://ieeexplore.ieee.org/abstract/document/9622796">A Comparison of Automatic Differentiation and Continuous Sensitivity Analysis for Derivatives of Differential Equation Solutions</a></p><pre><code class="language-julia hljs">using OrdinaryDiffEq, ReverseDiff, ForwardDiff, FiniteDiff, SciMLSensitivity
+using LinearAlgebra, Tracker, Plots</code></pre><pre><code class="language-julia hljs">function makebrusselator(N=8)
+    xyd_brusselator = range(0,stop=1,length=N)
+    function limit(a, N)
+      if a == N+1
+        return 1
+      elseif a == 0
+        return N
+      else
+        return a
+      end
+    end
+    brusselator_f(x, y, t) = ifelse((((x-0.3)^2 + (y-0.6)^2) &lt;= 0.1^2) &amp;&amp;
+                                    (t &gt;= 1.1), 5., 0.)
+    brusselator_2d_loop = let N=N, xyd=xyd_brusselator, dx=step(xyd_brusselator)
+      function brusselator_2d_loop(du, u, p, t)
+          @inbounds begin
+              ii1 = N^2
+              ii2 = ii1+N^2
+              ii3 = ii2+2(N^2)
+              A = @view p[1:ii1]
+              B = @view p[ii1+1:ii2]
+              α = @view p[ii2+1:ii3]
+              II = LinearIndices((N, N, 2))
+              for I in CartesianIndices((N, N))
+                  x = xyd[I[1]]
+                  y = xyd[I[2]]
+                  i = I[1]
+                  j = I[2]
+                  ip1 = limit(i+1, N); im1 = limit(i-1, N)
+                  jp1 = limit(j+1, N); jm1 = limit(j-1, N)
+                  du[II[i,j,1]] = α[II[i,j,1]]*(u[II[im1,j,1]] + u[II[ip1,j,1]] + u[II[i,jp1,1]] + u[II[i,jm1,1]] - 4u[II[i,j,1]])/dx^2 +
+                      B[II[i,j,1]] + u[II[i,j,1]]^2*u[II[i,j,2]] - (A[II[i,j,1]] + 1)*u[II[i,j,1]] + brusselator_f(x, y, t)
+              end
+              for I in CartesianIndices((N, N))
+                i = I[1]
+                j = I[2]
+                ip1 = limit(i+1, N)
+                im1 = limit(i-1, N)
+                jp1 = limit(j+1, N)
+                jm1 = limit(j-1, N)
+                du[II[i,j,2]] = α[II[i,j,2]]*(u[II[im1,j,2]] + u[II[ip1,j,2]] + u[II[i,jp1,2]] + u[II[i,jm1,2]] - 4u[II[i,j,2]])/dx^2 +
+                    A[II[i,j,1]]*u[II[i,j,1]] - u[II[i,j,1]]^2*u[II[i,j,2]]
+              end
+              return nothing
+          end
+      end
+    end
+    function init_brusselator_2d(xyd)
+        N = length(xyd)
+        u = zeros(N, N, 2)
+        for I in CartesianIndices((N, N))
+            x = xyd[I[1]]
+            y = xyd[I[2]]
+            u[I,1] = 22*(y*(1-y))^(3/2)
+            u[I,2] = 27*(x*(1-x))^(3/2)
+        end
+        vec(u)
+    end
+    dx = step(xyd_brusselator)
+    e1 = ones(N-1)
+    off = N-1
+    e4 = ones(N-off)
+    T = diagm(0=&gt;-2ones(N), -1=&gt;e1, 1=&gt;e1, off=&gt;e4, -off=&gt;e4) ./ dx^2
+    Ie = Matrix{Float64}(I, N, N)
+    # A + df/du
+    Op = kron(Ie, T) + kron(T, Ie)
+    brusselator_jac = let N=N
+      (J,a,p,t) -&gt; begin
+        ii1 = N^2
+        ii2 = ii1+N^2
+        ii3 = ii2+2(N^2)
+        A = @view p[1:ii1]
+        B = @view p[ii1+1:ii2]
+        α = @view p[ii2+1:ii3]
+        u = @view a[1:end÷2]
+        v = @view a[end÷2+1:end]
+        N2 = length(a)÷2
+        α1 = @view α[1:end÷2]
+        α2 = @view α[end÷2+1:end]
+        fill!(J, 0)
+
+        J[1:N2, 1:N2] .= α1.*Op
+        J[N2+1:end, N2+1:end] .= α2.*Op
+
+        J1 = @view J[1:N2,     1:N2]
+        J2 = @view J[N2+1:end, 1:N2]
+        J3 = @view J[1:N2,     N2+1:end]
+        J4 = @view J[N2+1:end, N2+1:end]
+        J1[diagind(J1)] .+= @. 2u*v-(A+1)
+        J2[diagind(J2)] .= @. A-2u*v
+        J3[diagind(J3)] .= @. u^2
+        J4[diagind(J4)] .+= @. -u^2
+        nothing
+      end
+    end
+    Jmat = zeros(2N*N, 2N*N)
+    dp = zeros(2N*N, 4N*N)
+    brusselator_comp = let N=N, xyd=xyd_brusselator, dx=step(xyd_brusselator), Jmat=Jmat, dp=dp, brusselator_jac=brusselator_jac
+      function brusselator_comp(dus, us, p, t)
+          @inbounds begin
+              ii1 = N^2
+              ii2 = ii1+N^2
+              ii3 = ii2+2(N^2)
+              @views u, s = us[1:ii2], us[ii2+1:end]
+              du = @view dus[1:ii2]
+              ds = @view dus[ii2+1:end]
+              fill!(dp, 0)
+              A = @view p[1:ii1]
+              B = @view p[ii1+1:ii2]
+              α = @view p[ii2+1:ii3]
+              dfdα = @view dp[:, ii2+1:ii3]
+              diagind(dfdα)
+              for i in 1:ii1
+                dp[i, ii1+i] = 1
+              end
+              II = LinearIndices((N, N, 2))
+              uu = @view u[1:end÷2]
+              for i in eachindex(uu)
+                dp[i, i] = -uu[i]
+                dp[i+ii1, i] = uu[i]
+              end
+              for I in CartesianIndices((N, N))
+                  x = xyd[I[1]]
+                  y = xyd[I[2]]
+                  i = I[1]
+                  j = I[2]
+                  ip1 = limit(i+1, N); im1 = limit(i-1, N)
+                  jp1 = limit(j+1, N); jm1 = limit(j-1, N)
+                  au = dfdα[II[i,j,1],II[i,j,1]] = (u[II[im1,j,1]] + u[II[ip1,j,1]] + u[II[i,jp1,1]] + u[II[i,jm1,1]] - 4u[II[i,j,1]])/dx^2
+                  du[II[i,j,1]] = α[II[i,j,1]]*(au) + B[II[i,j,1]] + u[II[i,j,1]]^2*u[II[i,j,2]] - (A[II[i,j,1]] + 1)*u[II[i,j,1]] + brusselator_f(x, y, t)
+              end
+              for I in CartesianIndices((N, N))
+                  i = I[1]
+                  j = I[2]
+                  ip1 = limit(i+1, N)
+                  im1 = limit(i-1, N)
+                  jp1 = limit(j+1, N)
+                  jm1 = limit(j-1, N)
+                  av = dfdα[II[i,j,2],II[i,j,2]] = (u[II[im1,j,2]] + u[II[ip1,j,2]] + u[II[i,jp1,2]] + u[II[i,jm1,2]] - 4u[II[i,j,2]])/dx^2
+                  du[II[i,j,2]] = α[II[i,j,2]]*(av) + A[II[i,j,1]]*u[II[i,j,1]] - u[II[i,j,1]]^2*u[II[i,j,2]]
+              end
+              brusselator_jac(Jmat,u,p,t)
+              BLAS.gemm!(&#39;N&#39;, &#39;N&#39;, 1., Jmat, reshape(s, 2N*N, 4N*N), 1., dp)
+              copyto!(ds, vec(dp))
+              return nothing
+          end
+      end
+    end
+    u0 = init_brusselator_2d(xyd_brusselator)
+    p = [fill(3.4,N^2); fill(1.,N^2); fill(10.,2*N^2)]
+    brusselator_2d_loop, u0, p, brusselator_jac, ODEProblem(brusselator_comp, copy([u0;zeros((N^2*2)*(N^2*4))]), (0.,10.), p)
+end
+
+Base.eps(::Type{Tracker.TrackedReal{T}}) where T = eps(T)
+Base.vec(v::Adjoint{&lt;:Real, &lt;:AbstractVector}) = vec(v&#39;) # bad bad hack</code></pre><h2 id="Setup-AutoDiff"><a class="docs-heading-anchor" href="#Setup-AutoDiff">Setup AutoDiff</a><a id="Setup-AutoDiff-1"></a><a class="docs-heading-anchor-permalink" href="#Setup-AutoDiff" title="Permalink"></a></h2><pre><code class="language-julia hljs">bt = 0:0.1:1
+tspan = (0.0, 1.0)
+forwarddiffn = vcat(2:10,12,15)
+reversediffn = 2:10
+numdiffn = vcat(2:10,12)
+csan = vcat(2:10,12,15,17)
+#csaseedn = 2:10
+tols = (abstol=1e-5, reltol=1e-7)
+
+@isdefined(PROBS) || (const PROBS = Dict{Int,Any}())
+makebrusselator!(dict, n) = get!(()-&gt;makebrusselator(n), dict, n)
+
+_adjoint_methods = ntuple(3) do ii
+  Alg = (InterpolatingAdjoint, QuadratureAdjoint, BacksolveAdjoint)[ii]
+  (
+    user = Alg(autodiff=false,autojacvec=false), # user Jacobian
+    adjc = Alg(autodiff=true,autojacvec=false), # AD Jacobian
+    advj = Alg(autodiff=true,autojacvec=EnzymeVJP()), # AD vJ
+  )
+end |&gt; NamedTuple{(:interp, :quad, :backsol)}
+@isdefined(ADJOINT_METHODS) || (const ADJOINT_METHODS = mapreduce(collect, vcat, _adjoint_methods))
+
+function auto_sen_l2(f, u0, tspan, p, t, alg=Tsit5(); diffalg=ReverseDiff.gradient, kwargs...)
+  test_f(p) = begin
+    prob = ODEProblem{true, SciMLBase.FullSpecialize}(f,convert.(eltype(p),u0),tspan,p)
+    sol = solve(prob,alg,saveat=t; kwargs...)
+    sum(sol.u) do x
+      sum(z-&gt;(1-z)^2/2, x)
+    end
+  end
+  diffalg(test_f, p)
+end
+@inline function diffeq_sen_l2(df, u0, tspan, p, t, alg=Tsit5();
+                       abstol=1e-5, reltol=1e-7, iabstol=abstol, ireltol=reltol,
+                       sensalg=SensitivityAlg(), kwargs...)
+    prob = ODEProblem{true, SciMLBase.FullSpecialize}(df,u0,tspan,p)
+    saveat = tspan[1] != t[1] &amp;&amp; tspan[end] != t[end] ? vcat(tspan[1],t,tspan[end]) : t
+    sol = solve(prob, alg, abstol=abstol, reltol=reltol, saveat=saveat; kwargs...)
+    dg(out,u,p,t,i) = (out.=u.-1.0)
+    adjoint_sensitivities(sol,alg;t,abstol=abstol,dgdu_discrete = dg,
+                            reltol=reltol,sensealg=sensalg)
+end</code></pre><pre><code class="nohighlight hljs">diffeq_sen_l2 (generic function with 2 methods)</code></pre><h2 id="AD-Choice-Benchmarks"><a class="docs-heading-anchor" href="#AD-Choice-Benchmarks">AD Choice Benchmarks</a><a id="AD-Choice-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#AD-Choice-Benchmarks" title="Permalink"></a></h2><pre><code class="language-julia hljs">forwarddiff = map(forwarddiffn) do n
+  bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
+  @elapsed auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5()); diffalg=(ForwardDiff.gradient), tols...)
+  t = @elapsed auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5()); diffalg=(ForwardDiff.gradient), tols...)
+  @show n,t
+  t
+end</code></pre><pre><code class="nohighlight hljs">(n, t) = (2, 0.000638025)
+(n, t) = (3, 0.014818023)
+(n, t) = (4, 0.037541015)
+(n, t) = (5, 0.520653741)
+(n, t) = (6, 1.731218393)
+(n, t) = (7, 5.512084862)
+(n, t) = (8, 15.127203746)
+(n, t) = (9, 36.06489506)
+(n, t) = (10, 82.559742306)
+(n, t) = (12, 343.941457935)
+(n, t) = (15, 2076.784127286)
+11-element Vector{Float64}:
+    0.000638025
+    0.014818023
+    0.037541015
+    0.520653741
+    1.731218393
+    5.512084862
+   15.127203746
+   36.06489506
+   82.559742306
+  343.941457935
+ 2076.784127286</code></pre><pre><code class="language-julia hljs">#=
+reversediff = map(reversediffn) do n
+  bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
+  @elapsed auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5(autodiff=false)); diffalg=(ReverseDiff.gradient), tols...)
+  t = @elapsed auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5(autodiff=false)); diffalg=(ReverseDiff.gradient), tols...)
+  @show n,t
+  t
+end
+=#</code></pre><pre><code class="language-julia hljs">numdiff = map(numdiffn) do n
+  bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
+  @elapsed auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5()); diffalg=(FiniteDiff.finite_difference_gradient), tols...)
+  t = @elapsed auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5()); diffalg=(FiniteDiff.finite_difference_gradient), tols...)
+  @show n,t
+  t
+end</code></pre><pre><code class="nohighlight hljs">(n, t) = (2, 0.002366211)
+(n, t) = (3, 0.021170203)
+(n, t) = (4, 0.07246591)
+(n, t) = (5, 0.240821835)
+(n, t) = (6, 0.59219555)
+(n, t) = (7, 1.317970678)
+(n, t) = (8, 3.074216759)
+(n, t) = (9, 6.692397508)
+(n, t) = (10, 12.334107618)
+(n, t) = (12, 44.152922056)
+10-element Vector{Float64}:
+  0.002366211
+  0.021170203
+  0.07246591
+  0.240821835
+  0.59219555
+  1.317970678
+  3.074216759
+  6.692397508
+ 12.334107618
+ 44.152922056</code></pre><pre><code class="language-julia hljs">csa = map(csan) do n
+  bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
+  @time ts = map(ADJOINT_METHODS[1:2end÷3]) do alg
+    @info &quot;Running $alg&quot;
+    f = SciMLSensitivity.alg_autodiff(alg) ? bfun : ODEFunction(bfun, jac=brusselator_jac)
+    solver = Rodas5(autodiff=false)
+    @time diffeq_sen_l2(bfun, b_u0, tspan, b_p, bt, solver; sensalg=alg, tols...)
+    t = @elapsed diffeq_sen_l2(bfun, b_u0, tspan, b_p, bt, solver; sensalg=alg, tols...)
+    return t
+  end
+  @show n,ts
+  ts
+end</code></pre><pre><code class="nohighlight hljs">11.673866 seconds (22.77 M allocations: 1.431 GiB, 4.17% gc time, 99.91% c
+ompilation time)
+  7.373040 seconds (9.37 M allocations: 609.410 MiB, 2.26% gc time, 99.92% 
+compilation time)
+ 16.021497 seconds (17.51 M allocations: 1.153 GiB, 1.63% gc time, 99.97% c
+ompilation time)
+ 10.329365 seconds (16.39 M allocations: 1.045 GiB, 2.60% gc time, 99.95% c
+ompilation time)
+  5.536433 seconds (6.29 M allocations: 407.921 MiB, 2.12% gc time, 99.92% 
+compilation time)
+  5.969226 seconds (9.63 M allocations: 633.380 MiB, 3.11% gc time, 99.92% 
+compilation time)
+ 57.554926 seconds (82.61 M allocations: 5.286 GiB, 2.58% gc time, 99.89% c
+ompilation time: &lt;1% of which was recompilation)
+(n, ts) = (2, [0.005766315, 0.002615139, 0.001530478, 0.002469601, 0.001214
+4, 0.001077771])
+  0.077516 seconds (62.26 k allocations: 5.428 MiB)
+ 10.177735 seconds (4.93 M allocations: 315.954 MiB, 0.73% gc time, 99.87% 
+compilation time)
+  0.003136 seconds (1.33 k allocations: 335.484 KiB)
+  0.015205 seconds (10.37 k allocations: 526.766 KiB)
+  5.345636 seconds (3.19 M allocations: 200.407 MiB, 1.32% gc time, 99.88% 
+compilation time)
+  0.001653 seconds (2.00 k allocations: 324.484 KiB)
+ 15.738828 seconds (8.29 M allocations: 531.136 MiB, 0.92% gc time, 98.50% 
+compilation time)
+(n, ts) = (3, [0.079083065, 0.010416808, 0.002884667, 0.016020024, 0.003188
+155, 0.001517188])
+  0.607980 seconds (171.07 k allocations: 14.870 MiB)
+ 10.232305 seconds (4.77 M allocations: 304.974 MiB, 0.71% gc time, 99.58% 
+compilation time)
+  0.006891 seconds (1.34 k allocations: 644.125 KiB)
+  0.105528 seconds (25.35 k allocations: 1.129 MiB)
+  6.096430 seconds (3.19 M allocations: 200.691 MiB, 0.99% gc time, 99.80% 
+compilation time)
+  0.002837 seconds (2.01 k allocations: 476.203 KiB)
+ 17.824796 seconds (8.39 M allocations: 542.482 MiB, 0.75% gc time, 91.30% 
+compilation time)
+(n, ts) = (4, [0.605376479, 0.039999894, 0.006600048, 0.105607206, 0.008933
+949, 0.002645529])
+  2.146124 seconds (258.31 k allocations: 22.838 MiB)
+ 10.337101 seconds (3.94 M allocations: 250.977 MiB, 0.58% gc time, 98.60% 
+compilation time)
+  0.012939 seconds (1.37 k allocations: 1.187 MiB)
+  0.395402 seconds (39.99 k allocations: 1.873 MiB)
+  5.752005 seconds (3.19 M allocations: 200.889 MiB, 1.42% gc time, 99.43% 
+compilation time)
+  0.004713 seconds (2.02 k allocations: 713.219 KiB)
+ 21.376260 seconds (7.77 M allocations: 509.239 MiB, 0.66% gc time, 74.44% 
+compilation time)
+(n, ts) = (5, [2.144412444, 0.140900077, 0.01260177, 0.392291652, 0.0294178
+78, 0.004479414])
+  9.252132 seconds (550.87 k allocations: 48.491 MiB)
+ 12.602450 seconds (3.88 M allocations: 248.069 MiB, 0.66% gc time, 96.91% 
+compilation time)
+  0.023654 seconds (1.38 k allocations: 2.126 MiB)
+  1.258592 seconds (63.10 k allocations: 3.091 MiB)
+  6.679730 seconds (3.19 M allocations: 201.619 MiB, 98.78% compilation tim
+e)
+  0.007698 seconds (2.02 k allocations: 1005.625 KiB)
+ 40.832238 seconds (8.36 M allocations: 565.820 MiB, 0.20% gc time, 46.07% 
+compilation time)
+(n, ts) = (6, [9.247024686, 0.386754816, 0.023369405, 1.260113049, 0.077969
+535, 0.00759652])
+ 20.180575 seconds (645.69 k allocations: 58.354 MiB)
+ 11.203397 seconds (2.80 M allocations: 178.722 MiB, 91.75% compilation tim
+e)
+  0.048933 seconds (1.38 k allocations: 3.629 MiB)
+  3.763778 seconds (101.24 k allocations: 4.883 MiB)
+  1.440449 seconds (486.53 k allocations: 33.353 MiB, 4.18% gc time, 90.11%
+ compilation time)
+  0.012181 seconds (2.02 k allocations: 1.348 MiB)
+ 61.882581 seconds (4.87 M allocations: 358.811 MiB, 0.36% gc time, 18.71% 
+compilation time)
+(n, ts) = (7, [20.336134035, 0.924284653, 0.049776787, 3.763606015, 0.14175
+1231, 0.011959805])
+ 47.518351 seconds (900.95 k allocations: 82.711 MiB)
+  2.236290 seconds (87.09 k allocations: 11.261 MiB)
+  0.085626 seconds (1.38 k allocations: 5.840 MiB)
+  7.832869 seconds (124.44 k allocations: 6.799 MiB)
+  0.406060 seconds (15.28 k allocations: 4.193 MiB)
+  0.020294 seconds (2.02 k allocations: 1.853 MiB)
+116.146916 seconds (2.26 M allocations: 225.530 MiB)
+(n, ts) = (8, [47.458886539, 2.23977471, 0.084984069, 7.831247874, 0.406233
+653, 0.019794413])
+111.669495 seconds (1.32 M allocations: 122.362 MiB, 0.10% gc time)
+  5.333110 seconds (129.01 k allocations: 17.277 MiB)
+  0.162652 seconds (1.38 k allocations: 9.038 MiB)
+ 18.439632 seconds (181.83 k allocations: 10.563 MiB)
+  0.805259 seconds (18.54 k allocations: 6.093 MiB)
+  0.031802 seconds (2.02 k allocations: 2.484 MiB)
+272.894875 seconds (3.32 M allocations: 335.848 MiB, 0.06% gc time)
+(n, ts) = (9, [111.640496255, 5.363320235, 0.162026892, 18.444480809, 0.803
+039225, 0.031353593])
+185.273775 seconds (1.43 M allocations: 137.566 MiB)
+  8.882475 seconds (138.58 k allocations: 23.825 MiB)
+  0.355799 seconds (1.39 k allocations: 13.525 MiB)
+ 36.501456 seconds (234.78 k allocations: 14.327 MiB)
+  1.477429 seconds (22.19 k allocations: 8.639 MiB)
+  0.046857 seconds (2.02 k allocations: 3.280 MiB)
+464.913812 seconds (3.67 M allocations: 402.536 MiB, 0.01% gc time)
+(n, ts) = (10, [185.071636528, 8.943698357, 0.432105674, 36.391540075, 1.46
+793774, 0.045954298])
+742.390015 seconds (2.81 M allocations: 271.145 MiB, 0.01% gc time)
+ 28.242135 seconds (204.72 k allocations: 45.189 MiB, 0.26% gc time)
+  0.520924 seconds (1.39 k allocations: 27.085 MiB)
+100.797741 seconds (315.80 k allocations: 23.681 MiB)
+  4.427439 seconds (30.64 k allocations: 16.156 MiB)
+  0.105995 seconds (2.02 k allocations: 5.388 MiB)
+1751.522064 seconds (6.73 M allocations: 777.501 MiB, 0.01% gc time)
+(n, ts) = (12, [741.096580009, 28.073572982, 0.653599631, 100.676165224, 4.
+415155522, 0.105222724])
+3271.910010 seconds (5.14 M allocations: 516.645 MiB, 0.01% gc time)
+111.513792 seconds (328.37 k allocations: 102.016 MiB)
+  1.362499 seconds (1.40 k allocations: 64.528 MiB)
+453.781448 seconds (586.28 k allocations: 50.502 MiB)
+ 16.777105 seconds (46.19 k allocations: 36.239 MiB)
+  0.299543 seconds (2.02 k allocations: 10.569 MiB)
+7712.407907 seconds (12.20 M allocations: 1.525 GiB, 0.02% gc time)
+(n, ts) = (15, [3273.139537912, 111.489407172, 1.403090087, 453.610881798, 
+16.813436676, 0.295176203])
+7828.649315 seconds (7.45 M allocations: 766.079 MiB, 0.00% gc time)
+219.838040 seconds (392.62 k allocations: 161.462 MiB)
+  2.819736 seconds (1.41 k allocations: 105.404 MiB, 1.04% gc time)
+1114.664890 seconds (872.20 k allocations: 80.006 MiB, 0.00% gc time)
+ 35.293195 seconds (58.48 k allocations: 57.750 MiB)
+  1.180990 seconds (2.03 k allocations: 15.774 MiB)
+18388.113853 seconds (17.55 M allocations: 2.318 GiB, 0.01% gc time)
+(n, ts) = (17, [7810.521708444, 219.537046931, 2.991678379, 1116.379010265,
+ 35.393436637, 0.832696167])
+12-element Vector{Vector{Float64}}:
+ [0.005766315, 0.002615139, 0.001530478, 0.002469601, 0.0012144, 0.00107777
+1]
+ [0.079083065, 0.010416808, 0.002884667, 0.016020024, 0.003188155, 0.001517
+188]
+ [0.605376479, 0.039999894, 0.006600048, 0.105607206, 0.008933949, 0.002645
+529]
+ [2.144412444, 0.140900077, 0.01260177, 0.392291652, 0.029417878, 0.0044794
+14]
+ [9.247024686, 0.386754816, 0.023369405, 1.260113049, 0.077969535, 0.007596
+52]
+ [20.336134035, 0.924284653, 0.049776787, 3.763606015, 0.141751231, 0.01195
+9805]
+ [47.458886539, 2.23977471, 0.084984069, 7.831247874, 0.406233653, 0.019794
+413]
+ [111.640496255, 5.363320235, 0.162026892, 18.444480809, 0.803039225, 0.031
+353593]
+ [185.071636528, 8.943698357, 0.432105674, 36.391540075, 1.46793774, 0.0459
+54298]
+ [741.096580009, 28.073572982, 0.653599631, 100.676165224, 4.415155522, 0.1
+05222724]
+ [3273.139537912, 111.489407172, 1.403090087, 453.610881798, 16.813436676, 
+0.295176203]
+ [7810.521708444, 219.537046931, 2.991678379, 1116.379010265, 35.393436637,
+ 0.832696167]</code></pre><pre><code class="language-julia hljs">n_to_param(n) = 4n^2
+
+lw = 2
+ms = 0.5
+plt1 = plot(title=&quot;Sensitivity Scaling on Brusselator&quot;);
+plot!(plt1, n_to_param.(forwarddiffn), forwarddiff, lab=&quot;Forward-Mode DSAAD&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+#plot!(plt1, n_to_param.(reversediffn), reversediff, lab=&quot;Reverse-Mode DSAAD&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+csadata = [[csa[j][i] for j in eachindex(csa)] for i in eachindex(csa[1])]
+plot!(plt1, n_to_param.(csan), csadata[1], lab=&quot;Interpolating CASA user-Jacobian&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+plot!(plt1, n_to_param.(csan), csadata[2], lab=&quot;Interpolating CASA AD-Jacobian&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+plot!(plt1, n_to_param.(csan), csadata[3], lab=raw&quot;Interpolating CASA AD-$v^{T}J$ seeding&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+plot!(plt1, n_to_param.(csan), csadata[1+3], lab=&quot;Quadrature CASA user-Jacobian&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+plot!(plt1, n_to_param.(csan), csadata[2+3], lab=&quot;Quadrature CASA AD-Jacobian&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+plot!(plt1, n_to_param.(csan), csadata[3+3], lab=raw&quot;Quadrature CASA AD-$v^{T}J$ seeding&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+plot!(plt1, n_to_param.(numdiffn), numdiff, lab=&quot;Numerical Differentiation&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+xaxis!(plt1, &quot;Number of Parameters&quot;, :log10);
+yaxis!(plt1, &quot;Runtime (s)&quot;, :log10);
+plot!(plt1, legend=:outertopleft, size=(1200, 600))</code></pre><p><img src="../figures/BrussScaling_8_1.png" alt/></p><h2 id="VJP-Choice-Benchmarks"><a class="docs-heading-anchor" href="#VJP-Choice-Benchmarks">VJP Choice Benchmarks</a><a id="VJP-Choice-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#VJP-Choice-Benchmarks" title="Permalink"></a></h2><pre><code class="language-julia hljs">bt = 0:0.1:1
+tspan = (0.0, 1.0)
+csan = vcat(2:10,12,15,17)
+tols = (abstol=1e-5, reltol=1e-7)
+
+_adjoint_methods = ntuple(2) do ii
+  Alg = (InterpolatingAdjoint, QuadratureAdjoint)[ii]
+  (
+    advj1 = Alg(autodiff=true,autojacvec=EnzymeVJP()), # AD vJ
+    advj2 = Alg(autodiff=true,autojacvec=ReverseDiffVJP(false)), # AD vJ
+    advj3 = Alg(autodiff=true,autojacvec=ReverseDiffVJP(true)), # AD vJ
+  )
+end |&gt; NamedTuple{(:interp, :quad)}
+adjoint_methods = mapreduce(collect, vcat, _adjoint_methods)
+
+csavjp = map(csan) do n
+  bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
+  @time ts = map(adjoint_methods) do alg
+    @info &quot;Running $alg&quot;
+    f = SciMLSensitivity.alg_autodiff(alg) ? bfun : ODEFunction(bfun, jac=brusselator_jac)
+    solver = Rodas5(autodiff=false)
+    @time diffeq_sen_l2(bfun, b_u0, tspan, b_p, bt, solver; sensalg=alg, tols...)
+    t = @elapsed diffeq_sen_l2(bfun, b_u0, tspan, b_p, bt, solver; sensalg=alg, tols...)
+    return t
+  end
+  @show n,ts
+  ts
+end</code></pre><pre><code class="nohighlight hljs">0.001690 seconds (1.27 k allocations: 190.828 KiB)
+  5.570353 seconds (9.30 M allocations: 588.848 MiB, 1.77% gc time, 99.14% 
+compilation time)
+  4.800770 seconds (6.89 M allocations: 448.154 MiB, 2.65% gc time, 99.79% 
+compilation time)
+  0.001104 seconds (2.02 k allocations: 216.688 KiB)
+  4.698080 seconds (7.03 M allocations: 448.099 MiB, 1.78% gc time, 99.36% 
+compilation time)
+  4.897851 seconds (6.68 M allocations: 432.411 MiB, 2.70% gc time, 99.86% 
+compilation time)
+ 20.460323 seconds (31.16 M allocations: 1.933 GiB, 2.33% gc time, 99.07% c
+ompilation time)
+(n, ts) = (2, [0.00134782, 0.045370017, 0.005664228, 0.000861954, 0.0289168
+51, 0.003877491])
+  0.003174 seconds (1.33 k allocations: 335.484 KiB)
+  0.143369 seconds (2.09 M allocations: 95.600 MiB)
+  0.016478 seconds (5.41 k allocations: 549.000 KiB)
+  0.001609 seconds (2.00 k allocations: 324.484 KiB)
+  0.080354 seconds (1.10 M allocations: 50.154 MiB)
+  0.009897 seconds (7.24 k allocations: 600.453 KiB)
+  0.544487 seconds (6.41 M allocations: 295.261 MiB, 6.62% gc time)
+(n, ts) = (3, [0.002918817, 0.175614832, 0.016079348, 0.001447749, 0.079940
+026, 0.009716347])
+  0.006638 seconds (1.34 k allocations: 644.125 KiB)
+  0.457758 seconds (6.23 M allocations: 268.498 MiB, 9.07% gc time)
+  0.045981 seconds (8.54 k allocations: 1017.906 KiB)
+  0.002802 seconds (2.01 k allocations: 476.203 KiB)
+  0.222059 seconds (2.94 M allocations: 126.581 MiB, 7.38% gc time)
+  0.023726 seconds (11.63 k allocations: 957.094 KiB)
+  1.474712 seconds (18.39 M allocations: 796.423 MiB, 5.02% gc time)
+(n, ts) = (4, [0.006365751, 0.428318034, 0.045904303, 0.002571931, 0.205848
+574, 0.023545472])
+  0.012787 seconds (1.37 k allocations: 1.187 MiB)
+  1.005298 seconds (14.51 M allocations: 666.822 MiB, 4.83% gc time)
+  0.107025 seconds (12.50 k allocations: 1.762 MiB)
+  0.004581 seconds (2.02 k allocations: 713.219 KiB)
+  0.470657 seconds (6.63 M allocations: 304.667 MiB, 3.44% gc time)
+  0.051861 seconds (17.30 k allocations: 1.453 MiB)
+  3.361923 seconds (42.35 M allocations: 1.908 GiB, 5.33% gc time)
+(n, ts) = (5, [0.02905132, 1.019605045, 0.109611032, 0.004368717, 0.4911791
+68, 0.052094806])
+  0.023941 seconds (1.38 k allocations: 2.126 MiB)
+  2.030913 seconds (29.30 M allocations: 1.260 GiB, 5.51% gc time)
+  0.216941 seconds (17.32 k allocations: 2.941 MiB)
+  0.007488 seconds (2.02 k allocations: 1005.625 KiB)
+  0.938821 seconds (12.88 M allocations: 567.154 MiB, 6.37% gc time)
+  0.102241 seconds (24.17 k allocations: 2.051 MiB)
+  6.624316 seconds (84.44 M allocations: 3.643 GiB, 5.00% gc time)
+(n, ts) = (6, [0.023715081, 2.034729794, 0.218926176, 0.007279226, 0.917513
+287, 0.098336767])
+  0.049382 seconds (1.38 k allocations: 3.629 MiB)
+  3.860072 seconds (55.53 M allocations: 2.326 GiB, 5.23% gc time)
+  0.421175 seconds (23.32 k allocations: 4.747 MiB)
+  0.012493 seconds (2.02 k allocations: 1.348 MiB)
+  1.614930 seconds (22.90 M allocations: 981.691 MiB, 4.92% gc time)
+  0.175317 seconds (32.28 k allocations: 2.785 MiB)
+ 12.262925 seconds (156.98 M allocations: 6.593 GiB, 4.62% gc time)
+(n, ts) = (7, [0.048996969, 3.840106902, 0.435524889, 0.011982559, 1.614185
+443, 0.174397882])
+  0.084674 seconds (1.38 k allocations: 5.840 MiB)
+  6.521814 seconds (93.69 M allocations: 4.182 GiB, 5.48% gc time)
+  0.706281 seconds (29.97 k allocations: 7.322 MiB)
+  0.019816 seconds (2.02 k allocations: 1.853 MiB)
+  2.761892 seconds (39.29 M allocations: 1.753 GiB, 5.21% gc time)
+  0.292543 seconds (41.80 k allocations: 3.789 MiB)
+ 20.764954 seconds (266.11 M allocations: 11.907 GiB, 4.81% gc time)
+(n, ts) = (8, [0.084454822, 6.492965447, 0.703652362, 0.019438883, 2.762388
+087, 0.309297833])
+  0.162697 seconds (1.38 k allocations: 9.038 MiB)
+ 12.643907 seconds (181.84 M allocations: 7.891 GiB, 4.97% gc time)
+  1.422938 seconds (40.48 k allocations: 11.079 MiB)
+  0.031657 seconds (2.02 k allocations: 2.484 MiB)
+  4.374755 seconds (61.70 M allocations: 2.677 GiB, 5.17% gc time)
+  0.474672 seconds (52.44 k allocations: 4.905 MiB)
+ 38.271864 seconds (487.28 M allocations: 21.190 GiB, 4.59% gc time)
+(n, ts) = (9, [0.166029446, 12.704010424, 1.397609859, 0.031407873, 4.37985
+4015, 0.476869296])
+  0.322541 seconds (1.39 k allocations: 13.525 MiB)
+ 16.593448 seconds (233.92 M allocations: 9.952 GiB, 5.79% gc time)
+  1.971747 seconds (46.53 k allocations: 15.842 MiB)
+  0.047572 seconds (2.02 k allocations: 3.280 MiB)
+  6.720136 seconds (92.71 M allocations: 3.942 GiB, 6.15% gc time)
+  0.694388 seconds (64.33 k allocations: 6.243 MiB)
+ 52.981381 seconds (653.49 M allocations: 27.864 GiB, 5.30% gc time)
+(n, ts) = (10, [0.366210753, 16.849548053, 1.975394454, 0.046164092, 6.6928
+40149, 0.694055986])
+  0.536341 seconds (1.39 k allocations: 27.085 MiB)
+ 35.845385 seconds (498.79 M allocations: 22.283 GiB, 6.11% gc time)
+  4.135898 seconds (67.17 k allocations: 30.513 MiB)
+  0.107482 seconds (2.02 k allocations: 5.388 MiB)
+ 13.812169 seconds (188.66 M allocations: 8.423 GiB, 6.34% gc time)
+  1.394373 seconds (91.88 k allocations: 9.739 MiB)
+112.304933 seconds (1.38 G allocations: 61.554 GiB, 5.67% gc time)
+(n, ts) = (12, [0.535702803, 36.576058422, 4.110717811, 0.105450193, 13.731
+807029, 1.404409329])
+  1.346842 seconds (1.40 k allocations: 64.528 MiB, 1.43% gc time)
+ 94.751902 seconds (1.25 G allocations: 53.273 GiB, 7.78% gc time)
+ 10.440717 seconds (105.39 k allocations: 69.894 MiB)
+  0.297721 seconds (2.02 k allocations: 10.569 MiB)
+ 35.724916 seconds (453.40 M allocations: 19.275 GiB, 10.19% gc time)
+  3.434800 seconds (142.59 k allocations: 17.231 MiB)
+292.931394 seconds (3.41 G allocations: 145.412 GiB, 7.42% gc time)
+(n, ts) = (15, [1.404007982, 97.010873436, 10.30252896, 0.295888695, 34.474
+083925, 3.436738948])
+  2.795526 seconds (1.41 k allocations: 105.404 MiB)
+134.015879 seconds (1.92 G allocations: 80.231 GiB, 5.86% gc time)
+ 15.912583 seconds (131.41 k allocations: 112.046 MiB, 0.10% gc time)
+  0.679523 seconds (2.03 k allocations: 15.774 MiB)
+ 53.960011 seconds (743.36 M allocations: 30.973 GiB, 6.73% gc time)
+  6.061710 seconds (182.65 k allocations: 24.263 MiB)
+429.984940 seconds (5.34 G allocations: 222.910 GiB, 5.34% gc time)
+(n, ts) = (17, [2.751485266, 136.515721937, 16.370492397, 0.677623282, 54.2
+55790305, 5.977512346])
+12-element Vector{Vector{Float64}}:
+ [0.00134782, 0.045370017, 0.005664228, 0.000861954, 0.028916851, 0.0038774
+91]
+ [0.002918817, 0.175614832, 0.016079348, 0.001447749, 0.079940026, 0.009716
+347]
+ [0.006365751, 0.428318034, 0.045904303, 0.002571931, 0.205848574, 0.023545
+472]
+ [0.02905132, 1.019605045, 0.109611032, 0.004368717, 0.491179168, 0.0520948
+06]
+ [0.023715081, 2.034729794, 0.218926176, 0.007279226, 0.917513287, 0.098336
+767]
+ [0.048996969, 3.840106902, 0.435524889, 0.011982559, 1.614185443, 0.174397
+882]
+ [0.084454822, 6.492965447, 0.703652362, 0.019438883, 2.762388087, 0.309297
+833]
+ [0.166029446, 12.704010424, 1.397609859, 0.031407873, 4.379854015, 0.47686
+9296]
+ [0.366210753, 16.849548053, 1.975394454, 0.046164092, 6.692840149, 0.69405
+5986]
+ [0.535702803, 36.576058422, 4.110717811, 0.105450193, 13.731807029, 1.4044
+09329]
+ [1.404007982, 97.010873436, 10.30252896, 0.295888695, 34.474083925, 3.4367
+38948]
+ [2.751485266, 136.515721937, 16.370492397, 0.677623282, 54.255790305, 5.97
+7512346]</code></pre><pre><code class="language-julia hljs">plt2 = plot(title=&quot;Brusselator quadrature adjoint scaling&quot;);
+csacompare = [[csavjp[j][i] for j in eachindex(csavjp)] for i in eachindex(csavjp[1])]
+plot!(plt2, n_to_param.(csan), csadata[2+3], lab=&quot;AD-Jacobian&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+plot!(plt2, n_to_param.(csan), csacompare[1+3], lab=raw&quot;EnzymeVJP&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+plot!(plt2, n_to_param.(csan), csacompare[2+3], lab=raw&quot;ReverseDiffVJP&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+plot!(plt2, n_to_param.(csan), csacompare[3+3], lab=raw&quot;Compiled ReverseDiffVJP&quot;, lw=lw, marksize=ms, linestyle=:auto, marker=:auto);
+xaxis!(plt2, &quot;Number of Parameters&quot;, :log10);
+yaxis!(plt2, &quot;Runtime (s)&quot;, :log10);
+plot!(plt2, legend=:outertopleft, size=(1200, 600))</code></pre><p><img src="../figures/BrussScaling_10_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+SciMLBenchmarks.weave_file(&quot;benchmarks/AutomaticDifferentiation&quot;,&quot;BrussScaling.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.9
+Commit 5595d20a287 (2025-03-10 12:51 UTC)
+Build Info:
+  Official https://julialang.org/ release
+Platform Info:
+  OS: Linux (x86_64-linux-gnu)
+  CPU: 128 × AMD EPYC 7502 32-Core Processor
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Environment:
+  JULIA_CPU_THREADS = 128
+  JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
+⌃ [6e4b80f9] BenchmarkTools v1.5.0
+⌃ [a93c6f00] DataFrames v1.6.1
+⌃ [1313f7d8] DataFramesMeta v0.15.3
+⌅ [a0c0ee7d] DifferentiationInterface v0.5.9
+⌅ [a82114a7] DifferentiationInterfaceTest v0.5.0
+⌅ [7da242da] Enzyme v0.12.25
+⌃ [6a86dc24] FiniteDiff v2.23.1
+⌅ [f6369f11] ForwardDiff v0.10.36
+⌃ [1dea7af3] OrdinaryDiffEq v6.86.0
+⌃ [65888b18] ParameterizedFunctions v5.17.0
+⌃ [91a5bcdd] Plots v1.40.5
+⌃ [08abe8d2] PrettyTables v2.3.2
+  [37e2e3b7] ReverseDiff v1.15.3
+  [31c91b34] SciMLBenchmarks v0.1.3
+⌃ [1ed8b502] SciMLSensitivity v7.64.0
+⌃ [90137ffa] StaticArrays v1.9.7
+⌃ [07d77754] Tapir v0.2.26
+⌃ [9f7883ad] Tracker v0.2.34
+⌅ [e88e6eb3] Zygote v0.6.70
+  [37e2e46d] LinearAlgebra
+  [d6f4376e] Markdown
+  [de0858da] Printf
+  [8dfed614] Test
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+⌃ [47edcb42] ADTypes v1.6.1
+  [621f4979] AbstractFFTs v1.5.0
+  [1520ce14] AbstractTrees v0.4.5
+⌃ [7d9f7c33] Accessors v0.1.37
+⌃ [79e6a3ab] Adapt v4.0.4
+  [66dad0bd] AliasTables v1.1.3
+  [ec485272] ArnoldiMethod v0.4.0
+⌃ [4fba245c] ArrayInterface v7.12.0
+⌃ [4c555306] ArrayLayouts v1.10.2
+⌅ [a9b6321e] Atomix v0.1.0
+⌃ [6e4b80f9] BenchmarkTools v1.5.0
+⌃ [e2ed5e7c] Bijections v0.1.7
+  [d1d4a3ce] BitFlags v0.1.9
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
+  [fa961155] CEnum v0.5.0
+  [2a0fbf3d] CPUSummary v0.2.6
+  [00ebfdb7] CSTParser v3.4.3
+⌃ [49dc2e85] Calculus v0.5.1
+⌃ [7057c7e9] Cassette v0.3.13
+  [8be319e6] Chain v0.6.0
+⌃ [082447d4] ChainRules v1.69.0
+⌃ [d360d2e6] ChainRulesCore v1.24.0
+⌃ [0ca39b1e] Chairmarks v1.2.1
+  [fb6a15b2] CloseOpenIntervals v0.1.13
+⌃ [da1fd8a2] CodeTracking v1.3.5
+⌃ [944b1d66] CodecZlib v0.7.5
+⌃ [35d6a980] ColorSchemes v3.26.0
+⌅ [3da002f7] ColorTypes v0.11.5
+⌅ [c3611d14] ColorVectorSpace v0.10.0
+⌅ [5ae59095] Colors v0.12.11
+  [861a8166] Combinatorics v1.0.2
+⌅ [a80b9123] CommonMark v0.8.12
+  [38540f10] CommonSolve v0.2.4
+⌃ [bbf7d656] CommonSubexpressions v0.3.0
+  [f70d9fcc] CommonWorldInvalidations v1.0.0
+⌃ [34da2185] Compat v4.15.0
+⌃ [b0b7db55] ComponentArrays v0.15.14
+  [b152e2b5] CompositeTypes v0.1.4
+  [a33af91c] CompositionsBase v0.1.2
+  [2569d6c7] ConcreteStructs v0.2.3
+⌃ [f0e56b4a] ConcurrentUtilities v2.4.2
+  [8f4d0f93] Conda v1.10.2
+⌅ [187b0558] ConstructionBase v1.5.6
+  [d38c429a] Contour v0.6.3
+  [adafc99b] CpuId v0.3.1
+  [a8cc5b0e] Crayons v4.1.1
+  [9a962f9c] DataAPI v1.16.0
+⌃ [a93c6f00] DataFrames v1.6.1
+⌃ [1313f7d8] DataFramesMeta v0.15.3
+⌃ [864edb3b] DataStructures v0.18.20
+  [e2d170a0] DataValueInterfaces v1.0.0
+  [8bb1440f] DelimitedFiles v1.9.1
+⌃ [2b5f629d] DiffEqBase v6.151.5
+⌅ [459566f4] DiffEqCallbacks v3.6.2
+⌃ [77a26b50] DiffEqNoiseProcess v5.22.0
+  [163ba53b] DiffResults v1.1.0
+  [b552c78f] DiffRules v1.15.1
+  [de460e47] DiffTests v0.1.2
+⌅ [a0c0ee7d] DifferentiationInterface v0.5.9
+⌅ [a82114a7] DifferentiationInterfaceTest v0.5.0
+⌃ [b4f34e82] Distances v0.10.11
+⌃ [31c24e10] Distributions v0.25.109
+  [ffbed154] DocStringExtensions v0.9.3
+⌃ [5b8099bc] DomainSets v0.7.14
+⌃ [fa6b7ba4] DualNumbers v0.6.8
+⌅ [7c1d4256] DynamicPolynomials v0.5.7
+⌅ [06fc5a27] DynamicQuantities v0.13.2
+  [da5c29d0] EllipsisNotation v1.8.0
+  [4e289a0a] EnumX v1.0.4
+⌅ [7da242da] Enzyme v0.12.25
+⌅ [f151be2c] EnzymeCore v0.7.7
+⌃ [460bff9d] ExceptionUnwrapping v0.1.10
+⌃ [d4d017d3] ExponentialUtilities v1.26.1
+  [e2ba6199] ExprTools v0.1.10
+⌃ [c87230d0] FFMPEG v0.4.1
+⌃ [7034ab61] FastBroadcast v0.3.4
+  [9aa1b823] FastClosures v0.3.2
+  [29a986be] FastLapackInterface v2.0.4
+⌃ [1a297f60] FillArrays v1.11.0
+⌃ [64ca27bc] FindFirstFunctions v1.2.0
+⌃ [6a86dc24] FiniteDiff v2.23.1
+  [53c48c17] FixedPointNumbers v0.8.5
+  [1fa38f19] Format v1.3.7
+⌅ [f6369f11] ForwardDiff v0.10.36
+  [f62d2435] FunctionProperties v0.1.2
+  [069b7b12] FunctionWrappers v1.1.3
+  [77dc65aa] FunctionWrappersWrappers v0.1.3
+⌅ [d9f16b24] Functors v0.4.11
+⌅ [0c68f7d7] GPUArrays v10.3.0
+⌅ [46192b85] GPUArraysCore v0.1.6
+⌅ [61eb1bfa] GPUCompiler v0.26.7
+⌃ [28b8d3ca] GR v0.73.7
+  [c145ed77] GenericSchur v0.5.4
+  [d7ba0133] Git v1.3.1
+  [c27321d9] Glob v1.3.1
+⌃ [86223c79] Graphs v1.11.2
+  [42e2da0e] Grisu v1.0.2
+⌃ [cd3eb016] HTTP v1.10.8
+  [eafb193a] Highlights v0.5.3
+  [3e5b6fbb] HostCPUFeatures v0.1.17
+⌃ [34004b35] HypergeometricFunctions v0.3.23
+⌃ [7073ff75] IJulia v1.25.0
+  [7869d1d1] IRTools v0.4.14
+  [615f187c] IfElse v0.1.1
+  [d25df0c9] Inflate v0.1.5
+⌃ [842dd82b] InlineStrings v1.4.2
+  [8197267c] IntervalSets v0.7.10
+⌃ [3587e190] InverseFunctions v0.1.15
+⌃ [41ab1584] InvertedIndices v1.3.0
+⌃ [92d709cd] IrrationalConstants v0.2.2
+  [82899510] IteratorInterfaceExtensions v1.0.0
+⌃ [c3a54625] JET v0.9.6
+⌅ [27aeb0d3] JLArrays v0.1.5
+⌃ [1019f520] JLFzf v0.1.7
+⌃ [692b3bcd] JLLWrappers v1.5.0
+  [682c06a0] JSON v0.21.4
+⌃ [98e50ef6] JuliaFormatter v1.0.58
+⌃ [aa1ae85d] JuliaInterpreter v0.9.32
+⌃ [ccbc3e58] JumpProcesses v9.11.1
+  [ef3ab10e] KLU v0.6.0
+⌃ [63c18a36] KernelAbstractions v0.9.22
+⌃ [ba0b0d4f] Krylov v0.9.6
+⌅ [929cbde3] LLVM v8.0.0
+⌃ [b964fa9f] LaTeXStrings v1.3.1
+  [2ee39098] LabelledArrays v1.16.0
+⌅ [984bce1d] LambertW v0.4.6
+⌃ [23fbe1c1] Latexify v0.16.4
+  [10f19ff3] LayoutPointers v0.1.17
+⌃ [5078a376] LazyArrays v2.1.9
+  [2d8b4e74] LevyArea v1.0.0
+⌃ [d3d80556] LineSearches v7.2.0
+⌅ [7ed4a6bd] LinearSolve v2.30.2
+⌃ [2ab3a3ac] LogExpFunctions v0.3.28
+⌃ [e6f89c97] LoggingExtras v1.0.3
+⌃ [bdcacae8] LoopVectorization v0.12.171
+⌅ [6f1432cf] LoweredCodeUtils v2.4.8
+  [d8e11817] MLStyle v0.4.17
+⌃ [1914dd2f] MacroTools v0.5.13
+  [d125e4d3] ManualMemory v0.1.8
+⌃ [bb5d69b7] MaybeInplace v0.1.3
+  [739be429] MbedTLS v1.1.9
+  [442fdcdd] Measures v0.3.2
+  [e1d29d7a] Missings v1.2.0
+⌅ [dbe65cb8] MistyClosures v1.0.1
+⌃ [961ee093] ModelingToolkit v9.26.0
+  [46d2c3a1] MuladdMacro v0.2.4
+⌃ [102ac46a] MultivariatePolynomials v0.5.6
+⌃ [ffc61752] Mustache v1.0.19
+⌃ [d8a4904e] MutableArithmetics v1.4.5
+⌃ [d41bc354] NLSolversBase v7.8.3
+  [2774e3e8] NLsolve v4.5.1
+⌃ [872c559c] NNlib v0.9.21
+⌃ [77ba4419] NaNMath v1.0.2
+⌅ [8913a72c] NonlinearSolve v3.13.1
+⌃ [d8793406] ObjectFile v0.4.1
+⌃ [6fe1bfb0] OffsetArrays v1.14.1
+  [4d8831e6] OpenSSL v1.4.3
+⌃ [429524aa] Optim v1.9.4
+⌅ [3bd65402] Optimisers v0.3.3
+⌃ [bac558e1] OrderedCollections v1.6.3
+⌃ [1dea7af3] OrdinaryDiffEq v6.86.0
+⌃ [90014a1f] PDMats v0.11.31
+  [65ce6f38] PackageExtensionCompat v1.0.2
+⌃ [65888b18] ParameterizedFunctions v5.17.0
+  [d96e819e] Parameters v0.12.3
+  [69de0a69] Parsers v2.8.1
+  [b98c9c47] Pipe v1.3.0
+⌃ [ccf2f8ad] PlotThemes v3.2.0
+⌃ [995b91a9] PlotUtils v1.4.1
+⌃ [91a5bcdd] Plots v1.40.5
+  [e409e4f3] PoissonRandom v0.4.4
+⌃ [f517fe37] Polyester v0.7.15
+  [1d0040c9] PolyesterWeave v0.2.2
+  [2dfb63ee] PooledArrays v1.4.3
+  [85a6dd25] PositiveFactorizations v0.2.4
+⌃ [d236fae5] PreallocationTools v0.4.22
+⌅ [aea7be01] PrecompileTools v1.2.1
+  [21216c6a] Preferences v1.4.3
+⌃ [08abe8d2] PrettyTables v2.3.2
+  [92933f4c] ProgressMeter v1.10.2
+⌃ [43287f4e] PtrArrays v1.2.0
+⌃ [1fd47b50] QuadGK v2.9.4
+  [74087812] Random123 v1.7.0
+⌃ [e6cf234a] RandomNumbers v1.5.3
+  [c1ae055f] RealDot v0.1.0
+  [3cdcf5f2] RecipesBase v1.3.4
+  [01d81517] RecipesPipeline v0.6.12
+⌃ [731186ca] RecursiveArrayTools v3.26.0
+  [f2c3362d] RecursiveFactorization v0.2.23
+  [189a3867] Reexport v1.2.2
+  [05181044] RelocatableFolders v1.0.1
+⌃ [ae029012] Requires v1.3.0
+  [ae5879a3] ResettableStacks v1.1.1
+  [37e2e3b7] ReverseDiff v1.15.3
+⌅ [79098fc4] Rmath v0.7.1
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.13
+  [94e857df] SIMDTypes v0.1.0
+  [476501e8] SLEEFPirates v0.6.43
+⌃ [0bca4576] SciMLBase v2.44.0
+  [31c91b34] SciMLBenchmarks v0.1.3
+⌃ [c0aeaf25] SciMLOperators v0.3.8
+⌃ [1ed8b502] SciMLSensitivity v7.64.0
+⌃ [53ae85a6] SciMLStructures v1.4.1
+  [6c6a2e73] Scratch v1.2.1
+⌃ [91c51154] SentinelArrays v1.4.5
+⌃ [efcf1570] Setfield v1.1.1
+  [992d4aef] Showoff v1.0.3
+⌃ [777ac1f9] SimpleBufferStream v1.1.0
+⌅ [727e6d20] SimpleNonlinearSolve v1.11.0
+  [699a6c99] SimpleTraits v0.9.4
+  [ce78b400] SimpleUnPack v1.1.0
+  [b85f4697] SoftGlobalScope v1.1.0
+  [a2af1166] SortingAlgorithms v1.2.1
+⌃ [47a9eef4] SparseDiffTools v2.19.0
+  [dc90abb0] SparseInverseSubset v0.1.2
+⌅ [0a514795] SparseMatrixColorings v0.3.5
+  [e56a9233] Sparspak v0.3.9
+⌃ [276daf66] SpecialFunctions v2.4.0
+⌃ [aedffcd0] Static v1.1.1
+⌃ [0d7ed370] StaticArrayInterface v1.5.1
+⌃ [90137ffa] StaticArrays v1.9.7
+  [1e83bf80] StaticArraysCore v1.4.3
+  [82ae8749] StatsAPI v1.7.0
+⌃ [2913bbd2] StatsBase v0.34.3
+⌃ [4c63d2b9] StatsFuns v1.3.1
+⌃ [789caeaf] StochasticDiffEq v6.66.0
+  [7792a7ef] StrideArraysCore v0.5.7
+  [69024149] StringEncodings v0.3.7
+⌅ [892a3eda] StringManipulation v0.3.4
+⌅ [09ab397b] StructArrays v0.6.18
+⌃ [53d494c1] StructIO v0.3.0
+⌃ [2efcf032] SymbolicIndexingInterface v0.3.26
+⌃ [19f23fe9] SymbolicLimits v0.2.1
+⌅ [d1185830] SymbolicUtils v2.1.2
+⌅ [0c5d862f] Symbolics v5.34.0
+  [9ce81f87] TableMetadataTools v0.1.0
+  [3783bdb8] TableTraits v1.0.1
+  [bd369af6] Tables v1.12.0
+⌃ [07d77754] Tapir v0.2.26
+  [62fd8b95] TensorCore v0.1.1
+⌅ [8ea1fca8] TermInterface v0.4.1
+  [8290d209] ThreadingUtilities v0.5.2
+⌃ [a759f4b9] TimerOutputs v0.5.24
+  [0796e94c] Tokenize v0.5.29
+⌃ [9f7883ad] Tracker v0.2.34
+⌃ [3bb67fe8] TranscodingStreams v0.11.1
+  [d5829a12] TriangularSolve v0.2.1
+⌃ [410a4b4d] Tricks v0.1.8
+  [781d530d] TruncatedStacktraces v1.4.0
+  [5c2747f8] URIs v1.5.1
+  [3a884ed6] UnPack v1.0.2
+  [1cfade01] UnicodeFun v0.4.1
+⌃ [1986cc42] Unitful v1.21.0
+  [45397f5d] UnitfulLatexify v1.6.4
+  [a7c27f48] Unityper v0.1.6
+⌅ [013be700] UnsafeAtomics v0.2.1
+⌅ [d80eeb9a] UnsafeAtomicsLLVM v0.1.5
+  [41fe7b60] Unzip v0.2.0
+⌃ [3d5dd08c] VectorizationBase v0.21.70
+  [81def892] VersionParsing v1.3.0
+  [19fa3120] VertexSafeGraphs v0.2.0
+  [44d3d7a6] Weave v0.10.12
+⌃ [ddb6d928] YAML v0.4.11
+⌃ [c2297ded] ZMQ v1.2.6
+⌅ [e88e6eb3] Zygote v0.6.70
+⌃ [700de1a5] ZygoteRules v0.2.5
+⌃ [6e34b625] Bzip2_jll v1.0.8+1
+⌃ [83423d85] Cairo_jll v1.18.0+2
+⌅ [7cc45869] Enzyme_jll v0.0.137+0
+⌃ [2702e6a9] EpollShim_jll v0.0.20230411+0
+⌃ [2e619515] Expat_jll v2.6.2+0
+⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
+⌃ [a3f928ae] Fontconfig_jll v2.13.96+0
+⌃ [d7e528f0] FreeType2_jll v2.13.2+0
+⌃ [559328eb] FriBidi_jll v1.0.14+0
+⌃ [0656b61e] GLFW_jll v3.4.0+0
+⌅ [d2c73de3] GR_jll v0.73.7+0
+  [78b55507] Gettext_jll v0.21.0+0
+⌃ [f8c6e375] Git_jll v2.44.0+2
+⌃ [7746bdde] Glib_jll v2.80.2+0
+⌃ [3b182d85] Graphite2_jll v1.3.14+0
+⌅ [2e76f6c2] HarfBuzz_jll v2.8.1+1
+⌅ [1d5cc7b8] IntelOpenMP_jll v2024.2.0+0
+⌃ [aacddb02] JpegTurbo_jll v3.0.3+0
+  [c1c5ebd0] LAME_jll v3.100.2+0
+⌅ [88015f11] LERC_jll v3.0.0+1
+⌅ [dad2f222] LLVMExtra_jll v0.0.30+0
+⌃ [1d63c593] LLVMOpenMP_jll v15.0.7+0
+⌃ [dd4b983a] LZO_jll v2.10.2+0
+⌅ [e9f186c6] Libffi_jll v3.2.2+1
+⌃ [d4300ac3] Libgcrypt_jll v1.8.11+0
+⌃ [7e76a0d4] Libglvnd_jll v1.6.0+0
+⌃ [7add5ba3] Libgpg_error_jll v1.49.0+0
+⌃ [94ce4f54] Libiconv_jll v1.17.0+0
+⌃ [4b2f31a3] Libmount_jll v2.40.1+0
+⌅ [89763e89] Libtiff_jll v4.5.1+1
+⌃ [38a345b3] Libuuid_jll v2.40.1+0
+⌃ [856f044c] MKL_jll v2024.2.0+0
+  [e7412a2a] Ogg_jll v1.3.5+1
+⌃ [458c3c95] OpenSSL_jll v3.0.14+0
+⌃ [efe28fd5] OpenSpecFun_jll v0.5.5+0
+⌃ [91d4177d] Opus_jll v1.3.2+0
+⌅ [30392449] Pixman_jll v0.43.4+0
+⌅ [c0090381] Qt6Base_jll v6.7.1+1
+⌅ [629bc702] Qt6Declarative_jll v6.7.1+2
+⌅ [ce943373] Qt6ShaderTools_jll v6.7.1+1
+⌃ [e99dba38] Qt6Wayland_jll v6.7.1+1
+⌅ [f50d1b31] Rmath_jll v0.4.2+0
+  [a44049a8] Vulkan_Loader_jll v1.3.243+0
+⌃ [a2964d1f] Wayland_jll v1.21.0+1
+⌃ [2381bf8a] Wayland_protocols_jll v1.31.0+0
+⌃ [02c8fc9c] XML2_jll v2.13.1+0
+⌃ [aed1982a] XSLT_jll v1.1.41+0
+⌃ [ffd25f8a] XZ_jll v5.4.6+0
+  [f67eecfb] Xorg_libICE_jll v1.1.1+0
+  [c834827a] Xorg_libSM_jll v1.2.4+0
+⌃ [4f6342f7] Xorg_libX11_jll v1.8.6+0
+⌃ [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
+⌃ [935fb764] Xorg_libXcursor_jll v1.2.0+4
+⌃ [a3789734] Xorg_libXdmcp_jll v1.1.4+0
+⌃ [1082639a] Xorg_libXext_jll v1.3.6+0
+⌃ [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
+⌃ [a51aa0fd] Xorg_libXi_jll v1.7.10+4
+⌃ [d1454406] Xorg_libXinerama_jll v1.1.4+4
+⌃ [ec84b674] Xorg_libXrandr_jll v1.5.2+4
+⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.11+0
+⌃ [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
+⌃ [c7cfdc94] Xorg_libxcb_jll v1.17.0+0
+⌃ [cc61e674] Xorg_libxkbfile_jll v1.1.2+0
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.4+0
+  [12413925] Xorg_xcb_util_image_jll v0.4.0+1
+  [2def613f] Xorg_xcb_util_jll v0.4.0+1
+  [975044d2] Xorg_xcb_util_keysyms_jll v0.4.0+1
+  [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.9+1
+  [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.1+1
+⌃ [35661453] Xorg_xkbcomp_jll v1.4.6+0
+  [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
+⌃ [c5fb5394] Xorg_xtrans_jll v1.5.0+0
+⌃ [8f1865be] ZeroMQ_jll v4.3.5+0
+⌃ [3161d3a3] Zstd_jll v1.5.6+0
+  [35ca27e7] eudev_jll v3.2.9+0
+⌅ [214eeab7] fzf_jll v0.43.0+0
+⌃ [1a1c6b14] gperf_jll v3.1.1+0
+⌃ [a4ae2306] libaom_jll v3.9.0+0
+⌃ [0ac62f75] libass_jll v0.15.1+0
+  [2db6ffa8] libevdev_jll v1.11.0+0
+⌃ [f638f0a6] libfdk_aac_jll v2.0.2+0
+  [36db933b] libinput_jll v1.18.0+0
+⌃ [b53b4c65] libpng_jll v1.6.43+1
+⌃ [a9144af2] libsodium_jll v1.0.20+0
+⌃ [f27f6e37] libvorbis_jll v1.3.7+1
+  [009596ad] mtdev_jll v1.1.6+0
+⌃ [1317d2d5] oneTBB_jll v2021.12.0+0
+⌅ [1270edf5] x264_jll v2021.5.5+0
+⌅ [dfaa095f] x265_jll v3.5.0+0
+⌃ [d8fb68d0] xkbcommon_jll v1.4.1+1
+  [0dad84c5] ArgTools v1.1.1
+  [56f22d72] Artifacts
+  [2a0f44e3] Base64
+  [ade2ca70] Dates
+  [8ba89e20] Distributed
+  [f43a241f] Downloads v1.6.0
+  [7b1f6079] FileWatching
+  [9fa8497b] Future
+  [b77e0a4c] InteractiveUtils
+  [4af54fe1] LazyArtifacts
+  [b27032c2] LibCURL v0.6.4
+  [76f85450] LibGit2
+  [8f399da3] Libdl
+  [37e2e46d] LinearAlgebra
+  [56ddb016] Logging
+  [d6f4376e] Markdown
+  [a63ad114] Mmap
+  [ca575930] NetworkOptions v1.2.0
+  [44cfe95a] Pkg v1.10.0
+  [de0858da] Printf
+  [9abbd945] Profile
+  [3fa0cd96] REPL
+  [9a3f8284] Random
+  [ea8e919c] SHA v0.7.0
+  [9e88b42a] Serialization
+  [1a1011a3] SharedArrays
+  [6462fe0b] Sockets
+  [2f01184e] SparseArrays v1.10.0
+  [10745b16] Statistics v1.10.0
+  [4607b0f0] SuiteSparse
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
+  [8dfed614] Test
+  [cf7118a7] UUIDs
+  [4ec0a83e] Unicode
+  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
+  [deac9b47] LibCURL_jll v8.4.0+0
+  [e37daf67] LibGit2_jll v1.6.4+0
+  [29816b5a] LibSSH2_jll v1.11.0+1
+  [c8ffd9c3] MbedTLS_jll v2.28.2+1
+  [14a3606d] MozillaCACerts_jll v2023.1.10
+  [4536629a] OpenBLAS_jll v0.3.23+4
+  [05823500] OpenLibm_jll v0.8.1+2
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.2.1+1
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.8.0+1
+  [8e850ede] nghttp2_jll v1.52.0+1
+  [3f19e933] p7zip_jll v17.4.0+2
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../NonlinearProblem/quadratic_nonlinear/">« Quadratic Nonlinear Rootfinding Benchmark</a><a class="docs-footer-nextpage" href="../JuliaAD/">Julia AD Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 3 May 2025 02:06">Saturday 3 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

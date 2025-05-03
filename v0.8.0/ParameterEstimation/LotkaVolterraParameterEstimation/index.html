@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Lotka-Volterra Parameter Estimation Benchmarks · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/ParameterEstimation/LotkaVolterraParameterEstimation/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen_Cahn FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">KdV FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">KdV Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">KS FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">KS Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li class="is-active"><a class="tocitem" href>Lotka-Volterra Parameter Estimation Benchmarks</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Parameter-estimation-of-Lotka-Volterra-model-using-optimisation-methods"><span>Parameter estimation of Lotka Volterra model using optimisation methods</span></a></li><li class="toplevel"><a class="tocitem" href="#Using-NLopt"><span>Using NLopt</span></a></li><li><a class="tocitem" href="#Now-the-longer-problem-is-solved-for-a-global-solution"><span>Now the longer problem is solved for a global solution</span></a></li><li><a class="tocitem" href="#Local-problem"><span>Local problem</span></a></li><li class="toplevel"><a class="tocitem" href="#Conclusion"><span>Conclusion</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Parameter Estimation and Inverse Problem Benchmarks</a></li><li class="is-active"><a href>Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/ParameterEstimation/LotkaVolterraParameterEstimation.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Lotka-Volterra-Parameter-Estimation-Benchmarks"><a class="docs-heading-anchor" href="#Lotka-Volterra-Parameter-Estimation-Benchmarks">Lotka-Volterra Parameter Estimation Benchmarks</a><a id="Lotka-Volterra-Parameter-Estimation-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Lotka-Volterra-Parameter-Estimation-Benchmarks" title="Permalink"></a></h1><h1 id="Parameter-estimation-of-Lotka-Volterra-model-using-optimisation-methods"><a class="docs-heading-anchor" href="#Parameter-estimation-of-Lotka-Volterra-model-using-optimisation-methods">Parameter estimation of Lotka Volterra model using optimisation methods</a><a id="Parameter-estimation-of-Lotka-Volterra-model-using-optimisation-methods-1"></a><a class="docs-heading-anchor-permalink" href="#Parameter-estimation-of-Lotka-Volterra-model-using-optimisation-methods" title="Permalink"></a></h1><pre><code class="language-julia hljs">using ParameterizedFunctions, OrdinaryDiffEq, DiffEqParamEstim, Optimization, ForwardDiff
+using OptimizationBBO, OptimizationNLopt, Plots, RecursiveArrayTools, BenchmarkTools
+using ModelingToolkit: t_nounits as t, D_nounits as D
+gr(fmt=:png)</code></pre><pre><code class="nohighlight hljs">Plots.GRBackend()</code></pre><pre><code class="language-julia hljs">loc_bounds = Tuple{Float64, Float64}[(0, 5), (0, 5), (0, 5), (0, 5)]
+glo_bounds = Tuple{Float64, Float64}[(0, 10), (0, 10), (0, 10), (0, 10)]
+loc_init = [1,0.5,3.5,1.5]
+glo_init = [5.0,5.0,5.0,5.0]</code></pre><pre><code class="nohighlight hljs">4-element Vector{Float64}:
+ 5.0
+ 5.0
+ 5.0
+ 5.0</code></pre><pre><code class="language-julia hljs">@mtkmodel LotkaVolterraTest begin
+    @parameters begin
+        a = 1.5  # Growth rate of prey
+        b = 1.0  # Predation rate
+        c = 3.0  # Death rate of predators
+        d = 1.0  # Reproduction rate of predators
+        e = 0.0  # Additional parameter (if needed)
+    end
+    @variables begin
+        x(t) = 1.0  # Population of prey with initial condition
+        y(t) = 1.0  # Population of predators with initial condition
+    end
+    @equations begin
+        D(x) ~ a * x - b * x * y
+        D(y) ~ -c * y + d * x * y
+    end
+end
+
+@mtkbuild f = LotkaVolterraTest()</code></pre><pre><code class="nohighlight hljs">Model f:
+Equations (2):
+  2 standard: see equations(f)
+Unknowns (2): see unknowns(f)
+  x(t) [defaults to 1.0]
+  y(t) [defaults to 1.0]
+Parameters (5): see parameters(f)
+  a [defaults to 1.5]
+  d [defaults to 1.0]
+  b [defaults to 1.0]
+  e [defaults to 0.0]
+  ⋮</code></pre><pre><code class="language-julia hljs">u0 = [1.0,1.0]                          #initial values
+tspan = (0.0,10.0)
+p = [1.5,1.0,3.0,1,0]                   #parameters used, these need to be estimated from the data
+tspan = (0.0, 30.0)                     # sample of 3000 observations over the (0,30) timespan
+prob = ODEProblem(f, u0, tspan,p)
+tspan2 = (0.0, 3.0)                     # sample of 3000 observations over the (0,30) timespan
+prob_short = ODEProblem(f, u0, tspan2,p)</code></pre><pre><code class="nohighlight hljs">ODEProblem with uType Vector{Float64} and tType Float64. In-place: true
+timespan: (0.0, 3.0)
+u0: 2-element Vector{Float64}:
+ 1.0
+ 1.0</code></pre><pre><code class="language-julia hljs">dt = 30.0/3000
+tf = 30.0
+tinterval = 0:dt:tf
+time_points  = collect(tinterval)</code></pre><pre><code class="nohighlight hljs">3001-element Vector{Float64}:
+  0.0
+  0.01
+  0.02
+  0.03
+  0.04
+  0.05
+  0.06
+  0.07
+  0.08
+  0.09
+  ⋮
+ 29.92
+ 29.93
+ 29.94
+ 29.95
+ 29.96
+ 29.97
+ 29.98
+ 29.99
+ 30.0</code></pre><pre><code class="language-julia hljs">h = 0.01
+M = 300
+tstart = 0.0
+tstop = tstart + M * h
+tinterval_short = 0:h:tstop
+t_short = collect(tinterval_short)</code></pre><pre><code class="nohighlight hljs">301-element Vector{Float64}:
+ 0.0
+ 0.01
+ 0.02
+ 0.03
+ 0.04
+ 0.05
+ 0.06
+ 0.07
+ 0.08
+ 0.09
+ ⋮
+ 2.92
+ 2.93
+ 2.94
+ 2.95
+ 2.96
+ 2.97
+ 2.98
+ 2.99
+ 3.0</code></pre><pre><code class="language-julia hljs">#Generate Data
+data_sol_short = solve(prob_short,Tsit5(),saveat=t_short,reltol=1e-9,abstol=1e-9)
+data_short = convert(Array, data_sol_short)
+data_sol = solve(prob,Tsit5(),saveat=time_points,reltol=1e-9,abstol=1e-9)
+data = convert(Array, data_sol)</code></pre><pre><code class="nohighlight hljs">2×3001 Matrix{Float64}:
+ 1.0  0.984964  0.969865  0.954715  0.939523  …  3.23047e-10  3.12995e-10
+ 1.0  1.00997   1.01989   1.02976   1.03956      1.55363      1.55363</code></pre><h4 id="Plot-of-the-solution"><a class="docs-heading-anchor" href="#Plot-of-the-solution">Plot of the solution</a><a id="Plot-of-the-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-of-the-solution" title="Permalink"></a></h4><h5 id="Short-Solution"><a class="docs-heading-anchor" href="#Short-Solution">Short Solution</a><a id="Short-Solution-1"></a><a class="docs-heading-anchor-permalink" href="#Short-Solution" title="Permalink"></a></h5><pre><code class="language-julia hljs">p1 = plot(data_sol_short)</code></pre><p><img src="../figures/LotkaVolterraParameterEstimation_8_1.png" alt/></p><h5 id="Longer-Solution"><a class="docs-heading-anchor" href="#Longer-Solution">Longer Solution</a><a id="Longer-Solution-1"></a><a class="docs-heading-anchor-permalink" href="#Longer-Solution" title="Permalink"></a></h5><pre><code class="language-julia hljs">p2 = plot(data_sol)</code></pre><p><img src="../figures/LotkaVolterraParameterEstimation_9_1.png" alt/></p><h3 id="Local-Solution-from-the-short-data-set"><a class="docs-heading-anchor" href="#Local-Solution-from-the-short-data-set">Local Solution from the short data set</a><a id="Local-Solution-from-the-short-data-set-1"></a><a class="docs-heading-anchor-permalink" href="#Local-Solution-from-the-short-data-set" title="Permalink"></a></h3><pre><code class="language-julia hljs">obj_short = build_loss_objective(prob_short,Tsit5(),L2Loss(t_short,data_short),tstops=t_short)
+optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
+@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
+# Lower tolerance could lead to smaller fitness (more accuracy)</code></pre><pre><code class="nohighlight hljs">1.194 s (2614253 allocations: 365.42 MiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 1.500214965467566
+ 1.0000024750180068
+ 3.0001750483239555
+ 2.637318438652911</code></pre><pre><code class="language-julia hljs">obj_short = build_loss_objective(prob_short,Tsit5(),L2Loss(t_short,data_short),tstops=t_short,reltol=1e-9)
+optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
+@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
+# Change in tolerance makes it worse</code></pre><pre><code class="nohighlight hljs">1.219 s (2613157 allocations: 365.26 MiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 1.499974225730644
+ 0.9999952271858773
+ 2.999973052611709
+ 2.230546883489635</code></pre><pre><code class="language-julia hljs">obj_short = build_loss_objective(prob_short,Vern9(),L2Loss(t_short,data_short),tstops=t_short,reltol=1e-9,abstol=1e-9)
+optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
+@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
+# using the moe accurate Vern9() reduces the fitness marginally and leads to some increase in time taken</code></pre><pre><code class="nohighlight hljs">1.716 s (2652560 allocations: 370.04 MiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 1.5000042547804053
+ 1.0000157391806568
+ 3.0000489057559867
+ 0.1405331999454995</code></pre><h1 id="Using-NLopt"><a class="docs-heading-anchor" href="#Using-NLopt">Using NLopt</a><a id="Using-NLopt-1"></a><a class="docs-heading-anchor-permalink" href="#Using-NLopt" title="Permalink"></a></h1><h4 id="Global-Optimisation-first"><a class="docs-heading-anchor" href="#Global-Optimisation-first">Global Optimisation first</a><a id="Global-Optimisation-first-1"></a><a class="docs-heading-anchor-permalink" href="#Global-Optimisation-first" title="Permalink"></a></h4><pre><code class="language-julia hljs">obj_short = build_loss_objective(prob_short,Vern9(),L2Loss(t_short,data_short), Optimization.AutoForwardDiff(), tstops=t_short,reltol=1e-9,abstol=1e-9)
+optprob = OptimizationProblem(obj_short, glo_init, lb = first.(glo_bounds), ub = last.(glo_bounds))</code></pre><pre><code class="nohighlight hljs">OptimizationProblem. In-place: true
+u0: 4-element Vector{Float64}:
+ 5.0
+ 5.0
+ 5.0
+ 5.0</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ORIG_DIRECT_L, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">370.191 ms (578188 allocations: 79.50 MiB)
+retcode: Failure
+u: 4-element Vector{Float64}:
+ 2.9629629629570617
+ 1.112635269019771
+ 4.444444444446411
+ 5.183661027276527</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_CRS2_LM, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">1.806 s (2480017 allocations: 341.07 MiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 1.5000000007104524
+ 1.000000000066415
+ 3.00000000072833
+ 8.609730365585019</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ISRES, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">2.551 s (3760116 allocations: 517.13 MiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 3.2101820934868086
+ 3.102703061056422
+ 6.23284316667356
+ 3.0228330952260194</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ESCH, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">2.742 s (3760136 allocations: 517.13 MiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 0.41717752397541985
+ 1.0152957354634846
+ 2.1590654457868057
+ 0.3327333284030529</code></pre><p>Now local optimization algorithms are used to check the global ones, these use the local constraints, different initial values and time step</p><pre><code class="language-julia hljs">optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))</code></pre><pre><code class="nohighlight hljs">OptimizationProblem. In-place: true
+u0: 4-element Vector{Float64}:
+ 1.0
+ 0.5
+ 3.5
+ 1.5</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_BOBYQA, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">22.004 ms (32988 allocations: 4.52 MiB)
+retcode: Success
+u: 4-element Vector{Float64}:
+ 1.5000000007152077
+ 1.0000000000665352
+ 3.0000000007324514
+ 1.3140958126026705</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_NELDERMEAD, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">356.796 ms (516524 allocations: 71.02 MiB)
+retcode: Failure
+u: 4-element Vector{Float64}:
+ 1.50000000071043
+ 1.0000000000664235
+ 3.000000000728334
+ 1.3358196081664195</code></pre><pre><code class="language-julia hljs">opt = Opt(:LD_SLSQP, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">33.718 s (21641385 allocations: 4.22 GiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 2.0
+ 1.625
+ 2.625
+ 1.125</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_COBYLA, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">2.761 s (3760144 allocations: 517.13 MiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 1.6469631689746635
+ 0.9994654455200698
+ 3.117789184493826
+ 1.5182360928459269</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_NEWUOA_BOUND, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">198.261 ms (154304 allocations: 21.21 MiB)
+retcode: Success
+u: 4-element Vector{Float64}:
+ 1.5487464181140709
+ 0.999840139235765
+ 3.0391418493128373
+ 1.3642113819198016</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_PRAXIS, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">19.411 ms (31768 allocations: 4.38 MiB)
+retcode: Failure
+u: 4-element Vector{Float64}:
+ 1.0
+ 0.5
+ 3.5
+ 1.5</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_SBPLX, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">2.421 s (3760136 allocations: 517.13 MiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 1.5000005835389816
+ 0.9999999986401436
+ 3.000000468839309
+ 1.8838550099135751</code></pre><pre><code class="language-julia hljs">opt = Opt(:LD_MMA, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">6.769 s (7370358 allocations: 1.20 GiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 1.0
+ 0.5
+ 3.5
+ 1.5</code></pre><pre><code class="language-julia hljs">opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">875.323 μs (1235 allocations: 177.48 KiB)
+retcode: Failure
+u: 4-element Vector{Float64}:
+ 1.0
+ 0.5
+ 3.5
+ 1.5</code></pre><h2 id="Now-the-longer-problem-is-solved-for-a-global-solution"><a class="docs-heading-anchor" href="#Now-the-longer-problem-is-solved-for-a-global-solution">Now the longer problem is solved for a global solution</a><a id="Now-the-longer-problem-is-solved-for-a-global-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Now-the-longer-problem-is-solved-for-a-global-solution" title="Permalink"></a></h2><p>Vern9 solver with reltol=1e-9 and abstol=1e-9 is used and the dataset is increased to 3000 observations per variable with the same integration time step of 0.01.</p><pre><code class="language-julia hljs">t_concrete = collect(0.0:dt:tf)
+obj = build_loss_objective(prob,Vern9(),L2Loss(t_concrete,data),tstops=t_concrete,reltol=1e-9,abstol=1e-9)
+optprob = OptimizationProblem(obj, glo_init, lb =first.(glo_bounds), ub = last.(glo_bounds))</code></pre><pre><code class="nohighlight hljs">OptimizationProblem. In-place: true
+u0: 4-element Vector{Float64}:
+ 5.0
+ 5.0
+ 5.0
+ 5.0</code></pre><pre><code class="language-julia hljs">@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 4e3)</code></pre><pre><code class="nohighlight hljs">10.602 s (12704588 allocations: 1.66 GiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 1.4885687659607436
+ 1.0011714661862494
+ 2.99416289933156
+ 9.296455885807822</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ORIG_DIRECT_L, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">5.275 s (5886150 allocations: 783.86 MiB)
+retcode: Failure
+u: 4-element Vector{Float64}:
+ 2.5514403292122063
+ 1.604938271606906
+ 4.938271604944172
+ 8.353909465014675</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_CRS2_LM, 4)
+@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">30.086 s (33879834 allocations: 4.41 GiB)
+retcode: Failure
+u: 4-element Vector{Float64}:
+ 1.5000000005815561
+ 1.0000000000683134
+ 3.000000000619062
+ 0.0</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ISRES, 4)
+@btime res1 = solve(optprob, opt, maxiters = 50000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">126.998 s (153970386 allocations: 20.03 GiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 2.7654422322632435
+ 5.137708728727137
+ 4.831283307687359
+ 0.1431635686737227</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ESCH, 4)
+@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">54.391 s (61600130 allocations: 8.01 GiB)
+retcode: MaxIters
+u: 4-element Vector{Float64}:
+ 5.164220594437419
+ 0.8056708844950282
+ 5.576026825177544
+ 6.963544609522616</code></pre><h2 id="Local-problem"><a class="docs-heading-anchor" href="#Local-problem">Local problem</a><a id="Local-problem-1"></a><a class="docs-heading-anchor-permalink" href="#Local-problem" title="Permalink"></a></h2><pre><code class="language-julia hljs">obj = build_loss_objective(prob,Vern9(),L2Loss(t,data),Optimization.AutoForwardDiff(),tstops=t,reltol=1e-9,abstol=1e-9)
+optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))</code></pre><pre><code class="nohighlight hljs">OptimizationProblem. In-place: true
+u0: 4-element Vector{Float64}:
+ 1.0
+ 0.5
+ 3.5
+ 1.5</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_BOBYQA, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">54.861 ms (86248 allocations: 11.85 MiB)
+retcode: Success
+u: 4-element Vector{Float64}:
+ 1.5000000007152077
+ 1.0000000000665352
+ 3.0000000007324514
+ 1.3140958126026705</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_NELDERMEAD, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">357.405 ms (516524 allocations: 71.02 MiB)
+retcode: Failure
+u: 4-element Vector{Float64}:
+ 1.50000000071043
+ 1.0000000000664235
+ 3.000000000728334
+ 1.3358196081664195</code></pre><pre><code class="language-julia hljs">opt = Opt(:LD_SLSQP, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">975.504 μs (1014 allocations: 147.74 KiB)
+retcode: Failure
+u: 4-element Vector{Float64}:
+ 4.021234894406051
+ 3.899461050223107
+ 3.412580878071708
+ 1.5000471446870371</code></pre><h4 id="Parameter-estimation-on-the-longer-sample-proves-to-be-extremely-challenging-for-some-of-the-global-optimizers.-A-few-give-the-accurate-values,-BlacBoxOptim-also-performs-quite-well-while-others-seem-to-struggle-with-accuracy-a-lot."><a class="docs-heading-anchor" href="#Parameter-estimation-on-the-longer-sample-proves-to-be-extremely-challenging-for-some-of-the-global-optimizers.-A-few-give-the-accurate-values,-BlacBoxOptim-also-performs-quite-well-while-others-seem-to-struggle-with-accuracy-a-lot.">Parameter estimation on the longer sample proves to be extremely challenging for some of the global optimizers. A few give the accurate values, BlacBoxOptim also performs quite well while others seem to struggle with accuracy a lot.</a><a id="Parameter-estimation-on-the-longer-sample-proves-to-be-extremely-challenging-for-some-of-the-global-optimizers.-A-few-give-the-accurate-values,-BlacBoxOptim-also-performs-quite-well-while-others-seem-to-struggle-with-accuracy-a-lot.-1"></a><a class="docs-heading-anchor-permalink" href="#Parameter-estimation-on-the-longer-sample-proves-to-be-extremely-challenging-for-some-of-the-global-optimizers.-A-few-give-the-accurate-values,-BlacBoxOptim-also-performs-quite-well-while-others-seem-to-struggle-with-accuracy-a-lot." title="Permalink"></a></h4><h1 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h1><p>In general we observe that lower tolerance lead to higher accuracy but too low tolerance could affect the convergence time drastically. Also fitting a shorter timespan seems to be easier in comparison (quite intuitively). NLOpt methods seem to give great accuracy in the shorter problem with a lot of the algorithms giving 0 fitness, BBO performs very well on it with marginal change with <code>tol</code> values. In case of global optimization of the longer problem  there is some difference in the performance amongst the algorithms with <code>LD_SLSQP</code> <code>GN_ESCH</code> <code>GN_ISRES</code> <code>GN_ORIG_DIRECT_L</code> performing among the worse, BBO also gives a bit high fitness in comparison. QuadDIRECT gives accurate results in the case of the shorter problem but doesn&#39;t perform very well in the longer problem case.</p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+SciMLBenchmarks.weave_file(&quot;benchmarks/ParameterEstimation&quot;,&quot;LotkaVolterraParameterEstimation.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.9
+Commit 5595d20a287 (2025-03-10 12:51 UTC)
+Build Info:
+  Official https://julialang.org/ release
+Platform Info:
+  OS: Linux (x86_64-linux-gnu)
+  CPU: 128 × AMD EPYC 7502 32-Core Processor
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Environment:
+  JULIA_CPU_THREADS = 128
+  JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ParameterEstimation/Project.toml`
+  [6e4b80f9] BenchmarkTools v1.6.0
+  [a134a8b2] BlackBoxOptim v0.6.3
+  [1130ab10] DiffEqParamEstim v2.2.0
+⌃ [31c24e10] Distributions v0.25.117
+⌅ [f6369f11] ForwardDiff v0.10.38
+⌃ [961ee093] ModelingToolkit v9.61.0
+⌃ [76087f3c] NLopt v1.1.2
+⌃ [7f7a1694] Optimization v4.1.0
+  [3e6eede4] OptimizationBBO v0.4.0
+  [4e6fcdb7] OptimizationNLopt v0.3.2
+⌃ [1dea7af3] OrdinaryDiffEq v6.90.1
+  [65888b18] ParameterizedFunctions v5.17.2
+⌃ [91a5bcdd] Plots v1.40.9
+⌃ [731186ca] RecursiveArrayTools v3.27.4
+  [31c91b34] SciMLBenchmarks v0.1.3
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/ParameterEstimation/Manifest.toml`
+⌃ [47edcb42] ADTypes v1.12.1
+  [1520ce14] AbstractTrees v0.4.5
+⌃ [7d9f7c33] Accessors v0.1.41
+⌃ [79e6a3ab] Adapt v4.1.1
+  [66dad0bd] AliasTables v1.1.3
+  [ec485272] ArnoldiMethod v0.4.0
+  [4fba245c] ArrayInterface v7.18.0
+⌃ [4c555306] ArrayLayouts v1.11.0
+  [6e4b80f9] BenchmarkTools v1.6.0
+  [e2ed5e7c] Bijections v0.1.9
+  [d1d4a3ce] BitFlags v0.1.9
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
+  [a134a8b2] BlackBoxOptim v0.6.3
+⌃ [8e7c35d0] BlockArrays v1.3.0
+⌃ [70df07ce] BracketingNonlinearSolve v1.1.0
+  [fa961155] CEnum v0.5.0
+  [2a0fbf3d] CPUSummary v0.2.6
+  [a9c8d775] CPUTime v1.0.0
+  [00ebfdb7] CSTParser v3.4.3
+  [49dc2e85] Calculus v0.5.2
+  [d360d2e6] ChainRulesCore v1.25.1
+  [fb6a15b2] CloseOpenIntervals v0.1.13
+⌃ [944b1d66] CodecZlib v0.7.6
+⌃ [35d6a980] ColorSchemes v3.28.0
+  [3da002f7] ColorTypes v0.12.0
+  [c3611d14] ColorVectorSpace v0.11.0
+  [5ae59095] Colors v0.13.0
+  [861a8166] Combinatorics v1.0.2
+⌅ [a80b9123] CommonMark v0.8.15
+  [38540f10] CommonSolve v0.2.4
+  [bbf7d656] CommonSubexpressions v0.3.1
+  [f70d9fcc] CommonWorldInvalidations v1.0.0
+  [34da2185] Compat v4.16.0
+  [b152e2b5] CompositeTypes v0.1.4
+  [a33af91c] CompositionsBase v0.1.2
+  [2569d6c7] ConcreteStructs v0.2.3
+⌃ [f0e56b4a] ConcurrentUtilities v2.4.3
+  [8f4d0f93] Conda v1.10.2
+  [88cd18e8] ConsoleProgressMonitor v0.1.2
+  [187b0558] ConstructionBase v1.5.8
+  [d38c429a] Contour v0.6.3
+  [adafc99b] CpuId v0.3.1
+  [a8cc5b0e] Crayons v4.1.1
+  [9a962f9c] DataAPI v1.16.0
+⌃ [864edb3b] DataStructures v0.18.20
+  [e2d170a0] DataValueInterfaces v1.0.0
+  [8bb1440f] DelimitedFiles v1.9.1
+  [39dd38d3] Dierckx v0.5.4
+⌃ [2b5f629d] DiffEqBase v6.161.0
+⌃ [459566f4] DiffEqCallbacks v4.2.2
+  [77a26b50] DiffEqNoiseProcess v5.24.1
+  [1130ab10] DiffEqParamEstim v2.2.0
+  [163ba53b] DiffResults v1.1.0
+  [b552c78f] DiffRules v1.15.1
+⌃ [a0c0ee7d] DifferentiationInterface v0.6.32
+  [8d63f2c5] DispatchDoctor v0.4.19
+⌃ [31c24e10] Distributions v0.25.117
+  [ffbed154] DocStringExtensions v0.9.3
+  [5b8099bc] DomainSets v0.7.15
+  [7c1d4256] DynamicPolynomials v0.6.1
+⌃ [06fc5a27] DynamicQuantities v1.4.0
+  [4e289a0a] EnumX v1.0.4
+  [f151be2c] EnzymeCore v0.8.8
+  [460bff9d] ExceptionUnwrapping v0.1.11
+  [d4d017d3] ExponentialUtilities v1.27.0
+  [e2ba6199] ExprTools v0.1.10
+⌅ [6b7a57c9] Expronicon v0.8.5
+  [c87230d0] FFMPEG v0.4.2
+  [7034ab61] FastBroadcast v0.3.5
+  [9aa1b823] FastClosures v0.3.2
+  [442a2c76] FastGaussQuadrature v1.0.2
+  [29a986be] FastLapackInterface v2.0.4
+  [a4df4552] FastPower v1.1.1
+  [1a297f60] FillArrays v1.13.0
+  [64ca27bc] FindFirstFunctions v1.4.1
+⌃ [6a86dc24] FiniteDiff v2.26.2
+  [53c48c17] FixedPointNumbers v0.8.5
+  [1fa38f19] Format v1.3.7
+⌅ [f6369f11] ForwardDiff v0.10.38
+  [069b7b12] FunctionWrappers v1.1.3
+  [77dc65aa] FunctionWrappersWrappers v0.1.3
+  [d9f16b24] Functors v0.5.2
+  [46192b85] GPUArraysCore v0.2.0
+⌃ [28b8d3ca] GR v0.73.12
+  [c145ed77] GenericSchur v0.5.4
+  [d7ba0133] Git v1.3.1
+  [c27321d9] Glob v1.3.1
+  [86223c79] Graphs v1.12.0
+  [42e2da0e] Grisu v1.0.2
+  [cd3eb016] HTTP v1.10.15
+  [eafb193a] Highlights v0.5.3
+  [3e5b6fbb] HostCPUFeatures v0.1.17
+⌃ [34004b35] HypergeometricFunctions v0.3.27
+  [7073ff75] IJulia v1.26.0
+  [615f187c] IfElse v0.1.1
+  [d25df0c9] Inflate v0.1.5
+  [18e54dd8] IntegerMathUtils v0.1.2
+  [8197267c] IntervalSets v0.7.10
+  [3587e190] InverseFunctions v0.1.17
+⌃ [92d709cd] IrrationalConstants v0.2.2
+  [82899510] IteratorInterfaceExtensions v1.0.0
+⌃ [1019f520] JLFzf v0.1.9
+  [692b3bcd] JLLWrappers v1.7.0
+  [682c06a0] JSON v0.21.4
+  [98e50ef6] JuliaFormatter v1.0.62
+⌃ [ccbc3e58] JumpProcesses v9.14.1
+  [ef3ab10e] KLU v0.6.0
+⌃ [ba0b0d4f] Krylov v0.9.9
+  [5be7bae1] LBFGSB v0.4.1
+  [b964fa9f] LaTeXStrings v1.4.0
+⌃ [23fbe1c1] Latexify v0.16.5
+  [10f19ff3] LayoutPointers v0.1.17
+⌃ [5078a376] LazyArrays v2.4.0
+  [1d6d02ad] LeftChildRightSiblingTrees v0.2.0
+  [87fe0de2] LineSearch v0.1.4
+  [d3d80556] LineSearches v7.3.0
+⌅ [7ed4a6bd] LinearSolve v2.38.0
+  [2ab3a3ac] LogExpFunctions v0.3.29
+  [e6f89c97] LoggingExtras v1.1.0
+⌃ [bdcacae8] LoopVectorization v0.12.171
+  [d8e11817] MLStyle v0.4.17
+  [1914dd2f] MacroTools v0.5.15
+  [d125e4d3] ManualMemory v0.1.8
+  [bb5d69b7] MaybeInplace v0.1.4
+  [739be429] MbedTLS v1.1.9
+  [442fdcdd] Measures v0.3.2
+  [e1d29d7a] Missings v1.2.0
+⌃ [961ee093] ModelingToolkit v9.61.0
+  [46d2c3a1] MuladdMacro v0.2.4
+  [102ac46a] MultivariatePolynomials v0.5.7
+  [ffc61752] Mustache v1.0.20
+⌃ [d8a4904e] MutableArithmetics v1.6.2
+⌃ [d41bc354] NLSolversBase v7.8.3
+⌃ [76087f3c] NLopt v1.1.2
+⌃ [77ba4419] NaNMath v1.1.1
+⌃ [8913a72c] NonlinearSolve v4.3.0
+⌃ [be0214bd] NonlinearSolveBase v1.4.0
+⌃ [5959db7a] NonlinearSolveFirstOrder v1.2.0
+⌃ [9a2c21bd] NonlinearSolveQuasiNewton v1.1.0
+  [26075421] NonlinearSolveSpectralMethods v1.1.0
+⌃ [6fe1bfb0] OffsetArrays v1.15.0
+  [4d8831e6] OpenSSL v1.4.3
+  [429524aa] Optim v1.11.0
+⌃ [7f7a1694] Optimization v4.1.0
+  [3e6eede4] OptimizationBBO v0.4.0
+⌃ [bca83a33] OptimizationBase v2.4.0
+  [4e6fcdb7] OptimizationNLopt v0.3.2
+⌃ [bac558e1] OrderedCollections v1.7.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.90.1
+⌃ [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.1.0
+⌃ [6ad6398a] OrdinaryDiffEqBDF v1.2.0
+⌃ [bbf590c4] OrdinaryDiffEqCore v1.15.1
+⌃ [50262376] OrdinaryDiffEqDefault v1.2.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v1.3.0
+  [9286f039] OrdinaryDiffEqExplicitRK v1.1.0
+⌃ [e0540318] OrdinaryDiffEqExponentialRK v1.2.0
+⌃ [becaefa8] OrdinaryDiffEqExtrapolation v1.3.0
+⌃ [5960d6e9] OrdinaryDiffEqFIRK v1.6.0
+  [101fe9f7] OrdinaryDiffEqFeagin v1.1.0
+  [d3585ca7] OrdinaryDiffEqFunctionMap v1.1.1
+  [d28bc4f8] OrdinaryDiffEqHighOrderRK v1.1.0
+⌃ [9f002381] OrdinaryDiffEqIMEXMultistep v1.2.0
+  [521117fe] OrdinaryDiffEqLinear v1.1.0
+  [1344f307] OrdinaryDiffEqLowOrderRK v1.2.0
+⌃ [b0944070] OrdinaryDiffEqLowStorageRK v1.2.1
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.3.0
+  [c9986a66] OrdinaryDiffEqNordsieck v1.1.0
+⌃ [5dd0a6cf] OrdinaryDiffEqPDIRK v1.2.0
+  [5b33eab2] OrdinaryDiffEqPRK v1.1.0
+  [04162be5] OrdinaryDiffEqQPRK v1.1.0
+  [af6ede74] OrdinaryDiffEqRKN v1.1.0
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v1.4.0
+⌃ [2d112036] OrdinaryDiffEqSDIRK v1.2.0
+⌃ [669c94d9] OrdinaryDiffEqSSPRK v1.2.0
+⌃ [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.2.0
+  [358294b1] OrdinaryDiffEqStabilizedRK v1.1.0
+⌃ [fa646aed] OrdinaryDiffEqSymplecticRK v1.1.0
+  [b1df2697] OrdinaryDiffEqTsit5 v1.1.0
+  [79d7bb75] OrdinaryDiffEqVerner v1.1.1
+  [90014a1f] PDMats v0.11.32
+  [65ce6f38] PackageExtensionCompat v1.0.2
+  [65888b18] ParameterizedFunctions v5.17.2
+  [d96e819e] Parameters v0.12.3
+  [69de0a69] Parsers v2.8.1
+  [06bb1623] PenaltyFunctions v0.3.0
+  [b98c9c47] Pipe v1.3.0
+  [ccf2f8ad] PlotThemes v3.3.0
+  [995b91a9] PlotUtils v1.4.3
+⌃ [91a5bcdd] Plots v1.40.9
+  [e409e4f3] PoissonRandom v0.4.4
+  [f517fe37] Polyester v0.7.16
+  [1d0040c9] PolyesterWeave v0.2.2
+  [85a6dd25] PositiveFactorizations v0.2.4
+⌃ [d236fae5] PreallocationTools v0.4.24
+⌅ [aea7be01] PrecompileTools v1.2.1
+  [21216c6a] Preferences v1.4.3
+⌃ [27ebfcd6] Primes v0.5.6
+  [33c8b6b6] ProgressLogging v0.1.4
+  [92933f4c] ProgressMeter v1.10.2
+  [43287f4e] PtrArrays v1.3.0
+⌃ [1fd47b50] QuadGK v2.11.1
+  [74087812] Random123 v1.7.0
+  [e6cf234a] RandomNumbers v1.6.0
+  [3cdcf5f2] RecipesBase v1.3.4
+  [01d81517] RecipesPipeline v0.6.12
+⌃ [731186ca] RecursiveArrayTools v3.27.4
+  [f2c3362d] RecursiveFactorization v0.2.23
+  [189a3867] Reexport v1.2.2
+  [05181044] RelocatableFolders v1.0.1
+⌃ [ae029012] Requires v1.3.0
+  [ae5879a3] ResettableStacks v1.1.1
+  [79098fc4] Rmath v0.8.0
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.13
+  [9dfe8606] SCCNonlinearSolve v1.0.0
+  [94e857df] SIMDTypes v0.1.0
+  [476501e8] SLEEFPirates v0.6.43
+⌃ [0bca4576] SciMLBase v2.72.1
+  [31c91b34] SciMLBenchmarks v0.1.3
+  [19f34311] SciMLJacobianOperators v0.1.1
+⌃ [c0aeaf25] SciMLOperators v0.3.12
+⌃ [53ae85a6] SciMLStructures v1.6.1
+  [6c6a2e73] Scratch v1.2.1
+⌃ [efcf1570] Setfield v1.1.1
+  [992d4aef] Showoff v1.0.3
+  [777ac1f9] SimpleBufferStream v1.2.0
+⌃ [727e6d20] SimpleNonlinearSolve v2.1.0
+  [699a6c99] SimpleTraits v0.9.4
+  [ce78b400] SimpleUnPack v1.1.0
+  [b85f4697] SoftGlobalScope v1.1.0
+  [a2af1166] SortingAlgorithms v1.2.1
+⌃ [9f842d2f] SparseConnectivityTracer v0.6.10
+⌃ [47a9eef4] SparseDiffTools v2.23.1
+⌃ [0a514795] SparseMatrixColorings v0.4.12
+  [e56a9233] Sparspak v0.3.9
+  [d4ead438] SpatialIndexing v0.1.6
+  [276daf66] SpecialFunctions v2.5.0
+  [860ef19b] StableRNGs v1.0.2
+⌃ [aedffcd0] Static v1.1.1
+  [0d7ed370] StaticArrayInterface v1.8.0
+⌃ [90137ffa] StaticArrays v1.9.10
+  [1e83bf80] StaticArraysCore v1.4.3
+  [82ae8749] StatsAPI v1.7.0
+  [2913bbd2] StatsBase v0.34.4
+  [4c63d2b9] StatsFuns v1.3.2
+  [7792a7ef] StrideArraysCore v0.5.7
+  [69024149] StringEncodings v0.3.7
+⌃ [2efcf032] SymbolicIndexingInterface v0.3.37
+  [19f23fe9] SymbolicLimits v0.2.2
+⌃ [d1185830] SymbolicUtils v3.11.0
+⌃ [0c5d862f] Symbolics v6.25.0
+  [3783bdb8] TableTraits v1.0.1
+  [bd369af6] Tables v1.12.0
+  [62fd8b95] TensorCore v0.1.1
+  [8ea1fca8] TermInterface v2.0.0
+  [5d786b92] TerminalLoggers v0.1.7
+  [1c621080] TestItems v1.0.0
+  [8290d209] ThreadingUtilities v0.5.2
+⌃ [a759f4b9] TimerOutputs v0.5.26
+  [0796e94c] Tokenize v0.5.29
+  [3bb67fe8] TranscodingStreams v0.11.3
+  [d5829a12] TriangularSolve v0.2.1
+  [410a4b4d] Tricks v0.1.10
+  [781d530d] TruncatedStacktraces v1.4.0
+  [5c2747f8] URIs v1.5.1
+  [3a884ed6] UnPack v1.0.2
+  [1cfade01] UnicodeFun v0.4.1
+  [1986cc42] Unitful v1.22.0
+  [45397f5d] UnitfulLatexify v1.6.4
+  [a7c27f48] Unityper v0.1.6
+  [41fe7b60] Unzip v0.2.0
+  [3d5dd08c] VectorizationBase v0.21.71
+  [81def892] VersionParsing v1.3.0
+  [19fa3120] VertexSafeGraphs v0.2.0
+  [897b6980] WeakValueDicts v0.1.0
+  [44d3d7a6] Weave v0.10.12
+⌃ [ddb6d928] YAML v0.4.12
+  [c2297ded] ZMQ v1.4.0
+⌃ [6e34b625] Bzip2_jll v1.0.8+4
+⌃ [83423d85] Cairo_jll v1.18.2+1
+  [ee1fde0b] Dbus_jll v1.14.10+0
+  [cd4c43a9] Dierckx_jll v0.2.0+0
+  [2702e6a9] EpollShim_jll v0.0.20230411+1
+⌃ [2e619515] Expat_jll v2.6.4+3
+⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
+  [a3f928ae] Fontconfig_jll v2.15.0+0
+  [d7e528f0] FreeType2_jll v2.13.3+1
+  [559328eb] FriBidi_jll v1.0.16+0
+  [0656b61e] GLFW_jll v3.4.0+2
+⌅ [d2c73de3] GR_jll v0.73.12+0
+  [78b55507] Gettext_jll v0.21.0+0
+⌃ [f8c6e375] Git_jll v2.47.1+0
+⌃ [7746bdde] Glib_jll v2.82.4+0
+  [3b182d85] Graphite2_jll v1.3.14+1
+  [2e76f6c2] HarfBuzz_jll v8.5.0+0
+  [1d5cc7b8] IntelOpenMP_jll v2025.0.4+0
+  [aacddb02] JpegTurbo_jll v3.1.1+0
+  [c1c5ebd0] LAME_jll v3.100.2+0
+  [88015f11] LERC_jll v4.0.1+0
+  [1d63c593] LLVMOpenMP_jll v18.1.7+0
+  [dd4b983a] LZO_jll v2.10.3+0
+  [81d17ec3] L_BFGS_B_jll v3.0.1+0
+⌅ [e9f186c6] Libffi_jll v3.2.2+2
+  [d4300ac3] Libgcrypt_jll v1.11.0+0
+  [7e76a0d4] Libglvnd_jll v1.7.0+0
+  [7add5ba3] Libgpg_error_jll v1.51.1+0
+  [94ce4f54] Libiconv_jll v1.18.0+0
+  [4b2f31a3] Libmount_jll v2.40.3+0
+  [89763e89] Libtiff_jll v4.7.1+0
+  [38a345b3] Libuuid_jll v2.40.3+0
+  [856f044c] MKL_jll v2025.0.1+1
+⌃ [079eb43e] NLopt_jll v2.9.0+0
+  [e7412a2a] Ogg_jll v1.3.5+1
+⌃ [458c3c95] OpenSSL_jll v3.0.15+3
+  [efe28fd5] OpenSpecFun_jll v0.5.6+0
+  [91d4177d] Opus_jll v1.3.3+0
+⌃ [36c8627f] Pango_jll v1.55.5+0
+⌅ [30392449] Pixman_jll v0.43.4+0
+⌅ [c0090381] Qt6Base_jll v6.7.1+1
+⌅ [629bc702] Qt6Declarative_jll v6.7.1+2
+⌅ [ce943373] Qt6ShaderTools_jll v6.7.1+1
+⌃ [e99dba38] Qt6Wayland_jll v6.7.1+1
+  [f50d1b31] Rmath_jll v0.5.1+0
+  [a44049a8] Vulkan_Loader_jll v1.3.243+0
+  [a2964d1f] Wayland_jll v1.21.0+2
+  [2381bf8a] Wayland_protocols_jll v1.36.0+0
+⌃ [02c8fc9c] XML2_jll v2.13.5+0
+  [aed1982a] XSLT_jll v1.1.42+0
+  [ffd25f8a] XZ_jll v5.6.4+1
+  [f67eecfb] Xorg_libICE_jll v1.1.1+0
+  [c834827a] Xorg_libSM_jll v1.2.4+0
+  [4f6342f7] Xorg_libX11_jll v1.8.6+3
+  [0c0b7dd1] Xorg_libXau_jll v1.0.12+0
+  [935fb764] Xorg_libXcursor_jll v1.2.3+0
+  [a3789734] Xorg_libXdmcp_jll v1.1.5+0
+  [1082639a] Xorg_libXext_jll v1.3.6+3
+  [d091e8ba] Xorg_libXfixes_jll v6.0.0+0
+  [a51aa0fd] Xorg_libXi_jll v1.8.2+0
+  [d1454406] Xorg_libXinerama_jll v1.1.5+0
+  [ec84b674] Xorg_libXrandr_jll v1.5.4+0
+  [ea2f1a96] Xorg_libXrender_jll v0.9.11+1
+  [14d82f49] Xorg_libpthread_stubs_jll v0.1.2+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.0+3
+  [cc61e674] Xorg_libxkbfile_jll v1.1.2+1
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.4+0
+  [12413925] Xorg_xcb_util_image_jll v0.4.0+1
+  [2def613f] Xorg_xcb_util_jll v0.4.0+1
+  [975044d2] Xorg_xcb_util_keysyms_jll v0.4.0+1
+  [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.9+1
+  [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.1+1
+  [35661453] Xorg_xkbcomp_jll v1.4.6+1
+  [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
+  [c5fb5394] Xorg_xtrans_jll v1.5.1+0
+⌃ [8f1865be] ZeroMQ_jll v4.3.5+3
+⌃ [3161d3a3] Zstd_jll v1.5.7+0
+  [35ca27e7] eudev_jll v3.2.9+0
+  [214eeab7] fzf_jll v0.56.3+0
+  [1a1c6b14] gperf_jll v3.1.1+1
+  [a4ae2306] libaom_jll v3.11.0+0
+  [0ac62f75] libass_jll v0.15.2+0
+  [1183f4f0] libdecor_jll v0.2.2+0
+  [2db6ffa8] libevdev_jll v1.11.0+0
+  [f638f0a6] libfdk_aac_jll v2.0.3+0
+  [36db933b] libinput_jll v1.18.0+0
+⌃ [b53b4c65] libpng_jll v1.6.45+1
+⌃ [a9144af2] libsodium_jll v1.0.20+3
+  [f27f6e37] libvorbis_jll v1.3.7+2
+  [009596ad] mtdev_jll v1.1.6+0
+⌃ [1317d2d5] oneTBB_jll v2021.12.0+0
+⌅ [1270edf5] x264_jll v2021.5.5+0
+⌅ [dfaa095f] x265_jll v3.5.0+0
+  [d8fb68d0] xkbcommon_jll v1.4.1+2
+  [0dad84c5] ArgTools v1.1.1
+  [56f22d72] Artifacts
+  [2a0f44e3] Base64
+  [ade2ca70] Dates
+  [8ba89e20] Distributed
+  [f43a241f] Downloads v1.6.0
+  [7b1f6079] FileWatching
+  [9fa8497b] Future
+  [b77e0a4c] InteractiveUtils
+  [4af54fe1] LazyArtifacts
+  [b27032c2] LibCURL v0.6.4
+  [76f85450] LibGit2
+  [8f399da3] Libdl
+  [37e2e46d] LinearAlgebra
+  [56ddb016] Logging
+  [d6f4376e] Markdown
+  [a63ad114] Mmap
+  [ca575930] NetworkOptions v1.2.0
+  [44cfe95a] Pkg v1.10.0
+  [de0858da] Printf
+  [9abbd945] Profile
+  [3fa0cd96] REPL
+  [9a3f8284] Random
+  [ea8e919c] SHA v0.7.0
+  [9e88b42a] Serialization
+  [1a1011a3] SharedArrays
+  [6462fe0b] Sockets
+  [2f01184e] SparseArrays v1.10.0
+  [10745b16] Statistics v1.10.0
+  [4607b0f0] SuiteSparse
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
+  [8dfed614] Test
+  [cf7118a7] UUIDs
+  [4ec0a83e] Unicode
+  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
+  [deac9b47] LibCURL_jll v8.4.0+0
+  [e37daf67] LibGit2_jll v1.6.4+0
+  [29816b5a] LibSSH2_jll v1.11.0+1
+  [c8ffd9c3] MbedTLS_jll v2.28.2+1
+  [14a3606d] MozillaCACerts_jll v2023.1.10
+  [4536629a] OpenBLAS_jll v0.3.23+4
+  [05823500] OpenLibm_jll v0.8.1+2
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.2.1+1
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.11.0+0
+  [8e850ede] nghttp2_jll v1.52.0+1
+  [3f19e933] p7zip_jll v17.4.0+2
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../LorenzParameterEstimation/">« Lorenz Parameter Estimation Benchmarks</a><a class="docs-footer-nextpage" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 3 May 2025 02:06">Saturday 3 May 2025</span>. Using Julia version 1.11.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
