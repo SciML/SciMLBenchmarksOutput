@@ -185,9 +185,9 @@ data = convert(Array, VectorOfArray([(sol(t[i]) + sig*randn(3)) for i in 1:lengt
 
 ```
 3×30 Matrix{Float64}:
- -10.6601   -7.54385  -7.83015   -9.87397  …  12.0027   3.25321   0.136849
-  -9.38595  -9.20388  -6.50847  -10.6299      16.1373   1.04234   0.0756352
-  28.7707   25.7196   28.599     26.9251      24.8948  26.1235   12.4032
+ -8.60221  -7.8308   -7.83975   -9.73928  …  10.7223   3.54911  -0.317459
+ -9.03699  -8.64908  -6.95781  -10.1946      15.307    1.32129   0.361791
+ 27.7355   25.1761   28.9517    26.6683      25.2028  26.002    13.2363
 ```
 
 
@@ -264,9 +264,9 @@ Lorenz equation is a chaotic system hence requires very low tolerance to be esti
 ```
 
 ```
-1093.111150 seconds (2.13 M allocations: 144.995 MiB, 0.14% compilation tim
-e)
-1114.449960 seconds (6.49 M allocations: 439.356 MiB, 0.01% gc time, 0.39% 
+2180.442163 seconds (2.17 M allocations: 148.250 MiB, 0.00% gc time, 0.08% 
+compilation time)
+2202.962588 seconds (6.75 M allocations: 460.316 MiB, 0.00% gc time, 0.25% 
 compilation time: <1% of which was recompilation)
 Chains MCMC chain (1000×6×1 Array{Float64, 3}):
 
@@ -282,17 +282,17 @@ Summary Statistics
       Symbol   Float64   Float64   Float64    Float64    Float64   Float64 
     ⋯
 
-    sigma1.1    6.1551    0.8508    0.0819   105.4194   210.6085    1.0042 
+    sigma1.1    4.9489    0.4572    0.1103    17.2519    37.6045    1.0914 
     ⋯
-    sigma1.2    7.9956    1.0096    0.0733   197.1286   348.4017    0.9998 
+    sigma1.2    7.0738    0.7434    0.1521    28.0525   113.5502    1.0277 
     ⋯
-    sigma1.3    6.8392    0.9287    0.0730   182.4107   313.3166    1.0228 
+    sigma1.3    7.1863    0.6196    0.1163    23.7609    69.3491    1.0713 
     ⋯
-     theta_1    8.9803    1.0706    0.1771    38.8040    51.5322    1.0219 
+     theta_1    5.2102    0.1518    0.0481     7.6518    19.9568    1.1693 
     ⋯
-     theta_2   22.6191    0.2137    0.0314    50.7946    41.4548    1.0094 
+     theta_2   22.0352    0.0780    0.0250     9.6522    33.4941    1.0344 
     ⋯
-     theta_3    2.2141    0.0522    0.0077    40.2201    44.0878    1.0082 
+     theta_3    1.4975    0.0287    0.0097     7.3043    39.1249    1.0936 
     ⋯
                                                                 1 column om
 itted
@@ -301,12 +301,12 @@ Quantiles
   parameters      2.5%     25.0%     50.0%     75.0%     97.5%
       Symbol   Float64   Float64   Float64   Float64   Float64
 
-    sigma1.1    4.7065    5.5682    6.1206    6.5845    8.0399
-    sigma1.2    6.2641    7.2486    7.9738    8.6878   10.0300
-    sigma1.3    5.3269    6.1705    6.7684    7.4394    8.8077
-     theta_1    7.0475    8.2906    8.8480    9.5756   11.3679
-     theta_2   22.3532   22.4632   22.5817   22.7040   23.2649
-     theta_3    2.1435    2.1807    2.1996    2.2316    2.3574
+    sigma1.1    4.1745    4.7141    4.8851    5.1467    5.8759
+    sigma1.2    5.5874    6.5167    7.3347    7.5843    8.3335
+    sigma1.3    5.9099    6.9393    7.1756    7.5189    8.5925
+     theta_1    4.8563    5.1265    5.2503    5.3275    5.3857
+     theta_2   21.9117   21.9886   22.0164   22.0934   22.1995
+     theta_3    1.4712    1.4813    1.4854    1.5016    1.5778
 ```
 
 
@@ -342,15 +342,15 @@ model = fitlv(data, sprob)
 ```
 
 ```
-2085.584748 seconds (3.80 G allocations: 761.065 GiB, 3.72% gc time, 1.04% 
-compilation time)
+100.478309 seconds (225.68 M allocations: 40.962 GiB, 5.04% gc time, 21.56%
+ compilation time)
 Chains MCMC chain (10000×16×1 Array{Float64, 3}):
 
 Iterations        = 1001:1:11000
 Number of chains  = 1
 Samples per chain = 10000
-Wall duration     = 2077.72 seconds
-Compute duration  = 2077.72 seconds
+Wall duration     = 92.74 seconds
+Compute duration  = 92.74 seconds
 parameters        = α, σ, ρ, β
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, h
 amiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, 
@@ -362,13 +362,13 @@ Summary Statistics
       Symbol   Float64   Float64   Float64    Float64    Float64   Float64 
     ⋯
 
-           α    0.3147    0.0000    0.0000    21.7102    38.1369    1.7173 
+           α    7.2303    0.3938    0.0792    24.9858    33.1335    1.1241 
     ⋯
-           σ   13.0925    0.0000    0.0000        NaN        NaN       NaN 
+           σ    5.9531    0.0359    0.0069    25.9645    33.9060    1.3009 
     ⋯
-           ρ   29.1572    0.0000    0.0000        NaN        NaN       NaN 
+           ρ   23.2424    0.2843    0.0584    23.7966    46.1054    1.0634 
     ⋯
-           β    1.8379    0.0000    0.0000   307.4406   336.1443    1.0002 
+           β    1.8073    0.0471    0.0097    24.4725    27.5327    1.2820 
     ⋯
                                                                 1 column om
 itted
@@ -377,10 +377,10 @@ Quantiles
   parameters      2.5%     25.0%     50.0%     75.0%     97.5%
       Symbol   Float64   Float64   Float64   Float64   Float64
 
-           α    0.3147    0.3147    0.3147    0.3147    0.3147
-           σ   13.0925   13.0925   13.0925   13.0925   13.0925
-           ρ   29.1572   29.1572   29.1572   29.1572   29.1572
-           β    1.8379    1.8379    1.8379    1.8379    1.8379
+           α    6.4063    6.9531    7.3869    7.5262    7.7012
+           σ    5.8776    5.9347    5.9516    5.9758    6.0178
+           ρ   22.6368   23.0581   23.3896   23.4460   23.5274
+           β    1.7054    1.8080    1.8195    1.8277    1.8987
 ```
 
 
@@ -394,15 +394,15 @@ Quantiles
 ```
 
 ```
-368.818015 seconds (1.63 G allocations: 84.286 GiB, 2.58% gc time, 4.80% co
-mpilation time)
+47.283401 seconds (166.48 M allocations: 10.412 GiB, 2.97% gc time, 37.50%
+ compilation time)
 Chains MCMC chain (1000×18×1 Array{Float64, 3}):
 
 Iterations        = 501:1:1500
 Number of chains  = 1
 Samples per chain = 1000
-Wall duration     = 366.27 seconds
-Compute duration  = 366.27 seconds
+Wall duration     = 44.78 seconds
+Compute duration  = 44.78 seconds
 parameters        = theta[1], theta[2], theta[3], σ[1], σ[2], σ[3]
 internals         = lp, n_steps, is_accept, acceptance_rate, log_density, h
 amiltonian_energy, hamiltonian_energy_error, max_hamiltonian_energy_error, 
@@ -414,17 +414,17 @@ Summary Statistics
       Symbol   Float64   Float64   Float64    Float64    Float64   Float64 
     ⋯
 
-    theta[1]   11.7361    0.9001    0.1593    33.2634    88.6128    1.0592 
+    theta[1]    7.5233    0.3008    0.1551     6.0450    17.4679    1.1542 
     ⋯
-    theta[2]   25.1943    0.0933    0.0391     5.9667    38.3165    1.2245 
+    theta[2]   22.9403    0.1346    0.0687     4.3001    28.5545    1.2654 
     ⋯
-    theta[3]    2.6593    0.0514    0.0086    36.3936    95.6147    1.0442 
+    theta[3]    2.0609    0.0329    0.0212     2.5168    15.5271    2.1160 
     ⋯
-        σ[1]    6.5917    0.7180    0.1536    21.7595    62.4331    1.0159 
+        σ[1]    6.8272    0.1600    0.0561    10.9176    58.9159    1.0234 
     ⋯
-        σ[2]    8.5671    1.2913    0.2568    25.5158    36.4270    1.0080 
+        σ[2]    7.4490    0.6195    0.3959     2.4365    14.3989    2.0762 
     ⋯
-        σ[3]    7.3115    1.0896    0.2273    30.7537    26.9866    1.0059 
+        σ[3]    7.1329    0.3048    0.1457     4.5362    39.5257    1.1739 
     ⋯
                                                                 1 column om
 itted
@@ -433,12 +433,12 @@ Quantiles
   parameters      2.5%     25.0%     50.0%     75.0%     97.5%
       Symbol   Float64   Float64   Float64   Float64   Float64
 
-    theta[1]   10.2393   10.9923   11.6469   12.5727   13.2497
-    theta[2]   25.0458   25.1223   25.1843   25.2662   25.4015
-    theta[3]    2.5865    2.6114    2.6541    2.6972    2.7629
-        σ[1]    5.4081    6.0630    6.5654    7.0090    7.9817
-        σ[2]    6.1665    7.6454    8.5773    9.4328   10.9029
-        σ[3]    5.8644    6.4202    7.0854    8.0180    9.8265
+    theta[1]    7.2917    7.3468    7.3863    7.4717    8.2194
+    theta[2]   22.6908   22.8244   22.9657   23.0380   23.1462
+    theta[3]    1.9991    2.0359    2.0673    2.0879    2.1084
+        σ[1]    6.5998    6.6887    6.7739    6.9777    7.1327
+        σ[2]    6.6796    6.9072    7.4271    7.7779    8.8338
+        σ[3]    6.6832    6.8734    7.1034    7.4558    7.5540
 ```
 
 
@@ -452,96 +452,92 @@ Quantiles
 ```
 
 ```
-724.259517 seconds (136.99 M allocations: 26.957 GiB, 0.51% gc time, 0.86% 
+612.037998 seconds (150.45 M allocations: 29.745 GiB, 0.67% gc time, 1.02% 
 compilation time)
 (posterior = @NamedTuple{parameters::Vector{Float64}, σ::Vector{Float64}}[(
-parameters = [7.694801171482742, 22.893818968086762, 2.2976578521757185], σ
- = [6.2167536964683645, 7.5413837881846195, 6.868909454859528]), (parameter
-s = [8.153555317462024, 22.69727675682712, 2.2445230607600357], σ = [5.8757
-91510510043, 7.1334974432702225, 7.156284300675723]), (parameters = [8.4937
-56136014097, 22.59554009087766, 2.2114403153310516], σ = [5.742043050239264
-, 7.0764716928604345, 7.943822036552526]), (parameters = [8.249675901152653
-, 22.698945800427715, 2.229346752388919], σ = [5.814410339873596, 6.9678237
-44250997, 7.804823565633406]), (parameters = [9.363353564439103, 22.5377108
-38909764, 2.1877961553112546], σ = [5.707802252328887, 7.179872156131361, 7
-.847122262367753]), (parameters = [9.082403363772633, 22.511833510114037, 2
-.1876575361401747], σ = [5.996062649980872, 7.405976475291018, 7.3696530558
-04812]), (parameters = [9.021181810908196, 22.51769906918402, 2.19219507836
-17046], σ = [6.01949951664016, 7.3928894057213554, 7.383938167151761]), (pa
-rameters = [8.963310030361393, 22.452547997099884, 2.19759660171501], σ = [
-6.023716462096951, 7.3629588783110425, 7.460442015183531]), (parameters = [
-8.909560909882261, 22.586392198004905, 2.199227530101629], σ = [6.017715685
-880321, 7.359429013997393, 7.451684448832139]), (parameters = [9.0001263854
-83759, 22.587411093870752, 2.1963553815563746], σ = [5.949664474532547, 7.3
-5659018067715, 7.158340840201999])  …  (parameters = [7.71832152983362, 22.
-8323110721328, 2.2855344115943987], σ = [6.032425770743965, 8.6931001510124
-2, 6.0655610255245795]), (parameters = [7.778961466933968, 22.8060724912803
-75, 2.291662713572156], σ = [6.058793667502328, 8.705500145281798, 6.082672
-110714241]), (parameters = [7.796188544728113, 22.843575323343014, 2.291847
-467219827], σ = [6.056768412999365, 8.707613037121552, 6.071269968214637]),
- (parameters = [7.686667751202682, 22.87968512695112, 2.2951126413085134], 
-σ = [6.1040681798803575, 8.719079415655479, 6.039301089192822]), (parameter
-s = [7.045937750000604, 23.298500913338746, 2.3597834557040396], σ = [6.272
-3787517816545, 8.688059053119792, 5.924824947640448]), (parameters = [7.557
-592187711866, 22.968971395035812, 2.313393349000611], σ = [6.56989308030619
-1, 8.777372151791468, 5.886149445652496]), (parameters = [8.829175649557438
-, 22.5976901501517, 2.1949294119015392], σ = [5.964026178142975, 9.21264821
-929834, 6.141610420052226]), (parameters = [8.159827561145491, 22.744310401
-780044, 2.2415237611723096], σ = [6.141047695414409, 8.79174405672379, 6.73
-3857805092642]), (parameters = [9.914220491934637, 22.439678344489995, 2.17
-74527259001943], σ = [6.131338110236664, 8.447693188950316, 5.8282215113543
-28]), (parameters = [10.879654852259806, 22.4148164242974, 2.15909735340049
-74], σ = [6.322439779113763, 8.255519574816802, 5.59017028873388])], poster
-ior_matrix = [2.0405449282933072 2.098454067401242 … 2.2939701398124988 2.3
-86894517786722; 3.130866960069492 3.1222449506311833 … 3.1108307465272524 3
-.1097221877142807; … ; 2.0204056914654087 1.9648016391609797 … 2.1338934087
-085626 2.1108820160112565; 1.92700535343858 1.9679908938505508 … 1.76271189
-57359815 1.7210097498038899], tree_statistics = DynamicHMC.TreeStatisticsNU
-TS[DynamicHMC.TreeStatisticsNUTS(-313.85054519422147, 10, reached maximum d
-epth without divergence or turning, 0.9998634941642631, 1023, DynamicHMC.Di
-rections(0xfc481725)), DynamicHMC.TreeStatisticsNUTS(-307.9253967799472, 10
-, reached maximum depth without divergence or turning, 0.9967038324935233, 
-1023, DynamicHMC.Directions(0xaf040856)), DynamicHMC.TreeStatisticsNUTS(-30
-8.7189196055699, 9, turning at positions 820:827, 0.9629416780862775, 863, 
-DynamicHMC.Directions(0xd5bdafdb)), DynamicHMC.TreeStatisticsNUTS(-311.3157
-8057774607, 8, turning at positions -251:-282, 0.9131306297862282, 511, Dyn
-amicHMC.Directions(0x50f96ce5)), DynamicHMC.TreeStatisticsNUTS(-307.7591299
-070481, 10, reached maximum depth without divergence or turning, 0.99777092
-61481045, 1023, DynamicHMC.Directions(0x8895f417)), DynamicHMC.TreeStatisti
-csNUTS(-307.4693372853194, 10, reached maximum depth without divergence or 
-turning, 0.9980062767443947, 1023, DynamicHMC.Directions(0x4dd73a93)), Dyna
-micHMC.TreeStatisticsNUTS(-308.24780230613595, 7, turning at positions -67:
--68, 0.8799452019205208, 163, DynamicHMC.Directions(0xbe4e735f)), DynamicHM
-C.TreeStatisticsNUTS(-311.76221847360387, 6, turning at positions -46:-49, 
-0.6127654465464937, 67, DynamicHMC.Directions(0x3e71af92)), DynamicHMC.Tree
-StatisticsNUTS(-311.66838373885, 4, turning at positions -11:-14, 0.9259258
-294289162, 27, DynamicHMC.Directions(0xa5a0ef8d)), DynamicHMC.TreeStatistic
-sNUTS(-307.5823472012412, 10, reached maximum depth without divergence or t
-urning, 0.9996562243292789, 1023, DynamicHMC.Directions(0x1cb7e59a))  …  Dy
-namicHMC.TreeStatisticsNUTS(-310.1265294838295, 9, turning at positions -49
-0:-505, 0.8060015321905788, 639, DynamicHMC.Directions(0x7a521886)), Dynami
-cHMC.TreeStatisticsNUTS(-310.1822301102478, 7, turning at positions 126:129
-, 0.5975038460927558, 215, DynamicHMC.Directions(0x7275b0a9)), DynamicHMC.T
-reeStatisticsNUTS(-311.4915892664929, 5, turning at positions 31:34, 0.4113
-17086637644, 39, DynamicHMC.Directions(0xde2e367a)), DynamicHMC.TreeStatist
-icsNUTS(-309.16806256004406, 7, turning at positions 244:247, 0.95919270046
-78042, 247, DynamicHMC.Directions(0x1f847eff)), DynamicHMC.TreeStatisticsNU
-TS(-309.4718684672975, 9, turning at positions 665:666, 0.9955484954247962,
- 917, DynamicHMC.Directions(0xaeab3f04)), DynamicHMC.TreeStatisticsNUTS(-30
-8.151758683113, 10, reached maximum depth without divergence or turning, 0.
-9927802505726506, 1023, DynamicHMC.Directions(0xfd443fd6)), DynamicHMC.Tree
-StatisticsNUTS(-310.0717027624037, 10, reached maximum depth without diverg
-ence or turning, 0.9907029152155133, 1023, DynamicHMC.Directions(0x30c5df49
-)), DynamicHMC.TreeStatisticsNUTS(-308.6979951391607, 10, reached maximum d
-epth without divergence or turning, 0.9960066970390885, 1023, DynamicHMC.Di
-rections(0x8db9dc77)), DynamicHMC.TreeStatisticsNUTS(-307.9184472424107, 10
-, reached maximum depth without divergence or turning, 0.9998323272964955, 
-1023, DynamicHMC.Directions(0x1547d71d)), DynamicHMC.TreeStatisticsNUTS(-31
-0.09970528966534, 9, turning at positions -322:-323, 0.9764746207943619, 51
-7, DynamicHMC.Directions(0x742788c2))], κ = Gaussian kinetic energy (Diagon
-al), √diag(M⁻¹): [0.818696409766844, 1.3913870567567268, 0.2808566504257373
-, 0.27501982605234715, 0.23452958084565675, 0.5379005339742007], ϵ = 0.0003
-208163681735802)
+parameters = [5.554865180085494, 21.63383611295706, 1.6992498549011021], σ 
+= [5.611592380362323, 5.8552131154221145, 8.17594167599006]), (parameters =
+ [6.091714729248618, 21.717011069868672, 1.5569469286060238], σ = [6.175974
+329333978, 9.256778156858223, 6.9253043937851535]), (parameters = [6.199925
+107065802, 21.543862275991195, 1.5627624218091738], σ = [6.512408765117676,
+ 8.635012402194489, 7.4812171157136955]), (parameters = [5.593076356592441,
+ 22.07216812047315, 1.6120639388527707], σ = [6.280362290093031, 7.23229263
+3773132, 7.67960585528417]), (parameters = [5.612633629345708, 21.875047802
+83442, 1.664020308036359], σ = [7.049648591866764, 7.084565805411298, 7.222
+08422653215]), (parameters = [5.572987443767706, 21.619850367879923, 1.6516
+64177005243], σ = [7.822429381982619, 7.190747214847372, 6.739509868016136]
+), (parameters = [5.56455399677507, 21.794383719162226, 1.634951708379088],
+ σ = [6.8720155317098515, 6.754647038502775, 7.7801175825178115]), (paramet
+ers = [5.620114711965501, 22.348317878634578, 1.6523790605129065], σ = [6.7
+836796472419545, 7.093541125417478, 7.699827435909344]), (parameters = [5.6
+35054704764993, 22.358423242434412, 1.6508423977198399], σ = [6.81393267199
+9361, 7.101463233050159, 7.7001662616432185]), (parameters = [5.54940820424
+7089, 22.234424203533216, 1.6584449906549938], σ = [7.308924163351382, 7.15
+8587157318439, 7.683246178058683])  …  (parameters = [6.310966203678753, 21
+.797397383926082, 1.567769970145609], σ = [4.683256252688815, 5.82392795161
+6331, 7.011002130700901]), (parameters = [6.3081332227419376, 21.7980428284
+35225, 1.567799908715652], σ = [4.684696030012695, 5.821699417933461, 7.007
+427232882992]), (parameters = [6.3209779751170405, 21.770252468901706, 1.56
+7482371310491], σ = [4.696111068078141, 5.820857123186585, 7.03082635122257
+1]), (parameters = [6.3209779751170405, 21.770252468901706, 1.5674823713104
+91], σ = [4.696111068078141, 5.820857123186585, 7.030826351222571]), (param
+eters = [6.321301704037298, 21.774489716646897, 1.5677875108685815], σ = [4
+.687047184805562, 5.81895869012107, 7.016987023926552]), (parameters = [6.3
+21301704037298, 21.774489716646897, 1.5677875108685815], σ = [4.68704718480
+5562, 5.81895869012107, 7.016987023926552]), (parameters = [6.3210454901890
+3, 21.775712304194734, 1.5675013132549345], σ = [4.685221747258433, 5.82135
+6686413296, 7.0230479085738775]), (parameters = [6.324564139901641, 21.7646
+56616102226, 1.5677348360770245], σ = [4.687643404827513, 5.826005625528433
+, 6.988741062871255]), (parameters = [6.324564139901641, 21.764656616102226
+, 1.5677348360770245], σ = [4.687643404827513, 5.826005625528433, 6.9887410
+62871255]), (parameters = [6.327171067547953, 21.765061105598203, 1.5680284
+32475149], σ = [4.682391744330155, 5.825196526086061, 6.989169057117163])],
+ posterior_matrix = [1.7146741527854594 1.8069296068269414 … 1.844441121551
+6459 1.8448532275024045; 3.0742585757406067 3.078095873711851 … 3.080287397
+995 3.0803059825168924; … ; 1.767332395263793 2.225356056891162 … 1.7623316
+241269642 1.762192737266511; 2.101195899873045 1.9351820068886247 … 1.94430
+04345700277 1.9443616732305096], tree_statistics = DynamicHMC.TreeStatistic
+sNUTS[DynamicHMC.TreeStatisticsNUTS(-326.35884892652507, 5, turning at posi
+tions -39:-46, 0.5402519867900831, 63, DynamicHMC.Directions(0xe6553751)), 
+DynamicHMC.TreeStatisticsNUTS(-316.69126201184736, 10, turning at positions
+ -698:325, 0.9988076290883171, 1023, DynamicHMC.Directions(0x35664545)), Dy
+namicHMC.TreeStatisticsNUTS(-317.4207234085219, 9, turning at positions 149
+:660, 0.9636811598360674, 1023, DynamicHMC.Directions(0xe4e4f694)), Dynamic
+HMC.TreeStatisticsNUTS(-316.7290501592837, 9, turning at positions -341:170
+, 0.999248997592912, 511, DynamicHMC.Directions(0xb5143aaa)), DynamicHMC.Tr
+eeStatisticsNUTS(-315.7372926648861, 9, turning at positions -180:331, 0.99
+9628030385721, 511, DynamicHMC.Directions(0x73c68d4b)), DynamicHMC.TreeStat
+isticsNUTS(-318.63541447413763, 7, turning at positions 191:206, 0.99400125
+24546168, 207, DynamicHMC.Directions(0x78f1e1fe)), DynamicHMC.TreeStatistic
+sNUTS(-317.76750028781385, 9, turning at positions -194:317, 0.981114204643
+8337, 511, DynamicHMC.Directions(0xb477953d)), DynamicHMC.TreeStatisticsNUT
+S(-314.5588993302546, 8, turning at positions -145:110, 0.9217265323116614,
+ 255, DynamicHMC.Directions(0x0a5a106e)), DynamicHMC.TreeStatisticsNUTS(-31
+6.29902632166795, 6, turning at positions 41:48, 0.41988012183706336, 111, 
+DynamicHMC.Directions(0xdafd8640)), DynamicHMC.TreeStatisticsNUTS(-316.3736
+966571559, 7, turning at positions -138:-153, 0.8509088539170357, 175, Dyna
+micHMC.Directions(0xc51f5716))  …  DynamicHMC.TreeStatisticsNUTS(-307.40595
+057596664, 2, turning at positions 3:6, 0.5391353030528737, 7, DynamicHMC.D
+irections(0x414ee446)), DynamicHMC.TreeStatisticsNUTS(-307.10770503880667, 
+2, divergence at position 5, 0.2875129131051729, 7, DynamicHMC.Directions(0
+xb5953955)), DynamicHMC.TreeStatisticsNUTS(-309.267596659324, 4, turning at
+ positions -2:13, 0.2294413627325506, 15, DynamicHMC.Directions(0x3d6956fd)
+), DynamicHMC.TreeStatisticsNUTS(-309.8467113888505, 0, divergence at posit
+ion -1, 0.0, 1, DynamicHMC.Directions(0x23b201ca)), DynamicHMC.TreeStatisti
+csNUTS(-306.9978339576681, 4, divergence at position -11, 0.926590192402939
+8, 19, DynamicHMC.Directions(0xbaf75a88)), DynamicHMC.TreeStatisticsNUTS(-3
+09.0485507210135, 3, turning at positions -7:0, 0.0011510237180031933, 7, D
+ynamicHMC.Directions(0x22449bb8)), DynamicHMC.TreeStatisticsNUTS(-308.43574
+02038905, 3, divergence at position -11, 0.1838173056454343, 12, DynamicHMC
+.Directions(0x079bd2c1)), DynamicHMC.TreeStatisticsNUTS(-308.2743979956188,
+ 4, divergence at position -16, 0.40406791668567166, 21, DynamicHMC.Directi
+ons(0x696a5de5)), DynamicHMC.TreeStatisticsNUTS(-308.79968309536093, 3, div
+ergence at position -2, 0.11247311624440146, 9, DynamicHMC.Directions(0x0b8
+cac07)), DynamicHMC.TreeStatisticsNUTS(-308.6566863071676, 2, divergence at
+ position -5, 0.2, 5, DynamicHMC.Directions(0x79cc8b38))], κ = Gaussian kin
+etic energy (Diagonal), √diag(M⁻¹): [0.09065436440431678, 0.031237859841619
+125, 0.03769054477309786, 0.12923649076550886, 0.09321145506197823, 0.11468
+930316731393], ϵ = 0.005160717301756368)
 ```
 
 
@@ -570,8 +566,8 @@ SciMLBenchmarks.weave_file("benchmarks/BayesianInference","DiffEqBayesLorenz.jmd
 Computer Information:
 
 ```
-Julia Version 1.10.5
-Commit 6f3fdf7b362 (2024-08-27 14:19 UTC)
+Julia Version 1.10.9
+Commit 5595d20a287 (2025-03-10 12:51 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -590,7 +586,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Project.toml`
 ⌃ [6e4b80f9] BenchmarkTools v1.3.2
 ⌃ [ebbdde9d] DiffEqBayes v3.6.0
 ⌅ [459566f4] DiffEqCallbacks v2.29.1
@@ -612,7 +608,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/BayesianInference/Manifest.toml`
 ⌅ [47edcb42] ADTypes v0.2.1
   [a4c015fc] ANSIColoredPrinters v0.0.1
 ⌅ [c3fe647b] AbstractAlgebra v0.31.1
@@ -624,19 +620,19 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [0bf59076] AdvancedHMC v0.5.4
 ⌅ [5b7e9947] AdvancedMH v0.7.5
 ⌅ [576499cb] AdvancedPS v0.4.3
-⌃ [b5ca4192] AdvancedVI v0.2.4
-  [dce04be8] ArgCheck v2.3.0
+⌅ [b5ca4192] AdvancedVI v0.2.4
+⌃ [dce04be8] ArgCheck v2.3.0
 ⌅ [ec485272] ArnoldiMethod v0.2.0
 ⌃ [4fba245c] ArrayInterface v7.4.11
   [30b0a656] ArrayInterfaceCore v0.1.29
-  [a9b6321e] Atomix v0.1.0
+⌅ [a9b6321e] Atomix v0.1.0
 ⌃ [13072b0f] AxisAlgorithms v1.0.1
   [39de3d68] AxisArrays v0.4.7
 ⌅ [198e06fe] BangBang v0.3.39
   [9718e550] Baselet v0.1.1
 ⌃ [6e4b80f9] BenchmarkTools v1.3.2
-⌃ [e2ed5e7c] Bijections v0.1.4
-⌃ [76274a88] Bijectors v0.13.6
+⌅ [e2ed5e7c] Bijections v0.1.4
+⌅ [76274a88] Bijectors v0.13.6
 ⌃ [d1d4a3ce] BitFlags v0.1.7
 ⌃ [62783981] BitTwiddlingConvenienceFunctions v0.1.5
 ⌅ [fa961155] CEnum v0.4.2
@@ -651,10 +647,10 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [944b1d66] CodecZlib v0.7.2
 ⌃ [35d6a980] ColorSchemes v3.23.0
 ⌅ [3da002f7] ColorTypes v0.11.4
-  [c3611d14] ColorVectorSpace v0.10.0
-⌃ [5ae59095] Colors v0.12.10
-  [861a8166] Combinatorics v1.0.2
-⌃ [a80b9123] CommonMark v0.8.12
+⌅ [c3611d14] ColorVectorSpace v0.10.0
+⌅ [5ae59095] Colors v0.12.10
+⌃ [861a8166] Combinatorics v1.0.2
+⌅ [a80b9123] CommonMark v0.8.12
   [38540f10] CommonSolve v0.2.4
 ⌃ [bbf7d656] CommonSubexpressions v0.3.0
 ⌃ [34da2185] Compat v4.9.0
@@ -683,15 +679,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [b4f34e82] Distances v0.10.9
 ⌃ [31c24e10] Distributions v0.25.100
 ⌃ [ced4e74d] DistributionsAD v0.6.52
-  [ffbed154] DocStringExtensions v0.9.3
+⌃ [ffbed154] DocStringExtensions v0.9.3
 ⌅ [e30172f5] Documenter v0.27.25
 ⌅ [5b8099bc] DomainSets v0.6.7
-  [fa6b7ba4] DualNumbers v0.6.8
+⌃ [fa6b7ba4] DualNumbers v0.6.8
 ⌃ [bbc10e6e] DynamicHMC v3.4.6
 ⌅ [366bfd00] DynamicPPL v0.23.14
 ⌅ [7c1d4256] DynamicPolynomials v0.5.2
 ⌅ [cad2338a] EllipticalSliceSampling v1.1.0
-  [4e289a0a] EnumX v1.0.4
+⌃ [4e289a0a] EnumX v1.0.4
 ⌃ [460bff9d] ExceptionUnwrapping v0.1.9
 ⌃ [d4d017d3] ExponentialUtilities v1.24.0
   [e2ba6199] ExprTools v0.1.10
@@ -705,10 +701,10 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [6a86dc24] FiniteDiff v2.21.1
 ⌃ [53c48c17] FixedPointNumbers v0.8.4
 ⌃ [59287772] Formatting v0.4.2
-  [f6369f11] ForwardDiff v0.10.36
+⌅ [f6369f11] ForwardDiff v0.10.36
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
-⌃ [d9f16b24] Functors v0.4.5
+⌅ [d9f16b24] Functors v0.4.5
 ⌅ [46192b85] GPUArraysCore v0.1.5
 ⌅ [28b8d3ca] GR v0.72.9
 ⌃ [c145ed77] GenericSchur v0.5.3
@@ -733,19 +729,19 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [a98d9a8b] Interpolations v0.14.7
 ⌃ [8197267c] IntervalSets v0.7.7
 ⌃ [3587e190] InverseFunctions v0.1.12
-  [41ab1584] InvertedIndices v1.3.0
-  [92d709cd] IrrationalConstants v0.2.2
+⌃ [41ab1584] InvertedIndices v1.3.0
+⌃ [92d709cd] IrrationalConstants v0.2.2
 ⌃ [c8e1da08] IterTools v1.8.0
   [82899510] IteratorInterfaceExtensions v1.0.0
 ⌃ [1019f520] JLFzf v0.1.5
 ⌃ [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
-⌃ [98e50ef6] JuliaFormatter v1.0.35
+⌅ [98e50ef6] JuliaFormatter v1.0.35
 ⌃ [ccbc3e58] JumpProcesses v9.7.2
 ⌅ [ef3ab10e] KLU v0.4.0
 ⌃ [63c18a36] KernelAbstractions v0.9.8
 ⌃ [5ab0869b] KernelDensity v0.6.7
-⌃ [ba0b0d4f] Krylov v0.9.3
+⌅ [ba0b0d4f] Krylov v0.9.3
 ⌅ [929cbde3] LLVM v6.1.0
 ⌃ [8ac3fa9e] LRUCache v1.4.1
 ⌃ [b964fa9f] LaTeXStrings v1.3.0
@@ -756,15 +752,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [50d2b5c4] Lazy v0.15.1
 ⌃ [1fad7336] LazyStack v0.1.1
   [1d6d02ad] LeftChildRightSiblingTrees v0.2.0
-⌃ [6f1fad26] Libtask v0.8.6
+⌅ [6f1fad26] Libtask v0.8.6
 ⌃ [d3d80556] LineSearches v7.2.0
-⌃ [7ed4a6bd] LinearSolve v2.5.1
+⌅ [7ed4a6bd] LinearSolve v2.5.1
 ⌃ [6fdf6af0] LogDensityProblems v2.1.1
 ⌃ [996a588d] LogDensityProblemsAD v1.5.0
 ⌃ [2ab3a3ac] LogExpFunctions v0.3.26
 ⌃ [e6f89c97] LoggingExtras v1.0.1
 ⌃ [bdcacae8] LoopVectorization v0.12.165
-⌃ [c7f686f2] MCMCChains v6.0.3
+⌅ [c7f686f2] MCMCChains v6.0.3
 ⌃ [be115224] MCMCDiagnosticTools v0.3.5
 ⌃ [e80e1ace] MLJModelInterface v1.9.2
   [d8e11817] MLStyle v0.4.17
@@ -780,10 +776,10 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [102ac46a] MultivariatePolynomials v0.5.1
 ⌃ [ffc61752] Mustache v1.0.17
 ⌃ [d8a4904e] MutableArithmetics v1.3.1
-  [d41bc354] NLSolversBase v7.8.3
+⌃ [d41bc354] NLSolversBase v7.8.3
   [2774e3e8] NLsolve v4.5.1
 ⌃ [872c559c] NNlib v0.9.4
-  [77ba4419] NaNMath v1.0.2
+⌃ [77ba4419] NaNMath v1.0.2
 ⌃ [86f7a689] NamedArrays v0.10.0
   [d9ec5142] NamedTupleTools v0.14.3
   [c020b1a1] NaturalSort v1.0.0
@@ -809,7 +805,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [2dfb63ee] PooledArrays v1.4.2
   [85a6dd25] PositiveFactorizations v0.2.4
 ⌃ [d236fae5] PreallocationTools v0.4.12
-⌃ [aea7be01] PrecompileTools v1.2.0
+⌅ [aea7be01] PrecompileTools v1.2.0
 ⌃ [21216c6a] Preferences v1.4.0
 ⌃ [08abe8d2] PrettyTables v2.2.7
 ⌃ [27ebfcd6] Primes v0.5.4
@@ -828,7 +824,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [f2c3362d] RecursiveFactorization v0.2.20
   [189a3867] Reexport v1.2.2
 ⌃ [05181044] RelocatableFolders v1.0.0
-  [ae029012] Requires v1.3.0
+⌃ [ae029012] Requires v1.3.0
 ⌅ [79098fc4] Rmath v0.7.1
 ⌃ [f2b01f46] Roots v2.0.19
 ⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.12
@@ -838,11 +834,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [0bca4576] SciMLBase v1.95.0
   [31c91b34] SciMLBenchmarks v0.1.3
 ⌃ [e9a6253c] SciMLNLSolve v0.1.8
-⌃ [c0aeaf25] SciMLOperators v0.3.6
+⌅ [c0aeaf25] SciMLOperators v0.3.6
   [30f210dd] ScientificTypesBase v3.0.0
 ⌃ [6c6a2e73] Scratch v1.2.0
 ⌃ [91c51154] SentinelArrays v1.4.0
-  [efcf1570] Setfield v1.1.1
+⌃ [efcf1570] Setfield v1.1.1
   [992d4aef] Showoff v1.0.3
 ⌃ [777ac1f9] SimpleBufferStream v1.1.0
 ⌅ [727e6d20] SimpleNonlinearSolve v0.1.19
@@ -852,7 +848,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b85f4697] SoftGlobalScope v1.1.0
 ⌃ [a2af1166] SortingAlgorithms v1.1.1
 ⌃ [47a9eef4] SparseDiffTools v2.5.0
-  [e56a9233] Sparspak v0.3.9
+⌃ [e56a9233] Sparspak v0.3.9
 ⌃ [276daf66] SpecialFunctions v2.3.1
   [171d559e] SplittablesBase v0.1.15
 ⌃ [d0ee94f6] StanBase v4.8.1
@@ -869,7 +865,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [5e0ebb24] Strided v1.2.3
   [69024149] StringEncodings v0.3.7
 ⌅ [892a3eda] StringManipulation v0.3.0
-⌃ [09ab397b] StructArrays v0.6.15
+⌅ [09ab397b] StructArrays v0.6.15
 ⌅ [2efcf032] SymbolicIndexingInterface v0.2.2
 ⌅ [d1185830] SymbolicUtils v1.2.0
 ⌅ [0c5d862f] Symbolics v5.5.1
@@ -879,14 +875,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [02d47bb6] TensorCast v0.4.6
   [62fd8b95] TensorCore v0.1.1
   [5d786b92] TerminalLoggers v0.1.7
-  [8290d209] ThreadingUtilities v0.5.2
+⌃ [8290d209] ThreadingUtilities v0.5.2
 ⌃ [a759f4b9] TimerOutputs v0.5.23
 ⌃ [0796e94c] Tokenize v0.5.25
 ⌃ [9f7883ad] Tracker v0.2.26
 ⌅ [3bb67fe8] TranscodingStreams v0.9.13
 ⌃ [28d57a85] Transducers v0.4.78
 ⌃ [84d833dd] TransformVariables v0.8.7
-  [f9bc47f6] TransformedLogDensities v1.0.3
+⌃ [f9bc47f6] TransformedLogDensities v1.0.3
 ⌃ [24ddb15e] TransmuteDims v0.1.15
   [a2a6695c] TreeViews v0.3.0
 ⌅ [d5829a12] TriangularSolve v0.1.19
@@ -900,7 +896,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [1986cc42] Unitful v1.17.0
 ⌃ [45397f5d] UnitfulLatexify v1.6.3
 ⌃ [a7c27f48] Unityper v0.1.5
-  [013be700] UnsafeAtomics v0.2.1
+⌅ [013be700] UnsafeAtomics v0.2.1
 ⌅ [d80eeb9a] UnsafeAtomicsLLVM v0.1.3
   [41fe7b60] Unzip v0.2.0
 ⌃ [3d5dd08c] VectorizationBase v0.21.64
@@ -926,7 +922,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [78b55507] Gettext_jll v0.21.0+0
 ⌃ [f8c6e375] Git_jll v2.36.1+2
 ⌃ [7746bdde] Glib_jll v2.74.0+2
-  [3b182d85] Graphite2_jll v1.3.14+0
+⌃ [3b182d85] Graphite2_jll v1.3.14+0
 ⌅ [2e76f6c2] HarfBuzz_jll v2.8.1+1
 ⌅ [1d5cc7b8] IntelOpenMP_jll v2023.2.0+0
 ⌃ [aacddb02] JpegTurbo_jll v2.1.91+0
@@ -937,7 +933,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [dd4b983a] LZO_jll v2.10.1+0
 ⌅ [e9f186c6] Libffi_jll v3.2.2+1
 ⌃ [d4300ac3] Libgcrypt_jll v1.8.7+0
-  [7e76a0d4] Libglvnd_jll v1.6.0+0
+⌃ [7e76a0d4] Libglvnd_jll v1.6.0+0
 ⌃ [7add5ba3] Libgpg_error_jll v1.42.0+0
 ⌃ [94ce4f54] Libiconv_jll v1.16.1+2
 ⌃ [4b2f31a3] Libmount_jll v2.35.0+0
@@ -946,37 +942,37 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [856f044c] MKL_jll v2023.2.0+0
   [e7412a2a] Ogg_jll v1.3.5+1
 ⌅ [458c3c95] OpenSSL_jll v1.1.22+0
-  [efe28fd5] OpenSpecFun_jll v0.5.5+0
+⌃ [efe28fd5] OpenSpecFun_jll v0.5.5+0
 ⌃ [91d4177d] Opus_jll v1.3.2+0
 ⌃ [30392449] Pixman_jll v0.42.2+0
 ⌅ [c0090381] Qt6Base_jll v6.4.2+3
 ⌅ [f50d1b31] Rmath_jll v0.4.0+0
 ⌃ [a2964d1f] Wayland_jll v1.21.0+0
 ⌃ [2381bf8a] Wayland_protocols_jll v1.25.0+0
-⌃ [02c8fc9c] XML2_jll v2.10.3+0
+⌅ [02c8fc9c] XML2_jll v2.10.3+0
 ⌃ [aed1982a] XSLT_jll v1.1.34+0
 ⌃ [ffd25f8a] XZ_jll v5.4.4+0
-  [4f6342f7] Xorg_libX11_jll v1.8.6+0
-  [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
-  [935fb764] Xorg_libXcursor_jll v1.2.0+4
-  [a3789734] Xorg_libXdmcp_jll v1.1.4+0
+⌃ [4f6342f7] Xorg_libX11_jll v1.8.6+0
+⌃ [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
+⌃ [935fb764] Xorg_libXcursor_jll v1.2.0+4
+⌃ [a3789734] Xorg_libXdmcp_jll v1.1.4+0
 ⌃ [1082639a] Xorg_libXext_jll v1.3.4+4
-  [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
-  [a51aa0fd] Xorg_libXi_jll v1.7.10+4
-  [d1454406] Xorg_libXinerama_jll v1.1.4+4
-  [ec84b674] Xorg_libXrandr_jll v1.5.2+4
+⌃ [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
+⌃ [a51aa0fd] Xorg_libXi_jll v1.7.10+4
+⌃ [d1454406] Xorg_libXinerama_jll v1.1.4+4
+⌃ [ec84b674] Xorg_libXrandr_jll v1.5.2+4
 ⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.10+4
-  [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
+⌃ [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
 ⌃ [c7cfdc94] Xorg_libxcb_jll v1.15.0+0
-  [cc61e674] Xorg_libxkbfile_jll v1.1.2+0
+⌃ [cc61e674] Xorg_libxkbfile_jll v1.1.2+0
   [12413925] Xorg_xcb_util_image_jll v0.4.0+1
   [2def613f] Xorg_xcb_util_jll v0.4.0+1
   [975044d2] Xorg_xcb_util_keysyms_jll v0.4.0+1
   [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.9+1
   [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.1+1
-  [35661453] Xorg_xkbcomp_jll v1.4.6+0
-  [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
-  [c5fb5394] Xorg_xtrans_jll v1.5.0+0
+⌃ [35661453] Xorg_xkbcomp_jll v1.4.6+0
+⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
+⌃ [c5fb5394] Xorg_xtrans_jll v1.5.0+0
 ⌃ [8f1865be] ZeroMQ_jll v4.3.4+0
 ⌃ [3161d3a3] Zstd_jll v1.5.5+0
 ⌅ [214eeab7] fzf_jll v0.29.0+0
