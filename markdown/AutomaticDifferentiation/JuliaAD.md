@@ -46,24 +46,24 @@ Markdown.parse(table)
 
 |                                          **backend** |                                                           **scenario** |        **operator** | **calls** | **samples** | **evals** | **time** | **allocs** | **bytes** | **gc_fraction** | **compile_fraction** |
 | ----------------------------------------------------:| ----------------------------------------------------------------------:| -------------------:| ---------:| -----------:| ---------:| --------:| ----------:| ---------:| ---------------:| --------------------:|
-| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   0.0e+00 |     1.0e+00 |   1.0e+00 |  5.6e-07 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
-| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   1.0e+00 |     3.0e+04 |   1.0e+00 |  2.0e-06 |    9.0e+00 |   1.9e+02 |         0.0e+00 |              0.0e+00 |
-| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   1.0e+00 |     4.6e+04 |   1.0e+00 |  8.1e-07 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
-| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   0.0e+00 |     1.0e+00 |   1.0e+00 |  3.0e-08 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
-| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   1.0e+00 |     5.4e+02 |   1.0e+00 |  1.5e-04 |    9.0e+00 |   1.9e+02 |         0.0e+00 |              0.0e+00 |
-| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   1.0e+00 |     8.7e+02 |   1.0e+00 |  9.1e-05 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
+| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   0.0e+00 |     1.0e+00 |   1.0e+00 |  1.2e-07 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
+| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   1.0e+00 |     2.3e+04 |   1.0e+00 |  2.2e-06 |    9.0e+00 |   1.9e+02 |         0.0e+00 |              0.0e+00 |
+| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   1.0e+00 |     4.7e+04 |   1.0e+00 |  7.9e-07 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
+| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   0.0e+00 |     1.0e+00 |   1.0e+00 |  4.0e-08 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
+| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   1.0e+00 |     5.3e+02 |   1.0e+00 |  1.5e-04 |    9.0e+00 |   1.9e+02 |         0.0e+00 |              0.0e+00 |
+| AutoEnzyme(mode=ReverseMode{false, FFIABI, false}()) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   1.0e+00 |     9.5e+02 |   1.0e+00 |  8.7e-05 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
 |                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   1.0e+00 |     1.0e+00 |   1.0e+00 |  1.0e-01 |    3.2e+05 |   2.2e+07 |         0.0e+00 |              8.6e-01 |
-|                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   0.0e+00 |     1.5e+03 |   1.0e+00 |  3.2e-06 |    1.1e+01 |   5.9e+02 |         0.0e+00 |              0.0e+00 |
-|                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   0.0e+00 |     1.2e+03 |   1.0e+00 |  3.2e-06 |    1.1e+01 |   5.9e+02 |         0.0e+00 |              0.0e+00 |
-|                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   1.0e+00 |     1.0e+00 |   1.0e+00 |  1.6e-01 |    3.2e+05 |   2.3e+07 |         1.6e-01 |              9.1e-01 |
-|                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   0.0e+00 |     1.8e+01 |   1.0e+00 |  2.1e-04 |    1.1e+01 |   5.9e+02 |         0.0e+00 |              0.0e+00 |
-|                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   0.0e+00 |     1.5e+01 |   1.0e+00 |  2.1e-04 |    1.1e+01 |   5.9e+02 |         0.0e+00 |              0.0e+00 |
-|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   0.0e+00 |     1.0e+00 |   1.0e+00 |  1.3e-07 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
-|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   1.0e+00 |     1.6e+02 |   1.0e+00 |  5.7e-04 |    3.9e+03 |   2.6e+05 |         0.0e+00 |              0.0e+00 |
-|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   1.0e+00 |     1.2e+02 |   1.0e+00 |  5.7e-04 |    3.9e+03 |   2.6e+05 |         0.0e+00 |              0.0e+00 |
-|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   0.0e+00 |     1.0e+00 |   1.0e+00 |  3.0e-08 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
-|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   1.0e+00 |     1.0e+00 |   1.0e+00 |  1.5e-01 |    3.9e+05 |   8.2e+08 |         1.6e-01 |              0.0e+00 |
-|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   1.0e+00 |     1.0e+00 |   1.0e+00 |  1.5e-01 |    3.9e+05 |   8.2e+08 |         1.6e-01 |              0.0e+00 |
+|                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   0.0e+00 |     1.2e+03 |   1.0e+00 |  2.8e-06 |    1.1e+01 |   5.9e+02 |         0.0e+00 |              0.0e+00 |
+|                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   0.0e+00 |     1.5e+03 |   1.0e+00 |  2.8e-06 |    1.1e+01 |   5.9e+02 |         0.0e+00 |              0.0e+00 |
+|                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   1.0e+00 |     1.0e+00 |   1.0e+00 |  1.0e-01 |    3.2e+05 |   2.3e+07 |         0.0e+00 |              8.5e-01 |
+|                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   0.0e+00 |     1.5e+01 |   1.0e+00 |  2.1e-04 |    1.1e+01 |   5.9e+02 |         0.0e+00 |              0.0e+00 |
+|                           AutoTapir(safe_mode=false) | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   0.0e+00 |     1.8e+01 |   1.0e+00 |  2.1e-04 |    1.1e+01 |   5.9e+02 |         0.0e+00 |              0.0e+00 |
+|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   0.0e+00 |     1.0e+00 |   1.0e+00 |  1.2e-07 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
+|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   1.0e+00 |     1.3e+02 |   1.0e+00 |  5.4e-04 |    3.9e+03 |   2.6e+05 |         0.0e+00 |              0.0e+00 |
+|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   1.0e+00 |     1.6e+02 |   1.0e+00 |  5.8e-04 |    3.9e+03 |   2.6e+05 |         0.0e+00 |              0.0e+00 |
+|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |    prepare_gradient |   0.0e+00 |     1.0e+00 |   1.0e+00 |  2.0e-08 |    0.0e+00 |   0.0e+00 |         0.0e+00 |              0.0e+00 |
+|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 | value_and_gradient! |   1.0e+00 |     1.0e+00 |   1.0e+00 |  1.8e-01 |    3.9e+05 |   8.2e+08 |         1.8e-01 |              0.0e+00 |
+|                                         AutoZygote() | Scenario{:gradient,1,:inplace} paritytrig : Vector{Float64} -> Float64 |           gradient! |   1.0e+00 |     1.0e+00 |   1.0e+00 |  1.8e-01 |    3.9e+05 |   8.2e+08 |         1.5e-01 |              0.0e+00 |
 
 
 
@@ -106,7 +106,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [a93c6f00] DataFrames v1.6.1
 ⌃ [1313f7d8] DataFramesMeta v0.15.3
 ⌅ [a0c0ee7d] DifferentiationInterface v0.5.9
-⌅ [a82114a7] DifferentiationInterfaceTest v0.5.0
+⌃ [a82114a7] DifferentiationInterfaceTest v0.5.0
 ⌅ [7da242da] Enzyme v0.12.25
 ⌃ [6a86dc24] FiniteDiff v2.23.1
 ⌅ [f6369f11] ForwardDiff v0.10.36
@@ -114,7 +114,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [65888b18] ParameterizedFunctions v5.17.0
 ⌃ [91a5bcdd] Plots v1.40.5
 ⌃ [08abe8d2] PrettyTables v2.3.2
-  [37e2e3b7] ReverseDiff v1.15.3
+⌃ [37e2e3b7] ReverseDiff v1.15.3
   [31c91b34] SciMLBenchmarks v0.1.3
 ⌃ [1ed8b502] SciMLSensitivity v7.64.0
 ⌃ [90137ffa] StaticArrays v1.9.7
@@ -144,7 +144,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [4c555306] ArrayLayouts v1.10.2
 ⌅ [a9b6321e] Atomix v0.1.0
 ⌃ [6e4b80f9] BenchmarkTools v1.5.0
-⌃ [e2ed5e7c] Bijections v0.1.7
+⌅ [e2ed5e7c] Bijections v0.1.7
   [d1d4a3ce] BitFlags v0.1.9
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [fa961155] CEnum v0.5.0
@@ -163,7 +163,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [3da002f7] ColorTypes v0.11.5
 ⌅ [c3611d14] ColorVectorSpace v0.10.0
 ⌅ [5ae59095] Colors v0.12.11
-  [861a8166] Combinatorics v1.0.2
+⌃ [861a8166] Combinatorics v1.0.2
 ⌅ [a80b9123] CommonMark v0.8.12
   [38540f10] CommonSolve v0.2.4
 ⌃ [bbf7d656] CommonSubexpressions v0.3.0
@@ -192,16 +192,16 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [b552c78f] DiffRules v1.15.1
   [de460e47] DiffTests v0.1.2
 ⌅ [a0c0ee7d] DifferentiationInterface v0.5.9
-⌅ [a82114a7] DifferentiationInterfaceTest v0.5.0
+⌃ [a82114a7] DifferentiationInterfaceTest v0.5.0
 ⌃ [b4f34e82] Distances v0.10.11
 ⌃ [31c24e10] Distributions v0.25.109
-  [ffbed154] DocStringExtensions v0.9.3
+⌃ [ffbed154] DocStringExtensions v0.9.3
 ⌃ [5b8099bc] DomainSets v0.7.14
 ⌃ [fa6b7ba4] DualNumbers v0.6.8
 ⌅ [7c1d4256] DynamicPolynomials v0.5.7
 ⌅ [06fc5a27] DynamicQuantities v0.13.2
   [da5c29d0] EllipsisNotation v1.8.0
-  [4e289a0a] EnumX v1.0.4
+⌃ [4e289a0a] EnumX v1.0.4
 ⌅ [7da242da] Enzyme v0.12.25
 ⌅ [f151be2c] EnzymeCore v0.7.7
 ⌃ [460bff9d] ExceptionUnwrapping v0.1.10
@@ -225,8 +225,8 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [46192b85] GPUArraysCore v0.1.6
 ⌅ [61eb1bfa] GPUCompiler v0.26.7
 ⌃ [28b8d3ca] GR v0.73.7
-  [c145ed77] GenericSchur v0.5.4
-  [d7ba0133] Git v1.3.1
+⌃ [c145ed77] GenericSchur v0.5.4
+⌃ [d7ba0133] Git v1.3.1
   [c27321d9] Glob v1.3.1
 ⌃ [86223c79] Graphs v1.11.2
   [42e2da0e] Grisu v1.0.2
@@ -239,25 +239,25 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [615f187c] IfElse v0.1.1
   [d25df0c9] Inflate v0.1.5
 ⌃ [842dd82b] InlineStrings v1.4.2
-  [8197267c] IntervalSets v0.7.10
+⌃ [8197267c] IntervalSets v0.7.10
 ⌃ [3587e190] InverseFunctions v0.1.15
 ⌃ [41ab1584] InvertedIndices v1.3.0
 ⌃ [92d709cd] IrrationalConstants v0.2.2
   [82899510] IteratorInterfaceExtensions v1.0.0
-⌃ [c3a54625] JET v0.9.6
+⌅ [c3a54625] JET v0.9.6
 ⌅ [27aeb0d3] JLArrays v0.1.5
 ⌃ [1019f520] JLFzf v0.1.7
 ⌃ [692b3bcd] JLLWrappers v1.5.0
   [682c06a0] JSON v0.21.4
-⌃ [98e50ef6] JuliaFormatter v1.0.58
-⌃ [aa1ae85d] JuliaInterpreter v0.9.32
+⌅ [98e50ef6] JuliaFormatter v1.0.58
+⌅ [aa1ae85d] JuliaInterpreter v0.9.32
 ⌃ [ccbc3e58] JumpProcesses v9.11.1
   [ef3ab10e] KLU v0.6.0
 ⌃ [63c18a36] KernelAbstractions v0.9.22
-⌃ [ba0b0d4f] Krylov v0.9.6
+⌅ [ba0b0d4f] Krylov v0.9.6
 ⌅ [929cbde3] LLVM v8.0.0
 ⌃ [b964fa9f] LaTeXStrings v1.3.1
-  [2ee39098] LabelledArrays v1.16.0
+⌃ [2ee39098] LabelledArrays v1.16.0
 ⌅ [984bce1d] LambertW v0.4.6
 ⌃ [23fbe1c1] Latexify v0.16.4
   [10f19ff3] LayoutPointers v0.1.17
@@ -277,7 +277,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [442fdcdd] Measures v0.3.2
   [e1d29d7a] Missings v1.2.0
 ⌅ [dbe65cb8] MistyClosures v1.0.1
-⌃ [961ee093] ModelingToolkit v9.26.0
+⌅ [961ee093] ModelingToolkit v9.26.0
   [46d2c3a1] MuladdMacro v0.2.4
 ⌃ [102ac46a] MultivariatePolynomials v0.5.6
 ⌃ [ffc61752] Mustache v1.0.19
@@ -289,7 +289,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [8913a72c] NonlinearSolve v3.13.1
 ⌃ [d8793406] ObjectFile v0.4.1
 ⌃ [6fe1bfb0] OffsetArrays v1.14.1
-  [4d8831e6] OpenSSL v1.4.3
+⌃ [4d8831e6] OpenSSL v1.4.3
 ⌃ [429524aa] Optim v1.9.4
 ⌅ [3bd65402] Optimisers v0.3.3
 ⌃ [bac558e1] OrderedCollections v1.6.3
@@ -298,7 +298,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [65ce6f38] PackageExtensionCompat v1.0.2
 ⌃ [65888b18] ParameterizedFunctions v5.17.0
   [d96e819e] Parameters v0.12.3
-  [69de0a69] Parsers v2.8.1
+⌃ [69de0a69] Parsers v2.8.1
   [b98c9c47] Pipe v1.3.0
 ⌃ [ccf2f8ad] PlotThemes v3.2.0
 ⌃ [995b91a9] PlotUtils v1.4.1
@@ -312,10 +312,10 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.4.3
 ⌃ [08abe8d2] PrettyTables v2.3.2
-  [92933f4c] ProgressMeter v1.10.2
+⌃ [92933f4c] ProgressMeter v1.10.2
 ⌃ [43287f4e] PtrArrays v1.2.0
 ⌃ [1fd47b50] QuadGK v2.9.4
-  [74087812] Random123 v1.7.0
+⌃ [74087812] Random123 v1.7.0
 ⌃ [e6cf234a] RandomNumbers v1.5.3
   [c1ae055f] RealDot v0.1.0
   [3cdcf5f2] RecipesBase v1.3.4
@@ -326,14 +326,14 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [05181044] RelocatableFolders v1.0.1
 ⌃ [ae029012] Requires v1.3.0
   [ae5879a3] ResettableStacks v1.1.1
-  [37e2e3b7] ReverseDiff v1.15.3
+⌃ [37e2e3b7] ReverseDiff v1.15.3
 ⌅ [79098fc4] Rmath v0.7.1
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.13
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.13
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.43
 ⌃ [0bca4576] SciMLBase v2.44.0
   [31c91b34] SciMLBenchmarks v0.1.3
-⌃ [c0aeaf25] SciMLOperators v0.3.8
+⌅ [c0aeaf25] SciMLOperators v0.3.8
 ⌃ [1ed8b502] SciMLSensitivity v7.64.0
 ⌃ [53ae85a6] SciMLStructures v1.4.1
   [6c6a2e73] Scratch v1.2.1
@@ -349,13 +349,13 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [47a9eef4] SparseDiffTools v2.19.0
   [dc90abb0] SparseInverseSubset v0.1.2
 ⌅ [0a514795] SparseMatrixColorings v0.3.5
-  [e56a9233] Sparspak v0.3.9
+⌃ [e56a9233] Sparspak v0.3.9
 ⌃ [276daf66] SpecialFunctions v2.4.0
 ⌃ [aedffcd0] Static v1.1.1
 ⌃ [0d7ed370] StaticArrayInterface v1.5.1
 ⌃ [90137ffa] StaticArrays v1.9.7
   [1e83bf80] StaticArraysCore v1.4.3
-  [82ae8749] StatsAPI v1.7.0
+⌃ [82ae8749] StatsAPI v1.7.0
 ⌃ [2913bbd2] StatsBase v0.34.3
 ⌃ [4c63d2b9] StatsFuns v1.3.1
 ⌃ [789caeaf] StochasticDiffEq v6.66.0
@@ -374,7 +374,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [07d77754] Tapir v0.2.26
   [62fd8b95] TensorCore v0.1.1
 ⌅ [8ea1fca8] TermInterface v0.4.1
-  [8290d209] ThreadingUtilities v0.5.2
+⌃ [8290d209] ThreadingUtilities v0.5.2
 ⌃ [a759f4b9] TimerOutputs v0.5.24
   [0796e94c] Tokenize v0.5.29
 ⌃ [9f7883ad] Tracker v0.2.34
@@ -382,11 +382,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d5829a12] TriangularSolve v0.2.1
 ⌃ [410a4b4d] Tricks v0.1.8
   [781d530d] TruncatedStacktraces v1.4.0
-  [5c2747f8] URIs v1.5.1
+⌃ [5c2747f8] URIs v1.5.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
 ⌃ [1986cc42] Unitful v1.21.0
-  [45397f5d] UnitfulLatexify v1.6.4
+⌃ [45397f5d] UnitfulLatexify v1.6.4
   [a7c27f48] Unityper v0.1.6
 ⌅ [013be700] UnsafeAtomics v0.2.1
 ⌅ [d80eeb9a] UnsafeAtomicsLLVM v0.1.5
@@ -444,11 +444,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
 ⌃ [a2964d1f] Wayland_jll v1.21.0+1
 ⌃ [2381bf8a] Wayland_protocols_jll v1.31.0+0
-⌃ [02c8fc9c] XML2_jll v2.13.1+0
+⌅ [02c8fc9c] XML2_jll v2.13.1+0
 ⌃ [aed1982a] XSLT_jll v1.1.41+0
 ⌃ [ffd25f8a] XZ_jll v5.4.6+0
-  [f67eecfb] Xorg_libICE_jll v1.1.1+0
-  [c834827a] Xorg_libSM_jll v1.2.4+0
+⌃ [f67eecfb] Xorg_libICE_jll v1.1.1+0
+⌃ [c834827a] Xorg_libSM_jll v1.2.4+0
 ⌃ [4f6342f7] Xorg_libX11_jll v1.8.6+0
 ⌃ [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
 ⌃ [935fb764] Xorg_libXcursor_jll v1.2.0+4
@@ -469,7 +469,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.9+1
   [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.1+1
 ⌃ [35661453] Xorg_xkbcomp_jll v1.4.6+0
-  [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
+⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
 ⌃ [c5fb5394] Xorg_xtrans_jll v1.5.0+0
 ⌃ [8f1865be] ZeroMQ_jll v4.3.5+0
 ⌃ [3161d3a3] Zstd_jll v1.5.6+0
