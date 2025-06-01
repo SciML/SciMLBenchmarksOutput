@@ -7,6 +7,7 @@ using OrdinaryDiffEq
 using DiffEqDevTools, Plots
 using Sundials, LSODA
 using ODEInterface, ODEInterfaceDiffEq
+using RecursiveFactorization
 ```
 
 

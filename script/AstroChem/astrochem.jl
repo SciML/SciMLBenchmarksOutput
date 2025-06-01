@@ -5,6 +5,7 @@ using Plots
 using Symbolics
 using DiffEqDevTools
 using Sundials, ODEInterface, ODEInterfaceDiffEq, LSODA
+using RecursiveFactorization
 
 
 # Some basic astrochemistry constants:
