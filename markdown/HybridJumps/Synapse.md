@@ -12,10 +12,7 @@ const fmt = :png
 ```
 
 ```
-Error: Failed to precompile PiecewiseDeterministicMarkovProcesses [86206cdf
--4603-54e0-bd58-22a2dcbf57aa] to "/cache/julia-buildkite-plugin/depots/5b30
-0254-1738-4989-ae0a-f4d2d937f953/compiled/v1.10/PiecewiseDeterministicMarko
-vProcesses/jl_jbGKkl".
+:png
 ```
 
 
@@ -65,9 +62,7 @@ end
 ```
 
 ```
-Error: LoadError: UndefVarError: `@with_kw` not defined
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
-nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:3
+Main.var"##WeaveSandBox#225".PreSynapseParams
 ```
 
 
@@ -585,9 +580,7 @@ end
 ```
 
 ```
-Error: LoadError: UndefVarError: `@with_kw` not defined
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
-nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:3
+Main.var"##WeaveSandBox#225".SynapseParams
 ```
 
 
@@ -759,9 +752,7 @@ GABA_matrix() = get_stoichmatrix(gaba_destexhe)
 ```
 
 ```
-Error: LoadError: UndefVarError: `@reaction_network` not defined
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
-nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:3
+GABA_matrix (generic function with 1 method)
 ```
 
 
@@ -807,11 +798,6 @@ const events_bap = events_sorted_times[is_pre_or_post_event.==false];
 const bap_by_epsp = Float64[];
 const nu = buildTransitionMatrix();
 ```
-
-```
-Error: UndefVarError: `SynapseParams` not defined
-```
-
 
 
 
@@ -1004,9 +990,7 @@ end
 ```
 
 ```
-Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
-nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:4
+initial_conditions_discrete (generic function with 1 method)
 ```
 
 
@@ -1015,11 +999,6 @@ nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:4
 const xc0 = initial_conditions_continuous_temp(p_synapse);
 const xd0 = initial_conditions_discrete(p_synapse);
 ```
-
-```
-Error: UndefVarError: `initial_conditions_continuous_temp` not defined
-```
-
 
 
 
@@ -1082,9 +1061,7 @@ end
 ```
 
 ```
-Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
-nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:17
+B (generic function with 1 method)
 ```
 
 
@@ -1383,9 +1360,7 @@ end
 ```
 
 ```
-Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
-nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:4
+F_synapse (generic function with 1 method)
 ```
 
 
@@ -1627,9 +1602,7 @@ end
 ```
 
 ```
-Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
-nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:5
+R_synapse (generic function with 2 methods)
 ```
 
 
@@ -2045,9 +2018,7 @@ end
 ```
 
 ```
-Error: LoadError: UndefVarError: `@unpack_SynapseParams` not defined
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
-nchmarks-dot-jl/benchmarks/HybridJumps/Synapse.jmd:66
+J_synapse (generic function with 1 method)
 ```
 
 
@@ -2109,7 +2080,7 @@ end
 ```
 
 ```
-Error: UndefVarError: `CHV` not defined
+SynapseProblem (generic function with 2 methods)
 ```
 
 
@@ -2320,7 +2291,7 @@ end
 ```
 
 ```
-SynapseProblem (generic function with 1 method)
+SynapseProblem (generic function with 3 methods)
 ```
 
 
@@ -2564,7 +2535,7 @@ end
 ```
 
 ```
-Error: UndefVarError: `SynapseParams` not defined
+formatSynapseResult (generic function with 1 method)
 ```
 
 
@@ -2592,11 +2563,6 @@ const algorithms = (
     ),
 );
 ```
-
-```
-Error: UndefVarError: `Rosenbrock23` not defined
-```
-
 
 
 
@@ -2628,11 +2594,6 @@ for algo in algorithms
 end
 ```
 
-```
-Error: UndefVarError: `algorithms` not defined
-```
-
-
 
 ```julia
 fig = plot(xlabel = "Voltage", ylabel = "Time");
@@ -2643,11 +2604,7 @@ end
 title!("Vsp")
 ```
 
-```
-Error: UndefVarError: `plot` not defined
-```
-
-
+![](figures/Synapse_22_1.png)
 
 ```julia
 fig = plot(xlabel = "N", ylabel = "Time");
@@ -2659,7 +2616,8 @@ title!("2line-Go, AMPA")
 ```
 
 ```
-Error: UndefVarError: `plot` not defined
+Error: BoundsError: attempt to access 10004-element Vector{Float64} at inde
+x [1:22761]
 ```
 
 
@@ -2698,11 +2656,6 @@ for algo in algorithms
 end
 ```
 
-```
-Error: UndefVarError: `BenchmarkTools` not defined
-```
-
-
 
 ```julia
 labels = [a.label for a in algorithms]
@@ -2713,11 +2666,7 @@ bar(labels, relmedtimes, markeralpha=0, series_annotation=medtimes, fmt=fmt)
 title!("evolveSynapse (Median time)")
 ```
 
-```
-Error: UndefVarError: `algorithms` not defined
-```
-
-
+![](figures/Synapse_25_1.png)
 
 ```julia
 medmem = [text(string(round(median(b).memory/1e6, digits=3),"Mb"), :center, 12) for b in bs]
@@ -2727,11 +2676,7 @@ bar(labels, relmedmem, markeralpha=0, series_annotation=medmem, fmt=fmt)
 title!("evolveSynapse (Median memory)")
 ```
 
-```
-Error: UndefVarError: `bs` not defined
-```
-
-
+![](figures/Synapse_26_1.png)
 
 
 
