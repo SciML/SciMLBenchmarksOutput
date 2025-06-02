@@ -518,308 +518,312 @@ Collecting package metadata (repodata.json): ...working... done
 Solving environment: ...working... failed
 Error: failed process: Process(setenv(`/cache/julia-buildkite-plugin/depots
 /5b300254-1738-4989-ae0a-f4d2d937f953/conda/3/x86_64/bin/conda install -q -
-y python=3.8`,["DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/21581/bus", "B
-UILDKITE_PULL_REQUEST_REPO=", "BUILDKITE_SOURCE=webhook", "BUILDKITE_PLUGIN
-_COPPERMIND_INPUTS_0=benchmarks/Jumps", "BUILDKITE_GIT_CLONE_FLAGS=-v", "BU
-ILDKITE_PLUGIN_CRYPTIC_BASE64_AGENT_PUBLIC_KEY_SECRET=LS0tLS1CRUdJTiBQVUJMS
-UMgS0VZLS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF0
-WHNKMzFGbTFKN29IYzlveGZaWQpKY3FxRk5yaXRMUUhxaDVJUHNGS3YySis1K1FVQkZNYURjMHI
-3czZ3NDNSMDFobkVNT1lYNDAreUVDT3h5bHErClo3dHdxWlNxS2U1MThwc0RyeWRna0xJNzRnQU
-VZWWNTZGdvTGt4YWpWNy9rb0hFTDgrczRKdFRVNUJ6d1RFdXAKTllTZGNQOFhQSmJLekY1RE5qd
-WJmeFA5ZjdSN2x6SUx2NWl2Z2lxZTVtbUxGd1lwb0hTRVFVNXRlT09IQStLYwpjUDZ3K2d1Q0Vx
-MUZFb0N2MDRyaTFXaWpVZXorMytEWVM4UCtROGRxMGJYUWZUS1Vyc0thMkdnLzVmZ0h5Z0R1CmR
-HT2ZsdzUvVEljR3VVbGNsd1hZb2tTRkpSWUJFa2pUOXBCZ2JNNEcyL2tXNGFmZ3d4bHNuN3VsUW
-5QNDZVLzEKZFFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==", "BUILDKITE_ENV
-_FILE=/tmp/job-env-01948d8b-9d50-4213-988c-df9b2a12d5fa59504781", "BUILDKIT
-E_BUILD_NUMBER=3119", "BUILDKITE_GIT_CLONE_MIRROR_FLAGS=-v", "BUILDKITE_AGE
-NT_DEBUG=false", "BUILDKITE_AGENT_META_DATA_QUEUE=juliaecosystem", "BUILDKI
-TE_PLUGINS_PATH=/etc/buildkite-agent/plugins", "BUILDKITE_COMMAND_EVAL=true
-", "BUILDKITE_AGENT_META_DATA_SANDBOX_CAPABLE=true", "BUILDKITE_ORGANIZATIO
-N_SLUG=julialang", "BUILDKITE_PLUGIN_COPPERMIND_INPUTS_1=src/**/*.jl", "BUI
-LDKITE_PIPELINE_PROVIDER=github", "BUILDKITE_AGENT_EXPERIMENT=resolve-commi
-t-after-checkout", "BUILDKITE_CONFIG_PATH=/etc/buildkite-agent/buildkite-ag
-ent.cfg", "BUILDKITE_PIPELINE_TEAMS=sciml-full-access", "BUILDKITE_AGENT_ME
-TA_DATA_CRYPTIC_CAPABLE=true", "BUILDKITE_AGENT_ACCESS_TOKEN=bkaj_eyJhbGciO
-iJIUzUxMiJ9.eyJzdWIiOiIwMTk0OGQ4Yi05ZDUwLTQyMTMtOTg4Yy1kZjliMmExMmQ1ZmEiLCJ
-hdWQiOiIwMTk0OGRiNi1hN2UxLTQxNWYtODcxYi1hODRmMDM5NzlhOWUiLCJpc3MiOiJidWlsZG
-tpdGUiLCJleHAiOjE3MzgxNTI3NTYsImlhdCI6MTczNzU0NDM1Niwib3JnYW5pemF0aW9uX2lkI
-joiZDQwOTgyM2MtNWZhNy00MWM4LTkwMzMtNzI2OWM1ZmRlNGYzIn0.iak80kBLgJPm8STf-e8C
-grQsbKhLqCSf34kZz2lG1145z7TQqsASzmmNir-4_Lrbtyt7lusr-OoILgPvYRXnRw", "BUILD
-KITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET=NaOhkp6CvOqsYTsaDXbXsWZCege
-pRFjhgb2+ydKOkT6Xv63BHiGDDZ0/xLiU1fZJ4pZ6XURYI05eWzkhdTXQDkU51tSYu/um6nZG8y
-mRoSPsZfmQ+j2Po5/Bn7JgEJ+odKUO50rJp/dEKL2PeuSlPlCGH+zrMspw0ec2F9dN1a7PFuN+F
-oPmHCPVgchW6XF8Kg5+G3bho6plqiGo+U8YSBrpjvWb+ZElf6LEb+3+LxI7nbfKaQefmPjl90fb
-sC+SDLAn9eYmUMGRFqBkI3Ud6/IgdTOd0QpJcxL2Z61ZoWCqBguow1kYWKVkkzC/hL0HonXoSUw
-Mxa3nVonp4jBo1w==", "BUILDKITE_PLUGIN_COPPERMIND_S3_PREFIX=s3://julialang-b
-uildkite-artifacts/scimlbenchmarks", "BUILDKITE_BUILD_CREATOR_EMAIL=account
-s@chrisrackauckas.com", "XKB_CONFIG_ROOT=/cache/julia-buildkite-plugin/depo
-ts/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/f8b49c7c45b400e3f5c4002d1
-9645d4b88712c0c/share/X11/xkb", "BUILDKITE_SSH_KEYSCAN=true", "BUILDKITE_PR
-OJECT_SLUG=julialang/scimlbenchmarks-dot-jl", "BUILDKITE_INITIAL_JOB_ID=019
-48d8b-4f0c-41a2-b3e6-cc08e43c5c98", "BUILDKITE_BIN_PATH=/usr/bin", "PWD=/ca
-che/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl", "GRDIR=/cac
-he/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artif
-acts/cac6855585def46d7fa06ba4243521b00fa28a8d", "BUILDKITE_GIT_CHECKOUT_FLA
-GS=-f", "BUILDKITE_COMPUTE_TYPE=self-hosted", "BUILDKITE_GIT_SUBMODULES=tru
-e", "BUILDKITE_AGENT_META_DATA_OS=linux", "CI=true", "BUILDKITE_STEP_KEY=be
-nchmark-benchmarks-Jumps", "BUILDKITE_STEP_IDENTIFIER=benchmark-benchmarks-
-Jumps", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_0=markdown/**/figures/*.png", 
-"CONDA_PREFIX=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/conda/3/x86_64", "BUILDKITE_PLUGIN_COPPERMIND_INPUTS_2=./*.tom
-l", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_3=markdown/**/*.svg", "BUILDKITE_A
-GENT_PID=2", "BUILDKITE_LAST_HOOK_EXIT_STATUS=0", "BUILDKITE_AGENT_META_DAT
-A_EXCLUSIVE=true", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_6=script/**/*.jl", 
-"BUILDKITE_BUILD_CREATOR=Christopher Rackauckas", "BUILDKITE_REBUILT_FROM_B
-UILD_ID=", "OPENBLAS_DEFAULT_NUM_THREADS=1", "BUILDKITE_BRANCH=master", "JU
-LIA_DEPOT_PATH=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a
--f4d2d937f953", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_5=pdf/**/*.pdf", "BUIL
-DKITE_AGENT_DEBUG_HTTP=false", "SHELL=/shells/bash", "BUILDKITE=true", "BUI
-LDKITE_PLUGIN_CRYPTIC_PRIVILEGED=true", "BUILDKITE_HOOKS_PATH=/hooks", "BUI
-LDKITE_PIPELINE_DEFAULT_BRANCH=master", "BUILDKITE_PLUGIN_NAME=COPPERMIND",
- "BUILDKITE_REBUILT_FROM_BUILD_NUMBER=", "HOME=/root", "BUILDKITE_PLUGIN_CO
-PPERMIND_OUTPUTS_4=notebook/**/*.ipynb", "BUILDKITE_S3_DEFAULT_REGION=us-ea
-st-1", "BUILDKITE_TRIGGERED_FROM_BUILD_PIPELINE_SLUG=", "BUILDKITE_BUILD_CH
-ECKOUT_PATH=/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-j
-l", "BUILDKITE_SCRIPT_PATH=# Clear out these secrets as they're not needed 
-during the actual build\nBUILDKITE_S3_ACCESS_KEY_ID=\"\" BUILDKITE_S3_SECRE
-T_ACCESS_KEY=\"\" ./.buildkite/build_benchmark.sh \"benchmarks/Jumps\"\n", 
-"INVOCATION_ID=ed9a44182cac424599c57d13973a3cde", "BUILDKITE_PLUGIN_COPPERM
-IND_OUTPUTS_2=markdown/**/*.pdf", "LANG=en_US.UTF-8", "BUILDKITE_PIPELINE_N
-AME=SciMLBenchmarks.jl", "SHLVL=3", "XDG_RUNTIME_DIR=/run/user/21581", "OLD
-PWD=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f9
-53", "FONTCONFIG_FILE=/cache/julia-buildkite-plugin/depots/5b300254-1738-49
-89-ae0a-f4d2d937f953/artifacts/bd752d7807f5f10e2dce3d2b2b683589fa03d31a/etc
-/fonts/fonts.conf", "BUILDKITE_PLUGIN_CONFIGURATION={\"inputs\":[\"benchmar
-ks/Jumps\",\"src/**/*.jl\",\"./*.toml\"],\"outputs\":[\"markdown/**/figures
-/*.png\",\"markdown/**/*.md\",\"markdown/**/*.pdf\",\"markdown/**/*.svg\",\
-"notebook/**/*.ipynb\",\"pdf/**/*.pdf\",\"script/**/*.jl\"],\"s3_prefix\":\
-"s3://julialang-buildkite-artifacts/scimlbenchmarks\"}", "BUILDKITE_BUILD_P
-ATH=/cache/build", "BUILDKITE_BUILD_AUTHOR_EMAIL=accounts@chrisrackauckas.c
-om", "BUILDKITE_TIMEOUT=10080", "BUILDKITE_GIT_MIRRORS_PATH=/cache/repos", 
-"BUILDKITE_STRICT_SINGLE_HOOKS=false", "BUILDKITE_LABEL=:hammer: benchmarks
-/Jumps", "FONTCONFIG_PATH=/cache/julia-buildkite-plugin/depots/5b300254-173
-8-4989-ae0a-f4d2d937f953/artifacts/bd752d7807f5f10e2dce3d2b2b683589fa03d31a
-/etc/fonts", "JOURNAL_STREAM=8:667266937", "BUILDKITE_AGENT_META_DATA_SANDB
-OX_JL=true", "BUILDKITE_BUILD_CREATOR_TEAMS=juliagpu-full-access:sciml-full
--access", "BUILDKITE_PROJECT_PROVIDER=github", "BUILDKITE_S3_SECRET_ACCESS_
-KEY=", "GKS_USE_CAIRO_PNG=true", "BUILDKITE_REPO_MIRROR=/cache/repos/https-
---github-com-SciML-SciMLBenchmarks-jl-git", "GIT_TERMINAL_PROMPT=0", "BUILD
-KITE_JOB_ID=01948d8b-9d50-4213-988c-df9b2a12d5fa", "SYSTEMD_EXEC_PID=923513
-", "BUILDKITE_REDACTED_VARS=*_PASSWORD,*_SECRET,*_TOKEN,*_PRIVATE_KEY,*_ACC
-ESS_KEY,*_SECRET_KEY,*_CONNECTION_STRING", "BUILDKITE_BUILD_AUTHOR=Christop
-her Rackauckas", "USER=sabae", "GKSwstype=100", "BUILDKITE_REPO=https://git
-hub.com/SciML/SciMLBenchmarks.jl.git", "BUILDKITE_GIT_FETCH_FLAGS=-v --prun
-e --tags", "BUILDKITE_LOCAL_HOOKS_ENABLED=true", "MANAGERPID=7863", "BUILDK
-ITE_S3_ACCESS_KEY_ID=", "BUILDKITE_GIT_MIRRORS_LOCK_TIMEOUT=300", "BUILDKIT
-E_AGENT_ID=01948db6-a7e1-415f-871b-a84f03979a9e", "BUILDKITE_GIT_MIRRORS_SK
-IP_UPDATE=false", "BUILDKITE_ARTIFACT_PATHS=", "BUILDKITE_BUILD_URL=https:/
-/buildkite.com/julialang/scimlbenchmarks-dot-jl/builds/3119", "BUILDKITE_ME
-SSAGE=Merge pull request #1115 from vyudu/egfr\n\nTesting JumpProcesses - E
-GFR benchmark", "BUILDKITE_RETRY_COUNT=0", "LOGNAME=sabae", "JULIA_CPU_THRE
-ADS=128", "BUILDKITE_PLUGIN_JULIA_CACHE_DIR=/cache/julia-buildkite-plugin",
- "BUILDKITE_PLUGIN_COPPERMIND_INPUT_HASH=3ba2386f3eae02e3ee81c8c48e1ebcdbf0
-f3e613444fc4e53135d91b12a5cfbb", "BUILDKITE_PLUGIN_CRYPTIC_BASE64_AGENT_PRI
-VATE_KEY_SECRET=LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0N
-BUUVBdFhzSjMxRm0xSjdvSGM5b3hmWllKY3FxRk5yaXRMUUhxaDVJUHNGS3YySis1K1FVCkJGTW
-FEYzByN3M2dzQzUjAxaG5FTU9ZWDQwK3lFQ094eWxxK1o3dHdxWlNxS2U1MThwc0RyeWRna0xJN
-zRnQUUKWVljU2Rnb0xreGFqVjcva29IRUw4K3M0SnRUVTVCendURXVwTllTZGNQOFhQSmJLekY1
-RE5qdWJmeFA5ZjdSNwpseklMdjVpdmdpcWU1bW1MRndZcG9IU0VRVTV0ZU9PSEErS2NjUDZ3K2d
-1Q0VxMUZFb0N2MDRyaTFXaWpVZXorCjMrRFlTOFArUThkcTBiWFFmVEtVcnNLYTJHZy81ZmdIeW
-dEdWRHT2ZsdzUvVEljR3VVbGNsd1hZb2tTRkpSWUIKRWtqVDlwQmdiTTRHMi9rVzRhZmd3eGxzb
-jd1bFFuUDQ2VS8xZFFJREFRQUJBb0lCQVFDTU5sVjRUbUlPWC8raQpHSDh3ZzVXekRSTy9MU1gr
-eXlFbzFHQ282NW9lcDdDNDVNUjZXdUpFUzRKbjdSVkpoczVHSkg0cDhYdi9TYkdmCk9wVEFiTCt
-6VVdSSUFPNC9tMWRSYTJhN1NzY1d4RDN6N0dOMkhtK3E5elBlSHAxd3pIZU5aZ29BR0htM3RyUU
-0KMGpidUczN09OSG1YdGQ1MEYyVHo1TmcwN0hURkJwV3hMMjJwNm9aZzgyUEk0OXIrdUpWWmZ5M
-U5HZVRnaFA4cgp2dVRVTVJIcldZa25YbUR1eDVSMHNIdDFoU2FvTXBFbSsrMWc1V09rSzZDTGFJ
-bEV0ZitWVVBvR0piYlNYRzNJCmo5N1h5a3NGUDhGZ24wMWx4ZktGV1p4MXlnTVdsUm00SFNCTWV
-kc1FpWStqeG5Sd3BtRnh5L2pIOVhFTUppT0wKQSsvVFdCbUJBb0dCQU52cXROQjRuVS9zODIxTU
-9oalRPTmtFOGNJOENxV1BRRTZXcEFOYVY5UkVVcGVCZzhmMgpjTXg2VFMweE9EU0JRUk9PRnNEU
-G9pc1E0VVRGQmFialBLTU41d2IzNFVKYmN4V0ZwcGlLUHJMa09Zdmtqb01VCkNSb1pKK05Lb253
-RWh5bWJ0TG0yMHhmUUZCamY1R1QvMHJZUWcxUkN1OVllSmE0Z3NWYWtSNGh4QW9HQkFOTkIKMzh
-xenJhTTBDeHhrSnZkVmlTY3g2MFowN2g4OHFISy9SV2dVK3ZZaitwZy9ibXBwMmdiUXZkYTJxaS
-84UEl2OApSb0JwcmY2Y285TmdSa2JmY05xZmFnM1Z5SDhBNW1iUE1nK0s4YmFuKzlwU003WkREV
-W1sdU03R3ZRSW5OVnBCCnBJcE1uWEk5eDZSSFlpOFF2MHhXOXcyUmpmS09TbElYZFlITjZwOUZB
-b0dCQUp0NXdwMkVPRXR5VE9NZnVnOGsKL1pMSVlSY2VGYlRZb3ZFc3BRWE4wRHc4bFZ1UmNCWmx
-6M2R3bTdGd2s3ampESndEbjJodklzcHBvNmxYMVZnWQpYUjAxemZocU5QSVI3em52QkVuaHF0UV
-ViKzdNQmtqN1dEZ0FRdWY1TXdpVXR1NGVxOVdFUUpjY1A2a2FXTUZpCjc1aFI4bGNXMnU5VTN2V
-E5Iak1QNzVheEFvR0JBSm5HdExsZlMwQ21USVF4SHZBaE1rSDJvMVZaSGxCY25oMVEKdjV3QTBh
-RkVGVkNuczU4QVNEVjMwd2d0VlBxeTkvdkoraVBWU1ZNeUFFcUlKUC9IKytVWDcySDh3UUk1ekh
-6Lwp5MmZtOHdYTGg1ZW5DSDllbFppTGFsZ1I4RmxWNHc4OUF5R3NuVnNnUDJlRWtxTEI1UTRUcT
-ZnVDBLakVETE51CjRobEhvOGFsQW9HQUhBVGltTGRkS0JFTkN2MXZyNnZ0d3JCZGRCbWlGSWFwa
-VcvMk5acWxCTFp1bEp6MEwzdCsKM3FvSUF0Uisxd2xpWkQwZGJnRGdVeVRMcnN5Y1RDSkZIczNI
-ZTFXb3NCSzcxTmlncFZhWEVzWnFpOHNENjlvUQo2QkFnaEdvbnNGbTEydzhhRGNDdm92WUxLTlh
-VV1BFT1c0akdvd2k0Tmx4NGZidHlkYXpIUEdnPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS
-0tLQo=", "BUILDKITE_PIPELINE_SLUG=scimlbenchmarks-dot-jl", "BUILDKITE_SHELL
-=/bin/bash -e -c", "BUILDKITE_PLUGINS_ENABLED=true", "LANGUAGE=en_US", "GKS
-_FONTPATH=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2
-d937f953/artifacts/cac6855585def46d7fa06ba4243521b00fa28a8d", "BUILDKITE_AG
-ENT_NAME=exclusive-amdci3.0", "BUILDKITE_STEP_ID=01948d8b-9d26-4245-b7e4-1e
-6633f5d19f", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_1=markdown/**/*.md", "BUI
-LDKITE_TAG=", "OPENBLAS_MAIN_FREE=1", "PATH=/cache/julia-buildkite-plugin/j
-ulia_installs/bin/linux/x64/1.10/julia-1.10-latest-linux-x86_64/bin:/usr/lo
-cal/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local
-/games:/snap/bin:/usr/bin:/usr/local/bin:/usr/bin:/bin", "GKS_ENCODING=utf8
-", "BUILDKITE_AGENT_META_DATA_NUM_CPUS=128", "BUILDKITE_TRIGGERED_FROM_BUIL
-D_NUMBER=", "BUILDKITE_AGENT_META_DATA_CONFIG_GITSHA=f1058577", "BUILDKITE_
-COMMAND=# Clear out these secrets as they're not needed during the actual b
-uild\nBUILDKITE_S3_ACCESS_KEY_ID=\"\" BUILDKITE_S3_SECRET_ACCESS_KEY=\"\" .
-/.buildkite/build_benchmark.sh \"benchmarks/Jumps\"\n", "LIBDECOR_PLUGIN_DI
-R=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-/artifacts/38e215c51e5c0f77bc7a8813ba4586632a8fc750/lib/libdecor/plugins-1"
-, "BUILDKITE_PLUGIN_VALIDATION=false", "BUILDKITE_AGENT_META_DATA_ARCH=x86_
-64", "CONDARC=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/conda/3/x86_64/condarc-julia.yml", "FORCE_SANDBOX_MODE=unprivi
-leged", "BUILDKITE_TRIGGERED_FROM_BUILD_ID=", "TERM=xterm-256color", "PYTHO
-NIOENCODING=UTF-8", "BUILDKITE_PULL_REQUEST_BASE_BRANCH=", "BUILDKITE_PIPEL
-INE_ID=5b300254-1738-4989-ae0a-f4d2d937f953", "_=/cache/julia-buildkite-plu
-gin/julia_installs/bin/linux/x64/1.10/julia-1.10-latest-linux-x86_64/bin/ju
-lia", "BUILDKITE_BUILD_ID=01948d8b-4f01-487a-a3b5-5fe7a3c6faa5", "BUILDKITE
-_AGENT_ENDPOINT=https://agent.buildkite.com/v3", "BUILDKITE_PLUGINS=[{\"git
-hub.com/staticfloat/cryptic-buildkite-plugin#v2\":{\"files\":[\".buildkite/
-secrets/token.toml\"],\"variables\":[\"BUILDKITE_S3_ACCESS_KEY_ID=\\\"U2Fsd
-GVkX1+x3xs1ZRRZRt3FmwFQmYYKnpV7o8xKkX5Ib6y0o5fv0+rskVAj+JKu\\\"\",\"BUILDKI
-TE_S3_SECRET_ACCESS_KEY=\\\"U2FsdGVkX1+LWh1yX7LsMBlecEJLc08eJrgOhurhd47CY1/
-jS3wCGVCQmS1t6f2j70spBoFdfc9kn2naj8HH5A==\\\"\",\"BUILDKITE_S3_DEFAULT_REGI
-ON=\\\"U2FsdGVkX18ccoE9FmtkwsCm1x0MLMBlN/FLcAyKkY4=\\\"\"]}},{\"github.com/
-JuliaCI/julia-buildkite-plugin#v1\":{\"version\":\"1.10\"}},{\"github.com/s
-taticfloat/sandbox-buildkite-plugin\":{\"gid\":1000,\"uid\":1000,\"rootfs_u
-rl\":\"https://github.com/thazhemadam/openmodelica-rootfs-image/releases/do
-wnload/v1.23.0/rootfs-openmodelica-v1.23.0.amd64.tar.gz\",\"workspaces\":[\
-"/cache/julia-buildkite-plugin:/cache/julia-buildkite-plugin\"],\"rootfs_tr
-eehash\":\"82970243dc4f188e599a976abc20951f4aba2912\"}},{\"github.com/stati
-cfloat/coppermind-buildkite-plugin#v1\":{\"inputs\":[\"benchmarks/Jumps\",\
-"src/**/*.jl\",\"./*.toml\"],\"outputs\":[\"markdown/**/figures/*.png\",\"m
-arkdown/**/*.md\",\"markdown/**/*.pdf\",\"markdown/**/*.svg\",\"notebook/**
-/*.ipynb\",\"pdf/**/*.pdf\",\"script/**/*.jl\"],\"s3_prefix\":\"s3://julial
-ang-buildkite-artifacts/scimlbenchmarks\"}}]", "BUILDKITE_SOCKETS_PATH=/roo
-t/.buildkite-agent/sockets", "SANDBOX_PERSISTENCE_DIR=/cache/sandbox_persis
-tence", "BUILDKITE_GIT_CLEAN_FLAGS=-ffxdq", "BUILDKITE_COMMIT=d44f9459eeac4
-6f1151a3bfaba382886676e6690", "BUILDKITE_PULL_REQUEST=false", "BUILDKITE_OR
-GANIZATION_ID=d409823c-5fa7-41c8-9033-7269c5fde4f3", "GKS_QT=env LD_LIBRARY
-_PATH=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
-f953/artifacts/f839432e3d2904a5c847b217ef0c0f489377ecc5/lib:/cache/julia-bu
-ildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/5acd76
-6faaca59c3c1f3cfa67e2bf6dcf1e3e883/lib:/cache/julia-buildkite-plugin/depots
-/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/08ab7db13fbc32076a77781b2f8
-bd372cf4c9a8d/lib:/cache/julia-buildkite-plugin/julia_installs/bin/linux/x6
-4/1.10/julia-1.10-latest-linux-x86_64/bin/../lib/julia:/cache/julia-buildki
-te-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/0ccc8805e50
-47cf9fbd848c4f7d4c15715aad7c9/lib:/cache/julia-buildkite-plugin/depots/5b30
-0254-1738-4989-ae0a-f4d2d937f953/artifacts/dc526f26fb179a3f68eb13fcbe5d2d2a
-5aa7eeac/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f
-4d2d937f953/artifacts/812bb7cf607c01b79ab9407ffed3a3e924c1af83/lib:/cache/j
-ulia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts
-/6d8a1f48d4b47dc03fa048d88680be84ae15e5fc/lib:/cache/julia-buildkite-plugin
-/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/b3ddd583e7aec92a77cf
-5961fad01fd7063c1d40/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738
--4989-ae0a-f4d2d937f953/artifacts/494c807a751dcd5c5f898d9954115592fcb3e955/
-lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f9
-53/artifacts/a0f4f1441f9fabbc6b0c3a1bf38bfa415fce0bab/lib:/cache/julia-buil
-dkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/2b18d04d
-0b7fdaa8e5ddbf432b44048a3571f05b/lib:/cache/julia-buildkite-plugin/depots/5
-b300254-1738-4989-ae0a-f4d2d937f953/artifacts/96bc7b9ddb319d1a051535c85184a
-a2bf42dbd8b/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0
-a-f4d2d937f953/artifacts/bd752d7807f5f10e2dce3d2b2b683589fa03d31a/lib:/cach
-e/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifa
-cts/0a1006d282bce91b5cd408c714cbb95d3bb4f515/lib:/cache/julia-buildkite-plu
-gin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/59eff635528e6914e
-1a96db241e950195574903b/lib:/cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/artifacts/2bb2b0081086bcb24e6bd287b7416b6b61d856
-a3/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d93
-7f953/artifacts/d632a0145c0b967e10f0612438e65bf33ce26882/lib:/cache/julia-b
-uildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/2b9ac
-56bc0585f3b03cd92f988f0d07c6ab12822/lib:/cache/julia-buildkite-plugin/depot
-s/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/8223b86c51229362d4689de6a5
-127d0b80ea77bd/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-
-ae0a-f4d2d937f953/artifacts/e2512e1cd411449b9bede7b4294c7409c9973345/lib:/c
-ache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/art
-ifacts/d4f3ff9736df0dda120f8dc1d27174b0d5696fb1/lib:/cache/julia-buildkite-
-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/b8a470e4553346
-122607f94ec60d83c77f061cd6/lib:/cache/julia-buildkite-plugin/depots/5b30025
-4-1738-4989-ae0a-f4d2d937f953/artifacts/eb13375496c29fe52101a0e6710c54ff87a
-a0e20/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2
-d937f953/artifacts/3ded11a619b50414af902abd0a7a5bb6426b5b92/lib:/cache/juli
-a-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/bd
-1f25e7053ebc00ee7d82f3c5ec4cf1e9a51e17/lib:/cache/julia-buildkite-plugin/de
-pots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/cf5d5f8a6109be3f9c460a3
-9768f57a3e53ff11d/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-49
-89-ae0a-f4d2d937f953/artifacts/c8a20a2030f10b70947d8d2a6bff7f8b5f343fe9/lib
-:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/
-artifacts/0631e2a6a31b5692eec7a575836451b16b734ec0/lib:/cache/julia-buildki
-te-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/4abd0521d21
-0cb9e48ea5e711873ba34dc05fc70/lib:/cache/julia-buildkite-plugin/depots/5b30
-0254-1738-4989-ae0a-f4d2d937f953/artifacts/0b5269206a6849e48487ed04136c30b1
-f12443e7/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f
-4d2d937f953/artifacts/587de110e5f58fd435dc35b294df31bb7a75f692/lib:/cache/j
-ulia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts
-/fc239b3ff5739aeab252bd154fa4dd045fefe629/lib:/cache/julia-buildkite-plugin
-/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/c951fb23b5652def1dea
-483af7095a38f3b3cefd/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738
--4989-ae0a-f4d2d937f953/artifacts/85dab0a3f6b9cc2e5d61165ee376bf46260812a4/
-lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f9
-53/artifacts/5b83972689fb7dea5e89326f1c0ba60d68e962fb/lib:/cache/julia-buil
-dkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/66340992
-0d88c928b764932f501919306eb3a558/lib:/cache/julia-buildkite-plugin/depots/5
-b300254-1738-4989-ae0a-f4d2d937f953/artifacts/a7c26f0f974654c19a165fb76317f
-44001aa0a29/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0
-a-f4d2d937f953/artifacts/ab035e8b0b866b38237e59b109fbea663bf2a846/lib:/cach
-e/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifa
-cts/951960aa7e4599865406f432151003dd82cde65d/lib:/cache/julia-buildkite-plu
-gin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/ac4708c3ef4040501
-4c1080c17818cfa7d017563/lib:/cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/artifacts/a58c60683d9991d236f2a2d707edcc09974ca6
-2b/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d93
-7f953/artifacts/38e215c51e5c0f77bc7a8813ba4586632a8fc750/lib:/cache/julia-b
-uildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/b9b76
-2dad2f49b75527e933ac66eea5af4cc8a30/lib:/cache/julia-buildkite-plugin/depot
-s/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/4667462ed75b7b8e3a82c128fb
-1bfc71edbc2f39/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-
-ae0a-f4d2d937f953/artifacts/50f053314e373517d1763bb91d3520bc7a5e665d/lib:/c
-ache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/art
-ifacts/b91557c233ebb402f9a2c3f8dec9573990211818/lib:/cache/julia-buildkite-
-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/f2af068a5dffc0
-225d3e1e01e896cd11792ecfe0/lib:/cache/julia-buildkite-plugin/depots/5b30025
-4-1738-4989-ae0a-f4d2d937f953/artifacts/55f9376d5c77106b4813c4fb45a6b37a77d
-4d823/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2
-d937f953/artifacts/d03aca19e34a4289ab7f118cf0b212ca46eb49be/lib:/cache/juli
-a-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/e3
-e8d2abb72b0145ee6de4b7be33e5a5c67e5f59/lib:/cache/julia-buildkite-plugin/de
-pots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/f04f41a07edc6a87194afc6
-b58e284f94924d43a/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-49
-89-ae0a-f4d2d937f953/artifacts/f7ee295b548ab3df8b28b6d67cd65b5eeef8dad1/lib
-:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/
-artifacts/21ed7b5e888fb9b18f44ba3f4652f14d8beda78c/lib:/cache/julia-buildki
-te-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/872754c2f79
-5d19a3e2e205b2bbaea659f28d11e/lib:/cache/julia-buildkite-plugin/depots/5b30
-0254-1738-4989-ae0a-f4d2d937f953/artifacts/7da37be2742b3d1cfe1c14bf5bbd85ae
-d4887f46/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f
-4d2d937f953/artifacts/c35cb3f6f3043a4e962fd56b61ad91b4adb557f7/lib:/cache/j
-ulia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts
-/13befbe35cffe7da192c7001ece18b4be3aa3720/lib:/cache/julia-buildkite-plugin
-/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/cacd8c147f866d6672e1
-aca9bb01fb919a81e96a/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738
--4989-ae0a-f4d2d937f953/artifacts/b7dc5dce963737414a564aca8d4b82ee388f4fa1/
-lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f9
-53/artifacts/0d364e900393f710a03a5bafe2852d76e4d2c2cd/lib:/cache/julia-buil
-dkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/1a2adcee
-7d99fea18ead33c350332626b262e29a/lib:/cache/julia-buildkite-plugin/depots/5
-b300254-1738-4989-ae0a-f4d2d937f953/artifacts/40eea58ff37ecc8fb6f21f41079a3
-3b511b3ff92/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0
-a-f4d2d937f953/artifacts/79cc5446ced978de84b6e673e01da0ebfdd6e4a5/lib:/cach
-e/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifa
-cts/fce445d991cf502908d681348eec2174c5e31ba8/lib:/cache/julia-buildkite-plu
-gin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/b0d2538004dda9eb6
-449b72b0b85703aeac30a66/lib:/cache/julia-buildkite-plugin/depots/5b300254-1
-738-4989-ae0a-f4d2d937f953/artifacts/f03dd5ac03468009d5a99bbfcdf336c2dc372d
-e4/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d93
-7f953/artifacts/eae77862e95d04dfafb9fbe9ae39e688b35d756a/lib:/cache/julia-b
-uildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/cac68
-55585def46d7fa06ba4243521b00fa28a8d/lib:/cache/julia-buildkite-plugin/julia
-_installs/bin/linux/x64/1.10/julia-1.10-latest-linux-x86_64/bin/../lib/juli
-a:/cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia-1.1
-0-latest-linux-x86_64/bin/../lib /cache/julia-buildkite-plugin/depots/5b300
-254-1738-4989-ae0a-f4d2d937f953/artifacts/cac6855585def46d7fa06ba4243521b00
-fa28a8d/bin/gksqt"]), ProcessExited(1)) [1]
+y python=3.8`,["BUILDKITE_UNBLOCKER_TEAMS=juliagpu-full-access:sciml-full-a
+ccess", "DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/21581/bus", "BUILDKIT
+E_PULL_REQUEST_REPO=", "BUILDKITE_SOURCE=webhook", "BUILDKITE_PLUGIN_COPPER
+MIND_INPUTS_0=benchmarks/Jumps", "BUILDKITE_GIT_CLONE_FLAGS=-v", "BUILDKITE
+_PLUGIN_CRYPTIC_BASE64_AGENT_PUBLIC_KEY_SECRET=LS0tLS1CRUdJTiBQVUJMSUMgS0VZ
+LS0tLS0KTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF0WHNKMzF
+GbTFKN29IYzlveGZaWQpKY3FxRk5yaXRMUUhxaDVJUHNGS3YySis1K1FVQkZNYURjMHI3czZ3ND
+NSMDFobkVNT1lYNDAreUVDT3h5bHErClo3dHdxWlNxS2U1MThwc0RyeWRna0xJNzRnQUVZWWNTZ
+GdvTGt4YWpWNy9rb0hFTDgrczRKdFRVNUJ6d1RFdXAKTllTZGNQOFhQSmJLekY1RE5qdWJmeFA5
+ZjdSN2x6SUx2NWl2Z2lxZTVtbUxGd1lwb0hTRVFVNXRlT09IQStLYwpjUDZ3K2d1Q0VxMUZFb0N
+2MDRyaTFXaWpVZXorMytEWVM4UCtROGRxMGJYUWZUS1Vyc0thMkdnLzVmZ0h5Z0R1CmRHT2Zsdz
+UvVEljR3VVbGNsd1hZb2tTRkpSWUJFa2pUOXBCZ2JNNEcyL2tXNGFmZ3d4bHNuN3VsUW5QNDZVL
+zEKZFFJREFRQUIKLS0tLS1FTkQgUFVCTElDIEtFWS0tLS0tCg==", "BUILDKITE_ENV_FILE=/
+tmp/job-env-01972aee-952f-4edf-9681-772a5d47bdbe861539779", "BUILDKITE_BUIL
+D_NUMBER=3409", "BUILDKITE_GIT_CLONE_MIRROR_FLAGS=-v", "BUILDKITE_AGENT_DEB
+UG=false", "BUILDKITE_AGENT_META_DATA_QUEUE=juliaecosystem", "BUILDKITE_PLU
+GINS_PATH=/etc/buildkite-agent/plugins", "BUILDKITE_COMMAND_EVAL=true", "BU
+ILDKITE_AGENT_META_DATA_SANDBOX_CAPABLE=true", "BUILDKITE_ORGANIZATION_SLUG
+=julialang", "BUILDKITE_PLUGIN_COPPERMIND_INPUTS_1=src/**/*.jl", "BUILDKITE
+_PIPELINE_PROVIDER=github", "BUILDKITE_AGENT_EXPERIMENT=resolve-commit-afte
+r-checkout", "BUILDKITE_CONFIG_PATH=/etc/buildkite-agent/buildkite-agent.cf
+g", "BUILDKITE_PIPELINE_TEAMS=sciml-full-access", "BUILDKITE_AGENT_META_DAT
+A_CRYPTIC_CAPABLE=true", "BUILDKITE_AGENT_ACCESS_TOKEN=bkaj_eyJhbGciOiJIUzU
+xMiJ9.eyJzdWIiOiIwMTk3MmFlZS05NTJmLTRlZGYtOTY4MS03NzJhNWQ0N2JkYmUiLCJhdWQiO
+iIwMTk3MmQ5OC1iZTBiLTQ3ZDEtOTU4Ni05YjcwMzA1YjU2ZTAiLCJpc3MiOiJidWlsZGtpdGUi
+LCJleHAiOjE3NDk0MjUwNzQsImlhdCI6MTc0ODgxNjY3NCwib3JnYW5pemF0aW9uX2lkIjoiZDQ
+wOTgyM2MtNWZhNy00MWM4LTkwMzMtNzI2OWM1ZmRlNGYzIn0.K6PY1ZRJs8NbsdNVkdOENuXUKa
+y1IClQ9Rppd_ZuAjDZ6AlKy6o-Em9c5InmY7Fp-8JuBhkgWXNkVBP0mnyHWA", "BUILDKITE_P
+ULL_REQUEST_LABELS=", "BUILDKITE_PLUGIN_CRYPTIC_BASE64_SIGNED_JOB_ID_SECRET
+=IPfgsEMt4nBS7nNc8v6kB5ewad0H+7c6nfMpufYSwFa9T5fxQEizYeOYH8pb8Eb+61bXsY+peS
+3jbUDPcMxVTeYreoxiwLWVwW6Ut+kiX4ywwYSQ+PiH3cWKtFdIxmqXfpp/MrukL6caZb+JjfgdV
+KSrKUR4HikI8txHZSgmRcQnwb6wUDT6Z0ehBVjzuE9LzrmqzPcjYWlOvUo1unLdFwoqjzAXoNe7
+bVMprEbhjPO9ULe2vXAxsL1Rl0XUW3fMfozC1pmfZQzO7GJCp61vH9WiFoTjXrGnNdPL6wfUZXZ
+Q3ui1Y4o3Y5ZnxeIE7RddRfituWJlkkw5D2J0nRg8nQ==", "BUILDKITE_PLUGIN_COPPERMIN
+D_S3_PREFIX=s3://julialang-buildkite-artifacts/scimlbenchmarks", "BUILDKITE
+_BUILD_CREATOR_EMAIL=accounts@chrisrackauckas.com", "XKB_CONFIG_ROOT=/cache
+/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifac
+ts/23d821271a00e164eb2b5c273985da44f9a831a1/share/X11/xkb", "BUILDKITE_SSH_
+KEYSCAN=true", "BUILDKITE_UNBLOCKER_EMAIL=accounts@chrisrackauckas.com", "B
+UILDKITE_PROJECT_SLUG=julialang/scimlbenchmarks-dot-jl", "BUILDKITE_INITIAL
+_JOB_ID=01972aec-7855-409e-ab37-8d23dd60ba67", "BUILDKITE_BIN_PATH=/usr/bin
+", "PWD=/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl", 
+"GRDIR=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d93
+7f953/artifacts/9d01ece285704bef6238fd8461f65f1b63aeaece", "BUILDKITE_GIT_C
+HECKOUT_FLAGS=-f", "BUILDKITE_COMPUTE_TYPE=self-hosted", "BUILDKITE_GIT_SUB
+MODULES=true", "BUILDKITE_AGENT_META_DATA_OS=linux", "CI=true", "BUILDKITE_
+STEP_KEY=benchmark-benchmarks-Jumps", "BUILDKITE_STEP_IDENTIFIER=benchmark-
+benchmarks-Jumps", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_0=markdown/**/figur
+es/*.png", "CONDA_PREFIX=/cache/julia-buildkite-plugin/depots/5b300254-1738
+-4989-ae0a-f4d2d937f953/conda/3/x86_64", "BUILDKITE_PLUGIN_COPPERMIND_INPUT
+S_2=./*.toml", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_3=markdown/**/*.svg", "
+BUILDKITE_AGENT_PID=2", "BUILDKITE_LAST_HOOK_EXIT_STATUS=0", "BUILDKITE_AGE
+NT_META_DATA_EXCLUSIVE=true", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_6=script
+/**/*.jl", "BUILDKITE_BUILD_CREATOR=Christopher Rackauckas", "BUILDKITE_UNB
+LOCKER=Christopher Rackauckas", "BUILDKITE_REBUILT_FROM_BUILD_ID=", "OPENBL
+AS_DEFAULT_NUM_THREADS=1", "BUILDKITE_BRANCH=master", "JULIA_DEPOT_PATH=/ca
+che/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953", "B
+UILDKITE_PLUGIN_COPPERMIND_OUTPUTS_5=pdf/**/*.pdf", "BUILDKITE_AGENT_DEBUG_
+HTTP=false", "SHELL=/shells/bash", "BUILDKITE=true", "BUILDKITE_PLUGIN_CRYP
+TIC_PRIVILEGED=true", "BUILDKITE_HOOKS_PATH=/hooks", "BUILDKITE_PIPELINE_DE
+FAULT_BRANCH=master", "BUILDKITE_PLUGIN_NAME=COPPERMIND", "BUILDKITE_REBUIL
+T_FROM_BUILD_NUMBER=", "HOME=/root", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_4
+=notebook/**/*.ipynb", "BUILDKITE_S3_DEFAULT_REGION=us-east-1", "BUILDKITE_
+TRIGGERED_FROM_BUILD_PIPELINE_SLUG=", "BUILDKITE_BUILD_CHECKOUT_PATH=/cache
+/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl", "BUILDKITE_SCR
+IPT_PATH=# Clear out these secrets as they're not needed during the actual 
+build\nBUILDKITE_S3_ACCESS_KEY_ID=\"\" BUILDKITE_S3_SECRET_ACCESS_KEY=\"\" 
+./.buildkite/build_benchmark.sh \"benchmarks/Jumps\"\n", "INVOCATION_ID=4cc
+4229329854fe0bfb6afa2496b48ef", "BUILDKITE_PLUGIN_COPPERMIND_OUTPUTS_2=mark
+down/**/*.pdf", "LANG=en_US.UTF-8", "BUILDKITE_PIPELINE_NAME=SciMLBenchmark
+s.jl", "SHLVL=3", "XDG_RUNTIME_DIR=/run/user/21581", "OLDPWD=/cache/julia-b
+uildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953", "FONTCONFIG_F
+ILE=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f9
+53/artifacts/2a6bae048c28452d329375cbb7479499115e45ad/etc/fonts/fonts.conf"
+, "BUILDKITE_PLUGIN_CONFIGURATION={\"inputs\":[\"benchmarks/Jumps\",\"src/*
+*/*.jl\",\"./*.toml\"],\"outputs\":[\"markdown/**/figures/*.png\",\"markdow
+n/**/*.md\",\"markdown/**/*.pdf\",\"markdown/**/*.svg\",\"notebook/**/*.ipy
+nb\",\"pdf/**/*.pdf\",\"script/**/*.jl\"],\"s3_prefix\":\"s3://julialang-bu
+ildkite-artifacts/scimlbenchmarks\"}", "BUILDKITE_BUILD_PATH=/cache/build",
+ "BUILDKITE_BUILD_AUTHOR_EMAIL=accounts@chrisrackauckas.com", "BUILDKITE_TI
+MEOUT=10080", "BUILDKITE_GIT_MIRRORS_PATH=/cache/repos", "BUILDKITE_STRICT_
+SINGLE_HOOKS=false", "BUILDKITE_LABEL=:hammer: benchmarks/Jumps", "FONTCONF
+IG_PATH=/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
+37f953/artifacts/2a6bae048c28452d329375cbb7479499115e45ad/etc/fonts", "JOUR
+NAL_STREAM=8:970893541", "BUILDKITE_AGENT_META_DATA_SANDBOX_JL=true", "BUIL
+DKITE_BUILD_CREATOR_TEAMS=juliagpu-full-access:sciml-full-access", "BUILDKI
+TE_PROJECT_PROVIDER=github", "QT_ACCESSIBILITY=1", "BUILDKITE_S3_SECRET_ACC
+ESS_KEY=", "GKS_USE_CAIRO_PNG=true", "BUILDKITE_REPO_MIRROR=/cache/repos/ht
+tps---github-com-SciML-SciMLBenchmarks-jl-git", "GIT_TERMINAL_PROMPT=0", "B
+UILDKITE_JOB_ID=01972aee-952f-4edf-9681-772a5d47bdbe", "SYSTEMD_EXEC_PID=17
+97210", "BUILDKITE_REDACTED_VARS=*_PASSWORD,*_SECRET,*_TOKEN,*_PRIVATE_KEY,
+*_ACCESS_KEY,*_SECRET_KEY,*_CONNECTION_STRING", "BUILDKITE_BUILD_AUTHOR=Chr
+istopher Rackauckas", "USER=sabae", "GKSwstype=100", "BUILDKITE_REPO=https:
+//github.com/SciML/SciMLBenchmarks.jl.git", "BUILDKITE_GIT_FETCH_FLAGS=-v -
+-prune --tags", "BUILDKITE_LOCAL_HOOKS_ENABLED=true", "MANAGERPID=59175", "
+BUILDKITE_S3_ACCESS_KEY_ID=", "BUILDKITE_GIT_MIRRORS_LOCK_TIMEOUT=300", "BU
+ILDKITE_AGENT_ID=01972d98-be0b-47d1-9586-9b70305b56e0", "BUILDKITE_GIT_MIRR
+ORS_SKIP_UPDATE=false", "BUILDKITE_ARTIFACT_PATHS=", "BUILDKITE_BUILD_URL=h
+ttps://buildkite.com/julialang/scimlbenchmarks-dot-jl/builds/3409", "BUILDK
+ITE_MESSAGE=Merge pull request #1259 from SciML/jumps\n\nBump jumps tests",
+ "BUILDKITE_RETRY_COUNT=0", "LOGNAME=sabae", "JULIA_CPU_THREADS=128", "BUIL
+DKITE_PLUGIN_JULIA_CACHE_DIR=/cache/julia-buildkite-plugin", "BUILDKITE_PLU
+GIN_COPPERMIND_INPUT_HASH=5db57f718fd34b05f3c8371a16d76dab965bb0c2290233f4f
+83648e323d053cb", "BUILDKITE_PLUGIN_CRYPTIC_BASE64_AGENT_PRIVATE_KEY_SECRET
+=LS0tLS1CRUdJTiBSU0EgUFJJVkFURSBLRVktLS0tLQpNSUlFcFFJQkFBS0NBUUVBdFhzSjMxRm
+0xSjdvSGM5b3hmWllKY3FxRk5yaXRMUUhxaDVJUHNGS3YySis1K1FVCkJGTWFEYzByN3M2dzQzU
+jAxaG5FTU9ZWDQwK3lFQ094eWxxK1o3dHdxWlNxS2U1MThwc0RyeWRna0xJNzRnQUUKWVljU2Rn
+b0xreGFqVjcva29IRUw4K3M0SnRUVTVCendURXVwTllTZGNQOFhQSmJLekY1RE5qdWJmeFA5Zjd
+SNwpseklMdjVpdmdpcWU1bW1MRndZcG9IU0VRVTV0ZU9PSEErS2NjUDZ3K2d1Q0VxMUZFb0N2MD
+RyaTFXaWpVZXorCjMrRFlTOFArUThkcTBiWFFmVEtVcnNLYTJHZy81ZmdIeWdEdWRHT2ZsdzUvV
+EljR3VVbGNsd1hZb2tTRkpSWUIKRWtqVDlwQmdiTTRHMi9rVzRhZmd3eGxzbjd1bFFuUDQ2VS8x
+ZFFJREFRQUJBb0lCQVFDTU5sVjRUbUlPWC8raQpHSDh3ZzVXekRSTy9MU1greXlFbzFHQ282NW9
+lcDdDNDVNUjZXdUpFUzRKbjdSVkpoczVHSkg0cDhYdi9TYkdmCk9wVEFiTCt6VVdSSUFPNC9tMW
+RSYTJhN1NzY1d4RDN6N0dOMkhtK3E5elBlSHAxd3pIZU5aZ29BR0htM3RyUU0KMGpidUczN09OS
+G1YdGQ1MEYyVHo1TmcwN0hURkJwV3hMMjJwNm9aZzgyUEk0OXIrdUpWWmZ5MU5HZVRnaFA4cgp2
+dVRVTVJIcldZa25YbUR1eDVSMHNIdDFoU2FvTXBFbSsrMWc1V09rSzZDTGFJbEV0ZitWVVBvR0p
+iYlNYRzNJCmo5N1h5a3NGUDhGZ24wMWx4ZktGV1p4MXlnTVdsUm00SFNCTWVkc1FpWStqeG5Sd3
+BtRnh5L2pIOVhFTUppT0wKQSsvVFdCbUJBb0dCQU52cXROQjRuVS9zODIxTU9oalRPTmtFOGNJO
+ENxV1BRRTZXcEFOYVY5UkVVcGVCZzhmMgpjTXg2VFMweE9EU0JRUk9PRnNEUG9pc1E0VVRGQmFi
+alBLTU41d2IzNFVKYmN4V0ZwcGlLUHJMa09Zdmtqb01VCkNSb1pKK05Lb253RWh5bWJ0TG0yMHh
+mUUZCamY1R1QvMHJZUWcxUkN1OVllSmE0Z3NWYWtSNGh4QW9HQkFOTkIKMzhxenJhTTBDeHhrSn
+ZkVmlTY3g2MFowN2g4OHFISy9SV2dVK3ZZaitwZy9ibXBwMmdiUXZkYTJxaS84UEl2OApSb0Jwc
+mY2Y285TmdSa2JmY05xZmFnM1Z5SDhBNW1iUE1nK0s4YmFuKzlwU003WkREVW1sdU03R3ZRSW5O
+VnBCCnBJcE1uWEk5eDZSSFlpOFF2MHhXOXcyUmpmS09TbElYZFlITjZwOUZBb0dCQUp0NXdwMkV
+PRXR5VE9NZnVnOGsKL1pMSVlSY2VGYlRZb3ZFc3BRWE4wRHc4bFZ1UmNCWmx6M2R3bTdGd2s3am
+pESndEbjJodklzcHBvNmxYMVZnWQpYUjAxemZocU5QSVI3em52QkVuaHF0UVViKzdNQmtqN1dEZ
+0FRdWY1TXdpVXR1NGVxOVdFUUpjY1A2a2FXTUZpCjc1aFI4bGNXMnU5VTN2VE5Iak1QNzVheEFv
+R0JBSm5HdExsZlMwQ21USVF4SHZBaE1rSDJvMVZaSGxCY25oMVEKdjV3QTBhRkVGVkNuczU4QVN
+EVjMwd2d0VlBxeTkvdkoraVBWU1ZNeUFFcUlKUC9IKytVWDcySDh3UUk1ekh6Lwp5MmZtOHdYTG
+g1ZW5DSDllbFppTGFsZ1I4RmxWNHc4OUF5R3NuVnNnUDJlRWtxTEI1UTRUcTZnVDBLakVETE51C
+jRobEhvOGFsQW9HQUhBVGltTGRkS0JFTkN2MXZyNnZ0d3JCZGRCbWlGSWFwaVcvMk5acWxCTFp1
+bEp6MEwzdCsKM3FvSUF0Uisxd2xpWkQwZGJnRGdVeVRMcnN5Y1RDSkZIczNIZTFXb3NCSzcxTml
+ncFZhWEVzWnFpOHNENjlvUQo2QkFnaEdvbnNGbTEydzhhRGNDdm92WUxLTlhVV1BFT1c0akdvd2
+k0Tmx4NGZidHlkYXpIUEdnPQotLS0tLUVORCBSU0EgUFJJVkFURSBLRVktLS0tLQo=", "BUILD
+KITE_PIPELINE_SLUG=scimlbenchmarks-dot-jl", "BUILDKITE_SHELL=/bin/bash -e -
+c", "BUILDKITE_UNBLOCKER_ID=e8e997cc-aa1b-4cc5-8244-2786f678c8d6", "BUILDKI
+TE_PLUGINS_ENABLED=true", "LANGUAGE=en_US", "GKS_FONTPATH=/cache/julia-buil
+dkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/9d01ece2
+85704bef6238fd8461f65f1b63aeaece", "BUILDKITE_AGENT_NAME=exclusive-amdci1.0
+", "BUILDKITE_STEP_ID=01972aee-9502-491a-bb55-f9b5c4c2f5ac", "BUILDKITE_PLU
+GIN_COPPERMIND_OUTPUTS_1=markdown/**/*.md", "BUILDKITE_TAG=", "OPENBLAS_MAI
+N_FREE=1", "PATH=/cache/julia-buildkite-plugin/julia_installs/bin/linux/x64
+/1.10/julia-1.10-latest-linux-x86_64/bin:/usr/local/sbin:/usr/local/bin:/us
+r/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/bin:/
+usr/local/bin:/usr/bin:/bin", "GKS_ENCODING=utf8", "BUILDKITE_AGENT_META_DA
+TA_NUM_CPUS=128", "BUILDKITE_TRIGGERED_FROM_BUILD_NUMBER=", "BUILDKITE_AGEN
+T_META_DATA_CONFIG_GITSHA=2a413ab3", "BUILDKITE_COMMAND=# Clear out these s
+ecrets as they're not needed during the actual build\nBUILDKITE_S3_ACCESS_K
+EY_ID=\"\" BUILDKITE_S3_SECRET_ACCESS_KEY=\"\" ./.buildkite/build_benchmark
+.sh \"benchmarks/Jumps\"\n", "LIBDECOR_PLUGIN_DIR=/cache/julia-buildkite-pl
+ugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/38e215c51e5c0f77
+bc7a8813ba4586632a8fc750/lib/libdecor/plugins-1", "BUILDKITE_PLUGIN_VALIDAT
+ION=false", "BUILDKITE_AGENT_META_DATA_ARCH=x86_64", "BUILDKITE_COMMIT_RESO
+LVED=true", "CONDARC=/cache/julia-buildkite-plugin/depots/5b300254-1738-498
+9-ae0a-f4d2d937f953/conda/3/x86_64/condarc-julia.yml", "FORCE_SANDBOX_MODE=
+unprivileged", "BUILDKITE_TRIGGERED_FROM_BUILD_ID=", "TERM=xterm-256color",
+ "PYTHONIOENCODING=UTF-8", "BUILDKITE_PULL_REQUEST_BASE_BRANCH=", "BUILDKIT
+E_PIPELINE_ID=5b300254-1738-4989-ae0a-f4d2d937f953", "_=/cache/julia-buildk
+ite-plugin/julia_installs/bin/linux/x64/1.10/julia-1.10-latest-linux-x86_64
+/bin/julia", "BUILDKITE_BUILD_ID=01972aec-7845-4aa2-b22d-b17b13f3e399", "BU
+ILDKITE_AGENT_ENDPOINT=https://shard-009.agent.buildkite.com/v3", "BUILDKIT
+E_PLUGINS=[{\"github.com/staticfloat/cryptic-buildkite-plugin#v2\":{\"files
+\":[\".buildkite/secrets/token.toml\"],\"variables\":[\"BUILDKITE_S3_ACCESS
+_KEY_ID=\\\"U2FsdGVkX1+x3xs1ZRRZRt3FmwFQmYYKnpV7o8xKkX5Ib6y0o5fv0+rskVAj+JK
+u\\\"\",\"BUILDKITE_S3_SECRET_ACCESS_KEY=\\\"U2FsdGVkX1+LWh1yX7LsMBlecEJLc0
+8eJrgOhurhd47CY1/jS3wCGVCQmS1t6f2j70spBoFdfc9kn2naj8HH5A==\\\"\",\"BUILDKIT
+E_S3_DEFAULT_REGION=\\\"U2FsdGVkX18ccoE9FmtkwsCm1x0MLMBlN/FLcAyKkY4=\\\"\"]
+}},{\"github.com/JuliaCI/julia-buildkite-plugin#v1\":{\"version\":\"1.10\"}
+},{\"github.com/staticfloat/sandbox-buildkite-plugin\":{\"gid\":1000,\"uid\
+":1000,\"rootfs_url\":\"https://github.com/thazhemadam/openmodelica-rootfs-
+image/releases/download/v1.23.0/rootfs-openmodelica-v1.23.0.amd64.tar.gz\",
+\"workspaces\":[\"/cache/julia-buildkite-plugin:/cache/julia-buildkite-plug
+in\"],\"rootfs_treehash\":\"82970243dc4f188e599a976abc20951f4aba2912\"}},{\
+"github.com/staticfloat/coppermind-buildkite-plugin#v1\":{\"inputs\":[\"ben
+chmarks/Jumps\",\"src/**/*.jl\",\"./*.toml\"],\"outputs\":[\"markdown/**/fi
+gures/*.png\",\"markdown/**/*.md\",\"markdown/**/*.pdf\",\"markdown/**/*.sv
+g\",\"notebook/**/*.ipynb\",\"pdf/**/*.pdf\",\"script/**/*.jl\"],\"s3_prefi
+x\":\"s3://julialang-buildkite-artifacts/scimlbenchmarks\"}}]", "BUILDKITE_
+SOCKETS_PATH=/root/.buildkite-agent/sockets", "SANDBOX_PERSISTENCE_DIR=/cac
+he/sandbox_persistence", "BUILDKITE_GIT_CLEAN_FLAGS=-ffxdq", "BUILDKITE_COM
+MIT=848ec8038b09c87176e24a8b86bead39044aff63", "BUILDKITE_PULL_REQUEST=fals
+e", "BUILDKITE_ORGANIZATION_ID=d409823c-5fa7-41c8-9033-7269c5fde4f3", "GKS_
+QT=env LD_LIBRARY_PATH=/cache/julia-buildkite-plugin/depots/5b300254-1738-4
+989-ae0a-f4d2d937f953/artifacts/715b660f53eb83c33e199a44ececfd8dc03f2a27/li
+b:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+/artifacts/5acd766faaca59c3c1f3cfa67e2bf6dcf1e3e883/lib:/cache/julia-buildk
+ite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/d4c2f2966f
+2932e4870b0488c3b8a6b92b6641a9/lib:/cache/julia-buildkite-plugin/julia_inst
+alls/bin/linux/x64/1.10/julia-1.10-latest-linux-x86_64/bin/../lib/julia:/ca
+che/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/arti
+facts/7f882b869c126a717e15be05453b83bd9135eab0/lib:/cache/julia-buildkite-p
+lugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/dc526f26fb179a3
+f68eb13fcbe5d2d2a5aa7eeac/lib:/cache/julia-buildkite-plugin/depots/5b300254
+-1738-4989-ae0a-f4d2d937f953/artifacts/1d90be1fb2a7f5023513bdcbb8abf7727ded
+6044/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d
+937f953/artifacts/f8704eb01ec7508ae1f125b7ff89647997ed80cb/lib:/cache/julia
+-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/e85
+74c15e0152044b131e5d6956374f4b0bacce7/lib:/cache/julia-buildkite-plugin/dep
+ots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/4e7928c9107faa32c07a9cda
+6bb7097690f3cdbb/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-498
+9-ae0a-f4d2d937f953/artifacts/94475b26c9b6ff3bed68391232c55fd81a4a64b4/lib:
+/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/a
+rtifacts/f5e52a42c85b68d1f7ee821d9d8c13a44c377956/lib:/cache/julia-buildkit
+e-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/96bc7b9ddb31
+9d1a051535c85184aa2bf42dbd8b/lib:/cache/julia-buildkite-plugin/depots/5b300
+254-1738-4989-ae0a-f4d2d937f953/artifacts/2a6bae048c28452d329375cbb74794991
+15e45ad/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4
+d2d937f953/artifacts/0a1006d282bce91b5cd408c714cbb95d3bb4f515/lib:/cache/ju
+lia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/
+59eff635528e6914e1a96db241e950195574903b/lib:/cache/julia-buildkite-plugin/
+depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/299dd9a174ebc497df2cf
+4d30f1c6d10948c60ef/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-
+4989-ae0a-f4d2d937f953/artifacts/f0557b9a3c2c4667444e8fc63c1fc9c2c5cb9e63/l
+ib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f95
+3/artifacts/6da9d8475fd9fd2867e3bd1f46f3913c800a316f/lib:/cache/julia-build
+kite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/a3f956e67
+72ef4da35e128fd2a4477cf16fd3c84/lib:/cache/julia-buildkite-plugin/depots/5b
+300254-1738-4989-ae0a-f4d2d937f953/artifacts/e2512e1cd411449b9bede7b4294c74
+09c9973345/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a
+-f4d2d937f953/artifacts/ed48bfcf31d2d5ebdc0a681d1ed07e1e9f9f0377/lib:/cache
+/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifac
+ts/b8a470e4553346122607f94ec60d83c77f061cd6/lib:/cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/eb13375496c29fe521
+01a0e6710c54ff87aa0e20/lib:/cache/julia-buildkite-plugin/depots/5b300254-17
+38-4989-ae0a-f4d2d937f953/artifacts/5c030ff72c13f84fbbc8f93a146e34c6219a026
+1/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/artifacts/bd1f25e7053ebc00ee7d82f3c5ec4cf1e9a51e17/lib:/cache/julia-bu
+ildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/cf5d5f
+8a6109be3f9c460a39768f57a3e53ff11d/lib:/cache/julia-buildkite-plugin/depots
+/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/c8a20a2030f10b70947d8d2a6bf
+f7f8b5f343fe9/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-a
+e0a-f4d2d937f953/artifacts/0631e2a6a31b5692eec7a575836451b16b734ec0/lib:/ca
+che/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/arti
+facts/4abd0521d210cb9e48ea5e711873ba34dc05fc70/lib:/cache/julia-buildkite-p
+lugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/0b5269206a6849e
+48487ed04136c30b1f12443e7/lib:/cache/julia-buildkite-plugin/depots/5b300254
+-1738-4989-ae0a-f4d2d937f953/artifacts/587de110e5f58fd435dc35b294df31bb7a75
+f692/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d
+937f953/artifacts/fc239b3ff5739aeab252bd154fa4dd045fefe629/lib:/cache/julia
+-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/a69
+6e1e3e6b8d3c2c4b67609357ebc5c35eabde1/lib:/cache/julia-buildkite-plugin/dep
+ots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/85dab0a3f6b9cc2e5d61165e
+e376bf46260812a4/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-498
+9-ae0a-f4d2d937f953/artifacts/5b83972689fb7dea5e89326f1c0ba60d68e962fb/lib:
+/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/a
+rtifacts/d007148a0838385ad09a5cc9f703679ddaffcf0b/lib:/cache/julia-buildkit
+e-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/1156a1c62f59
+f758df3cda780d59a6c9cb3d7ae8/lib:/cache/julia-buildkite-plugin/depots/5b300
+254-1738-4989-ae0a-f4d2d937f953/artifacts/36e9b0d89deb511d38dc1f51d370e2b44
+5dd33ea/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4
+d2d937f953/artifacts/7882cd1425db289a3e1703b83c7e8678e7f397d9/lib:/cache/ju
+lia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/
+52d9b3e9e3507f7b2cf723af43d0e7f095e2edc7/lib:/cache/julia-buildkite-plugin/
+depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/5b34e010ca7a3d88eeebe
+cbc7a5b39ad72e33323/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-
+4989-ae0a-f4d2d937f953/artifacts/38e215c51e5c0f77bc7a8813ba4586632a8fc750/l
+ib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f95
+3/artifacts/65c5e10af6182e66ace3d62ab4d99114f9009e7e/lib:/cache/julia-build
+kite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/353f5c4e0
+91a41ba8da5297d1b4d13652aa7f775/lib:/cache/julia-buildkite-plugin/depots/5b
+300254-1738-4989-ae0a-f4d2d937f953/artifacts/5cb2f5f8a13f3117c7770ed28b896e
+ff85315555/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a
+-f4d2d937f953/artifacts/04915d2401d6f1b7b5e37382a0776ee2d20d343b/lib:/cache
+/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifac
+ts/f493bc948a41fd60ba4a5864a7127c7a2c8f863b/lib:/cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/55f9376d5c77106b48
+13c4fb45a6b37a77d4d823/lib:/cache/julia-buildkite-plugin/depots/5b300254-17
+38-4989-ae0a-f4d2d937f953/artifacts/d03aca19e34a4289ab7f118cf0b212ca46eb49b
+e/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/artifacts/e3e8d2abb72b0145ee6de4b7be33e5a5c67e5f59/lib:/cache/julia-bu
+ildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/45a076
+ac2b0b5e528159c96142254106709ec982/lib:/cache/julia-buildkite-plugin/depots
+/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/4db1e58d71ac6bbb35ecc832033
+264c630d5d3b3/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-a
+e0a-f4d2d937f953/artifacts/21ed7b5e888fb9b18f44ba3f4652f14d8beda78c/lib:/ca
+che/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/arti
+facts/872754c2f795d19a3e2e205b2bbaea659f28d11e/lib:/cache/julia-buildkite-p
+lugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/7da37be2742b3d1
+cfe1c14bf5bbd85aed4887f46/lib:/cache/julia-buildkite-plugin/depots/5b300254
+-1738-4989-ae0a-f4d2d937f953/artifacts/c35cb3f6f3043a4e962fd56b61ad91b4adb5
+57f7/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d
+937f953/artifacts/13befbe35cffe7da192c7001ece18b4be3aa3720/lib:/cache/julia
+-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/cac
+d8c147f866d6672e1aca9bb01fb919a81e96a/lib:/cache/julia-buildkite-plugin/dep
+ots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/b7dc5dce963737414a564aca
+8d4b82ee388f4fa1/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-498
+9-ae0a-f4d2d937f953/artifacts/0d364e900393f710a03a5bafe2852d76e4d2c2cd/lib:
+/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/a
+rtifacts/1a2adcee7d99fea18ead33c350332626b262e29a/lib:/cache/julia-buildkit
+e-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/40eea58ff37e
+cc8fb6f21f41079a33b511b3ff92/lib:/cache/julia-buildkite-plugin/depots/5b300
+254-1738-4989-ae0a-f4d2d937f953/artifacts/79cc5446ced978de84b6e673e01da0ebf
+dd6e4a5/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4
+d2d937f953/artifacts/443e05ab3771707793cdec96039306b08738a626/lib:/cache/ju
+lia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/
+0ecdcf67bd5c1db95253c03ab63d57e40d0b4886/lib:/cache/julia-buildkite-plugin/
+depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/f03dd5ac03468009d5a99
+bbfcdf336c2dc372de4/lib:/cache/julia-buildkite-plugin/depots/5b300254-1738-
+4989-ae0a-f4d2d937f953/artifacts/8b45e0c5c7fbecd1e34f024cdc22fec4be4c7807/l
+ib:/cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f95
+3/artifacts/9d01ece285704bef6238fd8461f65f1b63aeaece/lib:/cache/julia-build
+kite-plugin/julia_installs/bin/linux/x64/1.10/julia-1.10-latest-linux-x86_6
+4/bin/../lib/julia:/cache/julia-buildkite-plugin/julia_installs/bin/linux/x
+64/1.10/julia-1.10-latest-linux-x86_64/bin/../lib /cache/julia-buildkite-pl
+ugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953/artifacts/9d01ece285704bef
+6238fd8461f65f1b63aeaece/bin/gksqt"]), ProcessExited(1)) [1]
 ```
 
 
@@ -1291,86 +1295,86 @@ end
 ```
 
 ```
-algo=Direct (brute-force), V = 1, length = 50, median time = 91.014 μs
-algo=Direct (brute-force), V = 10, length = 50, median time = 10.653 ms
-algo=Direct (brute-force), V = 20, length = 50, median time = 87.156 ms
-algo=Direct (brute-force), V = 30, length = 36, median time = 277.982 ms
-algo=Direct (brute-force), V = 40, length = 7, median time = 1.638 s
-algo=Direct (brute-force), V = 50, length = 4, median time = 3.061 s
-algo=Direct (brute-force), V = 60, length = 2, median time = 5.864 s
-algo=Direct (brute-force), V = 70, length = 2, median time = 9.722 s
-algo=Direct (brute-force), V = 80, length = 1, median time = 13.729 s
-algo=Direct (brute-force), V = 90, length = 1, median time = 24.593 s
-algo=Coevolve (brute-force), V = 1, length = 50, median time = 4.770 μs
-algo=Coevolve (brute-force), V = 10, length = 50, median time = 208.828 μs
-algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.387 ms
-algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.331 ms
-algo=Coevolve (brute-force), V = 40, length = 50, median time = 8.497 ms
-algo=Coevolve (brute-force), V = 50, length = 50, median time = 17.334 ms
-algo=Coevolve (brute-force), V = 60, length = 50, median time = 30.987 ms
-algo=Coevolve (brute-force), V = 70, length = 50, median time = 52.492 ms
-algo=Coevolve (brute-force), V = 80, length = 50, median time = 77.400 ms
-algo=Coevolve (brute-force), V = 90, length = 50, median time = 125.731 ms
-algo=Direct (recursive), V = 1, length = 50, median time = 90.249 μs
-algo=Direct (recursive), V = 10, length = 50, median time = 4.807 ms
-algo=Direct (recursive), V = 20, length = 50, median time = 22.666 ms
-algo=Direct (recursive), V = 30, length = 50, median time = 75.103 ms
-algo=Direct (recursive), V = 40, length = 11, median time = 930.458 ms
-algo=Direct (recursive), V = 50, length = 6, median time = 1.823 s
-algo=Direct (recursive), V = 60, length = 4, median time = 2.990 s
-algo=Direct (recursive), V = 70, length = 2, median time = 5.203 s
-algo=Direct (recursive), V = 80, length = 2, median time = 7.991 s
-algo=Direct (recursive), V = 90, length = 1, median time = 11.201 s
-algo=Coevolve (recursive), V = 1, length = 50, median time = 4.975 μs
-algo=Coevolve (recursive), V = 10, length = 50, median time = 73.200 μs
-algo=Coevolve (recursive), V = 20, length = 50, median time = 247.934 μs
-algo=Coevolve (recursive), V = 30, length = 50, median time = 470.967 μs
-algo=Coevolve (recursive), V = 40, length = 50, median time = 858.394 μs
-algo=Coevolve (recursive), V = 50, length = 50, median time = 1.412 ms
-algo=Coevolve (recursive), V = 60, length = 50, median time = 2.196 ms
-algo=Coevolve (recursive), V = 70, length = 50, median time = 3.052 ms
-algo=Coevolve (recursive), V = 80, length = 50, median time = 4.014 ms
-algo=Coevolve (recursive), V = 90, length = 50, median time = 5.317 ms
-algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 68.734 
+algo=Direct (brute-force), V = 1, length = 50, median time = 98.719 μs
+algo=Direct (brute-force), V = 10, length = 50, median time = 10.733 ms
+algo=Direct (brute-force), V = 20, length = 50, median time = 84.722 ms
+algo=Direct (brute-force), V = 30, length = 37, median time = 275.204 ms
+algo=Direct (brute-force), V = 40, length = 7, median time = 1.551 s
+algo=Direct (brute-force), V = 50, length = 4, median time = 3.240 s
+algo=Direct (brute-force), V = 60, length = 2, median time = 5.686 s
+algo=Direct (brute-force), V = 70, length = 1, median time = 10.190 s
+algo=Direct (brute-force), V = 80, length = 1, median time = 15.298 s
+algo=Direct (brute-force), V = 90, length = 1, median time = 20.870 s
+algo=Coevolve (brute-force), V = 1, length = 50, median time = 3.340 μs
+algo=Coevolve (brute-force), V = 10, length = 50, median time = 207.068 μs
+algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.310 ms
+algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.151 ms
+algo=Coevolve (brute-force), V = 40, length = 50, median time = 8.119 ms
+algo=Coevolve (brute-force), V = 50, length = 50, median time = 17.098 ms
+algo=Coevolve (brute-force), V = 60, length = 50, median time = 29.820 ms
+algo=Coevolve (brute-force), V = 70, length = 50, median time = 50.014 ms
+algo=Coevolve (brute-force), V = 80, length = 50, median time = 73.230 ms
+algo=Coevolve (brute-force), V = 90, length = 50, median time = 122.305 ms
+algo=Direct (recursive), V = 1, length = 50, median time = 92.914 μs
+algo=Direct (recursive), V = 10, length = 50, median time = 4.804 ms
+algo=Direct (recursive), V = 20, length = 50, median time = 24.125 ms
+algo=Direct (recursive), V = 30, length = 50, median time = 69.895 ms
+algo=Direct (recursive), V = 40, length = 11, median time = 979.790 ms
+algo=Direct (recursive), V = 50, length = 6, median time = 1.800 s
+algo=Direct (recursive), V = 60, length = 4, median time = 3.087 s
+algo=Direct (recursive), V = 70, length = 2, median time = 5.412 s
+algo=Direct (recursive), V = 80, length = 2, median time = 8.048 s
+algo=Direct (recursive), V = 90, length = 1, median time = 11.911 s
+algo=Coevolve (recursive), V = 1, length = 50, median time = 3.830 μs
+algo=Coevolve (recursive), V = 10, length = 50, median time = 74.740 μs
+algo=Coevolve (recursive), V = 20, length = 50, median time = 263.803 μs
+algo=Coevolve (recursive), V = 30, length = 50, median time = 493.786 μs
+algo=Coevolve (recursive), V = 40, length = 50, median time = 899.168 μs
+algo=Coevolve (recursive), V = 50, length = 50, median time = 1.485 ms
+algo=Coevolve (recursive), V = 60, length = 50, median time = 2.202 ms
+algo=Coevolve (recursive), V = 70, length = 50, median time = 3.112 ms
+algo=Coevolve (recursive), V = 80, length = 50, median time = 4.023 ms
+algo=Coevolve (recursive), V = 90, length = 50, median time = 5.461 ms
+algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 71.079 
 μs
-algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 4.959 
+algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 5.005 
 ms
-algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 39.322
+algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 41.739
  ms
-algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 112.71
-4 ms
-algo=PDMPCHVSimple (brute-force), V = 40, length = 35, median time = 288.63
-0 ms
-algo=PDMPCHVSimple (brute-force), V = 50, length = 18, median time = 579.25
-9 ms
-algo=PDMPCHVSimple (brute-force), V = 60, length = 10, median time = 1.095 
+algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 113.93
+7 ms
+algo=PDMPCHVSimple (brute-force), V = 40, length = 35, median time = 285.70
+5 ms
+algo=PDMPCHVSimple (brute-force), V = 50, length = 17, median time = 602.09
+8 ms
+algo=PDMPCHVSimple (brute-force), V = 60, length = 10, median time = 1.083 
 s
-algo=PDMPCHVSimple (brute-force), V = 70, length = 6, median time = 1.730 s
-algo=PDMPCHVSimple (brute-force), V = 80, length = 4, median time = 2.841 s
-algo=PDMPCHVSimple (brute-force), V = 90, length = 3, median time = 4.446 s
-algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 67.910 μs
-algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 350.838 
+algo=PDMPCHVSimple (brute-force), V = 70, length = 6, median time = 1.898 s
+algo=PDMPCHVSimple (brute-force), V = 80, length = 4, median time = 2.879 s
+algo=PDMPCHVSimple (brute-force), V = 90, length = 3, median time = 4.524 s
+algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 71.570 μs
+algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 343.667 
 μs
-algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 824.585 
+algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 800.223 
 μs
-algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.570 ms
-algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.472 ms
-algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.665 ms
-algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 5.236 ms
-algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 7.116 ms
-algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 9.477 ms
-algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 12.203 m
+algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.507 ms
+algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.474 ms
+algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.620 ms
+algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 5.083 ms
+algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 7.069 ms
+algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 9.347 ms
+algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 12.089 m
 s
-algo=PDMPCHVFull, V = 1, length = 50, median time = 66.635 μs
-algo=PDMPCHVFull, V = 10, length = 50, median time = 486.906 μs
-algo=PDMPCHVFull, V = 20, length = 50, median time = 758.091 μs
-algo=PDMPCHVFull, V = 30, length = 50, median time = 1.210 ms
-algo=PDMPCHVFull, V = 40, length = 50, median time = 1.523 ms
-algo=PDMPCHVFull, V = 50, length = 50, median time = 1.897 ms
-algo=PDMPCHVFull, V = 60, length = 50, median time = 2.504 ms
-algo=PDMPCHVFull, V = 70, length = 50, median time = 2.996 ms
-algo=PDMPCHVFull, V = 80, length = 50, median time = 3.597 ms
-algo=PDMPCHVFull, V = 90, length = 50, median time = 4.419 ms
+algo=PDMPCHVFull, V = 1, length = 50, median time = 70.070 μs
+algo=PDMPCHVFull, V = 10, length = 50, median time = 482.171 μs
+algo=PDMPCHVFull, V = 20, length = 50, median time = 739.314 μs
+algo=PDMPCHVFull, V = 30, length = 50, median time = 1.216 ms
+algo=PDMPCHVFull, V = 40, length = 50, median time = 1.531 ms
+algo=PDMPCHVFull, V = 50, length = 50, median time = 1.891 ms
+algo=PDMPCHVFull, V = 60, length = 50, median time = 2.557 ms
+algo=PDMPCHVFull, V = 70, length = 50, median time = 3.099 ms
+algo=PDMPCHVFull, V = 80, length = 50, median time = 3.716 ms
+algo=PDMPCHVFull, V = 90, length = 50, median time = 4.443 ms
 ```
 
 
