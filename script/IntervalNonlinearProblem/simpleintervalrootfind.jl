@@ -1,5 +1,7 @@
 
-using Roots, BenchmarkTools
+using Roots, BenchmarkTools, Random
+
+Random.seed!(42)
 
 const N = 100_000;
 levels = 1.5 .* rand(N);
@@ -7,7 +9,7 @@ out = zeros(N);
 myfun(x, lv) = x * sin(x) - lv
 function froots(out, levels, u0)
     for i in 1:N
-        out[i] = find_zero(x->myfun(x, levels[i]), u0)
+        out[i] = find_zero(myfun, u0, levels[i])
     end
 end
 
