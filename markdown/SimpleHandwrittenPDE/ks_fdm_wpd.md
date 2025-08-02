@@ -87,7 +87,7 @@ plt = heatmap(xs, tslices, ys', xlabel="x", ylabel="t")
 ```
 
 ```
-17.137453 seconds (16.55 M allocations: 2.154 GiB, 5.05% gc time, 53.07% c
+17.965191 seconds (16.54 M allocations: 2.154 GiB, 3.99% gc time, 54.33% c
 ompilation time)
 ```
 
@@ -130,8 +130,8 @@ IMEXEuler
 CNAB2
 CNLF2
 SBDF2
- 67.222792 seconds (59.96 M allocations: 27.375 GiB, 4.30% gc time, 17.13% 
-compilation time)
+ 73.287431 seconds (60.06 M allocations: 27.382 GiB, 10.67% gc time, 17.46%
+ compilation time)
 ```
 
 
@@ -175,8 +175,8 @@ NorsettEuler (m=20)
 ETDRK2 (caching)
 ETDRK2 (m=5)
 ETDRK2 (m=20)
-256.758478 seconds (145.20 M allocations: 111.863 GiB, 6.91% gc time, 3.43%
- compilation time)
+263.221534 seconds (145.17 M allocations: 111.860 GiB, 11.61% gc time, 3.54
+% compilation time)
 ```
 
 
@@ -197,8 +197,8 @@ setups = [
     Dict(:alg => ETDRK2(), :dts => 1e-4 * multipliers),
 ]
 labels = hcat(
-    "CNAB2 (dense linsolve)",
-    "CNAB2 (Krylov linsolve)", 
+    "CNAB2 (dense)",
+    "CNAB2 (Krylov)", 
     "ETDRK2 (caching)",
 )
 @time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
@@ -209,10 +209,10 @@ plot(wp, label=labels, markershape=:auto, title="Between Families, High Toleranc
 ```
 
 ```
-CNAB2 (dense linsolve)
-CNAB2 (Krylov linsolve)
+CNAB2 (dense)
+CNAB2 (Krylov)
 ETDRK2 (caching)
- 64.014218 seconds (40.55 M allocations: 34.591 GiB, 10.80% gc time, 3.11% 
+ 70.109623 seconds (34.75 M allocations: 28.427 GiB, 23.75% gc time, 3.12% 
 compilation time)
 ```
 
@@ -225,27 +225,31 @@ compilation time)
 
 #### Implicit-Explicit Methods
 
-
-Krylov linear solvers.
+Dense and Krylov linear solvers.
 ```julia
-abstols = 0.1 .^ (7:13)
-reltols = 0.1 .^ (4:10)
+abstols = 0.1 .^ (8:12)
+reltols = 0.1 .^ (5:9)
 setups = [
-    # KenCarp methods take forever with adaptive timestepping for some reason
-    # Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES())),
-    # Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES())),
-    # Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES())),
+    Dict(:alg => KenCarp3()),
+    Dict(:alg => KenCarp4()),
+    Dict(:alg => KenCarp5()),
+    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES())),
+    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES())),
+    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES())),
     Dict(:alg => ARKODE(Sundials.Implicit(), order=3, linear_solver=:GMRES)),
     Dict(:alg => ARKODE(Sundials.Implicit(), order=4, linear_solver=:GMRES)),
     Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:GMRES)),
 ]
 labels = hcat(
-    # "KenCarp3",
-    # "KenCarp4",
-    # "KenCarp5",
-    "ARKODE3",
-    "ARKODE4",
-    "ARKODE5",
+    "KenCarp3 (dense)",
+    "KenCarp4 (dense)",
+    "KenCarp5 (dense)",
+    "KenCarp3 (Krylov)",
+    "KenCarp4 (Krylov)",
+    "KenCarp5 (Krylov)",
+    "ARKODE3 (Krylov)",
+    "ARKODE4 (Krylov)",
+    "ARKODE5 (Krylov)",
 )
 @time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
     print_names=true, names=labels, numruns=5, error_estimate=:l2,
@@ -255,10 +259,16 @@ plot(wp, label=labels, markershape=:auto, title="IMEX Methods, Krylov Linsolve, 
 ```
 
 ```
-ARKODE3
-ARKODE4
-ARKODE5
-128.340745 seconds (261.02 M allocations: 41.002 GiB, 3.48% gc time, 1.47% 
+KenCarp3 (dense)
+KenCarp4 (dense)
+KenCarp5 (dense)
+KenCarp3 (Krylov)
+KenCarp4 (Krylov)
+KenCarp5 (Krylov)
+ARKODE3 (Krylov)
+ARKODE4 (Krylov)
+ARKODE5 (Krylov)
+426.726592 seconds (198.17 M allocations: 29.443 GiB, 1.79% gc time, 4.05% 
 compilation time)
 ```
 
@@ -294,7 +304,7 @@ plot(wp, label=labels, markershape=:auto, title="ExpRK Methods, Low Tolerances")
 ETDRK3 (caching)
 ETDRK4 (caching)
 HochOst4 (caching)
-131.857690 seconds (11.45 M allocations: 18.307 GiB, 0.71% gc time, 4.68% c
+138.101421 seconds (11.44 M allocations: 19.659 GiB, 0.78% gc time, 4.76% c
 ompilation time)
 ```
 
@@ -314,7 +324,11 @@ setups = [
     Dict(:alg => ETDRK3(), :dts => 1e-2 * multipliers),
     Dict(:alg => ETDRK4(), :dts => 1e-2 * multipliers),
 ]
-labels = hcat("ARKODE (Krylov linsolve)", "ETDRK3 ()", "ETDRK4 ()")
+labels = hcat(
+    "ARKODE5 (Krylov)",
+    "ETDRK3 (caching)",
+    "ETDRK4 (caching)"
+)
 @time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
     print_names=true, names=labels, numruns=5, error_estimate=:l2,
     save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
@@ -323,10 +337,10 @@ plot(wp, label=labels, markershape=:auto, title="Between Families, Low Tolerance
 ```
 
 ```
-ARKODE (Krylov linsolve)
-ETDRK3 ()
-ETDRK4 ()
-131.804965 seconds (35.36 M allocations: 17.681 GiB, 1.34% gc time, 0.06% c
+ARKODE5 (Krylov)
+ETDRK3 (caching)
+ETDRK4 (caching)
+ 96.038497 seconds (35.33 M allocations: 17.679 GiB, 2.57% gc time, 0.01% c
 ompilation time)
 ```
 
@@ -358,7 +372,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
@@ -381,6 +395,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c3572dad] Sundials v4.28.0
   [37e2e46d] LinearAlgebra
   [2f01184e] SparseArrays v1.10.0
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -777,5 +792,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
