@@ -1,189 +1,211 @@
 
-using ApproxFun, OrdinaryDiffEq, Sundials, LinearSolve
+using OrdinaryDiffEq
 using DiffEqDevTools
-using LinearAlgebra, RecursiveFactorization
-using Plots; gr()
+using SciMLOperators
+using LinearSolve
+using LinearAlgebra
+using SparseArrays
+using Sundials
+using SummationByPartsOperators
+const SBP = SummationByPartsOperators
+using Plots
+gr();
 
 
-# Define the linear and nonlinear terms
-function lin_term(N)
-    dx = 1/(N + 1)
-    du = 1/2 * ones(N - 1) # super diagonal
-    dl = -1/2 * ones(N - 1) # lower diagonal
-    DiffEqArrayOperator(0.01*(1/dx) * diagm(-1 => dl, 1 => du))
-end
-
-function nl_term(N)
-    function (du,u,p,t)
-        du .= u .- u.^3
-    end
+# Nonlinear term: u - u^3
+function forcing_term(du, u, p, t)
+    du .= p * @. (u - u^3)
+    # Apply boundary conditions (ghost cells)
+    du[1] = 0.0
+    du[end] = 0.0
 end
 
 # Construct the problem
-function allen_cahn(N)
-    f1 = lin_term(N)
-    f2 = nl_term(N)
-    dx = 1 / (N + 1)
-    xs = (1:N) * dx
+function allen_cahn(N, L)
+    # Linear and nonlinear terms
+    eps = 1e-3 # Diffusion coefficient
+    D2 = derivative_operator(MattssonSvärdNordström2004(); 
+                             derivative_order = 2, accuracy_order = 2, 
+                             xmin = -L, xmax = L, N = N)
 
-    f0 = x -> .53*x + .47*sin(-1.5*pi*x) - x
-    u0 = f0.(xs)
-    prob = SplitODEProblem(f1, f2, u0, (0.0, 1.0))
-    xs, prob
+    x = LinRange(-L, L, N) # Domain discretization
+    u0 = @. cos(2π * x) # Initial condition
+    p = 3.0 # Nonlinear coefficient
+
+    prob = SplitODEProblem(MatrixOperator(eps * sparse(D2)), forcing_term, u0, (0.0, 1.0), p)
+
+    x, prob
 end;
 
 
-xs, prob = allen_cahn(100)
-sol = solve(prob, RadauIIA5(autodiff=false); abstol=1e-14, reltol=1e-14, dt=1e-4, adaptive=false)
-test_sol = TestSolution(sol);
+N = 128 # Number of grid points
+L = 2.0  # Domain length
+xs, prob = allen_cahn(N, L)
+@time sol = solve(prob, AutoVern7(RadauIIA5(autodiff=false)); dt=1e-2, abstol=1e-14, reltol=1e-14, adaptive=true)
 
-tslices = [0.0 0.25 0.50 0.75 1.]
-ys = hcat((sol(t) for t in tslices)...)
-labels = ["t = $t" for t in tslices]
-plot(xs, ys, label=labels)
+test_sol = TestSolution(sol) # Reference solution for error estimation
 
-
-const LS_Dense = LinSolveFactorize(lu)
-
-
-abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
-reltols = 0.1 .^ (1:4)
-multipliers = 0.5 .^ (0:3)
-setups = [Dict(:alg => IMEXEuler(), :dts => 1e-3 * multipliers),
-          Dict(:alg => CNAB2(), :dts => 1e-4 * multipliers),
-          Dict(:alg => CNLF2(), :dts => 1e-4 * multipliers),
-          Dict(:alg => SBDF2(), :dts => 1e-3 * multipliers)]
-labels = ["IMEXEuler" "CNAB2" "CNLF2" "SBDF2"]
-@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-                            print_names=true, names=labels,
-                            numruns=5, error_estimate=:l2,
-                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
-
-plot(wp, label=labels, markershape=:auto, title="IMEX methods, dense linsolve, low order")
+tslices = LinRange(prob.tspan..., 50)
+ys = mapreduce(sol, hcat, tslices)
+plt = heatmap(xs, tslices, ys', xlabel="x", ylabel="t")
 
 
 abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
 reltols = 0.1 .^ (1:4)
 multipliers = 0.5 .^ (0:3)
-setups = [Dict(:alg => IMEXEuler(linsolve=KrylovJL_GMRES()), :dts => 1e-3 * multipliers),
-          Dict(:alg => CNAB2(linsolve=KrylovJL_GMRES()), :dts => 1e-4 * multipliers),
-          Dict(:alg => CNLF2(linsolve=KrylovJL_GMRES()), :dts => 1e-4 * multipliers),
-          Dict(:alg => SBDF2(linsolve=KrylovJL_GMRES()), :dts => 1e-3 * multipliers)]
-labels = ["IMEXEuler" "CNAB2" "CNLF2" "SBDF2"]
-@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-                            print_names=true, names=labels,
-                            numruns=5, error_estimate=:l2,
-                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
+setups = [
+    Dict(:alg => IMEXEuler(), :dts => 1e-4 * multipliers),
+    Dict(:alg => CNAB2(), :dts => 1e-4 * multipliers),
+    Dict(:alg => CNLF2(), :dts => 1e-4 * multipliers),
+    Dict(:alg => SBDF2(), :dts => 1e-4 * multipliers),
+]
+labels = hcat(
+    "IMEXEuler",
+    "CNAB2",
+    "CNLF2",
+    "SBDF2",
+)
+@time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    print_names=true, names=labels, numruns=5, error_estimate=:l2,
+    save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp, label=labels, markershape=:auto, title="IMEX methods, Krylov linsolve, low order")
-
-
-abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
-reltols = 0.1 .^ (1:4)
-multipliers = 0.5 .^ (0:3)
-setups = [Dict(:alg => NorsettEuler(), :dts => 1e-3 * multipliers),
-          Dict(:alg => NorsettEuler(krylov=true, m=5), :dts => 1e-3 * multipliers),
-          Dict(:alg => NorsettEuler(krylov=true, m=20), :dts => 1e-3 * multipliers),
-          Dict(:alg => ETDRK2(), :dts => 1e-3 * multipliers),
-          Dict(:alg => ETDRK2(krylov=true, m=20), :dts => 1e-2 * multipliers),
-          Dict(:alg => ETDRK2(krylov=true, m=20), :dts => 1e-2 * multipliers)]
-labels = hcat("NorsettEuler (caching)", "NorsettEuler (m=5)", "NorsettEuler (m=20)",
-              "ETDRK2 (caching)", "ETDRK2 (m=5)", "ETDRK2 (m=20)")
-@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-                            print_names=true, names=labels,
-                            numruns=5, error_estimate=:l2,
-                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
-
-plot(wp, label=labels, markershape=:auto, title="ExpRK methods, low order")
+plot(wp, label=labels, markershape=:auto, title="Work-Precision Diagram, High Tolerance")
 
 
 abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
 reltols = 0.1 .^ (1:4)
 multipliers = 0.5 .^ (0:3)
-setups = [Dict(:alg => CNAB2(), :dts => 1e-4 * multipliers),
-          Dict(:alg => CNAB2(linsolve=KrylovJL_GMRES()), :dts => 1e-4 * multipliers),
-          Dict(:alg => ETDRK2(), :dts => 1e-3 * multipliers)]
-labels = ["CNAB2 (dense linsolve)" "CNAB2 (Krylov linsolve)" "ETDRK2 (m=5)"]
-@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-                            print_names=true, names=labels,
-                            numruns=5, error_estimate=:l2,
-                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
+setups = [
+    Dict(:alg => NorsettEuler(), :dts => 1e-4 * multipliers),
+    Dict(:alg => NorsettEuler(krylov=true, m=5), :dts => 1e-4 * multipliers),
+    Dict(:alg => NorsettEuler(krylov=true, m=20), :dts => 1e-4 * multipliers),
+    Dict(:alg => ETDRK2(), :dts => 1e-3 * multipliers),
+    Dict(:alg => ETDRK2(krylov=true, m=5), :dts => 1e-3 * multipliers),
+    Dict(:alg => ETDRK2(krylov=true, m=20), :dts => 1e-3 * multipliers)
+]
+labels = hcat(
+    "NorsettEuler (caching)", 
+    "NorsettEuler (m=5)",
+    "NorsettEuler (m=20)",
+    "ETDRK2 (caching)", 
+    "ETDRK2 (m=5)", 
+    "ETDRK2 (m=20)"
+)
+@time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    print_names=true, names=labels, numruns=5, error_estimate=:l2,
+    save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp, label=labels, markershape=:auto, title="Between family, low orders")
+plot(wp, label=labels, markershape=:auto, title="ExpRK Methods, High Tolerance")
+
+
+abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
+reltols = 0.1 .^ (1:4)
+multipliers = 0.5 .^ (0:3)
+setups = [
+    Dict(:alg => CNAB2(), :dts => 1e-4 * multipliers),
+    Dict(:alg => CNAB2(linsolve=KrylovJL_GMRES()), :dts => 1e-4 * multipliers),
+    Dict(:alg => ETDRK2(), :dts => 1e-4 * multipliers),
+    Dict(:alg => Tsit5(), :dts => 1e-5 * multipliers),
+]
+labels = hcat(
+    "CNAB2 (dense linsolve)",
+    "CNAB2 (Krylov linsolve)", 
+    "ETDRK2 (caching)",
+    "Tsit5",
+)
+@time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    print_names=true, names=labels, numruns=5, error_estimate=:l2,
+    save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
+
+plot(wp, label=labels, markershape=:auto, title="Between Families, High Tolerances")
 
 
 abstols = 0.1 .^ (7:13)
 reltols = 0.1 .^ (4:10)
-setups = [Dict(:alg => KenCarp3()),
-          Dict(:alg => KenCarp4()),
-          Dict(:alg => KenCarp5()),
-          Dict(:alg => ARKODE(Sundials.Implicit(), order=3, linear_solver=:Dense)),
-          Dict(:alg => ARKODE(Sundials.Implicit(), order=4, linear_solver=:Dense)),
-          Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:Dense))]
-labels = hcat("KenCarp3", "KenCarp4", "KenCarp5", "ARKODE3", "ARKODE4", "ARKODE5")
-@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-                            print_names=true, names=labels,
-                            numruns=5, error_estimate=:l2,
-                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
+setups = [
+    Dict(:alg => KenCarp3()),
+    Dict(:alg => KenCarp4()),
+    Dict(:alg => KenCarp5()),
+    Dict(:alg => ARKODE(Sundials.Implicit(), order=3, linear_solver=:Band, jac_upper=1, jac_lower=1)),
+    Dict(:alg => ARKODE(Sundials.Implicit(), order=4, linear_solver=:Band, jac_upper=1, jac_lower=1)),
+    Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:Band, jac_upper=1, jac_lower=1)),
+]
+labels = hcat(
+    "KenCarp3",
+    "KenCarp4",
+    "KenCarp5",
+    "ARKODE3",
+    "ARKODE4",
+    "ARKODE5",
+)
+@time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    print_names=true, names=labels, numruns=5, error_estimate=:l2,
+    save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp, label=labels, markershape=:auto, title="IMEX methods, dense linsolve, medium order")
+plot(wp, label=labels, markershape=:auto, title="IMEX Methods, Band Linsolve, Low Tolerances")
 
 
 abstols = 0.1 .^ (7:13)
 reltols = 0.1 .^ (4:10)
-setups = [Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES())),
-          Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES())),
-          Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES())),
-          Dict(:alg => ARKODE(Sundials.Implicit(), order=3, linear_solver=:GMRES)),
-          Dict(:alg => ARKODE(Sundials.Implicit(), order=4, linear_solver=:GMRES)),
-          Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:GMRES))]
-labels = ["KenCarp3" "KenCarp4" "KenCarp5" "ARKODE3" "ARKODE4" "ARKODE5"]
-@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-                            print_names=true, names=labels,
-                            numruns=5, error_estimate=:l2,
-                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
+setups = [
+    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES())),
+    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES())),
+    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES())),
+    Dict(:alg => ARKODE(Sundials.Implicit(), order=3, linear_solver=:GMRES)),
+    Dict(:alg => ARKODE(Sundials.Implicit(), order=4, linear_solver=:GMRES)),
+    Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:GMRES)),
+]
+labels = hcat(
+    "KenCarp3",
+    "KenCarp4",
+    "KenCarp5",
+    "ARKODE3",
+    "ARKODE4",
+    "ARKODE5",
+)
+@time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    print_names=true, names=labels, numruns=5, error_estimate=:l2,
+    save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp, label=labels, markershape=:auto, title="IMEX methods, medium order")
+plot(wp, label=labels, markershape=:auto, title="IMEX Methods, Krylov Linsolve, Low Tolerances")
 
 
 abstols = 0.1 .^ (7:11) # all fixed dt methods so these don't matter much
 reltols = 0.1 .^ (4:8)
 multipliers = 0.5 .^ (0:4)
-setups = [Dict(:alg => ETDRK3(), :dts => 1e-2 * multipliers),
-          Dict(:alg => ETDRK3(krylov=true, m=5), :dts => 1e-2 * multipliers),
-          Dict(:alg => ETDRK4(), :dts => 1e-2 * multipliers),
-          Dict(:alg => ETDRK4(krylov=true, m=5), :dts => 1e-2 * multipliers),
-          Dict(:alg => HochOst4(), :dts => 1e-2 * multipliers),
-          Dict(:alg => HochOst4(krylov=true, m=5), :dts => 1e-2 * multipliers)]
-labels = hcat("ETDRK3 (caching)", "ETDRK3 (m=5)", "ETDRK4 (caching)",
-              "ETDRK4 (m=5)", "HochOst4 (caching)", "HochOst4 (m=5)")
-@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-                            print_names=true, names=labels,
-                            numruns=5, error_estimate=:l2,
-                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
+setups = [
+    Dict(:alg => ETDRK3(), :dts => 1e-2 * multipliers),
+    Dict(:alg => ETDRK4(), :dts => 1e-2 * multipliers),
+    Dict(:alg => HochOst4(), :dts => 1e-2 * multipliers),
+]
+labels = hcat(
+    "ETDRK3 (caching)",
+    "ETDRK4 (caching)",
+    "HochOst4 (caching)",
+)
+@time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    print_names=true, names=labels, numruns=5, error_estimate=:l2,
+    save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp, label=labels, markershape=:auto, title="ExpRK methods, medium order")
+plot(wp, label=labels, markershape=:auto, title="ExpRK Methods, Low Tolerances")
 
 
 abstols = 0.1 .^ (7:11)
 reltols = 0.1 .^ (4:8)
 multipliers = 0.5 .^ (0:4)
-setups = [Dict(:alg => KenCarp5()),
-          Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:Dense)),
-          Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES())),
-          Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:GMRES)),
-          Dict(:alg => ETDRK3(krylov=true, m=5), :dts => 1e-2 * multipliers),
-          Dict(:alg => ETDRK4(krylov=true, m=5), :dts => 1e-2 * multipliers)]
-labels = hcat("KenCarp5 (dense linsolve)", "ARKODE (dense linsolve)", "KenCarp5 (Krylov linsolve)",
-              "ARKODE (Krylov linsolve)", "ETDRK3 (m=5)", "ETDRK4 (m=5)")
-@time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
-                            print_names=true, names=labels,
-                            numruns=5, error_estimate=:l2,
-                            save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
+setups = [
+    Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:GMRES)),
+    Dict(:alg => ETDRK3(), :dts => 1e-2 * multipliers),
+    Dict(:alg => ETDRK4(), :dts => 1e-2 * multipliers),
+]
+labels = hcat("ARKODE (nondiagonal linsolve)", "ETDRK3 ()", "ETDRK4 ()")
+@time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    print_names=true, names=labels, numruns=5, error_estimate=:l2,
+    save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp, label=labels, markershape=:auto, title="Between family, medium order")
+plot(wp, label=labels, markershape=:auto, title="Between Families, Low Tolerances")
 
 
 using SciMLBenchmarks
-SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
 
