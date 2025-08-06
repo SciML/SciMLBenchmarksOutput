@@ -1,364 +1,127 @@
 ---
 author: "Chris Rackauckas"
-title: "SDE Basic Weak Work-Precision Diagrams"
+title: "SDE Lokta-Volterra Work-Precision Diagrams"
 ---
-
-
-# SDE Basic Weak Work-Precision Diagrams
-
-In this notebook we will run some benchmarks for the weak error on some simple sample SDEs. The weak error is defined as:
-
-$$E_W = \mathbb{E}[Y_\delta(t)] - \mathbb{E}[Y(t)]$$
-
-and is thus a measure of how close the mean of the numerical solution is to the mean of the true solution. Other moments can be measured as well, but the mean is a good stand-in for other properties. Note that convergence of the mean is calculated on a sample. Thus there's actually two sources of error. We have not only the error between the numerical and actual results, but we also have the error of the mean to the true mean due to only taking a finite sample. Using the normal confidence interval of the mean due to the Central Limit Theorem, the error due to finite sampling is
-
-$$E_S = V[Y(t)]/\sqrt(N)$$
-
-for $N$ being the number of samples. In practice,
-
-$$E = minimum(E_W,E_S)$$
-
-Thus in each case, we will determine the variance of the true solution and use that to estimate the sample error, and the goal is to thus find the numerical method that achieves the sample error most efficiently.
-
 ```julia
-using StochasticDiffEq, DiffEqDevTools, ParameterizedFunctions, SDEProblemLibrary
+using StochasticDiffEq, DiffEqDevTools, ParameterizedFunctions
 using Plots;
 gr()
-import SDEProblemLibrary: prob_sde_additive,
-                          prob_sde_linear, prob_sde_wave
-const N = 1000
+const N = 100
+
+f = @ode_def LotkaVolterraTest begin
+    dx = a*x - b*x*y
+    dy = -c*y + d*x*y
+end a b c d
+
+p = [1.5, 1.0, 3.0, 1.0]
+
+function g(du, u, p, t)
+    du .= 0.1u
+end
+u0 = [1.0; 1.0]
+tspan = (0.0, 10.0)
+prob = SDEProblem(f, g, u0, tspan, p);
 ```
 
-```
-1000
-```
-
-
-
-
-
-### Additive Noise Problem
-
-$$dX_{t}=\left(\frac{\beta}{\sqrt{1+t}}-\frac{1}{2\left(1+t\right)}X_{t}\right)dt+\frac{\alpha\beta}{\sqrt{1+t}}dW_{t},\thinspace\thinspace\thinspace X_{0}=\frac{1}{2}$$
-
-where $\alpha=\frac{1}{10}$ and $\beta=\frac{1}{20}$. Actual Solution:
-
-$$X_{t}=\frac{1}{\sqrt{1+t}}X_{0}+\frac{\beta}{\sqrt{1+t}}\left(t+\alpha W_{t}\right).$$
 
 ```julia
-prob = prob_sde_additive
+sol = solve(prob, SRIW1(), abstol = 1e-4, reltol = 1e-4)
+plot(sol)
+```
 
-reltols = 1.0 ./ 10.0 .^ (1:5)
+![](figures/LotkaVolterraSDE_2_1.png)
+
+
+
+## Strong Error
+
+The starting `dt`s was chosen as the largest in the `1/4^i` which were stable. All larger `dt`s contained trajectories which would veer off to infinity.
+
+```julia
+reltols = 1.0 ./ 4.0 .^ (2:4)
 abstols = reltols#[0.0 for i in eachindex(reltols)]
-setups = [Dict(:alg=>EM(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 1))
-          Dict(:alg=>RKMil(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 1), :adaptive=>false)
-          Dict(:alg=>SRIW1(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 1), :adaptive=>false)
-          Dict(:alg=>SRA1(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 1), :adaptive=>false)
-          Dict(:alg=>SRA1())
-          Dict(:alg=>SRIW1())]
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; numruns_error = N,
-    save_everystep = false,
-    parallel_type = :none,
-    error_estimate = :weak_final)#
-plot(wp)
-```
-
-![](figures/BasicSDEWeakWorkPrecision_2_1.png)
-
-```julia
-sample_size = Int[10; 1e2; 1e3; 1e4]
-se = get_sample_errors(prob, setups[6], numruns = sample_size,
-    sample_error_runs = 100_000, solution_runs = 100)
-```
-
-```
-4-element Vector{Float64}:
- 0.00037292371794174663
- 3.676549219761362e-5
- 4.020781863650401e-6
- 4.6020735167386287e-7
-```
-
-
-
-```julia
-times = [wp[i].times for i in 1:length(wp)]
-times = [minimum(minimum(t) for t in times), maximum(maximum(t) for t in times)]
-plot!([se[end]; se[end]], times, color = :red,
-    linestyle = :dash, label = "Sample Error: 1000", lw = 3)
-```
-
-![](figures/BasicSDEWeakWorkPrecision_4_1.png)
-
-```julia
-prob = prob_sde_additive
-
-reltols = 1.0 ./ 10.0 .^ (1:5)
-abstols = reltols#[0.0 for i in eachindex(reltols)]
-setups = [Dict(:alg=>SRA1())
-          Dict(:alg=>SRA2())
-          Dict(:alg=>SRA3())
-          Dict(:alg=>SOSRA())
-          Dict(:alg=>SOSRA2())]
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; numruns_error = N,
-    save_everystep = false,
-    maxiters = 1e7,
-    parallel_type = :none,
-    error_estimate = :weak_final)
-plot(wp)
-```
-
-![](figures/BasicSDEWeakWorkPrecision_5_1.png)
-
-```julia
-sample_size = Int[10; 1e2; 1e3; 1e4]
-se = get_sample_errors(prob, setups[4], numruns = sample_size,
-    sample_error_runs = 100_000, solution_runs = 100)
-```
-
-```
-4-element Vector{Float64}:
- 0.00040062818226489804
- 3.9833429232592465e-5
- 3.75299195969397e-6
- 3.9670802025057e-7
-```
-
-
-
-```julia
-times = [wp[i].times for i in 1:length(wp)]
-times = [minimum(minimum(t) for t in times), maximum(maximum(t) for t in times)]
-plot!([se[end]; se[end]], times, color = :red,
-    linestyle = :dash, label = "Sample Error: 1000", lw = 3)
-```
-
-![](figures/BasicSDEWeakWorkPrecision_7_1.png)
-
-
-
-### Scalar Noise
-
-We will use a the linear SDE (also known as the Black-Scholes equation)
-
-$$dX_{t}=\alpha X_{t}dt+\beta X_{t}dW_{t},\thinspace\thinspace\thinspace X_{0}=\frac{1}{2}$$
-
-where $\alpha=\frac{1}{10}$ and $\beta=\frac{1}{20}$. Actual Solution:
-
-$$X_{t}=X_{0}e^{\left(\beta-\frac{\alpha^{2}}{2}\right)t+\alpha W_{t}}.$$
-
-```julia
-prob = prob_sde_linear
-
-reltols = 1.0 ./ 10.0 .^ (1:5)
-abstols = reltols#[0.0 for i in eachindex(reltols)]
-
 setups = [Dict(:alg=>SRIW1())
-          Dict(:alg=>EM(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 1))
-          Dict(:alg=>RKMil(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 1), :adaptive=>false)
-          Dict(:alg=>SRIW1(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 1), :adaptive=>false)]
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; numruns_error = N,
-    save_everystep = false,
-    maxiters = 1e7,
-    parallel_type = :none,
-    error_estimate = :weak_final)
-plot(wp)
-```
-
-```
-Error: BoundsError: attempt to access 4-element Vector{Float64} at index [5
-]
-```
-
-
-
-```julia
-sample_size = Int[10; 1e2; 1e3; 1e4]
-se = get_sample_errors(prob, setups[1], numruns = sample_size,
-    sample_error_runs = 100_000, solution_runs = 100)
-```
-
-```
-4-element Vector{Float64}:
- 0.15870955693569758
- 0.01852190216216807
- 0.0017895661766204247
- 0.00020281560423210057
-```
-
-
-
-```julia
-times = [wp[i].times for i in 1:length(wp)]
-times = [minimum(minimum(t) for t in times), maximum(maximum(t) for t in times)]
-plot!([se[end]; se[end]], times, color = :red,
-    linestyle = :dash, label = "Sample Error: 1000", lw = 3)
-```
-
-![](figures/BasicSDEWeakWorkPrecision_10_1.png)
-
-```julia
-prob = prob_sde_linear
-
-reltols = 1.0 ./ 10.0 .^ (1:5)
-abstols = reltols#[0.0 for i in eachindex(reltols)]
-
-setups = [Dict(:alg=>EM(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 2))
-          Dict(:alg=>RKMil(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 2), :adaptive=>false)
-          Dict(:alg=>SRI())
-          Dict(:alg=>SRIW1())
+          Dict(:alg=>EM(), :dts=>1.0 ./ 12.0 .^ ((1:length(reltols)) .+ 1.5))
+          Dict(:alg=>RKMil(), :dts=>1.0 ./ 12.0 .^ ((1:length(reltols)) .+ 1.5), :adaptive=>false)
+          Dict(:alg=>SRIW1(), :dts=>1.0 ./ 4.0 .^ ((1:length(reltols)) .+ 5), :adaptive=>false)
           Dict(:alg=>SRIW2())
           Dict(:alg=>SOSRI())
           Dict(:alg=>SOSRI2())]
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; numruns_error = N,
-    save_everystep = false,
+test_dt = 1/10^2
+appxsol_setup = Dict(:alg=>SRIW1(), :abstol=>1e-4, :reltol=>1e-4)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups, test_dt;
     maxiters = 1e7,
-    parallel_type = :none,
-    error_estimate = :weak_final)
+    verbose = false, save_everystep = false,
+    parallel_type = :threads,
+    appxsol_setup = appxsol_setup,
+    numruns_error = N, error_estimate = :final)
 plot(wp)
 ```
 
-![](figures/BasicSDEWeakWorkPrecision_11_1.png)
+![](figures/LotkaVolterraSDE_3_1.png)
+
+
+
+## Weak Error
 
 ```julia
-sample_size = Int[10; 1e2; 1e3; 1e4]
-se = get_sample_errors(prob, setups[6], numruns = sample_size,
-    sample_error_runs = 100_000, solution_runs = 100)
-```
-
-```
-4-element Vector{Float64}:
- 0.17231182491507088
- 0.019661082627820566
- 0.0016128338682566625
- 0.00015133554765872268
-```
-
-
-
-```julia
-times = [wp[i].times for i in 1:length(wp)]
-times = [minimum(minimum(t) for t in times), maximum(maximum(t) for t in times)]
-plot!([se[end]; se[end]], times, color = :red,
-    linestyle = :dash, label = "Sample Error: 1000", lw = 3)
-```
-
-![](figures/BasicSDEWeakWorkPrecision_13_1.png)
-
-
-
-## Scalar Wave SDE
-
-$$dX_{t}=-\left(\frac{1}{10}\right)^{2}\sin\left(X_{t}\right)\cos^{3}\left(X_{t}\right)dt+\frac{1}{10}\cos^{2}\left(X_{t}\right)dW_{t},\thinspace\thinspace\thinspace X_{0}=\frac{1}{2}$$
-
-Actual Solution:
-
-$$X_{t}=\arctan\left(\frac{1}{10}W_{t}+\tan\left(X_{0}\right)\right).$$
-
-```julia
-prob = prob_sde_wave
-
-reltols = 1.0 ./ 10.0 .^ (1:5)
+reltols = 1.0 ./ 4.0 .^ (2:4)
 abstols = reltols#[0.0 for i in eachindex(reltols)]
-
-setups = [Dict(:alg=>EM(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 1))
-          Dict(:alg=>RKMil(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 1), :adaptive=>false)
-          Dict(:alg=>SRIW1(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 1), :adaptive=>false)
-          Dict(:alg=>SRIW1())]
-
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; numruns_error = N,
-    save_everystep = false,
-    maxiters = 1e7,
-    parallel_type = :none,
-    error_estimate = :weak_final)
-plot(wp)
-```
-
-```
-Error: BoundsError: attempt to access 4-element Vector{Float64} at index [5
-]
-```
-
-
-
-```julia
-sample_size = Int[10; 1e2; 1e3; 1e4]
-se = get_sample_errors(prob, setups[4], numruns = sample_size,
-    sample_error_runs = 100_000, solution_runs = 100)
-```
-
-```
-4-element Vector{Float64}:
- 0.0035764651663830484
- 0.000322729787748465
- 3.194640134042552e-5
- 3.859178268794992e-6
-```
-
-
-
-```julia
-times = [wp[i].times for i in 1:length(wp)]
-times = [minimum(minimum(t) for t in times), maximum(maximum(t) for t in times)]
-plot!([se[end]; se[end]], times, color = :red,
-    linestyle = :dash, label = "Sample Error: 1000", lw = 3)
-```
-
-![](figures/BasicSDEWeakWorkPrecision_16_1.png)
-
-```julia
-prob = prob_sde_wave
-
-reltols = 1.0 ./ 10.0 .^ (1:5)
-abstols = reltols#[0.0 for i in eachindex(reltols)]
-
-setups = [Dict(:alg=>EM(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 2))
-          Dict(:alg=>RKMil(), :dts=>1.0 ./ 5.0 .^ ((1:length(reltols)) .+ 2), :adaptive=>false)
-          Dict(:alg=>SRI())
-          Dict(:alg=>SRIW1())
+setups = [Dict(:alg=>SRIW1())
+          Dict(:alg=>EM(), :dts=>1.0 ./ 12.0 .^ ((1:length(reltols)) .+ 1.5))
+          Dict(:alg=>RKMil(), :dts=>1.0 ./ 12.0 .^ ((1:length(reltols)) .+ 1.5), :adaptive=>false)
+          Dict(:alg=>SRIW1(), :dts=>1.0 ./ 4.0 .^ ((1:length(reltols)) .+ 5), :adaptive=>false)
           Dict(:alg=>SRIW2())
           Dict(:alg=>SOSRI())
           Dict(:alg=>SOSRI2())]
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; numruns_error = N,
-    save_everystep = false,
+test_dt = 1e-2
+appxsol_setup = Dict(:alg=>SRIW1(), :abstol=>1e-4, :reltol=>1e-4)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups, test_dt;
     maxiters = 1e7,
+    verbose = false, save_everystep = false,
     parallel_type = :none,
-    error_estimate = :weak_final)
-plot(wp)
+    appxsol_setup = appxsol_setup,
+    numruns_error = N, error_estimate = :weak_final)
+plot(wp; legend = :topleft)
 ```
 
-![](figures/BasicSDEWeakWorkPrecision_17_1.png)
+![](figures/LotkaVolterraSDE_4_1.png)
 
 ```julia
-sample_size = Int[10; 1e2; 1e3; 1e4]
-se = get_sample_errors(prob, setups[6], numruns = sample_size,
-    sample_error_runs = 100_000, solution_runs = 100)
+sample_size = Int[10; 1e2; 1e3]
+se = get_sample_errors(prob, setups[6], test_dt, numruns = sample_size,
+    appxsol_setup = appxsol_setup,
+    sample_error_runs = 100_000, solution_runs = 20)
 ```
 
 ```
-4-element Vector{Float64}:
- 0.003964358094485931
- 0.0003524629186944492
- 3.2204608613271093e-5
- 3.847252932709976e-6
+3-element Vector{Float64}:
+ 0.12397682065514846
+ 0.010312550452511556
+ 0.0010814155260340478
 ```
 
 
 
 ```julia
+plot(wp; legend = :topleft)
 times = [wp[i].times for i in 1:length(wp)]
 times = [minimum(minimum(t) for t in times), maximum(maximum(t) for t in times)]
-plot!([se[end]; se[end]], times, color = :red,
+plot!([se[end]; se[end]], times, color = :orange,
     linestyle = :dash, label = "Sample Error: 1000", lw = 3)
 ```
 
-![](figures/BasicSDEWeakWorkPrecision_19_1.png)
+![](figures/LotkaVolterraSDE_6_1.png)
 
 
 
-## Summary
+## Conclusion
 
-In the additive noise problem, the `EM` and `RKMil` algorithms are not effective at reaching the sample error. In the other two problems, the `EM` and `RKMil` algorithms are as efficient as the higher order methods at achieving the maximal weak error.
+These results show that in both strong and weak error, the high order method is more efficient.
+The strong and the weak are track each other well for the methods tested on this problem, with the
+strong error slightly higher than the weak error. To reach the sample error for a 100 trajectories,
+the higher order method is around 5x faster. To reach the sampling error for 10000 trajectories, the
+higher order method is nearly 100x faster.
 
 
 ## Appendix
@@ -369,7 +132,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/NonStiffSDE","BasicSDEWeakWorkPrecision.jmd")
+SciMLBenchmarks.weave_file("benchmarks/NonStiffSDE","LotkaVolterraSDE.jmd")
 ```
 
 Computer Information:
