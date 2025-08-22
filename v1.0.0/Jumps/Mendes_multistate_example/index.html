@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Mendes Multistate Model · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/Jumps/Mendes_multistate_example/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../EGFR_Benchmark/">EGFR Network Benchmark</a></li><li class="is-active"><a class="tocitem" href>Mendes Multistate Model</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Plot-solutions-by-each-method"><span>Plot solutions by each method</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmarking-performance-of-the-methods"><span>Benchmarking performance of the methods</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Jump Process Equations (Gillespie Benchmarks)</a></li><li class="is-active"><a href>Mendes Multistate Model</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Mendes Multistate Model</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/Jumps/Mendes_multistate_example.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Mendes-Multistate-Model"><a class="docs-heading-anchor" href="#Mendes-Multistate-Model">Mendes Multistate Model</a><a id="Mendes-Multistate-Model-1"></a><a class="docs-heading-anchor-permalink" href="#Mendes-Multistate-Model" title="Permalink"></a></h1><p>Taken from Gupta and Mendes, <em>An Overview of Network-Based and -Free Approaches for Stochastic Simulation of Biochemical Systems</em>, Computation, 6 (9), 2018.</p><pre><code class="language-julia hljs">using Catalyst, JumpProcesses, JumpProblemLibrary, Plots, Statistics
+fmt = :png</code></pre><pre><code class="nohighlight hljs">:png</code></pre><p>Our model is</p><pre><code class="language-julia hljs">jprob = JumpProblemLibrary.prob_jump_multistate
+rn  = jprob.network
+reactions(rn)</code></pre><pre><code class="nohighlight hljs">18-element Vector{Catalyst.Reaction}:
+ kon, S1 + S2 --&gt; S4
+ kAon, S1 + S3 --&gt; S5
+ kon, S2 + S5 --&gt; S6
+ koff, S4 --&gt; S1 + S2
+ kAon, S3 + S4 --&gt; S6
+ kAoff, S5 --&gt; S1 + S3
+ koff, S6 --&gt; S2 + S5
+ kAoff, S6 --&gt; S3 + S4
+ kAp, S6 --&gt; S7
+ koff, S7 --&gt; S2 + S8
+ kAoff, S7 --&gt; S4 + S9
+ kAdp, S7 --&gt; S6
+ kon, S2 + S8 --&gt; S7
+ kAon, S1 + S9 --&gt; S8
+ kAon, S4 + S9 --&gt; S7
+ kAoff, S8 --&gt; S1 + S9
+ kAdp, S8 --&gt; S5
+ kAdp, S9 --&gt; S3</code></pre><h1 id="Plot-solutions-by-each-method"><a class="docs-heading-anchor" href="#Plot-solutions-by-each-method">Plot solutions by each method</a><a id="Plot-solutions-by-each-method-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-solutions-by-each-method" title="Permalink"></a></h1><pre><code class="language-julia hljs">methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(), RSSA(), RSSACR(), Coevolve(), RDirect())
+shortlabels = [string(leg)[15:end-2] for leg in methods]
+tf      = 10.0 * jprob.tstop
+prob    = DiscreteProblem(rn, jprob.u0, (0.0, tf), jprob.rates)
+varlegs = [&quot;A_P&quot; &quot;A_bound_P&quot; &quot;A_unbound_P&quot; &quot;RLA_P&quot;]
+@variables t S7(t) S8(t) S9(t)
+varsyms = [
+    [S7,S8,S9],
+    [S9],
+    [S7,S8],
+    [S7]
+]
+varidxs = []
+for vars in varsyms
+    push!(varidxs, [findfirst(isequal(sym),unknowns(rn)) for sym in vars])
+end</code></pre><pre><code class="language-julia hljs">p = []
+for (i,method) in enumerate(methods)
+    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
+    sol = solve(jump_prob, SSAStepper(), saveat=tf/1000.)
+    solv = zeros(1001, 4)
+    for (i,varidx) in enumerate(varidxs)
+        solv[:,i] = sum(sol[varidx,:], dims=1)
+    end
+    if i &lt; length(methods)
+        push!(p, plot(sol.t, solv, title=shortlabels[i], legend=false, format=fmt))
+    else
+        push!(p, plot(sol.t, solv, title=shortlabels[i], legend=false, format=fmt))
+    end
+end
+push!(p, plot((1:4)&#39;, framestyle = :none, legend=:inside, labels=varlegs))
+plot(p..., layout=(6,2), format=fmt)</code></pre><p><img src="../figures/Mendes_multistate_example_4_1.png" alt/></p><h1 id="Benchmarking-performance-of-the-methods"><a class="docs-heading-anchor" href="#Benchmarking-performance-of-the-methods">Benchmarking performance of the methods</a><a id="Benchmarking-performance-of-the-methods-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarking-performance-of-the-methods" title="Permalink"></a></h1><pre><code class="language-julia hljs">function run_benchmark!(t, jump_prob, stepper)
+    sol = solve(jump_prob, stepper)
+    @inbounds for i in 1:length(t)
+        t[i] = @elapsed (sol = solve(jump_prob, stepper))
+    end
+end</code></pre><pre><code class="nohighlight hljs">run_benchmark! (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">nsims = 100
+benchmarks = Vector{Vector{Float64}}()
+for method in methods
+    jump_prob = JumpProblem(rn, prob, method, save_positions=(false, false))
+    stepper = SSAStepper()
+    time = Vector{Float64}(undef, nsims)
+    run_benchmark!(time, jump_prob, stepper)
+    push!(benchmarks, time)
+end</code></pre><pre><code class="language-julia hljs">medtimes = Vector{Float64}(undef,length(methods))
+stdtimes = Vector{Float64}(undef,length(methods))
+avgtimes = Vector{Float64}(undef,length(methods))
+for i in 1:length(methods)
+    medtimes[i] = median(benchmarks[i])
+    avgtimes[i] = mean(benchmarks[i])
+    stdtimes[i] = std(benchmarks[i])
+end
+using DataFrames
+
+df = DataFrame(names=shortlabels, medtimes=medtimes, relmedtimes=(medtimes/medtimes[1]),
+               avgtimes=avgtimes, std=stdtimes, cv=stdtimes./avgtimes)
+
+sa = [text(string(round(mt,digits=3),&quot;s&quot;),:center,12) for mt in df.medtimes]
+bar(df.names,df.relmedtimes,legend=:false, fmt=fmt)
+scatter!(df.names, .05 .+ df.relmedtimes, markeralpha=0, series_annotations=sa, fmt=fmt)
+ylabel!(&quot;median relative to Direct&quot;)
+title!(&quot;Multistate Model&quot;)</code></pre><p><img src="../figures/Mendes_multistate_example_7_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+SciMLBenchmarks.weave_file(&quot;benchmarks/Jumps&quot;,&quot;Mendes_multistate_example.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.9
+Commit 5595d20a287 (2025-03-10 12:51 UTC)
+Build Info:
+  Official https://julialang.org/ release
+Platform Info:
+  OS: Linux (x86_64-linux-gnu)
+  CPU: 128 × AMD EPYC 7502 32-Core Processor
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Environment:
+  JULIA_CPU_THREADS = 128
+  JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Project.toml`
+  [6e4b80f9] BenchmarkTools v1.6.0
+  [479239e8] Catalyst v15.0.8
+  [8f4d0f93] Conda v1.10.2
+  [a93c6f00] DataFrames v1.7.0
+  [0c46a032] DifferentialEquations v7.16.1
+  [31c24e10] Distributions v0.25.120
+  [86223c79] Graphs v1.12.1
+  [faf0f6d7] JumpProblemLibrary v1.1.0
+  [ccbc3e58] JumpProcesses v9.15.0
+⌅ [961ee093] ModelingToolkit v9.80.2
+  [1dea7af3] OrdinaryDiffEq v6.98.0
+  [86206cdf] PiecewiseDeterministicMarkovProcesses v0.0.10
+  [91a5bcdd] Plots v1.40.13
+  [438e738f] PyCall v1.96.4
+  [b4db0fb7] ReactionNetworkImporters v0.16.1
+  [31c91b34] SciMLBenchmarks v0.1.3
+  [860ef19b] StableRNGs v1.0.3
+  [f3b207a7] StatsPlots v0.15.7
+  [c3572dad] Sundials v4.28.0
+  [37e2e46d] LinearAlgebra
+  [9a3f8284] Random
+  [10745b16] Statistics v1.10.0
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Jumps/Manifest.toml`
+  [47edcb42] ADTypes v1.14.0
+  [621f4979] AbstractFFTs v1.5.0
+  [1520ce14] AbstractTrees v0.4.5
+  [7d9f7c33] Accessors v0.1.42
+  [79e6a3ab] Adapt v4.3.0
+  [66dad0bd] AliasTables v1.1.3
+  [a95523ee] AlmostBlockDiagonals v0.1.10
+  [ec485272] ArnoldiMethod v0.4.0
+  [7d9fca2a] Arpack v0.5.4
+  [4fba245c] ArrayInterface v7.19.0
+  [4c555306] ArrayLayouts v1.11.1
+  [13072b0f] AxisAlgorithms v1.1.0
+  [aae01518] BandedMatrices v1.9.4
+  [6e4b80f9] BenchmarkTools v1.6.0
+⌅ [e2ed5e7c] Bijections v0.1.10
+  [d1d4a3ce] BitFlags v0.1.9
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
+  [8e7c35d0] BlockArrays v1.6.3
+  [764a87c0] BoundaryValueDiffEq v5.17.0
+  [7227322d] BoundaryValueDiffEqAscher v1.6.1
+  [56b672f2] BoundaryValueDiffEqCore v1.9.0
+  [85d9eb09] BoundaryValueDiffEqFIRK v1.7.0
+  [1a22d4ce] BoundaryValueDiffEqMIRK v1.7.0
+  [9255f1d6] BoundaryValueDiffEqMIRKN v1.6.1
+  [ed55bfe0] BoundaryValueDiffEqShooting v1.7.0
+  [70df07ce] BracketingNonlinearSolve v1.3.0
+  [fa961155] CEnum v0.5.0
+  [2a0fbf3d] CPUSummary v0.2.6
+  [479239e8] Catalyst v15.0.8
+  [d360d2e6] ChainRulesCore v1.25.1
+  [fb6a15b2] CloseOpenIntervals v0.1.13
+  [aaaa29a8] Clustering v0.15.8
+  [944b1d66] CodecZlib v0.7.8
+  [35d6a980] ColorSchemes v3.29.0
+  [3da002f7] ColorTypes v0.12.1
+  [c3611d14] ColorVectorSpace v0.11.0
+  [5ae59095] Colors v0.13.1
+  [861a8166] Combinatorics v1.0.3
+  [a80b9123] CommonMark v0.9.1
+  [38540f10] CommonSolve v0.2.4
+  [bbf7d656] CommonSubexpressions v0.3.1
+  [f70d9fcc] CommonWorldInvalidations v1.0.0
+  [34da2185] Compat v4.16.0
+  [b152e2b5] CompositeTypes v0.1.4
+  [a33af91c] CompositionsBase v0.1.2
+  [2569d6c7] ConcreteStructs v0.2.3
+  [f0e56b4a] ConcurrentUtilities v2.5.0
+  [8f4d0f93] Conda v1.10.2
+  [187b0558] ConstructionBase v1.5.8
+  [d38c429a] Contour v0.6.3
+  [adafc99b] CpuId v0.3.1
+  [a8cc5b0e] Crayons v4.1.1
+  [9a962f9c] DataAPI v1.16.0
+  [a93c6f00] DataFrames v1.7.0
+  [864edb3b] DataStructures v0.18.22
+  [e2d170a0] DataValueInterfaces v1.0.0
+  [bcd4f6db] DelayDiffEq v5.53.1
+  [8bb1440f] DelimitedFiles v1.9.1
+  [2b5f629d] DiffEqBase v6.175.0
+  [459566f4] DiffEqCallbacks v4.6.0
+  [77a26b50] DiffEqNoiseProcess v5.24.1
+  [163ba53b] DiffResults v1.1.0
+  [b552c78f] DiffRules v1.15.1
+  [0c46a032] DifferentialEquations v7.16.1
+⌅ [a0c0ee7d] DifferentiationInterface v0.6.54
+  [8d63f2c5] DispatchDoctor v0.4.19
+  [b4f34e82] Distances v0.10.12
+  [31c24e10] Distributions v0.25.120
+  [ffbed154] DocStringExtensions v0.9.4
+  [5b8099bc] DomainSets v0.7.15
+  [7c1d4256] DynamicPolynomials v0.6.2
+  [06fc5a27] DynamicQuantities v1.8.0
+  [4e289a0a] EnumX v1.0.5
+⌃ [f151be2c] EnzymeCore v0.8.10
+  [460bff9d] ExceptionUnwrapping v0.1.11
+  [d4d017d3] ExponentialUtilities v1.27.0
+  [e2ba6199] ExprTools v0.1.10
+  [55351af7] ExproniconLite v0.10.14
+  [c87230d0] FFMPEG v0.4.2
+  [7a1cc6ca] FFTW v1.8.1
+  [9d29842c] FastAlmostBandedMatrices v0.1.5
+  [7034ab61] FastBroadcast v0.3.5
+  [9aa1b823] FastClosures v0.3.2
+  [442a2c76] FastGaussQuadrature v1.0.2
+  [a4df4552] FastPower v1.1.2
+  [1a297f60] FillArrays v1.13.0
+  [64ca27bc] FindFirstFunctions v1.4.1
+  [6a86dc24] FiniteDiff v2.27.0
+  [53c48c17] FixedPointNumbers v0.8.5
+  [1fa38f19] Format v1.3.7
+⌅ [f6369f11] ForwardDiff v0.10.38
+  [069b7b12] FunctionWrappers v1.1.3
+  [77dc65aa] FunctionWrappersWrappers v0.1.3
+  [d9f16b24] Functors v0.5.2
+  [46192b85] GPUArraysCore v0.2.0
+  [28b8d3ca] GR v0.73.16
+  [c145ed77] GenericSchur v0.5.5
+  [d7ba0133] Git v1.4.0
+  [c27321d9] Glob v1.3.1
+  [86223c79] Graphs v1.12.1
+  [42e2da0e] Grisu v1.0.2
+  [cd3eb016] HTTP v1.10.16
+  [eafb193a] Highlights v0.5.3
+  [34004b35] HypergeometricFunctions v0.3.28
+⌃ [7073ff75] IJulia v1.27.0
+  [615f187c] IfElse v0.1.1
+  [d25df0c9] Inflate v0.1.5
+  [842dd82b] InlineStrings v1.4.3
+  [18e54dd8] IntegerMathUtils v0.1.2
+⌅ [a98d9a8b] Interpolations v0.15.1
+  [8197267c] IntervalSets v0.7.11
+  [3587e190] InverseFunctions v0.1.17
+  [41ab1584] InvertedIndices v1.3.1
+  [92d709cd] IrrationalConstants v0.2.4
+  [82899510] IteratorInterfaceExtensions v1.0.0
+  [1019f520] JLFzf v0.1.11
+  [692b3bcd] JLLWrappers v1.7.0
+  [682c06a0] JSON v0.21.4
+  [ae98c720] Jieko v0.2.1
+  [98e50ef6] JuliaFormatter v2.1.2
+⌅ [70703baa] JuliaSyntax v0.4.10
+  [faf0f6d7] JumpProblemLibrary v1.1.0
+  [ccbc3e58] JumpProcesses v9.15.0
+  [5ab0869b] KernelDensity v0.6.9
+  [ba0b0d4f] Krylov v0.10.1
+  [7f56f5a3] LSODA v0.7.5
+  [b964fa9f] LaTeXStrings v1.4.0
+  [23fbe1c1] Latexify v0.16.8
+  [10f19ff3] LayoutPointers v0.1.17
+  [5078a376] LazyArrays v2.6.1
+  [2d8b4e74] LevyArea v1.0.0
+  [87fe0de2] LineSearch v0.1.4
+  [d3d80556] LineSearches v7.3.0
+  [7ed4a6bd] LinearSolve v3.16.0
+  [2ab3a3ac] LogExpFunctions v0.3.29
+  [e6f89c97] LoggingExtras v1.1.0
+  [d8e11817] MLStyle v0.4.17
+  [1914dd2f] MacroTools v0.5.16
+  [d125e4d3] ManualMemory v0.1.8
+  [a3b82374] MatrixFactorizations v3.0.1
+  [bb5d69b7] MaybeInplace v0.1.4
+  [739be429] MbedTLS v1.1.9
+  [442fdcdd] Measures v0.3.2
+  [e1d29d7a] Missings v1.2.0
+⌅ [961ee093] ModelingToolkit v9.80.2
+  [2e0e35c7] Moshi v0.3.5
+  [46d2c3a1] MuladdMacro v0.2.4
+  [102ac46a] MultivariatePolynomials v0.5.9
+  [6f286f6a] MultivariateStats v0.10.3
+  [ffc61752] Mustache v1.0.20
+  [d8a4904e] MutableArithmetics v1.6.4
+  [d41bc354] NLSolversBase v7.9.1
+  [2774e3e8] NLsolve v4.5.1
+  [77ba4419] NaNMath v1.1.3
+  [b8a86587] NearestNeighbors v0.4.21
+  [8913a72c] NonlinearSolve v4.9.0
+  [be0214bd] NonlinearSolveBase v1.12.0
+  [5959db7a] NonlinearSolveFirstOrder v1.5.0
+  [9a2c21bd] NonlinearSolveQuasiNewton v1.6.0
+  [26075421] NonlinearSolveSpectralMethods v1.2.0
+  [510215fc] Observables v0.5.5
+  [6fe1bfb0] OffsetArrays v1.17.0
+  [4d8831e6] OpenSSL v1.5.0
+  [429524aa] Optim v1.12.0
+  [bac558e1] OrderedCollections v1.8.1
+  [1dea7af3] OrdinaryDiffEq v6.98.0
+  [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.2.0
+  [6ad6398a] OrdinaryDiffEqBDF v1.5.1
+  [bbf590c4] OrdinaryDiffEqCore v1.26.0
+  [50262376] OrdinaryDiffEqDefault v1.4.0
+  [4302a76b] OrdinaryDiffEqDifferentiation v1.9.1
+  [9286f039] OrdinaryDiffEqExplicitRK v1.1.0
+  [e0540318] OrdinaryDiffEqExponentialRK v1.4.0
+  [becaefa8] OrdinaryDiffEqExtrapolation v1.5.0
+  [5960d6e9] OrdinaryDiffEqFIRK v1.12.0
+  [101fe9f7] OrdinaryDiffEqFeagin v1.1.0
+  [d3585ca7] OrdinaryDiffEqFunctionMap v1.1.1
+  [d28bc4f8] OrdinaryDiffEqHighOrderRK v1.1.0
+  [9f002381] OrdinaryDiffEqIMEXMultistep v1.3.0
+  [521117fe] OrdinaryDiffEqLinear v1.3.0
+  [1344f307] OrdinaryDiffEqLowOrderRK v1.2.0
+  [b0944070] OrdinaryDiffEqLowStorageRK v1.3.0
+  [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.10.0
+  [c9986a66] OrdinaryDiffEqNordsieck v1.1.0
+  [5dd0a6cf] OrdinaryDiffEqPDIRK v1.3.1
+  [5b33eab2] OrdinaryDiffEqPRK v1.1.0
+  [04162be5] OrdinaryDiffEqQPRK v1.1.0
+  [af6ede74] OrdinaryDiffEqRKN v1.1.0
+  [43230ef6] OrdinaryDiffEqRosenbrock v1.10.1
+  [2d112036] OrdinaryDiffEqSDIRK v1.3.0
+  [669c94d9] OrdinaryDiffEqSSPRK v1.3.0
+  [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.3.0
+  [358294b1] OrdinaryDiffEqStabilizedRK v1.1.0
+  [fa646aed] OrdinaryDiffEqSymplecticRK v1.3.0
+  [b1df2697] OrdinaryDiffEqTsit5 v1.1.0
+  [79d7bb75] OrdinaryDiffEqVerner v1.2.0
+  [90014a1f] PDMats v0.11.35
+  [d96e819e] Parameters v0.12.3
+  [69de0a69] Parsers v2.8.3
+  [86206cdf] PiecewiseDeterministicMarkovProcesses v0.0.10
+  [ccf2f8ad] PlotThemes v3.3.0
+  [995b91a9] PlotUtils v1.4.3
+  [91a5bcdd] Plots v1.40.13
+  [e409e4f3] PoissonRandom v0.4.4
+  [f517fe37] Polyester v0.7.18
+  [1d0040c9] PolyesterWeave v0.2.2
+  [2dfb63ee] PooledArrays v1.4.3
+  [85a6dd25] PositiveFactorizations v0.2.4
+  [d236fae5] PreallocationTools v0.4.27
+⌅ [aea7be01] PrecompileTools v1.2.1
+  [21216c6a] Preferences v1.4.3
+  [08abe8d2] PrettyTables v2.4.0
+  [27ebfcd6] Primes v0.5.7
+  [43287f4e] PtrArrays v1.3.0
+  [438e738f] PyCall v1.96.4
+  [1fd47b50] QuadGK v2.11.2
+  [74087812] Random123 v1.7.1
+  [e6cf234a] RandomNumbers v1.6.0
+  [c84ed2f1] Ratios v0.4.5
+  [b4db0fb7] ReactionNetworkImporters v0.16.1
+  [3cdcf5f2] RecipesBase v1.3.4
+  [01d81517] RecipesPipeline v0.6.12
+  [731186ca] RecursiveArrayTools v3.33.0
+  [189a3867] Reexport v1.2.2
+  [05181044] RelocatableFolders v1.0.1
+  [ae029012] Requires v1.3.1
+  [ae5879a3] ResettableStacks v1.1.1
+  [79098fc4] Rmath v0.8.0
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.15
+  [9dfe8606] SCCNonlinearSolve v1.2.0
+  [94e857df] SIMDTypes v0.1.0
+  [0bca4576] SciMLBase v2.96.0
+  [31c91b34] SciMLBenchmarks v0.1.3
+  [19f34311] SciMLJacobianOperators v0.1.6
+⌃ [c0aeaf25] SciMLOperators v0.4.0
+  [53ae85a6] SciMLStructures v1.7.0
+  [6c6a2e73] Scratch v1.2.1
+  [91c51154] SentinelArrays v1.4.8
+  [efcf1570] Setfield v1.1.2
+  [992d4aef] Showoff v1.0.3
+  [777ac1f9] SimpleBufferStream v1.2.0
+  [727e6d20] SimpleNonlinearSolve v2.5.0
+  [699a6c99] SimpleTraits v0.9.4
+  [ce78b400] SimpleUnPack v1.1.0
+  [b85f4697] SoftGlobalScope v1.1.0
+  [a2af1166] SortingAlgorithms v1.2.1
+  [9f842d2f] SparseConnectivityTracer v0.6.18
+  [0a514795] SparseMatrixColorings v0.4.20
+  [276daf66] SpecialFunctions v2.5.1
+  [860ef19b] StableRNGs v1.0.3
+  [aedffcd0] Static v1.2.0
+  [0d7ed370] StaticArrayInterface v1.8.0
+  [90137ffa] StaticArrays v1.9.13
+  [1e83bf80] StaticArraysCore v1.4.3
+  [82ae8749] StatsAPI v1.7.1
+  [2913bbd2] StatsBase v0.34.5
+  [4c63d2b9] StatsFuns v1.5.0
+  [f3b207a7] StatsPlots v0.15.7
+  [9672c7b4] SteadyStateDiffEq v2.5.0
+  [789caeaf] StochasticDiffEq v6.80.0
+  [7792a7ef] StrideArraysCore v0.5.7
+  [69024149] StringEncodings v0.3.7
+  [892a3eda] StringManipulation v0.4.1
+  [c3572dad] Sundials v4.28.0
+  [2efcf032] SymbolicIndexingInterface v0.3.40
+  [19f23fe9] SymbolicLimits v0.2.2
+  [d1185830] SymbolicUtils v3.29.0
+  [0c5d862f] Symbolics v6.40.0
+  [ab02a1b2] TableOperations v1.2.0
+  [3783bdb8] TableTraits v1.0.1
+  [bd369af6] Tables v1.12.0
+  [ed4db957] TaskLocalValues v0.1.2
+  [62fd8b95] TensorCore v0.1.1
+  [8ea1fca8] TermInterface v2.0.0
+  [1c621080] TestItems v1.0.0
+  [8290d209] ThreadingUtilities v0.5.4
+  [a759f4b9] TimerOutputs v0.5.29
+  [3bb67fe8] TranscodingStreams v0.11.3
+  [410a4b4d] Tricks v0.1.10
+  [781d530d] TruncatedStacktraces v1.4.0
+  [5c2747f8] URIs v1.5.2
+  [3a884ed6] UnPack v1.0.2
+  [1cfade01] UnicodeFun v0.4.1
+  [1986cc42] Unitful v1.22.1
+  [45397f5d] UnitfulLatexify v1.7.0
+  [a7c27f48] Unityper v0.1.6
+  [41fe7b60] Unzip v0.2.0
+  [81def892] VersionParsing v1.3.0
+  [897b6980] WeakValueDicts v0.1.0
+  [44d3d7a6] Weave v0.10.12
+  [cc8bc4a8] Widgets v0.6.7
+  [efce3f68] WoodburyMatrices v1.0.0
+  [ddb6d928] YAML v0.4.14
+  [c2297ded] ZMQ v1.4.0
+⌅ [68821587] Arpack_jll v3.5.1+1
+  [6e34b625] Bzip2_jll v1.0.9+0
+  [83423d85] Cairo_jll v1.18.5+0
+  [ee1fde0b] Dbus_jll v1.16.2+0
+  [2702e6a9] EpollShim_jll v0.0.20230411+1
+  [2e619515] Expat_jll v2.6.5+0
+⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
+  [f5851436] FFTW_jll v3.3.11+0
+  [a3f928ae] Fontconfig_jll v2.16.0+0
+  [d7e528f0] FreeType2_jll v2.13.4+0
+  [559328eb] FriBidi_jll v1.0.17+0
+  [0656b61e] GLFW_jll v3.4.0+2
+  [d2c73de3] GR_jll v0.73.16+0
+  [78b55507] Gettext_jll v0.21.0+0
+  [f8c6e375] Git_jll v2.49.0+0
+  [7746bdde] Glib_jll v2.84.0+0
+  [3b182d85] Graphite2_jll v1.3.15+0
+  [2e76f6c2] HarfBuzz_jll v8.5.1+0
+  [1d5cc7b8] IntelOpenMP_jll v2025.0.4+0
+  [aacddb02] JpegTurbo_jll v3.1.1+0
+  [c1c5ebd0] LAME_jll v3.100.2+0
+  [88015f11] LERC_jll v4.0.1+0
+  [1d63c593] LLVMOpenMP_jll v18.1.8+0
+  [aae0fff6] LSODA_jll v0.1.2+0
+  [dd4b983a] LZO_jll v2.10.3+0
+  [e9f186c6] Libffi_jll v3.4.7+0
+  [7e76a0d4] Libglvnd_jll v1.7.1+1
+  [94ce4f54] Libiconv_jll v1.18.0+0
+  [4b2f31a3] Libmount_jll v2.41.0+0
+  [89763e89] Libtiff_jll v4.7.1+0
+  [38a345b3] Libuuid_jll v2.41.0+0
+  [856f044c] MKL_jll v2025.0.1+1
+  [e7412a2a] Ogg_jll v1.3.5+1
+  [9bd350c2] OpenSSH_jll v10.0.1+0
+  [458c3c95] OpenSSL_jll v3.5.0+0
+  [efe28fd5] OpenSpecFun_jll v0.5.6+0
+  [91d4177d] Opus_jll v1.3.3+0
+  [36c8627f] Pango_jll v1.56.3+0
+⌅ [30392449] Pixman_jll v0.44.2+0
+  [c0090381] Qt6Base_jll v6.8.2+1
+  [629bc702] Qt6Declarative_jll v6.8.2+1
+  [ce943373] Qt6ShaderTools_jll v6.8.2+1
+  [e99dba38] Qt6Wayland_jll v6.8.2+0
+  [f50d1b31] Rmath_jll v0.5.1+0
+⌅ [fb77eaff] Sundials_jll v5.2.2+0
+  [a44049a8] Vulkan_Loader_jll v1.3.243+0
+  [a2964d1f] Wayland_jll v1.23.1+0
+  [2381bf8a] Wayland_protocols_jll v1.36.0+0
+⌅ [02c8fc9c] XML2_jll v2.13.6+1
+  [ffd25f8a] XZ_jll v5.8.1+0
+  [f67eecfb] Xorg_libICE_jll v1.1.2+0
+  [c834827a] Xorg_libSM_jll v1.2.6+0
+  [4f6342f7] Xorg_libX11_jll v1.8.12+0
+  [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
+  [935fb764] Xorg_libXcursor_jll v1.2.4+0
+  [a3789734] Xorg_libXdmcp_jll v1.1.6+0
+  [1082639a] Xorg_libXext_jll v1.3.7+0
+  [d091e8ba] Xorg_libXfixes_jll v6.0.1+0
+  [a51aa0fd] Xorg_libXi_jll v1.8.3+0
+  [d1454406] Xorg_libXinerama_jll v1.1.6+0
+  [ec84b674] Xorg_libXrandr_jll v1.5.5+0
+  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
+  [cc61e674] Xorg_libxkbfile_jll v1.1.3+0
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.4+0
+  [12413925] Xorg_xcb_util_image_jll v0.4.0+1
+  [2def613f] Xorg_xcb_util_jll v0.4.0+1
+  [975044d2] Xorg_xcb_util_keysyms_jll v0.4.0+1
+  [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.9+1
+  [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.1+1
+  [35661453] Xorg_xkbcomp_jll v1.4.7+0
+  [33bec58e] Xorg_xkeyboard_config_jll v2.44.0+0
+  [c5fb5394] Xorg_xtrans_jll v1.6.0+0
+  [8f1865be] ZeroMQ_jll v4.3.6+0
+  [3161d3a3] Zstd_jll v1.5.7+1
+  [35ca27e7] eudev_jll v3.2.9+0
+  [214eeab7] fzf_jll v0.61.1+0
+  [1a1c6b14] gperf_jll v3.3.0+0
+  [a4ae2306] libaom_jll v3.11.0+0
+  [0ac62f75] libass_jll v0.15.2+0
+  [1183f4f0] libdecor_jll v0.2.2+0
+  [2db6ffa8] libevdev_jll v1.11.0+0
+  [f638f0a6] libfdk_aac_jll v2.0.3+0
+  [36db933b] libinput_jll v1.18.0+0
+  [b53b4c65] libpng_jll v1.6.48+0
+  [a9144af2] libsodium_jll v1.0.21+0
+  [f27f6e37] libvorbis_jll v1.3.7+2
+  [009596ad] mtdev_jll v1.1.6+0
+  [1317d2d5] oneTBB_jll v2022.0.0+0
+⌅ [1270edf5] x264_jll v2021.5.5+0
+⌅ [dfaa095f] x265_jll v3.5.0+0
+  [d8fb68d0] xkbcommon_jll v1.8.1+0
+  [0dad84c5] ArgTools v1.1.1
+  [56f22d72] Artifacts
+  [2a0f44e3] Base64
+  [ade2ca70] Dates
+  [8ba89e20] Distributed
+  [f43a241f] Downloads v1.6.0
+  [7b1f6079] FileWatching
+  [9fa8497b] Future
+  [b77e0a4c] InteractiveUtils
+  [4af54fe1] LazyArtifacts
+  [b27032c2] LibCURL v0.6.4
+  [76f85450] LibGit2
+  [8f399da3] Libdl
+  [37e2e46d] LinearAlgebra
+  [56ddb016] Logging
+  [d6f4376e] Markdown
+  [a63ad114] Mmap
+  [ca575930] NetworkOptions v1.2.0
+  [44cfe95a] Pkg v1.10.0
+  [de0858da] Printf
+  [9abbd945] Profile
+  [3fa0cd96] REPL
+  [9a3f8284] Random
+  [ea8e919c] SHA v0.7.0
+  [9e88b42a] Serialization
+  [1a1011a3] SharedArrays
+  [6462fe0b] Sockets
+  [2f01184e] SparseArrays v1.10.0
+  [10745b16] Statistics v1.10.0
+  [4607b0f0] SuiteSparse
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
+  [8dfed614] Test
+  [cf7118a7] UUIDs
+  [4ec0a83e] Unicode
+  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
+  [deac9b47] LibCURL_jll v8.4.0+0
+  [e37daf67] LibGit2_jll v1.6.4+0
+  [29816b5a] LibSSH2_jll v1.11.0+1
+  [c8ffd9c3] MbedTLS_jll v2.28.2+1
+  [14a3606d] MozillaCACerts_jll v2023.1.10
+  [4536629a] OpenBLAS_jll v0.3.23+4
+  [05823500] OpenLibm_jll v0.8.1+4
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.2.1+1
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.11.0+0
+  [8e850ede] nghttp2_jll v1.52.0+1
+  [3f19e933] p7zip_jll v17.4.0+2
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../EGFR_Benchmark/">« EGFR Network Benchmark</a><a class="docs-footer-nextpage" href="../MultivariateHawkes/">Multivariate Hawkes Model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 22 August 2025 06:10">Friday 22 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

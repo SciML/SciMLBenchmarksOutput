@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Black-Box Global Optimizer Benchmarks · The SciML Benchmarks</title><script data-outdated-warner src="../../assets/warner.js"></script><link rel="canonical" href="https://benchmarks.sciml.ai/stable/GlobalOptimization/blackbox_global_optimizers/"/><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.045/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.13.24/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><form class="docs-search" action="../../search/"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li class="is-active"><a class="tocitem" href>Black-Box Global Optimizer Benchmarks</a><ul class="internal"><li><a class="tocitem" href="#Setup"><span>Setup</span></a></li><li><a class="tocitem" href="#Test-one-optimizer"><span>Test one optimizer</span></a></li><li><a class="tocitem" href="#Test-one-test-function-(Rastrigin)"><span>Test one test function (Rastrigin)</span></a></li><li><a class="tocitem" href="#Test-all"><span>Test all</span></a></li></ul></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Dynamical ODEs (Hamiltonian and Second Order)</a></li><li class="is-active"><a href>Black-Box Global Optimizer Benchmarks</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Black-Box Global Optimizer Benchmarks</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/GlobalOptimization/blackbox_global_optimizers.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Black-Box-Global-Optimizer-Benchmarks"><a class="docs-heading-anchor" href="#Black-Box-Global-Optimizer-Benchmarks">Black-Box Global Optimizer Benchmarks</a><a id="Black-Box-Global-Optimizer-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Black-Box-Global-Optimizer-Benchmarks" title="Permalink"></a></h1><p>In this benchmark we will run the <a href="https://github.com/jonathanBieler/BlackBoxOptimizationBenchmarking.jl">BlackboxGlobalOptimization.jl</a> benchmarks, a set of global optimization benchmarks on the <a href="https://github.com/SciML/Optimization.jl">Optimization.jl</a> interface that test a wide variety of behaviors. This tests time and iterations vs accuracy, i.e. for a given amount of time to the optimizer, what percentage of problems from the set is it able to solve. This gives a global view of which methods are the most efficient at finding difficult global optima.</p><h2 id="Setup"><a class="docs-heading-anchor" href="#Setup">Setup</a><a id="Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Setup" title="Permalink"></a></h2><pre><code class="language-julia hljs">using BlackBoxOptimizationBenchmarking, Plots, Optimization, Memoize, Statistics
+import BlackBoxOptimizationBenchmarking.Chain
+const BBOB = BlackBoxOptimizationBenchmarking
+
+using OptimizationBBO, OptimizationOptimJL, OptimizationEvolutionary, OptimizationNLopt
+using OptimizationMetaheuristics, OptimizationNOMAD, OptimizationPRIMA, OptimizationOptimisers</code></pre><pre><code class="language-julia hljs">chain = (t; isboxed=false) -&gt; Chain(
+    BenchmarkSetup(t, isboxed = isboxed),
+    BenchmarkSetup(NelderMead(), isboxed = false),
+    0.9
+)
+
+test_functions = BBOB.list_functions()
+dimension = 3
+run_length = round.(Int, 10 .^ LinRange(1,5,30))
+
+@memoize run_bench(algo) = BBOB.benchmark(setup[algo], test_functions, run_length, Ntrials=40, dimension = dimension)</code></pre><pre><code class="nohighlight hljs">run_bench (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">setup = Dict(
+    &quot;NelderMead&quot; =&gt; NelderMead(),
+    #Optim.BFGS(),
+    #&quot;NLopt.GN_MLSL_LDS&quot; =&gt; chain(NLopt.GN_MLSL_LDS(), isboxed=true), # gives me errors
+    &quot;NLopt.GN_CRS2_LM()&quot; =&gt; chain(NLopt.GN_CRS2_LM(), isboxed=true),
+    &quot;NLopt.GN_DIRECT()&quot; =&gt; chain(NLopt.GN_DIRECT(), isboxed=true),
+    &quot;NLopt.GN_ESCH()&quot;  =&gt; chain(NLopt.GN_ESCH(), isboxed=true),
+    &quot;OptimizationEvolutionary.GA()&quot; =&gt; chain(OptimizationEvolutionary.GA(), isboxed=true),
+    &quot;OptimizationEvolutionary.DE()&quot; =&gt; chain(OptimizationEvolutionary.DE(), isboxed=true),
+    &quot;OptimizationEvolutionary.ES()&quot; =&gt; chain(OptimizationEvolutionary.ES(), isboxed=true),
+    &quot;Optim.SAMIN&quot; =&gt; chain(SAMIN(verbosity=0), isboxed=true),
+    &quot;BBO_adaptive_de_rand_1_bin&quot; =&gt; chain(BBO_adaptive_de_rand_1_bin(), isboxed=true),
+    &quot;BBO_adaptive_de_rand_1_bin_radiuslimited&quot; =&gt; chain(BBO_adaptive_de_rand_1_bin_radiuslimited(), isboxed=true), # same as BBO_adaptive_de_rand_1_bin
+    &quot;BBO_separable_nes&quot; =&gt; chain(BBO_separable_nes(), isboxed=true),
+    &quot;BBO_de_rand_2_bin&quot; =&gt; chain(BBO_de_rand_2_bin(), isboxed=true),
+    #&quot;BBO_xnes&quot; =&gt; chain(BBO_xnes(), isboxed=true), # good but slow
+    #&quot;BBO_dxnes&quot; =&gt; chain(BBO_dxnes(), isboxed=true), 
+    &quot;OptimizationMetaheuristics.ECA&quot; =&gt; chain(OptimizationMetaheuristics.ECA(), isboxed=true),
+    #&quot;OptimizationMetaheuristics.CGSA&quot; =&gt; () -&gt; chain(OptimizationMetaheuristics.CGSA(), isboxed=true), #give me strange results
+    &quot;OptimizationMetaheuristics.DE&quot; =&gt; chain(OptimizationMetaheuristics.DE(), isboxed=true),
+    &quot;Optimisers.AdamW&quot; =&gt; chain(Optimisers.AdamW(), isboxed=false),
+    &quot;Optimisers.RMSProp&quot; =&gt; chain(Optimisers.RMSProp(), isboxed=false),
+    # &quot;NOMADOpt&quot; =&gt; chain(NOMADOpt()), too much printing
+    # &quot;OptimizationPRIMA.UOBYQA()&quot; =&gt; chain(OptimizationPRIMA.UOBYQA()), :StackOverflowError?
+    # &quot;OptimizationPRIMA.NEWUOA()&quot; =&gt; OptimizationPRIMA.UOBYQA(),
+    #
+)</code></pre><pre><code class="nohighlight hljs">Dict{String, Any} with 16 entries:
+  &quot;OptimizationEvolutionar… =&gt; Chain(GA → NelderMead)…
+  &quot;BBO_separable_nes&quot;       =&gt; Chain(BBO_separable_nes → NelderMead)…
+  &quot;NelderMead&quot;              =&gt; NelderMead{AffineSimplexer, AdaptiveParamete
+rs}(…
+  &quot;BBO_adaptive_de_rand_1_… =&gt; Chain(BBO_adaptive_de_rand_1_bin → NelderMea
+d)…
+  &quot;BBO_adaptive_de_rand_1_… =&gt; Chain(BBO_adaptive_de_rand_1_bin_radiuslimit
+ed →…
+  &quot;BBO_de_rand_2_bin&quot;       =&gt; Chain(BBO_de_rand_2_bin → NelderMead)…
+  &quot;NLopt.GN_DIRECT()&quot;       =&gt; Chain(Algorithm → NelderMead)…
+  &quot;NLopt.GN_ESCH()&quot;         =&gt; Chain(Algorithm → NelderMead)…
+  &quot;OptimizationMetaheurist… =&gt; Chain(Algorithm → NelderMead)…
+  &quot;OptimizationEvolutionar… =&gt; Chain(ES → NelderMead)…
+  &quot;Optimisers.AdamW&quot;        =&gt; Chain(AdamW → NelderMead)…
+  &quot;OptimizationEvolutionar… =&gt; Chain(DE → NelderMead)…
+  &quot;Optimisers.RMSProp&quot;      =&gt; Chain(RMSProp → NelderMead)…
+  &quot;OptimizationMetaheurist… =&gt; Chain(Algorithm → NelderMead)…
+  &quot;NLopt.GN_CRS2_LM()&quot;      =&gt; Chain(Algorithm → NelderMead)…
+  &quot;Optim.SAMIN&quot;             =&gt; Chain(SAMIN → NelderMead)…</code></pre><h2 id="Test-one-optimizer"><a class="docs-heading-anchor" href="#Test-one-optimizer">Test one optimizer</a><a id="Test-one-optimizer-1"></a><a class="docs-heading-anchor-permalink" href="#Test-one-optimizer" title="Permalink"></a></h2><pre><code class="language-julia hljs">@time b = BBOB.benchmark(
+    chain(OptimizationMetaheuristics.CGSA(), isboxed=true),
+    test_functions[1:10], 100:500:10_000, Ntrials=10, dimension = 3
+)
+
+plot(b)</code></pre><pre><code class="nohighlight hljs">11.445198 seconds (72.19 M allocations: 6.253 GiB, 5.34% gc time, 45.68% c
+ompilation time: 4% of which was recompilation)</code></pre><p><img src="../figures/blackbox_global_optimizers_4_1.png" alt/></p><h2 id="Test-one-test-function-(Rastrigin)"><a class="docs-heading-anchor" href="#Test-one-test-function-(Rastrigin)">Test one test function (Rastrigin)</a><a id="Test-one-test-function-(Rastrigin)-1"></a><a class="docs-heading-anchor-permalink" href="#Test-one-test-function-(Rastrigin)" title="Permalink"></a></h2><pre><code class="language-julia hljs">Δf = 1e-6
+f = test_functions[3]
+
+single_setup = BenchmarkSetup(NLopt.GN_CRS2_LM(), isboxed=true)
+
+sol = [BBOB.solve_problem(single_setup, f, 3, 5_000) for in in 1:10]
+@info [sol.objective &lt; Δf + f.f_opt for sol in sol]
+
+p = plot(f, size = (600,600), zoom = 1.5)
+for sol in sol
+    scatter!(sol.u[1:1], sol.u[2:2], label=&quot;&quot;, c=&quot;blue&quot;, marker = :xcross, markersize=5, markerstrokewidth=0)
+end
+p</code></pre><p><img src="../figures/blackbox_global_optimizers_5_1.png" alt/></p><h2 id="Test-all"><a class="docs-heading-anchor" href="#Test-all">Test all</a><a id="Test-all-1"></a><a class="docs-heading-anchor-permalink" href="#Test-all" title="Permalink"></a></h2><pre><code class="language-julia hljs">results = Array{BBOB.BenchmarkResults}(undef, length(setup))
+
+Threads.@threads for (i,algo) in collect(enumerate(keys(setup)))
+    results[i] = run_bench(algo)
+end
+
+results</code></pre><pre><code class="nohighlight hljs">16-element Vector{BlackBoxOptimizationBenchmarking.BenchmarkResults}:
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.0, 0.0, 0.0, 0.0, 0.0025, 0.00125, 0.0125, 0.015, 0.02625
+, 0.03  …  0.525, 0.5225, 0.53125, 0.53125, 0.52625, 0.52375, 0.5425, 0.526
+25, 0.52875, 0.53125]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.01875, 0.03, 0.0425, 0.04625, 0.05, 0.0525, 0.07125, 0.10
+375, 0.17625, 0.27625  …  0.63375, 0.6275, 0.64, 0.66125, 0.665, 0.65375, 0
+.64, 0.6475, 0.66, 0.6475]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.01625, 0.03, 0.04, 0.04625, 0.05, 0.05625, 0.08125, 0.146
+25, 0.25625, 0.35625  …  0.53875, 0.5375, 0.52875, 0.5425, 0.53375, 0.5275,
+ 0.53875, 0.5425, 0.53375, 0.53125]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.00125, 0.005, 0.005, 0.00875, 0.01, 0.02, 0.02875, 0.0412
+5, 0.04625, 0.05  …  0.8375, 0.92, 0.92875, 0.93875, 0.95875, 0.97375, 0.99
+, 0.99875, 0.99875, 0.99625]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.00125, 0.0025, 0.005, 0.01, 0.01875, 0.0175, 0.0375, 0.04
+, 0.0475, 0.05  …  0.855, 0.92375, 0.945, 0.95875, 0.95875, 0.96375, 0.9662
+5, 0.96, 0.95625, 0.965]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.00125, 0.00375, 0.00625, 0.005, 0.01625, 0.0225, 0.0275, 
+0.04125, 0.04875, 0.04875  …  0.7675, 0.84, 0.89125, 0.905, 0.91625, 0.9337
+5, 0.93875, 0.94875, 0.96375, 0.96375]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.0, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05  
+…  0.6, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.0, 0.0025, 0.00125, 0.0025, 0.00375, 0.0125, 0.0175, 0.03
+, 0.0475, 0.05  …  0.57875, 0.59, 0.62875, 0.63, 0.6375, 0.635, 0.63875, 0.
+6525, 0.6425, 0.64]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.0425, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1
+  …  0.5, 0.5, 0.5, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.0, 0.0, 0.0, 0.0, 0.005, 0.0025, 0.0075, 0.01, 0.0175, 0.
+02875  …  0.52, 0.525, 0.5275, 0.54, 0.535, 0.53375, 0.5275, 0.54125, 0.538
+75, 0.53875]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.0, 0.0, 0.00125, 0.0, 0.0, 0.00125, 0.00875, 0.01375, 0.0
+275, 0.0325  …  0.53, 0.5275, 0.53375, 0.53375, 0.53625, 0.545, 0.54125, 0.
+5525, 0.54375, 0.5575]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.0, 0.0, 0.0, 0.0, 0.00125, 0.0, 0.0075, 0.0175, 0.03125, 
+0.035  …  0.5225, 0.51375, 0.52625, 0.54, 0.54375, 0.53, 0.54, 0.53625, 0.5
+3625, 0.53625]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.0, 0.0, 0.0, 0.0, 0.00625, 0.00375, 0.01125, 0.00875, 0.0
+225, 0.0375  …  0.52125, 0.52125, 0.52125, 0.52875, 0.53625, 0.5275, 0.5525
+, 0.545, 0.53875, 0.54875]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.045, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1 
+ …  0.5, 0.5, 0.5, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.00125, 0.00125, 0.005, 0.00875, 0.015, 0.04125, 0.04125, 
+0.0475, 0.05, 0.05  …  0.80125, 0.785, 0.79625, 0.77625, 0.8, 0.79625, 0.79
+625, 0.8, 0.79125, 0.79875]
+ BenchmarkResults :
+Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
+6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
+Success rate : [0.00125, 0.01, 0.01125, 0.02, 0.0375, 0.03875, 0.0475, 0.04
+875, 0.05125, 0.05  …  0.64, 0.73625, 0.80125, 0.7775, 0.8175, 0.83875, 0.8
+175, 0.8125, 0.82125, 0.82625]</code></pre><pre><code class="language-julia hljs">labels = collect(keys(setup))
+idx = sortperm([b.success_rate[end] for b in results], rev=true)
+
+p = plot(xscale = :log10, legend = :outerright, size = (700,350), margin=10Plots.px, dpi=200)
+for i in idx
+    plot!(results[i], label = labels[i], showribbon=false, lw=2.5, xlim = (1,1e5), x = :run_length)
+end
+p</code></pre><p><img src="../figures/blackbox_global_optimizers_7_1.png" alt/></p><pre><code class="language-julia hljs">success_rate_per_function = reduce(hcat, b.success_rate_per_function for b in results)
+
+idx = sortperm(mean(success_rate_per_function, dims=1)[:], rev=false)
+idxfunc = sortperm(mean(success_rate_per_function, dims=2)[:], rev=true)
+idxfunc = 1:length(test_functions)
+
+p = heatmap(
+    string.(test_functions)[idxfunc], labels[idx], success_rate_per_function[idxfunc, idx]&#39;,
+    cmap = :RdYlGn,
+    xticks = :all,
+    yticks = :all,
+    xrotation = 45,
+    dpi = 200,
+)</code></pre><p><img src="../figures/blackbox_global_optimizers_8_1.png" alt/></p><pre><code class="language-julia hljs">labels = collect(keys(setup))
+idx = sortperm([b.distance_to_minimizer[end] for b in results], rev=false)
+
+p = plot(xscale = :log10, legend = :outerright, size = (900,500), margin=10Plots.px, ylim = (0,5))
+for i in idx
+    plot!(
+        results[i].run_length, results[i].distance_to_minimizer, label = labels[i],
+        showribbon=false, lw=2, xlim = (1,1e5),
+        xlabel = &quot;Iterations&quot;, ylabel = &quot;Mean distance to minimum&quot;
+    )
+end
+p</code></pre><p><img src="../figures/blackbox_global_optimizers_9_1.png" alt/></p><pre><code class="language-julia hljs">ref = findfirst(&quot;NelderMead&quot; .== labels)
+runtimes = getfield.(results, :runtime)
+runtimes = runtimes ./ runtimes[ref]
+
+bar(
+    labels, runtimes, xrotation = :45, xticks = :all, ylabel = &quot;Run time relative to NM&quot;,
+    yscale = :log10, yticks = [0.1,1,10,100],
+    legend = false, margin = 25Plots.px
+)</code></pre><p><img src="../figures/blackbox_global_optimizers_10_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">« Spring-Block PDE Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Friday 22 August 2025 06:10">Friday 22 August 2025</span>. Using Julia version 1.11.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
