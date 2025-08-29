@@ -141,7 +141,7 @@ labels = hcat(
     print_names=true, names=labels, numruns=5, error_estimate=:l2,
     save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp, label=labels, markershape=:auto, title="IMEX Methods, Krylov Linsolve, Low Tolerances")
+plot(wp, label=labels, markershape=:auto, title="IMEX Methods, Low Tolerances")
 
 
 abstols = 0.1 .^ (7:11) # all fixed dt methods so these don't matter much

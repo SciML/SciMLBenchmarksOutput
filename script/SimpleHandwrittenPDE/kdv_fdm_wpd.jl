@@ -124,9 +124,6 @@ setups = [
     Dict(:alg => KenCarp3()),
     Dict(:alg => KenCarp4()),
     Dict(:alg => KenCarp5()),
-    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES())),
-    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES())),
-    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES())),
     Dict(:alg => ARKODE(Sundials.Implicit(), order=3, linear_solver=:GMRES)),
     Dict(:alg => ARKODE(Sundials.Implicit(), order=4, linear_solver=:GMRES)),
     Dict(:alg => ARKODE(Sundials.Implicit(), order=5, linear_solver=:GMRES)),
@@ -135,9 +132,6 @@ labels = hcat(
     "KenCarp3 (dense)",
     "KenCarp4 (dense)",
     "KenCarp5 (dense)",
-    "KenCarp3 (Krylov)",
-    "KenCarp4 (Krylov)",
-    "KenCarp5 (Krylov)",
     "ARKODE3 (Krylov)",
     "ARKODE4 (Krylov)",
     "ARKODE5 (Krylov)",
@@ -146,7 +140,7 @@ labels = hcat(
     print_names=true, names=labels, numruns=5, error_estimate=:l2,
     save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
-plot(wp, label=labels, markershape=:auto, title="IMEX Methods, Krylov Linsolve, Low Tolerances")
+plot(wp, label=labels, markershape=:auto, title="IMEX Methods, Low Tolerances")
 
 
 abstols = 0.1 .^ (7:11) # all fixed dt methods so these don't matter much
