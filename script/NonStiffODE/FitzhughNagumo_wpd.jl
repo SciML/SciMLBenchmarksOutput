@@ -1,7 +1,7 @@
 
 using OrdinaryDiffEq, ParameterizedFunctions, ODEInterface,
       ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools,
-      StaticArrays
+      StaticArrays, OrdinaryDiffEqSIMDRK
 using Plots;
 gr()
 
@@ -33,7 +33,10 @@ setups = [Dict(:alg=>DP5())
           Dict(:alg=>Tsit5())
           Dict(:alg=>Vern6())
           Dict(:alg=>Tsit5(), :prob_choice => 2)
-          Dict(:alg=>Vern6(), :prob_choice => 2)]
+          Dict(:alg=>Vern6(), :prob_choice => 2)
+          Dict(:alg=>MER5v2(), :prob_choice => 2)
+          Dict(:alg=>MER6v2(), :prob_choice => 2)
+          Dict(:alg=>RK6v4(), :prob_choice => 2)]
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol,
     save_everystep = false, numruns = 100, maxiters = 1000)
 plot(wp)

@@ -1,7 +1,7 @@
 
 using OrdinaryDiffEq, ParameterizedFunctions, ODEInterface,
       ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools,
-      StaticArrays
+      StaticArrays, OrdinaryDiffEqSIMDRK
 using Plots
 gr()
 
@@ -12,12 +12,11 @@ abstols = 1.0 ./ 10.0 .^ (6:13)
 reltols = 1.0 ./ 10.0 .^ (3:10)
 
 
-# simdrkalgs = [
-#     Dict(:alg=>MER5v2()),
-#     Dict(:alg=>MER6v2()),
-#     Dict(:alg=>RK6v4())
-# ]
-simdrkalgs = []
+simdrkalgs = [
+    Dict(:alg=>MER5v2()),
+    Dict(:alg=>MER6v2()),
+    Dict(:alg=>RK6v4())
+]
 
 
 setups = [

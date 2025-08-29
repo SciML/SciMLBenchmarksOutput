@@ -11,7 +11,7 @@ The purpose of this benchmark is to test explicit Runge-Kutta methods on the Enr
 ```julia
 using OrdinaryDiffEq, ParameterizedFunctions, ODEInterface,
       ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools,
-      StaticArrays
+      StaticArrays, OrdinaryDiffEqSIMDRK
 using Plots
 gr()
 
@@ -38,21 +38,24 @@ reltols = 1.0 ./ 10.0 .^ (3:10)
 
 
 
-### SIMD Algorithms (Currently Disabled)
-
-Note: The SIMD RK methods will be added once the OrdinaryDiffEqSIMDRK package is publicly available.
+### SIMD Algorithms
 
 ```julia
-# simdrkalgs = [
-#     Dict(:alg=>MER5v2()),
-#     Dict(:alg=>MER6v2()),
-#     Dict(:alg=>RK6v4())
-# ]
-simdrkalgs = []
+simdrkalgs = [
+    Dict(:alg=>MER5v2()),
+    Dict(:alg=>MER6v2()),
+    Dict(:alg=>RK6v4())
+]
 ```
 
 ```
-Any[]
+3-element Vector{Dict{Symbol}}:
+ Dict(:alg => MER5v2(stage_limiter! = trivial_limiter!, step_limiter! = tri
+vial_limiter!, thread = static(false)))
+ Dict(:alg => MER6v2(stage_limiter! = trivial_limiter!, step_limiter! = tri
+vial_limiter!, thread = static(false)))
+ Dict(:alg => RK6v4(stage_limiter! = trivial_limiter!, step_limiter! = triv
+ial_limiter!, thread = static(false)))
 ```
 
 
@@ -72,7 +75,7 @@ setups = [
 ```
 
 ```
-4-element Vector{Dict{Symbol}}:
+7-element Vector{Dict{Symbol}}:
  Dict(:alg => OrdinaryDiffEqTsit5.Tsit5{typeof(OrdinaryDiffEqCore.trivial_l
 imiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}(Ordina
 ryDiffEqCore.trivial_limiter!, OrdinaryDiffEqCore.trivial_limiter!, static(
@@ -95,6 +98,12 @@ limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}}(:alg
  typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}(OrdinaryDiffEqC
 ore.trivial_limiter!, OrdinaryDiffEqCore.trivial_limiter!, static(false), t
 rue))
+ Dict(:alg => MER5v2(stage_limiter! = trivial_limiter!, step_limiter! = tri
+vial_limiter!, thread = static(false)))
+ Dict(:alg => MER6v2(stage_limiter! = trivial_limiter!, step_limiter! = tri
+vial_limiter!, thread = static(false)))
+ Dict(:alg => RK6v4(stage_limiter! = trivial_limiter!, step_limiter! = triv
+ial_limiter!, thread = static(false)))
 ```
 
 
@@ -272,7 +281,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NC5")
 ```
 
-![](figures/EnrightPryce_wpd_16_1.png)
+```
+Error: StackOverflowError:
+```
+
+
 
 
 
@@ -287,7 +300,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="ND1")
 ```
 
-![](figures/EnrightPryce_wpd_17_1.png)
+```
+Error: StackOverflowError:
+```
+
+
 
 
 
@@ -300,7 +317,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="ND2")
 ```
 
-![](figures/EnrightPryce_wpd_18_1.png)
+```
+Error: StackOverflowError:
+```
+
+
 
 
 
@@ -313,7 +334,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="ND3")
 ```
 
-![](figures/EnrightPryce_wpd_19_1.png)
+```
+Error: StackOverflowError:
+```
+
+
 
 
 
@@ -326,7 +351,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="ND4")
 ```
 
-![](figures/EnrightPryce_wpd_20_1.png)
+```
+Error: StackOverflowError:
+```
+
+
 
 
 
@@ -339,7 +368,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="ND5")
 ```
 
-![](figures/EnrightPryce_wpd_21_1.png)
+```
+Error: StackOverflowError:
+```
+
+
 
 
 ## Appendix
@@ -376,15 +409,16 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Project.toml`
-  [2b5f629d] DiffEqBase v6.183.2
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Project.toml`
+  [2b5f629d] DiffEqBase v6.184.0
   [f3b72e0c] DiffEqDevTools v2.48.0
   [615f187c] IfElse v0.1.1
   [7f56f5a3] LSODA v0.7.5
 ⌅ [961ee093] ModelingToolkit v9.82.0
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.13.4
-  [1dea7af3] OrdinaryDiffEq v6.101.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.101.0
+  [dc97f408] OrdinaryDiffEqSIMDRK v1.1.0
 ⌃ [65888b18] ParameterizedFunctions v5.17.2
   [91a5bcdd] Plots v1.40.19
   [31c91b34] SciMLBenchmarks v0.1.3
@@ -399,7 +433,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Manifest.toml`
   [47edcb42] ADTypes v1.17.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.42
@@ -440,7 +474,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [864edb3b] DataStructures v0.18.22
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.183.2
+  [2b5f629d] DiffEqBase v6.184.0
   [459566f4] DiffEqCallbacks v4.9.0
   [f3b72e0c] DiffEqDevTools v2.48.0
   [77a26b50] DiffEqNoiseProcess v5.24.1
@@ -452,7 +486,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [31c24e10] Distributions v0.25.120
   [ffbed154] DocStringExtensions v0.9.5
   [5b8099bc] DomainSets v0.7.16
-⌃ [7c1d4256] DynamicPolynomials v0.6.2
+  [7c1d4256] DynamicPolynomials v0.6.3
   [06fc5a27] DynamicQuantities v1.8.0
   [4e289a0a] EnumX v1.0.5
   [f151be2c] EnzymeCore v0.8.12
@@ -483,8 +517,9 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [42e2da0e] Grisu v1.0.2
   [cd3eb016] HTTP v1.10.17
   [eafb193a] Highlights v0.5.3
+  [3e5b6fbb] HostCPUFeatures v0.1.17
   [34004b35] HypergeometricFunctions v0.3.28
-  [7073ff75] IJulia v1.30.0
+  [7073ff75] IJulia v1.30.1
   [615f187c] IfElse v0.1.1
   [d25df0c9] Inflate v0.1.5
   [18e54dd8] IntegerMathUtils v0.1.3
@@ -537,7 +572,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [4d8831e6] OpenSSL v1.5.0
   [429524aa] Optim v1.13.2
   [bac558e1] OrderedCollections v1.8.1
-  [1dea7af3] OrdinaryDiffEq v6.101.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.101.0
   [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.5.0
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v1.9.0
   [bbf590c4] OrdinaryDiffEqCore v1.30.0
@@ -562,6 +597,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [af6ede74] OrdinaryDiffEqRKN v1.5.0
 ⌃ [43230ef6] OrdinaryDiffEqRosenbrock v1.14.0
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v1.6.0
+  [dc97f408] OrdinaryDiffEqSIMDRK v1.1.0
   [669c94d9] OrdinaryDiffEqSSPRK v1.6.0
 ⌃ [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.5.0
   [358294b1] OrdinaryDiffEqStabilizedRK v1.4.0
@@ -599,7 +635,8 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7e49a35a] RuntimeGeneratedFunctions v0.5.15
   [9dfe8606] SCCNonlinearSolve v1.4.0
   [94e857df] SIMDTypes v0.1.0
-⌃ [0bca4576] SciMLBase v2.112.0
+  [476501e8] SLEEFPirates v0.6.43
+  [0bca4576] SciMLBase v2.114.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.8
   [c0aeaf25] SciMLOperators v1.6.0
@@ -649,6 +686,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [45397f5d] UnitfulLatexify v1.7.0
   [a7c27f48] Unityper v0.1.6
   [41fe7b60] Unzip v0.2.0
+  [3d5dd08c] VectorizationBase v0.21.71
   [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.14
