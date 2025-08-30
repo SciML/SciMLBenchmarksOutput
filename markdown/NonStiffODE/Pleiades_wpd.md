@@ -259,8 +259,8 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Project.toml`
-  [2b5f629d] DiffEqBase v6.184.0
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Project.toml`
+⌃ [2b5f629d] DiffEqBase v6.184.0
   [f3b72e0c] DiffEqDevTools v2.48.0
   [615f187c] IfElse v0.1.1
   [7f56f5a3] LSODA v0.7.5
@@ -272,18 +272,19 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [65888b18] ParameterizedFunctions v5.17.2
   [91a5bcdd] Plots v1.40.19
   [31c91b34] SciMLBenchmarks v0.1.3
-  [90137ffa] StaticArrays v1.9.14
+⌃ [90137ffa] StaticArrays v1.9.14
   [c3572dad] Sundials v4.28.0
   [0c5d862f] Symbolics v6.52.0
   [37e2e46d] LinearAlgebra
   [9a3f8284] Random
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Manifest.toml`
   [47edcb42] ADTypes v1.17.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.42
@@ -324,7 +325,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [864edb3b] DataStructures v0.18.22
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.184.0
+⌃ [2b5f629d] DiffEqBase v6.184.0
   [459566f4] DiffEqCallbacks v4.9.0
   [f3b72e0c] DiffEqDevTools v2.48.0
   [77a26b50] DiffEqNoiseProcess v5.24.1
@@ -369,7 +370,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [eafb193a] Highlights v0.5.3
   [3e5b6fbb] HostCPUFeatures v0.1.17
   [34004b35] HypergeometricFunctions v0.3.28
-  [7073ff75] IJulia v1.30.1
+⌃ [7073ff75] IJulia v1.30.1
   [615f187c] IfElse v0.1.1
   [d25df0c9] Inflate v0.1.5
   [18e54dd8] IntegerMathUtils v0.1.3
@@ -505,7 +506,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [860ef19b] StableRNGs v1.0.3
   [aedffcd0] Static v1.2.0
   [0d7ed370] StaticArrayInterface v1.8.0
-  [90137ffa] StaticArrays v1.9.14
+⌃ [90137ffa] StaticArrays v1.9.14
   [1e83bf80] StaticArraysCore v1.4.3
   [82ae8749] StatsAPI v1.7.1
   [2913bbd2] StatsBase v0.34.6
@@ -679,5 +680,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
