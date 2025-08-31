@@ -23,15 +23,39 @@ reltols = 1.0 ./ 10.0 .^ (3:10)
 ```
 
 ```
-8-element Vector{Float64}:
- 0.001
- 0.0001
- 1.0e-5
- 1.0e-6
- 1.0e-7
- 1.0e-8
- 1.0e-9
- 1.0e-10
+Error: LoadError: MethodError: no method matching ModelingToolkit.System(::
+Matrix{Symbolics.Equation}, ::Symbolics.Num; name::Symbol)
+
+Closest candidates are:
+  ModelingToolkit.System(::Any, ::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any; ...)
+   @ ModelingToolkit /cache/julia-buildkite-plugin/depots/5b300254-1738-498
+9-ae0a-f4d2d937f953/packages/ModelingToolkit/hlGut/src/systems/system.jl:26
+3
+  ModelingToolkit.System(::Any, ::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any; ...)
+   @ ModelingToolkit /cache/julia-buildkite-plugin/depots/5b300254-1738-498
+9-ae0a-f4d2d937f953/packages/ModelingToolkit/hlGut/src/systems/system.jl:26
+3
+  ModelingToolkit.System(::Any, ::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
+ed::Any; ...)
+   @ ModelingToolkit /cache/julia-buildkite-plugin/depots/5b300254-1738-498
+9-ae0a-f4d2d937f953/packages/ModelingToolkit/hlGut/src/systems/system.jl:26
+3
+  ...
+
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/NonStiffODE/enright_pryce.jl:462
 ```
 
 
@@ -121,7 +145,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NA1")
 ```
 
-![](figures/EnrightPryce_wpd_4_1.png)
+```
+Error: UndefVarError: `abstols` not defined
+```
+
+
 
 
 
@@ -134,7 +162,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NA2")
 ```
 
-![](figures/EnrightPryce_wpd_5_1.png)
+```
+Error: UndefVarError: `abstols` not defined
+```
+
+
 
 
 
@@ -147,7 +179,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NA4")
 ```
 
-![](figures/EnrightPryce_wpd_6_1.png)
+```
+Error: UndefVarError: `abstols` not defined
+```
+
+
 
 
 
@@ -160,7 +196,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NA5")
 ```
 
-![](figures/EnrightPryce_wpd_7_1.png)
+```
+Error: UndefVarError: `abstols` not defined
+```
+
+
 
 
 
@@ -175,7 +215,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NB1")
 ```
 
-![](figures/EnrightPryce_wpd_8_1.png)
+```
+Error: UndefVarError: `abstols` not defined
+```
+
+
 
 
 
@@ -188,7 +232,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NB2")
 ```
 
-![](figures/EnrightPryce_wpd_9_1.png)
+```
+Error: UndefVarError: `abstols` not defined
+```
+
+
 
 
 
@@ -201,7 +249,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NB3")
 ```
 
-![](figures/EnrightPryce_wpd_10_1.png)
+```
+Error: UndefVarError: `abstols` not defined
+```
+
+
 
 
 
@@ -214,7 +266,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NB5")
 ```
 
-![](figures/EnrightPryce_wpd_11_1.png)
+```
+Error: UndefVarError: `abstols` not defined
+```
+
+
 
 
 
@@ -229,7 +285,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NC1")
 ```
 
-![](figures/EnrightPryce_wpd_12_1.png)
+```
+Error: UndefVarError: `NC_PROBLEMS` not defined
+```
+
+
 
 
 
@@ -242,7 +302,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NC2")
 ```
 
-![](figures/EnrightPryce_wpd_13_1.png)
+```
+Error: UndefVarError: `NC_PROBLEMS` not defined
+```
+
+
 
 
 
@@ -255,7 +319,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NC3")
 ```
 
-![](figures/EnrightPryce_wpd_14_1.png)
+```
+Error: UndefVarError: `NC_PROBLEMS` not defined
+```
+
+
 
 
 
@@ -268,7 +336,11 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NC4")
 ```
 
-![](figures/EnrightPryce_wpd_15_1.png)
+```
+Error: UndefVarError: `NC_PROBLEMS` not defined
+```
+
+
 
 
 
@@ -282,7 +354,7 @@ plot(wp; title="NC5")
 ```
 
 ```
-Error: StackOverflowError:
+Error: UndefVarError: `NC_PROBLEMS` not defined
 ```
 
 
@@ -301,7 +373,7 @@ plot(wp; title="ND1")
 ```
 
 ```
-Error: StackOverflowError:
+Error: UndefVarError: `ND_PROBLEMS` not defined
 ```
 
 
@@ -318,7 +390,7 @@ plot(wp; title="ND2")
 ```
 
 ```
-Error: StackOverflowError:
+Error: UndefVarError: `ND_PROBLEMS` not defined
 ```
 
 
@@ -335,7 +407,7 @@ plot(wp; title="ND3")
 ```
 
 ```
-Error: StackOverflowError:
+Error: UndefVarError: `ND_PROBLEMS` not defined
 ```
 
 
@@ -352,7 +424,7 @@ plot(wp; title="ND4")
 ```
 
 ```
-Error: StackOverflowError:
+Error: UndefVarError: `ND_PROBLEMS` not defined
 ```
 
 
@@ -369,7 +441,7 @@ plot(wp; title="ND5")
 ```
 
 ```
-Error: StackOverflowError:
+Error: UndefVarError: `ND_PROBLEMS` not defined
 ```
 
 
@@ -409,17 +481,16 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Project.toml`
 ⌃ [2b5f629d] DiffEqBase v6.184.0
   [f3b72e0c] DiffEqDevTools v2.48.0
-  [615f187c] IfElse v0.1.1
   [7f56f5a3] LSODA v0.7.5
-⌅ [961ee093] ModelingToolkit v9.82.0
+  [961ee093] ModelingToolkit v10.21.0
   [54ca160b] ODEInterface v0.5.0
   [09606e27] ODEInterfaceDiffEq v3.13.4
-⌃ [1dea7af3] OrdinaryDiffEq v6.101.0
+  [1dea7af3] OrdinaryDiffEq v6.102.0
   [dc97f408] OrdinaryDiffEqSIMDRK v1.1.0
-⌃ [65888b18] ParameterizedFunctions v5.17.2
+  [65888b18] ParameterizedFunctions v5.19.0
   [91a5bcdd] Plots v1.40.19
   [31c91b34] SciMLBenchmarks v0.1.3
 ⌃ [90137ffa] StaticArrays v1.9.14
@@ -427,14 +498,14 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [0c5d862f] Symbolics v6.52.0
   [37e2e46d] LinearAlgebra
   [9a3f8284] Random
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Manifest.toml`
   [47edcb42] ADTypes v1.17.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.42
@@ -481,7 +552,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [77a26b50] DiffEqNoiseProcess v5.24.1
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.15.1
-⌅ [a0c0ee7d] DifferentiationInterface v0.6.54
+  [a0c0ee7d] DifferentiationInterface v0.7.7
   [8d63f2c5] DispatchDoctor v0.4.26
   [b4f34e82] Distances v0.10.12
   [31c24e10] Distributions v0.25.120
@@ -492,6 +563,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [4e289a0a] EnumX v1.0.5
   [f151be2c] EnzymeCore v0.8.12
   [460bff9d] ExceptionUnwrapping v0.1.11
+  [7d51a73a] ExplicitImports v1.13.2
   [d4d017d3] ExponentialUtilities v1.27.0
   [e2ba6199] ExprTools v0.1.10
   [55351af7] ExproniconLite v0.10.14
@@ -505,7 +577,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [6a86dc24] FiniteDiff v2.28.1
   [53c48c17] FixedPointNumbers v0.8.5
   [1fa38f19] Format v1.3.7
-⌅ [f6369f11] ForwardDiff v0.10.38
+⌃ [f6369f11] ForwardDiff v0.10.38
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [d9f16b24] Functors v0.5.2
@@ -522,6 +594,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [34004b35] HypergeometricFunctions v0.3.28
 ⌃ [7073ff75] IJulia v1.30.1
   [615f187c] IfElse v0.1.1
+  [3263718b] ImplicitDiscreteSolve v1.2.0
   [d25df0c9] Inflate v0.1.5
   [18e54dd8] IntegerMathUtils v0.1.3
   [8197267c] IntervalSets v0.7.11
@@ -553,7 +626,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [739be429] MbedTLS v1.1.9
   [442fdcdd] Measures v0.3.2
   [e1d29d7a] Missings v1.2.0
-⌅ [961ee093] ModelingToolkit v9.82.0
+  [961ee093] ModelingToolkit v10.21.0
   [2e0e35c7] Moshi v0.3.7
   [46d2c3a1] MuladdMacro v0.2.4
 ⌃ [102ac46a] MultivariatePolynomials v0.5.9
@@ -573,40 +646,40 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [4d8831e6] OpenSSL v1.5.0
   [429524aa] Optim v1.13.2
   [bac558e1] OrderedCollections v1.8.1
-⌃ [1dea7af3] OrdinaryDiffEq v6.101.0
+  [1dea7af3] OrdinaryDiffEq v6.102.0
   [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.5.0
-⌃ [6ad6398a] OrdinaryDiffEqBDF v1.9.0
+  [6ad6398a] OrdinaryDiffEqBDF v1.10.1
   [bbf590c4] OrdinaryDiffEqCore v1.30.0
-⌃ [50262376] OrdinaryDiffEqDefault v1.7.0
-⌃ [4302a76b] OrdinaryDiffEqDifferentiation v1.11.0
+  [50262376] OrdinaryDiffEqDefault v1.8.0
+  [4302a76b] OrdinaryDiffEqDifferentiation v1.14.0
   [9286f039] OrdinaryDiffEqExplicitRK v1.4.0
-⌃ [e0540318] OrdinaryDiffEqExponentialRK v1.7.0
-⌃ [becaefa8] OrdinaryDiffEqExtrapolation v1.7.0
-⌃ [5960d6e9] OrdinaryDiffEqFIRK v1.15.0
+  [e0540318] OrdinaryDiffEqExponentialRK v1.8.0
+  [becaefa8] OrdinaryDiffEqExtrapolation v1.8.0
+  [5960d6e9] OrdinaryDiffEqFIRK v1.16.0
   [101fe9f7] OrdinaryDiffEqFeagin v1.4.0
   [d3585ca7] OrdinaryDiffEqFunctionMap v1.5.0
   [d28bc4f8] OrdinaryDiffEqHighOrderRK v1.5.0
-⌃ [9f002381] OrdinaryDiffEqIMEXMultistep v1.6.0
+  [9f002381] OrdinaryDiffEqIMEXMultistep v1.7.0
   [521117fe] OrdinaryDiffEqLinear v1.6.0
   [1344f307] OrdinaryDiffEqLowOrderRK v1.6.0
   [b0944070] OrdinaryDiffEqLowStorageRK v1.6.0
-⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.13.0
+  [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.14.1
   [c9986a66] OrdinaryDiffEqNordsieck v1.4.0
-⌃ [5dd0a6cf] OrdinaryDiffEqPDIRK v1.5.0
+  [5dd0a6cf] OrdinaryDiffEqPDIRK v1.6.0
   [5b33eab2] OrdinaryDiffEqPRK v1.4.0
   [04162be5] OrdinaryDiffEqQPRK v1.4.0
   [af6ede74] OrdinaryDiffEqRKN v1.5.0
-⌃ [43230ef6] OrdinaryDiffEqRosenbrock v1.14.0
-⌃ [2d112036] OrdinaryDiffEqSDIRK v1.6.0
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v1.16.1
+  [2d112036] OrdinaryDiffEqSDIRK v1.7.0
   [dc97f408] OrdinaryDiffEqSIMDRK v1.1.0
   [669c94d9] OrdinaryDiffEqSSPRK v1.6.0
-⌃ [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.5.0
+  [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.6.0
   [358294b1] OrdinaryDiffEqStabilizedRK v1.4.0
   [fa646aed] OrdinaryDiffEqSymplecticRK v1.7.0
   [b1df2697] OrdinaryDiffEqTsit5 v1.5.0
   [79d7bb75] OrdinaryDiffEqVerner v1.6.0
   [90014a1f] PDMats v0.11.35
-⌃ [65888b18] ParameterizedFunctions v5.17.2
+  [65888b18] ParameterizedFunctions v5.19.0
   [d96e819e] Parameters v0.12.3
   [69de0a69] Parsers v2.8.3
   [ccf2f8ad] PlotThemes v3.3.0
