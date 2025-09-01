@@ -23,39 +23,15 @@ reltols = 1.0 ./ 10.0 .^ (3:10)
 ```
 
 ```
-Error: LoadError: MethodError: no method matching ModelingToolkit.System(::
-Matrix{Symbolics.Equation}, ::Symbolics.Num; name::Symbol)
-
-Closest candidates are:
-  ModelingToolkit.System(::Any, ::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any; ...)
-   @ ModelingToolkit /cache/julia-buildkite-plugin/depots/5b300254-1738-498
-9-ae0a-f4d2d937f953/packages/ModelingToolkit/hlGut/src/systems/system.jl:26
-3
-  ModelingToolkit.System(::Any, ::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any; ...)
-   @ ModelingToolkit /cache/julia-buildkite-plugin/depots/5b300254-1738-498
-9-ae0a-f4d2d937f953/packages/ModelingToolkit/hlGut/src/systems/system.jl:26
-3
-  ModelingToolkit.System(::Any, ::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Matched::Any, !Match
-ed::Any; ...)
-   @ ModelingToolkit /cache/julia-buildkite-plugin/depots/5b300254-1738-498
-9-ae0a-f4d2d937f953/packages/ModelingToolkit/hlGut/src/systems/system.jl:26
-3
-  ...
-
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
-nchmarks-dot-jl/benchmarks/NonStiffODE/enright_pryce.jl:462
+8-element Vector{Float64}:
+ 0.001
+ 0.0001
+ 1.0e-5
+ 1.0e-6
+ 1.0e-7
+ 1.0e-8
+ 1.0e-9
+ 1.0e-10
 ```
 
 
@@ -145,11 +121,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NA1")
 ```
 
-```
-Error: UndefVarError: `abstols` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_4_1.png)
 
 
 
@@ -162,11 +134,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NA2")
 ```
 
-```
-Error: UndefVarError: `abstols` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_5_1.png)
 
 
 
@@ -179,11 +147,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NA4")
 ```
 
-```
-Error: UndefVarError: `abstols` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_6_1.png)
 
 
 
@@ -196,11 +160,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NA5")
 ```
 
-```
-Error: UndefVarError: `abstols` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_7_1.png)
 
 
 
@@ -215,11 +175,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NB1")
 ```
 
-```
-Error: UndefVarError: `abstols` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_8_1.png)
 
 
 
@@ -232,11 +188,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NB2")
 ```
 
-```
-Error: UndefVarError: `abstols` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_9_1.png)
 
 
 
@@ -249,11 +201,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NB3")
 ```
 
-```
-Error: UndefVarError: `abstols` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_10_1.png)
 
 
 
@@ -266,11 +214,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NB5")
 ```
 
-```
-Error: UndefVarError: `abstols` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_11_1.png)
 
 
 
@@ -285,11 +229,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NC1")
 ```
 
-```
-Error: UndefVarError: `NC_PROBLEMS` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_12_1.png)
 
 
 
@@ -302,11 +242,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NC2")
 ```
 
-```
-Error: UndefVarError: `NC_PROBLEMS` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_13_1.png)
 
 
 
@@ -319,11 +255,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NC3")
 ```
 
-```
-Error: UndefVarError: `NC_PROBLEMS` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_14_1.png)
 
 
 
@@ -336,11 +268,7 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NC4")
 ```
 
-```
-Error: UndefVarError: `NC_PROBLEMS` not defined
-```
-
-
+![](figures/EnrightPryce_wpd_15_1.png)
 
 
 
@@ -354,7 +282,11 @@ plot(wp; title="NC5")
 ```
 
 ```
-Error: UndefVarError: `NC_PROBLEMS` not defined
+Error: BoundsError: attempt to access 4-element Vector{SciMLBase.ODEProblem
+{uType, Tuple{Float64, Float64}, false, ModelingToolkit.MTKParameters{Stati
+cArraysCore.SizedVector{0, Float64, Vector{Float64}}, Vector{Float64}, Tupl
+e{}, Tuple{}, Tuple{}, Tuple{}}, F, Base.Pairs{Symbol, Union{}, Tuple{}, @N
+amedTuple{}}, SciMLBase.StandardODEProblem} where {uType, F}} at index [5]
 ```
 
 
@@ -373,7 +305,7 @@ plot(wp; title="ND1")
 ```
 
 ```
-Error: UndefVarError: `ND_PROBLEMS` not defined
+Error: StackOverflowError:
 ```
 
 
@@ -390,7 +322,7 @@ plot(wp; title="ND2")
 ```
 
 ```
-Error: UndefVarError: `ND_PROBLEMS` not defined
+Error: StackOverflowError:
 ```
 
 
@@ -407,7 +339,7 @@ plot(wp; title="ND3")
 ```
 
 ```
-Error: UndefVarError: `ND_PROBLEMS` not defined
+Error: StackOverflowError:
 ```
 
 
@@ -424,7 +356,7 @@ plot(wp; title="ND4")
 ```
 
 ```
-Error: UndefVarError: `ND_PROBLEMS` not defined
+Error: StackOverflowError:
 ```
 
 
@@ -441,7 +373,7 @@ plot(wp; title="ND5")
 ```
 
 ```
-Error: UndefVarError: `ND_PROBLEMS` not defined
+Error: StackOverflowError:
 ```
 
 
@@ -760,7 +692,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [45397f5d] UnitfulLatexify v1.7.0
   [a7c27f48] Unityper v0.1.6
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.71
+⌃ [3d5dd08c] VectorizationBase v0.21.71
   [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.14

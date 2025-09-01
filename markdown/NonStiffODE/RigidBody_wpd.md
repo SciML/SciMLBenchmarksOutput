@@ -510,7 +510,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [45397f5d] UnitfulLatexify v1.7.0
   [a7c27f48] Unityper v0.1.6
   [41fe7b60] Unzip v0.2.0
-  [3d5dd08c] VectorizationBase v0.21.71
+⌃ [3d5dd08c] VectorizationBase v0.21.71
   [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.14
