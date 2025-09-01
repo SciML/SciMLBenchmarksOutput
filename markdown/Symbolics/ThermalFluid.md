@@ -16,6 +16,25 @@ using SparseArrays, Chairmarks, Statistics
 using ModelingToolkit: t_nounits as t, D_nounits as D
 ```
 
+```
+Error: Unsatisfiable requirements detected for package Catalyst [479239e8]:
+ Catalyst [479239e8] log:
+ ├─possible versions are: 5.0.0-15.0.8 or uninstalled
+ ├─restricted to versions 15 by project [ff517f8d], leaving only versions: 
+15.0.0-15.0.8
+ │ └─project [ff517f8d] log:
+ │   ├─possible versions are: 0.0.0 or uninstalled
+ │   └─project [ff517f8d] is fixed to version 0.0.0
+ └─restricted by compatibility requirements with CairoMakie [13f3f980] to v
+ersions: 5.0.0-14.0.1 or uninstalled — no versions left
+   └─CairoMakie [13f3f980] log:
+     ├─possible versions are: 0.0.1-0.15.6 or uninstalled
+     └─restricted to versions 0.15 by project [ff517f8d], leaving only vers
+ions: 0.15.0-0.15.6
+       └─project [ff517f8d] log: see above
+```
+
+
 
 
 
@@ -257,7 +276,9 @@ end
 ```
 
 ```
-call (generic function with 1 method)
+Error: LoadError: UndefVarError: `@connector` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/Symbolics/ThermalFluid.jmd:28
 ```
 
 
@@ -357,7 +378,9 @@ end
 ```
 
 ```
-run_and_time_call! (generic function with 1 method)
+Error: LoadError: UndefVarError: `SymbolicUtils` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/Symbolics/old_sparse_jacobian.jl:21
 ```
 
 
@@ -403,20 +426,7 @@ end
 ```
 
 ```
-61.197094 seconds (231.39 M allocations: 7.315 GiB, 1.29% gc time, 0.05% c
-ompilation time)
- 63.170876 seconds (233.18 M allocations: 7.346 GiB, 1.54% gc time, 0.31% c
-ompilation time)
- 70.035612 seconds (235.22 M allocations: 7.444 GiB, 1.46% gc time, 0.36% c
-ompilation time)
-103.731239 seconds (260.96 M allocations: 8.272 GiB, 1.22% gc time, 0.01% c
-ompilation time)
-315.282988 seconds (404.44 M allocations: 12.932 GiB, 0.75% gc time, 0.01% 
-compilation time)
-1805.995384 seconds (997.48 M allocations: 32.380 GiB, 0.40% gc time, 0.00%
- compilation time)
-13171.506987 seconds (3.37 G allocations: 110.139 GiB, 0.23% gc time, 0.00%
- compilation time)
+Error: UndefVarError: `Chairmarks` not defined
 ```
 
 
@@ -432,8 +442,7 @@ pretty_table(tabledata; header, backend = Val(:html))
 ```
 
 ```
-Error: TypeError: in keyword argument backend, expected Symbol, got a value
- of type Val{:html}
+Error: UndefVarError: `pretty_table` not defined
 ```
 
 
@@ -490,7 +499,11 @@ save("thermal_fluid.pdf", f)
 f
 ```
 
-![](figures/ThermalFluid_7_1.png)
+```
+Error: UndefVarError: `Figure` not defined
+```
+
+
 
 
 
@@ -531,7 +544,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.0
 ⌃ [13f3f980] CairoMakie v0.13.10
 ⌃ [479239e8] Catalyst v15.0.1
@@ -554,12 +567,13 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2f01184e] SparseArrays v1.10.0
   [10745b16] Statistics v1.10.0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Manifest.toml`
   [47edcb42] ADTypes v1.17.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -1016,7 +1030,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c8ffd9c3] MbedTLS_jll v2.28.2+1
   [14a3606d] MozillaCACerts_jll v2023.1.10
   [4536629a] OpenBLAS_jll v0.3.23+4
-  [05823500] OpenLibm_jll v0.8.5+0
+  [05823500] OpenLibm_jll v0.8.1+4
   [efcefdf7] PCRE2_jll v10.42.0+1
   [bea87d4a] SuiteSparse_jll v7.2.1+1
   [83775a58] Zlib_jll v1.2.13+1
@@ -1024,5 +1038,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
