@@ -3,7 +3,8 @@ author: "Chris Rackauckas"
 title: "Three Body Work-Precision Diagrams"
 ---
 ```julia
-using OrdinaryDiffEq, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools, StaticArrays
+using OrdinaryDiffEq, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools, StaticArrays,
+      IRKGaussLegendre
 using Plots;
 gr()
 
@@ -93,6 +94,7 @@ setups = [Dict(:alg=>DP5())
           #Dict(:alg=>ode45()) #fails
           Dict(:alg=>BS5())
           Dict(:alg=>Tsit5())
+          Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Tsit5(), :prob_choice => 2)
           Dict(:alg=>dopri5())];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol,
@@ -111,7 +113,9 @@ setups = [Dict(:alg=>DP5(), :dense=>false)
           #Dict(:alg=>ode45()) # Fails
           Dict(:alg=>BS5(), :dense=>false)
           Dict(:alg=>Tsit5(), :dense=>false)
+          Dict(:alg=>RadauIIA5(), :dense=>false)
           Dict(:alg=>Tsit5(), :dense=>false, :prob_choice => 2)
+          Dict(:alg=>RadauIIA5(), :dense=>false, :prob_choice => 2)
           Dict(:alg=>dopri5())];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol, numruns = 100)
 plot(wp)
@@ -128,6 +132,7 @@ setups = [Dict(:alg=>DP5())
           #Dict(:alg=>ode45()) #fails
           Dict(:alg=>BS5())
           Dict(:alg=>Tsit5())
+          Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Tsit5(), :prob_choice => 2)
           Dict(:alg=>dopri5())];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol, numruns = 100)
@@ -151,6 +156,8 @@ setups = [Dict(:alg=>DP5())
           Dict(:alg=>Vern7())
           Dict(:alg=>Vern8())
           Dict(:alg=>Vern9())
+          Dict(:alg=>IRKGL16(simd = false))
+          Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Vern6(), :prob_choice => 2)
           Dict(:alg=>Vern7(), :prob_choice => 2)
           Dict(:alg=>Vern8(), :prob_choice => 2)
@@ -197,6 +204,8 @@ Once again we separate ODE.jl because it fails. We also separate Sundials' `CVOD
 setups = [Dict(:alg=>DP5())
           Dict(:alg=>lsoda())
           Dict(:alg=>Vern8())
+          Dict(:alg=>IRKGL16(simd = false))
+          Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Vern8(), :prob_choice => 2)
           Dict(:alg=>ddeabm())
           Dict(:alg=>odex())
@@ -222,14 +231,17 @@ abstols = 1.0 ./ 10.0 .^ (3:13);
 reltols = 1.0 ./ 10.0 .^ (0:10);
 setups = [Dict(:alg=>Tsit5())
           Dict(:alg=>Vern9())
+          Dict(:alg=>IRKGL16(simd = false))
+          Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Vern9(), :prob_choice => 2)
           Dict(:alg=>AitkenNeville(min_order = 1, max_order = 9, init_order = 4, threading = true))
           Dict(:alg=>ExtrapolationMidpointDeuflhard(
               min_order = 1, max_order = 9, init_order = 4, threading = true))
           Dict(:alg=>ExtrapolationMidpointHairerWanner(
               min_order = 2, max_order = 11, init_order = 4, threading = true))]
-solnames = ["Tsit5", "Vern9", "Vern9 Static", "AitkenNeville",
-    "Midpoint Deuflhard", "Midpoint Hairer Wanner"]
+solnames = ["Tsit5", "Vern9", "IRKGL16", "IRKGL16 SIMD",
+    "Vern9 Static",
+    "AitkenNeville", "Midpoint Deuflhard", "Midpoint Hairer Wanner"]
 wp = WorkPrecisionSet(
     probs, abstols, reltols, setups; appxsol = test_sol, names = solnames,
     save_everystep = false, verbose = false, numruns = 100)
@@ -322,8 +334,9 @@ Package Information:
 
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/NonStiffODE/Project.toml`
-⌃ [2b5f629d] DiffEqBase v6.184.0
+  [2b5f629d] DiffEqBase v6.188.0
   [f3b72e0c] DiffEqDevTools v2.48.0
+  [58bc7355] IRKGaussLegendre v0.2.11
   [7f56f5a3] LSODA v0.7.5
   [961ee093] ModelingToolkit v10.21.0
   [54ca160b] ODEInterface v0.5.0
@@ -333,13 +346,11 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [65888b18] ParameterizedFunctions v5.19.0
   [91a5bcdd] Plots v1.40.19
   [31c91b34] SciMLBenchmarks v0.1.3
-⌃ [90137ffa] StaticArrays v1.9.14
+  [90137ffa] StaticArrays v1.9.15
   [c3572dad] Sundials v4.28.0
-  [0c5d862f] Symbolics v6.52.0
+  [0c5d862f] Symbolics v6.54.0
   [37e2e46d] LinearAlgebra
   [9a3f8284] Random
-Info Packages marked with ⌃ have new versions available and may be upgradable.
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -352,12 +363,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [79e6a3ab] Adapt v4.3.0
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
-  [4fba245c] ArrayInterface v7.19.0
+  [4fba245c] ArrayInterface v7.20.0
   [4c555306] ArrayLayouts v1.11.2
   [e2ed5e7c] Bijections v0.2.2
   [d1d4a3ce] BitFlags v0.1.9
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
-  [8e7c35d0] BlockArrays v1.7.1
+  [8e7c35d0] BlockArrays v1.7.2
   [70df07ce] BracketingNonlinearSolve v1.3.0
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.7
@@ -368,7 +379,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
-  [861a8166] Combinatorics v1.0.3
+⌅ [861a8166] Combinatorics v1.0.2
   [a80b9123] CommonMark v0.9.1
   [38540f10] CommonSolve v0.2.4
   [bbf7d656] CommonSubexpressions v0.3.1
@@ -386,7 +397,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [864edb3b] DataStructures v0.18.22
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v6.184.0
+  [2b5f629d] DiffEqBase v6.188.0
   [459566f4] DiffEqCallbacks v4.9.0
   [f3b72e0c] DiffEqDevTools v2.48.0
   [77a26b50] DiffEqNoiseProcess v5.24.1
@@ -401,7 +412,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7c1d4256] DynamicPolynomials v0.6.3
   [06fc5a27] DynamicQuantities v1.8.0
   [4e289a0a] EnumX v1.0.5
-  [f151be2c] EnzymeCore v0.8.12
+  [f151be2c] EnzymeCore v0.8.13
   [460bff9d] ExceptionUnwrapping v0.1.11
   [7d51a73a] ExplicitImports v1.13.2
   [d4d017d3] ExponentialUtilities v1.27.0
@@ -417,7 +428,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [6a86dc24] FiniteDiff v2.28.1
   [53c48c17] FixedPointNumbers v0.8.5
   [1fa38f19] Format v1.3.7
-⌃ [f6369f11] ForwardDiff v0.10.38
+  [f6369f11] ForwardDiff v1.1.0
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [d9f16b24] Functors v0.5.2
@@ -432,7 +443,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [eafb193a] Highlights v0.5.3
   [3e5b6fbb] HostCPUFeatures v0.1.17
   [34004b35] HypergeometricFunctions v0.3.28
-⌃ [7073ff75] IJulia v1.30.1
+  [7073ff75] IJulia v1.30.3
+  [58bc7355] IRKGaussLegendre v0.2.11
   [615f187c] IfElse v0.1.1
   [3263718b] ImplicitDiscreteSolve v1.2.0
   [d25df0c9] Inflate v0.1.5
@@ -451,12 +463,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ba0b0d4f] Krylov v0.10.1
   [7f56f5a3] LSODA v0.7.5
   [b964fa9f] LaTeXStrings v1.4.0
-  [23fbe1c1] Latexify v0.16.9
+  [23fbe1c1] Latexify v0.16.10
   [10f19ff3] LayoutPointers v0.1.17
   [5078a376] LazyArrays v2.6.2
   [87fe0de2] LineSearch v0.1.4
   [d3d80556] LineSearches v7.4.0
-  [7ed4a6bd] LinearSolve v3.37.0
+  [7ed4a6bd] LinearSolve v3.39.2
   [2ab3a3ac] LogExpFunctions v0.3.29
   [e6f89c97] LoggingExtras v1.1.0
   [d8e11817] MLStyle v0.4.17
@@ -489,12 +501,12 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [1dea7af3] OrdinaryDiffEq v6.102.0
   [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.5.0
   [6ad6398a] OrdinaryDiffEqBDF v1.10.1
-  [bbf590c4] OrdinaryDiffEqCore v1.30.0
+  [bbf590c4] OrdinaryDiffEqCore v1.33.0
   [50262376] OrdinaryDiffEqDefault v1.8.0
-  [4302a76b] OrdinaryDiffEqDifferentiation v1.14.0
+  [4302a76b] OrdinaryDiffEqDifferentiation v1.16.0
   [9286f039] OrdinaryDiffEqExplicitRK v1.4.0
   [e0540318] OrdinaryDiffEqExponentialRK v1.8.0
-  [becaefa8] OrdinaryDiffEqExtrapolation v1.8.0
+  [becaefa8] OrdinaryDiffEqExtrapolation v1.9.0
   [5960d6e9] OrdinaryDiffEqFIRK v1.16.0
   [101fe9f7] OrdinaryDiffEqFeagin v1.4.0
   [d3585ca7] OrdinaryDiffEqFunctionMap v1.5.0
@@ -502,17 +514,17 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9f002381] OrdinaryDiffEqIMEXMultistep v1.7.0
   [521117fe] OrdinaryDiffEqLinear v1.6.0
   [1344f307] OrdinaryDiffEqLowOrderRK v1.6.0
-  [b0944070] OrdinaryDiffEqLowStorageRK v1.6.0
+  [b0944070] OrdinaryDiffEqLowStorageRK v1.7.0
   [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.14.1
   [c9986a66] OrdinaryDiffEqNordsieck v1.4.0
   [5dd0a6cf] OrdinaryDiffEqPDIRK v1.6.0
   [5b33eab2] OrdinaryDiffEqPRK v1.4.0
   [04162be5] OrdinaryDiffEqQPRK v1.4.0
   [af6ede74] OrdinaryDiffEqRKN v1.5.0
-⌃ [43230ef6] OrdinaryDiffEqRosenbrock v1.16.1
+  [43230ef6] OrdinaryDiffEqRosenbrock v1.17.0
   [2d112036] OrdinaryDiffEqSDIRK v1.7.0
   [dc97f408] OrdinaryDiffEqSIMDRK v1.1.0
-  [669c94d9] OrdinaryDiffEqSSPRK v1.6.0
+  [669c94d9] OrdinaryDiffEqSSPRK v1.7.0
   [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.6.0
   [358294b1] OrdinaryDiffEqStabilizedRK v1.4.0
   [fa646aed] OrdinaryDiffEqSymplecticRK v1.7.0
@@ -529,7 +541,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [f517fe37] Polyester v0.7.18
   [1d0040c9] PolyesterWeave v0.2.2
   [85a6dd25] PositiveFactorizations v0.2.4
-  [d236fae5] PreallocationTools v0.4.33
+  [d236fae5] PreallocationTools v0.4.34
 ⌅ [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.5.0
   [27ebfcd6] Primes v0.5.7
@@ -548,12 +560,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [47965b36] RootedTrees v2.23.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.15
   [9dfe8606] SCCNonlinearSolve v1.4.0
+  [fdea26ae] SIMD v3.7.1
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.43
-  [0bca4576] SciMLBase v2.114.0
+  [0bca4576] SciMLBase v2.116.3
   [31c91b34] SciMLBenchmarks v0.1.3
-  [19f34311] SciMLJacobianOperators v0.1.8
-  [c0aeaf25] SciMLOperators v1.6.0
+  [19f34311] SciMLJacobianOperators v0.1.11
+  [c0aeaf25] SciMLOperators v1.7.1
   [431bcebd] SciMLPublic v1.0.0
   [53ae85a6] SciMLStructures v1.7.0
   [6c6a2e73] Scratch v1.3.0
@@ -569,7 +582,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [860ef19b] StableRNGs v1.0.3
   [aedffcd0] Static v1.2.0
   [0d7ed370] StaticArrayInterface v1.8.0
-⌃ [90137ffa] StaticArrays v1.9.14
+  [90137ffa] StaticArrays v1.9.15
   [1e83bf80] StaticArraysCore v1.4.3
   [82ae8749] StatsAPI v1.7.1
   [2913bbd2] StatsBase v0.34.6
@@ -580,8 +593,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [c3572dad] Sundials v4.28.0
   [2efcf032] SymbolicIndexingInterface v0.3.43
   [19f23fe9] SymbolicLimits v0.2.2
-  [d1185830] SymbolicUtils v3.31.0
-  [0c5d862f] Symbolics v6.52.0
+  [d1185830] SymbolicUtils v3.32.0
+  [0c5d862f] Symbolics v6.54.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.1
   [ed4db957] TaskLocalValues v0.1.3
@@ -600,7 +613,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [45397f5d] UnitfulLatexify v1.7.0
   [a7c27f48] Unityper v0.1.6
   [41fe7b60] Unzip v0.2.0
-⌃ [3d5dd08c] VectorizationBase v0.21.71
+  [3d5dd08c] VectorizationBase v0.21.72
   [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.14
@@ -617,13 +630,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [0656b61e] GLFW_jll v3.4.0+2
   [d2c73de3] GR_jll v0.73.17+0
   [b0724c58] GettextRuntime_jll v0.22.4+0
+  [61579ee1] Ghostscript_jll v9.55.1+0
   [020c3dae] Git_LFS_jll v3.7.0+0
-  [f8c6e375] Git_jll v2.51.0+0
+  [f8c6e375] Git_jll v2.51.1+0
   [7746bdde] Glib_jll v2.84.3+0
   [3b182d85] Graphite2_jll v1.3.15+0
   [2e76f6c2] HarfBuzz_jll v8.5.1+0
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
-  [aacddb02] JpegTurbo_jll v3.1.2+0
+  [aacddb02] JpegTurbo_jll v3.1.3+0
   [c1c5ebd0] LAME_jll v3.100.3+0
   [88015f11] LERC_jll v4.0.1+0
   [1d63c593] LLVMOpenMP_jll v18.1.8+0
@@ -743,6 +757,5 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

@@ -1,5 +1,6 @@
 
-using OrdinaryDiffEq, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools, StaticArrays
+using OrdinaryDiffEq, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools, StaticArrays,
+      IRKGaussLegendre
 using Plots;
 gr()
 
@@ -67,6 +68,7 @@ setups = [Dict(:alg=>DP5())
           #Dict(:alg=>ode45()) #fails
           Dict(:alg=>BS5())
           Dict(:alg=>Tsit5())
+          Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Tsit5(), :prob_choice => 2)
           Dict(:alg=>dopri5())];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol,
@@ -78,7 +80,9 @@ setups = [Dict(:alg=>DP5(), :dense=>false)
           #Dict(:alg=>ode45()) # Fails
           Dict(:alg=>BS5(), :dense=>false)
           Dict(:alg=>Tsit5(), :dense=>false)
+          Dict(:alg=>RadauIIA5(), :dense=>false)
           Dict(:alg=>Tsit5(), :dense=>false, :prob_choice => 2)
+          Dict(:alg=>RadauIIA5(), :dense=>false, :prob_choice => 2)
           Dict(:alg=>dopri5())];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol, numruns = 100)
 plot(wp)
@@ -88,6 +92,7 @@ setups = [Dict(:alg=>DP5())
           #Dict(:alg=>ode45()) #fails
           Dict(:alg=>BS5())
           Dict(:alg=>Tsit5())
+          Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Tsit5(), :prob_choice => 2)
           Dict(:alg=>dopri5())];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol, numruns = 100)
@@ -102,6 +107,8 @@ setups = [Dict(:alg=>DP5())
           Dict(:alg=>Vern7())
           Dict(:alg=>Vern8())
           Dict(:alg=>Vern9())
+          Dict(:alg=>IRKGL16(simd = false))
+          Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Vern6(), :prob_choice => 2)
           Dict(:alg=>Vern7(), :prob_choice => 2)
           Dict(:alg=>Vern8(), :prob_choice => 2)
@@ -129,6 +136,8 @@ plot(wp)
 setups = [Dict(:alg=>DP5())
           Dict(:alg=>lsoda())
           Dict(:alg=>Vern8())
+          Dict(:alg=>IRKGL16(simd = false))
+          Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Vern8(), :prob_choice => 2)
           Dict(:alg=>ddeabm())
           Dict(:alg=>odex())
@@ -142,14 +151,17 @@ abstols = 1.0 ./ 10.0 .^ (3:13);
 reltols = 1.0 ./ 10.0 .^ (0:10);
 setups = [Dict(:alg=>Tsit5())
           Dict(:alg=>Vern9())
+          Dict(:alg=>IRKGL16(simd = false))
+          Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Vern9(), :prob_choice => 2)
           Dict(:alg=>AitkenNeville(min_order = 1, max_order = 9, init_order = 4, threading = true))
           Dict(:alg=>ExtrapolationMidpointDeuflhard(
               min_order = 1, max_order = 9, init_order = 4, threading = true))
           Dict(:alg=>ExtrapolationMidpointHairerWanner(
               min_order = 2, max_order = 11, init_order = 4, threading = true))]
-solnames = ["Tsit5", "Vern9", "Vern9 Static", "AitkenNeville",
-    "Midpoint Deuflhard", "Midpoint Hairer Wanner"]
+solnames = ["Tsit5", "Vern9", "IRKGL16", "IRKGL16 SIMD",
+    "Vern9 Static",
+    "AitkenNeville", "Midpoint Deuflhard", "Midpoint Hairer Wanner"]
 wp = WorkPrecisionSet(
     probs, abstols, reltols, setups; appxsol = test_sol, names = solnames,
     save_everystep = false, verbose = false, numruns = 100)

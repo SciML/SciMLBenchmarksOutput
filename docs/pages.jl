@@ -84,4 +84,3 @@ names = [
 for i in 1:length(pages)
     pages[i] = names[i] => pages[i][2]
 end
-
