@@ -674,86 +674,85 @@ for (algo, stepper, use_recursion, label) in algorithms
             println(&quot;algo=$(label), V = $(nv(G)), length = $(length(trial.times)), median time = $median_time&quot;)
         end
     end
-end</code></pre><pre><code class="nohighlight hljs">algo=Direct (brute-force), V = 1, length = 50, median time = 100.044 μs
-algo=Direct (brute-force), V = 10, length = 50, median time = 10.455 ms
-algo=Direct (brute-force), V = 20, length = 50, median time = 87.470 ms
-algo=Direct (brute-force), V = 30, length = 37, median time = 271.783 ms
-algo=Direct (brute-force), V = 40, length = 7, median time = 1.568 s
-algo=Direct (brute-force), V = 50, length = 4, median time = 2.955 s
-algo=Direct (brute-force), V = 60, length = 2, median time = 5.495 s
-algo=Direct (brute-force), V = 70, length = 2, median time = 8.914 s
-algo=Direct (brute-force), V = 80, length = 1, median time = 13.645 s
-algo=Direct (brute-force), V = 90, length = 1, median time = 22.342 s
-algo=Coevolve (brute-force), V = 1, length = 50, median time = 3.805 μs
-algo=Coevolve (brute-force), V = 10, length = 50, median time = 210.169 μs
-algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.420 ms
-algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.395 ms
-algo=Coevolve (brute-force), V = 40, length = 50, median time = 8.551 ms
-algo=Coevolve (brute-force), V = 50, length = 50, median time = 17.748 ms
-algo=Coevolve (brute-force), V = 60, length = 50, median time = 29.981 ms
-algo=Coevolve (brute-force), V = 70, length = 50, median time = 54.063 ms
-algo=Coevolve (brute-force), V = 80, length = 50, median time = 79.859 ms
-algo=Coevolve (brute-force), V = 90, length = 50, median time = 126.592 ms
-algo=Direct (recursive), V = 1, length = 50, median time = 94.079 μs
-algo=Direct (recursive), V = 10, length = 50, median time = 4.776 ms
-algo=Direct (recursive), V = 20, length = 50, median time = 23.757 ms
-algo=Direct (recursive), V = 30, length = 50, median time = 68.897 ms
-algo=Direct (recursive), V = 40, length = 11, median time = 974.707 ms
-algo=Direct (recursive), V = 50, length = 6, median time = 1.853 s
-algo=Direct (recursive), V = 60, length = 4, median time = 2.961 s
-algo=Direct (recursive), V = 70, length = 3, median time = 4.960 s
-algo=Direct (recursive), V = 80, length = 2, median time = 8.414 s
-algo=Direct (recursive), V = 90, length = 1, median time = 12.488 s
-algo=Coevolve (recursive), V = 1, length = 50, median time = 3.760 μs
-algo=Coevolve (recursive), V = 10, length = 50, median time = 78.645 μs
-algo=Coevolve (recursive), V = 20, length = 50, median time = 277.402 μs
-algo=Coevolve (recursive), V = 30, length = 50, median time = 521.741 μs
-algo=Coevolve (recursive), V = 40, length = 50, median time = 975.057 μs
-algo=Coevolve (recursive), V = 50, length = 50, median time = 1.633 ms
-algo=Coevolve (recursive), V = 60, length = 50, median time = 2.385 ms
-algo=Coevolve (recursive), V = 70, length = 50, median time = 3.319 ms
-algo=Coevolve (recursive), V = 80, length = 50, median time = 4.306 ms
-algo=Coevolve (recursive), V = 90, length = 50, median time = 5.868 ms
-algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 71.494 
+end</code></pre><pre><code class="nohighlight hljs">algo=Direct (brute-force), V = 1, length = 50, median time = 93.180 μs
+algo=Direct (brute-force), V = 10, length = 50, median time = 11.063 ms
+algo=Direct (brute-force), V = 20, length = 50, median time = 85.666 ms
+algo=Direct (brute-force), V = 30, length = 37, median time = 271.819 ms
+algo=Direct (brute-force), V = 40, length = 7, median time = 1.551 s
+algo=Direct (brute-force), V = 50, length = 4, median time = 3.055 s
+algo=Direct (brute-force), V = 60, length = 2, median time = 5.792 s
+algo=Direct (brute-force), V = 70, length = 2, median time = 9.098 s
+algo=Direct (brute-force), V = 80, length = 1, median time = 15.065 s
+algo=Direct (brute-force), V = 90, length = 1, median time = 22.055 s
+algo=Coevolve (brute-force), V = 1, length = 50, median time = 3.400 μs
+algo=Coevolve (brute-force), V = 10, length = 50, median time = 214.248 μs
+algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.344 ms
+algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.259 ms
+algo=Coevolve (brute-force), V = 40, length = 50, median time = 8.325 ms
+algo=Coevolve (brute-force), V = 50, length = 50, median time = 16.015 ms
+algo=Coevolve (brute-force), V = 60, length = 50, median time = 30.060 ms
+algo=Coevolve (brute-force), V = 70, length = 50, median time = 50.153 ms
+algo=Coevolve (brute-force), V = 80, length = 50, median time = 75.695 ms
+algo=Coevolve (brute-force), V = 90, length = 50, median time = 123.587 ms
+algo=Direct (recursive), V = 1, length = 50, median time = 91.385 μs
+algo=Direct (recursive), V = 10, length = 50, median time = 4.489 ms
+algo=Direct (recursive), V = 20, length = 50, median time = 23.574 ms
+algo=Direct (recursive), V = 30, length = 50, median time = 69.532 ms
+algo=Direct (recursive), V = 40, length = 11, median time = 1.017 s
+algo=Direct (recursive), V = 50, length = 6, median time = 1.862 s
+algo=Direct (recursive), V = 60, length = 3, median time = 3.307 s
+algo=Direct (recursive), V = 70, length = 3, median time = 5.067 s
+algo=Direct (recursive), V = 80, length = 2, median time = 8.011 s
+algo=Direct (recursive), V = 90, length = 1, median time = 12.484 s
+algo=Coevolve (recursive), V = 1, length = 50, median time = 3.460 μs
+algo=Coevolve (recursive), V = 10, length = 50, median time = 71.855 μs
+algo=Coevolve (recursive), V = 20, length = 50, median time = 243.878 μs
+algo=Coevolve (recursive), V = 30, length = 50, median time = 467.401 μs
+algo=Coevolve (recursive), V = 40, length = 50, median time = 869.373 μs
+algo=Coevolve (recursive), V = 50, length = 50, median time = 1.434 ms
+algo=Coevolve (recursive), V = 60, length = 50, median time = 2.162 ms
+algo=Coevolve (recursive), V = 70, length = 50, median time = 3.003 ms
+algo=Coevolve (recursive), V = 80, length = 50, median time = 3.950 ms
+algo=Coevolve (recursive), V = 90, length = 50, median time = 5.434 ms
+algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 70.220 
 μs
-algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 5.095 
+algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 4.494 
 ms
-algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 37.461
+algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 41.088
  ms
-algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 114.75
-4 ms
-algo=PDMPCHVSimple (brute-force), V = 40, length = 35, median time = 287.04
-3 ms
-algo=PDMPCHVSimple (brute-force), V = 50, length = 17, median time = 585.80
-4 ms
-algo=PDMPCHVSimple (brute-force), V = 60, length = 10, median time = 1.092 
-s
-algo=PDMPCHVSimple (brute-force), V = 70, length = 6, median time = 1.913 s
-algo=PDMPCHVSimple (brute-force), V = 80, length = 4, median time = 2.886 s
-algo=PDMPCHVSimple (brute-force), V = 90, length = 3, median time = 4.964 s
-algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 73.829 μs
-algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 347.767 
+algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 113.40
+6 ms
+algo=PDMPCHVSimple (brute-force), V = 40, length = 35, median time = 289.51
+5 ms
+algo=PDMPCHVSimple (brute-force), V = 50, length = 16, median time = 628.89
+5 ms
+algo=PDMPCHVSimple (brute-force), V = 60, length = 9, median time = 1.129 s
+algo=PDMPCHVSimple (brute-force), V = 70, length = 6, median time = 1.858 s
+algo=PDMPCHVSimple (brute-force), V = 80, length = 4, median time = 2.817 s
+algo=PDMPCHVSimple (brute-force), V = 90, length = 2, median time = 5.147 s
+algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 71.960 μs
+algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 338.767 
 μs
-algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 796.933 
+algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 793.399 
 μs
-algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.545 ms
-algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.503 ms
-algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.636 ms
+algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.570 ms
+algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.508 ms
+algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.632 ms
 algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 5.224 ms
-algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 7.182 ms
-algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 9.346 ms
-algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 12.257 m
+algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 7.133 ms
+algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 9.501 ms
+algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 12.255 m
 s
-algo=PDMPCHVFull, V = 1, length = 50, median time = 69.494 μs
-algo=PDMPCHVFull, V = 10, length = 50, median time = 485.957 μs
-algo=PDMPCHVFull, V = 20, length = 50, median time = 754.958 μs
-algo=PDMPCHVFull, V = 30, length = 50, median time = 1.251 ms
-algo=PDMPCHVFull, V = 40, length = 50, median time = 1.565 ms
-algo=PDMPCHVFull, V = 50, length = 50, median time = 1.953 ms
-algo=PDMPCHVFull, V = 60, length = 50, median time = 2.591 ms
-algo=PDMPCHVFull, V = 70, length = 50, median time = 3.106 ms
-algo=PDMPCHVFull, V = 80, length = 50, median time = 3.717 ms
-algo=PDMPCHVFull, V = 90, length = 50, median time = 4.276 ms</code></pre><pre><code class="language-julia hljs">let fig = plot(
+algo=PDMPCHVFull, V = 1, length = 50, median time = 70.049 μs
+algo=PDMPCHVFull, V = 10, length = 50, median time = 494.666 μs
+algo=PDMPCHVFull, V = 20, length = 50, median time = 776.644 μs
+algo=PDMPCHVFull, V = 30, length = 50, median time = 1.245 ms
+algo=PDMPCHVFull, V = 40, length = 50, median time = 1.597 ms
+algo=PDMPCHVFull, V = 50, length = 50, median time = 1.966 ms
+algo=PDMPCHVFull, V = 60, length = 50, median time = 2.563 ms
+algo=PDMPCHVFull, V = 70, length = 50, median time = 3.126 ms
+algo=PDMPCHVFull, V = 80, length = 50, median time = 3.728 ms
+algo=PDMPCHVFull, V = 90, length = 50, median time = 4.529 ms</code></pre><pre><code class="language-julia hljs">let fig = plot(
         yscale = :log10,
         xlabel = &quot;V&quot;,
         ylabel = &quot;Time (ns)&quot;,
@@ -835,66 +834,66 @@ for (vr_agg, stepper, use_recursion, label) in vr_aggs
             println(&quot;algo=$label, V=$(nv(G)), length=$(length(trial.times)), median time=$median_time&quot;)
         end
     end
-end</code></pre><pre><code class="nohighlight hljs">algo=VR_Direct (brute-force), V=1, length=50, median time=392.932 μs
-algo=VR_Direct (brute-force), V=10, length=50, median time=21.040 ms
-algo=VR_Direct (brute-force), V=20, length=50, median time=196.116 ms
-algo=VR_Direct (brute-force), V=30, length=16, median time=647.640 ms
-algo=VR_Direct (brute-force), V=40, length=2, median time=5.152 s
-algo=VR_Direct (brute-force), V=50, length=1, median time=10.696 s
-algo=VR_Direct (brute-force), V=60, length=1, median time=18.252 s
-algo=VR_Direct (brute-force), V=70, length=1, median time=32.061 s
-algo=VR_Direct (brute-force), V=80, length=1, median time=47.187 s
-algo=VR_Direct (brute-force), V=90, length=1, median time=69.347 s
-algo=VR_DirectFW (brute-force), V=1, length=50, median time=677.409 μs
-algo=VR_DirectFW (brute-force), V=10, length=50, median time=52.160 ms
-algo=VR_DirectFW (brute-force), V=20, length=27, median time=372.966 ms
-algo=VR_DirectFW (brute-force), V=30, length=10, median time=1.076 s
-algo=VR_DirectFW (brute-force), V=40, length=4, median time=2.613 s
-algo=VR_DirectFW (brute-force), V=50, length=2, median time=5.519 s
-algo=VR_DirectFW (brute-force), V=60, length=2, median time=9.455 s
-algo=VR_DirectFW (brute-force), V=70, length=1, median time=16.539 s
-algo=VR_DirectFW (brute-force), V=80, length=1, median time=27.739 s
-algo=VR_DirectFW (brute-force), V=90, length=1, median time=36.927 s
-algo=VR_FRM (brute-force), V=1, length=50, median time=86.604 μs
-algo=VR_FRM (brute-force), V=10, length=50, median time=10.651 ms
-algo=VR_FRM (brute-force), V=20, length=50, median time=87.725 ms
-algo=VR_FRM (brute-force), V=30, length=37, median time=272.288 ms
-algo=VR_FRM (brute-force), V=40, length=7, median time=1.495 s
-algo=VR_FRM (brute-force), V=50, length=4, median time=3.011 s
-algo=VR_FRM (brute-force), V=60, length=2, median time=5.698 s
-algo=VR_FRM (brute-force), V=70, length=2, median time=8.943 s
-algo=VR_FRM (brute-force), V=80, length=1, median time=15.092 s
-algo=VR_FRM (brute-force), V=90, length=1, median time=22.262 s
-algo=VR_Direct (recursive), V=1, length=50, median time=487.681 μs
-algo=VR_Direct (recursive), V=10, length=50, median time=4.218 ms
-algo=VR_Direct (recursive), V=20, length=50, median time=9.850 ms
-algo=VR_Direct (recursive), V=30, length=50, median time=17.760 ms
-algo=VR_Direct (recursive), V=40, length=4, median time=3.183 s
-algo=VR_Direct (recursive), V=50, length=2, median time=6.147 s
-algo=VR_Direct (recursive), V=60, length=1, median time=10.973 s
-algo=VR_Direct (recursive), V=70, length=1, median time=16.332 s
-algo=VR_Direct (recursive), V=80, length=1, median time=25.784 s
-algo=VR_Direct (recursive), V=90, length=1, median time=38.806 s
-algo=VR_DirectFW (recursive), V=1, length=50, median time=657.610 μs
-algo=VR_DirectFW (recursive), V=10, length=50, median time=31.108 ms
-algo=VR_DirectFW (recursive), V=20, length=50, median time=155.297 ms
-algo=VR_DirectFW (recursive), V=30, length=23, median time=437.546 ms
-algo=VR_DirectFW (recursive), V=40, length=11, median time=1.003 s
-algo=VR_DirectFW (recursive), V=50, length=6, median time=1.784 s
-algo=VR_DirectFW (recursive), V=60, length=4, median time=2.972 s
-algo=VR_DirectFW (recursive), V=70, length=3, median time=4.866 s
-algo=VR_DirectFW (recursive), V=80, length=2, median time=7.603 s
-algo=VR_DirectFW (recursive), V=90, length=1, median time=11.233 s
-algo=VR_FRM (recursive), V=1, length=50, median time=85.865 μs
-algo=VR_FRM (recursive), V=10, length=50, median time=4.750 ms
-algo=VR_FRM (recursive), V=20, length=50, median time=23.669 ms
-algo=VR_FRM (recursive), V=30, length=50, median time=68.565 ms
-algo=VR_FRM (recursive), V=40, length=10, median time=1.047 s
-algo=VR_FRM (recursive), V=50, length=6, median time=1.978 s
-algo=VR_FRM (recursive), V=60, length=3, median time=3.571 s
-algo=VR_FRM (recursive), V=70, length=2, median time=5.492 s
-algo=VR_FRM (recursive), V=80, length=2, median time=8.672 s
-algo=VR_FRM (recursive), V=90, length=1, median time=12.807 s</code></pre><pre><code class="language-julia hljs">let fig = plot(
+end</code></pre><pre><code class="nohighlight hljs">algo=VR_Direct (brute-force), V=1, length=50, median time=422.596 μs
+algo=VR_Direct (brute-force), V=10, length=50, median time=21.213 ms
+algo=VR_Direct (brute-force), V=20, length=50, median time=201.130 ms
+algo=VR_Direct (brute-force), V=30, length=17, median time=632.366 ms
+algo=VR_Direct (brute-force), V=40, length=2, median time=5.255 s
+algo=VR_Direct (brute-force), V=50, length=1, median time=10.717 s
+algo=VR_Direct (brute-force), V=60, length=1, median time=18.335 s
+algo=VR_Direct (brute-force), V=70, length=1, median time=29.772 s
+algo=VR_Direct (brute-force), V=80, length=1, median time=42.278 s
+algo=VR_Direct (brute-force), V=90, length=1, median time=71.160 s
+algo=VR_DirectFW (brute-force), V=1, length=50, median time=722.584 μs
+algo=VR_DirectFW (brute-force), V=10, length=50, median time=50.058 ms
+algo=VR_DirectFW (brute-force), V=20, length=27, median time=368.843 ms
+algo=VR_DirectFW (brute-force), V=30, length=10, median time=1.033 s
+algo=VR_DirectFW (brute-force), V=40, length=4, median time=2.567 s
+algo=VR_DirectFW (brute-force), V=50, length=2, median time=5.531 s
+algo=VR_DirectFW (brute-force), V=60, length=2, median time=9.141 s
+algo=VR_DirectFW (brute-force), V=70, length=1, median time=15.791 s
+algo=VR_DirectFW (brute-force), V=80, length=1, median time=25.263 s
+algo=VR_DirectFW (brute-force), V=90, length=1, median time=38.161 s
+algo=VR_FRM (brute-force), V=1, length=50, median time=90.734 μs
+algo=VR_FRM (brute-force), V=10, length=50, median time=10.675 ms
+algo=VR_FRM (brute-force), V=20, length=50, median time=89.522 ms
+algo=VR_FRM (brute-force), V=30, length=37, median time=272.177 ms
+algo=VR_FRM (brute-force), V=40, length=7, median time=1.542 s
+algo=VR_FRM (brute-force), V=50, length=4, median time=3.025 s
+algo=VR_FRM (brute-force), V=60, length=2, median time=5.745 s
+algo=VR_FRM (brute-force), V=70, length=2, median time=9.761 s
+algo=VR_FRM (brute-force), V=80, length=1, median time=15.093 s
+algo=VR_FRM (brute-force), V=90, length=1, median time=21.314 s
+algo=VR_Direct (recursive), V=1, length=50, median time=411.262 μs
+algo=VR_Direct (recursive), V=10, length=50, median time=3.965 ms
+algo=VR_Direct (recursive), V=20, length=50, median time=9.868 ms
+algo=VR_Direct (recursive), V=30, length=50, median time=17.843 ms
+algo=VR_Direct (recursive), V=40, length=4, median time=3.135 s
+algo=VR_Direct (recursive), V=50, length=2, median time=6.489 s
+algo=VR_Direct (recursive), V=60, length=1, median time=11.094 s
+algo=VR_Direct (recursive), V=70, length=1, median time=17.661 s
+algo=VR_Direct (recursive), V=80, length=1, median time=26.371 s
+algo=VR_Direct (recursive), V=90, length=1, median time=43.734 s
+algo=VR_DirectFW (recursive), V=1, length=50, median time=723.149 μs
+algo=VR_DirectFW (recursive), V=10, length=50, median time=30.872 ms
+algo=VR_DirectFW (recursive), V=20, length=50, median time=161.190 ms
+algo=VR_DirectFW (recursive), V=30, length=22, median time=461.050 ms
+algo=VR_DirectFW (recursive), V=40, length=11, median time=983.974 ms
+algo=VR_DirectFW (recursive), V=50, length=6, median time=1.785 s
+algo=VR_DirectFW (recursive), V=60, length=4, median time=3.142 s
+algo=VR_DirectFW (recursive), V=70, length=2, median time=5.039 s
+algo=VR_DirectFW (recursive), V=80, length=2, median time=7.222 s
+algo=VR_DirectFW (recursive), V=90, length=1, median time=11.003 s
+algo=VR_FRM (recursive), V=1, length=50, median time=91.134 μs
+algo=VR_FRM (recursive), V=10, length=50, median time=4.591 ms
+algo=VR_FRM (recursive), V=20, length=50, median time=24.131 ms
+algo=VR_FRM (recursive), V=30, length=50, median time=70.962 ms
+algo=VR_FRM (recursive), V=40, length=10, median time=1.030 s
+algo=VR_FRM (recursive), V=50, length=6, median time=1.985 s
+algo=VR_FRM (recursive), V=60, length=4, median time=3.372 s
+algo=VR_FRM (recursive), V=70, length=2, median time=5.268 s
+algo=VR_FRM (recursive), V=80, length=2, median time=8.297 s
+algo=VR_FRM (recursive), V=90, length=1, median time=12.896 s</code></pre><pre><code class="language-julia hljs">let fig = plot(
     yscale = :log10,
     xlabel = &quot;V&quot;,
     ylabel = &quot;Time (ns)&quot;,
@@ -911,4 +910,4 @@ algo=VR_FRM (recursive), V=90, length=1, median time=12.807 s</code></pre><pre><
         plot!(_Vs, _bs, label=label)
     end
     title!(&quot;Variable Rate Simulations, 50 samples: nodes × time&quot;)
-end</code></pre><p><img src="../figures/MultivariateHawkes_25_1.png" alt/></p><h1 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h1><p>[1] D. J. Daley and D. Vere-Jones. An Introduction to the Theory of Point Processes: Volume I: Elementary Theory and Methods. Probability and Its Applications, An Introduction to the Theory of Point Processes. Springer-Verlag, 2 edition. doi:10.1007/b97277.</p><p>[2] Patrick J. Laub, Young Lee, and Thomas Taimre. The Elements of Hawkes Processes. Springer International Publishing. doi:10.1007/978-3-030-84639-8.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Jumps/Spatial_Signaling_Sanft/">« Spatial Signaling Model from Sanft and Othmer (2015)</a><a class="docs-footer-nextpage" href="../Synapse/">Synapse model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Tuesday 16 September 2025 10:52">Tuesday 16 September 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre><p><img src="../figures/MultivariateHawkes_25_1.png" alt/></p><h1 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h1><p>[1] D. J. Daley and D. Vere-Jones. An Introduction to the Theory of Point Processes: Volume I: Elementary Theory and Methods. Probability and Its Applications, An Introduction to the Theory of Point Processes. Springer-Verlag, 2 edition. doi:10.1007/b97277.</p><p>[2] Patrick J. Laub, Young Lee, and Thomas Taimre. The Elements of Hawkes Processes. Springer International Publishing. doi:10.1007/978-3-030-84639-8.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Jumps/Spatial_Signaling_Sanft/">« Spatial Signaling Model from Sanft and Othmer (2015)</a><a class="docs-footer-nextpage" href="../Synapse/">Synapse model »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Tuesday 16 September 2025 14:50">Tuesday 16 September 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
