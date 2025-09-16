@@ -119,66 +119,66 @@ end
 ```
 
 ```
-algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 1, length = 50, mean time = 478.
-452 μs
-algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 5, length = 50, mean time = 548.
+algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 1, length = 50, mean time = 458.
+795 μs
+algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 5, length = 50, mean time = 514.
 770 μs
-algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 10, length = 50, mean time = 548
-.681 μs
-algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 15, length = 50, mean time = 589
-.178 μs
-algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 20, length = 50, mean time = 587
-.150 μs
+algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 10, length = 50, mean time = 550
+.156 μs
+algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 15, length = 50, mean time = 564
+.860 μs
+algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 20, length = 50, mean time = 584
+.889 μs
 algo=Test 1 Tsit5 (VR_DirectFW), Num Jumps = 1, length = 50, mean time = 78
-4.920 μs
+5.570 μs
 algo=Test 1 Tsit5 (VR_DirectFW), Num Jumps = 5, length = 50, mean time = 2.
-240 ms
+250 ms
 algo=Test 1 Tsit5 (VR_DirectFW), Num Jumps = 10, length = 50, mean time = 5
-.002 ms
+.018 ms
 algo=Test 1 Tsit5 (VR_DirectFW), Num Jumps = 15, length = 50, mean time = 8
 .252 ms
 algo=Test 1 Tsit5 (VR_DirectFW), Num Jumps = 20, length = 50, mean time = 1
-2.401 ms
-algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 1, length = 50, mean time = 79.766 
+2.483 ms
+algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 1, length = 50, mean time = 80.756 
 μs
-algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 5, length = 50, mean time = 338.101
+algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 5, length = 50, mean time = 333.676
  μs
-algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 10, length = 50, mean time = 751.59
-4 μs
-algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 15, length = 50, mean time = 1.266 
+algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 10, length = 50, mean time = 762.15
+6 μs
+algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 15, length = 50, mean time = 1.328 
 ms
-algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 20, length = 50, mean time = 1.952 
+algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 20, length = 50, mean time = 1.764 
 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_Direct), Num Jumps = 1, length = 50,
- mean time = 1.007 ms
+ mean time = 1.065 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_Direct), Num Jumps = 5, length = 50,
- mean time = 1.031 ms
+ mean time = 1.039 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_Direct), Num Jumps = 10, length = 50
-, mean time = 1.057 ms
+, mean time = 1.033 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_Direct), Num Jumps = 15, length = 50
-, mean time = 1.230 ms
+, mean time = 1.102 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_Direct), Num Jumps = 20, length = 50
-, mean time = 1.123 ms
+, mean time = 1.172 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_DirectFW), Num Jumps = 1, length = 5
-0, mean time = 1.686 ms
+0, mean time = 1.674 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_DirectFW), Num Jumps = 5, length = 5
-0, mean time = 4.772 ms
+0, mean time = 4.737 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_DirectFW), Num Jumps = 10, length = 
-50, mean time = 9.366 ms
+50, mean time = 9.442 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_DirectFW), Num Jumps = 15, length = 
-50, mean time = 16.058 ms
+50, mean time = 16.012 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_DirectFW), Num Jumps = 20, length = 
-50, mean time = 24.231 ms
+50, mean time = 24.144 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_FRM), Num Jumps = 1, length = 50, me
-an time = 246.105 μs
+an time = 240.726 μs
 algo=Test 1 Rosenbrock23 (autodiff, VR_FRM), Num Jumps = 5, length = 50, me
-an time = 576.378 μs
+an time = 582.162 μs
 algo=Test 1 Rosenbrock23 (autodiff, VR_FRM), Num Jumps = 10, length = 50, m
-ean time = 1.075 ms
+ean time = 1.086 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_FRM), Num Jumps = 15, length = 50, m
-ean time = 1.616 ms
+ean time = 1.629 ms
 algo=Test 1 Rosenbrock23 (autodiff, VR_FRM), Num Jumps = 20, length = 50, m
-ean time = 2.176 ms
+ean time = 2.075 ms
 ```
 
 
@@ -274,35 +274,35 @@ end
 ```
 
 ```
-algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 1, length = 50, mean time = 562.
-001 μs
-algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 5, length = 50, mean time = 2.48
-8 ms
-algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 10, length = 50, mean time = 4.3
-79 ms
-algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 15, length = 50, mean time = 6.5
-80 ms
+algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 1, length = 50, mean time = 561.
+970 μs
+algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 5, length = 50, mean time = 2.44
+0 ms
+algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 10, length = 50, mean time = 4.4
+57 ms
+algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 15, length = 50, mean time = 6.7
+24 ms
 algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 20, length = 50, mean time = 8.9
-67 ms
-algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 1, length = 50, mean time = 88
-2.216 μs
+16 ms
+algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 1, length = 50, mean time = 86
+5.087 μs
 algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 5, length = 50, mean time = 9.
-681 ms
+478 ms
 algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 10, length = 50, mean time = 3
-8.873 ms
+7.331 ms
 algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 15, length = 50, mean time = 9
-8.345 ms
+5.505 ms
 algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 20, length = 50, mean time = 1
-91.171 ms
-algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 1, length = 50, mean time = 84.377 
+86.038 ms
+algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 1, length = 50, mean time = 83.893 
 μs
-algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 5, length = 50, mean time = 1.087 m
+algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 5, length = 50, mean time = 1.093 m
 s
-algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 10, length = 50, mean time = 4.285 
+algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 10, length = 50, mean time = 4.615 
 ms
-algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 15, length = 50, mean time = 10.174
+algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 15, length = 50, mean time = 10.801
  ms
-algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 20, length = 50, mean time = 17.854
+algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 20, length = 50, mean time = 19.146
  ms
 ```
 
@@ -445,11 +445,11 @@ end
 
 ```
 algo=Test 3 Tsit5 (VR_Direct, DNA Model), Num Jumps = 10, length = 50, mean
- time = 83.604 ms
+ time = 85.896 ms
 algo=Test 3 Tsit5 (VR_DirectFW, DNA Model), Num Jumps = 10, length = 50, me
-an time = 1.061 s
+an time = 1.060 s
 algo=Test 3 Tsit5 (VR_FRM, DNA Model), Num Jumps = 10, length = 50, mean ti
-me = 86.239 ms
+me = 86.005 ms
 ```
 
 
@@ -603,11 +603,11 @@ end
 
 ```
 algo=Test 4 Tsit5 (VR_Direct, NegFeedback, Variable Rate), Num Jumps = 8, l
-ength = 50, mean time = 1.428 s
+ength = 50, mean time = 1.414 s
 algo=Test 4 Tsit5 (VR_DirectFW, NegFeedback, Variable Rate), Num Jumps = 8,
- length = 50, mean time = 13.442 s
+ length = 50, mean time = 13.321 s
 algo=Test 4 Tsit5 (VR_FRM, NegFeedback, Variable Rate), Num Jumps = 8, leng
-th = 50, mean time = 1.055 s
+th = 50, mean time = 1.053 s
 ```
 
 
