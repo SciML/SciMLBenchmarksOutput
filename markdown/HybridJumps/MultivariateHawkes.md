@@ -990,86 +990,86 @@ end
 ```
 
 ```
-algo=Direct (brute-force), V = 1, length = 50, median time = 95.714 μs
-algo=Direct (brute-force), V = 10, length = 50, median time = 10.378 ms
-algo=Direct (brute-force), V = 20, length = 50, median time = 84.178 ms
-algo=Direct (brute-force), V = 30, length = 38, median time = 264.693 ms
-algo=Direct (brute-force), V = 40, length = 7, median time = 1.476 s
-algo=Direct (brute-force), V = 50, length = 4, median time = 2.992 s
-algo=Direct (brute-force), V = 60, length = 2, median time = 5.810 s
-algo=Direct (brute-force), V = 70, length = 2, median time = 9.359 s
-algo=Direct (brute-force), V = 80, length = 1, median time = 13.216 s
-algo=Direct (brute-force), V = 90, length = 1, median time = 20.478 s
-algo=Coevolve (brute-force), V = 1, length = 50, median time = 3.420 μs
-algo=Coevolve (brute-force), V = 10, length = 50, median time = 221.183 μs
-algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.338 ms
-algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.105 ms
-algo=Coevolve (brute-force), V = 40, length = 50, median time = 7.921 ms
-algo=Coevolve (brute-force), V = 50, length = 50, median time = 16.422 ms
-algo=Coevolve (brute-force), V = 60, length = 50, median time = 29.624 ms
-algo=Coevolve (brute-force), V = 70, length = 50, median time = 50.813 ms
-algo=Coevolve (brute-force), V = 80, length = 50, median time = 73.983 ms
-algo=Coevolve (brute-force), V = 90, length = 50, median time = 120.743 ms
-algo=Direct (recursive), V = 1, length = 50, median time = 92.009 μs
-algo=Direct (recursive), V = 10, length = 50, median time = 4.804 ms
-algo=Direct (recursive), V = 20, length = 50, median time = 23.521 ms
-algo=Direct (recursive), V = 30, length = 50, median time = 67.824 ms
-algo=Direct (recursive), V = 40, length = 11, median time = 995.518 ms
-algo=Direct (recursive), V = 50, length = 6, median time = 1.796 s
-algo=Direct (recursive), V = 60, length = 3, median time = 3.457 s
-algo=Direct (recursive), V = 70, length = 2, median time = 5.217 s
-algo=Direct (recursive), V = 80, length = 2, median time = 7.742 s
-algo=Direct (recursive), V = 90, length = 1, median time = 11.343 s
-algo=Coevolve (recursive), V = 1, length = 50, median time = 3.515 μs
-algo=Coevolve (recursive), V = 10, length = 50, median time = 70.959 μs
-algo=Coevolve (recursive), V = 20, length = 50, median time = 246.203 μs
-algo=Coevolve (recursive), V = 30, length = 50, median time = 465.231 μs
-algo=Coevolve (recursive), V = 40, length = 50, median time = 841.598 μs
-algo=Coevolve (recursive), V = 50, length = 50, median time = 1.420 ms
-algo=Coevolve (recursive), V = 60, length = 50, median time = 2.157 ms
-algo=Coevolve (recursive), V = 70, length = 50, median time = 3.002 ms
-algo=Coevolve (recursive), V = 80, length = 50, median time = 4.004 ms
-algo=Coevolve (recursive), V = 90, length = 50, median time = 5.370 ms
-algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 71.034 
+algo=Direct (brute-force), V = 1, length = 50, median time = 100.044 μs
+algo=Direct (brute-force), V = 10, length = 50, median time = 10.455 ms
+algo=Direct (brute-force), V = 20, length = 50, median time = 87.470 ms
+algo=Direct (brute-force), V = 30, length = 37, median time = 271.783 ms
+algo=Direct (brute-force), V = 40, length = 7, median time = 1.568 s
+algo=Direct (brute-force), V = 50, length = 4, median time = 2.955 s
+algo=Direct (brute-force), V = 60, length = 2, median time = 5.495 s
+algo=Direct (brute-force), V = 70, length = 2, median time = 8.914 s
+algo=Direct (brute-force), V = 80, length = 1, median time = 13.645 s
+algo=Direct (brute-force), V = 90, length = 1, median time = 22.342 s
+algo=Coevolve (brute-force), V = 1, length = 50, median time = 3.805 μs
+algo=Coevolve (brute-force), V = 10, length = 50, median time = 210.169 μs
+algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.420 ms
+algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.395 ms
+algo=Coevolve (brute-force), V = 40, length = 50, median time = 8.551 ms
+algo=Coevolve (brute-force), V = 50, length = 50, median time = 17.748 ms
+algo=Coevolve (brute-force), V = 60, length = 50, median time = 29.981 ms
+algo=Coevolve (brute-force), V = 70, length = 50, median time = 54.063 ms
+algo=Coevolve (brute-force), V = 80, length = 50, median time = 79.859 ms
+algo=Coevolve (brute-force), V = 90, length = 50, median time = 126.592 ms
+algo=Direct (recursive), V = 1, length = 50, median time = 94.079 μs
+algo=Direct (recursive), V = 10, length = 50, median time = 4.776 ms
+algo=Direct (recursive), V = 20, length = 50, median time = 23.757 ms
+algo=Direct (recursive), V = 30, length = 50, median time = 68.897 ms
+algo=Direct (recursive), V = 40, length = 11, median time = 974.707 ms
+algo=Direct (recursive), V = 50, length = 6, median time = 1.853 s
+algo=Direct (recursive), V = 60, length = 4, median time = 2.961 s
+algo=Direct (recursive), V = 70, length = 3, median time = 4.960 s
+algo=Direct (recursive), V = 80, length = 2, median time = 8.414 s
+algo=Direct (recursive), V = 90, length = 1, median time = 12.488 s
+algo=Coevolve (recursive), V = 1, length = 50, median time = 3.760 μs
+algo=Coevolve (recursive), V = 10, length = 50, median time = 78.645 μs
+algo=Coevolve (recursive), V = 20, length = 50, median time = 277.402 μs
+algo=Coevolve (recursive), V = 30, length = 50, median time = 521.741 μs
+algo=Coevolve (recursive), V = 40, length = 50, median time = 975.057 μs
+algo=Coevolve (recursive), V = 50, length = 50, median time = 1.633 ms
+algo=Coevolve (recursive), V = 60, length = 50, median time = 2.385 ms
+algo=Coevolve (recursive), V = 70, length = 50, median time = 3.319 ms
+algo=Coevolve (recursive), V = 80, length = 50, median time = 4.306 ms
+algo=Coevolve (recursive), V = 90, length = 50, median time = 5.868 ms
+algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 71.494 
 μs
-algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 5.105 
+algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 5.095 
 ms
-algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 38.738
+algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 37.461
  ms
-algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 109.17
-6 ms
-algo=PDMPCHVSimple (brute-force), V = 40, length = 35, median time = 288.03
-8 ms
-algo=PDMPCHVSimple (brute-force), V = 50, length = 17, median time = 608.81
-6 ms
-algo=PDMPCHVSimple (brute-force), V = 60, length = 10, median time = 1.077 
+algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 114.75
+4 ms
+algo=PDMPCHVSimple (brute-force), V = 40, length = 35, median time = 287.04
+3 ms
+algo=PDMPCHVSimple (brute-force), V = 50, length = 17, median time = 585.80
+4 ms
+algo=PDMPCHVSimple (brute-force), V = 60, length = 10, median time = 1.092 
 s
-algo=PDMPCHVSimple (brute-force), V = 70, length = 6, median time = 1.782 s
-algo=PDMPCHVSimple (brute-force), V = 80, length = 4, median time = 2.786 s
-algo=PDMPCHVSimple (brute-force), V = 90, length = 3, median time = 5.207 s
-algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 71.510 μs
-algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 343.477 
+algo=PDMPCHVSimple (brute-force), V = 70, length = 6, median time = 1.913 s
+algo=PDMPCHVSimple (brute-force), V = 80, length = 4, median time = 2.886 s
+algo=PDMPCHVSimple (brute-force), V = 90, length = 3, median time = 4.964 s
+algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 73.829 μs
+algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 347.767 
 μs
-algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 795.163 
+algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 796.933 
 μs
-algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.559 ms
-algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.491 ms
-algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.645 ms
-algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 5.181 ms
-algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 7.125 ms
-algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 9.339 ms
-algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 11.996 m
+algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.545 ms
+algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.503 ms
+algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.636 ms
+algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 5.224 ms
+algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 7.182 ms
+algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 9.346 ms
+algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 12.257 m
 s
-algo=PDMPCHVFull, V = 1, length = 50, median time = 69.755 μs
-algo=PDMPCHVFull, V = 10, length = 50, median time = 483.566 μs
-algo=PDMPCHVFull, V = 20, length = 50, median time = 747.939 μs
-algo=PDMPCHVFull, V = 30, length = 50, median time = 1.224 ms
-algo=PDMPCHVFull, V = 40, length = 50, median time = 1.512 ms
-algo=PDMPCHVFull, V = 50, length = 50, median time = 1.942 ms
-algo=PDMPCHVFull, V = 60, length = 50, median time = 2.546 ms
-algo=PDMPCHVFull, V = 70, length = 50, median time = 3.038 ms
-algo=PDMPCHVFull, V = 80, length = 50, median time = 3.691 ms
-algo=PDMPCHVFull, V = 90, length = 50, median time = 4.548 ms
+algo=PDMPCHVFull, V = 1, length = 50, median time = 69.494 μs
+algo=PDMPCHVFull, V = 10, length = 50, median time = 485.957 μs
+algo=PDMPCHVFull, V = 20, length = 50, median time = 754.958 μs
+algo=PDMPCHVFull, V = 30, length = 50, median time = 1.251 ms
+algo=PDMPCHVFull, V = 40, length = 50, median time = 1.565 ms
+algo=PDMPCHVFull, V = 50, length = 50, median time = 1.953 ms
+algo=PDMPCHVFull, V = 60, length = 50, median time = 2.591 ms
+algo=PDMPCHVFull, V = 70, length = 50, median time = 3.106 ms
+algo=PDMPCHVFull, V = 80, length = 50, median time = 3.717 ms
+algo=PDMPCHVFull, V = 90, length = 50, median time = 4.276 ms
 ```
 
 
@@ -1173,66 +1173,66 @@ end
 ```
 
 ```
-algo=VR_Direct (brute-force), V=1, length=50, median time=399.952 μs
-algo=VR_Direct (brute-force), V=10, length=50, median time=22.903 ms
-algo=VR_Direct (brute-force), V=20, length=50, median time=200.629 ms
-algo=VR_Direct (brute-force), V=30, length=16, median time=621.396 ms
-algo=VR_Direct (brute-force), V=40, length=2, median time=5.597 s
-algo=VR_Direct (brute-force), V=50, length=1, median time=11.011 s
-algo=VR_Direct (brute-force), V=60, length=1, median time=17.364 s
-algo=VR_Direct (brute-force), V=70, length=1, median time=28.162 s
-algo=VR_Direct (brute-force), V=80, length=1, median time=46.414 s
-algo=VR_Direct (brute-force), V=90, length=1, median time=73.269 s
-algo=VR_DirectFW (brute-force), V=1, length=50, median time=718.874 μs
-algo=VR_DirectFW (brute-force), V=10, length=50, median time=54.450 ms
-algo=VR_DirectFW (brute-force), V=20, length=26, median time=388.795 ms
-algo=VR_DirectFW (brute-force), V=30, length=10, median time=1.038 s
-algo=VR_DirectFW (brute-force), V=40, length=4, median time=2.500 s
-algo=VR_DirectFW (brute-force), V=50, length=3, median time=5.079 s
-algo=VR_DirectFW (brute-force), V=60, length=2, median time=9.748 s
-algo=VR_DirectFW (brute-force), V=70, length=1, median time=17.701 s
-algo=VR_DirectFW (brute-force), V=80, length=1, median time=28.104 s
-algo=VR_DirectFW (brute-force), V=90, length=1, median time=39.764 s
-algo=VR_FRM (brute-force), V=1, length=50, median time=91.469 μs
-algo=VR_FRM (brute-force), V=10, length=50, median time=10.193 ms
-algo=VR_FRM (brute-force), V=20, length=50, median time=88.678 ms
-algo=VR_FRM (brute-force), V=30, length=38, median time=268.401 ms
-algo=VR_FRM (brute-force), V=40, length=7, median time=1.552 s
-algo=VR_FRM (brute-force), V=50, length=4, median time=3.124 s
-algo=VR_FRM (brute-force), V=60, length=2, median time=5.806 s
-algo=VR_FRM (brute-force), V=70, length=2, median time=9.044 s
-algo=VR_FRM (brute-force), V=80, length=1, median time=14.891 s
-algo=VR_FRM (brute-force), V=90, length=1, median time=20.292 s
-algo=VR_Direct (recursive), V=1, length=50, median time=381.411 μs
-algo=VR_Direct (recursive), V=10, length=50, median time=4.111 ms
-algo=VR_Direct (recursive), V=20, length=50, median time=9.680 ms
-algo=VR_Direct (recursive), V=30, length=50, median time=17.692 ms
-algo=VR_Direct (recursive), V=40, length=4, median time=3.240 s
-algo=VR_Direct (recursive), V=50, length=2, median time=6.296 s
-algo=VR_Direct (recursive), V=60, length=1, median time=11.290 s
-algo=VR_Direct (recursive), V=70, length=1, median time=18.225 s
-algo=VR_Direct (recursive), V=80, length=1, median time=28.730 s
-algo=VR_Direct (recursive), V=90, length=1, median time=40.981 s
-algo=VR_DirectFW (recursive), V=1, length=50, median time=662.929 μs
-algo=VR_DirectFW (recursive), V=10, length=50, median time=30.634 ms
-algo=VR_DirectFW (recursive), V=20, length=50, median time=159.020 ms
-algo=VR_DirectFW (recursive), V=30, length=23, median time=456.783 ms
-algo=VR_DirectFW (recursive), V=40, length=11, median time=966.881 ms
-algo=VR_DirectFW (recursive), V=50, length=6, median time=1.795 s
-algo=VR_DirectFW (recursive), V=60, length=4, median time=3.081 s
-algo=VR_DirectFW (recursive), V=70, length=3, median time=4.788 s
-algo=VR_DirectFW (recursive), V=80, length=2, median time=7.335 s
-algo=VR_DirectFW (recursive), V=90, length=1, median time=11.914 s
-algo=VR_FRM (recursive), V=1, length=50, median time=96.084 μs
-algo=VR_FRM (recursive), V=10, length=50, median time=4.821 ms
-algo=VR_FRM (recursive), V=20, length=50, median time=23.986 ms
-algo=VR_FRM (recursive), V=30, length=50, median time=68.655 ms
-algo=VR_FRM (recursive), V=40, length=11, median time=1.015 s
-algo=VR_FRM (recursive), V=50, length=6, median time=1.937 s
-algo=VR_FRM (recursive), V=60, length=3, median time=3.425 s
-algo=VR_FRM (recursive), V=70, length=2, median time=5.532 s
-algo=VR_FRM (recursive), V=80, length=2, median time=7.759 s
-algo=VR_FRM (recursive), V=90, length=1, median time=11.648 s
+algo=VR_Direct (brute-force), V=1, length=50, median time=392.932 μs
+algo=VR_Direct (brute-force), V=10, length=50, median time=21.040 ms
+algo=VR_Direct (brute-force), V=20, length=50, median time=196.116 ms
+algo=VR_Direct (brute-force), V=30, length=16, median time=647.640 ms
+algo=VR_Direct (brute-force), V=40, length=2, median time=5.152 s
+algo=VR_Direct (brute-force), V=50, length=1, median time=10.696 s
+algo=VR_Direct (brute-force), V=60, length=1, median time=18.252 s
+algo=VR_Direct (brute-force), V=70, length=1, median time=32.061 s
+algo=VR_Direct (brute-force), V=80, length=1, median time=47.187 s
+algo=VR_Direct (brute-force), V=90, length=1, median time=69.347 s
+algo=VR_DirectFW (brute-force), V=1, length=50, median time=677.409 μs
+algo=VR_DirectFW (brute-force), V=10, length=50, median time=52.160 ms
+algo=VR_DirectFW (brute-force), V=20, length=27, median time=372.966 ms
+algo=VR_DirectFW (brute-force), V=30, length=10, median time=1.076 s
+algo=VR_DirectFW (brute-force), V=40, length=4, median time=2.613 s
+algo=VR_DirectFW (brute-force), V=50, length=2, median time=5.519 s
+algo=VR_DirectFW (brute-force), V=60, length=2, median time=9.455 s
+algo=VR_DirectFW (brute-force), V=70, length=1, median time=16.539 s
+algo=VR_DirectFW (brute-force), V=80, length=1, median time=27.739 s
+algo=VR_DirectFW (brute-force), V=90, length=1, median time=36.927 s
+algo=VR_FRM (brute-force), V=1, length=50, median time=86.604 μs
+algo=VR_FRM (brute-force), V=10, length=50, median time=10.651 ms
+algo=VR_FRM (brute-force), V=20, length=50, median time=87.725 ms
+algo=VR_FRM (brute-force), V=30, length=37, median time=272.288 ms
+algo=VR_FRM (brute-force), V=40, length=7, median time=1.495 s
+algo=VR_FRM (brute-force), V=50, length=4, median time=3.011 s
+algo=VR_FRM (brute-force), V=60, length=2, median time=5.698 s
+algo=VR_FRM (brute-force), V=70, length=2, median time=8.943 s
+algo=VR_FRM (brute-force), V=80, length=1, median time=15.092 s
+algo=VR_FRM (brute-force), V=90, length=1, median time=22.262 s
+algo=VR_Direct (recursive), V=1, length=50, median time=487.681 μs
+algo=VR_Direct (recursive), V=10, length=50, median time=4.218 ms
+algo=VR_Direct (recursive), V=20, length=50, median time=9.850 ms
+algo=VR_Direct (recursive), V=30, length=50, median time=17.760 ms
+algo=VR_Direct (recursive), V=40, length=4, median time=3.183 s
+algo=VR_Direct (recursive), V=50, length=2, median time=6.147 s
+algo=VR_Direct (recursive), V=60, length=1, median time=10.973 s
+algo=VR_Direct (recursive), V=70, length=1, median time=16.332 s
+algo=VR_Direct (recursive), V=80, length=1, median time=25.784 s
+algo=VR_Direct (recursive), V=90, length=1, median time=38.806 s
+algo=VR_DirectFW (recursive), V=1, length=50, median time=657.610 μs
+algo=VR_DirectFW (recursive), V=10, length=50, median time=31.108 ms
+algo=VR_DirectFW (recursive), V=20, length=50, median time=155.297 ms
+algo=VR_DirectFW (recursive), V=30, length=23, median time=437.546 ms
+algo=VR_DirectFW (recursive), V=40, length=11, median time=1.003 s
+algo=VR_DirectFW (recursive), V=50, length=6, median time=1.784 s
+algo=VR_DirectFW (recursive), V=60, length=4, median time=2.972 s
+algo=VR_DirectFW (recursive), V=70, length=3, median time=4.866 s
+algo=VR_DirectFW (recursive), V=80, length=2, median time=7.603 s
+algo=VR_DirectFW (recursive), V=90, length=1, median time=11.233 s
+algo=VR_FRM (recursive), V=1, length=50, median time=85.865 μs
+algo=VR_FRM (recursive), V=10, length=50, median time=4.750 ms
+algo=VR_FRM (recursive), V=20, length=50, median time=23.669 ms
+algo=VR_FRM (recursive), V=30, length=50, median time=68.565 ms
+algo=VR_FRM (recursive), V=40, length=10, median time=1.047 s
+algo=VR_FRM (recursive), V=50, length=6, median time=1.978 s
+algo=VR_FRM (recursive), V=60, length=3, median time=3.571 s
+algo=VR_FRM (recursive), V=70, length=2, median time=5.492 s
+algo=VR_FRM (recursive), V=80, length=2, median time=8.672 s
+algo=VR_FRM (recursive), V=90, length=1, median time=12.807 s
 ```
 
 
