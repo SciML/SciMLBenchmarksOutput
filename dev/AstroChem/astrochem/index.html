@@ -46,7 +46,7 @@ function get_heating(H, H2, E, tgas, ntot, dust2gas)
     heats = [
         cosmic_ionisation_rate * (5.5e-12 * H + 2.5e-11 * H2),
         get_photoelectric_heating(H, E, tgas, gnot, ntot, dust2gas),
-        6.4e-13 * rate_H2 * H2,
+        6.4e-13 * rate_H2 * H2
     ]
 
     return sum(heats)
@@ -136,7 +136,8 @@ function cooling_H2(H, H2, temp)
     logt38 = logt37 * logt3
 
     if temp &lt; 2e3
-        HDLR = (9.5e-22 * t3^3.76) / (1.0 + 0.12 * t3^2.1) * exp(-((0.13 / t3)^3)) + 3.0e-24 * exp(-0.51 / t3)
+        HDLR = (9.5e-22 * t3^3.76) / (1.0 + 0.12 * t3^2.1) * exp(-((0.13 / t3)^3)) +
+               3.0e-24 * exp(-0.51 / t3)
         HDLV = 6.7e-19 * exp(-5.86 / t3) + 1.6e-18 * exp(-11.7 / t3)
         HDL = HDLR + HDLV
     elseif 2e3 &lt;= temp &lt;= 1e4
@@ -213,21 +214,22 @@ function cooling_H2(H, H2, temp)
     return cool
 end
 
-function get_heating_cooling(T, H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺, dust2gas)
+function get_heating_cooling(
+        T, H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺, dust2gas)
     ntot = get_ntot(H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺)
-    return (gamma_ad - 1e0) * (get_heating(H, H2, E, T, ntot, dust2gas) - get_cooling(H, H2, O, E, T)) / kboltzmann / ntot
+    return (gamma_ad - 1e0) *
+           (get_heating(H, H2, E, T, ntot, dust2gas) - get_cooling(H, H2, O, E, T)) /
+           kboltzmann / ntot
 end
 
 function get_ntot(H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺)
     return sum([H2 O C O⁺ OH⁺ H H2O⁺ H3O⁺ E H2O OH C⁺ CO CO⁺ H⁺ HCO⁺])
 end
 
-ka_reaction(Tgas, α=1.0, β=1.0, γ=0.0) = α*(Tgas/300)^β*exp(−γ / Tgas)
-
+ka_reaction(Tgas, α = 1.0, β = 1.0, γ = 0.0) = α*(Tgas/300)^β*exp(−γ / Tgas)
 
 # CONTINUE HERE
 # Try this: https://docs.sciml.ai/Catalyst/stable/catalyst_functionality/constraint_equations/#Coupling-ODE-constraints-via-directly-building-a-ReactionSystem
-
 
 @variables t T(t) = 100.0 # Define the variables before the species!
 @species H2(t) O(t) C(t) O⁺(t) OH⁺(t) H(t) H2O⁺(t) H3O⁺(t) E(t) H2O(t) OH(t) C⁺(t) CO(t) CO⁺(t) H⁺(t) HCO⁺(t)
@@ -235,35 +237,41 @@ ka_reaction(Tgas, α=1.0, β=1.0, γ=0.0) = α*(Tgas/300)^β*exp(−γ / Tgas)
 
 D = Differential(t)
 reaction_equations = [
-	(@reaction 1.6e-9, $O⁺ + $H2 --&gt; $OH⁺ + $H),
-	(@reaction 1e-9, $OH⁺ + $H2 --&gt; $H2O⁺ + $H),
-	(@reaction 6.1e-10, $H2O⁺ + $H2 --&gt; $H3O⁺ + $H),
-	(@reaction ka_reaction(T, 1.1e-7, -1/2), $H3O⁺ + $E --&gt; $H2O + $H),
-	(@reaction ka_reaction(T, 8.6e-8, -1/2), $H2O⁺ + $E --&gt; $OH + $H),
-	(@reaction ka_reaction(T, 3.9e-8, -1/2), $H2O⁺ + $E --&gt; $O + $H2),
-	(@reaction ka_reaction(T, 6.3e-9, -0.48), $OH⁺ + $E --&gt; $O + $H),
-	(@reaction ka_reaction(T, 3.4e-12, -0.63), $O⁺ + $E --&gt; $O),
-	(@reaction 2.8 * cosmic_ionisation_rate, $O --&gt; $O⁺ + $E),
-	(@reaction 2.62 * cosmic_ionisation_rate, $C --&gt; $C⁺ + $E),
-	(@reaction 5.0 * cosmic_ionisation_rate, $CO --&gt; $C + $O),
-	(@reaction ka_reaction(T, 4.4e-12, -0.61), $C⁺ + $E --&gt; $C),
-	(@reaction ka_reaction(T, 1.15e-10, -0.339), $C⁺ + $OH --&gt; CO + $H),
-	(@reaction 9.15e-10 * (0.62 + 0.4767 * 5.5 * sqrt(300 / T)), $C⁺ + $OH --&gt; $CO⁺ + $H),
-	(@reaction 4e-10, $CO⁺ + $H --&gt; $CO + $H⁺),
-	(@reaction 7.28e-10, $CO⁺ + $H2 --&gt; $HCO⁺ + $H),
-	(@reaction ka_reaction(T, 2.8e-7, -0.69), $HCO⁺ + $E --&gt; $CO + $H),
-	(@reaction ka_reaction(T, 3.5e-12, -0.7), $H⁺ + $E --&gt; $H),
-	(@reaction 2.121e-17 * dust2gas / 1e-2, $H + $H --&gt; $H2),
+    (@reaction 1.6e-9, $O⁺ + $H2 --&gt; $OH⁺ + $H),
+    (@reaction 1e-9, $OH⁺ + $H2 --&gt; $H2O⁺ + $H),
+    (@reaction 6.1e-10, $H2O⁺ + $H2 --&gt; $H3O⁺ + $H),
+    (@reaction ka_reaction(T, 1.1e-7, -1/2), $H3O⁺ + $E --&gt; $H2O + $H),
+    (@reaction ka_reaction(T, 8.6e-8, -1/2), $H2O⁺ + $E --&gt; $OH + $H),
+    (@reaction ka_reaction(T, 3.9e-8, -1/2), $H2O⁺ + $E --&gt; $O + $H2),
+    (@reaction ka_reaction(T, 6.3e-9, -0.48), $OH⁺ + $E --&gt; $O + $H),
+    (@reaction ka_reaction(T, 3.4e-12, -0.63), $O⁺ + $E --&gt; $O),
+    (@reaction 2.8 * cosmic_ionisation_rate, $O --&gt; $O⁺ + $E),
+    (@reaction 2.62 * cosmic_ionisation_rate, $C --&gt; $C⁺ + $E),
+    (@reaction 5.0 * cosmic_ionisation_rate, $CO --&gt; $C + $O),
+    (@reaction ka_reaction(T, 4.4e-12, -0.61), $C⁺ + $E --&gt; $C),
+    (@reaction ka_reaction(T, 1.15e-10, -0.339), $C⁺ + $OH --&gt; CO + $H),
+    (@reaction 9.15e-10 * (0.62 + 0.4767 * 5.5 * sqrt(300 / T)), $C⁺ + $OH --&gt; $CO⁺ + $H),
+    (@reaction 4e-10, $CO⁺ + $H --&gt; $CO + $H⁺),
+    (@reaction 7.28e-10, $CO⁺ + $H2 --&gt; $HCO⁺ + $H),
+    (@reaction ka_reaction(T, 2.8e-7, -0.69), $HCO⁺ + $E --&gt; $CO + $H),
+    (@reaction ka_reaction(T, 3.5e-12, -0.7), $H⁺ + $E --&gt; $H),
+    (@reaction 2.121e-17 * dust2gas / 1e-2, $H + $H --&gt; $H2),
     (@reaction 1e-1 * cosmic_ionisation_rate, $H2 --&gt; $H + $H),
-	(@reaction 3.39e-10 * radiation_field, $C --&gt; $C⁺ + $E),
-	(@reaction 2.43e-10 * radiation_field, $CO --&gt; $C + $O),
-	(@reaction 7.72e-10 * radiation_field, $H2O --&gt; $OH + $H),
-    # (D(T) ~ get_heating_cooling(T, H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺, dust2gas)) 
+    (@reaction 3.39e-10 * radiation_field, $C --&gt; $C⁺ + $E),
+    (@reaction 2.43e-10 * radiation_field, $CO --&gt; $C + $O),
+    (@reaction 7.72e-10 * radiation_field, $H2O --&gt; $OH + $H)    # (D(T) ~ get_heating_cooling(T, H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺, dust2gas)) 
 ]
 
 @named system = ReactionSystem(reaction_equations, t)
 
-u0 = [:H2 =&gt; number_density, :O =&gt; number_density*2e-4, :C =&gt; number_density*1e-4, :O⁺=&gt;minimum_fractional_density, :OH⁺=&gt;minimum_fractional_density, :H=&gt; minimum_fractional_density, :H2O⁺=&gt; minimum_fractional_density, :H3O⁺=&gt;minimum_fractional_density, :E=&gt;minimum_fractional_density, :H2O=&gt;minimum_fractional_density, :OH=&gt;minimum_fractional_density, :C⁺=&gt;minimum_fractional_density, :CO=&gt;minimum_fractional_density, :CO⁺=&gt;minimum_fractional_density, :H⁺=&gt;minimum_fractional_density, :HCO⁺=&gt; minimum_fractional_density, :T=&gt; 100.0]
+u0 = [:H2 =&gt; number_density, :O =&gt; number_density*2e-4, :C =&gt; number_density*1e-4,
+    :O⁺=&gt;minimum_fractional_density, :OH⁺=&gt;minimum_fractional_density,
+    :H =&gt; minimum_fractional_density, :H2O⁺ =&gt; minimum_fractional_density,
+    :H3O⁺=&gt;minimum_fractional_density, :E=&gt;minimum_fractional_density,
+    :H2O=&gt;minimum_fractional_density, :OH=&gt;minimum_fractional_density,
+    :C⁺=&gt;minimum_fractional_density, :CO=&gt;minimum_fractional_density,
+    :CO⁺=&gt;minimum_fractional_density, :H⁺=&gt;minimum_fractional_density,
+    :HCO⁺ =&gt; minimum_fractional_density, :T =&gt; 100.0]
 
 odesys = convert(ODESystem, complete(system))
 
@@ -298,7 +306,7 @@ sol = solve(oprob, Rodas5()) # Rodas5()) # Tsit5()
 
 # Generate a solution using high precision arithmetic
 bigprob = remake(oprob, u0 = big.(oprob.u0), tspan = big.(oprob.tspan))
-refsol = solve(bigprob, Rodas5P(), abstol=1e-18, reltol=1e-18)</code></pre><pre><code class="nohighlight hljs">Created the ODEproblem.
+refsol = solve(bigprob, Rodas5P(), abstol = 1e-18, reltol = 1e-18)</code></pre><pre><code class="nohighlight hljs">Created the ODEproblem.
 retcode: Success
 Interpolation: specialized 4rd order &quot;free&quot; stiffness-aware interpolation
 t: 27802-element Vector{BigFloat}:
@@ -699,53 +707,61 @@ e-25, 1.0000000000000000384948697491918390813719893615913383013961276435003
 reltols = 1.0 ./ 10.0 .^ (4:10)
 
 setups = [
-          Dict(:alg=&gt;FBDF()),
-          Dict(:alg=&gt;QNDF()),
-          Dict(:alg=&gt;Rodas4P()),
-          Dict(:alg=&gt;CVODE_BDF()),
-          #Dict(:alg=&gt;ddebdf()),
-          Dict(:alg=&gt;Rodas4()),
-          Dict(:alg=&gt;Rodas5P()),
-          #Dict(:alg=&gt;rodas()),
-          #Dict(:alg=&gt;radau()),
-          Dict(:alg=&gt;lsoda()),
-          #Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = OrdinaryDiffEqCore.PolyesterThreads())),
-          Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = false)),
-          #Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = OrdinaryDiffEqCore.PolyesterThreads())),
-          Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = false)),
-          ]
-wp = WorkPrecisionSet(oprob,abstols,reltols,setups;verbose=false,
-                      save_everystep=false,appxsol=refsol,maxiters=Int(1e5),numruns=10)
+    Dict(:alg=&gt;FBDF()),
+    Dict(:alg=&gt;QNDF()),
+    Dict(:alg=&gt;Rodas4P()),
+    Dict(:alg=&gt;CVODE_BDF()),
+    #Dict(:alg=&gt;ddebdf()),
+    Dict(:alg=&gt;Rodas4()),
+    Dict(:alg=&gt;Rodas5P()),
+    #Dict(:alg=&gt;rodas()),
+    #Dict(:alg=&gt;radau()),
+    Dict(:alg=&gt;lsoda()),
+    #Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = OrdinaryDiffEqCore.PolyesterThreads())),
+    Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3, threading = false)),
+    #Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = OrdinaryDiffEqCore.PolyesterThreads())),
+    Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = false))
+]
+wp = WorkPrecisionSet(oprob, abstols, reltols, setups; verbose = false,
+    save_everystep = false, appxsol = refsol, maxiters = Int(1e5), numruns = 10)
 plot(wp)</code></pre><p><img src="../figures/astrochem_4_1.png" alt/></p><h2 id="With-Temperature-Dynamics"><a class="docs-heading-anchor" href="#With-Temperature-Dynamics">With Temperature Dynamics</a><a id="With-Temperature-Dynamics-1"></a><a class="docs-heading-anchor-permalink" href="#With-Temperature-Dynamics" title="Permalink"></a></h2><pre><code class="language-julia hljs">reaction_equations = [
-	(@reaction 1.6e-9, $O⁺ + $H2 --&gt; $OH⁺ + $H),
-	(@reaction 1e-9, $OH⁺ + $H2 --&gt; $H2O⁺ + $H),
-	(@reaction 6.1e-10, $H2O⁺ + $H2 --&gt; $H3O⁺ + $H),
-	(@reaction ka_reaction(T, 1.1e-7, -1/2), $H3O⁺ + $E --&gt; $H2O + $H),
-	(@reaction ka_reaction(T, 8.6e-8, -1/2), $H2O⁺ + $E --&gt; $OH + $H),
-	(@reaction ka_reaction(T, 3.9e-8, -1/2), $H2O⁺ + $E --&gt; $O + $H2),
-	(@reaction ka_reaction(T, 6.3e-9, -0.48), $OH⁺ + $E --&gt; $O + $H),
-	(@reaction ka_reaction(T, 3.4e-12, -0.63), $O⁺ + $E --&gt; $O),
-	(@reaction 2.8 * cosmic_ionisation_rate, $O --&gt; $O⁺ + $E),
-	(@reaction 2.62 * cosmic_ionisation_rate, $C --&gt; $C⁺ + $E),
-	(@reaction 5.0 * cosmic_ionisation_rate, $CO --&gt; $C + $O),
-	(@reaction ka_reaction(T, 4.4e-12, -0.61), $C⁺ + $E --&gt; $C),
-	(@reaction ka_reaction(T, 1.15e-10, -0.339), $C⁺ + $OH --&gt; CO + $H),
-	(@reaction 9.15e-10 * (0.62 + 0.4767 * 5.5 * sqrt(300 / T)), $C⁺ + $OH --&gt; $CO⁺ + $H),
-	(@reaction 4e-10, $CO⁺ + $H --&gt; $CO + $H⁺),
-	(@reaction 7.28e-10, $CO⁺ + $H2 --&gt; $HCO⁺ + $H),
-	(@reaction ka_reaction(T, 2.8e-7, -0.69), $HCO⁺ + $E --&gt; $CO + $H),
-	(@reaction ka_reaction(T, 3.5e-12, -0.7), $H⁺ + $E --&gt; $H),
-	(@reaction 2.121e-17 * dust2gas / 1e-2, $H + $H --&gt; $H2),
+    (@reaction 1.6e-9, $O⁺ + $H2 --&gt; $OH⁺ + $H),
+    (@reaction 1e-9, $OH⁺ + $H2 --&gt; $H2O⁺ + $H),
+    (@reaction 6.1e-10, $H2O⁺ + $H2 --&gt; $H3O⁺ + $H),
+    (@reaction ka_reaction(T, 1.1e-7, -1/2), $H3O⁺ + $E --&gt; $H2O + $H),
+    (@reaction ka_reaction(T, 8.6e-8, -1/2), $H2O⁺ + $E --&gt; $OH + $H),
+    (@reaction ka_reaction(T, 3.9e-8, -1/2), $H2O⁺ + $E --&gt; $O + $H2),
+    (@reaction ka_reaction(T, 6.3e-9, -0.48), $OH⁺ + $E --&gt; $O + $H),
+    (@reaction ka_reaction(T, 3.4e-12, -0.63), $O⁺ + $E --&gt; $O),
+    (@reaction 2.8 * cosmic_ionisation_rate, $O --&gt; $O⁺ + $E),
+    (@reaction 2.62 * cosmic_ionisation_rate, $C --&gt; $C⁺ + $E),
+    (@reaction 5.0 * cosmic_ionisation_rate, $CO --&gt; $C + $O),
+    (@reaction ka_reaction(T, 4.4e-12, -0.61), $C⁺ + $E --&gt; $C),
+    (@reaction ka_reaction(T, 1.15e-10, -0.339), $C⁺ + $OH --&gt; CO + $H),
+    (@reaction 9.15e-10 * (0.62 + 0.4767 * 5.5 * sqrt(300 / T)), $C⁺ + $OH --&gt; $CO⁺ + $H),
+    (@reaction 4e-10, $CO⁺ + $H --&gt; $CO + $H⁺),
+    (@reaction 7.28e-10, $CO⁺ + $H2 --&gt; $HCO⁺ + $H),
+    (@reaction ka_reaction(T, 2.8e-7, -0.69), $HCO⁺ + $E --&gt; $CO + $H),
+    (@reaction ka_reaction(T, 3.5e-12, -0.7), $H⁺ + $E --&gt; $H),
+    (@reaction 2.121e-17 * dust2gas / 1e-2, $H + $H --&gt; $H2),
     (@reaction 1e-1 * cosmic_ionisation_rate, $H2 --&gt; $H + $H),
-	(@reaction 3.39e-10 * radiation_field, $C --&gt; $C⁺ + $E),
-	(@reaction 2.43e-10 * radiation_field, $CO --&gt; $C + $O),
-	(@reaction 7.72e-10 * radiation_field, $H2O --&gt; $OH + $H),
-    (D(T) ~ get_heating_cooling(T, H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺, dust2gas)) 
+    (@reaction 3.39e-10 * radiation_field, $C --&gt; $C⁺ + $E),
+    (@reaction 2.43e-10 * radiation_field, $CO --&gt; $C + $O),
+    (@reaction 7.72e-10 * radiation_field, $H2O --&gt; $OH + $H),
+    (D(T) ~ get_heating_cooling(
+        T, H2, O, C, O⁺, OH⁺, H, H2O⁺, H3O⁺, E, H2O, OH, C⁺, CO, CO⁺, H⁺, HCO⁺, dust2gas))
 ]
 
 @named system = ReactionSystem(reaction_equations, t)
 
-u0 = [:H2 =&gt; number_density, :O =&gt; number_density*2e-4, :C =&gt; number_density*1e-4, :O⁺=&gt;minimum_fractional_density, :OH⁺=&gt;minimum_fractional_density, :H=&gt; minimum_fractional_density, :H2O⁺=&gt; minimum_fractional_density, :H3O⁺=&gt;minimum_fractional_density, :E=&gt;minimum_fractional_density, :H2O=&gt;minimum_fractional_density, :OH=&gt;minimum_fractional_density, :C⁺=&gt;minimum_fractional_density, :CO=&gt;minimum_fractional_density, :CO⁺=&gt;minimum_fractional_density, :H⁺=&gt;minimum_fractional_density, :HCO⁺=&gt; minimum_fractional_density, :T=&gt; 100.0]
+u0 = [:H2 =&gt; number_density, :O =&gt; number_density*2e-4, :C =&gt; number_density*1e-4,
+    :O⁺=&gt;minimum_fractional_density, :OH⁺=&gt;minimum_fractional_density,
+    :H =&gt; minimum_fractional_density, :H2O⁺ =&gt; minimum_fractional_density,
+    :H3O⁺=&gt;minimum_fractional_density, :E=&gt;minimum_fractional_density,
+    :H2O=&gt;minimum_fractional_density, :OH=&gt;minimum_fractional_density,
+    :C⁺=&gt;minimum_fractional_density, :CO=&gt;minimum_fractional_density,
+    :CO⁺=&gt;minimum_fractional_density, :H⁺=&gt;minimum_fractional_density,
+    :HCO⁺ =&gt; minimum_fractional_density, :T =&gt; 100.0]
 
 odesys = convert(ODESystem, complete(system))
 
@@ -764,7 +780,7 @@ ssys = structural_simplify(sys)
 
 oprob = ODEProblem(ssys, [], tspan, params)
 println(&quot;Created the ODEproblem.&quot;)
-refsol = solve(oprob, Rodas5P(), abstol=1e-14, reltol=1e-14)</code></pre><pre><code class="nohighlight hljs">Lets try to solve the ODE:
+refsol = solve(oprob, Rodas5P(), abstol = 1e-14, reltol = 1e-14)</code></pre><pre><code class="nohighlight hljs">Lets try to solve the ODE:
 Created the ODEproblem.
 retcode: Success
 Interpolation: specialized 4rd order &quot;free&quot; stiffness-aware interpolation
@@ -884,7 +900,7 @@ e-13, 1.675727288412792e-24, 1.0003067535538262e-25, 3.451333918693873e-10,
 8270870421, 9.028364302490175e-12, 6.270086528900243e-10, 4.609969852759154
 , 7.133581577683084e-6, 2.4711094959690724e-8, 19.99996992271394, 5.3906064
 77563096, 4.609370604086538, 2.2918147695227227e-5, 7.38874600488668e-12, 5
-.459637516310114e-10, 1.9526228022175125e-10, 3756.1212533074563]</code></pre><pre><code class="language-julia hljs">refsol = solve(oprob, Rodas5P(), abstol=1e-13, reltol=1e-13)
+.459637516310114e-10, 1.9526228022175125e-10, 3756.1212533074563]</code></pre><pre><code class="language-julia hljs">refsol = solve(oprob, Rodas5P(), abstol = 1e-13, reltol = 1e-13)
 
 # Run Benchmark
 
@@ -892,29 +908,28 @@ abstols = 1.0 ./ 10.0 .^ (9:10)
 reltols = 1.0 ./ 10.0 .^ (9:10)
 
 setups = [
-          Dict(:alg=&gt;FBDF()),
-          Dict(:alg=&gt;QNDF()),
-          Dict(:alg=&gt;CVODE_BDF()),
-          #Dict(:alg=&gt;ddebdf()),
-          Dict(:alg=&gt;Rodas5P()),
-          Dict(:alg=&gt;KenCarp4()),
-          Dict(:alg=&gt;KenCarp47()),
-          #Dict(:alg=&gt;RadauIIA9()),
-          #Dict(:alg=&gt;rodas()),
-          #Dict(:alg=&gt;radau()),
-          Dict(:alg=&gt;lsoda()),
-          #Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = OrdinaryDiffEqCore.PolyesterThreads())),
-          #Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = false)),
-          #Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = OrdinaryDiffEqCore.PolyesterThreads())),
-          #Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = false)),
-          ]
-wp = WorkPrecisionSet(oprob,abstols,reltols,setups;verbose=false,
-                      save_everystep=false,appxsol=refsol,maxiters=Int(1e5),numruns=10,
-                      print_names = true)
+    Dict(:alg=&gt;FBDF()),
+    Dict(:alg=&gt;QNDF()),
+    Dict(:alg=&gt;CVODE_BDF()),
+    #Dict(:alg=&gt;ddebdf()),
+    Dict(:alg=&gt;Rodas5P()),
+    Dict(:alg=&gt;KenCarp4()),
+    Dict(:alg=&gt;KenCarp47()),
+    #Dict(:alg=&gt;RadauIIA9()),
+    #Dict(:alg=&gt;rodas()),
+    #Dict(:alg=&gt;radau()),
+    Dict(:alg=&gt;lsoda())    #Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = OrdinaryDiffEqCore.PolyesterThreads())),
+    #Dict(:alg=&gt;ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = false)),
+    #Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = OrdinaryDiffEqCore.PolyesterThreads())),
+    #Dict(:alg=&gt;ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = false)),
+]
+wp = WorkPrecisionSet(oprob, abstols, reltols, setups; verbose = false,
+    save_everystep = false, appxsol = refsol, maxiters = Int(1e5), numruns = 10,
+    print_names = true)
 plot(wp)</code></pre><pre><code class="nohighlight hljs">FBDF
 QNDF
 CVODE_BDF
 Rodas5P
 KenCarp4
 KenCarp47
-lsoda</code></pre><p><img src="../figures/astrochem_6_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Bio/multistate/">« Multistate Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../nelson/">Nelson Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 20 September 2025 08:15">Saturday 20 September 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+lsoda</code></pre><p><img src="../figures/astrochem_6_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Bio/multistate/">« Multistate Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../nelson/">Nelson Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Saturday 20 September 2025 08:16">Saturday 20 September 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
