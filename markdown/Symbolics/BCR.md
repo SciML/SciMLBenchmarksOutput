@@ -50,7 +50,7 @@ Parsing groups...done
 ────────────────────────────────────────────────────────────────────
                            Time                    Allocations      
                   ───────────────────────   ────────────────────────
-Tot / % measured:      7.13s /   0.0%            876MiB /   0.0%    
+Tot / % measured:      7.27s /   0.0%            896MiB /   0.0%    
 
 Section   ncalls     time    %tot     avg     alloc    %tot      avg
 ────────────────────────────────────────────────────────────────────
@@ -151,31 +151,31 @@ show(to)
                   Allocations      
                                                             ───────────────
 ────────   ────────────────────────
-                     Tot / % measured:                            483s /  9
-3.9%           36.1GiB /  91.5%    
+                     Tot / % measured:                            491s /  9
+4.0%           36.1GiB /  91.4%    
 
 Section                                             ncalls     time    %tot
      avg     alloc    %tot      avg
 ───────────────────────────────────────────────────────────────────────────
 ───────────────────────────────────
-Compile jacobian - no CSE                                1     192s   42.3%
-    192s   3.05GiB    9.2%  3.05GiB
-Compile jacobian - CSE                                   1    76.6s   16.9%
-   76.6s   0.95GiB    2.9%  0.95GiB
-Calculate jacobian - without hashconsing                 1    75.8s   16.7%
-   75.8s   10.5GiB   31.9%  10.5GiB
-Calculate jacobian - hashconsing, without caching        1    73.4s   16.2%
-   73.4s   10.5GiB   31.8%  10.5GiB
-Calculate jacobian - hashconsing and caching             1    30.2s    6.7%
-   30.2s   6.72GiB   20.4%  6.72GiB
-Build jacobian - no CSE                                  1    4.86s    1.1%
-   4.86s   1.10GiB    3.3%  1.10GiB
-Build jacobian - CSE                                     1    1.25s    0.3%
-   1.25s    160MiB    0.5%   160MiB
-Compute jacobian - no CSE                                1   86.5μs    0.0%
-  86.5μs      192B    0.0%     192B
-Compute jacobian - CSE                                   1   43.3μs    0.0%
-  43.3μs      192B    0.0%     192B
+Compile jacobian - no CSE                                1     197s   42.7%
+    197s   3.05GiB    9.2%  3.05GiB
+Compile jacobian - CSE                                   1    76.8s   16.6%
+   76.8s   0.95GiB    2.9%  0.95GiB
+Calculate jacobian - without hashconsing                 1    76.6s   16.6%
+   76.6s   10.5GiB   31.9%  10.5GiB
+Calculate jacobian - hashconsing, without caching        1    74.5s   16.1%
+   74.5s   10.5GiB   31.8%  10.5GiB
+Calculate jacobian - hashconsing and caching             1    30.7s    6.6%
+   30.7s   6.72GiB   20.4%  6.72GiB
+Build jacobian - no CSE                                  1    4.84s    1.0%
+   4.84s   1.10GiB    3.3%  1.10GiB
+Build jacobian - CSE                                     1    1.37s    0.3%
+   1.37s    160MiB    0.5%   160MiB
+Compute jacobian - no CSE                                1   77.7μs    0.0%
+  77.7μs      192B    0.0%     192B
+Compute jacobian - CSE                                   1   54.0μs    0.0%
+  54.0μs      192B    0.0%     192B
 ───────────────────────────────────────────────────────────────────────────
 ───────────────────────────────────
 ```
@@ -286,12 +286,22 @@ end
 ```julia
 tabledata = hcat(N, jacobian_times..., jacobian_allocs..., build_times..., first_call_times..., second_call_times...)
 header = ["N", "Jacobian time (no hashconsing)", "Jacobian time (hashconsing)", "Jacobian allocated memory (no hashconsing) (B)", "Jacobian allocated memory (hashconsing) (B)", "`build_function` time (no CSE)", "`build_function` time (CSE)", "First call time (no CSE)", "First call time (CSE)", "Second call time (no CSE)", "Second call time (CSE)"]
-pretty_table(tabledata; header, backend = Val(:html))
+pretty_table(tabledata; header, backend = :html)
 ```
 
 ```
-Error: TypeError: in keyword argument backend, expected Symbol, got a value
- of type Val{:html}
+Error: MethodError: no method matching _html__print(::PrettyTables.Printing
+Spec; is_stdout::Bool, header::Vector{String})
+
+Closest candidates are:
+  _html__print(::PrettyTables.PrintingSpec; allow_html_in_cells, column_lab
+el_titles, highlighters, is_stdout, line_breaks, maximum_column_width, mini
+fy, stand_alone, style, table_class, table_div_class, table_format, top_lef
+t_string, top_right_string, wrap_table_in_div) got unsupported keyword argu
+ment "header"
+   @ PrettyTables /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-a
+e0a-f4d2d937f953/packages/PrettyTables/oGINh/src/backends/html/html_backend
+.jl:7
 ```
 
 
