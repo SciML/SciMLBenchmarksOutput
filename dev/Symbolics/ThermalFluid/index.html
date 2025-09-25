@@ -8,18 +8,18 @@ using SparseArrays, Chairmarks, Statistics
 using ModelingToolkit: t_nounits as t, D_nounits as D</code></pre><pre><code class="nohighlight hljs">Error: Unsatisfiable requirements detected for package Catalyst [479239e8]:
  Catalyst [479239e8] log:
  ├─possible versions are: 5.0.0-15.0.8 or uninstalled
- ├─restricted to versions 15 by project [ff517f8d], leaving only versions: 
+ ├─restricted to versions 15 by project [703d0160], leaving only versions: 
 15.0.0-15.0.8
- │ └─project [ff517f8d] log:
+ │ └─project [703d0160] log:
  │   ├─possible versions are: 0.0.0 or uninstalled
- │   └─project [ff517f8d] is fixed to version 0.0.0
+ │   └─project [703d0160] is fixed to version 0.0.0
  └─restricted by compatibility requirements with CairoMakie [13f3f980] to v
 ersions: 5.0.0-14.0.1 or uninstalled — no versions left
    └─CairoMakie [13f3f980] log:
      ├─possible versions are: 0.0.1-0.15.6 or uninstalled
-     └─restricted to versions 0.15 by project [ff517f8d], leaving only vers
+     └─restricted to versions 0.15 by project [703d0160], leaving only vers
 ions: 0.15.0-0.15.6
-       └─project [ff517f8d] log: see above</code></pre><h2 id="Setup-Julia-Code"><a class="docs-heading-anchor" href="#Setup-Julia-Code">Setup Julia Code</a><a id="Setup-Julia-Code-1"></a><a class="docs-heading-anchor-permalink" href="#Setup-Julia-Code" title="Permalink"></a></h2><pre><code class="language-julia hljs">#          o  o  o  o  o  o  o &lt; heat capacitors
+       └─project [703d0160] log: see above</code></pre><h2 id="Setup-Julia-Code"><a class="docs-heading-anchor" href="#Setup-Julia-Code">Setup Julia Code</a><a id="Setup-Julia-Code-1"></a><a class="docs-heading-anchor-permalink" href="#Setup-Julia-Code" title="Permalink"></a></h2><pre><code class="language-julia hljs">#          o  o  o  o  o  o  o &lt; heat capacitors
 #          |  |  |  |  |  |  | &lt; heat conductors
 #          o  o  o  o  o  o  o
 #          |  |  |  |  |  |  |
@@ -251,7 +251,7 @@ end
 function call(fn, args...)
   fn(args...)
 end</code></pre><pre><code class="nohighlight hljs">Error: LoadError: UndefVarError: `@connector` not defined
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+in expression starting at /cache/build/exclusive-amdci1-0/julialang/scimlbe
 nchmarks-dot-jl/benchmarks/Symbolics/ThermalFluid.jmd:28</code></pre><p>The <code>sparsejacobian</code> function in Symbolics.jl is optimized for hashconsing and caching, and as such performs very poorly without either of those features. We use the old implementation, optimized without hashconsing, to benchmark performance without hashconsing and without caching to avoid biasing the results.</p><pre><code class="language-julia hljs">include(&quot;old_sparse_jacobian.jl&quot;)
 
 function run_and_time_construction!(jacobian_times, jacobian_gctimes, jacobian_allocs, build_times, functions, i, N)
@@ -337,7 +337,7 @@ function run_and_time_call!(functions, first_call_times, second_call_times, i)
   second_call_times[2][i] = mean(x -&gt; x.time, second_call_result_cse.samples)
   @info &quot;Runtime&quot; second_call_times[2][i]
 end</code></pre><pre><code class="nohighlight hljs">Error: LoadError: UndefVarError: `SymbolicUtils` not defined
-in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+in expression starting at /cache/build/exclusive-amdci1-0/julialang/scimlbe
 nchmarks-dot-jl/benchmarks/Symbolics/old_sparse_jacobian.jl:21</code></pre><pre><code class="language-julia hljs">N = [5, 10, 20, 40, 80, 160, 320];
 jacobian_times = [zeros(Float64, length(N)), zeros(Float64, length(N))]
 functions = [Vector{Any}(undef, length(N)), Vector{Any}(undef, length(N))]
@@ -425,7 +425,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.0
 ⌃ [13f3f980] CairoMakie v0.13.10
 ⌃ [479239e8] Catalyst v15.0.1
@@ -448,7 +448,7 @@ Environment:
   [2f01184e] SparseArrays v1.10.0
   [10745b16] Statistics v1.10.0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Manifest.toml`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Manifest.toml`
   [47edcb42] ADTypes v1.18.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -913,4 +913,4 @@ Warning The project dependencies or compat requirements have changed since the m
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BCR/">« BCR Symbolic Jacobian</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Thursday 25 September 2025 03:45">Thursday 25 September 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BCR/">« BCR Symbolic Jacobian</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Thursday 25 September 2025 03:50">Thursday 25 September 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
