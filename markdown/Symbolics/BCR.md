@@ -50,7 +50,7 @@ Parsing groups...done
 ────────────────────────────────────────────────────────────────────
                            Time                    Allocations      
                   ───────────────────────   ────────────────────────
-Tot / % measured:      7.27s /   0.0%            896MiB /   0.0%    
+Tot / % measured:      7.26s /   0.0%            894MiB /   0.0%    
 
 Section   ncalls     time    %tot     avg     alloc    %tot      avg
 ────────────────────────────────────────────────────────────────────
@@ -151,31 +151,31 @@ show(to)
                   Allocations      
                                                             ───────────────
 ────────   ────────────────────────
-                     Tot / % measured:                            491s /  9
+                     Tot / % measured:                            490s /  9
 4.0%           36.1GiB /  91.4%    
 
 Section                                             ncalls     time    %tot
      avg     alloc    %tot      avg
 ───────────────────────────────────────────────────────────────────────────
 ───────────────────────────────────
-Compile jacobian - no CSE                                1     197s   42.7%
+Compile jacobian - no CSE                                1     197s   42.6%
     197s   3.05GiB    9.2%  3.05GiB
-Compile jacobian - CSE                                   1    76.8s   16.6%
-   76.8s   0.95GiB    2.9%  0.95GiB
 Calculate jacobian - without hashconsing                 1    76.6s   16.6%
    76.6s   10.5GiB   31.9%  10.5GiB
-Calculate jacobian - hashconsing, without caching        1    74.5s   16.1%
+Compile jacobian - CSE                                   1    76.1s   16.5%
+   76.1s   0.95GiB    2.9%  0.95GiB
+Calculate jacobian - hashconsing, without caching        1    74.5s   16.2%
    74.5s   10.5GiB   31.8%  10.5GiB
-Calculate jacobian - hashconsing and caching             1    30.7s    6.6%
-   30.7s   6.72GiB   20.4%  6.72GiB
-Build jacobian - no CSE                                  1    4.84s    1.0%
-   4.84s   1.10GiB    3.3%  1.10GiB
-Build jacobian - CSE                                     1    1.37s    0.3%
-   1.37s    160MiB    0.5%   160MiB
-Compute jacobian - no CSE                                1   77.7μs    0.0%
-  77.7μs      192B    0.0%     192B
-Compute jacobian - CSE                                   1   54.0μs    0.0%
-  54.0μs      192B    0.0%     192B
+Calculate jacobian - hashconsing and caching             1    31.0s    6.7%
+   31.0s   6.72GiB   20.4%  6.72GiB
+Build jacobian - no CSE                                  1    4.76s    1.0%
+   4.76s   1.10GiB    3.3%  1.10GiB
+Build jacobian - CSE                                     1    1.34s    0.3%
+   1.34s    160MiB    0.5%   160MiB
+Compute jacobian - no CSE                                1   82.7μs    0.0%
+  82.7μs      192B    0.0%     192B
+Compute jacobian - CSE                                   1   78.7μs    0.0%
+  78.7μs      192B    0.0%     192B
 ───────────────────────────────────────────────────────────────────────────
 ───────────────────────────────────
 ```

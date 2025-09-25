@@ -16,6 +16,25 @@ using SparseArrays, Chairmarks, Statistics
 using ModelingToolkit: t_nounits as t, D_nounits as D
 ```
 
+```
+Error: Unsatisfiable requirements detected for package Catalyst [479239e8]:
+ Catalyst [479239e8] log:
+ ├─possible versions are: 5.0.0-15.0.8 or uninstalled
+ ├─restricted to versions 15 by project [ff517f8d], leaving only versions: 
+15.0.0-15.0.8
+ │ └─project [ff517f8d] log:
+ │   ├─possible versions are: 0.0.0 or uninstalled
+ │   └─project [ff517f8d] is fixed to version 0.0.0
+ └─restricted by compatibility requirements with CairoMakie [13f3f980] to v
+ersions: 5.0.0-14.0.1 or uninstalled — no versions left
+   └─CairoMakie [13f3f980] log:
+     ├─possible versions are: 0.0.1-0.15.6 or uninstalled
+     └─restricted to versions 0.15 by project [ff517f8d], leaving only vers
+ions: 0.15.0-0.15.6
+       └─project [ff517f8d] log: see above
+```
+
+
 
 
 
@@ -257,7 +276,9 @@ end
 ```
 
 ```
-call (generic function with 1 method)
+Error: LoadError: UndefVarError: `@connector` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/Symbolics/ThermalFluid.jmd:28
 ```
 
 
@@ -357,7 +378,9 @@ end
 ```
 
 ```
-run_and_time_call! (generic function with 1 method)
+Error: LoadError: UndefVarError: `SymbolicUtils` not defined
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
+nchmarks-dot-jl/benchmarks/Symbolics/old_sparse_jacobian.jl:21
 ```
 
 
@@ -403,20 +426,7 @@ end
 ```
 
 ```
-61.223400 seconds (230.26 M allocations: 7.275 GiB, 1.32% gc time, 0.07% c
-ompilation time)
- 63.086067 seconds (232.71 M allocations: 7.319 GiB, 1.51% gc time, 0.28% c
-ompilation time)
- 69.730215 seconds (234.15 M allocations: 7.401 GiB, 1.50% gc time, 0.39% c
-ompilation time)
-101.864866 seconds (264.49 M allocations: 8.371 GiB, 1.17% gc time, 0.00% c
-ompilation time)
-302.141525 seconds (404.66 M allocations: 12.940 GiB, 0.76% gc time, 0.01% 
-compilation time)
-1722.644488 seconds (1.00 G allocations: 32.653 GiB, 0.51% gc time, 0.00% c
-ompilation time)
-12209.910082 seconds (3.35 G allocations: 108.822 GiB, 0.25% gc time, 0.00%
- compilation time)
+Error: UndefVarError: `Chairmarks` not defined
 ```
 
 
@@ -432,8 +442,7 @@ pretty_table(tabledata; header, backend = Val(:html))
 ```
 
 ```
-Error: TypeError: in keyword argument backend, expected Symbol, got a value
- of type Val{:html}
+Error: UndefVarError: `pretty_table` not defined
 ```
 
 
@@ -490,7 +499,11 @@ save("thermal_fluid.pdf", f)
 f
 ```
 
-![](figures/ThermalFluid_7_1.png)
+```
+Error: UndefVarError: `Figure` not defined
+```
+
+
 
 
 
@@ -554,6 +567,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2f01184e] SparseArrays v1.10.0
   [10745b16] Statistics v1.10.0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -1024,5 +1038,6 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
