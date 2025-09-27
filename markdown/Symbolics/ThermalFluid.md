@@ -20,18 +20,18 @@ using ModelingToolkit: t_nounits as t, D_nounits as D
 Error: Unsatisfiable requirements detected for package Catalyst [479239e8]:
  Catalyst [479239e8] log:
  ├─possible versions are: 5.0.0-15.0.8 or uninstalled
- ├─restricted to versions 15 by project [703d0160], leaving only versions: 
+ ├─restricted to versions 15 by project [ff517f8d], leaving only versions: 
 15.0.0-15.0.8
- │ └─project [703d0160] log:
+ │ └─project [ff517f8d] log:
  │   ├─possible versions are: 0.0.0 or uninstalled
- │   └─project [703d0160] is fixed to version 0.0.0
+ │   └─project [ff517f8d] is fixed to version 0.0.0
  └─restricted by compatibility requirements with CairoMakie [13f3f980] to v
 ersions: 5.0.0-14.0.1 or uninstalled — no versions left
    └─CairoMakie [13f3f980] log:
      ├─possible versions are: 0.0.1-0.15.6 or uninstalled
-     └─restricted to versions 0.15 by project [703d0160], leaving only vers
+     └─restricted to versions 0.15 by project [ff517f8d], leaving only vers
 ions: 0.15.0-0.15.6
-       └─project [703d0160] log: see above
+       └─project [ff517f8d] log: see above
 ```
 
 
@@ -277,7 +277,7 @@ end
 
 ```
 Error: LoadError: UndefVarError: `@connector` not defined
-in expression starting at /cache/build/exclusive-amdci1-0/julialang/scimlbe
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
 nchmarks-dot-jl/benchmarks/Symbolics/ThermalFluid.jmd:28
 ```
 
@@ -379,7 +379,7 @@ end
 
 ```
 Error: LoadError: UndefVarError: `SymbolicUtils` not defined
-in expression starting at /cache/build/exclusive-amdci1-0/julialang/scimlbe
+in expression starting at /cache/build/exclusive-amdci3-0/julialang/scimlbe
 nchmarks-dot-jl/benchmarks/Symbolics/old_sparse_jacobian.jl:21
 ```
 
@@ -544,7 +544,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.0
 ⌃ [13f3f980] CairoMakie v0.13.10
 ⌃ [479239e8] Catalyst v15.0.1
@@ -559,7 +559,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [08abe8d2] PrettyTables v3.0.10
   [b4db0fb7] ReactionNetworkImporters v0.16.1
   [31c91b34] SciMLBenchmarks v0.1.3
-  [d1185830] SymbolicUtils v3.32.0
+⌅ [d1185830] SymbolicUtils v3.32.0
   [0c5d862f] Symbolics v6.55.0
   [a759f4b9] TimerOutputs v0.5.29
   [95ff35a0] XSteam v0.3.0 `https://github.com/hzgzh/XSteam.jl.git#f2a1c58`
@@ -573,7 +573,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Manifest.toml`
   [47edcb42] ADTypes v1.18.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -644,7 +644,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌃ [7c1d4256] DynamicPolynomials v0.6.3
   [06fc5a27] DynamicQuantities v1.10.0
   [4e289a0a] EnumX v1.0.5
-  [f151be2c] EnzymeCore v0.8.13
+⌃ [f151be2c] EnzymeCore v0.8.13
   [429591f6] ExactPredicates v2.2.9
   [460bff9d] ExceptionUnwrapping v0.1.11
   [d4d017d3] ExponentialUtilities v1.27.0
@@ -860,8 +860,8 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [892a3eda] StringManipulation v0.4.1
   [09ab397b] StructArrays v0.7.1
 ⌃ [2efcf032] SymbolicIndexingInterface v0.3.38
-  [19f23fe9] SymbolicLimits v0.2.3
-  [d1185830] SymbolicUtils v3.32.0
+⌃ [19f23fe9] SymbolicLimits v0.2.3
+⌅ [d1185830] SymbolicUtils v3.32.0
   [0c5d862f] Symbolics v6.55.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.1
@@ -922,9 +922,9 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
-  [4b2f31a3] Libmount_jll v2.41.1+0
+⌃ [4b2f31a3] Libmount_jll v2.41.1+0
 ⌃ [89763e89] Libtiff_jll v4.7.1+0
-  [38a345b3] Libuuid_jll v2.41.1+0
+⌃ [38a345b3] Libuuid_jll v2.41.1+0
   [856f044c] MKL_jll v2025.2.0+0
   [e7412a2a] Ogg_jll v1.3.6+0
   [6cdc7f73] OpenBLASConsistentFPCSR_jll v0.3.29+0
