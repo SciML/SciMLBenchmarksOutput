@@ -50,7 +50,7 @@ Parsing groups...done
 ────────────────────────────────────────────────────────────────────
                            Time                    Allocations      
                   ───────────────────────   ────────────────────────
-Tot / % measured:      7.57s /   0.0%            908MiB /   0.0%    
+Tot / % measured:      7.26s /   0.0%            888MiB /   0.0%    
 
 Section   ncalls     time    %tot     avg     alloc    %tot      avg
 ────────────────────────────────────────────────────────────────────
@@ -151,31 +151,31 @@ show(to)
                   Allocations      
                                                             ───────────────
 ────────   ────────────────────────
-                     Tot / % measured:                            496s /  9
-3.8%           36.1GiB /  91.3%    
+                     Tot / % measured:                            491s /  9
+3.7%           36.1GiB /  91.4%    
 
 Section                                             ncalls     time    %tot
      avg     alloc    %tot      avg
 ───────────────────────────────────────────────────────────────────────────
 ───────────────────────────────────
-Compile jacobian - no CSE                                1     201s   43.2%
-    201s   3.05GiB    9.2%  3.05GiB
-Compile jacobian - CSE                                   1    77.2s   16.6%
-   77.2s   0.95GiB    2.9%  0.95GiB
-Calculate jacobian - without hashconsing                 1    76.3s   16.4%
-   76.3s   10.5GiB   31.9%  10.5GiB
-Calculate jacobian - hashconsing, without caching        1    74.3s   16.0%
-   74.3s   10.5GiB   31.8%  10.5GiB
-Calculate jacobian - hashconsing and caching             1    30.5s    6.5%
-   30.5s   6.72GiB   20.4%  6.72GiB
-Build jacobian - no CSE                                  1    4.81s    1.0%
-   4.81s   1.10GiB    3.3%  1.10GiB
-Build jacobian - CSE                                     1    1.40s    0.3%
-   1.40s    160MiB    0.5%   160MiB
-Compute jacobian - no CSE                                1   78.1μs    0.0%
-  78.1μs      192B    0.0%     192B
-Compute jacobian - CSE                                   1   61.7μs    0.0%
-  61.7μs      192B    0.0%     192B
+Compile jacobian - no CSE                                1     193s   42.0%
+    193s   3.05GiB    9.2%  3.05GiB
+Calculate jacobian - without hashconsing                 1    77.6s   16.9%
+   77.6s   10.5GiB   32.0%  10.5GiB
+Compile jacobian - CSE                                   1    76.3s   16.6%
+   76.3s   0.95GiB    2.9%  0.95GiB
+Calculate jacobian - hashconsing, without caching        1    76.2s   16.6%
+   76.2s   10.5GiB   31.8%  10.5GiB
+Calculate jacobian - hashconsing and caching             1    30.7s    6.7%
+   30.7s   6.72GiB   20.4%  6.72GiB
+Build jacobian - no CSE                                  1    4.74s    1.0%
+   4.74s   1.10GiB    3.3%  1.10GiB
+Build jacobian - CSE                                     1    1.37s    0.3%
+   1.37s    160MiB    0.5%   160MiB
+Compute jacobian - no CSE                                1   95.5μs    0.0%
+  95.5μs      192B    0.0%     192B
+Compute jacobian - CSE                                   1   49.1μs    0.0%
+  49.1μs      192B    0.0%     192B
 ───────────────────────────────────────────────────────────────────────────
 ───────────────────────────────────
 ```
@@ -300,7 +300,7 @@ fy, stand_alone, style, table_class, table_div_class, table_format, top_lef
 t_string, top_right_string, wrap_table_in_div) got unsupported keyword argu
 ment "header"
    @ PrettyTables /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-a
-e0a-f4d2d937f953/packages/PrettyTables/oGINh/src/backends/html/html_backend
+e0a-f4d2d937f953/packages/PrettyTables/l3ncH/src/backends/html/html_backend
 .jl:7
 ```
 
