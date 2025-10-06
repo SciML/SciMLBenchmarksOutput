@@ -342,19 +342,19 @@ end
 for (i, n) in enumerate(N)
   @info i n
   run_and_time_call!(functions, first_call_times, second_call_times, i)
-end</code></pre><pre><code class="nohighlight hljs">61.509129 seconds (227.75 M allocations: 7.216 GiB, 1.30% gc time, 0.41% c
+end</code></pre><pre><code class="nohighlight hljs">61.494833 seconds (226.86 M allocations: 7.182 GiB, 1.28% gc time, 0.36% c
 ompilation time)
- 63.464838 seconds (229.33 M allocations: 7.233 GiB, 1.56% gc time, 0.55% c
+ 63.427017 seconds (229.18 M allocations: 7.225 GiB, 1.49% gc time, 0.48% c
 ompilation time)
- 70.290672 seconds (229.63 M allocations: 7.274 GiB, 1.48% gc time, 0.13% c
+ 70.227677 seconds (230.93 M allocations: 7.320 GiB, 1.41% gc time, 0.15% c
 ompilation time)
-105.894545 seconds (258.98 M allocations: 8.222 GiB, 1.16% gc time, 0.06% c
+104.596000 seconds (258.20 M allocations: 8.187 GiB, 1.14% gc time, 0.07% c
 ompilation time)
-324.180596 seconds (403.84 M allocations: 13.002 GiB, 0.72% gc time, 0.01% 
+316.208232 seconds (403.41 M allocations: 12.987 GiB, 0.72% gc time, 0.01% 
 compilation time)
-1854.799414 seconds (1.02 G allocations: 33.223 GiB, 0.40% gc time, 0.00% c
-ompilation time)
-13132.362599 seconds (3.35 G allocations: 109.281 GiB, 0.26% gc time, 0.00%
+1843.076391 seconds (994.31 M allocations: 32.364 GiB, 0.46% gc time, 0.00%
+ compilation time)
+13240.259680 seconds (3.38 G allocations: 110.793 GiB, 0.24% gc time, 0.00%
  compilation time)</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><pre><code class="language-julia hljs">tabledata = hcat(N, jacobian_times..., jacobian_gctimes..., jacobian_allocs..., build_times..., first_call_times..., second_call_times...)
 header = [&quot;N&quot;, &quot;Jacobian time (no hashconsing)&quot;, &quot;Jacobian time (hashconsing)&quot;, &quot;Jacobian GC time (no hashconsing)&quot;, &quot;Jacobian GC time (hashconsing)&quot;, &quot;Jacobian allocated memory (no hashconsing) (B)&quot;, &quot;Jacobian allocated memory (hashconsing) (B)&quot;, &quot;`build_function` time (no CSE)&quot;, &quot;`build_function` time (CSE)&quot;, &quot;First call time (no CSE)&quot;, &quot;First call time (CSE)&quot;, &quot;Second call time (no CSE)&quot;, &quot;Second call time (CSE)&quot;]
 pretty_table(tabledata; header, backend = Val(:html))</code></pre><pre><code class="nohighlight hljs">Error: TypeError: in keyword argument backend, expected Symbol, got a value
@@ -421,7 +421,7 @@ Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.0
 ⌃ [13f3f980] CairoMakie v0.13.10
   [479239e8] Catalyst v15.0.8
@@ -443,7 +443,7 @@ Environment:
   [37e2e46d] LinearAlgebra
   [2f01184e] SparseArrays v1.10.0
   [10745b16] Statistics v1.10.0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Manifest.toml`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Manifest.toml`
   [47edcb42] ADTypes v1.18.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
@@ -906,4 +906,4 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BCR/">« BCR Symbolic Jacobian</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 6 October 2025 10:20">Monday 6 October 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BCR/">« BCR Symbolic Jacobian</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 6 October 2025 11:06">Monday 6 October 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
