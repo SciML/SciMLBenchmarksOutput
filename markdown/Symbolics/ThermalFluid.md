@@ -403,19 +403,19 @@ end
 ```
 
 ```
-61.509129 seconds (227.75 M allocations: 7.216 GiB, 1.30% gc time, 0.41% c
+61.494833 seconds (226.86 M allocations: 7.182 GiB, 1.28% gc time, 0.36% c
 ompilation time)
- 63.464838 seconds (229.33 M allocations: 7.233 GiB, 1.56% gc time, 0.55% c
+ 63.427017 seconds (229.18 M allocations: 7.225 GiB, 1.49% gc time, 0.48% c
 ompilation time)
- 70.290672 seconds (229.63 M allocations: 7.274 GiB, 1.48% gc time, 0.13% c
+ 70.227677 seconds (230.93 M allocations: 7.320 GiB, 1.41% gc time, 0.15% c
 ompilation time)
-105.894545 seconds (258.98 M allocations: 8.222 GiB, 1.16% gc time, 0.06% c
+104.596000 seconds (258.20 M allocations: 8.187 GiB, 1.14% gc time, 0.07% c
 ompilation time)
-324.180596 seconds (403.84 M allocations: 13.002 GiB, 0.72% gc time, 0.01% 
+316.208232 seconds (403.41 M allocations: 12.987 GiB, 0.72% gc time, 0.01% 
 compilation time)
-1854.799414 seconds (1.02 G allocations: 33.223 GiB, 0.40% gc time, 0.00% c
-ompilation time)
-13132.362599 seconds (3.35 G allocations: 109.281 GiB, 0.26% gc time, 0.00%
+1843.076391 seconds (994.31 M allocations: 32.364 GiB, 0.46% gc time, 0.00%
+ compilation time)
+13240.259680 seconds (3.38 G allocations: 110.793 GiB, 0.24% gc time, 0.00%
  compilation time)
 ```
 
@@ -531,7 +531,7 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.0
 ⌃ [13f3f980] CairoMakie v0.13.10
   [479239e8] Catalyst v15.0.8
@@ -559,7 +559,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Manifest.toml`
   [47edcb42] ADTypes v1.18.0
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
