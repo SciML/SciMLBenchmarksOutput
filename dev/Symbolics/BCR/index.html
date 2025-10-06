@@ -27,7 +27,7 @@ Parsing groups...done
 ────────────────────────────────────────────────────────────────────
                            Time                    Allocations      
                   ───────────────────────   ────────────────────────
-Tot / % measured:      7.26s /   0.0%            888MiB /   0.0%    
+Tot / % measured:      8.07s /   0.0%            892MiB /   0.0%    
 
 Section   ncalls     time    %tot     avg     alloc    %tot      avg
 ────────────────────────────────────────────────────────────────────
@@ -102,31 +102,31 @@ show(to)</code></pre><pre><code class="nohighlight hljs">───────�
                   Allocations      
                                                             ───────────────
 ────────   ────────────────────────
-                     Tot / % measured:                            491s /  9
-3.7%           36.1GiB /  91.4%    
+                     Tot / % measured:                            496s /  9
+3.9%           36.1GiB /  91.4%    
 
 Section                                             ncalls     time    %tot
      avg     alloc    %tot      avg
 ───────────────────────────────────────────────────────────────────────────
 ───────────────────────────────────
-Compile jacobian - no CSE                                1     193s   42.0%
-    193s   3.05GiB    9.2%  3.05GiB
-Calculate jacobian - without hashconsing                 1    77.6s   16.9%
-   77.6s   10.5GiB   32.0%  10.5GiB
-Compile jacobian - CSE                                   1    76.3s   16.6%
-   76.3s   0.95GiB    2.9%  0.95GiB
-Calculate jacobian - hashconsing, without caching        1    76.2s   16.6%
-   76.2s   10.5GiB   31.8%  10.5GiB
-Calculate jacobian - hashconsing and caching             1    30.7s    6.7%
-   30.7s   6.72GiB   20.4%  6.72GiB
-Build jacobian - no CSE                                  1    4.74s    1.0%
-   4.74s   1.10GiB    3.3%  1.10GiB
-Build jacobian - CSE                                     1    1.37s    0.3%
-   1.37s    160MiB    0.5%   160MiB
-Compute jacobian - no CSE                                1   95.5μs    0.0%
-  95.5μs      192B    0.0%     192B
-Compute jacobian - CSE                                   1   49.1μs    0.0%
-  49.1μs      192B    0.0%     192B
+Compile jacobian - no CSE                                1     194s   41.6%
+    194s   3.05GiB    9.2%  3.05GiB
+Compile jacobian - CSE                                   1    82.3s   17.7%
+   82.3s   0.95GiB    2.9%  0.95GiB
+Calculate jacobian - without hashconsing                 1    77.9s   16.7%
+   77.9s   10.5GiB   32.0%  10.5GiB
+Calculate jacobian - hashconsing, without caching        1    75.3s   16.2%
+   75.3s   10.5GiB   31.8%  10.5GiB
+Calculate jacobian - hashconsing and caching             1    30.2s    6.5%
+   30.2s   6.72GiB   20.4%  6.72GiB
+Build jacobian - no CSE                                  1    4.99s    1.1%
+   4.99s   1.10GiB    3.3%  1.10GiB
+Build jacobian - CSE                                     1    1.42s    0.3%
+   1.42s    160MiB    0.5%   160MiB
+Compute jacobian - no CSE                                1   82.6μs    0.0%
+  82.6μs      192B    0.0%     192B
+Compute jacobian - CSE                                   1   50.0μs    0.0%
+  50.0μs      192B    0.0%     192B
 ───────────────────────────────────────────────────────────────────────────
 ───────────────────────────────────</code></pre><p>We&#39;ll also measure scaling.</p><pre><code class="language-julia hljs">function run_and_time_construct!(rhs, vars, pars, iv, N, i, jac_times, jac_allocs, build_times, functions)
     outputs = rhs[1:N]
@@ -262,4 +262,4 @@ for i in 1:3
     l2 = scatterlines!(ax, N, data[2], label = &quot;with hashconsing&quot;)
 end
 save(&quot;bcr.pdf&quot;, f)
-f</code></pre><p><img src="../figures/BCR_7_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Surrogates/tensor_product/">« Tensor Product Function</a><a class="docs-footer-nextpage" href="../ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 6 October 2025 05:14">Monday 6 October 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+f</code></pre><p><img src="../figures/BCR_7_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Surrogates/tensor_product/">« Tensor Product Function</a><a class="docs-footer-nextpage" href="../ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 0.27.25 on <span class="colophon-date" title="Monday 6 October 2025 10:20">Monday 6 October 2025</span>. Using Julia version 1.11.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
