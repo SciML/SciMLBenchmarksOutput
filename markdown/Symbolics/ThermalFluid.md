@@ -403,19 +403,19 @@ end
 ```
 
 ```
-61.496258 seconds (228.23 M allocations: 7.226 GiB, 1.36% gc time, 0.36% c
+61.509129 seconds (227.75 M allocations: 7.216 GiB, 1.30% gc time, 0.41% c
 ompilation time)
- 63.275430 seconds (230.22 M allocations: 7.251 GiB, 1.50% gc time, 0.12% c
+ 63.464838 seconds (229.33 M allocations: 7.233 GiB, 1.56% gc time, 0.55% c
 ompilation time)
- 70.272975 seconds (231.07 M allocations: 7.321 GiB, 1.51% gc time, 0.23% c
+ 70.290672 seconds (229.63 M allocations: 7.274 GiB, 1.48% gc time, 0.13% c
 ompilation time)
-105.685836 seconds (258.83 M allocations: 8.206 GiB, 1.20% gc time, 0.01% c
+105.894545 seconds (258.98 M allocations: 8.222 GiB, 1.16% gc time, 0.06% c
 ompilation time)
-328.964201 seconds (403.65 M allocations: 12.994 GiB, 0.72% gc time, 0.01% 
+324.180596 seconds (403.84 M allocations: 13.002 GiB, 0.72% gc time, 0.01% 
 compilation time)
-1915.325586 seconds (1.01 G allocations: 32.996 GiB, 0.39% gc time, 0.00% c
+1854.799414 seconds (1.02 G allocations: 33.223 GiB, 0.40% gc time, 0.00% c
 ompilation time)
-13505.076710 seconds (3.37 G allocations: 110.579 GiB, 0.26% gc time, 0.00%
+13132.362599 seconds (3.35 G allocations: 109.281 GiB, 0.26% gc time, 0.00%
  compilation time)
 ```
 
@@ -533,7 +533,7 @@ Package Information:
 ```
 Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Symbolics/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.0
-⌅ [13f3f980] CairoMakie v0.13.10
+⌃ [13f3f980] CairoMakie v0.13.10
   [479239e8] Catalyst v15.0.8
   [0ca39b1e] Chairmarks v1.3.1
 ⌅ [864edb3b] DataStructures v0.18.22
@@ -585,7 +585,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2a0fbf3d] CPUSummary v0.2.7
   [96374032] CRlibm v1.0.2
   [159f3aea] Cairo v1.1.1
-⌅ [13f3f980] CairoMakie v0.13.10
+⌃ [13f3f980] CairoMakie v0.13.10
   [479239e8] Catalyst v15.0.8
   [d360d2e6] ChainRulesCore v1.26.0
   [0ca39b1e] Chairmarks v1.3.1
