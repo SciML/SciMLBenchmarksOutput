@@ -242,7 +242,7 @@ setups = [
             Dict(:alg=>ImplicitHairerWannerExtrapolation(init_order = 5,threading = false)),
             ]
 
-solnames = ["CVODE_BDF","KenCarp4","Rodas4","Rodas4 Static","Rodas%P","Rodas5P Static","QNDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
+solnames = ["CVODE_BDF","KenCarp4","Rodas4","Rodas4 Static","Rodas5P","Rodas5P Static","QNDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
             "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
 
 wp = WorkPrecisionSet(probs,abstols,reltols,setups; verbose=false, dense=false,
