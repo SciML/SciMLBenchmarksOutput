@@ -284,7 +284,7 @@ tspan = (0.0, 1e6*seconds_per_year)
 
 params = [dust2gas => 0.01, radiation_field => 1e-1, cosmic_ionisation_rate => 1e-17]
 
-println("Lets try to solve the ODE:")
+println("Attempting to solve the ODE...")
 
 sys = convert(ODESystem, complete(system))
 # oprob = ODEProblemExpr(sys, [], tspan, params)
@@ -293,7 +293,7 @@ ssys = structural_simplify(sys)
 
 
 oprob = ODEProblem(ssys, [], tspan, params)
-println("Created the ODEproblem.")
+println("ODEProblem created successfully.")
 sol = solve(oprob, Rodas5()) # Rodas5()) # Tsit5()
 
 # Generate a solution using high precision arithmetic
@@ -372,7 +372,7 @@ tspan = (0.0, 1e6*seconds_per_year)
 
 params = [dust2gas => 0.01, radiation_field => 1e-1, cosmic_ionisation_rate => 1e-17]
 
-println("Lets try to solve the ODE:")
+println("Attempting to solve the ODE...")
 
 sys = convert(ODESystem, complete(system))
 # oprob = ODEProblemExpr(sys, [], tspan, params)
@@ -380,7 +380,7 @@ sys = convert(ODESystem, complete(system))
 ssys = structural_simplify(sys)
 
 oprob = ODEProblem(ssys, [], tspan, params)
-println("Created the ODEproblem.")
+println("ODEProblem created successfully.")
 refsol = solve(oprob, Rodas5P(), abstol = 1e-14, reltol = 1e-14)
 
 
