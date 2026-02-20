@@ -14,15 +14,15 @@ reltol_ref = 1e-12
 L_rlc, C_rlc, R_rlc = 1e-3, 1e-6, 1e3
 
 # System matrices from DAEV repository
-E_rlc = [L_rlc  0    0   0
-         0      0    1   0  
-         0      0    0   0
-         0      0    0   0]
+E_rlc = [L_rlc 0 0 0
+         0 0 1 0
+         0 0 0 0
+         0 0 0 0]
 
-A_rlc = [0      1    0   0
-         1/C_rlc 0   0   0
-         -R_rlc  0   0   1
-         0       1   1   1]
+A_rlc = [0 1 0 0
+         1/C_rlc 0 0 0
+         -R_rlc 0 0 1
+         0 1 1 1]
 
 B_rlc = [0; 0; 0; -1]
 C_rlc = [1 0 0 0; 0 0 1 0]
@@ -51,15 +51,15 @@ rlc_static_prob = ODEProblem{false}(rlc_sys, SA[i_R => 0.0, v_C => 0.0], (0.0, 1
 J1_masses, J2_masses = 1.0, 1.0
 
 # System matrices from DAEV repository
-E_masses = [J1_masses  0   0  0
-            0    J2_masses  0  0
-            0          0   0  0
-            0          0   0  0]
+E_masses = [J1_masses 0 0 0
+            0 J2_masses 0 0
+            0 0 0 0
+            0 0 0 0]
 
-A_masses = [0   0   1   0
-            0   0   0   1  
-            0   0  -1  -1
-           -1   1   0   0]
+A_masses = [0 0 1 0
+            0 0 0 1
+            0 0 -1 -1
+            -1 1 0 0]
 
 B_masses = [1 0; 0 1; 0 0; 0 0]
 C_masses = [1 0 0 0; 0 0 1 0]
@@ -90,13 +90,13 @@ masses_static_prob = ODEProblem{false}(masses_sys, SA[], (0.0, 1.0))
 R_rl, L_rl = 1.0, 1.0
 
 # System matrices from DAEV repository  
-E_rl = [0  0  0
-        0  0  0
-        0  0  L_rl]
+E_rl = [0 0 0
+        0 0 0
+        0 0 L_rl]
 
-A_rl = [-R_rl   R_rl   0
-         R_rl  -R_rl  -1
-         0      1     0]
+A_rl = [-R_rl R_rl 0
+        R_rl -R_rl -1
+        0 1 0]
 
 B_rl = [1; 0; 0]
 C_rl = [1 0 0]
@@ -125,27 +125,27 @@ rl_static_prob = ODEProblem{false}(rl_sys, SA[v_L => 1.0], (0.0, 1.0))
 m1_cart, m2_cart, L_cart, g_cart = 1.0, 1.0, 1.0, 9.81
 
 # System matrices (linearized around equilibrium)
-E_cart = [1.0  0   0   0   0   0   0
-          0   1.0  0   0   0   0   0  
-          0    0  1.0  0   0   0   0
-          0    0   0  m1_cart  0   0   0
-          0    0   0   0  m2_cart  0   0
-          0    0   0   0   0   0   0
-          0    0   0   0   0   0   0]
+E_cart = [1.0 0 0 0 0 0 0
+          0 1.0 0 0 0 0 0
+          0 0 1.0 0 0 0 0
+          0 0 0 m1_cart 0 0 0
+          0 0 0 0 m2_cart 0 0
+          0 0 0 0 0 0 0
+          0 0 0 0 0 0 0]
 
-A_cart = [0  0  0   1   0   0   0
-          0  0  0   0   1   0   0
-          0  0  0   0   0   1   0  
-          0  0  0   0   0   0   1
-          0  0  0   0   0   0   1
-          0  0 -g_cart/L_cart  0   0   0   0
-          1  0 -L_cart  0   0   0   0]
+A_cart = [0 0 0 1 0 0 0
+          0 0 0 0 1 0 0
+          0 0 0 0 0 1 0
+          0 0 0 0 0 0 1
+          0 0 0 0 0 0 1
+          0 0 -g_cart/L_cart 0 0 0 0
+          1 0 -L_cart 0 0 0 0]
 
 B_cart = [0; 0; 0; 1; 0; 0; 0]
 C_cart = [1 0 0 0 0 0 0; 0 0 1 0 0 0 0]
 
 # ModelingToolkit formulation using E*Dx = A*x + B*u  
-@variables x_cart(t)=0.0 y_cart(t)=0.0 φ_cart(t)=0.1 
+@variables x_cart(t)=0.0 y_cart(t)=0.0 φ_cart(t)=0.1
 @variables dx_cart(t)=0.0 dy_cart(t)=0.0 dφ_cart(t)=0.0 λ_cart(t)=0.0
 
 # State vector x and its derivative Dx
@@ -162,22 +162,23 @@ cart_eqs = E_cart * Dx ~ A_cart * x + B_cart .* u(t)
 
 # Problems using force input
 cart_prob = ODEProblem(cart_sys, [dy_cart => 0.0, y_cart => 0.0], (0.0, 1.0))
-cart_static_prob = ODEProblem{false}(cart_sys, SA[dy_cart => 0.0, y_cart => 0.0], (0.0, 1.0))
+cart_static_prob = ODEProblem{false}(cart_sys, SA[dy_cart => 0.0, y_cart => 0.0], (
+    0.0, 1.0))
 
 
 # Electric Generator Parameters
 J_gen, L_gen, R1_gen, R2_gen, k_gen = 1.0, 1.0, 1.0, 1.0, 1.0
 
 # System matrices (simplified 4x4 version)
-E_gen = [J_gen  0   0   0
-         0      0   0   0
-         0      0   0   0  
-         0      0   0   0]
+E_gen = [J_gen 0 0 0
+         0 0 0 0
+         0 0 0 0
+         0 0 0 0]
 
-A_gen = [0   0   0   0
-         0   0   0   1
-         0   0   0  -R2_gen
-         0  -k_gen  1   0]
+A_gen = [0 0 0 0
+         0 0 0 1
+         0 0 0 -R2_gen
+         0 -k_gen 1 0]
 
 B_gen = [1; 0; 0; 0]
 C_gen = [1 0 0 0; 0 0 0 1]
@@ -206,37 +207,37 @@ gen_static_prob = ODEProblem{false}(gen_sys, SA[ω_gen => 1.0], (0.0, 1.0))
 m_spring, k_spring, d_spring = 100.0, 2.0, 5.0
 
 # System matrices
-E_spring = [m_spring    0         0     0  0  0  0
-            0       m_spring     0     0  0  0  0
-            0           0    m_spring  0  0  0  0
-            0           0         0    0  0  0  0
-            0           0         0    0  0  0  0
-            0           0         0    0  0  0  0
-            0           0         0    0  0  0  0]
+E_spring = [m_spring 0 0 0 0 0 0
+            0 m_spring 0 0 0 0 0
+            0 0 m_spring 0 0 0 0
+            0 0 0 0 0 0 0
+            0 0 0 0 0 0 0
+            0 0 0 0 0 0 0
+            0 0 0 0 0 0 0]
 
-A_spring = [0   0   0   1    0    0   0
-            0   0   0   0    1    0   0
-            0   0   0   0    0    1   0
-           -k_spring  k_spring   0  -d_spring  d_spring   0   1
-            k_spring -2*k_spring k_spring  d_spring -2*d_spring d_spring  0
-            0   k_spring  -k_spring   0   d_spring  -d_spring  1
-            1   0   -1   0    0    0   0]
+A_spring = [0 0 0 1 0 0 0
+            0 0 0 0 1 0 0
+            0 0 0 0 0 1 0
+            -k_spring k_spring 0 -d_spring d_spring 0 1
+            k_spring -2*k_spring k_spring d_spring -2*d_spring d_spring 0
+            0 k_spring -k_spring 0 d_spring -d_spring 1
+            1 0 -1 0 0 0 0]
 
 B_spring = [0; 0; 0; 1; 0; 0; 0]
 C_spring = [1 0 0 0 0 0 0; 0 0 1 0 0 0 0]
 
 # Simplified 5x5 system matrices (2 masses + constraint)
-E_spring_5 = [1.0  0   0   0   0
-              0   1.0  0   0   0
-              0    0  m_spring  0   0
-              0    0   0  m_spring  0
-              0    0   0   0   0]
+E_spring_5 = [1.0 0 0 0 0
+              0 1.0 0 0 0
+              0 0 m_spring 0 0
+              0 0 0 m_spring 0
+              0 0 0 0 0]
 
-A_spring_5 = [0   0   1   0   0
-              0   0   0   1   0
-             -k_spring  0  -d_spring  0   1
-              k_spring  -k_spring  d_spring  -d_spring  -1
-              1   -1   0   0   0]
+A_spring_5 = [0 0 1 0 0
+              0 0 0 1 0
+              -k_spring 0 -d_spring 0 1
+              k_spring -k_spring d_spring -d_spring -1
+              1 -1 0 0 0]
 
 B_spring_5 = [0; 0; 1; 0; 0]
 C_spring_5 = [1 0 0 0 0; 0 1 0 0 0]
@@ -258,27 +259,28 @@ spring_eqs = E_spring_5 * Dx ~ A_spring_5 * x + B_spring_5 .* u(t)
 
 # Problems using force input
 spring_prob = ODEProblem(spring_sys, [λ_spring => 0.0, v1_spring => 1.0], (0.0, 20.0))
-spring_static_prob = ODEProblem{false}(spring_sys, SA[λ_spring => 0.0, v1_spring => 1.0], (0.0, 20.0))
+spring_static_prob = ODEProblem{false}(spring_sys, SA[λ_spring => 0.0, v1_spring => 1.0], (
+    0.0, 20.0))
 
 
 # Generate reference solutions for all systems using robust methods
-rlc_ref = solve(rlc_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
-rlc_static_ref = solve(rlc_static_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
+rlc_ref = solve(rlc_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
+rlc_static_ref = solve(rlc_static_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
 
-masses_ref = solve(masses_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
-masses_static_ref = solve(masses_static_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
+masses_ref = solve(masses_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
+masses_static_ref = solve(masses_static_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
 
-rl_ref = solve(rl_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
-rl_static_ref = solve(rl_static_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
+rl_ref = solve(rl_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
+rl_static_ref = solve(rl_static_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
 
-cart_ref = solve(cart_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
-cart_static_ref = solve(cart_static_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
+cart_ref = solve(cart_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
+cart_static_ref = solve(cart_static_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
 
-gen_ref = solve(gen_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
-gen_static_ref = solve(gen_static_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
+gen_ref = solve(gen_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
+gen_static_ref = solve(gen_static_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
 
-spring_ref = solve(spring_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
-spring_static_ref = solve(spring_static_prob, Rodas5P(), abstol=abstol_ref, reltol=reltol_ref)
+spring_ref = solve(spring_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
+spring_static_ref = solve(spring_static_prob, Rodas5P(), abstol = abstol_ref, reltol = reltol_ref)
 
 # Problem and reference solution arrays
 all_probs = [
@@ -303,20 +305,20 @@ all_refs = [
 ]
 
 system_names = ["RLC Circuit (Index-1)", "Two Masses (Index-2)", "RL Network (Index-2)",
-                "Cart Pendulum (Index-3)", "Electric Generator (Index-3)", "Mass-Spring (Index-3)"]
+    "Cart Pendulum (Index-3)", "Electric Generator (Index-3)", "Mass-Spring (Index-3)"]
 
 
 # Plot solutions for each system
-p1 = plot(rlc_ref, title="RLC Circuit", legend=:topright)
-p2 = plot(masses_ref, title="Two Masses", legend=:topright)
-p3 = plot(rl_ref, title="RL Network", legend=:topright)
-plot(p1, p2, p3, layout=(1,3), size=(1200,400))
+p1 = plot(rlc_ref, title = "RLC Circuit", legend = :topright)
+p2 = plot(masses_ref, title = "Two Masses", legend = :topright)
+p3 = plot(rl_ref, title = "RL Network", legend = :topright)
+plot(p1, p2, p3, layout = (1, 3), size = (1200, 400))
 
 
-p4 = plot(cart_ref, title="Cart Pendulum", legend=:topright)
-p5 = plot(gen_ref, title="Electric Generator", legend=:topright)
-p6 = plot(spring_ref, title="Mass-Spring", legend=:topright)
-plot(p4, p5, p6, layout=(1,3), size=(1200,400))
+p4 = plot(cart_ref, title = "Cart Pendulum", legend = :topright)
+p5 = plot(gen_ref, title = "Electric Generator", legend = :topright)
+p6 = plot(spring_ref, title = "Mass-Spring", legend = :topright)
+plot(p4, p5, p6, layout = (1, 3), size = (1200, 400))
 
 
 abstols = 1.0 ./ 10.0 .^ (5:8)
@@ -330,27 +332,27 @@ setups_rlc = [
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
-    Dict(:prob_choice => 2, :alg=>Rodas5P()),
+    Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
 
 wp_rlc = WorkPrecisionSet(all_probs[1], abstols, reltols, setups_rlc;
-                         save_everystep=false, appxsol=all_refs[1], maxiters=Int(1e5), numruns=10)
-plot(wp_rlc, title="RLC Circuit (Index-1) Work-Precision")
+    save_everystep = false, appxsol = all_refs[1], maxiters = Int(1e5), numruns = 10)
+plot(wp_rlc, title = "RLC Circuit (Index-1) Work-Precision")
 
 
 setups_masses = [
-   #Dict(:prob_choice => 2, :alg=>Rosenbrock23()),
+    #Dict(:prob_choice => 2, :alg=>Rosenbrock23()),
     Dict(:prob_choice => 1, :alg=>Rodas5P()),
     #Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
-    Dict(:prob_choice => 2, :alg=>Rodas5P()),
+    Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
 
 wp_masses = WorkPrecisionSet(all_probs[2], abstols, reltols, setups_masses;
-                            save_everystep=false, appxsol=all_refs[2], maxiters=Int(1e5), numruns=10)
-plot(wp_masses, title="Two Masses (Index-2) Work-Precision")
+    save_everystep = false, appxsol = all_refs[2], maxiters = Int(1e5), numruns = 10)
+plot(wp_masses, title = "Two Masses (Index-2) Work-Precision")
 
 
 #=
@@ -377,12 +379,12 @@ setups_cart = [
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
-    Dict(:prob_choice => 2, :alg=>Rodas5P()),
+    Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
 
 wp_cart = WorkPrecisionSet(all_probs[4], abstols, reltols, setups_cart;
-                          save_everystep=false, appxsol=all_refs[4], maxiters=Int(1e5), numruns=10)
-plot(wp_cart, title="Cart Pendulum (Index-3) Work-Precision")
+    save_everystep = false, appxsol = all_refs[4], maxiters = Int(1e5), numruns = 10)
+plot(wp_cart, title = "Cart Pendulum (Index-3) Work-Precision")
 
 
 setups_gen = [
@@ -392,12 +394,12 @@ setups_gen = [
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
-    Dict(:prob_choice => 2, :alg=>Rodas5P()),
+    Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
 
 wp_gen = WorkPrecisionSet(all_probs[5], abstols, reltols, setups_gen;
-                         save_everystep=false, appxsol=all_refs[5], maxiters=Int(1e5), numruns=10)
-plot(wp_gen, title="Electric Generator (Index-3) Work-Precision")
+    save_everystep = false, appxsol = all_refs[5], maxiters = Int(1e5), numruns = 10)
+plot(wp_gen, title = "Electric Generator (Index-3) Work-Precision")
 
 
 setups_spring = [
@@ -407,12 +409,12 @@ setups_spring = [
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
-    Dict(:prob_choice => 2, :alg=>Rodas5P()),
+    Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
 
 wp_spring = WorkPrecisionSet(all_probs[6], abstols, reltols, setups_spring;
-                            save_everystep=false, appxsol=all_refs[6], maxiters=Int(1e5), numruns=10)
-plot(wp_spring, title="Mass-Spring (Index-3) Work-Precision")
+    save_everystep = false, appxsol = all_refs[6], maxiters = Int(1e5), numruns = 10)
+plot(wp_spring, title = "Mass-Spring (Index-3) Work-Precision")
 
 
 abstols_low = 1.0 ./ 10.0 .^ (7:12)
@@ -425,14 +427,14 @@ all_setups = [
     #Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 2, :alg=>Rodas5P()),
+    Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
 
 # Generate work-precision plots for all systems at low tolerances
 for (i, (probs, refs, name)) in enumerate(zip(all_probs, all_refs, system_names))
     wp = WorkPrecisionSet(probs, abstols_low, reltols_low, all_setups;
-                         save_everystep=false, appxsol=refs, maxiters=Int(1e5), numruns=10)
-    p = plot(wp, title="$name - Low Tolerances")
+        save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+    p = plot(wp, title = "$name - Low Tolerances")
     display(p)
 end
 
@@ -447,13 +449,13 @@ high_setups = [
     #Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 2, :alg=>Rodas5P()),
+    Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
 
 for (i, (probs, refs, name)) in enumerate(zip(all_probs, all_refs, system_names))
     wp = WorkPrecisionSet(probs, abstols_high, reltols_high, high_setups;
-                         save_everystep=false, appxsol=refs, maxiters=Int(1e5), numruns=10)
-    p = plot(wp, title="$name - High Tolerances")
+        save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+    p = plot(wp, title = "$name - High Tolerances")
     display(p)
 end
 
@@ -462,12 +464,12 @@ end
 plot_array = []
 for (i, (probs, refs, name)) in enumerate(zip(all_probs, all_refs, system_names))
     wp = WorkPrecisionSet(probs, abstols, reltols, all_setups;
-                         save_everystep=false, appxsol=refs, maxiters=Int(1e5), numruns=10)
-    p = plot(wp, title=name, legend=false, titlefont=font(10))
+        save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+    p = plot(wp, title = name, legend = false, titlefont = font(10))
     push!(plot_array, p)
 end
 
-plot(plot_array..., layout=(2,3), size=(1500,800))
+plot(plot_array..., layout = (2, 3), size = (1500, 800))
 
 
 # Analyze L2 timeseries errors
@@ -476,13 +478,13 @@ reltols_ts = 1.0 ./ 10.0 .^ (2:5)
 
 for (i, (probs, refs, name)) in enumerate(zip(all_probs, all_refs, system_names))
     wp = WorkPrecisionSet(probs, abstols_ts, reltols_ts, all_setups;
-                         error_estimate=:l2, save_everystep=false, appxsol=refs, 
-                         maxiters=Int(1e5), numruns=10)
-    p = plot(wp, title="$name - L2 Timeseries Error")
+        error_estimate = :l2, save_everystep = false, appxsol = refs,
+        maxiters = Int(1e5), numruns = 10)
+    p = plot(wp, title = "$name - L2 Timeseries Error")
     display(p)
 end
 
 
 using SciMLBenchmarks
-SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
 
