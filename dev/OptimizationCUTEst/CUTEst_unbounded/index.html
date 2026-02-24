@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks · The SciML Benchmarks</title><meta name="title" content="CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks · The SciML Benchmarks"/><meta property="og:title" content="CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks · The SciML Benchmarks"/><meta property="twitter:title" content="CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/OptimizationCUTEst/CUTEst_unbounded/"/><meta property="twitter:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/OptimizationCUTEst/CUTEst_unbounded/"/><link rel="canonical" href="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/OptimizationCUTEst/CUTEst_unbounded/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li><li><a class="tocitem" href="../../DAE/slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li><li><a class="tocitem" href="../../HybridJumps/VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../CUTEst_quadratic/">CUTEst Quadratic Programming with Linear Constraints Benchmarks</a></li><li class="is-active"><a class="tocitem" href>CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Introduction"><span>Introduction</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmarks"><span>Benchmarks</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmarks-2"><span>Benchmarks</span></a></li><li><a class="tocitem" href="#Equality/Inequality-constrained-problems-with-unbounded-variables"><span>Equality/Inequality constrained problems with unbounded variables</span></a></li><li><a class="tocitem" href="#Success-Rate-Analysis-(Equality-Constrained)"><span>Success Rate Analysis (Equality Constrained)</span></a></li><li><a class="tocitem" href="#Success-Rate-Analysis-(Inequality-Constrained)"><span>Success Rate Analysis (Inequality Constrained)</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../CUTEst_unconstrained/">CUTEst Unconstrained Nonlinear Optimization Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">CUTEst Optimization Solver Benchmarks</a></li><li class="is-active"><a href>CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/OptimizationCUTEst/CUTEst_unbounded.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="CUTEst-Unbounded-Constrained-Nonlinear-Optimization-Benchmarks"><a class="docs-heading-anchor" href="#CUTEst-Unbounded-Constrained-Nonlinear-Optimization-Benchmarks">CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a><a id="CUTEst-Unbounded-Constrained-Nonlinear-Optimization-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#CUTEst-Unbounded-Constrained-Nonlinear-Optimization-Benchmarks" title="Permalink"></a></h1><h1 id="Introduction"><a class="docs-heading-anchor" href="#Introduction">Introduction</a><a id="Introduction-1"></a><a class="docs-heading-anchor-permalink" href="#Introduction" title="Permalink"></a></h1><p>CUTEst, the Constraind and Unconstrained Testing Environment is, as the name suggests is a collection of around 1500 problems for general nonlinear optimization used to test optimization routines. The wrapper <a href="https://github.com/JuliaSmoothOptimizers/CUTEst.jl">CUTEst.jl</a> provides convenient access to the problem collection, which we can leverage to test the optimizers made available by Optimization.jl.</p><p>This benchmark uses the following packages:</p><h1 id="Benchmarks"><a class="docs-heading-anchor" href="#Benchmarks">Benchmarks</a><a id="Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarks" title="Permalink"></a></h1><pre><code class="language-julia hljs">using Optimization
+using OptimizationNLPModels
+using CUTEst
+using OptimizationOptimJL
+using Ipopt
+using OptimizationMOI
+using OptimizationMOI: MOI as MOI
+using DataFrames
+using Plots
+using StatsPlots
+using StatsBase: countmap</code></pre><h1 id="Benchmarks-2"><a class="docs-heading-anchor" href="#Benchmarks-2">Benchmarks</a><a class="docs-heading-anchor-permalink" href="#Benchmarks-2" title="Permalink"></a></h1><pre><code class="language-julia hljs">using DataFrames
+# Only Ipopt supports constraints; use only Ipopt for constrained problems
+optimizers = [
+    (&quot;Ipopt&quot;, MOI.OptimizerWithAttributes(Ipopt.Optimizer,
+        &quot;max_iter&quot; =&gt; 5000,
+        &quot;tol&quot; =&gt; 1e-6,
+        &quot;print_level&quot; =&gt; 5)),
+]
+
+function get_stats(sol, optimizer_name)
+    if hasfield(typeof(sol), :stats) &amp;&amp; hasfield(typeof(sol.stats), :time)
+        solve_time = sol.stats.time
+    else
+        solve_time = NaN
+    end
+    return (length(sol.u), solve_time, optimizer_name, Symbol(sol.retcode))
+end
+
+function run_benchmarks(problems, optimizers; chunk_size=3)
+    problem = String[]
+    n_vars = Int64[]
+    secs = Float64[]
+    solver = String[]
+    retcode = Symbol[]
+    optz = length(optimizers)
+    n = length(problems)
+    @info &quot;Processing $(n) problems with $(optz) optimizers in chunks of $(chunk_size)&quot;
+    broadcast(c -&gt; sizehint!(c, optz * n), [problem, n_vars, secs, solver, retcode])
+    for chunk_start in 1:chunk_size:n
+        chunk_end = min(chunk_start + chunk_size - 1, n)
+        chunk_problems = problems[chunk_start:chunk_end]
+        @info &quot;Processing chunk $(div(chunk_start-1, chunk_size)+1)/$(div(n-1, chunk_size)+1): problems $(chunk_start)-$(chunk_end)&quot;
+        for (idx, prob_name) in enumerate(chunk_problems)
+            current_problem = chunk_start + idx - 1
+            @info &quot;Problem $(current_problem)/$(n): $(prob_name)&quot;
+            nlp_prob = nothing
+            try
+                nlp_prob = CUTEstModel(prob_name)
+                if nlp_prob.meta.nvar &gt; 10000
+                    @info &quot;  Skipping $(prob_name) (too large: $(nlp_prob.meta.nvar) variables)&quot;
+                    finalize(nlp_prob)
+                    continue
+                end
+                prob = OptimizationNLPModels.OptimizationProblem(nlp_prob, Optimization.AutoFiniteDiff())
+                for (optimizer_name, optimizer) in optimizers
+                    try
+                        sol = solve(prob, optimizer; maxiters = 1000, maxtime = 30.0)
+                        @info &quot;✓ Solved $(prob_name) with $(optimizer_name) - Status: $(sol.retcode)&quot;
+                        vars, time, alg, code = get_stats(sol, optimizer_name)
+                        push!(problem, prob_name)
+                        push!(n_vars, vars)
+                        push!(secs, time)
+                        push!(solver, alg)
+                        push!(retcode, code)
+                    catch e
+                        push!(problem, prob_name)
+                        push!(n_vars, nlp_prob !== nothing ? nlp_prob.meta.nvar : -1)
+                        push!(secs, NaN)
+                        push!(solver, optimizer_name)
+                        push!(retcode, :FAILED)
+                    end
+                end
+            catch e
+                for (optimizer_name, optimizer) in optimizers
+                    push!(problem, prob_name)
+                    push!(n_vars, -1)
+                    push!(secs, NaN)
+                    push!(solver, optimizer_name)
+                    push!(retcode, :LOAD_FAILED)
+                end
+            finally
+                if nlp_prob !== nothing
+                    try
+                        finalize(nlp_prob)
+                    catch e
+                    end
+                end
+            end
+        end
+        GC.gc()
+        @info &quot;Completed chunk, memory usage cleaned up&quot;
+    end
+    return DataFrame(problem = problem, n_vars = n_vars, secs = secs, solver = solver, retcode = retcode)
+end</code></pre><pre><code class="nohighlight hljs">run_benchmarks (generic function with 1 method)</code></pre><h2 id="Equality/Inequality-constrained-problems-with-unbounded-variables"><a class="docs-heading-anchor" href="#Equality/Inequality-constrained-problems-with-unbounded-variables">Equality/Inequality constrained problems with unbounded variables</a><a id="Equality/Inequality-constrained-problems-with-unbounded-variables-1"></a><a class="docs-heading-anchor-permalink" href="#Equality/Inequality-constrained-problems-with-unbounded-variables" title="Permalink"></a></h2><p>These problems have a constraint function that&#39;s subject to either equality or inequality constraints, but the variables themselves are free. CUTEst contains 285 problems with equality constraints and 114 with inequality constraints for a total of 299.</p><p>We start by analyzing the equality-constrained problems, of which there are 285. The following figure shows the time to solution as a function of number of variables by optimizer.</p><pre><code class="language-julia hljs">using DataFrames
+all_eq_unb_problems = CUTEst.select_sif_problems(min_con=1, only_equ_con=true, only_free_var=true)
+println(&quot;Available equality-constrained, unbounded problems:&quot;)
+println(all_eq_unb_problems)
+eq_unb_problems = all_eq_unb_problems[1:min(10, length(all_eq_unb_problems))]
+# Remove the 8th problem if it is &#39;luk&#39; or &#39;lukvle8&#39; (case-insensitive)
+if length(eq_unb_problems) &gt;= 8 &amp;&amp; (lowercase(eq_unb_problems[8]) == &quot;luk&quot; || lowercase(eq_unb_problems[8]) == &quot;lukvle8&quot;)
+    eq_unb_problems = vcat(eq_unb_problems[1:7], eq_unb_problems[9:end])
+end
+@info &quot;Testing $(length(eq_unb_problems)) equality-constrained unbounded problems&quot;
+
+# Analysis
+eq_unb_results =  run_benchmarks(eq_unb_problems, optimizers)
+# Show full results table
+println(&quot;Full results table for equality-constrained problems:&quot;)
+display(eq_unb_results)
+
+# Calculate and display success rates for equality constrained
+successful_codes = [:Success, :MaxIters, :MaxTime, :FirstOrderOptimal]
+successful_results = filter(row -&gt; row.retcode in successful_codes, eq_unb_results)
+total_attempts = nrow(eq_unb_results)
+successful_attempts = nrow(successful_results)
+success_rate = total_attempts &gt; 0 ? round(successful_attempts / total_attempts * 100, digits=1) : 0
+
+@info &quot;EQUALITY CONSTRAINED SUCCESS RATE: $(success_rate)% ($(successful_attempts)/$(total_attempts))&quot;
+
+@df eq_unb_results scatter(:n_vars, :secs,
+        group = :solver,
+        xlabel = &quot;n. variables&quot;,
+        ylabel = &quot;secs.&quot;,
+        title = &quot;Time to solution by optimizer and number of vars&quot;,
+    )
+if nrow(eq_unb_results) &gt; 0
+    try
+        @df eq_unb_results scatter(:n_vars, :secs,
+            group = :solver,
+            xlabel = &quot;n. variables&quot;,
+            ylabel = &quot;secs.&quot;,
+            title = &quot;Time to solution by optimizer and number of vars&quot;,
+        )
+        println(&quot;Plotted equality-constrained results.&quot;)
+    catch e
+        println(&quot;Plotting failed: &quot;, e)
+    end
+else
+    println(&quot;Warning: equality-constrained results DataFrame is empty. No data to plot.&quot;)
+    println(&quot;Attempted problems:&quot;)
+    println(eq_unb_problems)
+end</code></pre><pre><code class="nohighlight hljs">Available equality-constrained, unbounded problems:
+[&quot;GAUSS2&quot;, &quot;MSS1&quot;, &quot;WAYSEA1NE&quot;, &quot;FBRAIN2&quot;, &quot;BROWNDENE&quot;, &quot;AUG2D&quot;, &quot;HS79&quot;, &quot;L
+UKVLE8&quot;, &quot;GULFNE&quot;, &quot;JUDGENE&quot;, &quot;STRTCHDVNE&quot;, &quot;TRIGON1NE&quot;, &quot;PENLT1NE&quot;, &quot;PATTE
+RNNE&quot;, &quot;BA-L1SP&quot;, &quot;EXPFITNE&quot;, &quot;SSINE&quot;, &quot;LUKSAN17&quot;, &quot;HS7&quot;, &quot;BOX3NE&quot;, &quot;MODBEA
+LENE&quot;, &quot;KSS&quot;, &quot;HS48&quot;, &quot;BT9&quot;, &quot;S308NE&quot;, &quot;LUKVLE7&quot;, &quot;MGH17S&quot;, &quot;DENSCHNDNE&quot;, &quot;
+CERI651B&quot;, &quot;YATP1CNE&quot;, &quot;THURBER&quot;, &quot;VESUVIOU&quot;, &quot;CERI651E&quot;, &quot;ENSO&quot;, &quot;BARDNE&quot;,
+ &quot;GOTTFR&quot;, &quot;ORTHRDS2C&quot;, &quot;SPINOP&quot;, &quot;STREGNE&quot;, &quot;PENLT2NE&quot;, &quot;HS42&quot;, &quot;WOODSNE&quot;,
+ &quot;HS27&quot;, &quot;GRIDNETH&quot;, &quot;LUKVLE4C&quot;, &quot;EIGENA2&quot;, &quot;DENSCHNBNE&quot;, &quot;DIXCHLNG&quot;, &quot;VARD
+IMNE&quot;, &quot;COATINGNE&quot;, &quot;HIMMELBE&quot;, &quot;CYCLIC3&quot;, &quot;YATP2CNE&quot;, &quot;CHWIRUT1&quot;, &quot;CERI651
+A&quot;, &quot;MISRA1C&quot;, &quot;SPIN2&quot;, &quot;HATFLDG&quot;, &quot;BT11&quot;, &quot;MNISTS0&quot;, &quot;SPIN2OP&quot;, &quot;ORTHREGC&quot;
+, &quot;LUKVLE17&quot;, &quot;MARATOS&quot;, &quot;JENSMPNE&quot;, &quot;MANCINONE&quot;, &quot;LSC1&quot;, &quot;CHWIRUT2&quot;, &quot;BT6&quot;
+, &quot;ORTHREGB&quot;, &quot;LUKVLI4&quot;, &quot;HS6&quot;, &quot;LUKSAN12&quot;, &quot;HS28&quot;, &quot;NELSON&quot;, &quot;LUKVLE15&quot;, &quot;
+WATSONNE&quot;, &quot;NONDIANE&quot;, &quot;10FOLDTR&quot;, &quot;DEVGLA1NE&quot;, &quot;CUBENE&quot;, &quot;HS40&quot;, &quot;ELATVIDU
+NE&quot;, &quot;HATFLDF&quot;, &quot;MOREBVNE&quot;, &quot;KOWOSBNE&quot;, &quot;DMN37142&quot;, &quot;LIARWHDNE&quot;, &quot;COOLHANS&quot;
+, &quot;MSS3&quot;, &quot;HS8&quot;, &quot;BT8&quot;, &quot;MSS2&quot;, &quot;ARWHDNE&quot;, &quot;BT1&quot;, &quot;LSC2&quot;, &quot;CHAINWOONE&quot;, &quot;HA
+HN1&quot;, &quot;KIRBY2&quot;, &quot;VESUVIA&quot;, &quot;MISRA1A&quot;, &quot;DEVGLA2NE&quot;, &quot;DMN37143&quot;, &quot;CERI651C&quot;, 
+&quot;ORTHRDS2&quot;, &quot;BROYDNBD&quot;, &quot;EGGCRATENE&quot;, &quot;EIGENBCO&quot;, &quot;LUKVLE1&quot;, &quot;DIAMON3D&quot;, &quot;R
+ECIPE&quot;, &quot;HATFLDFLNE&quot;, &quot;DENSCHNENE&quot;, &quot;ORTHRGDM&quot;, &quot;VESUVIO&quot;, &quot;PRICE4NE&quot;, &quot;GRI
+DNETE&quot;, &quot;ARGLCLE&quot;, &quot;CHNRSBNE&quot;, &quot;GBRAIN&quot;, &quot;EIGENC&quot;, &quot;BROWNBSNE&quot;, &quot;ARGTRIG&quot;, 
+&quot;BYRDSPHR&quot;, &quot;RAT43&quot;, &quot;LUKSAN21&quot;, &quot;LUKVLE6&quot;, &quot;AUG3D&quot;, &quot;HS50&quot;, &quot;METHANB8&quot;, &quot;P
+OWELLSQ&quot;, &quot;ECKERLE4&quot;, &quot;CHANDHEU&quot;, &quot;BT10&quot;, &quot;MNISTS5&quot;, &quot;BOXBOD&quot;, &quot;DANIWOOD&quot;, 
+&quot;OSCIPANE&quot;, &quot;SROSENBRNE&quot;, &quot;LUKSAN13&quot;, &quot;HS26&quot;, &quot;CERI651D&quot;, &quot;BT7&quot;, &quot;LCH&quot;, &quot;BR
+YBNDNE&quot;, &quot;LUKVLE2&quot;, &quot;HS9&quot;, &quot;MUONSINE&quot;, &quot;HS100LNP&quot;, &quot;BA-L73&quot;, &quot;LUKVLE16&quot;, &quot;G
+ENHS28&quot;, &quot;LUKVLE14&quot;, &quot;MGH10&quot;, &quot;BT5&quot;, &quot;GROWTH&quot;, &quot;POWELLBS&quot;, &quot;HS61&quot;, &quot;ORTHREG
+A&quot;, &quot;ORTHREGD&quot;, &quot;DMN15102&quot;, &quot;PRICE3NE&quot;, &quot;BA-L21&quot;, &quot;EIGENB2&quot;, &quot;FBRAIN&quot;, &quot;LUK
+VLE9&quot;, &quot;HS77&quot;, &quot;INTEQNE&quot;, &quot;ENGVAL2NE&quot;, &quot;HYDCAR20&quot;, &quot;HS39&quot;, &quot;MSQRTA&quot;, &quot;YATP2
+SQ&quot;, &quot;OSBORNE2&quot;, &quot;AUG3DC&quot;, &quot;ARGAUSS&quot;, &quot;CHNRSNBMNE&quot;, &quot;GENROSENE&quot;, &quot;MWRIGHT&quot;,
+ &quot;DMN15333&quot;, &quot;BEALENE&quot;, &quot;LUKSAN22&quot;, &quot;BT4&quot;, &quot;TRIGON2NE&quot;, &quot;BT2&quot;, &quot;YATP1NE&quot;, &quot;
+YFITNE&quot;, &quot;DENSCHNCNE&quot;, &quot;HATFLDENE&quot;, &quot;WAYSEA2NE&quot;, &quot;LUKSAN14&quot;, &quot;LUKSAN11&quot;, &quot;H
+S46&quot;, &quot;SPMSQRT&quot;, &quot;POWELLSE&quot;, &quot;DIAMON2D&quot;, &quot;EIGENC2&quot;, &quot;HS49&quot;, &quot;ELEC&quot;, &quot;SBRYBN
+DNE&quot;, &quot;FBRAIN3&quot;, &quot;CYCLOOCF&quot;, &quot;ROSZMAN1&quot;, &quot;EIGENCCO&quot;, &quot;MEYER3NE&quot;, &quot;ARGLBLE&quot;,
+ &quot;MISRA1D&quot;, &quot;EIGENAU&quot;, &quot;LANCZOS2&quot;, &quot;HS78&quot;, &quot;BENNETT5&quot;, &quot;BOOTH&quot;, &quot;OSBORNE1&quot;,
+ &quot;BA-L1&quot;, &quot;ERRINROSNE&quot;, &quot;DMN15332&quot;, &quot;ZANGWIL3&quot;, &quot;LUKVLE12&quot;, &quot;MGH10S&quot;, &quot;LUKV
+LE10&quot;, &quot;LUKVLE13&quot;, &quot;DENSCHNFNE&quot;, &quot;HIMMELBC&quot;, &quot;LANCZOS3&quot;, &quot;HYPCIR&quot;, &quot;HEART6&quot;
+, &quot;MSQRTB&quot;, &quot;TQUARTICNE&quot;, &quot;BIGGS6NE&quot;, &quot;OSCIGRNE&quot;, &quot;LANCZOS1&quot;, &quot;GRIDNETB&quot;, &quot;
+ARGLALE&quot;, &quot;S316-322&quot;, &quot;HIMMELBD&quot;, &quot;ORTHRDM2&quot;, &quot;LUKVLE4&quot;, &quot;FLT&quot;, &quot;LUKSAN15&quot;,
+ &quot;FREURONE&quot;, &quot;SSBRYBNDNE&quot;, &quot;DANWOOD&quot;, &quot;LUKVLE3&quot;, &quot;ORTHRGDS&quot;, &quot;HYDCAR6&quot;, &quot;VI
+BRBEAMNE&quot;, &quot;HEART8&quot;, &quot;EIGENACO&quot;, &quot;VANDANIUMS&quot;, &quot;HELIXNE&quot;, &quot;EIGENB&quot;, &quot;BROWNA
+LE&quot;, &quot;BA-L49&quot;, &quot;SPIN&quot;, &quot;RSNBRNE&quot;, &quot;LUKVLE11&quot;, &quot;CLUSTER&quot;, &quot;BDQRTICNE&quot;, &quot;RAT4
+2&quot;, &quot;BA-L16&quot;, &quot;METHANL8&quot;, &quot;HS51&quot;, &quot;QINGNE&quot;, &quot;HS56&quot;, &quot;NONMSQRTNE&quot;, &quot;BT12&quot;, &quot;
+GAUSS3&quot;, &quot;HATFLDDNE&quot;, &quot;HIMMELBA&quot;, &quot;GAUSS1&quot;, &quot;HS111LNP&quot;, &quot;HS52&quot;, &quot;MISRA1B&quot;, 
+&quot;SINVALNE&quot;, &quot;EXP2NE&quot;, &quot;LUKVLE18&quot;, &quot;BA-L52&quot;, &quot;LUKSAN16&quot;, &quot;HIMMELBFNE&quot;, &quot;MGH0
+9&quot;, &quot;ERRINRSMNE&quot;, &quot;POWERSUMNE&quot;, &quot;BROYDN3D&quot;, &quot;DMN15103&quot;, &quot;AUG2DC&quot;, &quot;HS47&quot;, &quot;
+MGH17&quot;, &quot;EXTROSNBNE&quot;, &quot;BT3&quot;]
+
+***************************************************************************
+***
+This program contains Ipopt, a library for large-scale nonlinear optimizati
+on.
+ Ipopt is released as open source code under the Eclipse Public License (EP
+L).
+         For more information visit https://github.com/coin-or/Ipopt
+***************************************************************************
+***
+
+This is Ipopt version 3.14.17, running with linear solver MUMPS 5.8.0.
+
+Number of nonzeros in equality constraint Jacobian...:     2000
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:       36
+
+Exception of type: TOO_FEW_DOF in file &quot;Interfaces/IpIpoptApplication.cpp&quot; 
+at line 662:
+ Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: T
+oo few degrees of freedom (rethrown)!
+
+EXIT: Problem has too few degrees of freedom.
+This is Ipopt version 3.14.17, running with linear solver MUMPS 5.8.0.
+
+Number of nonzeros in equality constraint Jacobian...:     6570
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:     4095
+
+Total number of variables............................:       90
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:        0
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:       73
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+   0 -4.0500000e+03 8.90e+01 9.00e+01  -1.0 0.00e+00    -  0.00e+00 0.00e+0
+0   0
+   1 -1.0343731e+03 2.20e+01 4.86e+04  -1.0 4.98e-01    -  1.00e+00 1.00e+0
+0h  1
+   2 -4.4135894e+02 9.41e+00 1.17e+09  -1.0 3.00e-01  10.0 1.00e+00 1.00e+0
+0h  1
+   3 -1.1520127e+02 1.35e+01 6.32e+13  -1.0 1.55e+00  11.3 1.00e+00 1.00e+0
+0h  1
+   4 -1.6856914e+01 7.44e+00 2.15e+15  -1.0 1.18e+00  14.5 1.00e+00 1.00e+0
+0h  1
+   5 -4.8353640e+00 1.67e+00 1.49e+16  -1.0 4.88e-01  16.7 1.00e+00 1.00e+0
+0h  1
+   6 -2.1731031e+00 3.49e-01 2.31e+16  -1.0 2.29e-01  17.1 1.00e+00 1.00e+0
+0h  1
+   7 -1.3500739e+00 6.30e-02 1.18e+17  -1.0 1.01e-01  17.5 1.00e+00 1.00e+0
+0h  1
+   8 -9.0323387e-01 1.64e-02 1.16e+17  -1.0 6.72e-02  18.0 1.00e+00 1.00e+0
+0h  1
+   9 -8.0652706e-01 2.07e-03 1.15e+17  -1.0 2.10e-02  18.4 1.00e+00 1.00e+0
+0h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+  10 -8.3089391e-01 2.15e-04 2.94e+17  -1.0 7.97e-03  17.9 1.00e+00 1.00e+0
+0h  1
+  11 -8.4099177e-01 4.14e-05 1.06e+17  -1.0 3.82e-03  17.4 1.00e+00 1.00e+0
+0h  1
+  12 -8.4575518e-01 1.05e-05 1.18e+18  -1.7 1.94e-03  17.0 1.00e+00 1.00e+0
+0h  1
+WARNING: Problem in step computation; switching to emergency mode.
+  13r-8.4575518e-01 1.05e-05 9.86e+02  -3.8 0.00e+00  19.2 0.00e+00 0.00e+0
+0R  1
+  14r-8.4607237e-01 1.87e-06 1.75e+00  -3.8 1.61e-02    -  1.00e+00 1.43e-0
+2f  1
+  15 -8.4607237e-01 1.87e-06 1.48e+02  -3.8 3.50e-18  19.6 1.00e+00 1.00e+0
+0   0
+  16 -8.4607237e-01 1.87e-06 2.96e+02  -3.8 2.10e-17  19.1 1.00e+00 1.00e+0
+0   0
+  17 -8.4607237e-01 1.87e-06 4.44e+02  -3.8 9.43e-17  18.7 1.00e+00 1.00e+0
+0   0
+  18 -8.4607237e-01 1.87e-06 5.92e+02  -3.8 3.77e-16  18.2 1.00e+00 1.00e+0
+0   0
+  19 -8.4607237e-01 1.87e-06 7.40e+02  -3.8 1.41e-15  17.7 1.00e+00 1.00e+0
+0   0
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+  20r-8.4607237e-01 1.87e-06 9.23e+02  -3.8 0.00e+00  17.2 0.00e+00 4.77e-0
+7R 22
+  21r-8.4755616e-01 1.91e-06 1.03e+00  -3.8 1.13e-02    -  1.00e+00 8.27e-0
+2f  1
+  22r-8.4909450e-01 7.51e-07 7.86e-06  -3.8 4.85e-04    -  1.00e+00 1.00e+0
+0h  1
+  23r-8.4909450e-01 7.51e-07 8.20e+02  -3.8 0.00e+00  16.8 0.00e+00 4.77e-0
+7R 22
+  24r-8.4931084e-01 8.86e-08 2.18e-02  -3.8 3.27e-04    -  1.00e+00 2.18e-0
+1f  1
+  25 -8.4931084e-01 8.86e-08 7.40e+01  -3.8 3.82e-15  16.3 1.00e+00 1.00e+0
+0h  1
+  26 -8.4931084e-01 8.86e-08 1.49e+02  -3.8 2.30e-14  15.8 1.00e+00 1.00e+0
+0h  1
+  27 -8.4931084e-01 8.86e-08 2.23e+02  -3.8 1.04e-13  15.3 1.00e+00 1.00e+0
+0h  1
+  28 -8.4931084e-01 8.86e-08 2.98e+02  -3.8 4.15e-13  14.9 1.00e+00 1.00e+0
+0h  1
+  29 -8.4931084e-01 8.86e-08 3.72e+02  -3.8 1.56e-12  14.4 1.00e+00 1.00e+0
+0h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+  30 -8.4931084e-01 8.86e-08 4.47e+02  -3.8 5.60e-12  13.9 1.00e+00 1.00e+0
+0h  1
+  31 -8.4931084e-01 8.86e-08 5.21e+02  -3.8 1.96e-11  13.4 1.00e+00 1.00e+0
+0h  1
+  32 -8.4931084e-01 8.86e-08 5.95e+02  -3.8 6.72e-11  12.9 1.00e+00 1.00e+0
+0h  1
+  33 -8.4931084e-01 8.86e-08 6.69e+02  -3.8 2.26e-10  12.5 1.00e+00 1.00e+0
+0h  1
+  34 -8.4931085e-01 8.86e-08 7.40e+02  -3.8 7.51e-10  12.0 1.00e+00 1.00e+0
+0h  1
+  35 -8.4931085e-01 8.86e-08 8.01e+02  -3.8 2.44e-09  11.5 1.00e+00 1.00e+0
+0h  1
+  36 -8.4931088e-01 8.86e-08 8.36e+02  -3.8 7.64e-09  11.0 1.00e+00 1.00e+0
+0h  1
+  37 -8.4931094e-01 8.86e-08 7.91e+02  -3.8 2.17e-08  10.6 1.00e+00 1.00e+0
+0h  1
+  38 -8.4931109e-01 1.97e-07 5.75e+02  -3.8 4.73e-08  10.1 1.00e+00 1.00e+0
+0h  1
+  39 -8.4931126e-01 3.53e-07 1.89e+02  -3.8 4.67e-08   9.6 1.00e+00 1.00e+0
+0h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+  40 -8.4931126e-01 2.23e-07 5.47e+01  -3.8 4.05e-08   9.1 1.00e+00 1.00e+0
+0h  1
+  41 -1.1785535e+01 2.14e+01 1.14e+12  -3.8 2.72e+00    -  1.00e+00 1.00e+0
+0f  1
+  42 -3.3071569e+00 5.21e+00 7.78e+15  -3.8 1.26e+00   8.7 1.00e+00 1.00e+0
+0h  1
+  43 -2.0175689e+00 1.15e+00 1.98e+17  -3.8 5.58e-01  10.0 1.00e+00 1.00e+0
+0h  1
+  44 -1.0077496e+00 1.63e-01 2.29e+17  -3.8 2.15e-01  11.3 1.00e+00 1.00e+0
+0h  1
+  45 -8.5613530e-01 1.26e-01 2.44e+17  -3.8 1.07e-01    -  1.00e+00 2.50e-0
+1h  3
+  46 -8.5232312e-01 1.10e-01 2.21e+17  -3.8 5.86e-02    -  1.00e+00 1.25e-0
+1h  4
+  47 -8.4937224e-01 1.09e-01 2.18e+17  -3.8 6.52e-02    -  1.00e+00 1.56e-0
+2h  7
+  48 -8.4933815e-01 1.09e-01 2.18e+17  -3.8 6.59e-02    -  1.00e+00 1.22e-0
+4h 14
+  49 -8.4932335e-01 1.09e-01 2.18e+17  -3.8 5.75e-02    -  1.00e+00 4.88e-0
+4h 12
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+  50 -7.9323599e-01 9.48e-03 2.85e+17  -3.8 6.23e-02    -  1.00e+00 1.00e+0
+0h  1
+  51 -7.6628377e-01 2.85e-04 7.16e+18  -3.8 8.89e-03  11.7 1.00e+00 1.00e+0
+0h  1
+  52 -7.3738392e-01 2.06e-04 4.55e+19  -3.8 1.00e-02  12.2 1.00e+00 1.00e+0
+0h  1
+  53 -7.4904075e-01 1.66e-04 4.54e+23  -3.8 8.00e-03  12.6 1.00e+00 1.00e+0
+0h  1
+  54 -7.5469055e-01 2.74e-05 1.80e+23  -3.8 2.61e-03  13.0 1.00e+00 1.00e+0
+0h  1
+  55 -7.5885366e-01 6.40e-06 7.11e+25  -3.8 1.50e-03  13.4 1.00e+00 1.00e+0
+0h  1
+WARNING: Problem in step computation; switching to emergency mode.
+  56r-7.5885366e-01 6.40e-06 9.77e+02  -3.8 0.00e+00  19.3 0.00e+00 0.00e+0
+0R  1
+  57r-7.5885354e-01 7.13e-07 1.99e-01  -3.8 3.35e-04    -  1.00e+00 2.35e-0
+2f  1
+  58 -2.5756948e+00 2.27e-02 1.36e+02  -3.8 4.57e-02   2.0 1.00e+00 1.00e+0
+0f  1
+  59 -1.9498025e+00 6.72e-03 2.85e+07  -3.8 2.64e-02   3.3 1.00e+00 1.00e+0
+0h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+  60 -1.6902911e+00 1.39e-03 1.10e+07  -3.8 1.30e-02   3.8 1.00e+00 1.00e+0
+0h  1
+  61 -1.5976794e+00 4.40e-04 2.65e+08  -3.8 8.03e-03   3.3 1.00e+00 1.00e+0
+0h  1
+  62 -1.6653195e+00 2.63e-04 3.66e+12  -3.8 6.11e-03   2.8 1.00e+00 1.00e+0
+0f  1
+  63 -1.9910376e+00 2.26e-03 3.83e+15  -3.8 2.34e-02   2.3 1.00e+00 1.00e+0
+0f  1
+  64 -1.9780188e+00 1.02e-04 3.08e+17  -3.8 5.72e-03   4.6 1.00e+00 1.00e+0
+0h  1
+  65 -1.9110760e+00 1.15e-04 4.09e+19  -3.8 5.45e-03   4.1 1.00e+00 1.00e+0
+0H  1
+  66 -1.9099997e+00 3.97e-05 6.18e+20  -3.8 3.28e-03   3.6 1.00e+00 1.00e+0
+0h  1
+  67 -1.9053531e+00 9.91e-06 9.01e+22  -3.8 1.59e-03   5.8 1.00e+00 1.00e+0
+0h  1
+  68 -1.9009236e+00 5.92e-06 3.29e+28  -3.8 9.71e-04   6.3 1.00e+00 1.00e+0
+0h  1
+  69 -1.9048529e+00 4.78e-06 5.69e+30  -3.8 1.33e-03   6.7 1.00e+00 1.00e+0
+0f  1
+WARNING: Problem in step computation; switching to emergency mode.
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+  70r-1.9048529e+00 4.78e-06 9.69e+02  -3.8 0.00e+00  18.5 0.00e+00 0.00e+0
+0R  1
+  71r-1.9047160e+00 5.38e-07 1.50e-02  -3.8 1.11e-03    -  1.00e+00 3.16e-0
+2f  1
+  72 -4.2551342e+00 2.69e-02 1.93e+02  -3.8 6.61e-02   2.0 1.00e+00 1.00e+0
+0f  1
+  73 -3.7488224e+00 3.27e-03 1.27e+07  -3.8 2.23e-02   3.3 1.00e+00 1.00e+0
+0h  1
+  74 -3.7805878e+00 9.56e-04 4.04e+06  -3.8 1.08e-02   2.9 1.00e+00 1.00e+0
+0h  1
+  75 -3.9921881e+00 6.76e-03 1.23e+10  -3.8 3.52e-02   2.4 1.00e+00 1.00e+0
+0f  1
+  76 -3.8390058e+00 5.34e-04 4.18e+10  -3.8 9.88e-03   3.7 1.00e+00 1.00e+0
+0h  1
+  77 -3.8489717e+00 8.30e-04 2.83e+13  -3.8 1.12e-02   3.2 1.00e+00 1.00e+0
+0h  1
+  78 -3.7455376e+00 4.06e-04 2.19e+16  -3.8 1.20e-02   5.5 1.00e+00 1.00e+0
+0h  1
+  79 -3.7146108e+00 3.48e-05 8.24e+16  -3.8 3.98e-03   6.8 1.00e+00 1.00e+0
+0h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+  80 -1.3907502e+06 1.77e+06 2.50e+33  -3.8 1.13e+00   6.3 1.00e+00 1.00e+0
+0H  1
+WARNING: Problem in step computation; switching to emergency mode.
+  81r-1.3907502e+06 1.77e+06 9.99e+02   6.2 0.00e+00  18.2 0.00e+00 0.00e+0
+0R  1
+  82r-2.4249821e+05 4.92e+05 6.54e+02   6.2 1.80e+09    -  1.00e+00 9.74e-0
+4f  1
+  83 -2.4248985e+05 4.92e+05 5.23e+17  -3.8 1.10e-02  19.7 1.00e+00 1.00e+0
+0h  1
+WARNING: Problem in step computation; switching to emergency mode.
+  84r-2.4248985e+05 4.92e+05 9.99e+02   5.7 0.00e+00  19.2 0.00e+00 0.00e+0
+0R  1
+  85r-3.9495593e+04 1.87e+05 3.15e+02   5.7 4.93e+08    -  1.00e+00 9.87e-0
+4f  1
+  86 -3.9495016e+04 1.87e+05 8.54e+16  -3.8 2.01e-03  19.6 1.00e+00 1.00e+0
+0h  1
+WARNING: Problem in step computation; switching to emergency mode.
+  87r-3.9495016e+04 1.87e+05 9.99e+02   5.3 0.00e+00  19.1 0.00e+00 0.00e+0
+0R  1
+  88r-7.7474545e+04 1.02e+05 8.86e+02   5.3 1.85e+08    -  1.00e+00 9.98e-0
+4f  1
+  89r-7.7474545e+04 1.02e+05 9.99e+02   5.0 0.00e+00  19.6 0.00e+00 4.77e-0
+7R 22
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+  90r-1.7880495e+04 4.80e+04 4.14e+02   5.0 1.01e+08    -  1.00e+00 9.97e-0
+4f  1
+  91 -1.7880252e+04 4.80e+04 7.98e+15  -3.8 6.35e-04  19.1 1.00e+00 1.00e+0
+0h  1
+  92 -1.7880080e+04 4.80e+04 1.60e+16  -3.8 4.77e-04  19.5 1.00e+00 1.00e+0
+0h  1
+  93r-1.7880080e+04 4.80e+04 9.99e+02   4.7 0.00e+00  20.0 0.00e+00 4.77e-0
+7R 22
+  94r-5.3224086e+04 2.25e+04 9.93e+02   4.7 4.58e+07    -  2.35e-01 1.04e-0
+3f  1
+  95r-5.3224086e+04 2.25e+04 9.99e+02   4.4 0.00e+00  19.5 0.00e+00 4.77e-0
+7R 22
+  96r-4.1811005e+04 3.12e+04 9.79e+02   4.4 1.99e+07    -  9.62e-02 1.12e-0
+3f  1
+  97r-2.1791348e+04 1.14e+04 7.89e+05   3.0 7.03e+01   4.0 8.22e-01 1.00e+0
+0f  1
+  98r-2.1791348e+04 1.14e+04 9.99e+02   4.1 0.00e+00  19.0 0.00e+00 4.77e-0
+7R 22
+  99r-5.7835348e+03 7.51e+03 6.56e+02   4.1 1.12e+07    -  1.00e+00 1.01e-0
+3f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+ 100r-5.7835348e+03 7.51e+03 9.99e+02   3.9 0.00e+00  18.5 0.00e+00 4.77e-0
+7R 22
+ 101r-3.1704702e+04 1.02e+04 9.82e+02   3.9 5.55e+06    -  1.48e-01 1.34e-0
+3f  1
+ 102r-3.0785995e+03 5.34e+03 2.28e+05   2.5 6.41e+01   4.0 6.55e-01 1.00e+0
+0f  1
+ 103 -3.0785427e+03 5.33e+03 2.51e+14  -3.8 2.27e-04  18.0 1.00e+00 1.00e+0
+0h  1
+ 104 -3.0782158e+03 5.33e+03 5.01e+14  -3.8 1.37e-03  17.6 1.00e+00 1.00e+0
+0h  1
+ 105 -3.0780342e+03 5.33e+03 7.52e+14  -3.8 7.67e-04  18.0 1.00e+00 1.00e+0
+0h  1
+ 106 -3.0779262e+03 5.33e+03 1.00e+15  -3.8 3.85e-04  18.4 1.00e+00 1.00e+0
+0h  1
+ 107 -3.0778839e+03 5.33e+03 1.25e+15  -3.8 1.80e-04  18.8 1.00e+00 1.00e+0
+0h  1
+ 108r-3.0778839e+03 5.33e+03 9.99e+02   3.7 0.00e+00  19.3 0.00e+00 4.77e-0
+7R 22
+ 109r-2.1478572e+04 7.23e+03 3.66e+03   3.7 2.27e+06    -  9.26e-03 2.32e-0
+3f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+ 110r-5.3887006e+03 2.83e+03 1.29e+07   2.3 3.36e+01   6.0 7.69e-01 1.00e+0
+0f  1
+ 111r-5.3887006e+03 2.83e+03 9.99e+02   3.5 0.00e+00  18.8 0.00e+00 4.77e-0
+7R 22
+ 112r-1.0991572e+03 6.44e+03 1.28e+03   3.5 8.99e+05    -  2.06e-02 3.12e-0
+3f  1
+ 113r-1.1785648e+03 1.92e+03 9.17e+06   2.8 2.05e+01   6.0 8.31e-01 1.00e+0
+0f  1
+ 114r-1.1785648e+03 1.92e+03 9.99e+02   3.3 0.00e+00  18.3 0.00e+00 4.77e-0
+7R 22
+ 115r-1.2789154e+03 2.74e+03 9.91e+02   3.3 9.49e+05    -  1.33e-02 2.00e-0
+3f  1
+ 116r-1.9103757e+02 9.58e+02 6.05e+06   1.9 2.14e+01   6.0 5.94e-01 1.00e+0
+0f  1
+ 117r-1.9103757e+02 9.58e+02 9.99e+02   3.0 0.00e+00  17.8 0.00e+00 4.77e-0
+7R 22
+ 118r-8.7984967e+02 2.01e+03 1.18e+03   3.0 2.69e+05    -  3.22e-02 3.53e-0
+3f  1
+ 119r-3.0084178e+02 7.10e+02 8.50e+06   2.3 2.39e+01   6.0 4.02e-01 1.00e+0
+0f  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+ 120 -3.0083831e+02 7.10e+02 1.69e+13  -3.8 7.36e-05  17.4 1.00e+00 1.00e+0
+0h  1
+ 121 -3.0081812e+02 7.09e+02 3.38e+13  -3.8 4.41e-04  16.9 1.00e+00 1.00e+0
+0h  1
+ 122 -3.0071630e+02 7.09e+02 5.06e+13  -3.8 1.99e-03  16.4 1.00e+00 1.00e+0
+0h  1
+ 123 -3.0067101e+02 7.09e+02 6.75e+13  -3.8 9.94e-04  16.8 1.00e+00 1.00e+0
+0h  1
+ 124 -3.0044110e+02 7.09e+02 8.43e+13  -3.8 3.70e-03  16.4 1.00e+00 1.00e+0
+0h  1
+ 125 -3.0035975e+02 7.09e+02 1.01e+14  -3.8 1.67e-03  16.8 1.00e+00 1.00e+0
+0h  1
+ 126 -3.0032315e+02 7.08e+02 1.18e+14  -3.8 7.33e-04  17.2 1.00e+00 1.00e+0
+0h  1
+ 127 -3.0019674e+02 7.08e+02 1.35e+14  -3.8 2.51e-03  16.7 1.00e+00 1.00e+0
+0h  1
+ 128 -3.0014022e+02 7.08e+02 1.52e+14  -3.8 1.06e-03  17.2 1.00e+00 1.00e+0
+0h  1
+ 129 -3.0011811e+02 7.08e+02 1.68e+14  -3.8 4.41e-04  17.6 1.00e+00 1.00e+0
+0h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+ 130 -3.0004893e+02 7.08e+02 1.85e+14  -3.8 1.46e-03  17.1 1.00e+00 1.00e+0
+0h  1
+ 131 -3.0002286e+02 7.08e+02 2.02e+14  -3.8 5.95e-04  17.5 1.00e+00 1.00e+0
+0h  1
+ 132 -3.0001163e+02 7.08e+02 2.19e+14  -3.8 2.42e-04  18.0 1.00e+00 1.00e+0
+0h  1
+ 133 -2.9997195e+02 7.08e+02 2.36e+14  -3.8 7.81e-04  17.5 1.00e+00 1.00e+0
+0h  1
+ 134 -2.9995701e+02 7.08e+02 2.52e+14  -3.8 3.14e-04  17.9 1.00e+00 1.00e+0
+0h  1
+ 135 -2.9995098e+02 7.08e+02 2.69e+14  -3.8 1.26e-04  18.3 1.00e+00 1.00e+0
+0h  1
+ 136 -2.9993052e+02 7.08e+02 2.86e+14  -3.8 4.00e-04  17.9 1.00e+00 1.00e+0
+0h  1
+ 137 -2.9987459e+02 7.07e+02 3.03e+14  -3.8 1.27e-03  17.4 1.00e+00 1.00e+0
+0h  1
+ 138 -2.9985072e+02 7.07e+02 3.20e+14  -3.8 5.03e-04  17.8 1.00e+00 1.00e+0
+0h  1
+ 139 -2.9975445e+02 7.07e+02 3.36e+14  -3.8 1.58e-03  17.3 1.00e+00 1.00e+0
+0h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+ 140 -2.9972596e+02 7.07e+02 3.53e+14  -3.8 6.25e-04  17.8 1.00e+00 1.00e+0
+0h  1
+ 141 -2.9963243e+02 7.07e+02 3.70e+14  -3.8 1.96e-03  17.3 1.00e+00 1.00e+0
+0h  1
+ 142 -2.9959457e+02 7.07e+02 3.87e+14  -3.8 7.68e-04  17.7 1.00e+00 1.00e+0
+0h  1
+ 143 -2.9943715e+02 7.07e+02 4.03e+14  -3.8 2.41e-03  17.2 1.00e+00 1.00e+0
+0h  1
+ 144 -2.9939016e+02 7.06e+02 4.20e+14  -3.8 9.40e-04  17.6 1.00e+00 1.00e+0
+0h  1
+ 145 -2.9937293e+02 7.06e+02 4.37e+14  -3.8 3.67e-04  18.1 1.00e+00 1.00e+0
+0h  1
+ 146 -2.9936607e+02 7.06e+02 4.54e+14  -3.8 1.43e-04  18.5 1.00e+00 1.00e+0
+0h  1
+ 147 -2.9934658e+02 7.06e+02 4.70e+14  -3.8 4.45e-04  18.0 1.00e+00 1.00e+0
+0h  1
+ 148 -2.9924606e+02 7.06e+02 4.87e+14  -3.8 1.38e-03  17.5 1.00e+00 1.00e+0
+0h  1
+ 149 -2.9922004e+02 7.06e+02 5.04e+14  -3.8 5.35e-04  18.0 1.00e+00 1.00e+0
+0h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+ 150 -2.9912229e+02 7.06e+02 5.20e+14  -3.8 1.66e-03  17.5 1.00e+00 1.00e+0
+0h  1
+ 151 -2.9909106e+02 7.06e+02 5.37e+14  -3.8 6.43e-04  17.9 1.00e+00 1.00e+0
+0h  1
+ 152 -2.9907933e+02 7.06e+02 5.54e+14  -3.8 2.49e-04  18.3 1.00e+00 1.00e+0
+0h  1
+ 153 -7.2629840e+01 1.76e+02 2.00e+21  -3.8 6.18e+00  17.9 1.00e+00 1.00e+0
+0h  1
+WARNING: Problem in step computation; switching to emergency mode.
+ 154r-7.2629840e+01 1.76e+02 9.99e+02   2.2 0.00e+00  20.0 0.00e+00 0.00e+0
+0R  1
+ 155r-9.3231784e+02 3.75e+02 9.63e+02   2.2 6.90e+04    -  8.81e-02 2.53e-0
+3f  1
+ 156r-8.9161799e+02 3.53e+02 4.91e+05   1.5 8.77e+00   6.0 5.54e-02 6.10e-0
+2f  1
+ 157r-8.9123056e+02 3.53e+02 6.61e+06   1.5 8.20e+00   9.1 1.16e-01 5.47e-0
+4h  1
+ 158r-8.9121712e+02 3.53e+02 5.97e+09   1.5 8.22e+00  10.5 1.67e-01 1.96e-0
+5h  1
+ 159r-8.6218884e+02 3.44e+02 7.57e+09   1.5 8.19e+00  10.0 2.01e-01 2.54e-0
+2h  1
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+ 160r-8.6204470e+02 3.44e+02 1.09e+12   1.5 7.97e+00  12.2 3.79e-01 2.44e-0
+4h  1
+ 161r-8.6201763e+02 3.44e+02 1.39e+13   1.5 8.01e+00  13.5 2.08e-01 4.15e-0
+5h  1
+ 162r-7.4598636e+02 1.84e+02 4.67e+13   1.5 7.92e+00  13.1 3.72e-01 5.85e-0
+1h  1
+ 163r-7.4583844e+02 1.84e+02 5.69e+16   1.5 5.62e+00  17.1 6.03e-01 1.20e-0
+4h  1
+ 164r-5.2536140e+02 1.64e+02 4.83e+16   1.5 5.43e+00  16.6 1.70e-01 1.29e-0
+1h  1
+ 165r-5.2466971e+02 1.64e+02 1.20e+18   1.5 5.11e+00  19.8 2.66e-02 1.13e-0
+3h  1
+WARNING: Problem in step computation; switching to emergency mode.
+ 166r-5.2466971e+02 1.64e+02 3.63e+17   1.5 5.11e+00  20.0 0.00e+00 0.00e+0
+0R  1
+WARNING: Problem in step computation; switching to emergency mode.
+Cannot call restoration phase at point that is almost feasible for the rest
+oration NLP (violation 0.000000e+00).
+Abort in line search due to no other fall back.
+Step computation in the restoration phase failed.
+
+Number of Iterations....: 166
+
+                                   (scaled)                 (unscaled)
+Objective...............:  -5.2466970644132880e+02   -5.2466970644132880e+0
+2
+Dual infeasibility......:   3.6313679018314899e+17    3.6313679018314899e+1
+7
+Constraint violation....:   1.6365754660410741e+02    1.6365754660410741e+0
+2
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+0
+0
+Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+0
+0
+Overall NLP error.......:   2.7182234547475359e+03    3.6313679018314899e+1
+7
+
+
+Number of objective function evaluations             = 446
+Number of objective gradient evaluations             = 142
+Number of equality constraint evaluations            = 446
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 178
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 167
+Total seconds in IPOPT                               = 19.029
+
+EXIT: Restoration Failed!
+This is Ipopt version 3.14.17, running with linear solver MUMPS 5.8.0.
+
+Number of nonzeros in equality constraint Jacobian...:        4
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:        3
+
+Total number of variables............................:        2
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:        0
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:        2
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+   0  0.0000000e+00 6.09e+02 0.00e+00  -1.0 0.00e+00    -  0.00e+00 0.00e+0
+0   0
+   1  0.0000000e+00 1.90e+02 0.00e+00  -1.0 1.21e+00    -  1.00e+00 1.00e+0
+0h  1
+   2  0.0000000e+00 5.60e+01 0.00e+00  -1.0 8.70e-01    -  1.00e+00 1.00e+0
+0h  1
+   3  0.0000000e+00 1.44e+01 0.00e+00  -1.0 5.61e-01    -  1.00e+00 1.00e+0
+0h  1
+   4  0.0000000e+00 2.57e+00 0.00e+00  -1.0 2.79e-01    -  1.00e+00 1.00e+0
+0h  1
+   5  0.0000000e+00 1.67e-01 0.00e+00  -1.7 7.63e-02    -  1.00e+00 1.00e+0
+0h  1
+   6  0.0000000e+00 9.07e-04 0.00e+00  -2.5 5.71e-03    -  1.00e+00 1.00e+0
+0h  1
+   7  0.0000000e+00 2.71e-08 0.00e+00  -5.7 3.13e-05    -  1.00e+00 1.00e+0
+0h  1
+
+Number of Iterations....: 7
+
+                                   (scaled)                 (unscaled)
+Objective...............:   0.0000000000000000e+00    0.0000000000000000e+0
+0
+Dual infeasibility......:   0.0000000000000000e+00    0.0000000000000000e+0
+0
+Constraint violation....:   5.4280851813359737e-09    2.7140425906679866e-0
+8
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+0
+0
+Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+0
+0
+Overall NLP error.......:   5.4280851813359737e-09    2.7140425906679866e-0
+8
+
+
+Number of objective function evaluations             = 8
+Number of objective gradient evaluations             = 8
+Number of equality constraint evaluations            = 8
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 8
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 7
+Total seconds in IPOPT                               = 0.005
+
+EXIT: Optimal Solution Found.
+This is Ipopt version 3.14.17, running with linear solver MUMPS 5.8.0.
+
+Number of nonzeros in equality constraint Jacobian...:     8844
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:       10
+
+Exception of type: TOO_FEW_DOF in file &quot;Interfaces/IpIpoptApplication.cpp&quot; 
+at line 662:
+ Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: T
+oo few degrees of freedom (rethrown)!
+
+EXIT: Problem has too few degrees of freedom.
+This is Ipopt version 3.14.17, running with linear solver MUMPS 5.8.0.
+
+Number of nonzeros in equality constraint Jacobian...:       80
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:       10
+
+Exception of type: TOO_FEW_DOF in file &quot;Interfaces/IpIpoptApplication.cpp&quot; 
+at line 662:
+ Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: T
+oo few degrees of freedom (rethrown)!
+
+EXIT: Problem has too few degrees of freedom.
+This is Ipopt version 3.14.17, running with linear solver MUMPS 5.8.0.
+
+Number of nonzeros in equality constraint Jacobian...:       15
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:       15
+
+Total number of variables............................:        5
+                     variables with only lower bounds:        0
+                variables with lower and upper bounds:        0
+                     variables with only upper bounds:        0
+Total number of equality constraints.................:        3
+Total number of inequality constraints...............:        0
+        inequality constraints with only lower bounds:        0
+   inequality constraints with lower and upper bounds:        0
+        inequality constraints with only upper bounds:        0
+
+iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_p
+r  ls
+   0  1.0000000e+00 7.76e+00 9.91e-01  -1.0 0.00e+00    -  0.00e+00 0.00e+0
+0   0
+   1  1.3178035e-01 1.22e+00 5.71e-01  -1.0 7.09e-01    -  1.00e+00 1.00e+0
+0h  1
+   2  8.1454846e-02 6.77e-02 6.41e-02  -1.0 1.13e-01    -  1.00e+00 1.00e+0
+0h  1
+   3  7.8791251e-02 3.95e-04 1.54e-03  -2.5 1.62e-02    -  1.00e+00 1.00e+0
+0h  1
+   4  7.8776829e-02 3.80e-07 4.18e-05  -3.8 7.94e-04    -  1.00e+00 1.00e+0
+0h  1
+   5  7.8776821e-02 8.33e-10 1.63e-06  -5.7 4.97e-05    -  1.00e+00 1.00e+0
+0h  1
+   6  7.8776821e-02 1.26e-13 2.20e-08  -7.0 5.84e-07    -  1.00e+00 1.00e+0
+0h  1
+
+Number of Iterations....: 6
+
+                                   (scaled)                 (unscaled)
+Objective...............:   7.8776820987139728e-02    7.8776820987139728e-0
+2
+Dual infeasibility......:   2.2002492189310274e-08    2.2002492189310274e-0
+8
+Constraint violation....:   1.2567724638756772e-13    1.2567724638756772e-1
+3
+Variable bound violation:   0.0000000000000000e+00    0.0000000000000000e+0
+0
+Complementarity.........:   0.0000000000000000e+00    0.0000000000000000e+0
+0
+Overall NLP error.......:   2.2002492189310274e-08    2.2002492189310274e-0
+8
+
+
+Number of objective function evaluations             = 7
+Number of objective gradient evaluations             = 7
+Number of equality constraint evaluations            = 7
+Number of inequality constraint evaluations          = 0
+Number of equality constraint Jacobian evaluations   = 7
+Number of inequality constraint Jacobian evaluations = 0
+Number of Lagrangian Hessian evaluations             = 6
+Total seconds in IPOPT                               = 0.005
+
+EXIT: Optimal Solution Found.
+This is Ipopt version 3.14.17, running with linear solver MUMPS 5.8.0.
+
+Number of nonzeros in equality constraint Jacobian...:      297
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:        6
+
+Exception of type: TOO_FEW_DOF in file &quot;Interfaces/IpIpoptApplication.cpp&quot; 
+at line 662:
+ Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: T
+oo few degrees of freedom (rethrown)!
+
+EXIT: Problem has too few degrees of freedom.
+This is Ipopt version 3.14.17, running with linear solver MUMPS 5.8.0.
+
+Number of nonzeros in equality constraint Jacobian...:       40
+Number of nonzeros in inequality constraint Jacobian.:        0
+Number of nonzeros in Lagrangian Hessian.............:        3
+
+Exception of type: TOO_FEW_DOF in file &quot;Interfaces/IpIpoptApplication.cpp&quot; 
+at line 662:
+ Exception message: status != TOO_FEW_DEGREES_OF_FREEDOM evaluated false: T
+oo few degrees of freedom (rethrown)!
+
+EXIT: Problem has too few degrees of freedom.
+Full results table for equality-constrained problems:
+8×5 DataFrame
+ Row │ problem    n_vars  secs         solver  retcode
+     │ String     Int64   Float64      String  Symbol
+─────┼─────────────────────────────────────────────────
+   1 │ GAUSS2          8   1.0918      Ipopt   Failure
+   2 │ MSS1           90  19.034       Ipopt   Failure
+   3 │ WAYSEA1NE       2   0.00636697  Ipopt   Success
+   4 │ FBRAIN2         4   0.0045619   Ipopt   Failure
+   5 │ BROWNDENE       4   0.00168896  Ipopt   Failure
+   6 │ HS79            5   0.00636983  Ipopt   Success
+   7 │ GULFNE          3   0.00181985  Ipopt   Failure
+   8 │ JUDGENE         2   0.00160217  Ipopt   Failure
+Plotted equality-constrained results.</code></pre><p>Next, we examine the same relationship for problems with inequality-constrained problems.</p><pre><code class="language-julia hljs">using DataFrames
+all_ineq_unb_problems = CUTEst.select_sif_problems(min_con=1, only_ineq_con=true, only_free_var=true)
+# Restrict to a small, easy subset for demonstration/CI
+neq_unb_problems = filter(p -&gt; p in [&quot;HS21&quot;, &quot;HS35&quot;, &quot;HS38&quot;, &quot;HS39&quot;, &quot;HS41&quot;], all_ineq_unb_problems)
+@info &quot;Testing $(length(neq_unb_problems)) inequality-constrained unbounded problems&quot;
+
+
+# Harmonized analysis block for inequality-constrained unbounded problems
+neq_unb_results = run_benchmarks(neq_unb_problems, optimizers; chunk_size=3)
+println(&quot;Full results table for inequality-constrained problems:&quot;)
+if nrow(neq_unb_results) &gt; 0
+    display(neq_unb_results)
+else
+    println(&quot;No inequality-constrained results to display. DataFrame is empty.&quot;)
+end
+
+# Calculate and display success rates for inequality constrained
+successful_codes = [:Success, :MaxIters, :MaxTime, :FirstOrderOptimal]
+successful_results = filter(row -&gt; row.retcode in successful_codes, neq_unb_results)
+total_attempts = nrow(neq_unb_results)
+successful_attempts = nrow(successful_results)
+success_rate = total_attempts &gt; 0 ? round(successful_attempts / total_attempts * 100, digits=1) : 0
+
+@info &quot;INEQUALITY CONSTRAINED SUCCESS RATE: $(success_rate)% ($(successful_attempts)/$(total_attempts))&quot;
+
+if nrow(neq_unb_results) &gt; 0
+    try
+        @df neq_unb_results scatter(:n_vars, :secs,
+            group = :solver,
+            xlabel = &quot;n. variables&quot;,
+            ylabel = &quot;secs.&quot;,
+            title = &quot;Time to solution by optimizer and number of vars&quot;,
+        )
+        println(&quot;Plotted inequality-constrained results.&quot;)
+    catch e
+        println(&quot;Plotting failed: &quot;, e)
+    end
+else
+    println(&quot;Warning: inequality-constrained results DataFrame is empty. No data to plot.&quot;)
+    println(&quot;Attempted problems:&quot;)
+    println(neq_unb_problems)
+end</code></pre><pre><code class="nohighlight hljs">Full results table for inequality-constrained problems:
+No inequality-constrained results to display. DataFrame is empty.
+Warning: inequality-constrained results DataFrame is empty. No data to plot
+.
+Attempted problems:
+String[]</code></pre><h2 id="Success-Rate-Analysis-(Equality-Constrained)"><a class="docs-heading-anchor" href="#Success-Rate-Analysis-(Equality-Constrained)">Success Rate Analysis (Equality Constrained)</a><a id="Success-Rate-Analysis-(Equality-Constrained)-1"></a><a class="docs-heading-anchor-permalink" href="#Success-Rate-Analysis-(Equality-Constrained)" title="Permalink"></a></h2><pre><code class="language-julia hljs">using DataFrames
+total_attempts = nrow(eq_unb_results)
+successful_attempts = nrow(successful_results)
+success_rate = total_attempts &gt; 0 ? round(successful_attempts / total_attempts * 100, digits=1) : 0
+
+println(&quot;SUCCESS RATE ANALYSIS (Equality Constrained):&quot;)
+println(&quot;Total attempts: &quot;, total_attempts)
+println(&quot;Successful attempts: &quot;, successful_attempts)
+println(&quot;Success rate: &quot;, success_rate, &quot;%&quot;)
+println(&quot;Return code distribution:&quot;)
+if total_attempts &gt; 0
+    for (code, count) in sort(collect(pairs(countmap(eq_unb_results.retcode))), by=x-&gt;x[2], rev=true)
+        println(&quot;  &quot;, code, &quot;: &quot;, count, &quot; occurrences&quot;)
+    end
+else
+    println(&quot;  No results to analyze&quot;)
+end</code></pre><pre><code class="nohighlight hljs">SUCCESS RATE ANALYSIS (Equality Constrained):
+Total attempts: 8
+Successful attempts: 0
+Success rate: 0.0%
+Return code distribution:
+  Failure: 6 occurrences
+  Success: 2 occurrences</code></pre><h2 id="Success-Rate-Analysis-(Inequality-Constrained)"><a class="docs-heading-anchor" href="#Success-Rate-Analysis-(Inequality-Constrained)">Success Rate Analysis (Inequality Constrained)</a><a id="Success-Rate-Analysis-(Inequality-Constrained)-1"></a><a class="docs-heading-anchor-permalink" href="#Success-Rate-Analysis-(Inequality-Constrained)" title="Permalink"></a></h2><pre><code class="language-julia hljs">total_attempts_ineq = nrow(neq_unb_results)
+successful_attempts_ineq = nrow(successful_results)
+success_rate_ineq = total_attempts_ineq &gt; 0 ? round(successful_attempts_ineq / total_attempts_ineq * 100, digits=1) : 0
+
+println(&quot;SUCCESS RATE ANALYSIS (Inequality Constrained):&quot;)
+println(&quot;Total attempts: &quot;, total_attempts_ineq)
+println(&quot;Successful attempts: &quot;, successful_attempts_ineq)
+println(&quot;Success rate: &quot;, success_rate_ineq, &quot;%&quot;)
+println(&quot;Return code distribution:&quot;)
+if total_attempts_ineq &gt; 0
+    for (code, count) in sort(collect(pairs(countmap(neq_unb_results.retcode))), by=x-&gt;x[2], rev=true)
+        println(&quot;  &quot;, code, &quot;: &quot;, count, &quot; occurrences&quot;)
+    end
+else
+    println(&quot;  No results to analyze&quot;)
+end</code></pre><pre><code class="nohighlight hljs">SUCCESS RATE ANALYSIS (Inequality Constrained):
+Total attempts: 0
+Successful attempts: 0
+Success rate: 0%
+Return code distribution:
+  No results to analyze</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+SciMLBenchmarks.weave_file(&quot;benchmarks/OptimizationCUTEst&quot;,&quot;CUTEst_unbounded.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.10
+Commit 95f30e51f41 (2025-06-27 09:51 UTC)
+Build Info:
+  Official https://julialang.org/ release
+Platform Info:
+  OS: Linux (x86_64-linux-gnu)
+  CPU: 128 × AMD EPYC 7502 32-Core Processor
+  WORD_SIZE: 64
+  LIBM: libopenlibm
+  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Environment:
+  JULIA_CPU_THREADS = 128
+  JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953:
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/OptimizationCUTEst/Project.toml`
+⌃ [1b53aba6] CUTEst v1.3.2
+⌃ [a93c6f00] DataFrames v1.7.0
+⌃ [b6b21f68] Ipopt v1.10.6
+⌃ [b8f27783] MathOptInterface v1.42.1
+⌃ [a4795742] NLPModels v0.21.5
+⌅ [7f7a1694] Optimization v4.5.0
+⌃ [fd9f6733] OptimizationMOI v0.5.5
+⌅ [064b21be] OptimizationNLPModels v0.0.2
+⌃ [36348300] OptimizationOptimJL v0.4.3
+⌃ [42dfb2eb] OptimizationOptimisers v0.3.8
+⌃ [91a5bcdd] Plots v1.40.17
+  [31c91b34] SciMLBenchmarks v0.1.3
+⌃ [2913bbd2] StatsBase v0.34.6
+⌃ [f3b207a7] StatsPlots v0.15.7
+  [de0858da] Printf
+  [10745b16] Statistics v1.10.0
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/OptimizationCUTEst/Manifest.toml`
+⌃ [47edcb42] ADTypes v1.16.0
+  [621f4979] AbstractFFTs v1.5.0
+  [1520ce14] AbstractTrees v0.4.5
+⌃ [7d9f7c33] Accessors v0.1.42
+⌃ [79e6a3ab] Adapt v4.3.0
+  [66dad0bd] AliasTables v1.1.3
+  [ec485272] ArnoldiMethod v0.4.0
+  [7d9fca2a] Arpack v0.5.4
+⌃ [4fba245c] ArrayInterface v7.19.0
+⌃ [4c555306] ArrayLayouts v1.11.2
+  [13072b0f] AxisAlgorithms v1.1.0
+⌃ [6e4b80f9] BenchmarkTools v1.6.0
+  [e2ed5e7c] Bijections v0.2.2
+  [d1d4a3ce] BitFlags v0.1.9
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
+⌃ [8e7c35d0] BlockArrays v1.7.0
+⌃ [70df07ce] BracketingNonlinearSolve v1.3.0
+⌃ [2a0fbf3d] CPUSummary v0.2.6
+⌃ [1b53aba6] CUTEst v1.3.2
+⌃ [d360d2e6] ChainRulesCore v1.25.2
+  [fb6a15b2] CloseOpenIntervals v0.1.13
+  [aaaa29a8] Clustering v0.15.8
+  [523fee87] CodecBzip2 v0.8.5
+  [944b1d66] CodecZlib v0.7.8
+⌃ [35d6a980] ColorSchemes v3.30.0
+  [3da002f7] ColorTypes v0.12.1
+  [c3611d14] ColorVectorSpace v0.11.0
+  [5ae59095] Colors v0.13.1
+⌃ [861a8166] Combinatorics v1.0.3
+⌅ [a80b9123] CommonMark v0.9.1
+⌃ [38540f10] CommonSolve v0.2.4
+  [bbf7d656] CommonSubexpressions v0.3.1
+  [f70d9fcc] CommonWorldInvalidations v1.0.0
+⌃ [34da2185] Compat v4.18.0
+  [b152e2b5] CompositeTypes v0.1.4
+  [a33af91c] CompositionsBase v0.1.2
+  [2569d6c7] ConcreteStructs v0.2.3
+  [f0e56b4a] ConcurrentUtilities v2.5.0
+⌃ [8f4d0f93] Conda v1.10.2
+  [88cd18e8] ConsoleProgressMonitor v0.1.2
+  [187b0558] ConstructionBase v1.6.0
+  [d38c429a] Contour v0.6.3
+  [adafc99b] CpuId v0.3.1
+  [a8cc5b0e] Crayons v4.1.1
+  [9a962f9c] DataAPI v1.16.0
+⌃ [a93c6f00] DataFrames v1.7.0
+⌅ [864edb3b] DataStructures v0.18.22
+  [e2d170a0] DataValueInterfaces v1.0.0
+  [8bb1440f] DelimitedFiles v1.9.1
+⌃ [2b5f629d] DiffEqBase v6.181.0
+⌃ [459566f4] DiffEqCallbacks v4.8.0
+⌃ [77a26b50] DiffEqNoiseProcess v5.24.1
+  [163ba53b] DiffResults v1.1.0
+  [b552c78f] DiffRules v1.15.1
+⌃ [a0c0ee7d] DifferentiationInterface v0.7.4
+⌃ [8d63f2c5] DispatchDoctor v0.4.26
+  [b4f34e82] Distances v0.10.12
+⌃ [31c24e10] Distributions v0.25.120
+  [ffbed154] DocStringExtensions v0.9.5
+  [5b8099bc] DomainSets v0.7.16
+⌃ [7c1d4256] DynamicPolynomials v0.6.2
+⌃ [06fc5a27] DynamicQuantities v1.8.0
+  [4e289a0a] EnumX v1.0.5
+⌃ [f151be2c] EnzymeCore v0.8.12
+  [460bff9d] ExceptionUnwrapping v0.1.11
+  [e2ba6199] ExprTools v0.1.10
+  [55351af7] ExproniconLite v0.10.14
+⌃ [c87230d0] FFMPEG v0.4.4
+⌃ [7a1cc6ca] FFTW v1.9.0
+  [7034ab61] FastBroadcast v0.3.5
+  [9aa1b823] FastClosures v0.3.2
+⌃ [a4df4552] FastPower v1.1.3
+⌃ [1a297f60] FillArrays v1.13.0
+⌃ [64ca27bc] FindFirstFunctions v1.4.1
+⌃ [6a86dc24] FiniteDiff v2.27.0
+  [53c48c17] FixedPointNumbers v0.8.5
+  [1fa38f19] Format v1.3.7
+⌃ [f6369f11] ForwardDiff v1.0.1
+  [069b7b12] FunctionWrappers v1.1.3
+  [77dc65aa] FunctionWrappersWrappers v0.1.3
+  [d9f16b24] Functors v0.5.2
+  [46192b85] GPUArraysCore v0.2.0
+⌃ [28b8d3ca] GR v0.73.17
+⌃ [d7ba0133] Git v1.4.0
+⌃ [c27321d9] Glob v1.3.1
+⌃ [86223c79] Graphs v1.13.0
+  [42e2da0e] Grisu v1.0.2
+⌃ [cd3eb016] HTTP v1.10.17
+  [eafb193a] Highlights v0.5.3
+  [34004b35] HypergeometricFunctions v0.3.28
+⌃ [7073ff75] IJulia v1.29.2
+  [615f187c] IfElse v0.1.1
+⌅ [3263718b] ImplicitDiscreteSolve v0.1.3
+  [d25df0c9] Inflate v0.1.5
+⌃ [842dd82b] InlineStrings v1.4.4
+  [18e54dd8] IntegerMathUtils v0.1.3
+⌅ [a98d9a8b] Interpolations v0.15.1
+⌃ [8197267c] IntervalSets v0.7.11
+  [3587e190] InverseFunctions v0.1.17
+  [41ab1584] InvertedIndices v1.3.1
+⌃ [b6b21f68] Ipopt v1.10.6
+⌃ [92d709cd] IrrationalConstants v0.2.4
+  [82899510] IteratorInterfaceExtensions v1.0.0
+  [1019f520] JLFzf v0.1.11
+  [692b3bcd] JLLWrappers v1.7.1
+⌅ [682c06a0] JSON v0.21.4
+  [0f8b85d8] JSON3 v1.14.3
+  [ae98c720] Jieko v0.2.1
+⌃ [98e50ef6] JuliaFormatter v2.1.6
+⌅ [70703baa] JuliaSyntax v0.4.10
+⌃ [ccbc3e58] JumpProcesses v9.16.1
+⌃ [5ab0869b] KernelDensity v0.6.10
+⌃ [ba0b0d4f] Krylov v0.10.1
+  [5be7bae1] LBFGSB v0.4.1
+  [b964fa9f] LaTeXStrings v1.4.0
+⌃ [23fbe1c1] Latexify v0.16.8
+  [10f19ff3] LayoutPointers v0.1.17
+⌃ [5078a376] LazyArrays v2.6.2
+  [1d6d02ad] LeftChildRightSiblingTrees v0.2.1
+⌃ [87fe0de2] LineSearch v0.1.4
+⌃ [d3d80556] LineSearches v7.4.0
+⌃ [5c8ed15e] LinearOperators v2.10.0
+⌃ [7ed4a6bd] LinearSolve v3.25.0
+  [2ab3a3ac] LogExpFunctions v0.3.29
+⌃ [e6f89c97] LoggingExtras v1.1.0
+  [d8e11817] MLStyle v0.4.17
+  [1914dd2f] MacroTools v0.5.16
+  [d125e4d3] ManualMemory v0.1.8
+⌃ [b8f27783] MathOptInterface v1.42.1
+  [bb5d69b7] MaybeInplace v0.1.4
+  [739be429] MbedTLS v1.1.9
+⌃ [442fdcdd] Measures v0.3.2
+  [e1d29d7a] Missings v1.2.0
+⌅ [961ee093] ModelingToolkit v10.14.0
+  [2e0e35c7] Moshi v0.3.7
+  [46d2c3a1] MuladdMacro v0.2.4
+⌃ [102ac46a] MultivariatePolynomials v0.5.9
+  [6f286f6a] MultivariateStats v0.10.3
+  [ffc61752] Mustache v1.0.21
+⌃ [d8a4904e] MutableArithmetics v1.6.4
+⌃ [a4795742] NLPModels v0.21.5
+⌅ [d41bc354] NLSolversBase v7.10.0
+  [77ba4419] NaNMath v1.1.3
+⌃ [b8a86587] NearestNeighbors v0.4.22
+⌃ [8913a72c] NonlinearSolve v4.10.0
+⌅ [be0214bd] NonlinearSolveBase v1.13.0
+⌃ [5959db7a] NonlinearSolveFirstOrder v1.6.0
+⌃ [9a2c21bd] NonlinearSolveQuasiNewton v1.7.0
+⌃ [26075421] NonlinearSolveSpectralMethods v1.2.0
+  [510215fc] Observables v0.5.5
+  [6fe1bfb0] OffsetArrays v1.17.0
+⌃ [4d8831e6] OpenSSL v1.5.0
+⌅ [429524aa] Optim v1.13.2
+⌃ [3bd65402] Optimisers v0.4.6
+⌅ [7f7a1694] Optimization v4.5.0
+⌅ [bca83a33] OptimizationBase v2.10.0
+⌃ [fd9f6733] OptimizationMOI v0.5.5
+⌅ [064b21be] OptimizationNLPModels v0.0.2
+⌃ [36348300] OptimizationOptimJL v0.4.3
+⌃ [42dfb2eb] OptimizationOptimisers v0.3.8
+  [bac558e1] OrderedCollections v1.8.1
+⌅ [bbf590c4] OrdinaryDiffEqCore v1.26.2
+⌃ [90014a1f] PDMats v0.11.35
+  [d96e819e] Parameters v0.12.3
+  [69de0a69] Parsers v2.8.3
+  [ccf2f8ad] PlotThemes v3.3.0
+⌃ [995b91a9] PlotUtils v1.4.3
+⌃ [91a5bcdd] Plots v1.40.17
+⌃ [e409e4f3] PoissonRandom v0.4.6
+  [f517fe37] Polyester v0.7.18
+  [1d0040c9] PolyesterWeave v0.2.2
+  [2dfb63ee] PooledArrays v1.4.3
+  [85a6dd25] PositiveFactorizations v0.2.4
+⌅ [aea7be01] PrecompileTools v1.2.1
+⌃ [21216c6a] Preferences v1.4.3
+⌅ [08abe8d2] PrettyTables v2.4.0
+  [27ebfcd6] Primes v0.5.7
+⌃ [33c8b6b6] ProgressLogging v0.1.5
+⌃ [92933f4c] ProgressMeter v1.10.4
+  [43287f4e] PtrArrays v1.3.0
+  [1fd47b50] QuadGK v2.11.2
+  [be4d8f0f] Quadmath v0.5.13
+  [74087812] Random123 v1.7.1
+  [e6cf234a] RandomNumbers v1.6.0
+  [c84ed2f1] Ratios v0.4.5
+  [3cdcf5f2] RecipesBase v1.3.4
+  [01d81517] RecipesPipeline v0.6.12
+⌃ [731186ca] RecursiveArrayTools v3.36.0
+  [189a3867] Reexport v1.2.2
+  [05181044] RelocatableFolders v1.0.1
+  [ae029012] Requires v1.3.1
+⌃ [ae5879a3] ResettableStacks v1.1.1
+⌅ [79098fc4] Rmath v0.8.0
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.15
+⌃ [9dfe8606] SCCNonlinearSolve v1.4.0
+  [94e857df] SIMDTypes v0.1.0
+⌅ [0bca4576] SciMLBase v2.107.0
+  [31c91b34] SciMLBenchmarks v0.1.3
+⌃ [19f34311] SciMLJacobianOperators v0.1.8
+⌃ [c0aeaf25] SciMLOperators v1.4.0
+⌃ [431bcebd] SciMLPublic v1.0.0
+⌃ [53ae85a6] SciMLStructures v1.7.0
+  [6c6a2e73] Scratch v1.3.0
+⌃ [91c51154] SentinelArrays v1.4.8
+  [efcf1570] Setfield v1.1.2
+  [992d4aef] Showoff v1.0.3
+  [777ac1f9] SimpleBufferStream v1.2.0
+⌃ [727e6d20] SimpleNonlinearSolve v2.7.0
+⌃ [699a6c99] SimpleTraits v0.9.4
+  [ce78b400] SimpleUnPack v1.1.0
+  [b85f4697] SoftGlobalScope v1.1.0
+  [a2af1166] SortingAlgorithms v1.2.2
+⌃ [9f842d2f] SparseConnectivityTracer v1.0.0
+⌃ [0a514795] SparseMatrixColorings v0.4.21
+⌃ [276daf66] SpecialFunctions v2.5.1
+⌃ [860ef19b] StableRNGs v1.0.3
+⌃ [aedffcd0] Static v1.2.0
+  [0d7ed370] StaticArrayInterface v1.8.0
+⌃ [90137ffa] StaticArrays v1.9.14
+⌃ [1e83bf80] StaticArraysCore v1.4.3
+⌃ [82ae8749] StatsAPI v1.7.1
+⌃ [2913bbd2] StatsBase v0.34.6
+⌃ [4c63d2b9] StatsFuns v1.5.0
+⌃ [f3b207a7] StatsPlots v0.15.7
+⌃ [7792a7ef] StrideArraysCore v0.5.7
+  [69024149] StringEncodings v0.3.7
+⌃ [892a3eda] StringManipulation v0.4.1
+  [856f2bd8] StructTypes v1.11.0
+⌃ [2efcf032] SymbolicIndexingInterface v0.3.42
+⌅ [19f23fe9] SymbolicLimits v0.2.2
+⌅ [d1185830] SymbolicUtils v3.29.0
+⌅ [0c5d862f] Symbolics v6.48.1
+  [ab02a1b2] TableOperations v1.2.0
+  [3783bdb8] TableTraits v1.0.1
+  [bd369af6] Tables v1.12.1
+  [ed4db957] TaskLocalValues v0.1.3
+  [62fd8b95] TensorCore v0.1.1
+  [8ea1fca8] TermInterface v2.0.0
+  [5d786b92] TerminalLoggers v0.1.7
+  [1c621080] TestItems v1.0.0
+  [8290d209] ThreadingUtilities v0.5.5
+  [a759f4b9] TimerOutputs v0.5.29
+  [3bb67fe8] TranscodingStreams v0.11.3
+⌃ [410a4b4d] Tricks v0.1.11
+  [781d530d] TruncatedStacktraces v1.4.0
+  [5c2747f8] URIs v1.6.1
+  [3a884ed6] UnPack v1.0.2
+  [1cfade01] UnicodeFun v0.4.1
+⌅ [1986cc42] Unitful v1.24.0
+  [45397f5d] UnitfulLatexify v1.7.0
+  [a7c27f48] Unityper v0.1.6
+  [41fe7b60] Unzip v0.2.0
+  [81def892] VersionParsing v1.3.0
+  [897b6980] WeakValueDicts v0.1.0
+  [44d3d7a6] Weave v0.10.12
+  [cc8bc4a8] Widgets v0.6.7
+⌃ [efce3f68] WoodburyMatrices v1.0.0
+⌃ [ddb6d928] YAML v0.4.14
+⌃ [c2297ded] ZMQ v1.4.1
+  [ae81ac8f] ASL_jll v0.1.3+0
+⌅ [68821587] Arpack_jll v3.5.1+1
+  [6e34b625] Bzip2_jll v1.0.9+0
+⌃ [bb5f6f25] CUTEst_jll v2.5.3+0
+  [83423d85] Cairo_jll v1.18.5+0
+  [ee1fde0b] Dbus_jll v1.16.2+0
+  [2702e6a9] EpollShim_jll v0.0.20230411+1
+⌃ [2e619515] Expat_jll v2.6.5+0
+⌅ [b22a6f82] FFMPEG_jll v7.1.1+0
+  [f5851436] FFTW_jll v3.3.11+0
+⌃ [a3f928ae] Fontconfig_jll v2.16.0+0
+  [d7e528f0] FreeType2_jll v2.13.4+0
+  [559328eb] FriBidi_jll v1.0.17+0
+⌃ [0656b61e] GLFW_jll v3.4.0+2
+⌅ [d2c73de3] GR_jll v0.73.17+0
+  [b0724c58] GettextRuntime_jll v0.22.4+0
+⌃ [f8c6e375] Git_jll v2.50.1+0
+⌃ [7746bdde] Glib_jll v2.84.3+0
+  [3b182d85] Graphite2_jll v1.3.15+0
+  [2e76f6c2] HarfBuzz_jll v8.5.1+0
+⌃ [e33a78d0] Hwloc_jll v2.12.1+0
+  [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
+⌅ [9cc047cb] Ipopt_jll v300.1400.1701+0
+⌃ [aacddb02] JpegTurbo_jll v3.1.1+0
+  [c1c5ebd0] LAME_jll v3.100.3+0
+  [88015f11] LERC_jll v4.0.1+0
+  [1d63c593] LLVMOpenMP_jll v18.1.8+0
+  [dd4b983a] LZO_jll v2.10.3+0
+  [81d17ec3] L_BFGS_B_jll v3.0.1+0
+⌅ [e9f186c6] Libffi_jll v3.4.7+0
+  [7e76a0d4] Libglvnd_jll v1.7.1+1
+  [94ce4f54] Libiconv_jll v1.18.0+0
+⌃ [4b2f31a3] Libmount_jll v2.41.0+0
+⌃ [89763e89] Libtiff_jll v4.7.1+0
+⌃ [38a345b3] Libuuid_jll v2.41.0+0
+  [d00139f3] METIS_jll v5.1.3+0
+  [856f044c] MKL_jll v2025.2.0+0
+⌅ [d7ed1dd3] MUMPS_seq_jll v500.800.0+0
+  [e7412a2a] Ogg_jll v1.3.6+0
+⌅ [656ef2d0] OpenBLAS32_jll v0.3.24+0
+⌃ [9bd350c2] OpenSSH_jll v10.0.1+0
+⌅ [458c3c95] OpenSSL_jll v3.5.1+0
+  [efe28fd5] OpenSpecFun_jll v0.5.6+0
+⌃ [91d4177d] Opus_jll v1.5.2+0
+⌃ [36c8627f] Pango_jll v1.56.3+0
+⌅ [30392449] Pixman_jll v0.44.2+0
+⌃ [c0090381] Qt6Base_jll v6.8.2+1
+  [629bc702] Qt6Declarative_jll v6.8.2+1
+  [ce943373] Qt6ShaderTools_jll v6.8.2+1
+⌃ [e99dba38] Qt6Wayland_jll v6.8.2+1
+  [f50d1b31] Rmath_jll v0.5.1+0
+⌅ [54dcf436] SIFDecode_jll v2.6.3+0
+⌅ [319450e9] SPRAL_jll v2025.5.20+0
+  [a44049a8] Vulkan_Loader_jll v1.3.243+0
+  [a2964d1f] Wayland_jll v1.24.0+0
+⌃ [ffd25f8a] XZ_jll v5.8.1+0
+  [f67eecfb] Xorg_libICE_jll v1.1.2+0
+  [c834827a] Xorg_libSM_jll v1.2.6+0
+  [4f6342f7] Xorg_libX11_jll v1.8.12+0
+  [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
+  [935fb764] Xorg_libXcursor_jll v1.2.4+0
+  [a3789734] Xorg_libXdmcp_jll v1.1.6+0
+  [1082639a] Xorg_libXext_jll v1.3.7+0
+⌃ [d091e8ba] Xorg_libXfixes_jll v6.0.1+0
+  [a51aa0fd] Xorg_libXi_jll v1.8.3+0
+  [d1454406] Xorg_libXinerama_jll v1.1.6+0
+  [ec84b674] Xorg_libXrandr_jll v1.5.5+0
+  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
+  [cc61e674] Xorg_libxkbfile_jll v1.1.3+0
+⌃ [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.5+0
+  [12413925] Xorg_xcb_util_image_jll v0.4.1+0
+  [2def613f] Xorg_xcb_util_jll v0.4.1+0
+  [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
+  [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
+  [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
+  [35661453] Xorg_xkbcomp_jll v1.4.7+0
+  [33bec58e] Xorg_xkeyboard_config_jll v2.44.0+0
+  [c5fb5394] Xorg_xtrans_jll v1.6.0+0
+  [8f1865be] ZeroMQ_jll v4.3.6+0
+  [3161d3a3] Zstd_jll v1.5.7+1
+  [35ca27e7] eudev_jll v3.2.14+0
+  [214eeab7] fzf_jll v0.61.1+0
+⌃ [a4ae2306] libaom_jll v3.12.1+0
+  [0ac62f75] libass_jll v0.17.4+0
+  [1183f4f0] libdecor_jll v0.2.2+0
+  [2db6ffa8] libevdev_jll v1.13.4+0
+  [f638f0a6] libfdk_aac_jll v2.0.4+0
+  [36db933b] libinput_jll v1.28.1+0
+⌃ [b53b4c65] libpng_jll v1.6.50+0
+  [a9144af2] libsodium_jll v1.0.21+0
+  [f27f6e37] libvorbis_jll v1.3.8+0
+  [009596ad] mtdev_jll v1.1.7+0
+⌃ [1317d2d5] oneTBB_jll v2022.0.0+0
+⌅ [1270edf5] x264_jll v10164.0.1+0
+  [dfaa095f] x265_jll v4.1.0+0
+⌃ [d8fb68d0] xkbcommon_jll v1.9.2+0
+  [0dad84c5] ArgTools v1.1.1
+  [56f22d72] Artifacts
+  [2a0f44e3] Base64
+  [ade2ca70] Dates
+  [8ba89e20] Distributed
+  [f43a241f] Downloads v1.6.0
+  [7b1f6079] FileWatching
+  [9fa8497b] Future
+  [b77e0a4c] InteractiveUtils
+  [4af54fe1] LazyArtifacts
+  [b27032c2] LibCURL v0.6.4
+  [76f85450] LibGit2
+  [8f399da3] Libdl
+  [37e2e46d] LinearAlgebra
+  [56ddb016] Logging
+  [d6f4376e] Markdown
+  [a63ad114] Mmap
+  [ca575930] NetworkOptions v1.2.0
+  [44cfe95a] Pkg v1.10.0
+  [de0858da] Printf
+  [9abbd945] Profile
+  [3fa0cd96] REPL
+  [9a3f8284] Random
+  [ea8e919c] SHA v0.7.0
+  [9e88b42a] Serialization
+  [1a1011a3] SharedArrays
+  [6462fe0b] Sockets
+  [2f01184e] SparseArrays v1.10.0
+  [10745b16] Statistics v1.10.0
+  [4607b0f0] SuiteSparse
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
+  [8dfed614] Test
+  [cf7118a7] UUIDs
+  [4ec0a83e] Unicode
+  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
+  [deac9b47] LibCURL_jll v8.4.0+0
+  [e37daf67] LibGit2_jll v1.6.4+0
+  [29816b5a] LibSSH2_jll v1.11.0+1
+  [c8ffd9c3] MbedTLS_jll v2.28.2+1
+  [14a3606d] MozillaCACerts_jll v2023.1.10
+  [4536629a] OpenBLAS_jll v0.3.23+4
+  [05823500] OpenLibm_jll v0.8.5+0
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.2.1+1
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.11.0+0
+  [8e850ede] nghttp2_jll v1.52.0+1
+  [3f19e933] p7zip_jll v17.4.0+2
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../CUTEst_quadratic/">« CUTEst Quadratic Programming with Linear Constraints Benchmarks</a><a class="docs-footer-nextpage" href="../CUTEst_unconstrained/">CUTEst Unconstrained Nonlinear Optimization Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 24 February 2026 12:36">Tuesday 24 February 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
