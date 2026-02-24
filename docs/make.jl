@@ -14,7 +14,7 @@ makedocs(
     clean=true, doctest=false,
     warnonly = [:footnote],
     format=Documenter.HTML(#analytics = "UA-90474609-3",
-        size_threshold=1_000_000,
+        size_threshold=1_000_000_000,
         assets=["assets/favicon.ico"],
         canonical="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/"),
     pages=pages
