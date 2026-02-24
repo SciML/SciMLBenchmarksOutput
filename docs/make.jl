@@ -12,6 +12,7 @@ makedocs(
     authors="Chris Rackauckas",
     modules=[SciMLBenchmarksOutput],
     clean=true, doctest=false,
+    warnonly = [:footnote],
     format=Documenter.HTML(#analytics = "UA-90474609-3",
         assets=["assets/favicon.ico"],
         canonical="https://benchmarks.sciml.ai/stable/"),
