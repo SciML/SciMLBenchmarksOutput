@@ -1,0 +1,2308 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Synapse model · The SciML Benchmarks</title><meta name="title" content="Synapse model · The SciML Benchmarks"/><meta property="og:title" content="Synapse model · The SciML Benchmarks"/><meta property="twitter:title" content="Synapse model · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/HybridJumps/Synapse/"/><meta property="twitter:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/HybridJumps/Synapse/"/><link rel="canonical" href="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/HybridJumps/Synapse/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li><li><a class="tocitem" href="../../DAE/slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../MultivariateHawkes/">Multivariate Hawkes Model</a></li><li class="is-active"><a class="tocitem" href>Synapse model</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Model-and-example-solutions"><span>Model and example solutions</span></a></li><li><a class="tocitem" href="#Parameters-and-initial-conditions"><span>Parameters and initial conditions</span></a></li><li><a class="tocitem" href="#Model"><span>Model</span></a></li><li><a class="tocitem" href="#Algorithms-to-benchmark"><span>Algorithms to benchmark</span></a></li><li><a class="tocitem" href="#Example-solutions"><span>Example solutions</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmarking-performance"><span>Benchmarking performance</span></a></li><li class="toplevel"><a class="tocitem" href="#References"><span>References</span></a></li></ul></li><li><a class="tocitem" href="../VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_quadratic/">CUTEst Quadratic Programming with Linear Constraints Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unbounded/">CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unconstrained/">CUTEst Unconstrained Nonlinear Optimization Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Hybrid (Time-Dependent) Jump Processes</a></li><li class="is-active"><a href>Synapse model</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Synapse model</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/HybridJumps/Synapse.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Synapse-model"><a class="docs-heading-anchor" href="#Synapse-model">Synapse model</a><a id="Synapse-model-1"></a><a class="docs-heading-anchor-permalink" href="#Synapse-model" title="Permalink"></a></h1><pre><code class="language-julia hljs">using PiecewiseDeterministicMarkovProcesses, JumpProcesses, OrdinaryDiffEq
+using Catalyst, Parameters, LazySets, StaticArrays, Distributions, LinearAlgebra,
+      SparseArrays, RecursiveArrayTools
+using Plots
+using BenchmarkTools
+const PDMP = PiecewiseDeterministicMarkovProcesses
+const fmt = :png</code></pre><pre><code class="nohighlight hljs">:png</code></pre><p>This benchmark implements the stochastic model of hippocampal synaptic plasticity with geometrical readount of enzyme dinamics from Rodrigues et al. [1]. The source code for the model was obtained from the Github repository <a href="https://github.com/rveltz/SynapseElife/">SynapseElife</a> that accompanies the paper. The original source code is licensed with the MIT license. We have added comments on the parts of the code that were directly borrowed from the repository.</p><p>Initial idea for benchmarking this model comes from a <a href="https://discourse.julialang.org/t/help-me-beat-lsoda/88236">Discourse discussion</a>.</p><h1 id="Model-and-example-solutions"><a class="docs-heading-anchor" href="#Model-and-example-solutions">Model and example solutions</a><a id="Model-and-example-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Model-and-example-solutions" title="Permalink"></a></h1><h2 id="Parameters-and-initial-conditions"><a class="docs-heading-anchor" href="#Parameters-and-initial-conditions">Parameters and initial conditions</a><a id="Parameters-and-initial-conditions-1"></a><a class="docs-heading-anchor-permalink" href="#Parameters-and-initial-conditions" title="Permalink"></a></h2><h3 id="Presynaptic-parameters"><a class="docs-heading-anchor" href="#Presynaptic-parameters">Presynaptic parameters</a><a id="Presynaptic-parameters-1"></a><a class="docs-heading-anchor-permalink" href="#Presynaptic-parameters" title="Permalink"></a></h3><pre><code class="language-julia hljs"># adapted from  SynapseElife/src/ParamsSynapse.jl
+@with_kw struct PreSynapseParams
+    &quot;recovery constant of pre calcium decay function.&quot;
+    τ_rec::Float64 = 20000
+    &quot;fraction of decay constant of pre calcium decay f.&quot;
+    δ_ca::Float64 = 0.0004
+    &quot;decay time constant of pre calcium.&quot;
+    τ_pre::Float64 = 20
+    &quot;decay time constant for AP induced by EPSP.&quot;
+    τ_V::Float64 = 40
+    &quot;delay to EPSPs onset and evoked AP.&quot;
+    δ_delay_AP::Float64 = 15.0
+    &quot;initial conditions ready releaseble pool.&quot;
+    D_0::Int64 = 25
+    &quot;initial conditions recovery pool.&quot;
+    R_0::Int64 = 30
+    &quot;rate for `D -&gt; R`.&quot;
+    τ_R::Float64 = 5000
+    &quot;rate for `R -&gt; D`.&quot;
+    τ_D::Float64 = 45000
+    &quot;rate for `infinite reservoir -&gt; R`.&quot;
+    τ_R_ref::Float64 = 40000
+    &quot;sigmoid parameter for release probability.&quot;
+    s::Float64 = 2.0
+    &quot;sigmoid parameter for release probability.&quot;
+    h::Float64 = 0.7 # this value changes given Ca external concentration
+    &quot;sampling rate for plotting / printing.&quot;
+    sampling_rate::Float64 = 1.0
+end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#225&quot;.PreSynapseParams</code></pre><h3 id="Postsynpatic-parameters"><a class="docs-heading-anchor" href="#Postsynpatic-parameters">Postsynpatic parameters</a><a id="Postsynpatic-parameters-1"></a><a class="docs-heading-anchor-permalink" href="#Postsynpatic-parameters" title="Permalink"></a></h3><pre><code class="language-julia hljs"># adapted from  SynapseElife/src/ParamsSynapse.jl
+@with_kw struct SynapseParams{Tp}
+    &quot;polygonal threshold.&quot;
+    LTP_region::Tp = VPolygon([[6.35, 1.4], [10, 1.4], [6.35, 29.5], [10, 29.5]]) # VPolygon([SVector(6.35,1.4), SVector(10,1.4),SVector(6.35,29.5), SVector(10,29.5)])
+    &quot;polygonal threshold.&quot;
+    LTD_region::Tp = VPolygon([
+        [6.35, 1.4],
+        [6.35, 23.25],
+        [6.35, 29.5],
+        [1.85, 11.327205882352938],
+        [1.85, 23.25],
+        [3.7650354609929075, 1.4],
+        [5.650675675675676, 29.5]
+    ]) # VPolygon([SVector(6.35,1.4),SVector(6.35,23.25),SVector(6.35,29.5),SVector(1.85,11.327205882352938),SVector(1.85,23.25),SVector(3.7650354609929075,1.4),SVector(5.650675675675676,29.5)])
+    &quot;activation rates for thresholds.&quot;
+    a_D::Float64 = 0.1
+    &quot;activation rates for thresholds.&quot;
+    b_D::Float64 = 0.00002
+    &quot;activation rates for thresholds.&quot;
+    a_P::Float64 = 0.2
+    &quot;activation rates for thresholds.&quot;
+    b_P::Float64 = 0.0001
+    &quot;activation rates for thresholds.&quot;
+    t_D::Float64 = 18000
+    &quot;activation rates for thresholds.&quot;
+    t_P::Float64 = 13000
+    &quot;sigmoids controlling the rate of plasticity change.&quot;
+    K_D::Float64 = 80000.0
+    &quot;sigmoids controlling the rate of plasticity change.&quot;
+    K_P::Float64 = 13000.0
+    &quot;plasticity states.&quot;
+    rest_plstcty::Int64 = 100
+    &quot;simulation.&quot;
+    t_end::Float64 = 100
+    &quot;simulation.&quot;
+    sampling_rate::Float64 = 10
+    &quot;biophysical and GHK parameters.&quot;
+    temp_rates::Float64 = 35.0
+    &quot;biophysical and GHK parameters.&quot;
+    age::Float64 = 60.0
+    &quot;biophysical and GHK parameters.&quot;
+    faraday::Float64 = 96485e-6 * 1e-3
+    &quot;biophysical and GHK parameters.&quot;
+    Ca_ext::Float64 = 2.5e3
+    &quot;biophysical and GHK parameters.&quot;
+    Ca_infty::Float64 = 50e-3
+    &quot;biophysical and GHK parameters.&quot;
+    tau_ca::Float64 = 10.0
+    &quot;biophysical and GHK parameters.&quot;
+    D_Ca::Float64 = 0.3338
+    &quot;biophysical and GHK parameters.&quot;
+    f_Ca::Float64 = 0.1
+    &quot;biophysical and GHK parameters.&quot;
+    perm::Float64 = -0.04583333333333333
+    &quot;biophysical and GHK parameters.&quot;
+    z::Float64 = 2.0
+    &quot;biophysical and GHK parameters.&quot;
+    gas::Float64 = 8.314e-6
+    &quot;biophysical and GHK parameters.&quot;
+    p_release::NTuple{4,
+        Float64} = (
+        0.004225803293622208, 1708.4124496514878, 1.3499793762587964, 0.6540248201173222)
+    &quot;backpropagation attenuation.&quot;
+    trec::Float64 = 2000
+    &quot;backpropagation attenuation.&quot;
+    trec_soma::Float64 = 500
+    &quot;backpropagation attenuation.&quot;
+    delta_decay::Float64 = 1.7279e-5
+    &quot;backpropagation attenuation.&quot;
+    p_age_decay_bap::NTuple{
+        3, Float64} = (0.13525468256031167, 16.482800452454164, 5.564691354645679)
+    &quot;backpropagation attenuation.&quot;
+    delta_soma::Float64 = 2.5e-5 *
+                          (p_age_decay_bap[3] /
+                           (1 + exp(p_age_decay_bap[1] * (age - p_age_decay_bap[2]))))
+    &quot;backpropagation attenuation.&quot;
+    delta_aux::Float64 = 2.304e-5
+    &quot;backpropagation attenuation.&quot;
+    injbap::Float64 = 2.0
+    &quot;backpropagation attenuation.&quot;
+    soma_dist::Float64 = 200.0
+    &quot;backpropagation attenuation.&quot;
+    p_dist::NTuple{4,
+        Float64} = (
+        0.019719018173341547, 230.3206470553394, 1.4313810030893268, 0.10406540965358434)
+    &quot;backpropagation attenuation.&quot;
+    ϕ_dist::Float64 = (p_dist[4] +
+                       p_dist[3] / (1 + exp(p_dist[1] * (soma_dist - p_dist[2]))))
+    &quot;backpropagation attenuation.&quot;
+    I_clamp::Float64 = 0.0
+    &quot;Na and K.&quot;
+    gamma_Na::Float64 = 8e2
+    &quot;Na and K.&quot;
+    Erev_Na::Float64 = 50.0
+    &quot;Na and K.&quot;
+    gamma_K::Float64 = 4e1
+    &quot;Na and K.&quot;
+    Erev_K::Float64 = -90.0
+    &quot;NMDAr temperature modification.&quot;
+    p_nmda_frwd::NTuple{4,
+        Float64} = (
+        -0.09991802053299291, -37.63132907014948, 1239.0673283348326, -1230.6805720050966)
+    &quot;NMDAr temperature modification.&quot;
+    frwd_T_chng_NMDA::Float64 = (
+        p_nmda_frwd[4] +
+        p_nmda_frwd[3] / (1 + exp(p_nmda_frwd[1] * (temp_rates - p_nmda_frwd[2])))
+    )
+    &quot;NMDAr temperature modification.&quot;
+    p_nmda_bcwd::NTuple{4,
+        Float64} = (
+        -0.10605060141396823, 98.99939433046647, 1621.6168608608068, 3.0368551011554143)
+    &quot;NMDAr temperature modification.&quot;
+    bcwd_T_chng_NMDA::Float64 = (
+        p_nmda_bcwd[4] +
+        p_nmda_bcwd[3] / (1 + exp(p_nmda_bcwd[1] * (temp_rates - p_nmda_bcwd[2])))
+    ) # 0.16031*temp_rates - 0.80775
+    &quot;NMDAr kinetics (GluN2A type), uM-1ms-1.&quot;
+    NMDA_N2A_ka::Float64 = frwd_T_chng_NMDA * 34.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), uM-1ms-1.&quot;
+    NMDA_N2A_kb::Float64 = frwd_T_chng_NMDA * 17.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), uM-1ms-1.&quot;
+    NMDA_N2A_kc::Float64 = frwd_T_chng_NMDA * 127.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), uM-1ms-1.&quot;
+    NMDA_N2A_kd::Float64 = frwd_T_chng_NMDA * 580.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), uM-1ms-1.&quot;
+    NMDA_N2A_ke::Float64 = frwd_T_chng_NMDA * 2508.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), uM-1ms-1.&quot;
+    NMDA_N2A_kf::Float64 = frwd_T_chng_NMDA * 3449.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), ms-1.&quot;
+    NMDA_N2A_k_f::Float64 = bcwd_T_chng_NMDA * 662.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), ms-1.&quot;
+    NMDA_N2A_k_e::Float64 = bcwd_T_chng_NMDA * 2167.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), ms-1.&quot;
+    NMDA_N2A_k_d::Float64 = bcwd_T_chng_NMDA * 2610.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), ms-1.&quot;
+    NMDA_N2A_k_c::Float64 = bcwd_T_chng_NMDA * 161.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), ms-1.&quot;
+    NMDA_N2A_k_b::Float64 = bcwd_T_chng_NMDA * 120.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2A type), ms-1.&quot;
+    NMDA_N2A_k_a::Float64 = bcwd_T_chng_NMDA * 60.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), uM-1ms-1.&quot;
+    NMDA_N2B_sa::Float64 = frwd_T_chng_NMDA * 0.25 * 34.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), uM-1ms-1.&quot;
+    NMDA_N2B_sb::Float64 = frwd_T_chng_NMDA * 0.25 * 17.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), uM-1ms-1.&quot;
+    NMDA_N2B_sc::Float64 = frwd_T_chng_NMDA * 0.25 * 127.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), uM-1ms-1.&quot;
+    NMDA_N2B_sd::Float64 = frwd_T_chng_NMDA * 0.25 * 580.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), uM-1ms-1.&quot;
+    NMDA_N2B_se::Float64 = frwd_T_chng_NMDA * 0.25 * 2508.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), uM-1ms-1.&quot;
+    NMDA_N2B_sf::Float64 = frwd_T_chng_NMDA * 0.25 * 3449.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), ms-1.&quot;
+    NMDA_N2B_s_f::Float64 = bcwd_T_chng_NMDA * 0.23 * 662.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), ms-1.&quot;
+    NMDA_N2B_s_e::Float64 = bcwd_T_chng_NMDA * 0.23 * 2167.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), ms-1.&quot;
+    NMDA_N2B_s_d::Float64 = bcwd_T_chng_NMDA * 0.23 * 2610.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), ms-1.&quot;
+    NMDA_N2B_s_c::Float64 = bcwd_T_chng_NMDA * 0.23 * 161.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), ms-1.&quot;
+    NMDA_N2B_s_b::Float64 = bcwd_T_chng_NMDA * 0.23 * 120.0 * 1e-3
+    &quot;NMDAr kinetics (GluN2B type), ms-1.&quot;
+    NMDA_N2B_s_a::Float64 = bcwd_T_chng_NMDA * 0.23 * 60.0 * 1e-3
+    &quot;NMDA details.&quot;
+    p_nmda::NTuple{4,
+        Float64} = (
+        0.004477162852447629, 2701.3929349701334, 58.38819453272428, 33.949463268365555)
+    &quot;NMDA details.&quot;
+    gamma_nmda::Float64 = (p_nmda[4] +
+                           p_nmda[3] / (1 + exp(p_nmda[1] * (Ca_ext - p_nmda[2])))) * 1e-3
+    &quot;NMDA details.&quot;
+    p_age::NTuple{4,
+        Float64} = (
+        0.09993657672916968, 25.102347872464193, 0.9642137892004939, 0.5075183905839776)
+    &quot;ratio N2B/N2A.&quot;
+    r_NMDA_age::Float64 = rand(Normal(0, 0.05)) + p_age[4] +
+                          p_age[3] / (1 + exp(p_age[1] * (age - p_age[2]))) # 0.5+1.6*exp(-age/16.66) + rand(Normal(0,.05))
+    &quot;ratio N2B/N2A.&quot;
+    N_NMDA::Int64 = 15
+    &quot;ratio N2B/N2A.&quot;
+    N_N2B::Int64 = round(N_NMDA * r_NMDA_age / (r_NMDA_age + 1))
+    &quot;ratio N2B/N2A, using Sinclair ratio.&quot;
+    N_N2A::Int64 = round(N_NMDA / (r_NMDA_age + 1))
+    &quot;other NMDAr parameters.&quot;
+    Erev_nmda::Float64 = 0.0
+    &quot;other NMDAr parameters.&quot;
+    Mg::Float64 = 1.0
+    &quot;AMPAr temperature modification.&quot;
+    p_ampa_frwd::NTuple{
+        3, Float64} = (-0.4737773089201679, 31.7248285571622, 10.273135485873242)
+    &quot;AMPAr temperature modification.&quot;
+    frwd_T_chng_AMPA::Float64 = (p_ampa_frwd[3] /
+                                 (1 + exp(p_ampa_frwd[1] * (temp_rates - p_ampa_frwd[2])))) # temp_rates*0.78-18.7
+    &quot;AMPAr temperature modification.&quot;
+    p_ampa_bcwd::NTuple{
+        3, Float64} = (-0.36705555170278986, 28.976662403966674, 5.134547217640794)
+    &quot;AMPAr temperature modification.&quot;
+    bcwd_T_chng_AMPA::Float64 = (p_ampa_bcwd[3] /
+                                 (1 + exp(p_ampa_bcwd[1] * (temp_rates - p_ampa_bcwd[2])))) # temp_rates*0.37-8.25
+    &quot;AMPAr kinetics, uM-1ms-1.&quot;
+    AMPA_k1::Float64 = frwd_T_chng_AMPA * 1.6 * 1e7 * 1e-6 * 1e-3
+    &quot;AMPAr kinetics, ms-1.&quot;
+    AMPA_k_1::Float64 = bcwd_T_chng_AMPA * 7400 * 1e-3
+    &quot;AMPAr kinetics, ms-1.&quot;
+    AMPA_k_2::Float64 = bcwd_T_chng_AMPA * 0.41 * 1e-3
+    &quot;AMPAr kinetics, ms-1.&quot;
+    AMPA_alpha::Float64 = 2600 * 1e-3
+    &quot;AMPAr kinetics, ms-1.&quot;
+    AMPA_beta::Float64 = 9600 * 1e-3
+    &quot;AMPAr kinetics, ms-1.&quot;
+    AMPA_delta_1::Float64 = 1500 * 1e-3
+    &quot;AMPAr kinetics, ms-1.&quot;
+    AMPA_gamma_1::Float64 = 9.1 * 1e-3
+    &quot;AMPAr kinetics, ms-1.&quot;
+    AMPA_delta_2::Float64 = 170 * 1e-3
+    &quot;AMPAr kinetics, ms-1.&quot;
+    AMPA_gamma_2::Float64 = 42 * 1e-3
+    &quot;AMPAr kinetics, ms-1.&quot;
+    AMPA_delta_0::Float64 = 0.003 * 1e-3
+    &quot;AMPAr kinetics, ms-1.&quot;
+    AMPA_gamma_0::Float64 = 0.83 * 1e-3
+    &quot;AMPAr conductances, nS.&quot;
+    gamma_ampa1::Float64 = 0.5 * 31e-3
+    &quot;AMPAr conductances, nS.&quot;
+    gamma_ampa2::Float64 = 0.5 * 52e-3
+    &quot;AMPAr conductances, nS.&quot;
+    gamma_ampa3::Float64 = 0.5 * 73e-3
+    &quot;AMPAr conductances, AMPAr number.&quot;
+    N_ampa::Int64 = 120
+    &quot;AMPAr conductances, AMPAR reversal potential, mV.&quot;
+    Erev_ampa::Float64 = 0.0
+    &quot;GABAr.&quot;
+    N_GABA::Int64 = 34
+    &quot;GABAr.&quot;
+    p_Cl::NTuple{4,
+        Float64} = (
+        0.09151696057098718, 0.6919298240788684, 243.5159017060495, -92.6496083089155)
+    &quot;GABAr, Cl reversal potential.&quot;
+    Erev_Cl::Float64 = (p_Cl[4] + p_Cl[3] / (1 + exp(p_Cl[1] * (age - p_Cl[2]))))
+    &quot;GABAr, Cl reversal potential.&quot;
+    gamma_GABA::Float64 = 35e-3
+    &quot;GABAr, Cl reversal potential.&quot;
+    GABA_r_b1::Float64 = 1e6 * 1e-6 * 1e-3 * 20
+    &quot;GABAr, Cl reversal potential.&quot;
+    GABA_r_u1::Float64 = 1e3 * 4.6e-3
+    &quot;GABAr, Cl reversal potential.&quot;
+    GABA_r_b2::Float64 = 1e6 * 1e-6 * 1e-3 * 10
+    &quot;GABAr, Cl reversal potential.&quot;
+    GABA_r_u2::Float64 = 1e3 * 9.2e-3
+    &quot;GABAr, Cl reversal potential.&quot;
+    GABA_r_ro1::Float64 = 1e3 * 3.3e-3
+    &quot;GABAr, Cl reversal potential.&quot;
+    GABA_r_ro2::Float64 = 1e3 * 10.6e-3
+    &quot;GABAr, Cl reversal potential.&quot;
+    p_GABA::NTuple{4,
+        Float64} = (
+        0.19127068198185954, 32.16771140618756, -1.2798050197287802, 1.470692263981145)
+    &quot;GABAr, Cl reversal potential.&quot;
+    GABA_r_c1::Float64 = (p_GABA[4] +
+                          p_GABA[3] / (1 + exp(p_GABA[1] * (temp_rates - p_GABA[2])))) *
+                         1e3 *
+                         9.8e-3
+    &quot;GABAr, Cl reversal potential.&quot;
+    GABA_r_c2::Float64 = (p_GABA[4] +
+                          p_GABA[3] / (1 + exp(p_GABA[1] * (temp_rates - p_GABA[2])))) *
+                         400e-3
+    &quot;passive electrical properties.&quot;
+    E_leak::Float64 = -70.0
+    &quot;passive electrical properties.&quot;
+    g_leak::Float64 = 4e-6
+    &quot;passive electrical properties.&quot;
+    Cm::Float64 = 0.6e-2
+    &quot;passive electrical properties.&quot;
+    R_a::Float64 = 1e-2
+    &quot;morphology, Dendritic properties, dendrite diameter, um.&quot;
+    D_dend::Float64 = 2.0
+    &quot;morphology, Dendritic properties, dendrite length, chosen to tune attenuation, but not modified in BaP adaptation for simplicity sake, um.&quot;
+    L_dend::Float64 = 1400
+    &quot;morphology, Dendritic properties, dendrite surface area, 500 gives dendrite input resistance of 200MOhm, um^2.&quot;
+    A_dend::Float64 = 2 * pi * (D_dend / 2) * L_dend
+    &quot;morphology, Dendritic properties, dendrite volume, um^3.&quot;
+    Vol_dend::Float64 = pi * ((D_dend / 2)^2) * L_dend
+    &quot;morphology, Dendritic properties, dendritic membrane capacitance.&quot;
+    Cdend::Float64 = Cm * A_dend
+    &quot;morphology, Dendritic properties, dendrite cross-sectional area, um^2.&quot;
+    CS_dend::Float64 = pi * (D_dend / 2) .^ 2
+    &quot;morphology, Dendritic properties, nS.&quot;
+    g_leakdend::Float64 = g_leak * A_dend
+    &quot;morphology, Soma properties, soma diameter, um.&quot;
+    D_soma::Float64 = 30
+    &quot;morphology, Soma properties, soma surface area, 500 gives dendrite input resistance of 200MOhm, um^2.&quot;
+    A_soma::Float64 = pi * D_soma^2
+    &quot;morphology, Soma properties, soma membrane capacitance.&quot;
+    Csoma::Float64 = Cm * A_soma
+    &quot;morphology, Soma properties, soma cross-sectional area, um^2.&quot;
+    CS_soma::Float64 = pi * (D_soma / 2) .^ 2
+    &quot;morphology, Soma properties, nS.&quot;
+    g_leaksoma::Float64 = 15.0
+    &quot;morphology, Soma properties, value subject to modifications due to BaP adaptation implementation.&quot;
+    g_diff::Float64 = D_dend / (4R_a)
+    &quot;spine properties, spine head volume [bartol2015], um^3.&quot;
+    Vol_sp::Float64 = 0.03
+    &quot;spine properties, spine head surface area.&quot;
+    A_sp::Float64 = 4 * pi * ((3 * Vol_sp) / (4 * pi))^(2.0 / 3.0)
+    &quot;spine properties, spine membrane capacitance.&quot;
+    Csp::Float64 = Cm * A_sp
+    &quot;spine properties, spine head leak conductance.&quot;
+    g_leaksp::Float64 = g_leak * A_sp
+    &quot;neck properties, spine neck diameter [bartol2015], um.&quot;
+    D_neck::Float64 = 0.1
+    &quot;neck properties, neck length [bartol2015], um.&quot;
+    L_neck::Float64 = 0.2
+    &quot;neck properties, neck cross sectional area, um^2.&quot;
+    CS_neck::Float64 = pi * (D_neck / 2) .^ 2
+    &quot;neck properties.&quot;
+    g_neck::Float64 = CS_neck / (L_neck * R_a)
+    &quot;neck properties.&quot;
+    tau_diff::Float64 = ((Vol_sp / (2 * D_Ca * D_neck)) + (L_neck^2 / (2 * D_Ca)))
+    &quot;synpatic glutamate transient parameters, arbitrary, ms.&quot;
+    glu_width::Float64 = 1.0 # 0.1 ms for synapse
+    &quot;synpatic glutamate transient parameters, arbitrary, mM.&quot;
+    glu_amp::Float64 = 1e+3
+    &quot;synpatic glutamate transient parameters [liu1999].&quot;
+    glu_cv::Float64 = 0.5
+    &quot;SK channels, number of SK channels.&quot;
+    N_SK::Int64 = 15
+    &quot;SK channels [maylie2004], ns.&quot;
+    SK_gamma::Float64 = 10e-3
+    &quot;SK channels [mellor2016annex], mv.&quot;
+    SK_Erev::Float64 = -90
+    &quot;SK channels [mellor2016annex], uM.&quot;
+    SK_gating_half::Float64 = 0.33
+    &quot;SK channels [mellor2016annex], ms.&quot;
+    SK_time::Float64 = 6.3
+    &quot;SK channels [mellor2016annex], ms.&quot;
+    SK_hill::Float64 = 6
+    &quot;SK channels.&quot;
+    p_SK_bcwd::NTuple{4,
+        Float64} = (
+        0.09391588258147192, 98.85165844770867, -147.61669527876904, 149.37767054612135)
+    &quot;SK channels.&quot;
+    bcwd_SK::Float64 = (
+        p_SK_bcwd[4] + p_SK_bcwd[3] / (1 + exp(p_SK_bcwd[1] * (temp_rates - p_SK_bcwd[2])))
+    )
+    &quot;SK channels.&quot;
+    p_SK_frwd::NTuple{4,
+        Float64} = (
+        -0.334167923607112, 25.590920461511878, 2.2052151559841193, 0.005904170174699533)
+    &quot;SK channels.&quot;
+    frwd_SK::Float64 = (
+        p_SK_frwd[4] + p_SK_frwd[3] / (1 + exp(p_SK_frwd[1] * (temp_rates - p_SK_frwd[2])))
+    )
+    &quot;CaM, CaMKII and CaN concentrations.&quot;
+    CaM_con::Float64 = 30.0
+    &quot;CaM, CaMKII and CaN concentrations, renamed [feng2011], 100um.&quot;
+    mKCaM_con::Float64 = 70.0
+    &quot;CaM, CaMKII and CaN concentrations [lisman?], uM.&quot;
+    mCaN_con::Float64 = 20.0
+    &quot;Chang Pepke model - CaM reactions I.&quot;
+    kon_1C::Float64 = 5e-3
+    &quot;Chang Pepke model - CaM reactions I.&quot;
+    koff_1C::Float64 = 50e-3
+    &quot;Chang Pepke model - CaM reactions I.&quot;
+    kon_2C::Float64 = 10e-3
+    &quot;Chang Pepke model - CaM reactions I.&quot;
+    koff_2C::Float64 = 10e-3
+    &quot;Chang Pepke model - CaM reactions I.&quot;
+    kon_1N::Float64 = 100e-3
+    &quot;Chang Pepke model - CaM reactions I.&quot;
+    koff_1N::Float64 = 2000e-3
+    &quot;Chang Pepke model - CaM reactions I.&quot;
+    kon_2N::Float64 = 200e-3
+    &quot;Chang Pepke model - CaM reactions I.&quot;
+    koff_2N::Float64 = 500e-3
+    &quot;Chang Pepke model - CaM reactions II.&quot;
+    kf_CaM0::Float64 = 3.8e-6
+    &quot;Chang Pepke model - CaM reactions II.&quot;
+    kb_CaM0::Float64 = 5.5e-3
+    &quot;Chang Pepke model - CaM reactions II.&quot;
+    kf_CaM2C::Float64 = 0.92e-3
+    &quot;Chang Pepke model - CaM reactions II.&quot;
+    kb_CaM2C::Float64 = 6.8e-3
+    &quot;Chang Pepke model - CaM reactions II.&quot;
+    kf_CaM2N::Float64 = 0.12e-3
+    &quot;Chang Pepke model - CaM reactions II.&quot;
+    kb_CaM2N::Float64 = 1.7e-3
+    &quot;Chang Pepke model - CaM reactions II.&quot;
+    kf_CaM4::Float64 = 30e-3
+    &quot;Chang Pepke model - CaM reactions II.&quot;
+    kb_CaM4::Float64 = 1.5e-3
+    &quot;Chang Pepke model - CaMKII reactions.&quot;
+    kon_K1C::Float64 = 44e-3
+    &quot;Chang Pepke model - CaMKII reactions.&quot;
+    koff_K1C::Float64 = 33e-3
+    &quot;Chang Pepke model - CaMKII reactions.&quot;
+    kon_K2C::Float64 = 44e-3
+    &quot;Chang Pepke model - CaMKII reactions.&quot;
+    koff_K2C::Float64 = 0.8e-3
+    &quot;Chang Pepke model - CaMKII reactions.&quot;
+    kon_K1N::Float64 = 76e-3
+    &quot;Chang Pepke model - CaMKII reactions.&quot;
+    koff_K1N::Float64 = 300e-3
+    &quot;Chang Pepke model - CaMKII reactions.&quot;
+    kon_K2N::Float64 = 76e-3
+    &quot;Chang Pepke model - CaMKII reactions.&quot;
+    koff_K2N::Float64 = 20e-3
+    &quot;Chang Pepke model - autophosphorilation.&quot;
+    p_camkii_q10::NTuple{4,
+        Float64} = (
+        0.5118207068695309, 45.47503600542303, -161.42634157226917, 162.1718925882677)
+    &quot;Chang Pepke model - autophosphorilation.&quot;
+    q10::Float64 = p_camkii_q10[4] +
+                   p_camkii_q10[3] /
+                   (1 + exp(p_camkii_q10[1] * (temp_rates - p_camkii_q10[2]))) # change of temp to fit chang 35C
+    &quot;Chang Pepke model - autophosphorilation.&quot;
+    k1::Float64 = 12.6e-3
+    &quot;Chang Pepke model - autophosphorilation.&quot;
+    k2::Float64 = q10 * 0.33e-3 # q10 * 0.33e-3
+    &quot;Chang Pepke model - autophosphorilation.&quot;
+    k3::Float64 = 4 * q10 * 0.17e-3 # q10 * 0.17e-3
+    &quot;Chang Pepke model - autophosphorilation.&quot;
+    k4::Float64 = 4 * 0.041e-3
+    &quot;Chang Pepke model - autophosphorilation.&quot;
+    k5::Float64 = 4 * q10 * 2 * 0.017e-3 # q10 * 2* 0.017e-3
+    &quot;CaM-CaN reactions.&quot;
+    p_CaN_frwd::NTuple{4,
+        Float64} = (
+        -0.29481489145354556, 29.999999999999968, 0.15940019940354327, 0.870299900298228)
+    &quot;CaM-CaN reactions, 22C - 4.6e-2 [quintana2005].&quot;
+    kcanf::Float64 = (
+        p_CaN_frwd[4] +
+        p_CaN_frwd[3] / (1 + exp(p_CaN_frwd[1] * (temp_rates - p_CaN_frwd[2])))
+    ) * 1.75e-2
+    &quot;CaM-CaN reactions.&quot;
+    p_CaN_bcwd::NTuple{4,
+        Float64} = (
+        -0.6833299932488973, 26.277500129849113, 0.7114524682690591, 0.29037766196937326)
+    &quot;CaM-CaN reactions, 22C - 1.2e-6 [quintana2005].&quot;
+    kcanb::Float64 = (
+        p_CaN_bcwd[4] +
+        p_CaN_bcwd[3] / (1 + exp(p_CaN_bcwd[1] * (temp_rates - p_CaN_bcwd[2])))
+    ) * 2e-5
+    &quot;VGCCs.&quot;
+    p_frwd_VGCC::NTuple{4,
+        Float64} = (
+        1.0485098341579628, 30.66869198447378, -0.3040010721391852, 2.5032059559264357)
+    &quot;VGCCs.&quot;
+    frwd_VGCC::Float64 = (
+        p_frwd_VGCC[4] +
+        p_frwd_VGCC[3] / (1 + exp(p_frwd_VGCC[1] * (temp_rates - p_frwd_VGCC[2])))
+    )
+    &quot;VGCCs.&quot;
+    p_bcwd_VGCC::NTuple{4,
+        Float64} = (
+        -0.3302682317933842, 36.279019647221226, 3.2259761593440155, 0.7298285671937866)
+    &quot;VGCCs.&quot;
+    bcwd_VGCC::Float64 = (
+        p_bcwd_VGCC[4] +
+        p_bcwd_VGCC[3] / (1 + exp(p_bcwd_VGCC[1] * (temp_rates - p_bcwd_VGCC[2])))
+    )
+    &quot;VGCCs, calcium channel reversal potential, mV.&quot;
+    Erev_CaT::Float64 = 10.0
+    &quot;VGCCs, calcium channel reversal potential, mV.&quot;
+    Erev_CaR::Float64 = 10.0
+    &quot;VGCCs, calcium channel reversal potential, mV.&quot;
+    Erev_CaL::Float64 = 10.0
+    &quot;VGCCs [magee1995], nS.&quot;
+    gamma_CaT::Float64 = 12e-3
+    &quot;VGCCs [magee1995], nS.&quot;
+    gamma_CaR::Float64 = 17e-3
+    &quot;VGCCs [magee1995], nS.&quot;
+    gamma_CaL::Float64 = 27e-3
+    &quot;VGCCs.&quot;
+    N_caT::Int64 = 3
+    &quot;VGCCs.&quot;
+    N_caR::Int64 = 3
+    &quot;VGCCs.&quot;
+    N_caL::Int64 = 3
+    &quot;calcium dye and buffers [zenisek2003,naraghi1997], uMms-1.&quot;
+    EGTA_kf::Float64 = 2.7e-3
+    &quot;calcium dye and buffers, assuming Kd of 0.18uM [naraghi1997] ms-1.&quot;
+    EGTA_kb::Float64 = 0.18 * EGTA_kf
+    &quot;calcium dye and buffers, 0.2 for imaging, 200 for elecrophysiology [tigaret2016] uM.&quot;
+    EGTA_con::Float64 = 0.0
+    &quot;calcium dye and buffers [zenisek2003,naraghi1997], uM-1ms-1.&quot;
+    BAPTA_kf::Float64 = 0.45
+    &quot;calcium dye and buffers, assuming Kd of 0.176uM [naraghi1997], ms-1.&quot;
+    BAPTA_kb::Float64 = 0.176 * BAPTA_kf
+    &quot;calcium dye and buffers, uM.&quot;
+    BAPTA_con::Float64 = 0.0
+    &quot;calcium dye and buffers [bartol2015], uM-1ms-1.&quot;
+    Imbuf_k_on::Float64 = 0.247
+    &quot;calcium dye and buffers [bartol2015], ms-1.&quot;
+    Imbuf_k_off::Float64 = 0.524
+    &quot;calcium dye and buffers.&quot;
+    K_buff_diss::Float64 = Imbuf_k_off / Imbuf_k_on
+    &quot;calcium dye and buffers, 76.7 [bartol2015], uM.&quot;
+    Imbuf_con::Float64 = 62
+    &quot;calcium dye and buffers.&quot;
+    Imbuf_con_dend::Float64 = Imbuf_con * 4
+    &quot;calcium fluorescent dyes, assuming a [Ca] = 1um [bartol2015], ms-1.&quot;
+    ogb1_kf::Float64 = 0.8
+    &quot;calcium fluorescent dyes [bartol2015], ms-1.&quot;
+    ogb1_kb::Float64 = 0.16
+    &quot;calcium fluorescent dyes, assuming a [Ca] = 1um [bartol2015], ms-1.&quot;
+    fluo4_kf::Float64 = 0.8
+    &quot;calcium fluorescent dyes [bartol2015], ms-1.&quot;
+    fluo4_kb::Float64 = 0.24
+    &quot;calcium fluorescent dyes.&quot;
+    dye::Float64 = 0.0
+    &quot;calcium fluorescent dyes [zenisek2003,naraghi1997], uMms-1.&quot;
+    fluo5f_kf::Float64 = dye * 0.01
+    &quot;calcium fluorescent dyes assuming [Kd] = 1.3uM [yasuda2004].&quot;
+    fluo5f_kb::Float64 = dye * 26 * fluo5f_kf
+    &quot;calcium fluorescent dyes uM [tigaret2016].&quot;
+    fluo5f_con::Float64 = dye * 200.0
+end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#225&quot;.SynapseParams</code></pre><h3 id="Transition-matrices"><a class="docs-heading-anchor" href="#Transition-matrices">Transition matrices</a><a id="Transition-matrices-1"></a><a class="docs-heading-anchor-permalink" href="#Transition-matrices" title="Permalink"></a></h3><p>We define some utilities to help us construct the transition matrices.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/JumpMatrices.jl
+get_stoichmatrix(model) = transpose(Catalyst.netstoichmat(model)) |&gt; Matrix
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+jump_matrix(matrix_list) = cat(matrix_list..., dims = (1, 2))</code></pre><pre><code class="nohighlight hljs">jump_matrix (generic function with 1 method)</code></pre><p>Now we define each matrix one-by-one.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/JumpMatrices.jl
+const ampa_model = @reaction_network begin
+    #1line
+    #2line-GO
+    1, C0 → C1
+    1, C1 → C2
+    1, C2 → C3
+    1, C3 → C4
+    #2line-BAC
+    1, C4 → C3
+    1, C3 → C2
+    1, C2 → C1
+    1, C1 → C0
+    #3line-GO
+    1, D0 → D1
+    1, D1 → D2
+    1, D2 → D3
+    1, D3 → D4
+    #3line-BACK
+    1, D4 → D3
+    1, D3 → D2
+    1, D2 → D1
+    1, D1 → D0
+    #4line-GO
+    1, D22 → D23
+    1, D23 → D24
+    #4line-BACK
+    1, D24 → D23
+    1, D23 → D22
+    #1column-GO-BACK
+    1, C0 → D0
+    1, D0 → C0
+    #2column-GO-BACK
+    1, C1 → D1
+    1, D1 → C1
+    #3column-GO
+    1, O2 → C2
+    1, C2 → D2
+    1, D2 → D22
+    #3column-BACK
+    1, D22 → D2
+    1, D2 → C2
+    1, C2 → O2
+    #4column-GO
+    1, O3 → C3
+    1, C3 → D3
+    1, D3 → D23
+    #4column-BACK
+    1, D23 → D3
+    1, D3 → C3
+    1, C3 → O3
+    #5column-GO
+    1, O4 → C4
+    1, C4 → D4
+    1, D4 → D24
+    #5column-BACK
+    1, D24 → D4
+    1, D4 → C4
+    1, C4 → O4
+end
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+AMPA_matrix() = get_stoichmatrix(ampa_model)
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+const nmda_model_v2 = @reaction_network begin #same structure for N2A and N2B
+    #1line-GO
+    1, A0 → A1
+    1, A1 → A2
+    1, A2 → A3
+    1, A3 → A4
+    1, A4 → AO1
+    1, AO1 → AO2
+    #2line-BACK
+    1, AO2 → AO1
+    1, AO1 → A4
+    1, A4 → A3
+    1, A3 → A2
+    1, A2 → A1
+    1, A1 → A0
+end
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+NMDA_matrix() = get_stoichmatrix(nmda_model_v2)
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+function R_channel_matrix()
+    [[-1 1 0 0] # CaR m0h0 -&gt; m1h0
+     [1 -1 0 0] # CaR m1h0 -&gt; m0h0
+     [-1 0 1 0] # CaR m0h0 -&gt; m0h1
+     [1 0 -1 0] # CaR m0h1 -&gt; m0h0
+     [0 -1 0 1] # CaR m1h0 -&gt; O
+     [0 1 0 -1] # CaR    O -&gt; m1h0
+     [0 0 -1 1] # CaR m0h1 -&gt; O
+     [0 0 1 -1]]
+end
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+function T_channel_matrix()
+    [[-1 1 0 0] # CaT m0h0 -&gt; m1h0
+     [1 -1 0 0] # CaT m1h0 -&gt; m0h0
+     [-1 0 1 0] # CaT m0h0 -&gt; m0h1
+     [1 0 -1 0] # CaT m0h1 -&gt; m0h0
+     [0 -1 0 1] # CaT m1h0 -&gt; O
+     [0 1 0 -1] # CaT    O -&gt; m1h0
+     [0 0 -1 1] # CaT m0h1 -&gt; O
+     [0 0 1 -1]]
+end
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+L_channel_matrix() = [[-1 1 0] # CaL C -&gt; O1
+                      [1 -1 0] # CaL O1 -&gt; C
+                      [-1 0 1] # CaL C -&gt; O2
+                      [1 0 -1]]
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+const plasticity = @reaction_network begin
+    1, NC → LTD
+    1, LTD → NC
+    1, NC → LTP
+    1, LTP → NC
+end
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+LTP_LTD_matrix() = get_stoichmatrix(plasticity)
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+const gaba_destexhe = @reaction_network begin
+    #1line-GO
+    (1, 1), CO ↔ C1
+    (1, 1), C1 ↔ C2
+    (1, 1), C1 ↔ O1
+    (1, 1), C2 ↔ O2
+end
+
+# adapted from SynapseElife/src/JumpMatrices.jl
+GABA_matrix() = get_stoichmatrix(gaba_destexhe)</code></pre><pre><code class="nohighlight hljs">GABA_matrix (generic function with 1 method)</code></pre><p>Finally, we define a wrapper function to build the main transition matrix.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/SynapseModel.jl
+function buildTransitionMatrix()
+    matrix_list = [AMPA_matrix()]
+    push!(matrix_list, NMDA_matrix()) # for GluN2A
+    push!(matrix_list, Matrix{Int64}(I, 1, 1)) # print from Poisson Rate
+    push!(matrix_list, R_channel_matrix())
+    push!(matrix_list, T_channel_matrix())
+    push!(matrix_list, L_channel_matrix())
+    push!(matrix_list, LTP_LTD_matrix())
+    push!(matrix_list, NMDA_matrix()) # for GluN2B
+    push!(matrix_list, GABA_matrix())
+    return sparse(jump_matrix(matrix_list))
+end</code></pre><pre><code class="nohighlight hljs">buildTransitionMatrix (generic function with 1 method)</code></pre><h3 id="Assembling-it-all"><a class="docs-heading-anchor" href="#Assembling-it-all">Assembling it all</a><a id="Assembling-it-all-1"></a><a class="docs-heading-anchor-permalink" href="#Assembling-it-all" title="Permalink"></a></h3><p>Parameters.</p><pre><code class="language-julia hljs">const p_synapse = SynapseParams(t_end = 1000.0);
+const glu = 0.0;
+const events_sorted_times = [500.0];
+const is_pre_or_post_event = [true];
+const events_bap = events_sorted_times[is_pre_or_post_event .== false];
+const bap_by_epsp = Float64[];
+const nu = buildTransitionMatrix();</code></pre><p>Initial conditions.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/UtilsData.jl
+function initial_conditions_continuous_temp(param_synapse)
+    @unpack_SynapseParams param_synapse
+    if temp_rates &lt;= 25
+        return vec(
+            [-70.10245699808998
+             -70.02736715107497
+             -70.01992573979436
+             1.0
+             5.251484030952095
+             0.17942311304488254
+             0.0
+             18.422417385628144
+             0.061182835845181506
+             0.007491230194287401
+             2.5601235159798556e-5
+             18.60768149870139
+             1.3923185018623478
+             47.943467158481965
+             0.33484901412981444
+             0.00873078540237604
+             0.26160543666353603
+             0.006945031752908706
+             5.28369636945184
+             4.008117080305045
+             0.11294478061086997
+             0.09967594670655765
+             4.656494469862573
+             7.283473926518337
+             0.0
+             0.0
+             0.0
+             0.0
+             0.012283139643655655
+             0.9999998289470913
+             0.00010811866849049202
+             0.09878906052566663
+             1.0
+             1.0],
+        )
+    end
+    if 25 &lt; temp_rates &lt;= 30.0
+        return vec(
+            [-70.0140727673961
+             -70.00177103943689
+             -70.00007589726667
+             1.0
+             3.48177628683147
+             0.11706193391209137
+             0.0
+             19.902059159951726
+             0.04813075789246737
+             0.0033156783870759324
+             1.3058864642411135e-5
+             19.473469645955362
+             0.5265303542539336
+             49.658388018645105
+             0.39979810740476907
+             0.005987535794514187
+             0.22114161049072126
+             0.003443459770906218
+             5.486877056572574
+             3.2429635679748126
+             0.0967411298498974
+             0.06299852278885718
+             4.315666798657558
+             6.505994192089851
+             0.0
+             0.0
+             0.0
+             0.0
+             0.0123167984282587
+             0.9999998268859568
+             0.00010833059621284
+             0.016112012029112062
+             1.0
+             1.0],
+        )
+    end
+    if temp_rates &gt; 30
+        return vec(
+            [-70.02953996060384
+             -70.00364683510847
+             -70.0013995913228
+             1.0
+             3.3989773357494646
+             0.11430174346528181
+             0.0
+             25.14694054430742
+             0.048232611580821316
+             0.004340152415081933
+             6.8123069384392556e-6
+             19.865575695641734
+             0.13442430463415694
+             62.32357049746406
+             0.8459878113145832
+             0.009234347120412881
+             0.3607751119415231
+             0.003937688645035126
+             2.3440067259757305
+             1.0593952833042108
+             0.02913354160885602
+             0.013585064852268125
+             1.6677561415335218
+             1.3426177862569586
+             0.0
+             0.0
+             0.0
+             0.0
+             0.012314741437834478
+             0.999999826986425
+             0.00010831999489540837
+             0.03393795777123425
+             1.0
+             1.0],
+        )
+    end
+end
+
+# adapted from SynapseElife/src/UtilsData.jl
+function initial_conditions_discrete(param_synapse)
+    @unpack_SynapseParams param_synapse
+
+    return vec([
+        N_ampa, # AMPA 1-16
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        N_N2A,  # NMDA 17-23
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0, # Print 24
+        0, # R-type 25-28
+        0,
+        N_caR,
+        0,
+        0, # T-type 29-32
+        0,
+        N_caT,
+        0,
+        N_caL, # L-type 33-35
+        0,
+        0,
+        rest_plstcty, # GLUN2B
+        0,
+        0,
+        N_N2B,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        N_GABA, # GABA
+        0,
+        0,
+        0,
+        0
+    ])
+end</code></pre><pre><code class="nohighlight hljs">initial_conditions_discrete (generic function with 1 method)</code></pre><pre><code class="language-julia hljs">const xc0 = initial_conditions_continuous_temp(p_synapse);
+const xd0 = initial_conditions_discrete(p_synapse);</code></pre><h2 id="Model"><a class="docs-heading-anchor" href="#Model">Model</a><a id="Model-1"></a><a class="docs-heading-anchor-permalink" href="#Model" title="Permalink"></a></h2><p>Rodrigues et al. [1] synapse model that replaces NMDA model with fully state-based one from Jahr and Stevens, plus three types of VGCCs (R-type, T-type and L-type), from Magee and Johhston [2].</p><h3 id="Continuous-evolution"><a class="docs-heading-anchor" href="#Continuous-evolution">Continuous evolution</a><a id="Continuous-evolution-1"></a><a class="docs-heading-anchor-permalink" href="#Continuous-evolution" title="Permalink"></a></h3><p>Helper functions.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/UtilsDynamics.jl
+@inline alpha_m(V) = 0.4 * (V + 30) / (1 - exp(-(V + 30) / 7.2))
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline beta_m(V) = 0.124 * (V + 30) / (exp((V + 30) / 7.2) - 1)
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline alpha_h(V) = 0.01 * (V + 45) / (exp((V + 45) / 1.5) - 1)
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline beta_h(V) = 0.03 * (V + 45) / (1 - exp(-(V + 45) / 1.5))
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline alpha_n(V, nspeedfactor = 1) = nspeedfactor * exp(-0.11 * (V - 13))
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline beta_n(V, nspeedfactor = 1) = nspeedfactor * exp(-0.08 * (V - 13))
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline function ghk(V, Ca_int, Ca_ext, p_synapse)
+    # Kelvin physiological temp.
+    @unpack_SynapseParams p_synapse
+    x = z * V * faraday / (gas * (temp_rates + 273.15))
+    v = z * x * faraday * ((Ca_int) - (Ca_ext) * exp(-x)) / (1 - exp(-x))
+    return v
+end
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline SK_chnnl(Ca) = Ca^6 / (Ca^6 + 0.333^6) # 0.333
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline function mollifier(t, duration::T; pw = 20) where {T}
+    if abs(t/duration) &gt; 10
+        return zero(T)
+    else
+        return one(T) / (one(T) + (t/duration)^pw)
+    end
+end
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline function inputBaP(t, bapTimes::Vector, duration::T, amp::T) where {T}
+    if isempty(bapTimes)
+        return zero(T)
+    end
+    res = zero(T)
+    Δ = duration / 2
+    for ts in bapTimes
+        res += mollifier(t - (ts + Δ), Δ)
+    end
+    return res * amp
+end
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline rates_adapt(a, b, c, d, Ca) = a * b / (c + d * Ca)
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline B(v, Mg) = 1 / (1 + exp(-0.062 * v) * (Mg / 3.57)) #Jahr Stevens</code></pre><pre><code class="nohighlight hljs">B (generic function with 1 method)</code></pre><p>The continuous evolution.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/SynapseModel.jl
+function F_synapse(dxc, xc, xd, p_synapse::SynapseParams, t, events_bap, bap_by_epsp)
+    @unpack_SynapseParams p_synapse
+
+    # Stochastic channels/receptors
+    n1_ampa = xd[14] # ampa subconductance 1
+    n2_ampa = xd[15] # ampa subconductance 2
+    n3_ampa = xd[16] # ampa subconductance 3
+    n1_nmda_A = xd[22] # nmda subconductance 1
+    n2_nmda_A = xd[23] # nmda subconductance 2
+    n1_nmda_B = xd[44] # nmda subconductance 1
+    n2_nmda_B = xd[45] # nmda subconductance 2
+    n_car = xd[28] # vgcc-R opened state
+    n_cat = xd[32] # vgcc-T opened state
+    n_cal = xd[34] + xd[35] # vgcc-L opened states
+    n_gaba1 = xd[49] # GABA opened state
+    n_gaba2 = xd[50] # GABA opened state
+
+    # Continuous variables
+    Vsp,
+    Vdend,
+    Vsoma,
+    λ,
+    ImbufCa,
+    Ca,
+    Dye,
+    CaM0,
+    CaM2C,
+    CaM2N,
+    CaM4,
+    mCaN,
+    CaN4,
+    mKCaM,
+    KCaM0,
+    KCaM2N,
+    KCaM2C,
+    KCaM4,
+    PCaM0,
+    PCaM2C,
+    PCaM2N,
+    PCaM4,
+    P,
+    P2,
+    LTD,
+    LTP,
+    act_D,
+    act_P,
+    m,
+    h,
+    n,
+    SK,
+    λ_age,
+    λ_aux = xc
+
+    # Plasticity prediction regions
+    CaMKII = KCaM0 + KCaM2C + KCaM2N + KCaM4 + PCaM0 + PCaM2C + PCaM2N + PCaM4 + P + P2
+    CaN = CaN4
+
+    # Activation when it is inside the region
+    # this following line allocates 74.779 ns (3 allocations: 144 bytes). The 2 lines count for 25% of the performance
+    ∂LTD = SVector(CaN, CaMKII) ∈ LTD_region
+    ∂LTP = SVector(CaN, CaMKII) ∈ LTP_region
+
+    ∂act_D = a_D * ∂LTD - b_D * act_D * (1 - ∂LTD)
+    ∂act_P = a_P * ∂LTP - b_P * act_P * (1 - ∂LTP)
+
+    # Na channel
+    m_inf = alpha_m(Vsoma) / (alpha_m(Vsoma) + beta_m(Vsoma))
+    m_tau = 1 / (alpha_m(Vsoma) + beta_m(Vsoma))
+    ∂m = (m_inf - m) / m_tau
+    ∂h = alpha_h(Vsoma) * (1 - h) - beta_h(Vsoma) * h
+    I_Na = gamma_Na * (m^3) * h * (Erev_Na - Vsoma)
+
+    # K channel
+    n_inf = 1 / (1 + alpha_n(Vsoma))
+    n_tau = max(50 * beta_n(Vsoma) / (1 + alpha_n(Vsoma)), 2.0)
+    ∂n = (n_inf - n) / n_tau
+    I_K = gamma_K * n * (Erev_K - Vsoma)
+
+    # NMDA
+    NMDA = (n1_nmda_A + n2_nmda_A + n1_nmda_B + n2_nmda_B) * B(Vsp, Mg) * gamma_nmda
+    Inmda = (Erev_nmda - Vsp) * NMDA # current nmda
+
+    # AMPA
+    Iampa = (Erev_ampa - Vsp) *
+            (gamma_ampa1 * n1_ampa + gamma_ampa2 * n2_ampa + gamma_ampa3 * n3_ampa) # current ampa
+
+    # GABA
+    Igaba = (n_gaba1 + n_gaba2) * (Erev_Cl - Vdend) * gamma_GABA
+
+    # Calcium sources (VGCCs currents, and NMDA calcium contribution)
+    ΦCa = perm * ghk(Vsp, Ca, Ca_ext, p_synapse) #GHK factor
+    Ica_nmda = f_Ca * ΦCa * NMDA
+    Icar = gamma_CaR * n_car * ΦCa
+    Icat = gamma_CaT * n_cat * ΦCa
+    Ical = gamma_CaL * n_cal * ΦCa
+
+    # SK channel (not stochastic)
+    ∂SK = (SK_chnnl(Ca) * frwd_SK - SK) / (SK_time * bcwd_SK) #SK spine
+    Isk = SK_gamma * (SK_Erev - Vsp) * SK * N_SK
+
+    # Backpropgation
+    # Post input - for experimentally induced BaPs and those induced by EPSPs
+    I_BaP = inputBaP(t, bap_by_epsp, injbap, I_clamp) +
+            inputBaP(t, events_bap, injbap, I_clamp)
+    # Bap decay/attenuation - two component for adaptation in the Bap
+    ∂λ = (1 - λ) / trec - delta_decay * (1 / λ_aux) * λ * I_BaP
+    ∂λ_aux = (1 - λ_aux) / trec - delta_aux * λ_aux * I_BaP
+    gadapt = λ * g_diff * ϕ_dist
+
+    # Bap decay/attenuation - age dependent modification factor
+    ∂λ_age = (1 - λ_age) / trec_soma - delta_soma * λ_age * I_BaP
+
+    # Voltage
+    # Spine
+    ∂Vsp = (
+        Isk +
+        Inmda +
+        Iampa +
+        Icat +
+        Icar +
+        Ical +
+        g_neck * (Vdend - Vsp) +
+        g_leak * (E_leak - Vsp)
+    ) / (Csp)
+    # Dendrite
+    ∂Vdend = (
+        g_neck * (Vsp - Vdend) +
+        Igaba +
+        g_leakdend * (E_leak - Vdend) +
+        gadapt * (Vsoma - Vdend)
+    ) / Cdend
+    # Soma
+    ∂Vsoma = (
+        (I_BaP + I_Na) * λ_age +
+        I_K +
+        g_leaksoma * (E_leak - Vsoma) +
+        gadapt * (Vdend - Vsoma)
+    ) / Csoma
+
+    # Buffer and dye (spine only - no neck diffusion)
+    ∂ImbufCa = Imbuf_k_on * (Imbuf_con - ImbufCa) * Ca - Imbuf_k_off * ImbufCa
+    ∂Dye = 4 * fluo5f_kf * (fluo5f_con - Dye) * Ca - 8 * fluo5f_kb * Dye
+
+    # Ca Downstream
+    # CaM-KCaM-rates (coarsed model) from Pepke adapted by
+    kf_2C = rates_adapt(kon_1C, kon_2C, koff_1C, kon_2C, Ca)
+    kb_2C = rates_adapt(koff_1C, koff_2C, koff_1C, kon_2C, Ca)
+    kf_2N = rates_adapt(kon_1N, kon_2N, koff_1N, kon_2N, Ca)
+    kb_2N = rates_adapt(koff_1N, koff_2N, koff_1N, kon_2N, Ca)
+    kf_K2C = rates_adapt(kon_K1C, kon_K2C, koff_K1C, kon_K2C, Ca)
+    kb_K2C = rates_adapt(koff_K1C, koff_K2C, koff_K1C, kon_K2C, Ca)
+    kf_K2N = rates_adapt(kon_K1N, kon_K2N, koff_K1N, kon_K2N, Ca)
+    kb_K2N = rates_adapt(koff_K1N, koff_K2N, koff_K1N, kon_K2N, Ca)
+    F = CaMKII / mKCaM_con
+
+    ∂CaM0 = k2 * PCaM0 +
+            kb_2C * CaM2C +
+            kb_2N * CaM2N +
+            kb_CaM0 * KCaM0 +
+            -(1 // 2) * kf_2C * (Ca^2) * CaM0 - (1 // 2) * kf_2N * (Ca^2) * CaM0 +
+            -kf_CaM0 * CaM0 * mKCaM
+
+    ∂CaM2C = kb_2N * CaM4 + kb_CaM2C * KCaM2C + k2 * PCaM2C +
+             +(1 // 2) * kf_2C * (Ca^2) * CaM0 -
+             kb_2C * CaM2C - (1 // 2) * kf_2N * (Ca^2) * CaM2C + -kf_CaM2C * CaM2C * mKCaM
+
+    ∂CaM2N = kb_2C * CaM4 + kb_CaM2N * KCaM2N + k2 * PCaM2N +
+             +(1 // 2) * kf_2N * (Ca^2) * CaM0 -
+             kb_2N * CaM2N - (1 // 2) * kf_2C * (Ca^2) * CaM2N + -kf_CaM2N * CaM2N * mKCaM
+
+    ∂CaM4 = k2 * PCaM4 +
+            kcanb * CaN4 +
+            kb_CaM4 * KCaM4 +
+            +(1 // 2) * kf_2N * (Ca^2) * CaM2C +
+            (1 // 2) * kf_2C * (Ca^2) * CaM2N - kb_2C * CaM4 + -kb_2N * CaM4 -
+            kcanf * CaM4 * mCaN - kf_CaM4 * CaM4 * mKCaM
+
+    ∂mCaN = kcanb * CaN4 - kcanf * CaM4 * mCaN
+
+    ∂CaN4 = kcanf * CaM4 * mCaN - kcanb * CaN4
+
+    ∂mKCaM = kb_CaM0 * KCaM0 +
+             k3 * P +
+             kb_CaM2C * KCaM2C +
+             kb_CaM2N * KCaM2N +
+             +kb_CaM4 * KCaM4 - kf_CaM0 * CaM0 * mKCaM - kf_CaM2C * CaM2C * mKCaM +
+             -kf_CaM2N * CaM2N * mKCaM - kf_CaM4 * CaM4 * mKCaM
+
+    ∂KCaM0 = kb_K2C * KCaM2C + kb_K2N * KCaM2N + kf_CaM0 * CaM0 * mKCaM + -kb_CaM0 * KCaM0 -
+             (1 // 2) * kf_K2C * (Ca^2) * KCaM0 - F * k1 * KCaM0 +
+             -(1 // 2) * kf_K2N * (Ca^2) * KCaM0
+
+    ∂KCaM2N = kb_K2C * KCaM4 + kf_CaM2N * CaM2N * mKCaM +
+              +(1 // 2) * kf_K2N * (Ca^2) * KCaM0 -
+              kb_CaM2N * KCaM2N - kb_K2N * KCaM2N + -(1 // 2) * kf_K2C * (Ca^2) * KCaM2N -
+              F * k1 * KCaM2N
+
+    ∂KCaM2C = kb_K2N * KCaM4 + kf_CaM2C * CaM2C * mKCaM +
+              +(1 // 2) * kf_K2C * (Ca^2) * KCaM0 -
+              kb_CaM2C * KCaM2C - kb_K2C * KCaM2C + -F * k1 * KCaM2C -
+              (1 // 2) * kf_K2N * (Ca^2) * KCaM2C
+
+    ∂KCaM4 = kf_CaM4 * CaM4 * mKCaM +
+             (1 // 2) * kf_K2C * (Ca^2) * KCaM2N +
+             +(1 // 2) * kf_K2N * (Ca^2) * KCaM2C - kb_CaM4 * KCaM4 - kb_K2C * KCaM4 +
+             -kb_K2N * KCaM4 - F * k1 * KCaM4
+
+    ∂PCaM0 = F * k1 * KCaM0 - k2 * PCaM0
+
+    ∂PCaM2N = F * k1 * KCaM2N - k2 * PCaM2N
+
+    ∂PCaM2C = F * k1 * KCaM2C - k2 * PCaM2C
+
+    ∂PCaM4 = F * k1 * KCaM4 - k2 * PCaM4
+
+    ∂P = k2 * PCaM0 + k5 * P2 + k2 * PCaM2C + k2 * PCaM2N + k2 * PCaM4 - k3 * P - k4 * P
+
+    ∂P2 = k4 * P - k5 * P2
+
+    # Postsynaptic Ca
+    ∂Ca = (Ca_infty - Ca) / tau_ca +
+          +(Ica_nmda + Icar + Ical + Icat) / (2 * faraday * A_sp) +
+          +(max(Ca_infty, Ca / 3) - Ca) / tau_diff +
+          -∂ImbufCa +
+          -∂Dye +
+          +2kb_2C * CaM2C +
+          2kb_2C * CaM4 +
+          2kb_2N * CaM2N +
+          2kb_2N * CaM4 +
+          +2kb_K2C * KCaM2C +
+          2kb_K2N * KCaM2N +
+          2kb_K2C * KCaM4 +
+          2kb_K2N * KCaM4 +
+          -kf_2C * (Ca^2) * CaM0 - kf_2N * (Ca^2) * CaM0 - kf_2N * (Ca^2) * CaM2C +
+          -kf_2C * (Ca^2) * CaM2N - kf_K2C * (Ca^2) * KCaM0 - kf_K2C * (Ca^2) * KCaM2N +
+          -kf_K2N * (Ca^2) * KCaM0 - kf_K2N * (Ca^2) * KCaM2C
+
+    # dxc update
+    dxc[1] = ∂Vsp
+    dxc[2] = ∂Vdend
+    dxc[3] = ∂Vsoma
+    dxc[4] = ∂λ
+    dxc[5] = ∂ImbufCa
+    dxc[6] = ∂Ca
+    dxc[7] = ∂Dye
+    dxc[8] = ∂CaM0
+    dxc[9] = ∂CaM2C
+    dxc[10] = ∂CaM2N
+    dxc[11] = ∂CaM4
+    dxc[12] = ∂mCaN
+    dxc[13] = ∂CaN4
+    dxc[14] = ∂mKCaM
+    dxc[15] = ∂KCaM0
+    dxc[16] = ∂KCaM2N
+    dxc[17] = ∂KCaM2C
+    dxc[18] = ∂KCaM4
+    dxc[19] = ∂PCaM0
+    dxc[20] = ∂PCaM2C
+    dxc[21] = ∂PCaM2N
+    dxc[22] = ∂PCaM4
+    dxc[23] = ∂P
+    dxc[24] = ∂P2
+    dxc[25] = ∂LTD
+    dxc[26] = ∂LTP
+    dxc[27] = ∂act_D
+    dxc[28] = ∂act_P
+    dxc[29] = ∂m
+    dxc[30] = ∂h
+    dxc[31] = ∂n
+    dxc[32] = ∂SK
+    dxc[33] = ∂λ_age
+    dxc[34] = ∂λ_aux
+end</code></pre><pre><code class="nohighlight hljs">F_synapse (generic function with 1 method)</code></pre><h3 id="Discrete-jumps."><a class="docs-heading-anchor" href="#Discrete-jumps.">Discrete jumps.</a><a id="Discrete-jumps.-1"></a><a class="docs-heading-anchor-permalink" href="#Discrete-jumps." title="Permalink"></a></h3><p>For the PDMP package we need to define the rates in which the jumps occur.</p><p>Helper functions.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/UtilsDynamics.jl
+@inline function rates_m_r(Vsp)
+    beta_m_r_star = 1 / (4e-1) # /ms
+    minf_m_r_star = 1 / (1 + exp((3 - 10) / 8))
+    alpha_m_r_star = beta_m_r_star * minf_m_r_star / (1 - minf_m_r_star)
+    tau_m_r = 1 / (alpha_m_r_star + beta_m_r_star)
+    minf_r = 1 / (1 + exp((3 - Vsp) / 8))
+    alpha_m_r = minf_r / tau_m_r
+    beta_m_r = (1 - minf_r) / tau_m_r
+    return alpha_m_r, beta_m_r
+end
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline function rates_h_r(Vsp)
+    tau_h_r = 100 # ms
+    hinf_r = 1 / (1 + exp((Vsp + 39) / 9.2))
+    alpha_h_r = hinf_r / tau_h_r
+    beta_h_r = (1 - hinf_r) / tau_h_r
+    return alpha_h_r, beta_h_r
+end
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline function rates_m_t(Vsp)
+    beta_m_t_star = 1 # /ms
+    minf_m_t_star = 1 / (1 + exp((-32 + 20) / 7))
+    alpha_m_t_star = beta_m_t_star * minf_m_t_star / (1 - minf_m_t_star)
+    tau_m_t = 1 / (alpha_m_t_star + beta_m_t_star)
+    minf_t = 1 / (1 + exp((-32 - Vsp) / 7))
+    alpha_m_t = minf_t / tau_m_t
+    beta_m_t = (1 - minf_t) / tau_m_t
+    return alpha_m_t, beta_m_t
+end
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline function rates_h_t(Vsp)
+    tau_h_t = 50 # ms
+    hinf_t = 1 / (1 + exp((Vsp + 70) / 6.5))
+    alpha_h_t = hinf_t / tau_h_t
+    beta_h_t = (1 - hinf_t) / tau_h_t
+    return alpha_h_t, beta_h_t
+end
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline function rates_l(Vsp)
+    return 0.83 / (1 + exp((13.7 - Vsp) / 6.1)),
+    0.53 / (1 + exp((Vsp - 11.5) / 6.4)),
+    1.86 / (1 + exp((Vsp - 18.8) / 6.17))
+end
+# adapted from SynapseElife/src/UtilsDynamics.jl
+@inline function plasticityRate(p, nhill, K)
+    Pmax = 1
+    r = p^nhill
+    return Pmax * r / (r + K^nhill)
+end</code></pre><pre><code class="nohighlight hljs">plasticityRate (generic function with 1 method)</code></pre><p>The rate function.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/SynapseModel.jl
+function R_synapse(rate, xc, xd, p_synapse::SynapseParams, t, sum_rate, glu = 0)
+    @unpack_SynapseParams p_synapse
+
+    # Voltage
+    Vsp = xc[1]
+
+    # Glutamate &amp; GABA
+    Glu = glu_amp * glu
+
+    # AMPA
+    #2line-GO
+    rate[1] = 4 * AMPA_k1 * Glu * xd[1]
+    rate[2] = 3 * AMPA_k1 * Glu * xd[2]
+    rate[3] = 2 * AMPA_k1 * Glu * xd[3]
+    rate[4] = 1 * AMPA_k1 * Glu * xd[4]
+    #2line-BACK
+    rate[5] = 4 * AMPA_k_1 * xd[5]
+    rate[6] = 3 * AMPA_k_1 * xd[4]
+    rate[7] = 2 * AMPA_k_1 * xd[3]
+    rate[8] = 1 * AMPA_k_1 * xd[2]
+    #3line-GO
+    rate[9] = 3 * AMPA_k1 * Glu * xd[6]
+    rate[10] = 3 * AMPA_k1 * Glu * xd[7]
+    rate[11] = 2 * AMPA_k1 * Glu * xd[8]
+    rate[12] = 1 * AMPA_k1 * Glu * xd[9]
+    #3line-BACK
+    rate[13] = 3 * AMPA_k_1 * xd[10]
+    rate[14] = 2 * AMPA_k_1 * xd[9]
+    rate[15] = 1 * AMPA_k_1 * xd[8]
+    rate[16] = 1 * AMPA_k_2 * xd[7]
+    #4line-GO
+    rate[17] = 2 * AMPA_k1 * Glu * xd[11]
+    rate[18] = 1 * AMPA_k1 * Glu * xd[12]
+    #4line-BACK
+    rate[19] = 2 * AMPA_k_1 * xd[13]
+    rate[20] = 1 * AMPA_k_1 * xd[12]
+    #1column-GO-BACK
+    rate[21] = 4 * AMPA_delta_0 * xd[1]
+    rate[22] = 1 * AMPA_gamma_0 * xd[6]
+    #2column-GO-BACK
+    rate[23] = 1 * AMPA_delta_1 * xd[2]
+    rate[24] = 1 * AMPA_gamma_1 * xd[7]
+    #3column-GO
+    rate[25] = 1 * AMPA_alpha * xd[14]
+    rate[26] = 2 * AMPA_delta_1 * xd[3]
+    rate[27] = 1 * AMPA_delta_2 * xd[8]
+    #3column-BACK
+    rate[28] = 1 * AMPA_gamma_2 * xd[11]
+    rate[29] = 1 * AMPA_gamma_1 * xd[8]
+    rate[30] = 2 * AMPA_beta * xd[3]
+    #4column-GO
+    rate[31] = 1 * AMPA_alpha * xd[15]
+    rate[32] = 3 * AMPA_delta_1 * xd[4]
+    rate[33] = 2 * AMPA_delta_2 * xd[9]
+    #4column-BACK
+    rate[34] = 1 * AMPA_gamma_2 * xd[12]
+    rate[35] = 1 * AMPA_gamma_1 * xd[9]
+    rate[36] = 2 * AMPA_beta * xd[4]
+    #5column-GO
+    rate[37] = 1 * AMPA_alpha * xd[16]
+    rate[38] = 4 * AMPA_delta_1 * xd[5]
+    rate[39] = 3 * AMPA_delta_2 * xd[10]
+    #5column-BACK
+    rate[40] = 1 * AMPA_gamma_2 * xd[13]
+    rate[41] = 1 * AMPA_gamma_1 * xd[10]
+    rate[42] = 4 * AMPA_beta * xd[5]
+
+    # NMDA
+    #1line-GO
+    rate[43] = NMDA_N2A_ka * xd[17] * Glu
+    rate[44] = NMDA_N2A_kb * xd[18] * Glu
+    rate[45] = NMDA_N2A_kc * xd[19]
+    rate[46] = NMDA_N2A_kd * xd[20]
+    rate[47] = NMDA_N2A_ke * xd[21]
+    rate[48] = NMDA_N2A_kf * xd[22]
+    #1line-BACK
+    rate[49] = NMDA_N2A_k_f * xd[23]
+    rate[50] = NMDA_N2A_k_e * xd[22]
+    rate[51] = NMDA_N2A_k_d * xd[21]
+    rate[52] = NMDA_N2A_k_c * xd[20]
+    rate[53] = NMDA_N2A_k_b * xd[19]
+    rate[54] = NMDA_N2A_k_a * xd[18]
+
+    # Sampling
+    rate[55] = sampling_rate
+
+    # R-type VGCC
+    alpha_m_r, beta_m_r = rates_m_r(Vsp)
+    alpha_h_r, beta_h_r = rates_h_r(Vsp)
+    rate[56] = xd[25] * alpha_m_r * frwd_VGCC
+    rate[57] = xd[26] * beta_m_r * bcwd_VGCC
+    rate[58] = xd[25] * alpha_h_r * frwd_VGCC
+    rate[59] = xd[27] * beta_h_r * bcwd_VGCC
+    rate[60] = xd[26] * alpha_h_r * frwd_VGCC
+    rate[61] = xd[28] * beta_h_r * bcwd_VGCC
+    rate[62] = xd[27] * alpha_m_r * frwd_VGCC
+    rate[63] = xd[28] * beta_m_r * bcwd_VGCC
+
+    # T-type VGCC
+    alpha_m_t, beta_m_t = rates_m_t(Vsp)
+    alpha_h_t, beta_h_t = rates_h_t(Vsp)
+    rate[64] = xd[29] * alpha_m_t * frwd_VGCC
+    rate[65] = xd[30] * beta_m_t * bcwd_VGCC # this one can have a high rate
+    rate[66] = xd[29] * alpha_h_t * frwd_VGCC
+    rate[67] = xd[31] * beta_h_t * bcwd_VGCC
+    rate[68] = xd[30] * alpha_h_t * frwd_VGCC
+    rate[69] = xd[32] * beta_h_t * bcwd_VGCC
+    rate[70] = xd[31] * alpha_m_t * frwd_VGCC
+    rate[71] = xd[32] * beta_m_t * bcwd_VGCC # this one can have a high rate
+
+    # L-type VGCC
+    alpha_l, beta_1_l, beta_2_l = rates_l(Vsp)
+    rate[72] = xd[33] * alpha_l * frwd_VGCC
+    rate[73] = xd[34] * beta_1_l * bcwd_VGCC
+    rate[74] = xd[33] * alpha_l * frwd_VGCC
+    rate[75] = xd[35] * beta_2_l * bcwd_VGCC
+
+    # LTD/LTP
+    #the 6 lines take 50ns on 200ns, 1/4 of computations are here!!
+    D_rate = plasticityRate(xc[27], 2, K_D) / t_D
+    P_rate = plasticityRate(xc[28], 2, K_P) / t_P
+    rate[76] = xd[36] * D_rate
+    rate[77] = xd[37] * P_rate
+    rate[78] = xd[36] * P_rate
+    rate[79] = xd[38] * D_rate
+
+    # NMDA GLUN2B
+    #1line-GO
+    rate[80] = NMDA_N2B_sa * xd[39] * Glu
+    rate[81] = NMDA_N2B_sb * xd[40] * Glu
+    rate[82] = NMDA_N2B_sc * xd[41]
+    rate[83] = NMDA_N2B_sd * xd[42]
+    rate[84] = NMDA_N2B_se * xd[43]
+    rate[85] = NMDA_N2B_sf * xd[44]
+
+    #1line-BACK
+    rate[86] = NMDA_N2B_s_f * xd[45]
+    rate[87] = NMDA_N2B_s_e * xd[44]
+    rate[88] = NMDA_N2B_s_d * xd[43]
+    rate[89] = NMDA_N2B_s_c * xd[42]
+    rate[90] = NMDA_N2B_s_b * xd[41]
+    rate[91] = NMDA_N2B_s_a * xd[40]
+
+    # GABA
+    rate[92] = GABA_r_b1 * xd[46] * Glu #to simplify, we use the same amount at the same time
+    rate[93] = GABA_r_u1 * xd[47]
+    rate[94] = GABA_r_b2 * xd[47] * Glu
+    rate[95] = GABA_r_u2 * xd[48]
+    rate[96] = GABA_r_ro1 * xd[47]
+    rate[97] = GABA_r_c1 * xd[49]
+    rate[98] = GABA_r_ro2 * xd[48]
+    rate[99] = GABA_r_c2 * xd[50]
+
+    bound = 0.0
+    if sum_rate == false
+        return 0.0, bound
+    else
+        return sum(rate), bound
+    end
+end</code></pre><pre><code class="nohighlight hljs">R_synapse (generic function with 2 methods)</code></pre><p>Alternatively, for the JumpProcesses packages we need to define the jumps. First we define a macro to aid us in the definition of the jumps.</p><pre><code class="language-julia hljs">&quot;&quot;&quot;
+Macro to help with defining the Synapse problem for the JumpProcesses package, used in the `J_synapse` function body.
+
+# Arguments
+
+  - i : Jump index
+  - p_synapse : Synapse parameters
+  - rate_ex : Rate as Julia expression
+  - urate_ex : Rate upper bound as a Julia expression
+  - rateinterval_ex : Rate interval as a Julia expression
+&quot;&quot;&quot;
+macro j_jump(i, p_synapse, nu, rate_ex, urate_ex = nothing, rateinterval_ex = nothing)
+    assignments = Expr[]
+
+    alpha_beta_regex = r&quot;(alpha|beta)_(m_r|h_r|m_t|h_t|l|1_l|2_l)&quot;
+    alpha_beta_matches = Set([m.match for m in eachmatch(alpha_beta_regex, &quot;$rate_ex&quot;)])
+
+    if length(alpha_beta_matches) &gt; 0
+        for m in (&quot;alpha_1_l&quot;, &quot;alpha_2_l&quot;, &quot;beta_l&quot;)
+            if m in alpha_beta_matches
+                throw(DomainError(m, &quot;this variable does not exist in the model.&quot;))
+            end
+        end
+
+        push!(assignments, :(Vsp = u[1]))
+
+        if &quot;alpha_m_r&quot; in alpha_beta_matches || &quot;beta_m_r&quot; in alpha_beta_matches
+            push!(assignments, :((alpha_m_r, beta_m_r) = rates_m_r(Vsp)))
+        end
+
+        if &quot;alpha_h_r&quot; in alpha_beta_matches || &quot;beta_h_r&quot; in alpha_beta_matches
+            push!(assignments, :((alpha_h_r, beta_h_r) = rates_h_r(Vsp)))
+        end
+
+        if &quot;alpha_m_t&quot; in alpha_beta_matches || &quot;beta_m_t&quot; in alpha_beta_matches
+            push!(assignments, :((alpha_m_t, beta_m_t) = rates_m_t(Vsp)))
+        end
+
+        if &quot;alpha_h_t&quot; in alpha_beta_matches || &quot;beta_h_t&quot; in alpha_beta_matches
+            push!(assignments, :((alpha_h_t, beta_h_t) = rates_h_t(Vsp)))
+        end
+
+        if &quot;alpha_l&quot; in alpha_beta_matches ||
+           &quot;beta_1_l&quot; in alpha_beta_matches ||
+           &quot;beta_2_l&quot; in alpha_beta_matches
+            push!(assignments, :((alpha_l, beta_1_l, beta_2_l) = rates_l(Vsp)))
+        end
+    end
+
+    if occursin(&quot;D_rate&quot;, &quot;$rate_ex&quot;)
+        push!(assignments, :(D_rate = plasticityRate(u[27], 2, K_D) / t_D))
+    end
+
+    if occursin(&quot;P_rate&quot;, &quot;$rate_ex&quot;)
+        push!(assignments, :(P_rate = plasticityRate(u[28], 2, K_D) / t_P))
+    end
+
+    ex = Expr[]
+
+    push!(
+        ex,
+        quote
+            @unpack_SynapseParams $(esc(p_synapse))
+            @inline @inbounds function rate(u, p, t)
+                $(assignments...)
+                return $rate_ex
+            end
+            @inline @inbounds function affect!(integrator)
+                for (j, a) in zip(findnz($(esc(nu))[$(esc(i)), :])...)
+                    integrator.p.xd[j] += a
+                end
+            end
+        end
+    )
+
+    if !isnothing(urate_ex)
+        push!(ex, quote
+            max_m_r = rates_m_r(1_000.0)[1]
+            max_h_r = rates_h_r(1_000.0)[2]
+            max_m_t = rates_m_t(1_000.0)[1]
+            max_h_t = rates_h_t(1_000.0)[2]
+            max_alpha_l = rates_l(1_000)[1]
+            max_beta_1_l, max_beta_2_l = rates_l(-1_000)[2:3]
+            @inline @inbounds function urate(u, p, t)
+                return $urate_ex
+            end
+            @inline @inbounds function rateinterval(u, p, t)
+                return $rateinterval_ex
+            end
+        end)
+    end
+
+    if isnothing(urate_ex)
+        push!(ex, :(ConstantRateJump(rate, affect!)))
+    else
+        push!(
+            ex,
+            :(VariableRateJump(rate, affect!; urate = urate, rateinterval = rateinterval))
+        )
+    end
+
+    quote
+        $(ex...)
+    end
+end</code></pre><pre><code class="nohighlight hljs">Main.var&quot;##WeaveSandBox#225&quot;.@j_jump</code></pre><p>Next, we define the jumps themselves.</p><pre><code class="language-julia hljs">function J_synapse(p_synapse::SynapseParams, nu)
+
+    # we order the jumps in their order they appear in the dependency graph
+    jumps = JumpSet(;
+        constant_jumps = (
+            # AMPA
+            #2line-GO
+            @j_jump(1, p_synapse, nu, 4 * AMPA_k1 * p.Glu * p.xd[1]), # 1
+            @j_jump(2, p_synapse, nu, 3 * AMPA_k1 * p.Glu * p.xd[2]), # 2
+            @j_jump(3, p_synapse, nu, 2 * AMPA_k1 * p.Glu * p.xd[3]), # 3
+            @j_jump(4, p_synapse, nu, 1 * AMPA_k1 * p.Glu * p.xd[4]), # 4
+            #2line-BACK
+            @j_jump(5, p_synapse, nu, 4 * AMPA_k_1 * p.xd[5]), # 5
+            @j_jump(6, p_synapse, nu, 3 * AMPA_k_1 * p.xd[4]), # 6
+            @j_jump(7, p_synapse, nu, 2 * AMPA_k_1 * p.xd[3]), # 7
+            @j_jump(8, p_synapse, nu, 1 * AMPA_k_1 * p.xd[2]), # 8
+            #3line-GO
+            @j_jump(9, p_synapse, nu, 3 * AMPA_k1 * p.Glu * p.xd[6]), # 9
+            @j_jump(10, p_synapse, nu, 3 * AMPA_k1 * p.Glu * p.xd[7]), # 10
+            @j_jump(11, p_synapse, nu, 2 * AMPA_k1 * p.Glu * p.xd[8]), # 11
+            @j_jump(12, p_synapse, nu, 1 * AMPA_k1 * p.Glu * p.xd[9]), # 12
+            #3line-BACK
+            @j_jump(13, p_synapse, nu, 3 * AMPA_k_1 * p.xd[10]), # 13
+            @j_jump(14, p_synapse, nu, 2 * AMPA_k_1 * p.xd[9]), # 14
+            @j_jump(15, p_synapse, nu, 1 * AMPA_k_1 * p.xd[8]), # 15
+            @j_jump(16, p_synapse, nu, 1 * AMPA_k_2 * p.xd[7]), # 16
+            #4line-GO
+            @j_jump(17, p_synapse, nu, 2 * AMPA_k1 * p.Glu * p.xd[11]), # 17
+            @j_jump(18, p_synapse, nu, 1 * AMPA_k1 * p.Glu * p.xd[12]), # 18
+            #4line-BACK
+            @j_jump(19, p_synapse, nu, 2 * AMPA_k_1 * p.xd[13]), # 19
+            @j_jump(20, p_synapse, nu, 1 * AMPA_k_1 * p.xd[12]), # 20
+            #1column-GO-BACK
+            @j_jump(21, p_synapse, nu, 4 * AMPA_delta_0 * p.xd[1]), # 21
+            @j_jump(22, p_synapse, nu, 1 * AMPA_gamma_0 * p.xd[6]), # 22
+            #2column-GO-BACK
+            @j_jump(23, p_synapse, nu, 1 * AMPA_delta_1 * p.xd[2]), # 23
+            @j_jump(24, p_synapse, nu, 1 * AMPA_gamma_1 * p.xd[7]), # 24
+            #3column-GO
+            @j_jump(25, p_synapse, nu, 1 * AMPA_alpha * p.xd[14]), # 25
+            @j_jump(26, p_synapse, nu, 2 * AMPA_delta_1 * p.xd[3]), # 26
+            @j_jump(27, p_synapse, nu, 1 * AMPA_delta_2 * p.xd[8]), # 27
+            #3column-BACK
+            @j_jump(28, p_synapse, nu, 1 * AMPA_gamma_2 * p.xd[11]), # 28
+            @j_jump(29, p_synapse, nu, 1 * AMPA_gamma_1 * p.xd[8]), # 29
+            @j_jump(30, p_synapse, nu, 2 * AMPA_beta * p.xd[3]), # 30
+            #4column-GO
+            @j_jump(31, p_synapse, nu, 1 * AMPA_alpha * p.xd[15]), # 31
+            @j_jump(32, p_synapse, nu, 3 * AMPA_delta_1 * p.xd[4]), # 32
+            @j_jump(33, p_synapse, nu, 2 * AMPA_delta_2 * p.xd[9]), # 33
+            #4column-BACK
+            @j_jump(34, p_synapse, nu, 1 * AMPA_gamma_2 * p.xd[12]), # 34
+            @j_jump(35, p_synapse, nu, 1 * AMPA_gamma_1 * p.xd[9]), # 35
+            @j_jump(36, p_synapse, nu, 2 * AMPA_beta * p.xd[4]), # 36
+            #5column-GO
+            @j_jump(37, p_synapse, nu, 1 * AMPA_alpha * p.xd[16]), # 37
+            @j_jump(38, p_synapse, nu, 4 * AMPA_delta_1 * p.xd[5]), # 38
+            @j_jump(39, p_synapse, nu, 3 * AMPA_delta_2 * p.xd[10]), # 39
+            #5column-BACK
+            @j_jump(40, p_synapse, nu, 1 * AMPA_gamma_2 * p.xd[13]), # 40
+            @j_jump(41, p_synapse, nu, 1 * AMPA_gamma_1 * p.xd[10]), # 41
+            @j_jump(42, p_synapse, nu, 4 * AMPA_beta * p.xd[5]), # 42
+
+            # NMDA
+            #1line-GO
+            @j_jump(43, p_synapse, nu, NMDA_N2A_ka * p.xd[17] * p.Glu), # 43
+            @j_jump(44, p_synapse, nu, NMDA_N2A_kb * p.xd[18] * p.Glu), # 44
+            @j_jump(45, p_synapse, nu, NMDA_N2A_kc * p.xd[19]), # 45
+            @j_jump(46, p_synapse, nu, NMDA_N2A_kd * p.xd[20]), # 46
+            @j_jump(47, p_synapse, nu, NMDA_N2A_ke * p.xd[21]), # 47
+            @j_jump(48, p_synapse, nu, NMDA_N2A_kf * p.xd[22]), # 48
+            #1line-BACK
+            @j_jump(49, p_synapse, nu, NMDA_N2A_k_f * p.xd[23]), # 49
+            @j_jump(50, p_synapse, nu, NMDA_N2A_k_e * p.xd[22]), # 50
+            @j_jump(51, p_synapse, nu, NMDA_N2A_k_d * p.xd[21]), # 51
+            @j_jump(52, p_synapse, nu, NMDA_N2A_k_c * p.xd[20]), # 52
+            @j_jump(53, p_synapse, nu, NMDA_N2A_k_b * p.xd[19]), # 53
+            @j_jump(54, p_synapse, nu, NMDA_N2A_k_a * p.xd[18]), # 54
+
+            # NMDA GLUN2B
+            #1line-GO
+            @j_jump(80, p_synapse, nu, NMDA_N2B_sa * p.xd[39] * p.Glu), # 80
+            @j_jump(81, p_synapse, nu, NMDA_N2B_sb * p.xd[40] * p.Glu), # 81
+            @j_jump(82, p_synapse, nu, NMDA_N2B_sc * p.xd[41]), # 82
+            @j_jump(83, p_synapse, nu, NMDA_N2B_sd * p.xd[42]), # 83
+            @j_jump(84, p_synapse, nu, NMDA_N2B_se * p.xd[43]), # 84
+            @j_jump(85, p_synapse, nu, NMDA_N2B_sf * p.xd[44]), # 85
+            #1line-BACK
+            @j_jump(86, p_synapse, nu, NMDA_N2B_s_f * p.xd[45]), # 86
+            @j_jump(87, p_synapse, nu, NMDA_N2B_s_e * p.xd[44]), # 87
+            @j_jump(88, p_synapse, nu, NMDA_N2B_s_d * p.xd[43]), # 88
+            @j_jump(89, p_synapse, nu, NMDA_N2B_s_c * p.xd[42]), # 89
+            @j_jump(90, p_synapse, nu, NMDA_N2B_s_b * p.xd[41]), # 90
+            @j_jump(91, p_synapse, nu, NMDA_N2B_s_a * p.xd[40]), # 91
+
+            # GABA
+            @j_jump(92, p_synapse, nu, GABA_r_b1 * p.xd[46] * p.Glu), # 92 to simplify, we use the same amount at the same time)
+            @j_jump(93, p_synapse, nu, GABA_r_u1 * p.xd[47]), # 93
+            @j_jump(94, p_synapse, nu, GABA_r_b2 * p.xd[47] * p.Glu), # 94
+            @j_jump(95, p_synapse, nu, GABA_r_u2 * p.xd[48]), # 95
+            @j_jump(96, p_synapse, nu, GABA_r_ro1 * p.xd[47]), # 96
+            @j_jump(97, p_synapse, nu, GABA_r_c1 * p.xd[49]), # 97
+            @j_jump(98, p_synapse, nu, GABA_r_ro2 * p.xd[48]), # 98
+            @j_jump(99, p_synapse, nu, GABA_r_c2 * p.xd[50]), # 99
+        ),
+        variable_jumps = (
+            # R-type VGCC
+            @j_jump(56,
+                p_synapse,
+                nu,
+                p.xd[25] * alpha_m_r * frwd_VGCC,
+                p.xd[25] * max_m_r * frwd_VGCC,
+                typemax(Float64)), # 56
+            @j_jump(57,
+                p_synapse,
+                nu,
+                p.xd[26] * beta_m_r * bcwd_VGCC,
+                p.xd[26] * max_m_r * frwd_VGCC,
+                typemax(Float64)), # 57
+            @j_jump(58,
+                p_synapse,
+                nu,
+                p.xd[25] * alpha_h_r * frwd_VGCC,
+                p.xd[25] * max_h_r * frwd_VGCC,
+                typemax(Float64)), # 58
+            @j_jump(59,
+                p_synapse,
+                nu,
+                p.xd[27] * beta_h_r * bcwd_VGCC,
+                p.xd[27] * max_h_r * bcwd_VGCC,
+                typemax(Float64)), # 59
+            @j_jump(60,
+                p_synapse,
+                nu,
+                p.xd[26] * alpha_h_r * frwd_VGCC,
+                p.xd[26] * max_h_r * frwd_VGCC,
+                typemax(Float64)), # 60
+            @j_jump(61,
+                p_synapse,
+                nu,
+                p.xd[28] * beta_h_r * bcwd_VGCC,
+                p.xd[28] * max_h_r * bcwd_VGCC,
+                typemax(Float64)), # 61
+            @j_jump(62,
+                p_synapse,
+                nu,
+                p.xd[27] * alpha_m_r * frwd_VGCC,
+                p.xd[27] * max_m_r * frwd_VGCC,
+                typemax(Float64)), # 62
+            @j_jump(63,
+                p_synapse,
+                nu,
+                p.xd[28] * beta_m_r * bcwd_VGCC,
+                p.xd[28] * max_m_r * bcwd_VGCC,
+                typemax(Float64)), # 63
+
+            # T-type VGCC
+            @j_jump(64,
+                p_synapse,
+                nu,
+                p.xd[29] * alpha_m_t * frwd_VGCC,
+                p.xd[29] * max_m_t * frwd_VGCC,
+                typemax(Float64)), # 64
+            @j_jump(65,
+                p_synapse,
+                nu,
+                p.xd[30] * beta_m_t * bcwd_VGCC,
+                p.xd[30] * max_m_t * bcwd_VGCC,
+                typemax(Float64)), # 65 this one can have a high rate
+            @j_jump(66,
+                p_synapse,
+                nu,
+                p.xd[29] * alpha_h_t * frwd_VGCC,
+                p.xd[29] * max_h_t * frwd_VGCC,
+                typemax(Float64)), # 66
+            @j_jump(67,
+                p_synapse,
+                nu,
+                p.xd[31] * beta_h_t * bcwd_VGCC,
+                p.xd[31] * max_h_t * bcwd_VGCC,
+                typemax(Float64)), # 67
+            @j_jump(68,
+                p_synapse,
+                nu,
+                p.xd[30] * alpha_h_t * frwd_VGCC,
+                p.xd[30] * max_h_t * frwd_VGCC,
+                typemax(Float64)), # 68
+            @j_jump(69,
+                p_synapse,
+                nu,
+                p.xd[32] * beta_h_t * bcwd_VGCC,
+                p.xd[32] * max_h_t * bcwd_VGCC,
+                typemax(Float64)), # 69
+            @j_jump(70,
+                p_synapse,
+                nu,
+                p.xd[31] * alpha_m_t * frwd_VGCC,
+                p.xd[31] * max_m_t * frwd_VGCC,
+                typemax(Float64)), # 70
+            @j_jump(71,
+                p_synapse,
+                nu,
+                p.xd[32] * beta_m_t * bcwd_VGCC,
+                p.xd[32] * max_m_t * bcwd_VGCC,
+                typemax(Float64)), # 71, this one can have a high rate
+
+            # L-type VGCC
+            @j_jump(72,
+                p_synapse,
+                nu,
+                p.xd[33] * alpha_l * frwd_VGCC,
+                p.xd[33] * max_alpha_l * frwd_VGCC,
+                typemax(Float64)), # 72
+            @j_jump(73,
+                p_synapse,
+                nu,
+                p.xd[34] * beta_1_l * bcwd_VGCC,
+                p.xd[34] * max_beta_1_l * bcwd_VGCC,
+                typemax(Float64)), # 73
+            @j_jump(74,
+                p_synapse,
+                nu,
+                p.xd[33] * alpha_l * frwd_VGCC,
+                p.xd[33] * max_alpha_l * frwd_VGCC,
+                typemax(Float64)), # 74
+            @j_jump(75,
+                p_synapse,
+                nu,
+                p.xd[35] * beta_2_l * bcwd_VGCC,
+                p.xd[35] * max_beta_2_l * bcwd_VGCC,
+                typemax(Float64)), # 75
+
+            # LTD/LTP
+            @j_jump(76, p_synapse, nu, p.xd[36] * D_rate, 1, typemax(Float64)), # 76
+            @j_jump(77, p_synapse, nu, p.xd[37] * P_rate, 1, typemax(Float64)), # 77
+            @j_jump(78, p_synapse, nu, p.xd[36] * P_rate, 1, typemax(Float64)), # 78
+            @j_jump(79, p_synapse, nu, p.xd[38] * D_rate, 1, typemax(Float64)), # 79
+        ),
+    )
+
+    return jumps
+end</code></pre><pre><code class="nohighlight hljs">J_synapse (generic function with 1 method)</code></pre><p><code>R_synapse</code> and <code>J_synapse</code> define the exact same discrete problem. The comments at the end of the line in <code>J_synapse</code> corresponds to the rate index defined in <code>R_synapse</code>. For example, in <code>R_synapse</code> we have <code>rate[1]</code></p><pre><code class="nohighlight hljs">rate[1] = 4 * AMPA_k1 * Glu * xd[1]</code></pre><p>Equivalently, in <code>J_synapse</code> we have the equivalent formulation in terms of a jump using our macro.</p><pre><code class="nohighlight hljs">@j_jump(1, p_synapse, nu, 4 * AMPA_k1 * p.Glu * p.xd[1]), # 1</code></pre><p>Also, note that we modify the order of jumps in <code>J_synapse</code> compared to <code>R_synapse</code> because we bundle <code>ConstantRateJump</code> and <code>VariableRateJump</code> separately. Algorithms in <code>JumpProcesses</code> will approach each of this jumps in a different way.</p><p>We also remove the sampling rate from <code>J_synapse</code> (<code>rate[55]</code> in <code>R_synapse</code>) as it is not needed for <code>JumpProcesses</code>. The package can take a snapshot of the evolution at any point desired.</p><h3 id="Problem-wrappers"><a class="docs-heading-anchor" href="#Problem-wrappers">Problem wrappers</a><a id="Problem-wrappers-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-wrappers" title="Permalink"></a></h3><p>We define wrappers for setting up and solving problems involving synapses.</p><p>First, we define the problem for the <code>PDMP</code> package.</p><pre><code class="language-julia hljs">function SynapseProblem(
+    xc,
+    xd,
+    t1,
+    t2,
+    events_bap,
+    bap_by_epsp,
+    glu,
+    p_synapse,
+    nu,
+    algo::T,
+    agg = nothing;
+    vr_agg = VR_FRM(),
+    saveat = [],
+    save_everystep = isempty(saveat),
+    kwargs...,
+) where {T&lt;:CHV}
+    problem = PDMP.PDMPProblem(
+        (dxc, xc, xd, p, t) -&gt; F_synapse(dxc, xc, xd, p, t, events_bap, bap_by_epsp),
+        (rate, xc, xd, p, t, sum_rate) -&gt; R_synapse(rate, xc, xd, p, t, sum_rate, glu),
+        nu,
+        xc,
+        xd,
+        p_synapse,
+        (t1, t2);
+        Ncache = 12 # this option is for AD in PreallocationTools
+    )
+    sol = solve(problem, algo; kwargs...)
+    return sol
+end</code></pre><pre><code class="nohighlight hljs">SynapseProblem (generic function with 2 methods)</code></pre><p>Second, we define the problem for the <code>JumpProcesses</code> package.</p><p>We define a custom saving callback for the <code>JumpProcesses</code> problem to bring the saving behaviour as close as possible to the <code>PDMP</code> problem. Our callback will save jumps whenever the integrator steps and <code>save_modified == true</code>.</p><pre><code class="language-julia hljs">using DiffEqCallbacks: SavedValues, SavingAffect
+import DataStructures
+
+# adapted from DiffEqCallbacks.jl/src/saving.jl
+function (affect!::SavingAffect)(integrator, force_save = false)
+    just_saved = false
+    # see OrdinaryDiffEq.jl -&gt; integrator_utils.jl, function savevalues!
+    while !isempty(affect!.saveat) &amp;&amp;
+        integrator.tdir * first(affect!.saveat) &lt;= integrator.tdir * integrator.t # Perform saveat
+        affect!.saveiter += 1
+        curt = pop!(affect!.saveat) # current time
+        if curt != integrator.t # If &lt;t, interpolate
+            if integrator isa SciMLBase.AbstractODEIntegrator
+                # Expand lazy dense for interpolation
+                DiffEqBase.addsteps!(integrator)
+            end
+            if !DiffEqBase.isinplace(integrator.sol.prob)
+                curu = integrator(curt)
+            else
+                curu = first(get_tmp_cache(integrator))
+                integrator(curu, curt) # inplace since save_func allocates
+            end
+            copyat_or_push!(affect!.saved_values.t, affect!.saveiter, curt)
+            copyat_or_push!(affect!.saved_values.saveval, affect!.saveiter,
+                affect!.save_func(curu, curt, integrator), Val{false})
+        else # ==t, just save
+            just_saved = true
+            copyat_or_push!(affect!.saved_values.t, affect!.saveiter, integrator.t)
+            copyat_or_push!(affect!.saved_values.saveval, affect!.saveiter,
+                affect!.save_func(integrator.u, integrator.t, integrator),
+                Val{false})
+        end
+    end
+    if !just_saved &amp;&amp; affect!.save_everystep ||
+       force_save ||
+       (
+           affect!.save_end &amp;&amp;
+           # ensures we don&#39;t save twice; this the only difference from the original source
+           affect!.saved_values.t[affect!.saveiter] != integrator.t &amp;&amp;
+           integrator.t == integrator.sol.prob.tspan[end]
+       )
+        affect!.saveiter += 1
+        copyat_or_push!(affect!.saved_values.t, affect!.saveiter, integrator.t)
+        copyat_or_push!(
+            affect!.saved_values.saveval,
+            affect!.saveiter,
+            affect!.save_func(integrator.u, integrator.t, integrator),
+            Val{false}
+        )
+    end
+    u_modified!(integrator, false)
+end
+
+# adapted from DiffEqCallbacks.jl/src/saving.jl
+function saving_initialize!(cb, u, t, integrator)
+    integrator.p.xd .= integrator.p.xd0
+    cb.affect!.saveat = deepcopy(integrator.opts.saveat)
+    cb.affect!.save_everystep = integrator.opts.save_everystep
+    cb.affect!.save_start = integrator.opts.save_start
+    cb.affect!.save_end = integrator.opts.save_end
+    cb.affect!.saveiter = 0
+    cb.affect!.save_start &amp;&amp; cb.affect!(integrator, true)
+end
+
+# adapted from DiffEqCallbacks.jl/src/saving.jl
+function SavingCallback(save_func, saved_values::SavedValues; save_modified = true)
+    saveat_internal = DataStructures.BinaryHeap{eltype(saved_values.t)}(DataStructures.FasterForward())
+    affect! = SavingAffect(
+        save_func,
+        saved_values,
+        saveat_internal,
+        nothing,
+        false,
+        false,
+        false,
+        0
+    )
+    # only save when save_modified is true; SavingCallback from DiffEqCallbacks
+    # saves every step regardless of save_modified
+    condition = if save_modified
+        function (u, t, integrator)
+            if integrator.u_modified
+                push!(affect!.saveat, t)
+            end
+
+            return true
+        end
+    else
+        function (u, t, integrator)
+            return true
+        end
+    end
+    DiscreteCallback(
+        condition,
+        affect!;
+        initialize = saving_initialize!,
+        save_positions = (false, false)
+    )
+end</code></pre><pre><code class="nohighlight hljs">SavingCallback (generic function with 1 method)</code></pre><p>Next, we define our problem wrapper that uses our custom saving callback.</p><pre><code class="language-julia hljs">function buildRxDependencyGraph(nu)
+    numrxs, _ = size(nu)
+    dep_graph = [Vector{Int}() for n in 1:(numrxs - 1)]
+    for rx in 1:numrxs
+        if rx == 55  # no need to track the Poisson process
+            continue
+        end
+        rx_ix = rx
+        if 56 &lt;= rx &lt; 80
+            rx_ix += 19
+        elseif rx &gt;= 80
+            rx_ix -= 25
+        end
+        for (spec, _) in zip(findnz(nu[rx, :])...)
+            # we need to reorder the indices according to the order
+            # they apper in the problem
+            for (dependent_rx, _) in zip(findnz(nu[:, spec])...)
+                # we need to reorder the indices according to the order
+                # they apper in the problem
+                dependent_rx_ix = dependent_rx
+                if 56 &lt;= dependent_rx &lt; 80
+                    dependent_rx_ix += 19
+                elseif dependent_rx &gt;= 80
+                    dependent_rx_ix -= 25
+                end
+                push!(dep_graph[rx_ix], dependent_rx_ix)
+            end
+        end
+    end
+    return dep_graph
+end
+
+function SynapseProblem(
+    xc,
+    xd,
+    t1,
+    t2,
+    events_bap,
+    bap_by_epsp,
+    glu,
+    p_synapse,
+    nu,
+    algo,
+    agg;
+    vr_agg = VR_FRM(),
+    jumps = nothing,
+    save_positions = (false, true),
+    saveat = [],
+    save_everystep = isempty(saveat),
+    kwargs...,
+)
+    p = (
+        xd0 = copy(xd),
+        xd = copy(xd),
+        Glu = p_synapse.glu_amp * glu,
+        p_synapse = p_synapse
+    )
+    oprob = ODEProblem(
+        (dxc, xc, p,
+            t) -&gt; F_synapse(dxc, xc, p.xd, p.p_synapse, t, events_bap, bap_by_epsp),
+        xc,
+        (t1, t2),
+        p
+    )
+    xdsol = SavedValues(typeof(t1), typeof(xd))
+    dep_graph = buildRxDependencyGraph(nu)
+    callback = SavingCallback(
+        (u, t, integrator) -&gt; copy(integrator.p.xd),
+        xdsol;
+        save_modified = typeof(save_positions) &lt;: Bool ? save_positions : save_positions[2]
+    )
+    jprob = JumpProblem(
+        oprob,
+        agg,
+        jumps;
+        vr_aggregator = vr_agg,
+        dep_graph,
+        save_positions,
+        saveat,
+        save_everystep,
+        callback
+    )
+    sol = (xcsol = solve(jprob, algo; saveat, save_everystep, kwargs...), xdsol = xdsol)
+    return sol
+end</code></pre><pre><code class="nohighlight hljs">SynapseProblem (generic function with 3 methods)</code></pre><h3 id="Assembling-it-all-2"><a class="docs-heading-anchor" href="#Assembling-it-all-2">Assembling it all</a><a class="docs-heading-anchor-permalink" href="#Assembling-it-all-2" title="Permalink"></a></h3><p>We define functions to run the evolution of the whole synapse. The evolution includes a period before glutamate is released and after.</p><pre><code class="language-julia hljs"># adapted from SynapseElife/src/SynapseModel.jl
+function evolveSynapse(
+    xc0::Vector{T},
+    xd0,
+    p_synapse::SynapseParams,
+    events_sorted_times,
+    is_pre_or_post_event,
+    bap_by_epsp,
+    is_glu_released,
+    nu,
+    algos,
+    agg = nothing;
+    vr_agg,
+    progress = false,
+    abstol = 1e-8,
+    reltol = 1e-7,
+    save_positions = (false, true),
+    saveat = [],
+    kwargs...,
+) where {T}
+    tt, XC,
+    XD = evolveSynapse_noformat(
+        xc0,
+        xd0,
+        p_synapse,
+        events_sorted_times,
+        is_pre_or_post_event,
+        bap_by_epsp,
+        is_glu_released,
+        nu,
+        algos,
+        agg;
+        vr_agg,
+        progress,
+        abstol,
+        reltol,
+        save_positions,
+        saveat,
+        kwargs...
+    )
+
+    out = formatSynapseResult(tt, XC, XD)
+end
+
+# adapted from SynapseElife/src/SynapseModel.jl
+function evolveSynapse_noformat(
+    xc0::Vector{T},
+    xd0,
+    p_synapse::SynapseParams,
+    events_sorted_times,
+    is_pre_or_post_event,
+    bap_by_epsp,
+    is_glu_released,
+    nu,
+    algos,
+    agg = nothing;
+    vr_agg,
+    progress = false,
+    abstol = 1e-8,
+    reltol = 1e-7,
+    save_positions = (false, true),
+    saveat = [],
+    kwargs...,
+) where {T}
+    if save_positions isa Tuple{Bool, Bool}
+        save_positionsON = save_positions
+        save_positionsOFF = save_positions
+    else
+        save_positionsON = save_positions[1]
+        save_positionsOFF = save_positions[2]
+    end
+
+    @assert eltype(is_pre_or_post_event) == Bool &quot;Provide booleans for glutamate releases.&quot;
+    @assert eltype(is_glu_released) == Bool &quot;Provide booleans for glutamate indices.&quot;
+
+    XC = VectorOfArray([xc0]) # vector to hold continuous variables
+    if isnothing(agg)
+        XD = VectorOfArray([xd0]) # vector to hold discrete variables
+        jumps = nothing
+    else
+        XD = VectorOfArray([xd0])
+        jumps = J_synapse(p_synapse, nu)
+    end
+    tt = [0.0] # vector of times
+
+    # we collect which external events correspond to BaPs
+    events_bap = events_sorted_times[is_pre_or_post_event .== false]
+
+    # function to simulate the synapse when Glutamate is ON
+    SimGluON =
+        (xc, xd, t1, t2, glu) -&gt; SynapseProblem(
+            xc,
+            xd,
+            t1,
+            t2,
+            events_bap,
+            bap_by_epsp,
+            glu,
+            p_synapse,
+            nu,
+            algos[1],
+            agg;
+            vr_agg,
+            jumps,
+            reltol,
+            abstol,
+            saveat,
+            save_positions = save_positionsON,
+            kwargs...,
+        )
+
+    # function to simulate the synapse when Glutamate is OFF
+    SimGluOFF =
+        (xc, xd, t1, t2) -&gt; SynapseProblem(
+            xc,
+            xd,
+            t1,
+            t2,
+            events_bap,
+            bap_by_epsp,
+            zero(T),
+            p_synapse,
+            nu,
+            algos[2],
+            agg;
+            vr_agg,
+            jumps,
+            reltol,
+            abstol,
+            saveat,
+            save_positions = save_positionsOFF,
+            kwargs...,
+        )
+
+    # random variable for Glutamate concentration
+    gluDist = Gamma(1 / p_synapse.glu_cv^2, p_synapse.glu_cv^2)
+
+    # we loop over the external events, simulate them and append to res
+    for (eveindex, eve) in enumerate(events_sorted_times)
+        if is_pre_or_post_event[eveindex] == true # it is a pre-synaptic event
+            # we simulate the synapse with Glutamate OFF until event time
+            # then we put  Glutamate ON for dt = p_synapse.glu_width with variable amplitude (concentration)
+
+            # simulate the event with Glutamate OFF
+            res = SimGluOFF(XC[:, end], XD[:, end], tt[end], eve)
+            formatSimResult!(res, XC, XD, tt)
+            gluamp = rand(gluDist)
+
+            # simulate the event with Glutamate ON
+            # variability here
+            res = SimGluON(
+                XC[:, end],
+                XD[:, end],
+                eve,
+                eve + p_synapse.glu_width,
+                ifelse(is_glu_released[eveindex], gluamp, zero(T))
+            )
+            formatSimResult!(res, XC, XD, tt)
+        end
+    end
+
+    # reaching tend: we simulate the synapse with Glutamate OFF until simulation end time required
+    # by the user. In  most protocol, this is taking most of the time.
+    res = SimGluOFF(XC[:, end], XD[:, end], tt[end], p_synapse.t_end)
+    formatSimResult!(res, XC, XD, tt)
+    if isnothing(agg)
+        @info &quot;last bit&quot; agg length(res.time) tt[end] p_synapse.t_end
+    else
+        @info &quot;last bit&quot; agg length(res.xcsol.t) tt[end] p_synapse.t_end
+    end
+
+    if tt[end] != p_synapse.t_end
+        @warn &quot;The simulation did not reach requested simulated time.&quot;
+    end
+
+    return (t = tt, XC = XC, XD = XD)
+end
+
+function formatSimResult!(res::PDMP.PDMPResult, XC, XD, tt)
+    append!(XC, res.xc)
+    append!(XD, res.xd)
+    append!(tt, res.time)
+    nothing
+end
+
+function formatSimResult!(res::NamedTuple, XC, XD, tt)
+    append!(XC, VectorOfArray(res.xcsol.u))
+    append!(XD, VectorOfArray(res.xdsol.saveval))
+    append!(tt, res.xcsol.t)
+    nothing
+end
+
+# adapted from SynapseElife/src/SynapseModel.jl
+function formatSynapseResult(tt, XC, XD)
+    namesC = (
+        :Vsp,
+        :Vdend,
+        :Vsoma,
+        :λ,
+        :ImbufCa,
+        :Ca,
+        :Dye,
+        :CaM0,
+        :CaM2C,
+        :CaM2N,
+        :CaM4,
+        :mCaN,
+        :CaN4,
+        :mKCaM,
+        :KCaM0,
+        :KCaM2N,
+        :KCaM2C,
+        :KCaM4,
+        :PCaM0,
+        :PCaM2C,
+        :PCaM2N,
+        :PCaM4,
+        :P,
+        :P2,
+        :LTD,
+        :LTP,
+        :act_D,
+        :act_P,
+        :m,
+        :h,
+        :n,
+        :SK,
+        :λ_age,
+        :λ_aux
+    )
+    values = (XC[i, :] for i in 1:length(namesC))
+    return (t = tt, XD = XD, XC = XC, zip(namesC, values)...)
+end</code></pre><pre><code class="nohighlight hljs">formatSynapseResult (generic function with 1 method)</code></pre><h2 id="Algorithms-to-benchmark"><a class="docs-heading-anchor" href="#Algorithms-to-benchmark">Algorithms to benchmark</a><a id="Algorithms-to-benchmark-1"></a><a class="docs-heading-anchor-permalink" href="#Algorithms-to-benchmark" title="Permalink"></a></h2><p><code>CoevolveSynced</code> allow us to save at regular intervals. Thus, rather than saving when a jump occurs, we save at the same average frequency as obtained with <code>PDMP</code>.</p><pre><code class="language-julia hljs">const solver = AutoTsit5(Rosenbrock23());
+const algorithms = (
+    (
+        label = &quot;PDMP&quot;,
+        agg = nothing,
+        vr_agg = VR_FRM(),
+        solver = (CHV(solver), CHV(solver)),
+        saveat = [],
+    ),
+    (
+        label = &quot;Coevolve&quot;,
+        agg = Coevolve(),
+        vr_agg = VR_FRM(),
+        solver = (solver, solver),
+        saveat = 1 / p_synapse.sampling_rate,
+    ),
+    (
+        label = &quot;Direct(VR_FRM)&quot;,
+        agg = Direct(),
+        vr_agg = VR_FRM(),
+        solver = (solver, solver),
+        saveat = 1 / p_synapse.sampling_rate,
+    ),
+    (
+        label = &quot;Direct(VR_Direct)&quot;,
+        agg = Direct(),
+        vr_agg = VR_Direct(),
+        solver = (solver, solver),
+        saveat = 1 / p_synapse.sampling_rate,
+    ),
+    (
+        label = &quot;Direct(VR_DirectFW)&quot;,
+        agg = Direct(),
+        vr_agg = VR_DirectFW(),
+        solver = (solver, solver),
+        saveat = 1 / p_synapse.sampling_rate,
+    ),
+);</code></pre><h2 id="Example-solutions"><a class="docs-heading-anchor" href="#Example-solutions">Example solutions</a><a id="Example-solutions-1"></a><a class="docs-heading-anchor-permalink" href="#Example-solutions" title="Permalink"></a></h2><pre><code class="language-julia hljs">results = []
+
+for algo in algorithms
+    push!(
+        results,
+        evolveSynapse(
+            xc0,
+            xd0,
+            p_synapse,
+            events_sorted_times,
+            is_pre_or_post_event,
+            bap_by_epsp,
+            [true],
+            nu,
+            algo.solver,
+            algo.agg;
+            algo.vr_agg,
+            save_positions = (false, true),
+            saveat = algo.saveat,
+            save_everystep = false
+        )
+    )
+end</code></pre><pre><code class="language-julia hljs">fig = plot(xlabel = &quot;Voltage&quot;, ylabel = &quot;Time&quot;);
+for (i, algo) in enumerate(algorithms)
+    res = results[i]
+    plot!(res.t, res.Vsp, label = algo.label)
+end
+title!(&quot;Vsp&quot;)</code></pre><p><img src="../figures/Synapse_22_1.png" alt/></p><pre><code class="language-julia hljs">fig = plot(xlabel = &quot;N&quot;, ylabel = &quot;Time&quot;);
+for (i, algo) in enumerate(algorithms)
+    res = results[i]
+    plot!(res.t, res.XD[1, :], label = algo.label)
+end
+title!(&quot;2line-Go, AMPA&quot;)</code></pre><pre><code class="nohighlight hljs">Error: BoundsError: attempt to access 10004-element Vector{Float64} at inde
+x [1:21256]</code></pre><h1 id="Benchmarking-performance"><a class="docs-heading-anchor" href="#Benchmarking-performance">Benchmarking performance</a><a id="Benchmarking-performance-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarking-performance" title="Permalink"></a></h1><pre><code class="language-julia hljs">bs = Vector{BenchmarkTools.Trial}()
+
+for algo in algorithms
+    push!(
+        bs,
+        @benchmark(evolveSynapse(
+                xc0,
+                xd0,
+                p_synapse,
+                events_sorted_times,
+                is_pre_or_post_event,
+                bap_by_epsp,
+                [true],
+                nu,
+                $(algo).solver,
+                $(algo).agg;
+                $(algo).vr_agg,
+                save_positions = (false, true),
+                saveat = $(algo).saveat,
+                save_everystep = false
+            ),
+            samples=50,
+            evals=1,
+            seconds=500,)
+    )
+end</code></pre><pre><code class="language-julia hljs">labels = [a.label for a in algorithms]
+medtimes = [text(string(round(median(b).time/1e9, digits = 3), &quot;s&quot;), :center, 12)
+            for b in bs]
+relmedtimes = [median(b).time for b in bs]
+relmedtimes ./= relmedtimes[1]
+bar(labels, relmedtimes, markeralpha = 0, series_annotation = medtimes, fmt = fmt)
+title!(&quot;evolveSynapse (Median time)&quot;)</code></pre><p><img src="../figures/Synapse_25_1.png" alt/></p><pre><code class="language-julia hljs">medmem = [text(string(round(median(b).memory/1e6, digits = 3), &quot;Mb&quot;), :center, 12)
+          for b in bs]
+relmedmem = Float64[median(b).memory for b in bs]
+relmedmem ./= relmedmem[1]
+bar(labels, relmedmem, markeralpha = 0, series_annotation = medmem, fmt = fmt)
+title!(&quot;evolveSynapse (Median memory)&quot;)</code></pre><p><img src="../figures/Synapse_26_1.png" alt/></p><h1 id="References"><a class="docs-heading-anchor" href="#References">References</a><a id="References-1"></a><a class="docs-heading-anchor-permalink" href="#References" title="Permalink"></a></h1><p>[1] Y. E. Rodrigues, C. M. Tigaret, H. Marie, C. O’Donnell, and R. Veltz, &quot;A stochastic model of hippocampal synaptic plasticity with geometrical readout of enzyme dynamics.&quot; bioRxiv, p. 2021.03.30.437703, Mar. 30, 2021. doi: 10.1101/2021.03.30.437703.</p><p>[2] Magee, J.C., Johnston, D., 1995. Characterization of single voltage-gated na+ and ca2+ channels in apical dendrites of rat ca1 pyramidal neurons. The Journal of physiology 487, 67–90.</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../MultivariateHawkes/">« Multivariate Hawkes Model</a><a class="docs-footer-nextpage" href="../VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 24 February 2026 12:40">Tuesday 24 February 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

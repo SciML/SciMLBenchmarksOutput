@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods) · The SciML Benchmarks</title><meta name="title" content="Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods) · The SciML Benchmarks"/><meta property="og:title" content="Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods) · The SciML Benchmarks"/><meta property="twitter:title" content="Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods) · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/NonlinearProblem/bruss_krylov/"/><meta property="twitter:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/NonlinearProblem/bruss_krylov/"/><link rel="canonical" href="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/NonlinearProblem/bruss_krylov/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li class="is-active"><a class="tocitem" href>Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Setup"><span>Setup</span></a></li><li class="toplevel"><a class="tocitem" href="#Brusselator"><span>Brusselator</span></a></li><li class="toplevel"><a class="tocitem" href="#Jacobian-Free-Newton-/-TR-Krylov-Methods"><span>Jacobian-Free Newton / TR Krylov Methods</span></a></li></ul></li><li><a class="tocitem" href="../nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li><li><a class="tocitem" href="../../DAE/slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li><li><a class="tocitem" href="../../HybridJumps/VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_quadratic/">CUTEst Quadratic Programming with Linear Constraints Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unbounded/">CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unconstrained/">CUTEst Unconstrained Nonlinear Optimization Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Nonlinear Solvers</a></li><li class="is-active"><a href>Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/NonlinearProblem/bruss_krylov.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Ill-Conditioned-Nonlinear-System-Work-Precision-Diagrams-(Krylov-Methods)"><a class="docs-heading-anchor" href="#Ill-Conditioned-Nonlinear-System-Work-Precision-Diagrams-(Krylov-Methods)">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a><a id="Ill-Conditioned-Nonlinear-System-Work-Precision-Diagrams-(Krylov-Methods)-1"></a><a class="docs-heading-anchor-permalink" href="#Ill-Conditioned-Nonlinear-System-Work-Precision-Diagrams-(Krylov-Methods)" title="Permalink"></a></h1><h1 id="Setup"><a class="docs-heading-anchor" href="#Setup">Setup</a><a id="Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Setup" title="Permalink"></a></h1><p>Fetch required packages</p><pre><code class="language-julia hljs">using NonlinearSolve, LinearAlgebra, SparseArrays, DiffEqDevTools,
+      CairoMakie, Symbolics, BenchmarkTools, PolyesterForwardDiff, LinearSolve, Sundials,
+      Enzyme, SparseConnectivityTracer, DifferentiationInterface, SparseMatrixColorings
+import NLsolve, MINPACK, PETSc, RecursiveFactorization
+
+const RUS = RadiusUpdateSchemes;
+BenchmarkTools.DEFAULT_PARAMETERS.seconds = 0.2;</code></pre><p>Define a utility to timeout the benchmark after a certain time.</p><pre><code class="language-julia hljs"># Taken from ReTestItems.jl
+function timeout(f, timeout)
+    cond = Threads.Condition()
+    timer = Timer(timeout) do tm
+        close(tm)
+        ex = ErrorException(&quot;timed out after $timeout seconds&quot;)
+        @lock cond notify(cond, ex; error = false)
+    end
+    Threads.@spawn begin
+        try
+            ret = $f()
+            isopen(timer) &amp;&amp; @lock cond notify(cond, ret)
+        catch e
+            isopen(timer) &amp;&amp;
+                @lock cond notify(cond, CapturedException(e, catch_backtrace()); error = true)
+        finally
+            close(timer)
+        end
+    end
+    return @lock cond wait(cond) # will throw if we timeout
+end
+
+function get_ordering(x::AbstractMatrix)
+    idxs = Vector{Int}(undef, size(x, 1))
+    placed = zeros(Bool, size(x, 1))
+    idx = 1
+    for j in size(x, 2):-1:1
+        row = view(x, :, j)
+        idxs_row = sortperm(row; by = x -&gt; isnan(x) ? Inf : (x == -1 ? Inf : x))
+        for i in idxs_row
+            if !placed[i] &amp;&amp; !isnan(row[i]) &amp;&amp; row[i] ≠ -1
+                idxs[idx] = i
+                placed[i] = true
+                idx += 1
+                idx &gt; length(idxs) &amp;&amp; break
+            end
+        end
+        idx &gt; length(idxs) &amp;&amp; break
+    end
+    return idxs
+end</code></pre><pre><code class="nohighlight hljs">get_ordering (generic function with 1 method)</code></pre><h1 id="Brusselator"><a class="docs-heading-anchor" href="#Brusselator">Brusselator</a><a id="Brusselator-1"></a><a class="docs-heading-anchor-permalink" href="#Brusselator" title="Permalink"></a></h1><p>Define the Brussletor problem.</p><pre><code class="language-julia hljs">brusselator_f(x, y) = (((x - 3 // 10) ^ 2 + (y - 6 // 10) ^ 2) ≤ 0.01) * 5
+
+limit(a, N) = ifelse(a == N + 1, 1, ifelse(a == 0, N, a))
+
+function init_brusselator_2d(xyd, N)
+    N = length(xyd)
+    u = zeros(N, N, 2)
+    for I in CartesianIndices((N, N))
+        x = xyd[I[1]]
+        y = xyd[I[2]]
+        u[I, 1] = 22 * (y * (1 - y))^(3 / 2)
+        u[I, 2] = 27 * (x * (1 - x))^(3 / 2)
+    end
+    return u
+end
+
+function generate_brusselator_problem(N::Int; sparsity = nothing, kwargs...)
+    xyd_brusselator = range(0; stop = 1, length = N)
+
+    function brusselator_2d_loop(du_, u_, p)
+        A, B, α, δx = p
+        α = α / δx ^ 2
+
+        du = reshape(du_, N, N, 2)
+        u = reshape(u_, N, N, 2)
+
+        @inbounds @simd for I in CartesianIndices((N, N))
+            i, j = Tuple(I)
+            x, y = xyd_brusselator[I[1]], xyd_brusselator[I[2]]
+            ip1, im1 = limit(i + 1, N), limit(i - 1, N)
+            jp1, jm1 = limit(j + 1, N), limit(j - 1, N)
+
+            du[i, j, 1] = α * (u[im1, j, 1] + u[ip1, j, 1] + u[i, jp1, 1] + u[i, jm1, 1] -
+                           4u[i, j, 1]) +
+                          B + u[i, j, 1] ^ 2 * u[i, j, 2] - (A + 1) * u[i, j, 1] +
+                          brusselator_f(x, y)
+
+            du[i, j, 2] = α * (u[im1, j, 2] + u[ip1, j, 2] + u[i, jp1, 2] + u[i, jm1, 2] -
+                           4u[i, j, 2]) +
+                          A * u[i, j, 1] - u[i, j, 1] ^ 2 * u[i, j, 2]
+        end
+        return nothing
+    end
+
+    return NonlinearProblem(
+        NonlinearFunction(brusselator_2d_loop; sparsity),
+        vec(init_brusselator_2d(xyd_brusselator, N)),
+        (3.4, 1.0, 10.0, step(xyd_brusselator));
+        kwargs...
+    )
+end</code></pre><pre><code class="nohighlight hljs">generate_brusselator_problem (generic function with 1 method)</code></pre><h1 id="Jacobian-Free-Newton-/-TR-Krylov-Methods"><a class="docs-heading-anchor" href="#Jacobian-Free-Newton-/-TR-Krylov-Methods">Jacobian-Free Newton / TR Krylov Methods</a><a id="Jacobian-Free-Newton-/-TR-Krylov-Methods-1"></a><a class="docs-heading-anchor-permalink" href="#Jacobian-Free-Newton-/-TR-Krylov-Methods" title="Permalink"></a></h1><p>In this section, we will benchmark jacobian-free nonlinear solvers with Krylov methods. We will use preconditioning from <code>AlgebraicMultigrid.jl</code> and <code>IncompleteLU.jl</code>. Unfortunately, our ability to use 3rd party software is limited here, since only <code>Sundials.jl</code> supports jacobian-free methods via <code>:GMRES</code>.</p><pre><code class="language-julia hljs">using AlgebraicMultigrid, IncompleteLU
+
+incompletelu(W, p = nothing) = ilu(W, τ = 50.0), LinearAlgebra.I
+
+function algebraicmultigrid(W, p = nothing)
+    return aspreconditioner(ruge_stuben(convert(AbstractMatrix, W))), LinearAlgebra.I
+end
+
+function algebraicmultigrid_jacobi(W, p = nothing)
+    A = convert(AbstractMatrix, W)
+    Dinv = 1.0 ./ diag(A)  # PETSc-style Jacobi: inverse of diagonal
+    smoother = AlgebraicMultigrid.Jacobi(Dinv)
+
+    Pl = aspreconditioner(AlgebraicMultigrid.ruge_stuben(
+        A,
+        presmoother = smoother,
+        postsmoother = smoother
+    ))
+    return Pl, LinearAlgebra.I
+end
+
+Ns = 2 .^ (2:7)
+krylov_dim = 1000
+
+solvers_scaling_jacobian_free = [
+    (; pkg = :nonlinearsolve, name = &quot;Newton Krylov&quot;,
+        alg = NewtonRaphson(; linsolve = KrylovJL_GMRES())),
+    (; pkg = :nonlinearsolve,
+        name = &quot;Newton Krylov (ILU)&quot;,
+        alg = NewtonRaphson(; linsolve = KrylovJL_GMRES(; precs = incompletelu), concrete_jac = true)),
+    (; pkg = :nonlinearsolve,
+        name = &quot;Newton Krylov (AMG)&quot;,
+        alg = NewtonRaphson(; linsolve = KrylovJL_GMRES(; precs = algebraicmultigrid), concrete_jac = true)),
+    (; pkg = :nonlinearsolve,
+        name = &quot;Newton Krylov (AMG Jacobi)&quot;,
+        alg = NewtonRaphson(;
+            linsolve = KrylovJL_GMRES(; precs = algebraicmultigrid_jacobi),
+            concrete_jac = true)), (; pkg = :nonlinearsolve, name = &quot;TR Krylov&quot;,
+        alg = TrustRegion(; linsolve = KrylovJL_GMRES())),
+    (; pkg = :nonlinearsolve,
+        name = &quot;TR Krylov (ILU)&quot;,
+        alg = TrustRegion(; linsolve = KrylovJL_GMRES(; precs = incompletelu), concrete_jac = true)),
+    (; pkg = :nonlinearsolve,
+        name = &quot;TR Krylov (AMG)&quot;,
+        alg = TrustRegion(; linsolve = KrylovJL_GMRES(; precs = algebraicmultigrid), concrete_jac = true)),
+    (; pkg = :nonlinearsolve,
+        name = &quot;TR Krylov (AMG Jacobi)&quot;,
+        alg = TrustRegion(;
+            linsolve = KrylovJL_GMRES(; precs = algebraicmultigrid_jacobi), concrete_jac = true)), (;
+        pkg = :wrapper, name = &quot;Newton Krylov [Sundials]&quot;,
+        alg = KINSOL(; linear_solver = :GMRES, maxsetupcalls = 1, krylov_dim)),
+    (; pkg = :wrapper,
+        name = &quot;Newton Krylov [PETSc]&quot;,
+        alg = PETScSNES(; snes_type = &quot;newtonls&quot;, snes_linesearch_type = &quot;basic&quot;,
+            ksp_type = &quot;gmres&quot;, snes_mf = true, ksp_gmres_restart = krylov_dim)),
+    (; pkg = :wrapper,
+        name = &quot;Newton Krylov (ILU) [PETSc]&quot;,
+        alg = PETScSNES(; snes_type = &quot;newtonls&quot;, snes_linesearch_type = &quot;basic&quot;,
+            ksp_type = &quot;gmres&quot;, pc_type = &quot;ilu&quot;, ksp_gmres_restart = krylov_dim,
+            pc_factor_levels = 0, pc_factor_drop_tolerance = 50.0)),
+    (; pkg = :wrapper,
+        name = &quot;Newton Krylov (AMG) [PETSc]&quot;,
+        alg = PETScSNES(; snes_type = &quot;newtonls&quot;, snes_linesearch_type = &quot;basic&quot;,
+            ksp_type = &quot;gmres&quot;, pc_type = &quot;gamg&quot;, ksp_gmres_restart = krylov_dim)),
+    (; pkg = :wrapper,
+        name = &quot;Newton Krylov (AMG Jacobi) [PETSc]&quot;,
+        alg = PETScSNES(; snes_type = &quot;newtonls&quot;, snes_linesearch_type = &quot;basic&quot;,
+            ksp_type = &quot;gmres&quot;, pc_type = &quot;gamg&quot;, mg_levels_ksp_type = &quot;richardson&quot;,
+            mg_levels_pc_type = &quot;jacobi&quot;, ksp_gmres_restart = krylov_dim)), (;
+        pkg = :wrapper,
+        name = &quot;TR Krylov (Not Matrix Free) [PETSc]&quot;,
+        alg = PETScSNES(; snes_type = &quot;newtontr&quot;, ksp_type = &quot;gmres&quot;, ksp_gmres_restart = krylov_dim)),
+    (; pkg = :wrapper,
+        name = &quot;TR Krylov (ILU) [PETSc]&quot;,
+        alg = PETScSNES(; snes_type = &quot;newtontr&quot;, ksp_type = &quot;gmres&quot;,
+            pc_type = &quot;ilu&quot;, ksp_gmres_restart = krylov_dim,
+            pc_factor_levels = 0, pc_factor_drop_tolerance = 50.0)),
+    (; pkg = :wrapper,
+        name = &quot;TR Krylov (AMG) [PETSc]&quot;,
+        alg = PETScSNES(; snes_type = &quot;newtontr&quot;, ksp_type = &quot;gmres&quot;,
+            pc_type = &quot;gamg&quot;, ksp_gmres_restart = krylov_dim)),
+    (; pkg = :wrapper,
+        name = &quot;TR Krylov (AMG Jacobi) [PETSc]&quot;,
+        alg = PETScSNES(; snes_type = &quot;newtontr&quot;, ksp_type = &quot;gmres&quot;,
+            pc_type = &quot;gamg&quot;, mg_levels_ksp_type = &quot;richardson&quot;,
+            mg_levels_pc_type = &quot;jacobi&quot;, ksp_gmres_restart = krylov_dim))
+]
+
+gc_disabled = false
+runtimes_scaling = fill(-1.0, length(solvers_scaling_jacobian_free), length(Ns))
+
+for (j, solver) in enumerate(solvers_scaling_jacobian_free)
+    alg = solver.alg
+    name = solver.name
+
+    if !gc_disabled &amp;&amp; alg isa PETScSNES
+        GC.enable(false)
+        global gc_disabled = true
+        @info &quot;Disabling GC for $(name)&quot;
+    end
+
+    for (i, N) in enumerate(Ns)
+        prob = generate_brusselator_problem(N; sparsity = TracerSparsityDetector())
+
+        if (j &gt; 1 &amp;&amp; runtimes_scaling[j - 1, i] == -1)
+            # The last benchmark failed so skip this too
+            runtimes_scaling[j, i] = NaN
+            @warn &quot;$(name): Would Have Timed out&quot;
+        else
+            function benchmark_function()
+                termination_condition = (alg isa PETScSNES || alg isa KINSOL) ?
+                                        nothing :
+                                        NonlinearSolveBase.AbsNormTerminationMode(Base.Fix1(maximum, abs))
+                # PETSc doesn&#39;t converge properly
+                tol = alg isa PETScSNES ? 1e-6 : 1e-4
+                sol = solve(prob, alg; abstol = tol, reltol = tol,
+                    linsolve_kwargs = (; abstol = 1e-8, reltol = 1e-8),
+                    termination_condition)
+                if SciMLBase.successful_retcode(sol) || norm(sol.resid, Inf) ≤ 1e-4
+                    runtimes_scaling[j, i] = @belapsed solve($prob, $alg;
+                        abstol = $tol, reltol = $tol,
+                        linsolve_kwargs = (; abstol = 1e-8, reltol = 1e-8),
+                        termination_condition = $termination_condition)
+                else
+                    runtimes_scaling[j, i] = NaN
+                end
+                @info &quot;$(name): $(runtimes_scaling[j, i]) | $(norm(sol.resid, Inf)) | $(sol.retcode)&quot;
+            end
+
+            timeout(benchmark_function, 600)
+
+            if runtimes_scaling[j, i] == -1
+                @warn &quot;$(name): Timed out&quot;
+                runtimes_scaling[j, i] = NaN
+            end
+        end
+    end
+
+    println()
+end</code></pre><p>Plot the results.</p><pre><code class="language-julia hljs">fig = begin
+    ASPECT_RATIO = 0.7
+    WIDTH = 1200
+    HEIGHT = round(Int, WIDTH * ASPECT_RATIO)
+    STROKEWIDTH = 2.5
+
+    successful_solvers = map(x -&gt; any(isfinite, x), eachrow(runtimes_scaling))
+    solvers_scaling_jacobian_free = solvers_scaling_jacobian_free[successful_solvers]
+    runtimes_scaling = runtimes_scaling[successful_solvers, :]
+
+    cycle = Cycle([:marker], covary = true)
+    colors = cgrad(:tableau_20, length(solvers_scaling_jacobian_free); categorical = true)
+    theme = Theme(Lines = (cycle = cycle,), Scatter = (cycle = cycle,))
+    LINESTYLES = Dict(
+        :none =&gt; :solid,
+        :amg =&gt; :dot,
+        :amg_jacobi =&gt; :dash,
+        :ilu =&gt; :dashdot
+    )
+
+    Ns_ = Ns .^ 2 .* 2
+
+    with_theme(theme) do
+        fig = Figure(; size = (WIDTH, HEIGHT))
+
+        ax = Axis(fig[1, 1:2], ylabel = L&quot;Time ($s$)&quot;, xlabel = L&quot;Problem Size ($N$)&quot;,
+            xscale = log2, yscale = log2, xlabelsize = 22, ylabelsize = 22,
+            xticklabelsize = 20, yticklabelsize = 20, xtickwidth = STROKEWIDTH,
+            ytickwidth = STROKEWIDTH, spinewidth = STROKEWIDTH)
+
+        idxs = get_ordering(runtimes_scaling)
+
+        ls, scs, labels = [], [], []
+        for (i, solver) in zip(idxs, solvers_scaling_jacobian_free[idxs])
+            all(isnan, runtimes_scaling[i, :]) &amp;&amp; continue
+            precon = occursin(&quot;AMG Jacobi&quot;, solver.name) ? :amg_jacobi :
+                     occursin(&quot;AMG&quot;, solver.name) ? :amg :
+                     occursin(&quot;ILU&quot;, solver.name) ? :ilu : :none
+            linestyle = LINESTYLES[precon]
+            l = lines!(Ns_, runtimes_scaling[i, :]; linewidth = 5, color = colors[i],
+                linestyle)
+            sc = scatter!(Ns_, runtimes_scaling[i, :]; markersize = 16, strokewidth = 2,
+                color = colors[i])
+            push!(ls, l)
+            push!(scs, sc)
+            push!(labels, solver.name)
+        end
+
+        axislegend(ax, [[l, sc] for (l, sc) in zip(ls, scs)], labels,
+            &quot;Successful Solvers&quot;;
+            framevisible = true, framewidth = STROKEWIDTH, orientation = :vertical,
+            titlesize = 20, labelsize = 16, position = :lt, nbanks = 2,
+            tellheight = true, tellwidth = false, patchsize = (40.0f0, 20.0f0))
+
+        axislegend(ax,
+            [
+                LineElement(; linestyle = :solid, linewidth = 5),
+                LineElement(; linestyle = :dot, linewidth = 5),
+                LineElement(; linestyle = :dash, linewidth = 5),
+                LineElement(; linestyle = :dashdot, linewidth = 5)
+            ],
+            [&quot;No Preconditioning&quot;, &quot;AMG&quot;, &quot;AMG Jacobi&quot;, &quot;Incomplete LU&quot;],
+            &quot;Preconditioning&quot;; framevisible = true, framewidth = STROKEWIDTH,
+            orientation = :vertical, titlesize = 20, labelsize = 16,
+            tellheight = true, tellwidth = true, patchsize = (40.0f0, 20.0f0),
+            position = :rb)
+
+        fig[0, :] = Label(fig,
+            &quot;Brusselator 2D: Scaling of Jacobian-Free Nonlinear Solvers with Problem Size&quot;,
+            fontsize = 24, tellwidth = false, font = :bold)
+
+        return fig
+    end
+end</code></pre><p><img src="../figures/bruss_krylov_5_1.png" alt/></p><pre><code class="language-julia hljs">save(&quot;brusselator_krylov_methods_scaling.svg&quot;, fig)</code></pre><pre><code class="nohighlight hljs">CairoMakie.Screen{SVG}</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../bruss/">« Ill-Conditioned Nonlinear System Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 24 February 2026 12:40">Tuesday 24 February 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Benchmarking Variable Rate Aggregator · The SciML Benchmarks</title><meta name="title" content="Benchmarking Variable Rate Aggregator · The SciML Benchmarks"/><meta property="og:title" content="Benchmarking Variable Rate Aggregator · The SciML Benchmarks"/><meta property="twitter:title" content="Benchmarking Variable Rate Aggregator · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/HybridJumps/VR_Aggregator_Benchmark/"/><meta property="twitter:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/HybridJumps/VR_Aggregator_Benchmark/"/><link rel="canonical" href="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/HybridJumps/VR_Aggregator_Benchmark/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li><li><a class="tocitem" href="../../DAE/slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../Synapse/">Synapse model</a></li><li class="is-active"><a class="tocitem" href>Benchmarking Variable Rate Aggregator</a><ul class="internal"><li class="toplevel"><a class="tocitem" href="#Introduction"><span>Introduction</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmark-and-Plot-Test-1"><span>Benchmark and Plot Test 1</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmark-and-Plot-Test-2"><span>Benchmark and Plot Test 2</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmark-and-Plot-Test-3"><span>Benchmark and Plot Test 3</span></a></li><li class="toplevel"><a class="tocitem" href="#Benchmark-and-Plot-Test-4"><span>Benchmark and Plot Test 4</span></a></li></ul></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_quadratic/">CUTEst Quadratic Programming with Linear Constraints Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unbounded/">CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unconstrained/">CUTEst Unconstrained Nonlinear Optimization Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Hybrid (Time-Dependent) Jump Processes</a></li><li class="is-active"><a href>Benchmarking Variable Rate Aggregator</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Benchmarking Variable Rate Aggregator</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/HybridJumps/VR_Aggregator_Benchmark.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Benchmarking-Variable-Rate-Aggregator"><a class="docs-heading-anchor" href="#Benchmarking-Variable-Rate-Aggregator">Benchmarking Variable Rate Aggregator</a><a id="Benchmarking-Variable-Rate-Aggregator-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmarking-Variable-Rate-Aggregator" title="Permalink"></a></h1><pre><code class="language-julia hljs">using DiffEqBase, Catalyst, JumpProcesses, OrdinaryDiffEq, StochasticDiffEq
+using Random, LinearSolve, StableRNGs, BenchmarkTools, Plots, LinearAlgebra
+fmt = :png
+width_px, height_px = default(:size)
+rng = StableRNG(12345)</code></pre><pre><code class="nohighlight hljs">StableRNGs.LehmerRNG(state=0x00000000000000000000000000006073)</code></pre><h1 id="Introduction"><a class="docs-heading-anchor" href="#Introduction">Introduction</a><a id="Introduction-1"></a><a class="docs-heading-anchor-permalink" href="#Introduction" title="Permalink"></a></h1><p>This document benchmarks the performance of variable rate jumps in <code>JumpProcesses.jl</code> and visualizes example solution trajectories. The benchmark compares <code>VR_Direct</code>, <code>VR_DirectFW</code>, and <code>VR_FRM</code> aggregators for variable rate jumps, and includes a constant rate jump model with <code>Direct</code>. Visualization shows state variables vs. time to verify behavior.</p><p>The test cases are:</p><ol><li><strong>Scalar ODE with Variable Rate Jumps</strong>: Solved with <code>Tsit5</code> and <code>Rosenbrock23</code> (autodiff).</li><li><strong>Complex ODE with Variable Rate Jump</strong>: Solved with <code>Tsit5</code>.</li><li><strong>DNA Gene Model</strong>: ODE with 10 variable rate jumps from the RSSA paper, solved with <code>Tsit5</code>.</li><li><strong>Negative Feedback Gene Expression</strong>: Constant rate jumps solved with <code>SSAStepper</code>, variable rate jumps with <code>Tsit5</code>, from Marchetti et al. (2017).</li></ol><p>For visualization, we solve one trajectory per test case with 2 jumps (10 for Test 3, 8 for Test 4). For benchmarking, we vary jumps from 1 to 20 for Tests 1 and 2, use fixed jumps for Test 3 (10) and Test 4 (8), running 50 trajectories. Benchmarking saves only at the final time with <code>save_positions=(false, false)</code>.</p><h1 id="Benchmark-and-Plot-Test-1"><a class="docs-heading-anchor" href="#Benchmark-and-Plot-Test-1">Benchmark and Plot Test 1</a><a id="Benchmark-and-Plot-Test-1-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmark-and-Plot-Test-1" title="Permalink"></a></h1><p>We benchmark Test 1 for 1 to 20 jumps, running 50 trajectories, and plot mean execution times as a line plot.</p><pre><code class="language-julia hljs">let
+    algorithms = Tuple{Any, Any, String, String}[
+        (VR_Direct(), Tsit5(), &quot;VR_Direct&quot;, &quot;Test 1 Tsit5 (VR_Direct)&quot;),
+        (VR_DirectFW(), Tsit5(), &quot;VR_DirectFW&quot;, &quot;Test 1 Tsit5 (VR_DirectFW)&quot;),
+        (VR_FRM(), Tsit5(), &quot;VR_FRM&quot;, &quot;Test 1 Tsit5 (VR_FRM)&quot;),
+        (VR_Direct(), Rosenbrock23(), &quot;VR_Direct&quot;, &quot;Test 1 Rosenbrock23 (autodiff, VR_Direct)&quot;),
+        (VR_DirectFW(), Rosenbrock23(), &quot;VR_DirectFW&quot;, &quot;Test 1 Rosenbrock23 (autodiff, VR_DirectFW)&quot;),
+        (VR_FRM(), Rosenbrock23(), &quot;VR_FRM&quot;, &quot;Test 1 Rosenbrock23 (autodiff, VR_FRM)&quot;),
+    ]
+
+    function create_test1_problem(num_jumps, vr_aggregator, solver)
+        f = (du, u, p, t) -&gt; (du[1] = u[1])
+        prob = ODEProblem(f, [0.2], (0.0, 10.0))
+        jumps = [VariableRateJump((u, p, t) -&gt; u[1], (integrator) -&gt; (integrator.u[1] = integrator.u[1] / 2.0); interp_points=20) for _ in 1:num_jumps]
+        jump_prob = JumpProblem(prob, Direct(), jumps...; vr_aggregator=vr_aggregator, rng=rng, save_positions=(false, false))
+        ensemble_prob = EnsembleProblem(jump_prob)
+        return ensemble_prob, jump_prob
+    end
+
+    num_jumps_range = append!([1], 5:5:20)
+    bs = Vector{Vector{BenchmarkTools.Trial}}()
+    errors = Dict{String, Vector{String}}()
+
+    for (algo, stepper, agg_name, label) in algorithms
+        @info &quot;Benchmarking $label&quot;
+        push!(bs, Vector{BenchmarkTools.Trial}())
+        errors[label] = String[]
+        _bs = bs[end]
+        for var in num_jumps_range
+            ensemble_prob, jump_prob = create_test1_problem(var, algo, stepper)
+            trial = try
+                @benchmark(
+                    solve($jump_prob, $stepper, saveat=[$jump_prob.prob.tspan[2]]),
+                    samples=50,
+                    evals=1,
+                    seconds=100
+                )
+            catch e
+                push!(errors[label], &quot;Error at Num Jumps = $var: $(sprint(showerror, e))&quot;)
+                BenchmarkTools.Trial(BenchmarkTools.Parameters(samples=50, evals=1, seconds=100))
+            end
+            push!(_bs, trial)
+            mean_time = length(trial) &gt; 0 ? &quot;$(BenchmarkTools.prettytime(mean(trial.times)))&quot; : &quot;nan&quot;
+            println(&quot;algo=$label, Num Jumps = $var, length = $(length(trial.times)), mean time = $mean_time&quot;)
+        end
+    end
+
+    # Log errors
+    for (label, err_list) in errors
+        if !isempty(err_list)
+            @warn &quot;Errors for $label:&quot;
+            for err in err_list
+                println(err)
+            end
+        end
+    end
+
+    # Plot results
+    fig = plot(
+        yscale=:log10,
+        xlabel=&quot;Number of Jumps&quot;,
+        ylabel=&quot;Time (ns)&quot;,
+        legend_position=:outertopright,
+        title=&quot;Test 1: Simulations, 50 samples&quot;
+    )
+    for (i, (algo, stepper, agg_name, label)) in enumerate(algorithms)
+        _bs, _vars = [], []
+        for (j, b) in enumerate(bs[i])
+            if length(b) == 50
+                push!(_bs, mean(b.times))
+                push!(_vars, num_jumps_range[j])
+            end
+        end
+        if !isempty(_bs)
+            plot!(_vars, _bs, label=label)
+        else
+            @warn &quot;No valid data for $label in Test 1&quot;
+        end
+    end
+    display(plot(fig, layout=(1, 1), format=fmt, size=(width_px, height_px)))
+end</code></pre><pre><code class="nohighlight hljs">algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 1, length = 50, mean time = 462.
+745 μs
+algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 5, length = 50, mean time = 509.
+944 μs
+algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 10, length = 50, mean time = 537
+.943 μs
+algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 15, length = 50, mean time = 560
+.526 μs
+algo=Test 1 Tsit5 (VR_Direct), Num Jumps = 20, length = 50, mean time = 584
+.453 μs
+algo=Test 1 Tsit5 (VR_DirectFW), Num Jumps = 1, length = 50, mean time = 78
+3.847 μs
+algo=Test 1 Tsit5 (VR_DirectFW), Num Jumps = 5, length = 50, mean time = 2.
+257 ms
+algo=Test 1 Tsit5 (VR_DirectFW), Num Jumps = 10, length = 50, mean time = 5
+.137 ms
+algo=Test 1 Tsit5 (VR_DirectFW), Num Jumps = 15, length = 50, mean time = 8
+.390 ms
+algo=Test 1 Tsit5 (VR_DirectFW), Num Jumps = 20, length = 50, mean time = 1
+2.496 ms
+algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 1, length = 50, mean time = 78.989 
+μs
+algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 5, length = 50, mean time = 342.744
+ μs
+algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 10, length = 50, mean time = 782.56
+6 μs
+algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 15, length = 50, mean time = 1.278 
+ms
+algo=Test 1 Tsit5 (VR_FRM), Num Jumps = 20, length = 50, mean time = 1.915 
+ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_Direct), Num Jumps = 1, length = 50,
+ mean time = 990.101 μs
+algo=Test 1 Rosenbrock23 (autodiff, VR_Direct), Num Jumps = 5, length = 50,
+ mean time = 1.006 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_Direct), Num Jumps = 10, length = 50
+, mean time = 1.032 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_Direct), Num Jumps = 15, length = 50
+, mean time = 1.101 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_Direct), Num Jumps = 20, length = 50
+, mean time = 1.081 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_DirectFW), Num Jumps = 1, length = 5
+0, mean time = 1.685 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_DirectFW), Num Jumps = 5, length = 5
+0, mean time = 4.804 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_DirectFW), Num Jumps = 10, length = 
+50, mean time = 9.564 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_DirectFW), Num Jumps = 15, length = 
+50, mean time = 16.361 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_DirectFW), Num Jumps = 20, length = 
+50, mean time = 24.420 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_FRM), Num Jumps = 1, length = 50, me
+an time = 241.582 μs
+algo=Test 1 Rosenbrock23 (autodiff, VR_FRM), Num Jumps = 5, length = 50, me
+an time = 589.749 μs
+algo=Test 1 Rosenbrock23 (autodiff, VR_FRM), Num Jumps = 10, length = 50, m
+ean time = 1.083 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_FRM), Num Jumps = 15, length = 50, m
+ean time = 1.664 ms
+algo=Test 1 Rosenbrock23 (autodiff, VR_FRM), Num Jumps = 20, length = 50, m
+ean time = 2.070 ms</code></pre><p><img src="../figures/VR_Aggregator_Benchmark_2_1.png" alt/></p><h1 id="Benchmark-and-Plot-Test-2"><a class="docs-heading-anchor" href="#Benchmark-and-Plot-Test-2">Benchmark and Plot Test 2</a><a id="Benchmark-and-Plot-Test-2-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmark-and-Plot-Test-2" title="Permalink"></a></h1><p>We benchmark Test 2 for 1 to 20 jumps, running 50 trajectories, and plot mean execution times as a line plot.</p><pre><code class="language-julia hljs">let
+    algorithms = Tuple{Any, Any, String, String}[
+        (VR_Direct(), Tsit5(), &quot;VR_Direct&quot;, &quot;Test 2 Tsit5 (VR_Direct)&quot;),
+        (VR_DirectFW(), Tsit5(), &quot;VR_DirectFW&quot;, &quot;Test 2 Tsit5 (VR_DirectFW)&quot;),
+        (VR_FRM(), Tsit5(), &quot;VR_FRM&quot;, &quot;Test 2 Tsit5 (VR_FRM)&quot;),
+    ]
+
+    function create_test2_problem(num_jumps, vr_aggregator, solver)
+        f4 = (dx, x, p, t) -&gt; (dx[1] = x[1])
+        rate4 = (x, p, t) -&gt; t
+        affect4! = (integrator) -&gt; (integrator.u[1] = integrator.u[1] * 0.5)
+        prob = ODEProblem(f4, [1.0 + 0.0im], (0.0, 6.0))
+        jumps = [VariableRateJump(rate4, affect4!) for _ in 1:num_jumps]
+        jump_prob = JumpProblem(prob, Direct(), jumps...; vr_aggregator=vr_aggregator, rng=rng, save_positions=(false, false))
+        ensemble_prob = EnsembleProblem(jump_prob)
+        return ensemble_prob, jump_prob
+    end
+
+    num_jumps_range = append!([1], 5:5:20)
+    bs = Vector{Vector{BenchmarkTools.Trial}}()
+    errors = Dict{String, Vector{String}}()
+
+    for (algo, stepper, agg_name, label) in algorithms
+        @info &quot;Benchmarking $label&quot;
+        push!(bs, Vector{BenchmarkTools.Trial}())
+        errors[label] = String[]
+        _bs = bs[end]
+        for var in num_jumps_range
+            ensemble_prob, jump_prob = create_test2_problem(var, algo, stepper)
+            trial = try
+                @benchmark(
+                    solve($jump_prob, $stepper, saveat=[$jump_prob.prob.tspan[2]]),
+                    samples=50,
+                    evals=1,
+                    seconds=100
+                )
+            catch e
+                push!(errors[label], &quot;Error at Num Jumps = $var: $(sprint(showerror, e))&quot;)
+                BenchmarkTools.Trial(BenchmarkTools.Parameters(samples=50, evals=1, seconds=100))
+            end
+            push!(_bs, trial)
+            mean_time = length(trial) &gt; 0 ? &quot;$(BenchmarkTools.prettytime(mean(trial.times)))&quot; : &quot;nan&quot;
+            println(&quot;algo=$label, Num Jumps = $var, length = $(length(trial.times)), mean time = $mean_time&quot;)
+        end
+    end
+
+    # Log errors
+    for (label, err_list) in errors
+        if !isempty(err_list)
+            @warn &quot;Errors for $label:&quot;
+            for err in err_list
+                println(err)
+            end
+        end
+    end
+
+    # Plot results
+    fig = plot(
+        yscale=:log10,
+        xlabel=&quot;Number of Jumps&quot;,
+        ylabel=&quot;Time (ns)&quot;,
+        legend_position=:outertopright,
+        title=&quot;Test 2: Simulations, 50 samples&quot;
+    )
+    for (i, (algo, stepper, agg_name, label)) in enumerate(algorithms)
+        _bs, _vars = [], []
+        for (j, b) in enumerate(bs[i])
+            if length(b) == 50
+                push!(_bs, mean(b.times))
+                push!(_vars, num_jumps_range[j])
+            end
+        end
+        if !isempty(_bs)
+            plot!(_vars, _bs, label=label)
+        else
+            @warn &quot;No valid data for $label in Test 2&quot;
+        end
+    end
+    display(plot(fig, layout=(1, 1), format=fmt, size=(width_px, height_px)))
+end</code></pre><pre><code class="nohighlight hljs">algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 1, length = 50, mean time = 575.
+850 μs
+algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 5, length = 50, mean time = 2.29
+5 ms
+algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 10, length = 50, mean time = 4.6
+17 ms
+algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 15, length = 50, mean time = 6.8
+73 ms
+algo=Test 2 Tsit5 (VR_Direct), Num Jumps = 20, length = 50, mean time = 9.1
+77 ms
+algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 1, length = 50, mean time = 88
+5.439 μs
+algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 5, length = 50, mean time = 9.
+456 ms
+algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 10, length = 50, mean time = 3
+7.722 ms
+algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 15, length = 50, mean time = 9
+6.066 ms
+algo=Test 2 Tsit5 (VR_DirectFW), Num Jumps = 20, length = 50, mean time = 1
+87.467 ms
+algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 1, length = 50, mean time = 84.363 
+μs
+algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 5, length = 50, mean time = 1.106 m
+s
+algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 10, length = 50, mean time = 4.601 
+ms
+algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 15, length = 50, mean time = 10.479
+ ms
+algo=Test 2 Tsit5 (VR_FRM), Num Jumps = 20, length = 50, mean time = 19.043
+ ms</code></pre><p><img src="../figures/VR_Aggregator_Benchmark_3_1.png" alt/></p><h1 id="Benchmark-and-Plot-Test-3"><a class="docs-heading-anchor" href="#Benchmark-and-Plot-Test-3">Benchmark and Plot Test 3</a><a id="Benchmark-and-Plot-Test-3-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmark-and-Plot-Test-3" title="Permalink"></a></h1><p>We benchmark Test 3 for fixed 10 jumps, running 50 trajectories, and plot mean execution times as a bar plot.</p><pre><code class="language-julia hljs">let
+    algorithms = Tuple{Any, Any, String, String}[
+        (VR_Direct(), Tsit5(), &quot;VR_Direct&quot;, &quot;Test 3 Tsit5 (VR_Direct, DNA Model)&quot;),
+        (VR_DirectFW(), Tsit5(), &quot;VR_DirectFW&quot;, &quot;Test 3 Tsit5 (VR_DirectFW, DNA Model)&quot;),
+        (VR_FRM(), Tsit5(), &quot;VR_FRM&quot;, &quot;Test 3 Tsit5 (VR_FRM, DNA Model)&quot;),
+    ]
+
+    function create_test3_problem(num_jumps, vr_aggregator, solver)
+        r = [0.043, 0.0007, 0.0715, 0.0039, 0.0199, 0.4791, 0.00019, 0.8765, 0.083, 0.5]
+        k = -log(2) / 30
+        u0 = [10.0, 10.0, 30.0, 0.0, 0.0, 0.0]  # [DNA, M, D, RNA, DNAD, DNA2D]
+        tspan = (0.0, 120.0)
+        
+        function f_dna(du, u, p, t)
+            du .= 0.0
+            nothing
+        end
+        
+        function rate1(u, p, t) r[1] * u[4] end
+        function affect1!(integrator) integrator.u[2] += 1; nothing end
+        jump1 = VariableRateJump(rate1, affect1!)
+        
+        function rate2(u, p, t) r[2] * u[2] end
+        function affect2!(integrator) integrator.u[2] -= 1; nothing end
+        jump2 = VariableRateJump(rate2, affect2!)
+        
+        function rate3(u, p, t) r[3] * u[5] end
+        function affect3!(integrator) integrator.u[4] += 1; nothing end
+        jump3 = VariableRateJump(rate3, affect3!)
+        
+        function rate4(u, p, t) r[4] * u[4] end
+        function affect4!(integrator) integrator.u[4] -= 1; nothing end
+        jump4 = VariableRateJump(rate4, affect4!)
+        
+        function rate5(u, p, t) r[5] * exp(k * t) * u[1] * u[3] end
+        function affect5!(integrator) integrator.u[1] -= 1; integrator.u[3] -= 1; integrator.u[5] += 1; nothing end
+        jump5 = VariableRateJump(rate5, affect5!)
+        
+        function rate6(u, p, t) r[6] * u[5] end
+        function affect6!(integrator) integrator.u[5] -= 1; integrator.u[1] += 1; integrator.u[3] += 1; nothing end
+        jump6 = VariableRateJump(rate6, affect6!)
+        
+        function rate7(u, p, t) r[7] * exp(k * t) * u[5] * u[3] end
+        function affect7!(integrator) integrator.u[5] -= 1; integrator.u[3] -= 1; integrator.u[6] += 1; nothing end
+        jump7 = VariableRateJump(rate7, affect7!)
+        
+        function rate8(u, p, t) r[8] * u[6] end
+        function affect8!(integrator) integrator.u[6] -= 1; integrator.u[1] += 1; integrator.u[3] += 1; nothing end
+        jump8 = VariableRateJump(rate8, affect8!)
+        
+        function rate9(u, p, t) r[9] * exp(k * t) * u[2] * (u[2] - 1) / 2 end
+        function affect9!(integrator) integrator.u[2] -= 2; integrator.u[3] += 1; nothing end
+        jump9 = VariableRateJump(rate9, affect9!)
+        
+        function rate10(u, p, t) r[10] * u[3] end
+        function affect10!(integrator) integrator.u[3] -= 1; integrator.u[2] += 2; nothing end
+        jump10 = VariableRateJump(rate10, affect10!)
+        
+        prob = ODEProblem(f_dna, u0, tspan)
+        jumps = (jump1, jump2, jump3, jump4, jump5, jump6, jump7, jump8, jump9, jump10)
+        jump_prob = JumpProblem(prob, Direct(), jumps...; vr_aggregator=vr_aggregator, rng=rng, save_positions=(false, false))
+        ensemble_prob = EnsembleProblem(jump_prob)
+        return ensemble_prob, jump_prob
+    end
+
+    num_jumps_range = [10]
+    bs = Vector{Vector{BenchmarkTools.Trial}}()
+    errors = Dict{String, Vector{String}}()
+
+    for (algo, stepper, agg_name, label) in algorithms
+        @info &quot;Benchmarking $label&quot;
+        push!(bs, Vector{BenchmarkTools.Trial}())
+        errors[label] = String[]
+        _bs = bs[end]
+        for var in num_jumps_range
+            ensemble_prob, jump_prob = create_test3_problem(var, algo, stepper)
+            trial = try
+                @benchmark(
+                    solve($jump_prob, $stepper, saveat=[$jump_prob.prob.tspan[2]]),
+                    samples=50,
+                    evals=1,
+                    seconds=100
+                )
+            catch e
+                push!(errors[label], &quot;Error at Num Jumps = $var: $(sprint(showerror, e))&quot;)
+                BenchmarkTools.Trial(BenchmarkTools.Parameters(samples=50, evals=1, seconds=100))
+            end
+            push!(_bs, trial)
+            mean_time = length(trial) &gt; 0 ? &quot;$(BenchmarkTools.prettytime(mean(trial.times)))&quot; : &quot;nan&quot;
+            println(&quot;algo=$label, Num Jumps = $var, length = $(length(trial.times)), mean time = $mean_time&quot;)
+        end
+    end
+
+    # Log errors
+    for (label, err_list) in errors
+        if !isempty(err_list)
+            @warn &quot;Errors for $label:&quot;
+            for err in err_list
+                println(err)
+            end
+        end
+    end
+
+    # Plot results
+    fig = plot(
+        yscale=:log10,
+        xlabel=&quot;Method&quot;,
+        ylabel=&quot;Time (ns)&quot;,
+        title=&quot;Test 3: DNA Model, 10 Jumps, 50 samples&quot;,
+        xticks=(1:length(algorithms), [split(a[3], &quot; (&quot;)[1] for a in algorithms]),
+        xrotation=45
+    )
+    means = []
+    for (i, (algo, stepper, agg_name, label)) in enumerate(algorithms)
+        b = bs[i][1]  # Single jump count (10)
+        if length(b) == 50
+            push!(means, mean(b.times))
+        else
+            push!(means, NaN)
+            @warn &quot;No valid data for $label in Test 3&quot;
+        end
+    end
+    bar!(1:length(algorithms), means, label=&quot;&quot;, fillalpha=0.7)
+    display(plot(fig, layout=(1, 1), format=fmt, size=(width_px, height_px)))
+end</code></pre><pre><code class="nohighlight hljs">algo=Test 3 Tsit5 (VR_Direct, DNA Model), Num Jumps = 10, length = 50, mean
+ time = 83.432 ms
+algo=Test 3 Tsit5 (VR_DirectFW, DNA Model), Num Jumps = 10, length = 50, me
+an time = 1.065 s
+algo=Test 3 Tsit5 (VR_FRM, DNA Model), Num Jumps = 10, length = 50, mean ti
+me = 86.713 ms</code></pre><p><img src="../figures/VR_Aggregator_Benchmark_4_1.png" alt/></p><h1 id="Benchmark-and-Plot-Test-4"><a class="docs-heading-anchor" href="#Benchmark-and-Plot-Test-4">Benchmark and Plot Test 4</a><a id="Benchmark-and-Plot-Test-4-1"></a><a class="docs-heading-anchor-permalink" href="#Benchmark-and-Plot-Test-4" title="Permalink"></a></h1><p>We benchmark Test 4 for fixed 8 jumps, running 50 trajectories, and plot mean execution times as a bar plot.</p><pre><code class="language-julia hljs">let
+    algorithms = Tuple{Any, Any, String, String}[
+        #(Direct(), SSAStepper(), &quot;Direct&quot;, &quot;Test 4 SSAStepper (Direct, NegFeedback, Constant Rate)&quot;),
+        (VR_Direct(), Tsit5(), &quot;VR_Direct&quot;, &quot;Test 4 Tsit5 (VR_Direct, NegFeedback, Variable Rate)&quot;),
+        (VR_DirectFW(), Tsit5(), &quot;VR_DirectFW&quot;, &quot;Test 4 Tsit5 (VR_DirectFW, NegFeedback, Variable Rate)&quot;),
+        (VR_FRM(), Tsit5(), &quot;VR_FRM&quot;, &quot;Test 4 Tsit5 (VR_FRM, NegFeedback, Variable Rate)&quot;),
+    ]
+
+    function create_test4_problem(num_jumps, aggregator, solver)
+        rn = @reaction_network begin
+            c1, G --&gt; G + M
+            c2, M --&gt; M + P
+            c3, M --&gt; 0
+            c4, P --&gt; 0
+            c5, 2P --&gt; P2
+            c6, P2 --&gt; 2P
+            c7, P2 + G --&gt; P2G
+            c8, P2G --&gt; P2 + G
+        end
+        rnpar = [:c1 =&gt; 0.09, :c2 =&gt; 0.05, :c3 =&gt; 0.001, :c4 =&gt; 0.0009, :c5 =&gt; 0.00001,
+                 :c6 =&gt; 0.0005, :c7 =&gt; 0.005, :c8 =&gt; 0.9]
+        u0 = [:G =&gt; 500, :M =&gt; 0, :P =&gt; 0, :P2 =&gt; 0, :P2G =&gt; 0]
+        tspan = (0.0, 100.0)
+
+        if aggregator isa Direct
+            prob = DiscreteProblem(rn, u0, tspan, rnpar)
+            jump_prob = JumpProblem(rn, prob, Direct(), rng=rng, save_positions=(false, false))
+            ensemble_prob = EnsembleProblem(jump_prob)
+        else
+            function f_gene(du, u, p, t)
+                du .= 0.0
+                nothing
+            end
+            u0_numeric = [500.0, 0.0, 0.0, 0.0, 0.0]
+            p_numeric = [0.09, 0.05, 0.001, 0.0009, 0.00001, 0.0005, 0.005, 0.9]
+            var_rate = true
+            prob = ODEProblem(f_gene, u0_numeric, tspan, (p_numeric, var_rate))
+
+            function rate1(u, p, t) p[1][1] * (p[2] ? (1 + 0.1 * sin(t)) : 1.0) * u[1] end
+            function affect1!(integrator) integrator.u[2] += 1; nothing end
+            jump1 = VariableRateJump(rate1, affect1!)
+
+            function rate2(u, p, t) p[1][2] * u[2] end
+            function affect2!(integrator) integrator.u[3] += 1; nothing end
+            jump2 = VariableRateJump(rate2, affect2!)
+
+            function rate3(u, p, t) p[1][3] * u[2] end
+            function affect3!(integrator) integrator.u[2] -= 1; nothing end
+            jump3 = VariableRateJump(rate3, affect3!)
+
+            function rate4(u, p, t) p[1][4] * u[3] end
+            function affect4!(integrator) integrator.u[3] -= 1; nothing end
+            jump4 = VariableRateJump(rate4, affect4!)
+
+            function rate5(u, p, t) p[1][5] * (p[2] ? (1 + 0.1 * cos(t)) : 1.0) * u[3] * (u[3] - 1) / 2 end
+            function affect5!(integrator) integrator.u[3] -= 2; integrator.u[4] += 1; nothing end
+            jump5 = VariableRateJump(rate5, affect5!)
+
+            function rate6(u, p, t) p[1][6] * u[4] end
+            function affect6!(integrator) integrator.u[4] -= 1; integrator.u[3] += 2; nothing end
+            jump6 = VariableRateJump(rate6, affect6!)
+
+            function rate7(u, p, t) p[1][7] * u[4] * u[1] end
+            function affect7!(integrator) integrator.u[4] -= 1; integrator.u[1] -= 1; integrator.u[5] += 1; nothing end
+            jump7 = VariableRateJump(rate7, affect7!)
+
+            function rate8(u, p, t) p[1][8] * u[5] end
+            function affect8!(integrator) integrator.u[5] -= 1; integrator.u[4] += 1; integrator.u[1] += 1; nothing end
+            jump8 = VariableRateJump(rate8, affect8!)
+
+            jumps = (jump1, jump2, jump3, jump4, jump5, jump6, jump7, jump8)
+            jump_prob = JumpProblem(prob, Direct(), jumps...; vr_aggregator=aggregator, rng=rng, save_positions=(false, false))
+            ensemble_prob = EnsembleProblem(jump_prob)
+        end
+        return ensemble_prob, jump_prob
+    end
+
+    num_jumps_range = [8]
+    bs = Vector{Vector{BenchmarkTools.Trial}}()
+    errors = Dict{String, Vector{String}}()
+
+    for (algo, stepper, agg_name, label) in algorithms
+        @info &quot;Benchmarking $label&quot;
+        push!(bs, Vector{BenchmarkTools.Trial}())
+        errors[label] = String[]
+        _bs = bs[end]
+        for var in num_jumps_range
+            ensemble_prob, jump_prob = create_test4_problem(var, algo, stepper)
+            trial = try
+                @benchmark(
+                    solve($jump_prob, $stepper, saveat=[$jump_prob.prob.tspan[2]]),
+                    samples=50,
+                    evals=1,
+                    seconds=1000
+                )
+            catch e
+                push!(errors[label], &quot;Error at Num Jumps = $var: $(sprint(showerror, e))&quot;)
+                BenchmarkTools.Trial(BenchmarkTools.Parameters(samples=10, evals=1, seconds=1000))
+            end
+            push!(_bs, trial)
+            mean_time = length(trial) &gt; 0 ? &quot;$(BenchmarkTools.prettytime(mean(trial.times)))&quot; : &quot;nan&quot;
+            println(&quot;algo=$label, Num Jumps = $var, length = $(length(trial.times)), mean time = $mean_time&quot;)
+        end
+    end
+
+    # Log errors
+    for (label, err_list) in errors
+        if !isempty(err_list)
+            @warn &quot;Errors for $label:&quot;
+            for err in err_list
+                println(err)
+            end
+        end
+    end
+
+    # Plot results
+    fig = plot(
+        yscale=:log10,
+        xlabel=&quot;Method&quot;,
+        ylabel=&quot;Time (ns)&quot;,
+        title=&quot;Test 4: NegFeedback, 8 Jumps, 50 samples&quot;,
+        xticks=(1:length(algorithms), [split(a[3], &quot; (&quot;)[1] for a in algorithms]),
+        xrotation=45
+    )
+    means = []
+    for (i, (algo, stepper, agg_name, label)) in enumerate(algorithms)
+        b = bs[i][1]  # Single jump count (8)
+        if length(b) == 50
+            push!(means, mean(b.times))
+        else
+            push!(means, NaN)
+            @warn &quot;No valid data for $label in Test 4&quot;
+        end
+    end
+    bar!(1:length(algorithms), means, label=&quot;&quot;, fillalpha=0.7)
+    display(plot(fig, layout=(1, 1), format=fmt, size=(width_px, height_px)))
+end</code></pre><pre><code class="nohighlight hljs">algo=Test 4 Tsit5 (VR_Direct, NegFeedback, Variable Rate), Num Jumps = 8, l
+ength = 50, mean time = 1.413 s
+algo=Test 4 Tsit5 (VR_DirectFW, NegFeedback, Variable Rate), Num Jumps = 8,
+ length = 50, mean time = 13.072 s
+algo=Test 4 Tsit5 (VR_FRM, NegFeedback, Variable Rate), Num Jumps = 8, leng
+th = 50, mean time = 1.046 s</code></pre><p><img src="../figures/VR_Aggregator_Benchmark_5_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../Synapse/">« Synapse model</a><a class="docs-footer-nextpage" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 24 February 2026 12:40">Tuesday 24 February 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
