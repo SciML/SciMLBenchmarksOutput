@@ -1,0 +1,682 @@
+
+using OrdinaryDiffEq, DiffEqDevTools, Sundials, ModelingToolkit,
+      ODEInterfaceDiffEq, Plots, DASKR
+using ModelingToolkit: t_nounits as t, D_nounits as D
+using LinearAlgebra, Statistics
+
+
+const N_ART = 20
+const NEQN = 8 * N_ART  # 160
+const ALPHA_DAMP = 0.5
+
+function fekete_init()
+    y = zeros(NEQN)
+
+    # Ring 1: 3 particles at beta = 3π/8
+    for i in 1:3
+        α = 2π * i / 3 + π / 13
+        β = 3π / 8
+        y[3*(i-1)+1] = cos(α) * cos(β)
+        y[3*(i-1)+2] = sin(α) * cos(β)
+        y[3*(i-1)+3] = sin(β)
+    end
+    # Ring 2: 7 particles at beta = π/8
+    for i in 4:10
+        α = 2π * (i - 3) / 7 + π / 29
+        β = π / 8
+        y[3*(i-1)+1] = cos(α) * cos(β)
+        y[3*(i-1)+2] = sin(α) * cos(β)
+        y[3*(i-1)+3] = sin(β)
+    end
+    # Ring 3: 6 particles at beta = -2π/15
+    for i in 11:16
+        α = 2π * (i - 10) / 6 + π / 7
+        β = -2π / 15
+        y[3*(i-1)+1] = cos(α) * cos(β)
+        y[3*(i-1)+2] = sin(α) * cos(β)
+        y[3*(i-1)+3] = sin(β)
+    end
+    # Ring 4: 4 particles at beta = -3π/10
+    for i in 17:20
+        α = 2π * (i - 17) / 4 + π / 17
+        β = -3π / 10
+        y[3*(i-1)+1] = cos(α) * cos(β)
+        y[3*(i-1)+2] = sin(α) * cos(β)
+        y[3*(i-1)+3] = sin(β)
+    end
+
+    # q(0) = 0  (indices 3N+1 : 6N already zero)
+    # μ(0) = 0  initially, then compute consistent values
+
+    # Compute consistent μ via one feval pass (from Fortran init)
+    yprime = similar(y)
+    fekete_rhs!(yprime, y, nothing, 0.0)
+    for i in 1:N_ART
+        s = 0.0
+        for j in 1:3
+            s += y[3*(i-1)+j] * yprime[3*N_ART + 3*(i-1)+j]
+        end
+        y[6*N_ART+i] = -s / 2.0
+    end
+
+    return y
+end
+
+
+function fekete_rhs!(dy, y, p, t)
+    nart = N_ART
+    T = eltype(dy)
+
+    # Unpack state: positions p, velocities q, multipliers λ, μ
+    # p_i = y[3(i-1)+1 : 3(i-1)+3],  i = 1..N
+    # q_i = y[3N+3(i-1)+1 : 3N+3(i-1)+3]
+    # λ_i = y[6N+i]
+    # μ_i = y[7N+i]
+
+    # Compute pairwise repulsive forces f(i,j,k) = (p_i - p_j) / |p_i - p_j|²
+    # and accumulate into velocity derivatives
+
+    @inbounds for i in 1:nart
+        lam_i = y[6*nart+i]
+        mu_i  = y[7*nart+i]
+
+        # dp_i/dt = q_i + 2*μ_i*p_i
+        for k in 1:3
+            pk = y[3*(i-1)+k]
+            qk = y[3*nart+3*(i-1)+k]
+            dy[3*(i-1)+k] = qk + 2*mu_i*pk
+        end
+
+        # dq_i/dt = -α*q_i + 2*λ_i*p_i + Σ_{j≠i} (p_i - p_j)/|p_i - p_j|²
+        for k in 1:3
+            pk = y[3*(i-1)+k]
+            qk = y[3*nart+3*(i-1)+k]
+            force_k = -ALPHA_DAMP * qk + 2*lam_i * pk
+            for j in 1:nart
+                if j != i
+                    rn = zero(T)
+                    for m in 1:3
+                        rn += (y[3*(i-1)+m] - y[3*(j-1)+m])^2
+                    end
+                    force_k += (pk - y[3*(j-1)+k]) / rn
+                end
+            end
+            dy[3*nart+3*(i-1)+k] = force_k
+        end
+
+        # Algebraic equations
+        # φ_i = |p_i|² - 1 = 0  (sphere constraint)
+        phi_i = -one(T)
+        for k in 1:3
+            phi_i += y[3*(i-1)+k]^2
+        end
+        dy[6*nart+i] = phi_i
+
+        # g_i = 2*p_i·q_i = 0  (differentiated constraint)
+        gpq_i = zero(T)
+        for k in 1:3
+            gpq_i += 2*y[3*(i-1)+k] * y[3*nart+3*(i-1)+k]
+        end
+        dy[7*nart+i] = gpq_i
+    end
+    nothing
+end
+
+
+function fekete_jac!(J, y, p, t)
+    nart = N_ART
+    neqn = NEQN
+    T = eltype(J)
+    fill!(J, zero(T))
+
+    # Extract state
+    pp = zeros(T, nart, 3)
+    qq = zeros(T, nart, 3)
+    lam = zeros(T, nart)
+    mu  = zeros(T, nart)
+    for i in 1:nart
+        for k in 1:3
+            pp[i,k] = y[3*(i-1)+k]
+            qq[i,k] = y[3*nart+3*(i-1)+k]
+        end
+        lam[i] = y[6*nart+i]
+        mu[i]  = y[7*nart+i]
+    end
+
+    # Precompute |p_i - p_j|²
+    rn = zeros(T, nart, nart)
+    for j in 1:nart, i in 1:nart
+        for k in 1:3
+            rn[i,j] += (pp[i,k] - pp[j,k])^2
+        end
+    end
+
+    # J_pp: ∂(dp_i/dt)/∂p_i = 2μ_i * I₃
+    for i in 1:nart, k in 1:3
+        J[3*(i-1)+k, 3*(i-1)+k] = 2*mu[i]
+    end
+
+    # J_pq: ∂(dp_i/dt)/∂q_i = I₃
+    for i in 1:nart, k in 1:3
+        J[3*(i-1)+k, 3*nart+3*(i-1)+k] = one(T)
+    end
+
+    # J_pμ: ∂(dp_i/dt)/∂μ_i = 2p_i
+    for i in 1:nart, k in 1:3
+        J[3*(i-1)+k, 7*nart+i] = 2*pp[i,k]
+    end
+
+    # J_qp (same i, same k): diagonal + force derivatives
+    for i in 1:nart, k in 1:3
+        val = 2*lam[i]
+        for j in 1:nart
+            if j != i
+                val += (rn[i,j] - 2*(pp[i,k] - pp[j,k])^2) / rn[i,j]^2
+            end
+        end
+        J[3*nart+3*(i-1)+k, 3*(i-1)+k] = val
+    end
+
+    # J_qp (same i, different k,m): off-diagonal spatial components
+    for i in 1:nart, k in 1:3, m in 1:3
+        if m != k
+            val = zero(T)
+            for j in 1:nart
+                if j != i
+                    val -= 2*(pp[i,k] - pp[j,k])*(pp[i,m] - pp[j,m]) / rn[i,j]^2
+                end
+            end
+            J[3*nart+3*(i-1)+k, 3*(i-1)+m] += val
+        end
+    end
+
+    # J_qp (different i,l, same k): inter-particle force derivatives
+    for i in 1:nart, l in 1:nart
+        if l != i
+            for k in 1:3
+                J[3*nart+3*(i-1)+k, 3*(l-1)+k] =
+                    (-rn[i,l] + 2*(pp[i,k] - pp[l,k])^2) / rn[i,l]^2
+            end
+        end
+    end
+
+    # J_qp (different i,l, different k,m): cross terms
+    for i in 1:nart, l in 1:nart
+        if l != i
+            for k in 1:3, m in 1:3
+                if m != k
+                    J[3*nart+3*(i-1)+k, 3*(l-1)+m] +=
+                        2*(pp[i,k] - pp[l,k])*(pp[i,m] - pp[l,m]) / rn[i,l]^2
+                end
+            end
+        end
+    end
+
+    # J_qq: ∂(dq_i/dt)/∂q_i = -α I₃
+    for i in 1:nart, k in 1:3
+        J[3*nart+3*(i-1)+k, 3*nart+3*(i-1)+k] = -ALPHA_DAMP
+    end
+
+    # J_qλ: ∂(dq_i/dt)/∂λ_i = 2p_i
+    for i in 1:nart, k in 1:3
+        J[3*nart+3*(i-1)+k, 6*nart+i] = 2*pp[i,k]
+    end
+
+    # J_λp: ∂φ_i/∂p_i = 2p_i
+    for i in 1:nart, k in 1:3
+        J[6*nart+i, 3*(i-1)+k] = 2*pp[i,k]
+    end
+
+    # J_μp: ∂g_i/∂p_i = 2q_i
+    for i in 1:nart, k in 1:3
+        J[7*nart+i, 3*(i-1)+k] = 2*qq[i,k]
+    end
+
+    # J_μq: ∂g_i/∂q_i = 2p_i
+    for i in 1:nart, k in 1:3
+        J[7*nart+i, 3*nart+3*(i-1)+k] = 2*pp[i,k]
+    end
+
+    nothing
+end
+
+
+y0 = fekete_init()
+
+# Mass matrix: M = diag(I_{6N}, 0_{2N})
+M = zeros(NEQN, NEQN)
+for i in 1:6*N_ART
+    M[i,i] = 1.0
+end
+
+mmf = ODEFunction(fekete_rhs!, mass_matrix = M, jac = fekete_jac!)
+tspan = (0.0, 1000.0)
+mmprob = ODEProblem(mmf, y0, tspan)
+
+
+function fekete_dae!(res, du, u, p, t)
+    f = similar(u)
+    fekete_rhs!(f, u, p, t)
+    # Residual: M*du - f(u) = 0
+    for i in 1:6*N_ART
+        res[i] = du[i] - f[i]
+    end
+    for i in 6*N_ART+1:NEQN
+        res[i] = -f[i]  # algebraic: 0 = f_alg(u)
+    end
+    nothing
+end
+
+du0 = zeros(NEQN)
+fekete_rhs!(du0, y0, nothing, 0.0)
+# For differential variables, du0 = f(y0); for algebraic, du0 = 0
+du0_dae = copy(du0)
+du0_dae[6*N_ART+1:end] .= 0.0
+
+differential_vars = vcat(trues(6*N_ART), falses(2*N_ART))
+daeprob = DAEProblem(fekete_dae!, du0_dae, y0, tspan,
+                     differential_vars = differential_vars)
+
+
+ps_mtk = Vector{Num}(undef, 3*N_ART)
+qs_mtk = Vector{Num}(undef, 3*N_ART)
+λs_mtk = Vector{Num}(undef, N_ART)
+
+for i in 1:N_ART
+    for k in 1:3
+        idx = 3*(i-1) + k
+        ps_mtk[idx] = only(@variables $(Symbol("p$(i)_$(k)"))(t) = y0[idx])
+        qs_mtk[idx] = only(@variables $(Symbol("q$(i)_$(k)"))(t) = 0.0)
+    end
+    λs_mtk[i] = only(@variables $(Symbol("lam$(i)"))(t) = 0.0)
+end
+
+eqs_mtk = Equation[]
+
+# Kinematics: dp/dt = q  (60 equations)
+for idx in 1:3*N_ART
+    push!(eqs_mtk, D(ps_mtk[idx]) ~ qs_mtk[idx])
+end
+
+# Dynamics: dq/dt = -αq + 2λp + Coulomb  (60 equations)
+for i in 1:N_ART
+    for k in 1:3
+        idx = 3*(i-1) + k
+        coulomb = sum(
+            (ps_mtk[idx] - ps_mtk[3*(j-1)+k]) /
+            sum((ps_mtk[3*(i-1)+m] - ps_mtk[3*(j-1)+m])^2 for m in 1:3)
+            for j in 1:N_ART if j != i
+        )
+        push!(eqs_mtk, D(qs_mtk[idx]) ~ -ALPHA_DAMP*qs_mtk[idx] +
+              2*λs_mtk[i]*ps_mtk[idx] + coulomb)
+    end
+end
+
+# Position-level constraint: |p_i|² = 1  (20 index-3 constraints)
+for i in 1:N_ART
+    push!(eqs_mtk, sum(ps_mtk[3*(i-1)+k]^2 for k in 1:3) ~ 1)
+end
+
+# Explicit automatic index reduction
+@named sys_raw = ODESystem(eqs_mtk, t)
+sys_mtk = structural_simplify(sys_raw)
+
+mtkprob = ODEProblem(sys_mtk, [], tspan)
+println("MTK automatic reduction → $(length(unknowns(sys_mtk))) states")
+
+
+# Reference values from Fortran solut() subroutine (RADAU5, tol=1e-12)
+const REFSOL = zeros(NEQN)
+REFSOL[  1] =  -0.4070263380333202
+REFSOL[  2] =   0.3463758772791802
+REFSOL[  3] =   0.8451942450030429
+REFSOL[  4] =   0.7752934752521549e-01
+REFSOL[  5] =  -0.2628662719972299
+REFSOL[  6] =   0.9617122871829146
+REFSOL[  7] =   0.7100577833343567
+REFSOL[  8] =   0.1212948055586120
+REFSOL[  9] =   0.6936177005172217
+REFSOL[ 10] =   0.2348267744557627
+REFSOL[ 11] =   0.7449277976923311
+REFSOL[ 12] =   0.6244509285956391
+REFSOL[ 13] =  -0.4341114738782885
+REFSOL[ 14] =   0.8785430442262876
+REFSOL[ 15] =   0.1992720444237660
+REFSOL[ 16] =  -0.9515059600312596
+REFSOL[ 17] =   0.2203508762787005
+REFSOL[ 18] =   0.2146669498274008
+REFSOL[ 19] =  -0.6385191643609878
+REFSOL[ 20] =  -0.4310833259390688
+REFSOL[ 21] =   0.6375425027722121
+REFSOL[ 22] =  -0.1464175087914336
+REFSOL[ 23] =  -0.9380871635228862
+REFSOL[ 24] =   0.3139337298744690
+REFSOL[ 25] =   0.5666974065069942
+REFSOL[ 26] =  -0.6739221885076542
+REFSOL[ 27] =   0.4740073135462156
+REFSOL[ 28] =   0.9843259538440293
+REFSOL[ 29] =  -0.1696995357819996
+REFSOL[ 30] =  -0.4800504290609090e-01
+REFSOL[ 31] =   0.1464175087914331
+REFSOL[ 32] =   0.9380871635228875
+REFSOL[ 33] =  -0.3139337298744656
+REFSOL[ 34] =  -0.7092757549979014
+REFSOL[ 35] =   0.5264062637139616
+REFSOL[ 36] =  -0.4688542938854929
+REFSOL[ 37] =  -0.8665731819284478
+REFSOL[ 38] =  -0.4813878059756024
+REFSOL[ 39] =  -0.1315929352982178
+REFSOL[ 40] =  -0.2347897778700538
+REFSOL[ 41] =  -0.8594340408013130
+REFSOL[ 42] =  -0.4541441287957579
+REFSOL[ 43] =   0.5530976940074118
+REFSOL[ 44] =  -0.7674370265615124
+REFSOL[ 45] =  -0.3242273140037833
+REFSOL[ 46] =   0.7711050969896927
+REFSOL[ 47] =   0.6357041816577034
+REFSOL[ 48] =   0.3573685519777001e-01
+REFSOL[ 49] =   0.7103951209379591
+REFSOL[ 50] =   0.2403570431280519
+REFSOL[ 51] =  -0.6614886725910596
+REFSOL[ 52] =  -0.3038208738735660e-01
+REFSOL[ 53] =   0.4501923293640461
+REFSOL[ 54] =  -0.8924145871442046
+REFSOL[ 55] =  -0.5772996158107093
+REFSOL[ 56] =  -0.1766763414971813
+REFSOL[ 57] =  -0.7971892020969544
+REFSOL[ 58] =   0.2414481766969039
+REFSOL[ 59] =  -0.3416456818373135
+REFSOL[ 60] =  -0.9082846503446250
+# Velocities q at t=1000 (near-zero at stationary state)
+REFSOL[ 61] =   0.2409619682166627e-15
+REFSOL[ 62] =  -0.1139818460497816e-15
+REFSOL[ 63] =   0.1627536276556335e-15
+REFSOL[ 64] =   0.1745651819597609e-15
+REFSOL[ 65] =  -0.1914278710633076e-15
+REFSOL[ 66] =  -0.6639600671806291e-16
+REFSOL[ 67] =   0.1708576733899083e-15
+REFSOL[ 68] =  -0.2277602521390053e-15
+REFSOL[ 69] =  -0.1350782790950654e-15
+REFSOL[ 70] =   0.2411941341109454e-15
+REFSOL[ 71] =  -0.1438238671800488e-15
+REFSOL[ 72] =   0.8087033550666644e-16
+REFSOL[ 73] =   0.1618239105233347e-15
+REFSOL[ 74] =   0.1837556152070701e-16
+REFSOL[ 75] =   0.2715177369929503e-15
+REFSOL[ 76] =   0.7930078658689191e-16
+REFSOL[ 77] =   0.7482020588342764e-16
+REFSOL[ 78] =   0.2746974939098084e-15
+REFSOL[ 79] =   0.8849338913035911e-16
+REFSOL[ 80] =  -0.5940734725324115e-16
+REFSOL[ 81] =   0.4845984056889910e-16
+REFSOL[ 82] =  -0.3728835248155620e-16
+REFSOL[ 83] =  -0.4600332954062859e-16
+REFSOL[ 84] =  -0.1548568884846698e-15
+REFSOL[ 85] =   0.2507541692375411e-16
+REFSOL[ 86] =  -0.1560155223230823e-15
+REFSOL[ 87] =  -0.2517946296860555e-15
+REFSOL[ 88] =  -0.3739779361502470e-16
+REFSOL[ 89] =  -0.1381663620885020e-15
+REFSOL[ 90] =  -0.2784051540342329e-15
+REFSOL[ 91] =   0.6624397102887671e-16
+REFSOL[ 92] =   0.4226207488883120e-16
+REFSOL[ 93] =   0.1571821772296610e-15
+REFSOL[ 94] =  -0.4112243677286995e-16
+REFSOL[ 95] =   0.1939960344265876e-15
+REFSOL[ 96] =   0.2800184977692136e-15
+REFSOL[ 97] =  -0.9189023375328813e-16
+REFSOL[ 98] =   0.1392943179389155e-15
+REFSOL[ 99] =   0.9556003995587458e-16
+REFSOL[100] =  -0.2234188557495892e-15
+REFSOL[101] =   0.1276804778190781e-15
+REFSOL[102] =  -0.1261196211463950e-15
+REFSOL[103] =  -0.1887754149742397e-15
+REFSOL[104] =  -0.2140788698695373e-16
+REFSOL[105] =  -0.2713591291421657e-15
+REFSOL[106] =   0.1107887633060814e-15
+REFSOL[107] =  -0.1318443715631340e-15
+REFSOL[108] =  -0.4521275683078691e-16
+REFSOL[109] =  -0.1277688851278605e-15
+REFSOL[110] =   0.4850914012115388e-16
+REFSOL[111] =  -0.1195891666741192e-15
+REFSOL[112] =  -0.1569641653843750e-15
+REFSOL[113] =   0.1856239009452638e-15
+REFSOL[114] =   0.9898466095646496e-16
+REFSOL[115] =  -0.2068030800303723e-15
+REFSOL[116] =   0.2451470336752085e-15
+REFSOL[117] =   0.9542986459336358e-16
+REFSOL[118] =  -0.2456074075580993e-15
+REFSOL[119] =   0.1532475480661800e-15
+REFSOL[120] =  -0.1229326332276474e-15
+# λ multipliers at t=1000
+REFSOL[121] =  -0.4750000000000000e+01
+REFSOL[122] =  -0.4750000000000001e+01
+REFSOL[123] =  -0.4750000000000000e+01
+REFSOL[124] =  -0.4750000000000000e+01
+REFSOL[125] =  -0.4750000000000000e+01
+REFSOL[126] =  -0.4750000000000000e+01
+REFSOL[127] =  -0.4750000000000000e+01
+REFSOL[128] =  -0.4750000000000000e+01
+REFSOL[129] =  -0.4750000000000000e+01
+REFSOL[130] =  -0.4750000000000000e+01
+REFSOL[131] =  -0.4750000000000001e+01
+REFSOL[132] =  -0.4750000000000001e+01
+REFSOL[133] =  -0.4750000000000000e+01
+REFSOL[134] =  -0.4750000000000000e+01
+REFSOL[135] =  -0.4750000000000000e+01
+REFSOL[136] =  -0.4750000000000000e+01
+REFSOL[137] =  -0.4749999999999999e+01
+REFSOL[138] =  -0.4750000000000000e+01
+REFSOL[139] =  -0.4750000000000000e+01
+REFSOL[140] =  -0.4750000000000000e+01
+# μ multipliers at t=1000 (near-zero)
+REFSOL[141] =  -0.3537526598492654e-19
+REFSOL[142] =   0.2338193888161182e-18
+REFSOL[143] =  -0.3267771993164953e-18
+REFSOL[144] =   0.2915679914072042e-18
+REFSOL[145] =   0.1965183195887647e-18
+REFSOL[146] =  -0.6224992924096233e-19
+REFSOL[147] =  -0.1715878416756298e-18
+REFSOL[148] =  -0.2704741705248803e-18
+REFSOL[149] =   0.3008700893194513e-18
+REFSOL[150] =  -0.2703121624910402e-18
+REFSOL[151] =   0.4243755291982164e-18
+REFSOL[152] =   0.2862063003949612e-18
+REFSOL[153] =   0.1222125408406218e-19
+REFSOL[154] =  -0.4958862706817728e-18
+REFSOL[155] =  -0.7070673036251212e-18
+REFSOL[156] =  -0.4454983024194383e-18
+REFSOL[157] =  -0.1125384872521777e-18
+REFSOL[158] =   0.1512898724592511e-18
+REFSOL[159] =  -0.6163704221424137e-19
+REFSOL[160] =   0.6255426995473074e-19
+
+
+# Compute high-accuracy reference solutions
+println("Computing mass-matrix reference solution with Rodas5P...")
+ref_sol = solve(mmprob, Rodas5P(), reltol = 1e-8, abstol = 1e-8,
+                maxiters = 10_000_000)
+println("  retcode = $(ref_sol.retcode), npoints = $(length(ref_sol.t)), ",
+        "t_final = $(ref_sol.t[end])")
+
+println("Computing MTK reference solution with Rodas5P...")
+mtk_ref = solve(mtkprob, Rodas5P(), reltol = 1e-8, abstol = 1e-8,
+                maxiters = 10_000_000)
+println("  retcode = $(mtk_ref.retcode), npoints = $(length(mtk_ref.t))")
+
+# We use separate references: the canonical mass-matrix reference for
+# mass-matrix and DAE forms, and an MTK reference for the MTK form
+# (structural_simplify may change the state layout).
+
+
+sol_final = ref_sol.u[end]
+println("=== Verification at t = 1000 ===")
+println("Component | Fortran Reference     | Julia Solution        | Rel Error")
+println("-"^75)
+for idx in 1:6
+    ref_val = REFSOL[idx]
+    our_val = sol_final[idx]
+    relerr = abs(ref_val) > 0 ? abs((our_val - ref_val) / ref_val) : abs(our_val)
+    status = relerr < 1e-3 ? "✓" : (relerr < 1e-1 ? "~" : "✗")
+    println("y($(lpad(idx,3))) | $(lpad(string(ref_val), 22)) | $(lpad(string(round(our_val, sigdigits=12)), 22)) | $(relerr) $status")
+end
+
+# Check λ multipliers (should all be ≈ -4.75)
+lam_vals = sol_final[6*N_ART+1:7*N_ART]
+println("\nλ multipliers: mean = $(round(mean(lam_vals), sigdigits=6)), ",
+        "std = $(round(std(lam_vals), sigdigits=3))")
+
+# Check sphere constraints: |p_i|² should equal 1
+max_constraint = 0.0
+for i in 1:N_ART
+    c = sum(sol_final[3*(i-1)+k]^2 for k in 1:3) - 1.0
+    global max_constraint = max(max_constraint, abs(c))
+end
+println("Max sphere constraint violation: $(max_constraint)")
+
+
+plot(ref_sol, idxs = [1, 2, 3, 4, 5, 6],
+     title = "Fekete Problem: First 6 Position Components",
+     xlabel = "Time", ylabel = "Value", lw = 1.5,
+     layout = (2, 3), size = (900, 500))
+
+
+# Velocity components (should decay to zero)
+plot(ref_sol, idxs = [61, 62, 63, 64, 65, 66],
+     title = "Velocity Components (q₁)",
+     xlabel = "Time", ylabel = "Value", lw = 1.5)
+
+
+# Lagrange multipliers (should converge to -4.75)
+plot(ref_sol, idxs = [121, 122, 123, 124, 125],
+     title = "Lagrange Multipliers λ (should → -4.75)",
+     xlabel = "Time", ylabel = "λ", lw = 1.5)
+
+
+probs = [mmprob, daeprob, mtkprob]
+refs  = [ref_sol, ref_sol, mtk_ref]
+
+
+abstols = 1.0 ./ 10.0 .^ (5:8)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+setups = [
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => Rodas5P()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => radau()),
+    Dict(:prob_choice => 1, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
+    Dict(:prob_choice => 3, :alg => Rodas5P()),
+    Dict(:prob_choice => 3, :alg => Rodas4()),
+    Dict(:prob_choice => 3, :alg => FBDF()),
+]
+
+labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "QNDF (MM)" "radau (MM)" "RadauIIA5 (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "Rodas4 (MTK)" "FBDF (MTK)"]
+
+wp = WorkPrecisionSet(probs, abstols, reltols, setups;
+    names = labels, save_everystep = false, appxsol = refs,
+    maxiters = Int(1e7), numruns = 5)
+plot(wp, title = "Fekete Problem: All Formulations (High Tol)")
+
+
+abstols = 1.0 ./ 10.0 .^ (6:8)
+reltols = 1.0 ./ 10.0 .^ (2:4)
+setups = [
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => Rodas5P()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
+    Dict(:prob_choice => 3, :alg => Rodas5P()),
+    Dict(:prob_choice => 3, :alg => FBDF()),
+]
+
+labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "FBDF (MTK)"]
+
+wp = WorkPrecisionSet(probs, abstols, reltols, setups;
+    names = labels, save_everystep = false, appxsol = refs,
+    maxiters = Int(1e7), numruns = 5)
+plot(wp, title = "Fekete Problem: MM vs DAE vs MTK (High Tol)")
+
+
+abstols = 1.0 ./ 10.0 .^ (5:8)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+setups = [
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => Rodas5P()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => radau()),
+    Dict(:prob_choice => 1, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
+    Dict(:prob_choice => 3, :alg => Rodas5P()),
+    Dict(:prob_choice => 3, :alg => Rodas4()),
+    Dict(:prob_choice => 3, :alg => FBDF()),
+]
+
+labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "QNDF (MM)" "radau (MM)" "RadauIIA5 (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "Rodas4 (MTK)" "FBDF (MTK)"]
+
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
+    names = labels, save_everystep = false, appxsol = refs,
+    maxiters = Int(1e7), numruns = 5)
+plot(wp, title = "Fekete Problem: Timeseries (L2)")
+
+
+abstols = 1.0 ./ 10.0 .^ (6:8)
+reltols = 1.0 ./ 10.0 .^ (2:4)
+setups = [
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => Rodas5P()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
+    Dict(:prob_choice => 3, :alg => Rodas5P()),
+    Dict(:prob_choice => 3, :alg => FBDF()),
+]
+
+labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "FBDF (MTK)"]
+
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
+    names = labels, save_everystep = false, appxsol = refs,
+    maxiters = Int(1e7), numruns = 5)
+plot(wp, title = "Fekete Problem: MM vs DAE vs MTK Timeseries (L2)")
+
+
+abstols = 1.0 ./ 10.0 .^ (7:12)
+reltols = 1.0 ./ 10.0 .^ (4:9)
+
+setups = [
+    Dict(:prob_choice => 1, :alg => Rodas5()),
+    Dict(:prob_choice => 1, :alg => Rodas5P()),
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => radau()),
+    Dict(:prob_choice => 1, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
+    Dict(:prob_choice => 3, :alg => Rodas5P()),
+    Dict(:prob_choice => 3, :alg => Rodas4()),
+    Dict(:prob_choice => 3, :alg => FBDF()),
+]
+
+labels = ["Rodas5 (MM)" "Rodas5P (MM)" "Rodas4 (MM)" "FBDF (MM)" "QNDF (MM)" "radau (MM)" "RadauIIA5 (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "Rodas4 (MTK)" "FBDF (MTK)"]
+
+wp = WorkPrecisionSet(probs, abstols, reltols, setups;
+    names = labels, save_everystep = false, appxsol = refs,
+    maxiters = Int(1e7), numruns = 5)
+plot(wp, title = "Fekete Problem: Low Tolerances")
+
+
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
+    names = labels, save_everystep = false, appxsol = refs,
+    maxiters = Int(1e7), numruns = 5)
+plot(wp, title = "Fekete Problem: Low Tolerances (L2)")
+
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
