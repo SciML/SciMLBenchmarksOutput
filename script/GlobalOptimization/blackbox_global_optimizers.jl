@@ -1,10 +1,88 @@
 
 using BlackBoxOptimizationBenchmarking, Plots, Optimization, Memoize, Statistics
-import BlackBoxOptimizationBenchmarking.Chain
+import BlackBoxOptimizationBenchmarking: Chain, BenchmarkSetup, BenchmarkResults,
+    BBOBFunction, FunctionCallsCounter, solve_problem, pinit, compute_CI
 const BBOB = BlackBoxOptimizationBenchmarking
 
 using OptimizationBBO, OptimizationOptimJL, OptimizationEvolutionary, OptimizationNLopt
 using OptimizationMetaheuristics, OptimizationNOMAD, OptimizationPRIMA, OptimizationOptimisers, OptimizationSciPy, OptimizationPyCMA
+
+
+function make_success_tracker(f_raw, f_opt, Δf)
+    t0 = Ref(time())
+    time_to_success = Ref(Inf)
+    function tracked_f(u)
+        val = f_raw(u)
+        if val < Δf + f_opt && time_to_success[] == Inf
+            time_to_success[] = time() - t0[]
+        end
+        return val
+    end
+    return tracked_f, t0, time_to_success
+end
+
+function solve_problem_timed(optimizer::BenchmarkSetup, tracked_f, D::Int, run_length::Int;
+    u0 = pinit(D))
+    method = optimizer.method
+    optf = OptimizationFunction((u, _) -> tracked_f(u), AutoForwardDiff())
+    if optimizer.isboxed
+        prob = OptimizationProblem(optf, u0, lb = fill(-5.5, D), ub = fill(5.5, D))
+    else
+        prob = OptimizationProblem(optf, u0)
+    end
+    sol = solve(prob, method; maxiters = run_length)
+    sol
+end
+
+function solve_problem_timed(m::Chain, tracked_f, D::Int, run_length::Int)
+    rl1 = round(Int, m.p * run_length)
+    rl2 = run_length - rl1
+    sol = solve_problem_timed(m.first, tracked_f, D, rl1)
+    xinit = sol.u
+    sol = solve_problem_timed(m.second, tracked_f, D, rl2; u0 = xinit)
+end
+
+function benchmark_time_to_success(
+    optimizer::Union{Chain, BenchmarkSetup}, f::BBOBFunction;
+    Ntrials::Int = 20, dimension::Int = 3, Δf::Real = 1e-6, max_run_length::Int = 100_000
+)
+    times = Float64[]
+    for i in 1:Ntrials
+        tracked_f, t0_ref, tts_ref = make_success_tracker(f.f, f.f_opt, Δf)
+        try
+            t0_ref[] = time()
+            sol = solve_problem_timed(optimizer, tracked_f, dimension, max_run_length)
+            push!(times, tts_ref[])
+        catch err
+            push!(times, Inf)
+            @warn(string(optimizer, " failed: ", err))
+        end
+    end
+    return times
+end
+
+benchmark_time_to_success(optimizer, f; kwargs...) =
+    benchmark_time_to_success(BenchmarkSetup(optimizer), f; kwargs...)
+
+function benchmark_time_to_success(
+    optimizer::Union{Chain, BenchmarkSetup}, funcs::Vector{BBOBFunction};
+    Ntrials::Int = 20, dimension::Int = 3, Δf::Real = 1e-6, max_run_length::Int = 100_000
+)
+    all_times = Float64[]
+    for f in funcs
+        append!(all_times, benchmark_time_to_success(
+            optimizer, f; Ntrials, dimension, Δf, max_run_length))
+    end
+    return all_times
+end
+
+benchmark_time_to_success(optimizer, funcs::Vector{BBOBFunction}; kwargs...) =
+    benchmark_time_to_success(BenchmarkSetup(optimizer), funcs; kwargs...)
+
+function success_rate_cdf(all_times::Vector{Float64}, time_thresholds::AbstractVector{Float64})
+    N = length(all_times)
+    return [count(x -> x <= t, all_times) / N for t in time_thresholds]
+end
 
 
 chain = (t;
@@ -20,6 +98,8 @@ run_length = round.(Int, 10 .^ LinRange(1, 5, 30))
 
 @memoize run_bench(algo) = BBOB.benchmark(
     setup[algo], test_functions, run_length, Ntrials = 40, dimension = dimension)
+@memoize run_tts(algo) = benchmark_time_to_success(
+    setup[algo], test_functions, Ntrials = 40, dimension = dimension)
 
 
 setup = Dict(
@@ -39,7 +119,7 @@ setup = Dict(
     "BBO_separable_nes" => chain(BBO_separable_nes(), isboxed = true),
     "BBO_de_rand_2_bin" => chain(BBO_de_rand_2_bin(), isboxed = true),
     #"BBO_xnes" => chain(BBO_xnes(), isboxed=true), # good but slow
-    #"BBO_dxnes" => chain(BBO_dxnes(), isboxed=true), 
+    #"BBO_dxnes" => chain(BBO_dxnes(), isboxed=true),
     "OptimizationMetaheuristics.ECA" => chain(OptimizationMetaheuristics.ECA(), isboxed = true),
     #"OptimizationMetaheuristics.CGSA" => () -> chain(OptimizationMetaheuristics.CGSA(), isboxed=true), #give me strange results
     "OptimizationMetaheuristics.DE" => chain(OptimizationMetaheuristics.DE(), isboxed=true),
@@ -100,6 +180,33 @@ p = plot(xscale = :log10, legend = :outerright,
 for i in idx
     plot!(results[i], label = labels[i], showribbon = false,
         lw = 2.5, xlim = (1, 1e5), x = :run_length)
+end
+p
+
+
+tts_results = Dict{String, Vector{Float64}}()
+
+for algo in keys(setup)
+    tts_results[algo] = run_tts(algo)
+end
+
+
+labels = collect(keys(setup))
+
+# Determine time thresholds from data
+all_finite = filter(isfinite, vcat(values(tts_results)...))
+t_lo = minimum(all_finite) / 2
+t_hi = maximum(all_finite) * 2
+time_thresholds = 10 .^ range(log10(t_lo), log10(t_hi), length = 50)
+
+cdfs = Dict(algo => success_rate_cdf(tts_results[algo], time_thresholds) for algo in labels)
+idx = sortperm([cdfs[l][end] for l in labels], rev = true)
+
+p = plot(xscale = :log10, legend = :outerright,
+    size = (700, 350), margin = 10Plots.px, dpi = 200,
+    xlabel = "Wall time (s)", ylabel = "Success rate", ylim = (0, 1))
+for i in idx
+    plot!(time_thresholds, cdfs[labels[i]], label = labels[i], lw = 2.5)
 end
 p
 
