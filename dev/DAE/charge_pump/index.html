@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams · The SciML Benchmarks</title><meta name="title" content="Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams · The SciML Benchmarks"/><meta property="og:title" content="Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams · The SciML Benchmarks"/><meta property="twitter:title" content="Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://benchmarks.sciml.ai/stable/DAE/charge_pump/"/><meta property="twitter:url" content="https://benchmarks.sciml.ai/stable/DAE/charge_pump/"/><link rel="canonical" href="https://benchmarks.sciml.ai/stable/DAE/charge_pump/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../TransistorAmplifier/">Transistor Amplifier, DAE format</a></li><li class="is-active"><a class="tocitem" href>Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a><ul class="internal"><li><a class="tocitem" href="#MOS-Transistor-Charge-Functions"><span>MOS Transistor Charge Functions</span></a></li><li><a class="tocitem" href="#Input-Voltage-Function"><span>Input Voltage Function</span></a></li><li><a class="tocitem" href="#Discontinuity-Points"><span>Discontinuity Points</span></a></li><li><a class="tocitem" href="#ModelingToolkit-Index-Reduction"><span>ModelingToolkit Index Reduction</span></a></li><li><a class="tocitem" href="#Mass-Matrix-ODE-Form"><span>Mass-Matrix ODE Form</span></a></li><li><a class="tocitem" href="#DAE-Residual-Form"><span>DAE Residual Form</span></a></li><li><a class="tocitem" href="#Reference-Solution"><span>Reference Solution</span></a></li><li><a class="tocitem" href="#Reference-Solution-Verification"><span>Reference Solution Verification</span></a></li><li><a class="tocitem" href="#Solution-Plots"><span>Solution Plots</span></a></li><li><a class="tocitem" href="#Omissions"><span>Omissions</span></a></li><li><a class="tocitem" href="#Work-Precision-Benchmarks"><span>Work-Precision Benchmarks</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../fekete/">Fekete Problem DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../two_bit_adder/">Two-Bit Adding Unit DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../water_tube/">Water Tube System DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../wheelset/">Wheelset DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li><li><a class="tocitem" href="../../HybridJumps/VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_quadratic/">CUTEst Quadratic Programming with Linear Constraints Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unbounded/">CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unconstrained/">CUTEst Unconstrained Nonlinear Optimization Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li><li><span class="tocitem">Optimizaton</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Differential-Algebraic Equations (DAEs)</a></li><li class="is-active"><a href>Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/DAE/charge_pump.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Charge-Pump-Differential-Algebraic-Equation-(DAE)-Work-Precision-Diagrams"><a class="docs-heading-anchor" href="#Charge-Pump-Differential-Algebraic-Equation-(DAE)-Work-Precision-Diagrams">Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a><a id="Charge-Pump-Differential-Algebraic-Equation-(DAE)-Work-Precision-Diagrams-1"></a><a class="docs-heading-anchor-permalink" href="#Charge-Pump-Differential-Algebraic-Equation-(DAE)-Work-Precision-Diagrams" title="Permalink"></a></h1><p>This benchmark is for the Charge Pump problem, a stiff <strong>index-2</strong> DAE of dimension 9 from the <a href="http://www.dm.uniba.it/~testset/">IVP Test Set</a> (problem &quot;pump&quot;). The circuit consists of two capacitors and an n-channel MOS transistor. The formulation uses charge-oriented MOS transistor modelling where the charge functions <span>$Q_G$</span>, <span>$Q_S$</span>, <span>$Q_D$</span> (gate, source, drain) depend nonlinearly on the node voltages.</p><p><strong>Reference:</strong> Michael Günther, Georg Denk, Uwe Feldmann: <em>How models for MOS transistors reflect charge distribution effects.</em> Preprint 1745, May 1995, Technische Hochschule Darmstadt.</p><p>The system is:</p><p class="math-container">\[M \frac{dy}{dt} = f(t, y), \quad y(0) = y_0, \quad 0 \le t \le 1.2 \times 10^{-6}\]</p><p>where <span>$y \in \mathbb{R}^9$</span> and the mass matrix <span>$M$</span> is singular (rows 4–9 are zero).</p><p>The state vector is: <span>$y = (Y_{T1},\; Y_S,\; Y_{T2},\; Y_D,\; Y_{T3},\; U_1,\; U_2,\; U_3,\; I)^T$</span></p><p>where <span>$Y_{T1}, Y_{T2}, Y_{T3}$</span> are transistor charges, <span>$Y_S, Y_D$</span> are capacitor charges, <span>$U_1, U_2, U_3$</span> are node potentials, and <span>$I$</span> is the current through the voltage source.</p><p>The first 8 variables have index 1, while <span>$y_9$</span> (current <span>$I$</span>) has <strong>index 2</strong>. This makes the problem particularly challenging — in the original IVP Test Set benchmarks, many specialised Fortran solvers (RADAU, RADAU5, MEBDFDAE, MEBDFI) fail at all tolerances. Only BIMD, DASSL, GAMD, and PSIDE-1 succeed, and even those only at loose tolerances.</p><p><strong>ModelingToolkit Index Reduction:</strong> This is an index-2 DAE. ModelingToolkit&#39;s Pantelides algorithm successfully reduces it to index-1, collapsing 9 unknowns to 4 (node potentials <span>$U_2$</span>, <span>$U_3$</span> and their dummy derivatives). However, the index-reduced system introduces explicit derivatives of the piecewise charge functions <span>$Q_G$</span>, <span>$Q_S$</span>, <span>$Q_D$</span>, which have discontinuous first-order partial derivatives at the MOS operating-region boundaries. Standard implicit ODE solvers (Rodas5P, FBDF, etc.) fail on the reduced system because they cannot resolve the resulting non-smooth algebraic constraints. The MTK formulation is included below to demonstrate the structural analysis; the WPD benchmarks use the direct DAE residual form with IDA and DASKR.</p><pre><code class="language-julia hljs">using OrdinaryDiffEq, DiffEqDevTools, Sundials,
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams · The SciML Benchmarks</title><meta name="title" content="Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams · The SciML Benchmarks"/><meta property="og:title" content="Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams · The SciML Benchmarks"/><meta property="twitter:title" content="Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://benchmarks.sciml.ai/stable/DAE/charge_pump/"/><meta property="twitter:url" content="https://benchmarks.sciml.ai/stable/DAE/charge_pump/"/><link rel="canonical" href="https://benchmarks.sciml.ai/stable/DAE/charge_pump/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../TransistorAmplifier/">Transistor Amplifier, DAE format</a></li><li><a class="tocitem" href="../andrews_mechanism/">Andrews&#39; Squeezing Mechanism DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../caraxis/">Car Axis DAE Benchmark</a></li><li class="is-active"><a class="tocitem" href>Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a><ul class="internal"><li><a class="tocitem" href="#MOS-Transistor-Charge-Functions"><span>MOS Transistor Charge Functions</span></a></li><li><a class="tocitem" href="#Input-Voltage-Function"><span>Input Voltage Function</span></a></li><li><a class="tocitem" href="#Discontinuity-Points"><span>Discontinuity Points</span></a></li><li><a class="tocitem" href="#ModelingToolkit-Index-Reduction"><span>ModelingToolkit Index Reduction</span></a></li><li><a class="tocitem" href="#Mass-Matrix-ODE-Form"><span>Mass-Matrix ODE Form</span></a></li><li><a class="tocitem" href="#DAE-Residual-Form"><span>DAE Residual Form</span></a></li><li><a class="tocitem" href="#Reference-Solution"><span>Reference Solution</span></a></li><li><a class="tocitem" href="#Reference-Solution-Verification"><span>Reference Solution Verification</span></a></li><li><a class="tocitem" href="#Solution-Plots"><span>Solution Plots</span></a></li><li><a class="tocitem" href="#Omissions"><span>Omissions</span></a></li><li><a class="tocitem" href="#Work-Precision-Benchmarks"><span>Work-Precision Benchmarks</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../fekete/">Fekete Problem DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../two_bit_adder/">Two-Bit Adding Unit DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../water_tube/">Water Tube System DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../wheelset/">Wheelset DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li><li><a class="tocitem" href="../../HybridJumps/VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_quadratic/">CUTEst Quadratic Programming with Linear Constraints Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unbounded/">CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unconstrained/">CUTEst Unconstrained Nonlinear Optimization Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li><li><span class="tocitem">Optimizaton</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Differential-Algebraic Equations (DAEs)</a></li><li class="is-active"><a href>Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/DAE/charge_pump.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Charge-Pump-Differential-Algebraic-Equation-(DAE)-Work-Precision-Diagrams"><a class="docs-heading-anchor" href="#Charge-Pump-Differential-Algebraic-Equation-(DAE)-Work-Precision-Diagrams">Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a><a id="Charge-Pump-Differential-Algebraic-Equation-(DAE)-Work-Precision-Diagrams-1"></a><a class="docs-heading-anchor-permalink" href="#Charge-Pump-Differential-Algebraic-Equation-(DAE)-Work-Precision-Diagrams" title="Permalink"></a></h1><p>This benchmark is for the Charge Pump problem, a stiff <strong>index-2</strong> DAE of dimension 9 from the <a href="http://www.dm.uniba.it/~testset/">IVP Test Set</a> (problem &quot;pump&quot;). The circuit consists of two capacitors and an n-channel MOS transistor. The formulation uses charge-oriented MOS transistor modelling where the charge functions <span>$Q_G$</span>, <span>$Q_S$</span>, <span>$Q_D$</span> (gate, source, drain) depend nonlinearly on the node voltages.</p><p><strong>Reference:</strong> Michael Günther, Georg Denk, Uwe Feldmann: <em>How models for MOS transistors reflect charge distribution effects.</em> Preprint 1745, May 1995, Technische Hochschule Darmstadt.</p><p>The system is:</p><p class="math-container">\[M \frac{dy}{dt} = f(t, y), \quad y(0) = y_0, \quad 0 \le t \le 1.2 \times 10^{-6}\]</p><p>where <span>$y \in \mathbb{R}^9$</span> and the mass matrix <span>$M$</span> is singular (rows 4–9 are zero).</p><p>The state vector is: <span>$y = (Y_{T1},\; Y_S,\; Y_{T2},\; Y_D,\; Y_{T3},\; U_1,\; U_2,\; U_3,\; I)^T$</span></p><p>where <span>$Y_{T1}, Y_{T2}, Y_{T3}$</span> are transistor charges, <span>$Y_S, Y_D$</span> are capacitor charges, <span>$U_1, U_2, U_3$</span> are node potentials, and <span>$I$</span> is the current through the voltage source.</p><p>The first 8 variables have index 1, while <span>$y_9$</span> (current <span>$I$</span>) has <strong>index 2</strong>. This makes the problem particularly challenging — in the original IVP Test Set benchmarks, many specialised Fortran solvers (RADAU, RADAU5, MEBDFDAE, MEBDFI) fail at all tolerances. Only BIMD, DASSL, GAMD, and PSIDE-1 succeed, and even those only at loose tolerances.</p><p><strong>ModelingToolkit Index Reduction:</strong> This is an index-2 DAE. ModelingToolkit&#39;s Pantelides algorithm successfully reduces it to index-1, collapsing 9 unknowns to 4 (node potentials <span>$U_2$</span>, <span>$U_3$</span> and their dummy derivatives). However, the index-reduced system introduces explicit derivatives of the piecewise charge functions <span>$Q_G$</span>, <span>$Q_S$</span>, <span>$Q_D$</span>, which have discontinuous first-order partial derivatives at the MOS operating-region boundaries. Standard implicit ODE solvers (Rodas5P, FBDF, etc.) fail on the reduced system because they cannot resolve the resulting non-smooth algebraic constraints. The MTK formulation is included below to demonstrate the structural analysis; the WPD benchmarks use the direct DAE residual form with IDA and DASKR.</p><pre><code class="language-julia hljs">using OrdinaryDiffEq, DiffEqDevTools, Sundials,
       Plots, DASSL, DASKR
 using ModelingToolkit
 using ModelingToolkit: t_nounits as t, D_nounits as D
@@ -303,172 +303,173 @@ refs  = [ref_sol]</code></pre><pre><code class="nohighlight hljs">1-element Vect
 roblem{Vector{Float64}, Vector{Float64}, Tuple{Float64, Float64}, true, Sci
 MLBase.NullParameters, SciMLBase.DAEFunction{true, SciMLBase.FullSpecialize
 , typeof(Main.var&quot;##WeaveSandBox#225&quot;.charge_pump_dae!), Nothing, Nothing, 
-Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typ
-eof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing}, Base.Pairs{Sym
-bol, Union{}, Tuple{}, @NamedTuple{}}, Vector{Bool}}, Sundials.IDA{:Dense, 
-Nothing, Nothing}, SciMLBase.HermiteInterpolation{Vector{Float64}, Vector{V
-ector{Float64}}, Vector{Vector{Float64}}}, SciMLBase.DEStats, Nothing, Noth
-ing}}:
+Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
+hing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothin
+g}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, Vector{Bool}}, Sun
+dials.IDA{:Dense, Nothing, Nothing}, SciMLBase.HermiteInterpolation{Vector{
+Float64}, Vector{Vector{Float64}}, Vector{Vector{Float64}}}, SciMLBase.DESt
+ats, Nothing, Nothing}}:
  SciMLBase.DAESolution{Float64, 2, Vector{Vector{Float64}}, Vector{Vector{F
 loat64}}, Nothing, Nothing, Vector{Float64}, SciMLBase.DAEProblem{Vector{Fl
 oat64}, Vector{Float64}, Tuple{Float64, Float64}, true, SciMLBase.NullParam
 eters, SciMLBase.DAEFunction{true, SciMLBase.FullSpecialize, typeof(Main.va
 r&quot;##WeaveSandBox#225&quot;.charge_pump_dae!), Nothing, Nothing, Nothing, Nothing
-, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DE
-FAULT_OBSERVED), Nothing, Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tu
-ple{}, @NamedTuple{}}, Vector{Bool}}, Sundials.IDA{:Dense, Nothing, Nothing
-}, SciMLBase.HermiteInterpolation{Vector{Float64}, Vector{Vector{Float64}},
- Vector{Vector{Float64}}}, SciMLBase.DEStats, Nothing, Nothing}([[1.2628004
+, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, t
+ypeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing}, Base.Pairs{S
+ymbol, Union{}, Tuple{}, @NamedTuple{}}, Vector{Bool}}, Sundials.IDA{:Dense
+, Nothing, Nothing}, SciMLBase.HermiteInterpolation{Vector{Float64}, Vector
+{Vector{Float64}}, Vector{Vector{Float64}}}, SciMLBase.DEStats, Nothing, No
+thing}([[1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [
+1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004
 298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594
 e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0
 , 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.
 0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0
 .0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-, [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628
-004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767
-594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [1.400674012699209e-13
-, 2.814808032100996e-16, -2.814808032100995e-16, 2.814808032100996e-16, -2.
-814808032100995e-16, 0.18284616396878975, 0.00017592550200631229, 0.0007037
-020080252488, -0.00010172199521165957], [1.3924009485943487e-13, 3.69942837
-94439546e-17, -3.699428379443935e-17, 3.6994283794439546e-17, -3.6994283794
-43935e-17, 0.17776679057729639, 2.3121427371524696e-5, 9.248570948609878e-5
-, 0.00027127024275844377], [1.3885128419904236e-13, 1.232595164407831e-31, 
-0.0, 1.232595164407831e-31, 0.0, 0.1731953545249819, 8.131516293641283e-20,
- 3.2526065174565133e-19, 0.00017010438555296572], [1.3853387414762482e-13, 
-1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 0.168623918472674
-13, 7.115076756936123e-20, 2.981555974335137e-19, 0.00013886667024564536], 
-[1.378969004874096e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31
-, 0.0, 0.15948104636805865, 7.318533788671496e-20, 2.9274135154685985e-19, 
-0.0001393377601516324], [1.3661420060502134e-13, 1.1709654061874394e-31, 0.
-0, 1.1709654061874394e-31, 0.0, 0.14119530215840417, 7.318533788671496e-20,
- 2.9274135154685985e-19, 0.00014029507004916671], [1.3401263487454528e-13, 
-1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 0.104623813739518
-75, 7.318533788671496e-20, 2.9274135154685985e-19, 0.00014227289306173755],
- [1.2865472291597604e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-
-31, 0.0, 0.03148083690132435, 7.318533788671496e-20, 2.9274135154685985e-19
-, 0.00014650516536751835], [1.2628004298770012e-13, 1.1709654061874394e-31,
- 0.0, 1.1709654061874394e-31, 0.0, 3.176348073452573e-13, 7.318533788671496
-e-20, 2.9274135154685985e-19, 0.0001508651079222072], [1.2628004298766816e-
-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, -1.0588166628
-189324e-13, 7.318533788671496e-20, 2.9274135154685985e-19, 0.00015086510792
-226585]], [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0
+, [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [1.4
+00674012699209e-13, 2.814808032100996e-16, -2.814808032100995e-16, 2.814808
+032100996e-16, -2.814808032100995e-16, 0.18284616396878975, 0.0001759255020
+0631229, 0.0007037020080252488, -0.00010172199521165957], [1.39240094859434
+87e-13, 3.6994283794439546e-17, -3.699428379443935e-17, 3.6994283794439546e
+-17, -3.699428379443935e-17, 0.17776679057729639, 2.3121427371524696e-5, 9.
+248570948609878e-5, 0.00027127024275844377], [1.3885128419904236e-13, 1.232
+595164407831e-31, 0.0, 1.232595164407831e-31, 0.0, 0.1731953545249819, 8.13
+1516293641283e-20, 3.2526065174565133e-19, 0.00017010438555296572], [1.3853
+387414762482e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0,
+ 0.16862391847267413, 7.115076756936123e-20, 2.981555974335137e-19, 0.00013
+886667024564536], [1.378969004874096e-13, 1.1709654061874394e-31, 0.0, 1.17
+09654061874394e-31, 0.0, 0.15948104636805865, 7.318533788671496e-20, 2.9274
+135154685985e-19, 0.0001393377601516324], [1.3661420060502134e-13, 1.170965
+4061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 0.14119530215840417, 7.31
+8533788671496e-20, 2.9274135154685985e-19, 0.00014029507004916671], [1.3401
+263487454528e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0,
+ 0.10462381373951875, 7.318533788671496e-20, 2.9274135154685985e-19, 0.0001
+4227289306173755], [1.2865472291597604e-13, 1.1709654061874394e-31, 0.0, 1.
+1709654061874394e-31, 0.0, 0.03148083690132435, 7.318533788671496e-20, 2.92
+74135154685985e-19, 0.00014650516536751835], [1.2628004298770012e-13, 1.170
+9654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 3.176348073452573e-13,
+ 7.318533788671496e-20, 2.9274135154685985e-19, 0.0001508651079222072], [1.
+2628004298766816e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 
+0.0, -1.0588166628189324e-13, 7.318533788671496e-20, 2.9274135154685985e-19
+, 0.00015086510792226585]], [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+ [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0
+.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.
+0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0
 .0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 
-0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0
-.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
- 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 
-0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [0.00016510582171335765, 0.00015554888545
-659854, -0.00015554888545659854, 0.00015554888545659854, -0.000155548885456
-59854, -1.9999999999378743e9, 9.72180534103741e7, 3.888722136414963e8, 9.05
-7084623722783e7], [-0.00032575136605029944, -9.6266409483941e-5, 9.62664094
-83941e-5, -9.6266409483941e-5, 9.6266409483941e-5, -1.9999999999837008e9, -
-6.016650592746313e7, -2.4066602370985228e8, 1.4686545336152223e8], [-0.0001
-7010438555296572, -1.618497267403262e-5, 1.618497267403262e-5, -1.618497267
-403262e-5, 1.618497267403262e-5, -1.9999999999707808e9, -1.0115607921270385
-e7, -4.046243168508157e7, -4.425999009776372e7], [-0.00013886667024564536, 
-0.0, 0.0, 0.0, 0.0, -1.9999999999678302e9, -5.587935447692871e-9, -1.490116
-1193847656e-8, -1.366647808232969e7], [-0.0001393377601516324, 0.0, 0.0, 0.
-0, 0.0, -1.999999999967818e9, 4.4506152859644997e-10, -1.184364349542538e-9
-, 103050.74829640426], [-0.00014029507004916671, 0.0, 0.0, 0.0, 0.0, -2.000
-0000000141437e9, -5.686866711302065e-25, -3.7223127564886245e-24, 104705.59
-869645842], [-0.00014227289306173755, 0.0, 0.0, 0.0, 0.0, -1.99999999999098
-16e9, 1.7238160482756729e-25, 2.2018975376450138e-24, 108162.01899732203], 
-[-0.00014650516536751835, 0.0, 0.0, 0.0, 0.0, -2.0000000000025623e9, -2.018
-048422447826e-25, -7.915940389337857e-25, 115726.00648039709], [-0.00015086
-51079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6.675847078935393e-
-25, 2.685964161619502e-24, 276990.2571776556], [-0.0001508651079222072, 0.0
-, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6.675847078935393e-25, 2.6859641616
-19502e-24, 276990.2571776556]], nothing, nothing, [0.0, 1.0e-15, 2.0e-15, 4
-.0e-15, 8.0e-15, 1.6e-14, 3.2e-14, 6.4e-14, 1.28e-13, 2.56e-13  …  1.199908
-5769180155e-6, 1.1999111166047112e-6, 1.1999134023227374e-6, 1.199915688040
-7636e-6, 1.1999202594768159e-6, 1.1999294023489207e-6, 1.1999476880931301e-
-6, 1.1999842595815492e-6, 1.1999999999999997e-6, 1.2e-6], nothing, SciMLBas
-e.DAEProblem{Vector{Float64}, Vector{Float64}, Tuple{Float64, Float64}, tru
-e, SciMLBase.NullParameters, SciMLBase.DAEFunction{true, SciMLBase.FullSpec
-ialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.charge_pump_dae!), Nothing, Not
+, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [0.00016510582171335765
+, 0.00015554888545659854, -0.00015554888545659854, 0.00015554888545659854, 
+-0.00015554888545659854, -1.9999999999378743e9, 9.72180534103741e7, 3.88872
+2136414963e8, 9.057084623722783e7], [-0.00032575136605029944, -9.6266409483
+941e-5, 9.6266409483941e-5, -9.6266409483941e-5, 9.6266409483941e-5, -1.999
+9999999837008e9, -6.016650592746313e7, -2.4066602370985228e8, 1.46865453361
+52223e8], [-0.00017010438555296572, -1.618497267403262e-5, 1.61849726740326
+2e-5, -1.618497267403262e-5, 1.618497267403262e-5, -1.9999999999707808e9, -
+1.0115607921270385e7, -4.046243168508157e7, -4.425999009776372e7], [-0.0001
+3886667024564536, 0.0, 0.0, 0.0, 0.0, -1.9999999999678302e9, -5.58793544769
+2871e-9, -1.4901161193847656e-8, -1.366647808232969e7], [-0.000139337760151
+6324, 0.0, 0.0, 0.0, 0.0, -1.999999999967818e9, 4.4506152859644997e-10, -1.
+184364349542538e-9, 103050.74829640426], [-0.00014029507004916671, 0.0, 0.0
+, 0.0, 0.0, -2.0000000000141437e9, -5.686866711302065e-25, -3.7223127564886
+245e-24, 104705.59869645842], [-0.00014227289306173755, 0.0, 0.0, 0.0, 0.0,
+ -1.9999999999909816e9, 1.7238160482756729e-25, 2.2018975376450138e-24, 108
+162.01899732203], [-0.00014650516536751835, 0.0, 0.0, 0.0, 0.0, -2.00000000
+00025623e9, -2.018048422447826e-25, -7.915940389337857e-25, 115726.00648039
+709], [-0.0001508651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6
+.675847078935393e-25, 2.685964161619502e-24, 276990.2571776556], [-0.000150
+8651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6.675847078935393
+e-25, 2.685964161619502e-24, 276990.2571776556]], nothing, nothing, [0.0, 1
+.0e-15, 2.0e-15, 4.0e-15, 8.0e-15, 1.6e-14, 3.2e-14, 6.4e-14, 1.28e-13, 2.5
+6e-13  …  1.1999085769180155e-6, 1.1999111166047112e-6, 1.1999134023227374e
+-6, 1.1999156880407636e-6, 1.1999202594768159e-6, 1.1999294023489207e-6, 1.
+1999476880931301e-6, 1.1999842595815492e-6, 1.1999999999999997e-6, 1.2e-6],
+ nothing, SciMLBase.DAEProblem{Vector{Float64}, Vector{Float64}, Tuple{Floa
+t64, Float64}, true, SciMLBase.NullParameters, SciMLBase.DAEFunction{true, 
+SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.charge_pump_d
+ae!), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), 
+Nothing, Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTupl
+e{}}, Vector{Bool}}(SciMLBase.DAEFunction{true, SciMLBase.FullSpecialize, t
+ypeof(Main.var&quot;##WeaveSandBox#225&quot;.charge_pump_dae!), Nothing, Nothing, Not
 hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
-g, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing}, Base.Pai
-rs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, Vector{Bool}}(SciMLBase.DAEFun
-ction{true, SciMLBase.FullSpecialize, typeof(Main.var&quot;##WeaveSandBox#225&quot;.c
-harge_pump_dae!), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothin
-g, Nothing, Nothing}(Main.var&quot;##WeaveSandBox#225&quot;.charge_pump_dae!, nothing
-, nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing, n
-othing, SciMLBase.DEFAULT_OBSERVED, nothing, nothing, nothing), [0.0, 0.0, 
-0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0,
- 0.0, 0.0, 0.0, 0.0, 0.0], (0.0, 1.2e-6), SciMLBase.NullParameters(), Base.
-Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}(), Bool[1, 1, 1, 1, 1, 0, 0,
- 0, 0]), Sundials.IDA{:Dense, Nothing, Nothing}(0, 0, 0, 5, 7, 0.33, 3, 10,
- 0.0033, 5, 4, 10, 100, true, false, nothing, nothing), SciMLBase.HermiteIn
-terpolation{Vector{Float64}, Vector{Vector{Float64}}, Vector{Vector{Float64
-}}}([0.0, 1.0e-15, 2.0e-15, 4.0e-15, 8.0e-15, 1.6e-14, 3.2e-14, 6.4e-14, 1.
-28e-13, 2.56e-13  …  1.1999085769180155e-6, 1.1999111166047112e-6, 1.199913
-4023227374e-6, 1.1999156880407636e-6, 1.1999202594768159e-6, 1.199929402348
-9207e-6, 1.1999476880931301e-6, 1.1999842595815492e-6, 1.1999999999999997e-
-6, 1.2e-6], [[1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.
-0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.26
-28004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.26280042987
-67594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13
-, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.
-0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0
-.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 
-0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
- 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  … 
- [1.400674012699209e-13, 2.814808032100996e-16, -2.814808032100995e-16, 2.8
-14808032100996e-16, -2.814808032100995e-16, 0.18284616396878975, 0.00017592
-550200631229, 0.0007037020080252488, -0.00010172199521165957], [1.392400948
-5943487e-13, 3.6994283794439546e-17, -3.699428379443935e-17, 3.699428379443
-9546e-17, -3.699428379443935e-17, 0.17776679057729639, 2.3121427371524696e-
-5, 9.248570948609878e-5, 0.00027127024275844377], [1.3885128419904236e-13, 
-1.232595164407831e-31, 0.0, 1.232595164407831e-31, 0.0, 0.1731953545249819,
- 8.131516293641283e-20, 3.2526065174565133e-19, 0.00017010438555296572], [1
-.3853387414762482e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31,
- 0.0, 0.16862391847267413, 7.115076756936123e-20, 2.981555974335137e-19, 0.
-00013886667024564536], [1.378969004874096e-13, 1.1709654061874394e-31, 0.0,
- 1.1709654061874394e-31, 0.0, 0.15948104636805865, 7.318533788671496e-20, 2
-.9274135154685985e-19, 0.0001393377601516324], [1.3661420060502134e-13, 1.1
-709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 0.14119530215840417,
- 7.318533788671496e-20, 2.9274135154685985e-19, 0.00014029507004916671], [1
-.3401263487454528e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31,
- 0.0, 0.10462381373951875, 7.318533788671496e-20, 2.9274135154685985e-19, 0
-.00014227289306173755], [1.2865472291597604e-13, 1.1709654061874394e-31, 0.
-0, 1.1709654061874394e-31, 0.0, 0.03148083690132435, 7.318533788671496e-20,
- 2.9274135154685985e-19, 0.00014650516536751835], [1.2628004298770012e-13, 
-1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 3.176348073452573
-e-13, 7.318533788671496e-20, 2.9274135154685985e-19, 0.0001508651079222072]
-, [1.2628004298766816e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e
--31, 0.0, -1.0588166628189324e-13, 7.318533788671496e-20, 2.927413515468598
-5e-19, 0.00015086510792226585]], [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0
-.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.
-0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0
-.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
- 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [0.000165105821713
-35765, 0.00015554888545659854, -0.00015554888545659854, 0.00015554888545659
-854, -0.00015554888545659854, -1.9999999999378743e9, 9.72180534103741e7, 3.
-888722136414963e8, 9.057084623722783e7], [-0.00032575136605029944, -9.62664
-09483941e-5, 9.6266409483941e-5, -9.6266409483941e-5, 9.6266409483941e-5, -
-1.9999999999837008e9, -6.016650592746313e7, -2.4066602370985228e8, 1.468654
-5336152223e8], [-0.00017010438555296572, -1.618497267403262e-5, 1.618497267
-403262e-5, -1.618497267403262e-5, 1.618497267403262e-5, -1.9999999999707808
-e9, -1.0115607921270385e7, -4.046243168508157e7, -4.425999009776372e7], [-0
-.00013886667024564536, 0.0, 0.0, 0.0, 0.0, -1.9999999999678302e9, -5.587935
-447692871e-9, -1.4901161193847656e-8, -1.366647808232969e7], [-0.0001393377
-601516324, 0.0, 0.0, 0.0, 0.0, -1.999999999967818e9, 4.4506152859644997e-10
-, -1.184364349542538e-9, 103050.74829640426], [-0.00014029507004916671, 0.0
-, 0.0, 0.0, 0.0, -2.0000000000141437e9, -5.686866711302065e-25, -3.72231275
-64886245e-24, 104705.59869645842], [-0.00014227289306173755, 0.0, 0.0, 0.0,
- 0.0, -1.9999999999909816e9, 1.7238160482756729e-25, 2.2018975376450138e-24
-, 108162.01899732203], [-0.00014650516536751835, 0.0, 0.0, 0.0, 0.0, -2.000
-0000000025623e9, -2.018048422447826e-25, -7.915940389337857e-25, 115726.006
-48039709], [-0.0001508651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017
-e9, 6.675847078935393e-25, 2.685964161619502e-24, 276990.2571776556], [-0.0
-001508651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6.6758470789
-35393e-25, 2.685964161619502e-24, 276990.2571776556]], false), true, 0, Sci
-MLBase.DEStats(1726, 0, 842, 0, 842, 1726, 120, 0, 0, 0, 705, 118, 0.0), Sc
-iMLBase.ReturnCode.Success, nothing)</code></pre><h2 id="Reference-Solution-Verification"><a class="docs-heading-anchor" href="#Reference-Solution-Verification">Reference Solution Verification</a><a id="Reference-Solution-Verification-1"></a><a class="docs-heading-anchor-permalink" href="#Reference-Solution-Verification" title="Permalink"></a></h2><pre><code class="language-julia hljs">y_ref = zeros(9)
+g, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing}(
+Main.var&quot;##WeaveSandBox#225&quot;.charge_pump_dae!, nothing, nothing, nothing, n
+othing, nothing, nothing, nothing, nothing, nothing, nothing, nothing, noth
+ing, SciMLBase.DEFAULT_OBSERVED, nothing, nothing, nothing), [0.0, 0.0, 0.0
+, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.
+0, 0.0, 0.0, 0.0, 0.0], (0.0, 1.2e-6), SciMLBase.NullParameters(), Base.Pai
+rs{Symbol, Union{}, Tuple{}, @NamedTuple{}}(), Bool[1, 1, 1, 1, 1, 0, 0, 0,
+ 0]), Sundials.IDA{:Dense, Nothing, Nothing}(0, 0, 0, 5, 7, 0.33, 3, 10, 0.
+0033, 5, 4, 10, 100, true, false, nothing, nothing), SciMLBase.HermiteInter
+polation{Vector{Float64}, Vector{Vector{Float64}}, Vector{Vector{Float64}}}
+([0.0, 1.0e-15, 2.0e-15, 4.0e-15, 8.0e-15, 1.6e-14, 3.2e-14, 6.4e-14, 1.28e
+-13, 2.56e-13  …  1.1999085769180155e-6, 1.1999111166047112e-6, 1.199913402
+3227374e-6, 1.1999156880407636e-6, 1.1999202594768159e-6, 1.199929402348920
+7e-6, 1.1999476880931301e-6, 1.1999842595815492e-6, 1.1999999999999997e-6, 
+1.2e-6], [[1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+ [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.26280
+04298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.26280042987675
+94e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0
+.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 
+0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0,
+ 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.
+0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [1
+.400674012699209e-13, 2.814808032100996e-16, -2.814808032100995e-16, 2.8148
+08032100996e-16, -2.814808032100995e-16, 0.18284616396878975, 0.00017592550
+200631229, 0.0007037020080252488, -0.00010172199521165957], [1.392400948594
+3487e-13, 3.6994283794439546e-17, -3.699428379443935e-17, 3.699428379443954
+6e-17, -3.699428379443935e-17, 0.17776679057729639, 2.3121427371524696e-5, 
+9.248570948609878e-5, 0.00027127024275844377], [1.3885128419904236e-13, 1.2
+32595164407831e-31, 0.0, 1.232595164407831e-31, 0.0, 0.1731953545249819, 8.
+131516293641283e-20, 3.2526065174565133e-19, 0.00017010438555296572], [1.38
+53387414762482e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.
+0, 0.16862391847267413, 7.115076756936123e-20, 2.981555974335137e-19, 0.000
+13886667024564536], [1.378969004874096e-13, 1.1709654061874394e-31, 0.0, 1.
+1709654061874394e-31, 0.0, 0.15948104636805865, 7.318533788671496e-20, 2.92
+74135154685985e-19, 0.0001393377601516324], [1.3661420060502134e-13, 1.1709
+654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 0.14119530215840417, 7.
+318533788671496e-20, 2.9274135154685985e-19, 0.00014029507004916671], [1.34
+01263487454528e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.
+0, 0.10462381373951875, 7.318533788671496e-20, 2.9274135154685985e-19, 0.00
+014227289306173755], [1.2865472291597604e-13, 1.1709654061874394e-31, 0.0, 
+1.1709654061874394e-31, 0.0, 0.03148083690132435, 7.318533788671496e-20, 2.
+9274135154685985e-19, 0.00014650516536751835], [1.2628004298770012e-13, 1.1
+709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 3.176348073452573e-1
+3, 7.318533788671496e-20, 2.9274135154685985e-19, 0.0001508651079222072], [
+1.2628004298766816e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31
+, 0.0, -1.0588166628189324e-13, 7.318533788671496e-20, 2.9274135154685985e-
+19, 0.00015086510792226585]], [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0,
+ 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 
+0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0,
+ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.
+0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [0.000165105821713357
+65, 0.00015554888545659854, -0.00015554888545659854, 0.00015554888545659854
+, -0.00015554888545659854, -1.9999999999378743e9, 9.72180534103741e7, 3.888
+722136414963e8, 9.057084623722783e7], [-0.00032575136605029944, -9.62664094
+83941e-5, 9.6266409483941e-5, -9.6266409483941e-5, 9.6266409483941e-5, -1.9
+999999999837008e9, -6.016650592746313e7, -2.4066602370985228e8, 1.468654533
+6152223e8], [-0.00017010438555296572, -1.618497267403262e-5, 1.618497267403
+262e-5, -1.618497267403262e-5, 1.618497267403262e-5, -1.9999999999707808e9,
+ -1.0115607921270385e7, -4.046243168508157e7, -4.425999009776372e7], [-0.00
+013886667024564536, 0.0, 0.0, 0.0, 0.0, -1.9999999999678302e9, -5.587935447
+692871e-9, -1.4901161193847656e-8, -1.366647808232969e7], [-0.0001393377601
+516324, 0.0, 0.0, 0.0, 0.0, -1.999999999967818e9, 4.4506152859644997e-10, -
+1.184364349542538e-9, 103050.74829640426], [-0.00014029507004916671, 0.0, 0
+.0, 0.0, 0.0, -2.0000000000141437e9, -5.686866711302065e-25, -3.72231275648
+86245e-24, 104705.59869645842], [-0.00014227289306173755, 0.0, 0.0, 0.0, 0.
+0, -1.9999999999909816e9, 1.7238160482756729e-25, 2.2018975376450138e-24, 1
+08162.01899732203], [-0.00014650516536751835, 0.0, 0.0, 0.0, 0.0, -2.000000
+0000025623e9, -2.018048422447826e-25, -7.915940389337857e-25, 115726.006480
+39709], [-0.0001508651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9,
+ 6.675847078935393e-25, 2.685964161619502e-24, 276990.2571776556], [-0.0001
+508651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6.6758470789353
+93e-25, 2.685964161619502e-24, 276990.2571776556]], false), true, 0, SciMLB
+ase.DEStats(1726, 0, 842, 0, 842, 1726, 120, 0, 0, 0, 705, 118, 0.0), SciML
+Base.ReturnCode.Success, nothing)</code></pre><h2 id="Reference-Solution-Verification"><a class="docs-heading-anchor" href="#Reference-Solution-Verification">Reference Solution Verification</a><a id="Reference-Solution-Verification-1"></a><a class="docs-heading-anchor-permalink" href="#Reference-Solution-Verification" title="Permalink"></a></h2><pre><code class="language-julia hljs">y_ref = zeros(9)
 y_ref[1] = 0.126280042987675933170893e-12
 y_ref[9] = 0.152255686815577679043511e-3
 
@@ -546,8 +547,8 @@ plot(wp, title = &quot;Charge Pump DAE — Loose Tolerances (L₂ Timeseries)&qu
       
       In above message,  R1 =  0.6000050643872D-06
  DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT</code></pre><p><img src="../figures/charge_pump_16_1.png" alt/></p><h3 id="Conclusion"><a class="docs-heading-anchor" href="#Conclusion">Conclusion</a><a id="Conclusion-1"></a><a class="docs-heading-anchor-permalink" href="#Conclusion" title="Permalink"></a></h3><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
-SciMLBenchmarks.weave_file(&quot;benchmarks/DAE&quot;,&quot;charge_pump.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.10
-Commit 95f30e51f41 (2025-06-27 09:51 UTC)
+SciMLBenchmarks.weave_file(&quot;benchmarks/DAE&quot;,&quot;charge_pump.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.11
+Commit a2b11907d7b (2026-03-09 14:59 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -556,36 +557,36 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953:
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Project.toml`
   [165a45c3] DASKR v2.9.1
   [e993076c] DASSL v2.8.0
   [f3b72e0c] DiffEqDevTools v2.49.0
 ⌅ [961ee093] ModelingToolkit v9.84.0
-  [09606e27] ODEInterfaceDiffEq v3.15.0
-  [1dea7af3] OrdinaryDiffEq v6.108.0
+  [09606e27] ODEInterfaceDiffEq v3.16.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.107.0
   [91a5bcdd] Plots v1.41.6
   [31c91b34] SciMLBenchmarks v0.1.3
-  [90137ffa] StaticArrays v1.9.17
+  [90137ffa] StaticArrays v1.9.18
 ⌅ [c3572dad] Sundials v4.28.0
   [10745b16] Statistics v1.10.0
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Manifest.toml`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Manifest.toml`
   [47edcb42] ADTypes v1.21.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.43
-⌃ [79e6a3ab] Adapt v4.4.0
+  [79e6a3ab] Adapt v4.5.0
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
-⌃ [4fba245c] ArrayInterface v7.22.0
+  [4fba245c] ArrayInterface v7.23.0
   [4c555306] ArrayLayouts v1.12.2
   [e2ed5e7c] Bijections v0.2.2
   [d1d4a3ce] BitFlags v0.1.9
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [8e7c35d0] BlockArrays v1.9.3
-⌃ [70df07ce] BracketingNonlinearSolve v1.10.0
+  [70df07ce] BracketingNonlinearSolve v1.11.0
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.7
   [d360d2e6] ChainRulesCore v1.26.0
@@ -615,7 +616,7 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
 ⌅ [864edb3b] DataStructures v0.18.22
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v6.205.1
+  [2b5f629d] DiffEqBase v6.210.1
   [459566f4] DiffEqCallbacks v4.12.0
   [f3b72e0c] DiffEqDevTools v2.49.0
   [77a26b50] DiffEqNoiseProcess v5.27.0
@@ -628,8 +629,8 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [ffbed154] DocStringExtensions v0.9.5
   [5b8099bc] DomainSets v0.7.16
 ⌃ [7c1d4256] DynamicPolynomials v0.6.3
-  [06fc5a27] DynamicQuantities v1.11.0
-⌃ [4e289a0a] EnumX v1.0.6
+  [06fc5a27] DynamicQuantities v1.12.0
+  [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.18
   [460bff9d] ExceptionUnwrapping v0.1.11
   [d4d017d3] ExponentialUtilities v1.30.0
@@ -649,16 +650,16 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [46192b85] GPUArraysCore v0.2.0
-⌃ [28b8d3ca] GR v0.73.22
+  [28b8d3ca] GR v0.73.24
   [c145ed77] GenericSchur v0.5.6
   [d7ba0133] Git v1.5.0
   [c27321d9] Glob v1.4.0
 ⌃ [86223c79] Graphs v1.13.1
   [42e2da0e] Grisu v1.0.2
-  [cd3eb016] HTTP v1.10.19
+  [cd3eb016] HTTP v1.11.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.28
-⌃ [7073ff75] IJulia v1.34.3
+  [7073ff75] IJulia v1.34.4
   [615f187c] IfElse v0.1.1
   [d25df0c9] Inflate v0.1.5
   [18e54dd8] IntegerMathUtils v0.1.3
@@ -672,21 +673,21 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [ae98c720] Jieko v0.2.1
   [98e50ef6] JuliaFormatter v2.3.0
 ⌅ [70703baa] JuliaSyntax v0.4.10
-⌃ [ccbc3e58] JumpProcesses v9.22.0
-  [ba0b0d4f] Krylov v0.10.5
+  [ccbc3e58] JumpProcesses v9.23.1
+  [ba0b0d4f] Krylov v0.10.6
   [b964fa9f] LaTeXStrings v1.4.0
   [23fbe1c1] Latexify v0.16.10
   [10f19ff3] LayoutPointers v0.1.17
   [87fe0de2] LineSearch v0.1.6
 ⌃ [d3d80556] LineSearches v7.5.1
-⌃ [7ed4a6bd] LinearSolve v3.59.1
+  [7ed4a6bd] LinearSolve v3.65.0
   [2ab3a3ac] LogExpFunctions v0.3.29
   [e6f89c97] LoggingExtras v1.2.0
   [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.16
   [d125e4d3] ManualMemory v0.1.8
   [bb5d69b7] MaybeInplace v0.1.4
-⌃ [739be429] MbedTLS v1.1.9
+  [739be429] MbedTLS v1.1.10
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
 ⌅ [961ee093] ModelingToolkit v9.84.0
@@ -704,37 +705,37 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [9a2c21bd] NonlinearSolveQuasiNewton v1.12.0
   [26075421] NonlinearSolveSpectralMethods v1.6.0
   [54ca160b] ODEInterface v0.5.0
-  [09606e27] ODEInterfaceDiffEq v3.15.0
+  [09606e27] ODEInterfaceDiffEq v3.16.0
   [6fe1bfb0] OffsetArrays v1.17.0
   [4d8831e6] OpenSSL v1.6.1
   [bac558e1] OrderedCollections v1.8.1
-  [1dea7af3] OrdinaryDiffEq v6.108.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.107.0
   [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.9.0
-⌃ [6ad6398a] OrdinaryDiffEqBDF v1.15.0
+⌃ [6ad6398a] OrdinaryDiffEqBDF v1.14.0
 ⌃ [bbf590c4] OrdinaryDiffEqCore v3.1.0
-⌃ [50262376] OrdinaryDiffEqDefault v1.12.0
-⌃ [4302a76b] OrdinaryDiffEqDifferentiation v2.0.0
+  [50262376] OrdinaryDiffEqDefault v1.13.0
+⌅ [4302a76b] OrdinaryDiffEqDifferentiation v1.22.0
   [9286f039] OrdinaryDiffEqExplicitRK v1.9.0
-  [e0540318] OrdinaryDiffEqExponentialRK v1.13.0
-⌃ [becaefa8] OrdinaryDiffEqExtrapolation v1.14.0
-⌃ [5960d6e9] OrdinaryDiffEqFIRK v1.21.0
+⌃ [e0540318] OrdinaryDiffEqExponentialRK v1.12.0
+⌃ [becaefa8] OrdinaryDiffEqExtrapolation v1.13.0
+⌃ [5960d6e9] OrdinaryDiffEqFIRK v1.20.0
   [101fe9f7] OrdinaryDiffEqFeagin v1.8.0
   [d3585ca7] OrdinaryDiffEqFunctionMap v1.9.0
   [d28bc4f8] OrdinaryDiffEqHighOrderRK v1.9.0
-  [9f002381] OrdinaryDiffEqIMEXMultistep v1.12.0
+⌃ [9f002381] OrdinaryDiffEqIMEXMultistep v1.11.0
   [521117fe] OrdinaryDiffEqLinear v1.10.0
   [1344f307] OrdinaryDiffEqLowOrderRK v1.10.0
 ⌃ [b0944070] OrdinaryDiffEqLowStorageRK v1.11.0
-⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.20.0
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.19.0
 ⌃ [c9986a66] OrdinaryDiffEqNordsieck v1.8.0
-  [5dd0a6cf] OrdinaryDiffEqPDIRK v1.11.0
+⌃ [5dd0a6cf] OrdinaryDiffEqPDIRK v1.10.0
   [5b33eab2] OrdinaryDiffEqPRK v1.8.0
   [04162be5] OrdinaryDiffEqQPRK v1.8.0
-⌃ [af6ede74] OrdinaryDiffEqRKN v1.9.0
-⌃ [43230ef6] OrdinaryDiffEqRosenbrock v1.23.0
-  [2d112036] OrdinaryDiffEqSDIRK v1.12.0
+  [af6ede74] OrdinaryDiffEqRKN v1.10.0
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v1.22.0
+⌃ [2d112036] OrdinaryDiffEqSDIRK v1.11.0
   [669c94d9] OrdinaryDiffEqSSPRK v1.11.0
-  [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.11.0
+⌃ [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.10.0
   [358294b1] OrdinaryDiffEqStabilizedRK v1.8.0
   [fa646aed] OrdinaryDiffEqSymplecticRK v1.11.0
   [b1df2697] OrdinaryDiffEqTsit5 v1.9.0
@@ -749,9 +750,9 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [1d0040c9] PolyesterWeave v0.2.2
 ⌃ [d236fae5] PreallocationTools v0.4.34
 ⌅ [aea7be01] PrecompileTools v1.2.1
-⌃ [21216c6a] Preferences v1.5.1
+  [21216c6a] Preferences v1.5.2
   [27ebfcd6] Primes v0.5.7
-⌃ [43287f4e] PtrArrays v1.3.0
+  [43287f4e] PtrArrays v1.4.0
   [1fd47b50] QuadGK v2.11.2
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
@@ -765,7 +766,7 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [7e49a35a] RuntimeGeneratedFunctions v0.5.17
   [9dfe8606] SCCNonlinearSolve v1.11.0
   [94e857df] SIMDTypes v0.1.0
-⌃ [0bca4576] SciMLBase v2.140.0
+  [0bca4576] SciMLBase v2.149.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.12
   [a6db7da4] SciMLLogging v1.9.1
@@ -779,12 +780,12 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [727e6d20] SimpleNonlinearSolve v2.11.0
   [699a6c99] SimpleTraits v0.9.5
   [a2af1166] SortingAlgorithms v1.2.2
-⌃ [0a514795] SparseMatrixColorings v0.4.23
+  [0a514795] SparseMatrixColorings v0.4.24
   [276daf66] SpecialFunctions v2.7.1
   [860ef19b] StableRNGs v1.0.4
   [aedffcd0] Static v1.3.1
   [0d7ed370] StaticArrayInterface v1.9.0
-  [90137ffa] StaticArrays v1.9.17
+  [90137ffa] StaticArrays v1.9.18
   [1e83bf80] StaticArraysCore v1.4.4
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.10
@@ -829,7 +830,7 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [d7e528f0] FreeType2_jll v2.13.4+0
   [559328eb] FriBidi_jll v1.0.17+0
   [0656b61e] GLFW_jll v3.4.1+0
-⌅ [d2c73de3] GR_jll v0.73.22+0
+  [d2c73de3] GR_jll v0.73.24+0
   [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
   [020c3dae] Git_LFS_jll v3.7.0+0
@@ -858,10 +859,11 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [91d4177d] Opus_jll v1.6.1+0
   [36c8627f] Pango_jll v1.57.0+0
 ⌅ [30392449] Pixman_jll v0.44.2+0
-⌅ [c0090381] Qt6Base_jll v6.8.2+2
-⌅ [629bc702] Qt6Declarative_jll v6.8.2+1
-⌅ [ce943373] Qt6ShaderTools_jll v6.8.2+1
-⌃ [e99dba38] Qt6Wayland_jll v6.8.2+2
+  [c0090381] Qt6Base_jll v6.10.2+1
+  [629bc702] Qt6Declarative_jll v6.10.2+1
+  [ce943373] Qt6ShaderTools_jll v6.10.2+1
+  [6de9746b] Qt6Svg_jll v6.10.2+0
+  [e99dba38] Qt6Wayland_jll v6.10.2+1
   [f50d1b31] Rmath_jll v0.5.1+0
 ⌅ [fb77eaff] Sundials_jll v5.2.2+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
@@ -956,4 +958,4 @@ Info Packages marked with ⌅ have new versions available but compatibility cons
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../TransistorAmplifier/">« Transistor Amplifier, DAE format</a><a class="docs-footer-nextpage" href="../fekete/">Fekete Problem DAE Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Thursday 12 March 2026 11:43">Thursday 12 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../caraxis/">« Car Axis DAE Benchmark</a><a class="docs-footer-nextpage" href="../fekete/">Fekete Problem DAE Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Friday 13 March 2026 07:56">Friday 13 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
