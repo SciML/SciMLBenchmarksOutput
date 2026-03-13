@@ -533,172 +533,173 @@ refs  = [ref_sol]
 roblem{Vector{Float64}, Vector{Float64}, Tuple{Float64, Float64}, true, Sci
 MLBase.NullParameters, SciMLBase.DAEFunction{true, SciMLBase.FullSpecialize
 , typeof(Main.var"##WeaveSandBox#225".charge_pump_dae!), Nothing, Nothing, 
-Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typ
-eof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing}, Base.Pairs{Sym
-bol, Union{}, Tuple{}, @NamedTuple{}}, Vector{Bool}}, Sundials.IDA{:Dense, 
-Nothing, Nothing}, SciMLBase.HermiteInterpolation{Vector{Float64}, Vector{V
-ector{Float64}}, Vector{Vector{Float64}}}, SciMLBase.DEStats, Nothing, Noth
-ing}}:
+Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
+hing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothin
+g}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, Vector{Bool}}, Sun
+dials.IDA{:Dense, Nothing, Nothing}, SciMLBase.HermiteInterpolation{Vector{
+Float64}, Vector{Vector{Float64}}, Vector{Vector{Float64}}}, SciMLBase.DESt
+ats, Nothing, Nothing}}:
  SciMLBase.DAESolution{Float64, 2, Vector{Vector{Float64}}, Vector{Vector{F
 loat64}}, Nothing, Nothing, Vector{Float64}, SciMLBase.DAEProblem{Vector{Fl
 oat64}, Vector{Float64}, Tuple{Float64, Float64}, true, SciMLBase.NullParam
 eters, SciMLBase.DAEFunction{true, SciMLBase.FullSpecialize, typeof(Main.va
 r"##WeaveSandBox#225".charge_pump_dae!), Nothing, Nothing, Nothing, Nothing
-, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DE
-FAULT_OBSERVED), Nothing, Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tu
-ple{}, @NamedTuple{}}, Vector{Bool}}, Sundials.IDA{:Dense, Nothing, Nothing
-}, SciMLBase.HermiteInterpolation{Vector{Float64}, Vector{Vector{Float64}},
- Vector{Vector{Float64}}}, SciMLBase.DEStats, Nothing, Nothing}([[1.2628004
+, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, t
+ypeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing}, Base.Pairs{S
+ymbol, Union{}, Tuple{}, @NamedTuple{}}, Vector{Bool}}, Sundials.IDA{:Dense
+, Nothing, Nothing}, SciMLBase.HermiteInterpolation{Vector{Float64}, Vector
+{Vector{Float64}}, Vector{Vector{Float64}}}, SciMLBase.DEStats, Nothing, No
+thing}([[1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [
+1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004
 298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594
 e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0
 , 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.
 0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0
 .0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-, [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628
-004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767
-594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [1.400674012699209e-13
-, 2.814808032100996e-16, -2.814808032100995e-16, 2.814808032100996e-16, -2.
-814808032100995e-16, 0.18284616396878975, 0.00017592550200631229, 0.0007037
-020080252488, -0.00010172199521165957], [1.3924009485943487e-13, 3.69942837
-94439546e-17, -3.699428379443935e-17, 3.6994283794439546e-17, -3.6994283794
-43935e-17, 0.17776679057729639, 2.3121427371524696e-5, 9.248570948609878e-5
-, 0.00027127024275844377], [1.3885128419904236e-13, 1.232595164407831e-31, 
-0.0, 1.232595164407831e-31, 0.0, 0.1731953545249819, 8.131516293641283e-20,
- 3.2526065174565133e-19, 0.00017010438555296572], [1.3853387414762482e-13, 
-1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 0.168623918472674
-13, 7.115076756936123e-20, 2.981555974335137e-19, 0.00013886667024564536], 
-[1.378969004874096e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31
-, 0.0, 0.15948104636805865, 7.318533788671496e-20, 2.9274135154685985e-19, 
-0.0001393377601516324], [1.3661420060502134e-13, 1.1709654061874394e-31, 0.
-0, 1.1709654061874394e-31, 0.0, 0.14119530215840417, 7.318533788671496e-20,
- 2.9274135154685985e-19, 0.00014029507004916671], [1.3401263487454528e-13, 
-1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 0.104623813739518
-75, 7.318533788671496e-20, 2.9274135154685985e-19, 0.00014227289306173755],
- [1.2865472291597604e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-
-31, 0.0, 0.03148083690132435, 7.318533788671496e-20, 2.9274135154685985e-19
-, 0.00014650516536751835], [1.2628004298770012e-13, 1.1709654061874394e-31,
- 0.0, 1.1709654061874394e-31, 0.0, 3.176348073452573e-13, 7.318533788671496
-e-20, 2.9274135154685985e-19, 0.0001508651079222072], [1.2628004298766816e-
-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, -1.0588166628
-189324e-13, 7.318533788671496e-20, 2.9274135154685985e-19, 0.00015086510792
-226585]], [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0
+, [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [1.4
+00674012699209e-13, 2.814808032100996e-16, -2.814808032100995e-16, 2.814808
+032100996e-16, -2.814808032100995e-16, 0.18284616396878975, 0.0001759255020
+0631229, 0.0007037020080252488, -0.00010172199521165957], [1.39240094859434
+87e-13, 3.6994283794439546e-17, -3.699428379443935e-17, 3.6994283794439546e
+-17, -3.699428379443935e-17, 0.17776679057729639, 2.3121427371524696e-5, 9.
+248570948609878e-5, 0.00027127024275844377], [1.3885128419904236e-13, 1.232
+595164407831e-31, 0.0, 1.232595164407831e-31, 0.0, 0.1731953545249819, 8.13
+1516293641283e-20, 3.2526065174565133e-19, 0.00017010438555296572], [1.3853
+387414762482e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0,
+ 0.16862391847267413, 7.115076756936123e-20, 2.981555974335137e-19, 0.00013
+886667024564536], [1.378969004874096e-13, 1.1709654061874394e-31, 0.0, 1.17
+09654061874394e-31, 0.0, 0.15948104636805865, 7.318533788671496e-20, 2.9274
+135154685985e-19, 0.0001393377601516324], [1.3661420060502134e-13, 1.170965
+4061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 0.14119530215840417, 7.31
+8533788671496e-20, 2.9274135154685985e-19, 0.00014029507004916671], [1.3401
+263487454528e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0,
+ 0.10462381373951875, 7.318533788671496e-20, 2.9274135154685985e-19, 0.0001
+4227289306173755], [1.2865472291597604e-13, 1.1709654061874394e-31, 0.0, 1.
+1709654061874394e-31, 0.0, 0.03148083690132435, 7.318533788671496e-20, 2.92
+74135154685985e-19, 0.00014650516536751835], [1.2628004298770012e-13, 1.170
+9654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 3.176348073452573e-13,
+ 7.318533788671496e-20, 2.9274135154685985e-19, 0.0001508651079222072], [1.
+2628004298766816e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 
+0.0, -1.0588166628189324e-13, 7.318533788671496e-20, 2.9274135154685985e-19
+, 0.00015086510792226585]], [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+ [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0
+.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.
+0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0
 .0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 
-0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0
-.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
- 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 
-0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [0.00016510582171335765, 0.00015554888545
-659854, -0.00015554888545659854, 0.00015554888545659854, -0.000155548885456
-59854, -1.9999999999378743e9, 9.72180534103741e7, 3.888722136414963e8, 9.05
-7084623722783e7], [-0.00032575136605029944, -9.6266409483941e-5, 9.62664094
-83941e-5, -9.6266409483941e-5, 9.6266409483941e-5, -1.9999999999837008e9, -
-6.016650592746313e7, -2.4066602370985228e8, 1.4686545336152223e8], [-0.0001
-7010438555296572, -1.618497267403262e-5, 1.618497267403262e-5, -1.618497267
-403262e-5, 1.618497267403262e-5, -1.9999999999707808e9, -1.0115607921270385
-e7, -4.046243168508157e7, -4.425999009776372e7], [-0.00013886667024564536, 
-0.0, 0.0, 0.0, 0.0, -1.9999999999678302e9, -5.587935447692871e-9, -1.490116
-1193847656e-8, -1.366647808232969e7], [-0.0001393377601516324, 0.0, 0.0, 0.
-0, 0.0, -1.999999999967818e9, 4.4506152859644997e-10, -1.184364349542538e-9
-, 103050.74829640426], [-0.00014029507004916671, 0.0, 0.0, 0.0, 0.0, -2.000
-0000000141437e9, -5.686866711302065e-25, -3.7223127564886245e-24, 104705.59
-869645842], [-0.00014227289306173755, 0.0, 0.0, 0.0, 0.0, -1.99999999999098
-16e9, 1.7238160482756729e-25, 2.2018975376450138e-24, 108162.01899732203], 
-[-0.00014650516536751835, 0.0, 0.0, 0.0, 0.0, -2.0000000000025623e9, -2.018
-048422447826e-25, -7.915940389337857e-25, 115726.00648039709], [-0.00015086
-51079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6.675847078935393e-
-25, 2.685964161619502e-24, 276990.2571776556], [-0.0001508651079222072, 0.0
-, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6.675847078935393e-25, 2.6859641616
-19502e-24, 276990.2571776556]], nothing, nothing, [0.0, 1.0e-15, 2.0e-15, 4
-.0e-15, 8.0e-15, 1.6e-14, 3.2e-14, 6.4e-14, 1.28e-13, 2.56e-13  …  1.199908
-5769180155e-6, 1.1999111166047112e-6, 1.1999134023227374e-6, 1.199915688040
-7636e-6, 1.1999202594768159e-6, 1.1999294023489207e-6, 1.1999476880931301e-
-6, 1.1999842595815492e-6, 1.1999999999999997e-6, 1.2e-6], nothing, SciMLBas
-e.DAEProblem{Vector{Float64}, Vector{Float64}, Tuple{Float64, Float64}, tru
-e, SciMLBase.NullParameters, SciMLBase.DAEFunction{true, SciMLBase.FullSpec
-ialize, typeof(Main.var"##WeaveSandBox#225".charge_pump_dae!), Nothing, Not
+, [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [0.00016510582171335765
+, 0.00015554888545659854, -0.00015554888545659854, 0.00015554888545659854, 
+-0.00015554888545659854, -1.9999999999378743e9, 9.72180534103741e7, 3.88872
+2136414963e8, 9.057084623722783e7], [-0.00032575136605029944, -9.6266409483
+941e-5, 9.6266409483941e-5, -9.6266409483941e-5, 9.6266409483941e-5, -1.999
+9999999837008e9, -6.016650592746313e7, -2.4066602370985228e8, 1.46865453361
+52223e8], [-0.00017010438555296572, -1.618497267403262e-5, 1.61849726740326
+2e-5, -1.618497267403262e-5, 1.618497267403262e-5, -1.9999999999707808e9, -
+1.0115607921270385e7, -4.046243168508157e7, -4.425999009776372e7], [-0.0001
+3886667024564536, 0.0, 0.0, 0.0, 0.0, -1.9999999999678302e9, -5.58793544769
+2871e-9, -1.4901161193847656e-8, -1.366647808232969e7], [-0.000139337760151
+6324, 0.0, 0.0, 0.0, 0.0, -1.999999999967818e9, 4.4506152859644997e-10, -1.
+184364349542538e-9, 103050.74829640426], [-0.00014029507004916671, 0.0, 0.0
+, 0.0, 0.0, -2.0000000000141437e9, -5.686866711302065e-25, -3.7223127564886
+245e-24, 104705.59869645842], [-0.00014227289306173755, 0.0, 0.0, 0.0, 0.0,
+ -1.9999999999909816e9, 1.7238160482756729e-25, 2.2018975376450138e-24, 108
+162.01899732203], [-0.00014650516536751835, 0.0, 0.0, 0.0, 0.0, -2.00000000
+00025623e9, -2.018048422447826e-25, -7.915940389337857e-25, 115726.00648039
+709], [-0.0001508651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6
+.675847078935393e-25, 2.685964161619502e-24, 276990.2571776556], [-0.000150
+8651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6.675847078935393
+e-25, 2.685964161619502e-24, 276990.2571776556]], nothing, nothing, [0.0, 1
+.0e-15, 2.0e-15, 4.0e-15, 8.0e-15, 1.6e-14, 3.2e-14, 6.4e-14, 1.28e-13, 2.5
+6e-13  …  1.1999085769180155e-6, 1.1999111166047112e-6, 1.1999134023227374e
+-6, 1.1999156880407636e-6, 1.1999202594768159e-6, 1.1999294023489207e-6, 1.
+1999476880931301e-6, 1.1999842595815492e-6, 1.1999999999999997e-6, 1.2e-6],
+ nothing, SciMLBase.DAEProblem{Vector{Float64}, Vector{Float64}, Tuple{Floa
+t64, Float64}, true, SciMLBase.NullParameters, SciMLBase.DAEFunction{true, 
+SciMLBase.FullSpecialize, typeof(Main.var"##WeaveSandBox#225".charge_pump_d
+ae!), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), 
+Nothing, Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTupl
+e{}}, Vector{Bool}}(SciMLBase.DAEFunction{true, SciMLBase.FullSpecialize, t
+ypeof(Main.var"##WeaveSandBox#225".charge_pump_dae!), Nothing, Nothing, Not
 hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
-g, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing}, Base.Pai
-rs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, Vector{Bool}}(SciMLBase.DAEFun
-ction{true, SciMLBase.FullSpecialize, typeof(Main.var"##WeaveSandBox#225".c
-harge_pump_dae!), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Not
-hing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothin
-g, Nothing, Nothing}(Main.var"##WeaveSandBox#225".charge_pump_dae!, nothing
-, nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing, n
-othing, SciMLBase.DEFAULT_OBSERVED, nothing, nothing, nothing), [0.0, 0.0, 
-0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0,
- 0.0, 0.0, 0.0, 0.0, 0.0], (0.0, 1.2e-6), SciMLBase.NullParameters(), Base.
-Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}(), Bool[1, 1, 1, 1, 1, 0, 0,
- 0, 0]), Sundials.IDA{:Dense, Nothing, Nothing}(0, 0, 0, 5, 7, 0.33, 3, 10,
- 0.0033, 5, 4, 10, 100, true, false, nothing, nothing), SciMLBase.HermiteIn
-terpolation{Vector{Float64}, Vector{Vector{Float64}}, Vector{Vector{Float64
-}}}([0.0, 1.0e-15, 2.0e-15, 4.0e-15, 8.0e-15, 1.6e-14, 3.2e-14, 6.4e-14, 1.
-28e-13, 2.56e-13  …  1.1999085769180155e-6, 1.1999111166047112e-6, 1.199913
-4023227374e-6, 1.1999156880407636e-6, 1.1999202594768159e-6, 1.199929402348
-9207e-6, 1.1999476880931301e-6, 1.1999842595815492e-6, 1.1999999999999997e-
-6, 1.2e-6], [[1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.
-0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.26
-28004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.26280042987
-67594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13
-, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.
-0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0
-.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 
-0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
- 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  … 
- [1.400674012699209e-13, 2.814808032100996e-16, -2.814808032100995e-16, 2.8
-14808032100996e-16, -2.814808032100995e-16, 0.18284616396878975, 0.00017592
-550200631229, 0.0007037020080252488, -0.00010172199521165957], [1.392400948
-5943487e-13, 3.6994283794439546e-17, -3.699428379443935e-17, 3.699428379443
-9546e-17, -3.699428379443935e-17, 0.17776679057729639, 2.3121427371524696e-
-5, 9.248570948609878e-5, 0.00027127024275844377], [1.3885128419904236e-13, 
-1.232595164407831e-31, 0.0, 1.232595164407831e-31, 0.0, 0.1731953545249819,
- 8.131516293641283e-20, 3.2526065174565133e-19, 0.00017010438555296572], [1
-.3853387414762482e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31,
- 0.0, 0.16862391847267413, 7.115076756936123e-20, 2.981555974335137e-19, 0.
-00013886667024564536], [1.378969004874096e-13, 1.1709654061874394e-31, 0.0,
- 1.1709654061874394e-31, 0.0, 0.15948104636805865, 7.318533788671496e-20, 2
-.9274135154685985e-19, 0.0001393377601516324], [1.3661420060502134e-13, 1.1
-709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 0.14119530215840417,
- 7.318533788671496e-20, 2.9274135154685985e-19, 0.00014029507004916671], [1
-.3401263487454528e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31,
- 0.0, 0.10462381373951875, 7.318533788671496e-20, 2.9274135154685985e-19, 0
-.00014227289306173755], [1.2865472291597604e-13, 1.1709654061874394e-31, 0.
-0, 1.1709654061874394e-31, 0.0, 0.03148083690132435, 7.318533788671496e-20,
- 2.9274135154685985e-19, 0.00014650516536751835], [1.2628004298770012e-13, 
-1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 3.176348073452573
-e-13, 7.318533788671496e-20, 2.9274135154685985e-19, 0.0001508651079222072]
-, [1.2628004298766816e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e
--31, 0.0, -1.0588166628189324e-13, 7.318533788671496e-20, 2.927413515468598
-5e-19, 0.00015086510792226585]], [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0
-.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.
-0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
-0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0
-.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
- 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [0.000165105821713
-35765, 0.00015554888545659854, -0.00015554888545659854, 0.00015554888545659
-854, -0.00015554888545659854, -1.9999999999378743e9, 9.72180534103741e7, 3.
-888722136414963e8, 9.057084623722783e7], [-0.00032575136605029944, -9.62664
-09483941e-5, 9.6266409483941e-5, -9.6266409483941e-5, 9.6266409483941e-5, -
-1.9999999999837008e9, -6.016650592746313e7, -2.4066602370985228e8, 1.468654
-5336152223e8], [-0.00017010438555296572, -1.618497267403262e-5, 1.618497267
-403262e-5, -1.618497267403262e-5, 1.618497267403262e-5, -1.9999999999707808
-e9, -1.0115607921270385e7, -4.046243168508157e7, -4.425999009776372e7], [-0
-.00013886667024564536, 0.0, 0.0, 0.0, 0.0, -1.9999999999678302e9, -5.587935
-447692871e-9, -1.4901161193847656e-8, -1.366647808232969e7], [-0.0001393377
-601516324, 0.0, 0.0, 0.0, 0.0, -1.999999999967818e9, 4.4506152859644997e-10
-, -1.184364349542538e-9, 103050.74829640426], [-0.00014029507004916671, 0.0
-, 0.0, 0.0, 0.0, -2.0000000000141437e9, -5.686866711302065e-25, -3.72231275
-64886245e-24, 104705.59869645842], [-0.00014227289306173755, 0.0, 0.0, 0.0,
- 0.0, -1.9999999999909816e9, 1.7238160482756729e-25, 2.2018975376450138e-24
-, 108162.01899732203], [-0.00014650516536751835, 0.0, 0.0, 0.0, 0.0, -2.000
-0000000025623e9, -2.018048422447826e-25, -7.915940389337857e-25, 115726.006
-48039709], [-0.0001508651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017
-e9, 6.675847078935393e-25, 2.685964161619502e-24, 276990.2571776556], [-0.0
-001508651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6.6758470789
-35393e-25, 2.685964161619502e-24, 276990.2571776556]], false), true, 0, Sci
-MLBase.DEStats(1726, 0, 842, 0, 842, 1726, 120, 0, 0, 0, 705, 118, 0.0), Sc
-iMLBase.ReturnCode.Success, nothing)
+g, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing}(
+Main.var"##WeaveSandBox#225".charge_pump_dae!, nothing, nothing, nothing, n
+othing, nothing, nothing, nothing, nothing, nothing, nothing, nothing, noth
+ing, SciMLBase.DEFAULT_OBSERVED, nothing, nothing, nothing), [0.0, 0.0, 0.0
+, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.
+0, 0.0, 0.0, 0.0, 0.0], (0.0, 1.2e-6), SciMLBase.NullParameters(), Base.Pai
+rs{Symbol, Union{}, Tuple{}, @NamedTuple{}}(), Bool[1, 1, 1, 1, 1, 0, 0, 0,
+ 0]), Sundials.IDA{:Dense, Nothing, Nothing}(0, 0, 0, 5, 7, 0.33, 3, 10, 0.
+0033, 5, 4, 10, 100, true, false, nothing, nothing), SciMLBase.HermiteInter
+polation{Vector{Float64}, Vector{Vector{Float64}}, Vector{Vector{Float64}}}
+([0.0, 1.0e-15, 2.0e-15, 4.0e-15, 8.0e-15, 1.6e-14, 3.2e-14, 6.4e-14, 1.28e
+-13, 2.56e-13  …  1.1999085769180155e-6, 1.1999111166047112e-6, 1.199913402
+3227374e-6, 1.1999156880407636e-6, 1.1999202594768159e-6, 1.199929402348920
+7e-6, 1.1999476880931301e-6, 1.1999842595815492e-6, 1.1999999999999997e-6, 
+1.2e-6], [[1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+ [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.26280
+04298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.26280042987675
+94e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0
+.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 
+0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0,
+ 0.0, 0.0, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+, 0.0, 0.0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.
+0], [1.2628004298767594e-13, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [1
+.400674012699209e-13, 2.814808032100996e-16, -2.814808032100995e-16, 2.8148
+08032100996e-16, -2.814808032100995e-16, 0.18284616396878975, 0.00017592550
+200631229, 0.0007037020080252488, -0.00010172199521165957], [1.392400948594
+3487e-13, 3.6994283794439546e-17, -3.699428379443935e-17, 3.699428379443954
+6e-17, -3.699428379443935e-17, 0.17776679057729639, 2.3121427371524696e-5, 
+9.248570948609878e-5, 0.00027127024275844377], [1.3885128419904236e-13, 1.2
+32595164407831e-31, 0.0, 1.232595164407831e-31, 0.0, 0.1731953545249819, 8.
+131516293641283e-20, 3.2526065174565133e-19, 0.00017010438555296572], [1.38
+53387414762482e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.
+0, 0.16862391847267413, 7.115076756936123e-20, 2.981555974335137e-19, 0.000
+13886667024564536], [1.378969004874096e-13, 1.1709654061874394e-31, 0.0, 1.
+1709654061874394e-31, 0.0, 0.15948104636805865, 7.318533788671496e-20, 2.92
+74135154685985e-19, 0.0001393377601516324], [1.3661420060502134e-13, 1.1709
+654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 0.14119530215840417, 7.
+318533788671496e-20, 2.9274135154685985e-19, 0.00014029507004916671], [1.34
+01263487454528e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.
+0, 0.10462381373951875, 7.318533788671496e-20, 2.9274135154685985e-19, 0.00
+014227289306173755], [1.2865472291597604e-13, 1.1709654061874394e-31, 0.0, 
+1.1709654061874394e-31, 0.0, 0.03148083690132435, 7.318533788671496e-20, 2.
+9274135154685985e-19, 0.00014650516536751835], [1.2628004298770012e-13, 1.1
+709654061874394e-31, 0.0, 1.1709654061874394e-31, 0.0, 3.176348073452573e-1
+3, 7.318533788671496e-20, 2.9274135154685985e-19, 0.0001508651079222072], [
+1.2628004298766816e-13, 1.1709654061874394e-31, 0.0, 1.1709654061874394e-31
+, 0.0, -1.0588166628189324e-13, 7.318533788671496e-20, 2.9274135154685985e-
+19, 0.00015086510792226585]], [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0,
+ 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 
+0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0,
+ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.
+0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]  …  [0.000165105821713357
+65, 0.00015554888545659854, -0.00015554888545659854, 0.00015554888545659854
+, -0.00015554888545659854, -1.9999999999378743e9, 9.72180534103741e7, 3.888
+722136414963e8, 9.057084623722783e7], [-0.00032575136605029944, -9.62664094
+83941e-5, 9.6266409483941e-5, -9.6266409483941e-5, 9.6266409483941e-5, -1.9
+999999999837008e9, -6.016650592746313e7, -2.4066602370985228e8, 1.468654533
+6152223e8], [-0.00017010438555296572, -1.618497267403262e-5, 1.618497267403
+262e-5, -1.618497267403262e-5, 1.618497267403262e-5, -1.9999999999707808e9,
+ -1.0115607921270385e7, -4.046243168508157e7, -4.425999009776372e7], [-0.00
+013886667024564536, 0.0, 0.0, 0.0, 0.0, -1.9999999999678302e9, -5.587935447
+692871e-9, -1.4901161193847656e-8, -1.366647808232969e7], [-0.0001393377601
+516324, 0.0, 0.0, 0.0, 0.0, -1.999999999967818e9, 4.4506152859644997e-10, -
+1.184364349542538e-9, 103050.74829640426], [-0.00014029507004916671, 0.0, 0
+.0, 0.0, 0.0, -2.0000000000141437e9, -5.686866711302065e-25, -3.72231275648
+86245e-24, 104705.59869645842], [-0.00014227289306173755, 0.0, 0.0, 0.0, 0.
+0, -1.9999999999909816e9, 1.7238160482756729e-25, 2.2018975376450138e-24, 1
+08162.01899732203], [-0.00014650516536751835, 0.0, 0.0, 0.0, 0.0, -2.000000
+0000025623e9, -2.018048422447826e-25, -7.915940389337857e-25, 115726.006480
+39709], [-0.0001508651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9,
+ 6.675847078935393e-25, 2.685964161619502e-24, 276990.2571776556], [-0.0001
+508651079222072, 0.0, 0.0, 0.0, 0.0, -2.0000000000000017e9, 6.6758470789353
+93e-25, 2.685964161619502e-24, 276990.2571776556]], false), true, 0, SciMLB
+ase.DEStats(1726, 0, 842, 0, 842, 1726, 120, 0, 0, 0, 705, 118, 0.0), SciML
+Base.ReturnCode.Success, nothing)
 ```
 
 
@@ -876,8 +877,8 @@ SciMLBenchmarks.weave_file("benchmarks/DAE","charge_pump.jmd")
 Computer Information:
 
 ```
-Julia Version 1.10.10
-Commit 95f30e51f41 (2025-06-27 09:51 UTC)
+Julia Version 1.10.11
+Commit a2b11907d7b (2026-03-09 14:59 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -886,7 +887,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953:
@@ -896,38 +897,38 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Project.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Project.toml`
   [165a45c3] DASKR v2.9.1
   [e993076c] DASSL v2.8.0
   [f3b72e0c] DiffEqDevTools v2.49.0
 ⌅ [961ee093] ModelingToolkit v9.84.0
-  [09606e27] ODEInterfaceDiffEq v3.15.0
-  [1dea7af3] OrdinaryDiffEq v6.108.0
+  [09606e27] ODEInterfaceDiffEq v3.16.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.107.0
   [91a5bcdd] Plots v1.41.6
   [31c91b34] SciMLBenchmarks v0.1.3
-  [90137ffa] StaticArrays v1.9.17
+  [90137ffa] StaticArrays v1.9.18
 ⌅ [c3572dad] Sundials v4.28.0
   [10745b16] Statistics v1.10.0
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Manifest.toml`
+Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/DAE/Manifest.toml`
   [47edcb42] ADTypes v1.21.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.43
-⌃ [79e6a3ab] Adapt v4.4.0
+  [79e6a3ab] Adapt v4.5.0
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
-⌃ [4fba245c] ArrayInterface v7.22.0
+  [4fba245c] ArrayInterface v7.23.0
   [4c555306] ArrayLayouts v1.12.2
   [e2ed5e7c] Bijections v0.2.2
   [d1d4a3ce] BitFlags v0.1.9
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [8e7c35d0] BlockArrays v1.9.3
-⌃ [70df07ce] BracketingNonlinearSolve v1.10.0
+  [70df07ce] BracketingNonlinearSolve v1.11.0
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.7
   [d360d2e6] ChainRulesCore v1.26.0
@@ -957,7 +958,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
 ⌅ [864edb3b] DataStructures v0.18.22
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v6.205.1
+  [2b5f629d] DiffEqBase v6.210.1
   [459566f4] DiffEqCallbacks v4.12.0
   [f3b72e0c] DiffEqDevTools v2.49.0
   [77a26b50] DiffEqNoiseProcess v5.27.0
@@ -970,8 +971,8 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ffbed154] DocStringExtensions v0.9.5
   [5b8099bc] DomainSets v0.7.16
 ⌃ [7c1d4256] DynamicPolynomials v0.6.3
-  [06fc5a27] DynamicQuantities v1.11.0
-⌃ [4e289a0a] EnumX v1.0.6
+  [06fc5a27] DynamicQuantities v1.12.0
+  [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.18
   [460bff9d] ExceptionUnwrapping v0.1.11
   [d4d017d3] ExponentialUtilities v1.30.0
@@ -991,16 +992,16 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v0.1.3
   [46192b85] GPUArraysCore v0.2.0
-⌃ [28b8d3ca] GR v0.73.22
+  [28b8d3ca] GR v0.73.24
   [c145ed77] GenericSchur v0.5.6
   [d7ba0133] Git v1.5.0
   [c27321d9] Glob v1.4.0
 ⌃ [86223c79] Graphs v1.13.1
   [42e2da0e] Grisu v1.0.2
-  [cd3eb016] HTTP v1.10.19
+  [cd3eb016] HTTP v1.11.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.28
-⌃ [7073ff75] IJulia v1.34.3
+  [7073ff75] IJulia v1.34.4
   [615f187c] IfElse v0.1.1
   [d25df0c9] Inflate v0.1.5
   [18e54dd8] IntegerMathUtils v0.1.3
@@ -1014,21 +1015,21 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ae98c720] Jieko v0.2.1
   [98e50ef6] JuliaFormatter v2.3.0
 ⌅ [70703baa] JuliaSyntax v0.4.10
-⌃ [ccbc3e58] JumpProcesses v9.22.0
-  [ba0b0d4f] Krylov v0.10.5
+  [ccbc3e58] JumpProcesses v9.23.1
+  [ba0b0d4f] Krylov v0.10.6
   [b964fa9f] LaTeXStrings v1.4.0
   [23fbe1c1] Latexify v0.16.10
   [10f19ff3] LayoutPointers v0.1.17
   [87fe0de2] LineSearch v0.1.6
 ⌃ [d3d80556] LineSearches v7.5.1
-⌃ [7ed4a6bd] LinearSolve v3.59.1
+  [7ed4a6bd] LinearSolve v3.65.0
   [2ab3a3ac] LogExpFunctions v0.3.29
   [e6f89c97] LoggingExtras v1.2.0
   [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.16
   [d125e4d3] ManualMemory v0.1.8
   [bb5d69b7] MaybeInplace v0.1.4
-⌃ [739be429] MbedTLS v1.1.9
+  [739be429] MbedTLS v1.1.10
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
 ⌅ [961ee093] ModelingToolkit v9.84.0
@@ -1046,37 +1047,37 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9a2c21bd] NonlinearSolveQuasiNewton v1.12.0
   [26075421] NonlinearSolveSpectralMethods v1.6.0
   [54ca160b] ODEInterface v0.5.0
-  [09606e27] ODEInterfaceDiffEq v3.15.0
+  [09606e27] ODEInterfaceDiffEq v3.16.0
   [6fe1bfb0] OffsetArrays v1.17.0
   [4d8831e6] OpenSSL v1.6.1
   [bac558e1] OrderedCollections v1.8.1
-  [1dea7af3] OrdinaryDiffEq v6.108.0
+⌃ [1dea7af3] OrdinaryDiffEq v6.107.0
   [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.9.0
-⌃ [6ad6398a] OrdinaryDiffEqBDF v1.15.0
+⌃ [6ad6398a] OrdinaryDiffEqBDF v1.14.0
 ⌃ [bbf590c4] OrdinaryDiffEqCore v3.1.0
-⌃ [50262376] OrdinaryDiffEqDefault v1.12.0
-⌃ [4302a76b] OrdinaryDiffEqDifferentiation v2.0.0
+  [50262376] OrdinaryDiffEqDefault v1.13.0
+⌅ [4302a76b] OrdinaryDiffEqDifferentiation v1.22.0
   [9286f039] OrdinaryDiffEqExplicitRK v1.9.0
-  [e0540318] OrdinaryDiffEqExponentialRK v1.13.0
-⌃ [becaefa8] OrdinaryDiffEqExtrapolation v1.14.0
-⌃ [5960d6e9] OrdinaryDiffEqFIRK v1.21.0
+⌃ [e0540318] OrdinaryDiffEqExponentialRK v1.12.0
+⌃ [becaefa8] OrdinaryDiffEqExtrapolation v1.13.0
+⌃ [5960d6e9] OrdinaryDiffEqFIRK v1.20.0
   [101fe9f7] OrdinaryDiffEqFeagin v1.8.0
   [d3585ca7] OrdinaryDiffEqFunctionMap v1.9.0
   [d28bc4f8] OrdinaryDiffEqHighOrderRK v1.9.0
-  [9f002381] OrdinaryDiffEqIMEXMultistep v1.12.0
+⌃ [9f002381] OrdinaryDiffEqIMEXMultistep v1.11.0
   [521117fe] OrdinaryDiffEqLinear v1.10.0
   [1344f307] OrdinaryDiffEqLowOrderRK v1.10.0
 ⌃ [b0944070] OrdinaryDiffEqLowStorageRK v1.11.0
-⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.20.0
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.19.0
 ⌃ [c9986a66] OrdinaryDiffEqNordsieck v1.8.0
-  [5dd0a6cf] OrdinaryDiffEqPDIRK v1.11.0
+⌃ [5dd0a6cf] OrdinaryDiffEqPDIRK v1.10.0
   [5b33eab2] OrdinaryDiffEqPRK v1.8.0
   [04162be5] OrdinaryDiffEqQPRK v1.8.0
-⌃ [af6ede74] OrdinaryDiffEqRKN v1.9.0
-⌃ [43230ef6] OrdinaryDiffEqRosenbrock v1.23.0
-  [2d112036] OrdinaryDiffEqSDIRK v1.12.0
+  [af6ede74] OrdinaryDiffEqRKN v1.10.0
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v1.22.0
+⌃ [2d112036] OrdinaryDiffEqSDIRK v1.11.0
   [669c94d9] OrdinaryDiffEqSSPRK v1.11.0
-  [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.11.0
+⌃ [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.10.0
   [358294b1] OrdinaryDiffEqStabilizedRK v1.8.0
   [fa646aed] OrdinaryDiffEqSymplecticRK v1.11.0
   [b1df2697] OrdinaryDiffEqTsit5 v1.9.0
@@ -1091,9 +1092,9 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [1d0040c9] PolyesterWeave v0.2.2
 ⌃ [d236fae5] PreallocationTools v0.4.34
 ⌅ [aea7be01] PrecompileTools v1.2.1
-⌃ [21216c6a] Preferences v1.5.1
+  [21216c6a] Preferences v1.5.2
   [27ebfcd6] Primes v0.5.7
-⌃ [43287f4e] PtrArrays v1.3.0
+  [43287f4e] PtrArrays v1.4.0
   [1fd47b50] QuadGK v2.11.2
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
@@ -1107,7 +1108,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7e49a35a] RuntimeGeneratedFunctions v0.5.17
   [9dfe8606] SCCNonlinearSolve v1.11.0
   [94e857df] SIMDTypes v0.1.0
-⌃ [0bca4576] SciMLBase v2.140.0
+  [0bca4576] SciMLBase v2.149.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.12
   [a6db7da4] SciMLLogging v1.9.1
@@ -1121,12 +1122,12 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [727e6d20] SimpleNonlinearSolve v2.11.0
   [699a6c99] SimpleTraits v0.9.5
   [a2af1166] SortingAlgorithms v1.2.2
-⌃ [0a514795] SparseMatrixColorings v0.4.23
+  [0a514795] SparseMatrixColorings v0.4.24
   [276daf66] SpecialFunctions v2.7.1
   [860ef19b] StableRNGs v1.0.4
   [aedffcd0] Static v1.3.1
   [0d7ed370] StaticArrayInterface v1.9.0
-  [90137ffa] StaticArrays v1.9.17
+  [90137ffa] StaticArrays v1.9.18
   [1e83bf80] StaticArraysCore v1.4.4
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.10
@@ -1171,7 +1172,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d7e528f0] FreeType2_jll v2.13.4+0
   [559328eb] FriBidi_jll v1.0.17+0
   [0656b61e] GLFW_jll v3.4.1+0
-⌅ [d2c73de3] GR_jll v0.73.22+0
+  [d2c73de3] GR_jll v0.73.24+0
   [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
   [020c3dae] Git_LFS_jll v3.7.0+0
@@ -1200,10 +1201,11 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [91d4177d] Opus_jll v1.6.1+0
   [36c8627f] Pango_jll v1.57.0+0
 ⌅ [30392449] Pixman_jll v0.44.2+0
-⌅ [c0090381] Qt6Base_jll v6.8.2+2
-⌅ [629bc702] Qt6Declarative_jll v6.8.2+1
-⌅ [ce943373] Qt6ShaderTools_jll v6.8.2+1
-⌃ [e99dba38] Qt6Wayland_jll v6.8.2+2
+  [c0090381] Qt6Base_jll v6.10.2+1
+  [629bc702] Qt6Declarative_jll v6.10.2+1
+  [ce943373] Qt6ShaderTools_jll v6.10.2+1
+  [6de9746b] Qt6Svg_jll v6.10.2+0
+  [e99dba38] Qt6Wayland_jll v6.10.2+1
   [f50d1b31] Rmath_jll v0.5.1+0
 ⌅ [fb77eaff] Sundials_jll v5.2.2+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
