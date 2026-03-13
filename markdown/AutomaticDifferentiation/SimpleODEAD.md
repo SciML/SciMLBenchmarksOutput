@@ -418,10 +418,10 @@ makebrusselator (generic function with 2 methods)
 ## Differentiation Setups
 
 ```julia
-function diffeq_sen(prob::DiffEqBase.DEProblem, args...; kwargs...)
+function diffeq_sen(prob, args...; kwargs...)
     diffeq_sen(prob.f, prob.u0, prob.tspan, prob.p, args...; kwargs...)
 end
-function auto_sen(prob::DiffEqBase.DEProblem, args...; kwargs...)
+function auto_sen(prob, args...; kwargs...)
     auto_sen(prob.f, prob.u0, prob.tspan, prob.p, args...; kwargs...)
 end
 
@@ -455,7 +455,7 @@ function diffeq_sen_l2(df, u0, tspan, p, t, alg = Tsit5();
         abstol = 1e-5, reltol = 1e-7,
         sensalg = InterpolatingAdjoint(), kwargs...)
     prob = ODEProblem(df, u0, tspan, p)
-    sol = solve(prob, alg, sensealg = DiffEqBase.SensitivityADPassThrough(),
+    sol = solve(prob, alg, sensealg = SensitivityADPassThrough(),
         abstol = abstol, reltol = reltol; kwargs...)
     dg(out, u, p, t, i) = (out.=u .- 1.0)
     adjoint_sensitivities(sol, alg; t, abstol = abstol, dgdu_discrete = dg,
@@ -466,7 +466,7 @@ function auto_sen_l2(
         f, u0, tspan, p, t, alg = Tsit5(); diffalg = ReverseDiff.gradient, kwargs...)
     test_f(p) = begin
         prob = ODEProblem{true, SciMLBase.FullSpecialize}(f, eltype(p).(u0), tspan, p)
-        sol = solve(prob, alg; sensealg = DiffEqBase.SensitivityADPassThrough(), kwargs...)(t)
+        sol = solve(prob, alg; sensealg = SensitivityADPassThrough(), kwargs...)(t)
         sum(sol.u) do x
             sum(z->(1-z)^2/2, x)
         end
@@ -487,7 +487,7 @@ end
 ```
 
 ```
-Error: UndefVarError: `DiffEqBase` not defined
+numerical_sen_l2 (generic function with 2 methods)
 ```
 
 
@@ -569,7 +569,13 @@ end
 ```
 
 ```
-Error: UndefVarError: `auto_sen` not defined
+6-element Vector{Float64}:
+ 9.8869e-5
+ 4.7199e-5
+ 0.000445627
+ 0.000675694
+ 0.000457006
+ 0.000238348
 ```
 
 
@@ -622,7 +628,24 @@ end
 ```
 
 ```
-Error: UndefVarError: `numerical_sen` not defined
+5.689380 seconds (7.16 M allocations: 729.112 MiB, 3.94% gc time, 86.40% 
+compilation time)
+ 14.423444 seconds (13.42 M allocations: 916.200 MiB, 2.27% gc time, 90.02%
+ compilation time)
+163.090284 seconds (25.44 M allocations: 24.370 GiB, 1.96% gc time, 7.84% c
+ompilation time)
+166.258767 seconds (8.38 M allocations: 23.536 GiB, 1.38% gc time, 2.76% co
+mpilation time)
+123.259072 seconds (4.21 M allocations: 23.045 GiB, 1.75% gc time, 1.99% co
+mpilation time)
+
+6-element Vector{Float64}:
+ 119.133324424
+   1.417457925
+ 160.454763786
+ 136.439440118
+ 151.342611927
+   0.66192902
 ```
 
 
@@ -660,7 +683,13 @@ end
 ```
 
 ```
-Error: UndefVarError: `auto_sen` not defined
+6-element Vector{Float64}:
+ 0.0
+ 0.021434588
+ 0.624191755
+ 0.670061048
+ 0.66175936
+ 0.012386426
 ```
 
 
@@ -702,7 +731,13 @@ end
 ```
 
 ```
-Error: UndefVarError: `auto_sen` not defined
+6-element Vector{Float64}:
+ 0.0
+ 0.002118943
+ 0.007826891
+ 0.006097995
+ 0.008568525
+ 0.008595075
 ```
 
 
@@ -717,7 +752,27 @@ display(forward_timings)
 ```
 
 ```
-Error: UndefVarError: `forward_lv` not defined
+6×5 DataFrame
+ Row │ methods                    LV           Bruss       Pollution  PKPD 
+    ⋯
+     │ String                     Float64      Float64     Float64    Float
+64  ⋯
+─────┼─────────────────────────────────────────────────────────────────────
+─────
+   1 │ Compile-time CSA           9.8869e-5    119.133     0.0        0.0  
+    ⋯
+   2 │ DSA                        4.7199e-5      1.41746   0.0214346  0.002
+118
+   3 │ CSA user-Jacobian          0.000445627  160.455     0.624192   0.007
+826
+   4 │ AD-Jacobian                0.000675694  136.439     0.670061   0.006
+098
+   5 │ AD-Jv seeding              0.000457006  151.343     0.661759   0.008
+568 ⋯
+   6 │ Numerical Differentiation  0.000238348    0.661929  0.0123864  0.008
+595
+                                                                1 column om
+itted
 ```
 
 
@@ -764,7 +819,7 @@ end
 ```
 
 ```
-Error: UndefVarError: `auto_sen_l2` not defined
+Error: UndefVarError: `SensitivityADPassThrough` not defined
 ```
 
 
@@ -814,7 +869,7 @@ end
 ```
 
 ```
-Error: UndefVarError: `auto_sen_l2` not defined
+Error: UndefVarError: `SensitivityADPassThrough` not defined
 ```
 
 
@@ -867,7 +922,7 @@ end
 ```
 
 ```
-Error: UndefVarError: `auto_sen_l2` not defined
+Error: UndefVarError: `SensitivityADPassThrough` not defined
 ```
 
 
@@ -920,7 +975,7 @@ end
 ```
 
 ```
-Error: UndefVarError: `auto_sen_l2` not defined
+Error: UndefVarError: `SensitivityADPassThrough` not defined
 ```
 
 
@@ -963,8 +1018,8 @@ SciMLBenchmarks.weave_file("benchmarks/AutomaticDifferentiation","SimpleODEAD.jm
 Computer Information:
 
 ```
-Julia Version 1.10.10
-Commit 95f30e51f41 (2025-06-27 09:51 UTC)
+Julia Version 1.10.11
+Commit a2b11907d7b (2026-03-09 14:59 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -973,7 +1028,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953:
@@ -983,47 +1038,47 @@ Environment:
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.3
   [a93c6f00] DataFrames v1.8.1
   [1313f7d8] DataFramesMeta v0.15.6
   [a0c0ee7d] DifferentiationInterface v0.7.16
   [a82114a7] DifferentiationInterfaceTest v0.11.0
-  [7da242da] Enzyme v0.13.129
+⌃ [7da242da] Enzyme v0.13.129
   [6a86dc24] FiniteDiff v2.29.0
   [f6369f11] ForwardDiff v1.3.2
-  [da2b9cff] Mooncake v0.5.8
+⌃ [da2b9cff] Mooncake v0.5.8
   [1dea7af3] OrdinaryDiffEq v6.108.0
   [65888b18] ParameterizedFunctions v5.22.0
   [91a5bcdd] Plots v1.41.6
 ⌅ [08abe8d2] PrettyTables v2.4.0
   [37e2e3b7] ReverseDiff v1.16.2
   [31c91b34] SciMLBenchmarks v0.1.3
-  [1ed8b502] SciMLSensitivity v7.96.0
-  [90137ffa] StaticArrays v1.9.17
+⌃ [1ed8b502] SciMLSensitivity v7.96.0
+⌃ [90137ffa] StaticArrays v1.9.17
   [9f7883ad] Tracker v0.2.38
   [e88e6eb3] Zygote v0.7.10
   [37e2e46d] LinearAlgebra
   [d6f4376e] Markdown
   [de0858da] Printf
   [8dfed614] Test
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
   [47edcb42] ADTypes v1.21.0
   [621f4979] AbstractFFTs v1.5.0
   [6e696c72] AbstractPlutoDingetjes v1.3.2
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.43
-  [79e6a3ab] Adapt v4.4.0
+⌃ [79e6a3ab] Adapt v4.4.0
   [66dad0bd] AliasTables v1.1.3
   [9b6a8646] AllocCheck v0.2.3
   [ec485272] ArnoldiMethod v0.4.0
-  [4fba245c] ArrayInterface v7.22.0
+⌃ [4fba245c] ArrayInterface v7.22.0
   [4c555306] ArrayLayouts v1.12.2
   [a9b6321e] Atomix v1.1.2
   [6e4b80f9] BenchmarkTools v1.6.3
@@ -1032,7 +1087,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d1d4a3ce] BitFlags v0.1.9
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [8e7c35d0] BlockArrays v1.9.3
-  [70df07ce] BracketingNonlinearSolve v1.10.0
+⌃ [70df07ce] BracketingNonlinearSolve v1.10.0
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.7
   [7057c7e9] Cassette v0.3.14
@@ -1065,7 +1120,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [864edb3b] DataStructures v0.19.3
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v6.210.0
+⌃ [2b5f629d] DiffEqBase v6.210.0
   [459566f4] DiffEqCallbacks v4.12.0
   [77a26b50] DiffEqNoiseProcess v5.27.0
   [163ba53b] DiffResults v1.1.0
@@ -1077,8 +1132,8 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ffbed154] DocStringExtensions v0.9.5
   [5b8099bc] DomainSets v0.7.16
   [7c1d4256] DynamicPolynomials v0.6.4
-  [4e289a0a] EnumX v1.0.6
-  [7da242da] Enzyme v0.13.129
+⌃ [4e289a0a] EnumX v1.0.6
+⌃ [7da242da] Enzyme v0.13.129
   [f151be2c] EnzymeCore v0.8.18
   [460bff9d] ExceptionUnwrapping v0.1.11
   [d4d017d3] ExponentialUtilities v1.30.0
@@ -1101,19 +1156,19 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d9f16b24] Functors v0.5.2
   [46192b85] GPUArraysCore v0.2.0
   [61eb1bfa] GPUCompiler v1.8.2
-  [28b8d3ca] GR v0.73.22
+⌃ [28b8d3ca] GR v0.73.22
   [c145ed77] GenericSchur v0.5.6
   [d7ba0133] Git v1.5.0
-  [86223c79] Graphs v1.13.4
+⌃ [86223c79] Graphs v1.13.4
   [42e2da0e] Grisu v1.0.2
-  [cd3eb016] HTTP v1.10.19
+⌃ [cd3eb016] HTTP v1.10.19
   [076d061b] HashArrayMappedTries v0.2.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.28
-  [7073ff75] IJulia v1.34.3
+⌃ [7073ff75] IJulia v1.34.3
   [7869d1d1] IRTools v0.4.15
   [615f187c] IfElse v0.1.1
-  [3263718b] ImplicitDiscreteSolve v1.7.0
+⌃ [3263718b] ImplicitDiscreteSolve v1.7.0
   [d25df0c9] Inflate v0.1.5
   [842dd82b] InlineStrings v1.4.5
   [18e54dd8] IntegerMathUtils v0.1.3
@@ -1128,14 +1183,14 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ae98c720] Jieko v0.2.1
 ⌃ [ccbc3e58] JumpProcesses v9.22.1
   [63c18a36] KernelAbstractions v0.9.40
-  [ba0b0d4f] Krylov v0.10.5
+⌃ [ba0b0d4f] Krylov v0.10.5
   [929cbde3] LLVM v9.4.6
   [b964fa9f] LaTeXStrings v1.4.0
   [23fbe1c1] Latexify v0.16.10
   [10f19ff3] LayoutPointers v0.1.17
   [87fe0de2] LineSearch v0.1.6
   [d3d80556] LineSearches v7.6.0
-  [7ed4a6bd] LinearSolve v3.59.1
+⌃ [7ed4a6bd] LinearSolve v3.59.1
   [2ab3a3ac] LogExpFunctions v0.3.29
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
@@ -1145,20 +1200,20 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
   [dbe65cb8] MistyClosures v2.1.0
-  [961ee093] ModelingToolkit v11.11.1
+⌃ [961ee093] ModelingToolkit v11.11.1
 ⌃ [7771a370] ModelingToolkitBase v1.14.0
-  [6bb917b9] ModelingToolkitTearing v1.4.0
-  [da2b9cff] Mooncake v0.5.8
+⌃ [6bb917b9] ModelingToolkitTearing v1.4.0
+⌃ [da2b9cff] Mooncake v0.5.8
   [2e0e35c7] Moshi v0.3.7
   [46d2c3a1] MuladdMacro v0.2.4
-  [102ac46a] MultivariatePolynomials v0.5.13
+⌃ [102ac46a] MultivariatePolynomials v0.5.13
   [ffc61752] Mustache v1.0.21
   [d8a4904e] MutableArithmetics v1.6.7
   [d41bc354] NLSolversBase v8.0.0
   [872c559c] NNlib v0.9.33
   [77ba4419] NaNMath v1.1.3
 ⌃ [8913a72c] NonlinearSolve v4.15.0
-  [be0214bd] NonlinearSolveBase v2.14.0
+⌃ [be0214bd] NonlinearSolveBase v2.14.0
 ⌅ [5959db7a] NonlinearSolveFirstOrder v1.11.1
   [9a2c21bd] NonlinearSolveQuasiNewton v1.12.0
   [26075421] NonlinearSolveSpectralMethods v1.6.0
@@ -1169,13 +1224,13 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [bac558e1] OrderedCollections v1.8.1
   [1dea7af3] OrdinaryDiffEq v6.108.0
   [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.9.0
-  [6ad6398a] OrdinaryDiffEqBDF v1.21.0
-  [bbf590c4] OrdinaryDiffEqCore v3.9.0
-  [50262376] OrdinaryDiffEqDefault v1.12.0
-  [4302a76b] OrdinaryDiffEqDifferentiation v2.1.0
+⌃ [6ad6398a] OrdinaryDiffEqBDF v1.21.0
+⌃ [bbf590c4] OrdinaryDiffEqCore v3.9.0
+⌃ [50262376] OrdinaryDiffEqDefault v1.12.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v2.1.0
   [9286f039] OrdinaryDiffEqExplicitRK v1.9.0
   [e0540318] OrdinaryDiffEqExponentialRK v1.13.0
-  [becaefa8] OrdinaryDiffEqExtrapolation v1.15.0
+⌃ [becaefa8] OrdinaryDiffEqExtrapolation v1.15.0
   [5960d6e9] OrdinaryDiffEqFIRK v1.23.0
   [101fe9f7] OrdinaryDiffEqFeagin v1.8.0
   [d3585ca7] OrdinaryDiffEqFunctionMap v1.9.0
@@ -1210,7 +1265,7 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.1.2
 ⌅ [aea7be01] PrecompileTools v1.2.1
-  [21216c6a] Preferences v1.5.1
+⌃ [21216c6a] Preferences v1.5.1
 ⌅ [08abe8d2] PrettyTables v2.4.0
   [27ebfcd6] Primes v0.5.7
   [92933f4c] ProgressMeter v1.11.0
@@ -1232,15 +1287,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7e49a35a] RuntimeGeneratedFunctions v0.5.17
   [9dfe8606] SCCNonlinearSolve v1.11.0
   [94e857df] SIMDTypes v0.1.0
-  [0bca4576] SciMLBase v2.144.0
+⌃ [0bca4576] SciMLBase v2.144.0
   [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.12
   [a6db7da4] SciMLLogging v1.9.1
   [c0aeaf25] SciMLOperators v1.15.1
   [431bcebd] SciMLPublic v1.0.1
-  [1ed8b502] SciMLSensitivity v7.96.0
+⌃ [1ed8b502] SciMLSensitivity v7.96.0
   [53ae85a6] SciMLStructures v1.10.0
-  [7e506255] ScopedValues v1.5.0
+⌃ [7e506255] ScopedValues v1.5.0
   [6c6a2e73] Scratch v1.3.0
   [91c51154] SentinelArrays v1.4.9
   [efcf1570] Setfield v1.1.2
@@ -1250,26 +1305,26 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [699a6c99] SimpleTraits v0.9.5
   [a2af1166] SortingAlgorithms v1.2.2
   [dc90abb0] SparseInverseSubset v0.1.2
-  [0a514795] SparseMatrixColorings v0.4.23
+⌃ [0a514795] SparseMatrixColorings v0.4.23
   [276daf66] SpecialFunctions v2.7.1
   [860ef19b] StableRNGs v1.0.4
-  [64909d44] StateSelection v1.3.0
+⌃ [64909d44] StateSelection v1.3.0
   [aedffcd0] Static v1.3.1
   [0d7ed370] StaticArrayInterface v1.9.0
-  [90137ffa] StaticArrays v1.9.17
+⌃ [90137ffa] StaticArrays v1.9.17
   [1e83bf80] StaticArraysCore v1.4.4
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.10
   [4c63d2b9] StatsFuns v1.5.2
   [7792a7ef] StrideArraysCore v0.5.8
   [69024149] StringEncodings v0.3.7
-  [892a3eda] StringManipulation v0.4.2
+⌃ [892a3eda] StringManipulation v0.4.2
   [09ab397b] StructArrays v0.7.2
   [53d494c1] StructIO v0.3.1
   [3384d301] SymbolicCompilerPasses v0.1.2
 ⌃ [2efcf032] SymbolicIndexingInterface v0.3.44
   [19f23fe9] SymbolicLimits v1.1.0
-  [d1185830] SymbolicUtils v4.18.5
+⌃ [d1185830] SymbolicUtils v4.18.5
 ⌃ [0c5d862f] Symbolics v7.15.1
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
@@ -1299,15 +1354,15 @@ Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchma
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.5+1
   [ee1fde0b] Dbus_jll v1.16.2+0
-  [7cc45869] Enzyme_jll v0.0.249+0
+⌅ [7cc45869] Enzyme_jll v0.0.249+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
   [2e619515] Expat_jll v2.7.3+0
-  [b22a6f82] FFMPEG_jll v8.0.1+0
+⌃ [b22a6f82] FFMPEG_jll v8.0.1+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.13.4+0
   [559328eb] FriBidi_jll v1.0.17+0
   [0656b61e] GLFW_jll v3.4.1+0
-  [d2c73de3] GR_jll v0.73.22+0
+⌅ [d2c73de3] GR_jll v0.73.22+0
   [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
   [020c3dae] Git_LFS_jll v3.7.0+0
