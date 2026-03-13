@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Julia AD Benchmarks · The SciML Benchmarks</title><meta name="title" content="Julia AD Benchmarks · The SciML Benchmarks"/><meta property="og:title" content="Julia AD Benchmarks · The SciML Benchmarks"/><meta property="twitter:title" content="Julia AD Benchmarks · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://benchmarks.sciml.ai/stable/AutomaticDifferentiation/JuliaAD/"/><meta property="twitter:url" content="https://benchmarks.sciml.ai/stable/AutomaticDifferentiation/JuliaAD/"/><link rel="canonical" href="https://benchmarks.sciml.ai/stable/AutomaticDifferentiation/JuliaAD/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li class="is-active"><a class="tocitem" href>Julia AD Benchmarks</a><ul class="internal"><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li><li><a class="tocitem" href="../../DAE/andrews_mechanism/">Andrews&#39; Squeezing Mechanism DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/caraxis/">Car Axis DAE Benchmark</a></li><li><a class="tocitem" href="../../DAE/charge_pump/">Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/fekete/">Fekete Problem DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/two_bit_adder/">Two-Bit Adding Unit DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/water_tube/">Water Tube System DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/wheelset/">Wheelset DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li><li><a class="tocitem" href="../../HybridJumps/VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_quadratic/">CUTEst Quadratic Programming with Linear Constraints Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unbounded/">CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unconstrained/">CUTEst Unconstrained Nonlinear Optimization Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li><li><span class="tocitem">Optimizaton</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Automatic Differentiation</a></li><li class="is-active"><a href>Julia AD Benchmarks</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Julia AD Benchmarks</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/AutomaticDifferentiation/JuliaAD.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Julia-AD-Benchmarks"><a class="docs-heading-anchor" href="#Julia-AD-Benchmarks">Julia AD Benchmarks</a><a id="Julia-AD-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Julia-AD-Benchmarks" title="Permalink"></a></h1><pre><code class="language-julia hljs">using DifferentiationInterface, DifferentiationInterfaceTest, DataFrames, DataFramesMeta
+import Chairmarks
 import Enzyme, Zygote, Mooncake
 import Markdown, PrettyTables, Printf
 
@@ -17,7 +18,7 @@ end
 
 backends = [
     AutoEnzyme(mode=Enzyme.Reverse),
-    AutoMooncake(; config=nothing),
+    AutoMooncake(config=nothing),
     AutoZygote(),
 ];
 
@@ -31,996 +32,967 @@ data = benchmark_differentiation(backends, scenarios, logging=true);
 table = PrettyTables.pretty_table(
     String,
     data;
-    backend=Val(:markdown),
-    header=names(data),
-    formatters=PrettyTables.ft_printf(&quot;%.1e&quot;),
+    backend=:markdown,
+    formatters=[PrettyTables.fmt__printf(&quot;%.1e&quot;)],
 )
 
-Markdown.parse(table)</code></pre><pre><code class="nohighlight hljs">Benchmark: Error During Test at /cache/julia-buildkite-plugin/depots/5b3002
-54-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/
-src/test_differentiation.jl:193
-  Got exception outside of a @test
-  MethodError: no method matching run_benchmark!(::DifferentiationInterface
-Test.DifferentiationBenchmark{Float64}, ::ADTypes.AutoEnzyme{EnzymeCore.Rev
-erseMode{false, false, false, EnzymeCore.FFIABI, false, false}, Nothing}, :
-:DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.va
-r&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple
-{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; 
-logging::Bool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, ben
-chmark_seconds::Int64, benchmark_aggregation::typeof(minimum))
-  Stacktrace:
-    [1] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [2] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-    [3] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [4] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [5] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:137 [inlined]
-    [6] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [7] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:135 [inlined]
-    [8] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [9] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:132 [inlined]
-   [10] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-   [11] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scen
-arios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, t
-ypeof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, N
-othing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts
-::Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Sym
-bol, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, deta
-iled::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::F
-loat64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_mod
-ules::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;,
- skip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark
-_seconds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize
-::Bool)
-      @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5
-b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/m
-itFS/src/test_differentiation.jl:132
-   [12] test_differentiation
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:98 [inlined]
-   [13] #benchmark_differentiation#311
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:248 [inlined]
-   [14] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmarks/AutomaticDifferentiation/JuliaAD.jmd:27
-   [15] eval
-      @ ./boot.jl:385 [inlined]
-   [16] include_string(mapexpr::typeof(identity), mod::Module, code::String
-, filename::String)
-      @ Base ./loading.jl:2160
-   [17] include_string
-      @ ./loading.jl:2170 [inlined]
-   [18] (::Weave.var&quot;#32#34&quot;{String, Module, String, Bool, Task, Base.PipeE
-ndpoint, Base.PipeEndpoint, Base.TTY})()
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:218
-   [19] task_local_storage(body::Weave.var&quot;#32#34&quot;{String, Module, String, 
-Bool, Task, Base.PipeEndpoint, Base.PipeEndpoint, Base.TTY}, key::Symbol, v
-al::String)
-      @ Base ./task.jl:304
-   [20] capture_output(code::String, mod::Module, path::String, error::Bool
-, report::Weave.Report)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:216
-   [21] #29
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/run.jl:191 [inlined]
-   [22] _broadcast_getindex_evalf
-      @ ./broadcast.jl:709 [inlined]
-   [23] _broadcast_getindex
-      @ ./broadcast.jl:682 [inlined]
-   [24] getindex
-      @ ./broadcast.jl:636 [inlined]
-   [25] macro expansion
-      @ ./broadcast.jl:1004 [inlined]
-   [26] macro expansion
-      @ ./simdloop.jl:77 [inlined]
-   [27] copyto!
-      @ ./broadcast.jl:1003 [inlined]
-   [28] copyto!
-      @ ./broadcast.jl:956 [inlined]
-   [29] copy
-      @ ./broadcast.jl:928 [inlined]
-   [30] materialize(bc::Base.Broadcast.Broadcasted{Base.Broadcast.DefaultAr
-rayStyle{1}, Nothing, Weave.var&quot;#29#30&quot;{Weave.Report, Module, Bool, String}
-, Tuple{Vector{String}}})
-      @ Base.Broadcast ./broadcast.jl:903
-   [31] run_code(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Weave
-.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:192
-   [32] eval_chunk(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Wea
-ve.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:263
-   [33] run_chunk(chunk::Weave.CodeChunk, doc::Weave.WeaveDoc, report::Weav
-e.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:133
-   [34] run_doc(doc::Weave.WeaveDoc; doctype::String, out_path::String, arg
-s::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_ext::Nothing,
- cache_path::String, cache::Symbol)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:74
-   [35] weave(source::String; doctype::String, informat::Nothing, out_path:
-:String, args::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_e
-xt::Nothing, cache_path::String, cache::Symbol, template::Nothing, css::Not
-hing, highlight_theme::Nothing, pandoc_options::Vector{String}, latex_cmd::
-Vector{String}, keep_unicode::Bool)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/Weave.jl:176
-   [36] weave
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/Weave.jl:124 [inlined]
-   [37] weave_file(folder::String, file::String, build_list::Tuple{Symbol, 
-Symbol})
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:60
-   [38] weave_file(folder::String, file::String)
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:20
-   [39] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmark.jl:13
-Benchmark: Error During Test at /cache/julia-buildkite-plugin/depots/5b3002
-54-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/
-src/test_differentiation.jl:193
-  Got exception outside of a @test
-  MethodError: no method matching run_benchmark!(::DifferentiationInterface
-Test.DifferentiationBenchmark{Float64}, ::ADTypes.AutoEnzyme{EnzymeCore.Rev
-erseMode{false, false, false, EnzymeCore.FFIABI, false, false}, Nothing}, :
-:DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.va
-r&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple
-{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; 
-logging::Bool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, ben
-chmark_seconds::Int64, benchmark_aggregation::typeof(minimum))
-  Stacktrace:
-    [1] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [2] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-    [3] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [4] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [5] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:137 [inlined]
-    [6] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [7] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:135 [inlined]
-    [8] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [9] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:132 [inlined]
-   [10] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-   [11] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scen
-arios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, t
-ypeof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, N
-othing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts
-::Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Sym
-bol, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, deta
-iled::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::F
-loat64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_mod
-ules::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;,
- skip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark
-_seconds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize
-::Bool)
-      @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5
-b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/m
-itFS/src/test_differentiation.jl:132
-   [12] test_differentiation
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:98 [inlined]
-   [13] #benchmark_differentiation#311
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:248 [inlined]
-   [14] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmarks/AutomaticDifferentiation/JuliaAD.jmd:27
-   [15] eval
-      @ ./boot.jl:385 [inlined]
-   [16] include_string(mapexpr::typeof(identity), mod::Module, code::String
-, filename::String)
-      @ Base ./loading.jl:2160
-   [17] include_string
-      @ ./loading.jl:2170 [inlined]
-   [18] (::Weave.var&quot;#32#34&quot;{String, Module, String, Bool, Task, Base.PipeE
-ndpoint, Base.PipeEndpoint, Base.TTY})()
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:218
-   [19] task_local_storage(body::Weave.var&quot;#32#34&quot;{String, Module, String, 
-Bool, Task, Base.PipeEndpoint, Base.PipeEndpoint, Base.TTY}, key::Symbol, v
-al::String)
-      @ Base ./task.jl:304
-   [20] capture_output(code::String, mod::Module, path::String, error::Bool
-, report::Weave.Report)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:216
-   [21] #29
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/run.jl:191 [inlined]
-   [22] _broadcast_getindex_evalf
-      @ ./broadcast.jl:709 [inlined]
-   [23] _broadcast_getindex
-      @ ./broadcast.jl:682 [inlined]
-   [24] getindex
-      @ ./broadcast.jl:636 [inlined]
-   [25] macro expansion
-      @ ./broadcast.jl:1004 [inlined]
-   [26] macro expansion
-      @ ./simdloop.jl:77 [inlined]
-   [27] copyto!
-      @ ./broadcast.jl:1003 [inlined]
-   [28] copyto!
-      @ ./broadcast.jl:956 [inlined]
-   [29] copy
-      @ ./broadcast.jl:928 [inlined]
-   [30] materialize(bc::Base.Broadcast.Broadcasted{Base.Broadcast.DefaultAr
-rayStyle{1}, Nothing, Weave.var&quot;#29#30&quot;{Weave.Report, Module, Bool, String}
-, Tuple{Vector{String}}})
-      @ Base.Broadcast ./broadcast.jl:903
-   [31] run_code(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Weave
-.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:192
-   [32] eval_chunk(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Wea
-ve.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:263
-   [33] run_chunk(chunk::Weave.CodeChunk, doc::Weave.WeaveDoc, report::Weav
-e.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:133
-   [34] run_doc(doc::Weave.WeaveDoc; doctype::String, out_path::String, arg
-s::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_ext::Nothing,
- cache_path::String, cache::Symbol)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:74
-   [35] weave(source::String; doctype::String, informat::Nothing, out_path:
-:String, args::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_e
-xt::Nothing, cache_path::String, cache::Symbol, template::Nothing, css::Not
-hing, highlight_theme::Nothing, pandoc_options::Vector{String}, latex_cmd::
-Vector{String}, keep_unicode::Bool)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/Weave.jl:176
-   [36] weave
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/Weave.jl:124 [inlined]
-   [37] weave_file(folder::String, file::String, build_list::Tuple{Symbol, 
-Symbol})
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:60
-   [38] weave_file(folder::String, file::String)
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:20
-   [39] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmark.jl:13
-Benchmark: Error During Test at /cache/julia-buildkite-plugin/depots/5b3002
-54-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/
-src/test_differentiation.jl:193
-  Got exception outside of a @test
-  MethodError: no method matching run_benchmark!(::DifferentiationInterface
-Test.DifferentiationBenchmark{Float64}, ::ADTypes.AutoMooncake{Nothing}, ::
-DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var
-&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{
-}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; l
-ogging::Bool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benc
-hmark_seconds::Int64, benchmark_aggregation::typeof(minimum))
-  Stacktrace:
-    [1] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [2] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-    [3] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [4] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [5] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:137 [inlined]
-    [6] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [7] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:135 [inlined]
-    [8] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [9] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:132 [inlined]
-   [10] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-   [11] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scen
-arios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, t
-ypeof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, N
-othing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts
-::Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Sym
-bol, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, deta
-iled::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::F
-loat64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_mod
-ules::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;,
- skip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark
-_seconds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize
-::Bool)
-      @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5
-b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/m
-itFS/src/test_differentiation.jl:132
-   [12] test_differentiation
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:98 [inlined]
-   [13] #benchmark_differentiation#311
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:248 [inlined]
-   [14] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmarks/AutomaticDifferentiation/JuliaAD.jmd:27
-   [15] eval
-      @ ./boot.jl:385 [inlined]
-   [16] include_string(mapexpr::typeof(identity), mod::Module, code::String
-, filename::String)
-      @ Base ./loading.jl:2160
-   [17] include_string
-      @ ./loading.jl:2170 [inlined]
-   [18] (::Weave.var&quot;#32#34&quot;{String, Module, String, Bool, Task, Base.PipeE
-ndpoint, Base.PipeEndpoint, Base.TTY})()
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:218
-   [19] task_local_storage(body::Weave.var&quot;#32#34&quot;{String, Module, String, 
-Bool, Task, Base.PipeEndpoint, Base.PipeEndpoint, Base.TTY}, key::Symbol, v
-al::String)
-      @ Base ./task.jl:304
-   [20] capture_output(code::String, mod::Module, path::String, error::Bool
-, report::Weave.Report)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:216
-   [21] #29
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/run.jl:191 [inlined]
-   [22] _broadcast_getindex_evalf
-      @ ./broadcast.jl:709 [inlined]
-   [23] _broadcast_getindex
-      @ ./broadcast.jl:682 [inlined]
-   [24] getindex
-      @ ./broadcast.jl:636 [inlined]
-   [25] macro expansion
-      @ ./broadcast.jl:1004 [inlined]
-   [26] macro expansion
-      @ ./simdloop.jl:77 [inlined]
-   [27] copyto!
-      @ ./broadcast.jl:1003 [inlined]
-   [28] copyto!
-      @ ./broadcast.jl:956 [inlined]
-   [29] copy
-      @ ./broadcast.jl:928 [inlined]
-   [30] materialize(bc::Base.Broadcast.Broadcasted{Base.Broadcast.DefaultAr
-rayStyle{1}, Nothing, Weave.var&quot;#29#30&quot;{Weave.Report, Module, Bool, String}
-, Tuple{Vector{String}}})
-      @ Base.Broadcast ./broadcast.jl:903
-   [31] run_code(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Weave
-.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:192
-   [32] eval_chunk(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Wea
-ve.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:263
-   [33] run_chunk(chunk::Weave.CodeChunk, doc::Weave.WeaveDoc, report::Weav
-e.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:133
-   [34] run_doc(doc::Weave.WeaveDoc; doctype::String, out_path::String, arg
-s::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_ext::Nothing,
- cache_path::String, cache::Symbol)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:74
-   [35] weave(source::String; doctype::String, informat::Nothing, out_path:
-:String, args::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_e
-xt::Nothing, cache_path::String, cache::Symbol, template::Nothing, css::Not
-hing, highlight_theme::Nothing, pandoc_options::Vector{String}, latex_cmd::
-Vector{String}, keep_unicode::Bool)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/Weave.jl:176
-   [36] weave
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/Weave.jl:124 [inlined]
-   [37] weave_file(folder::String, file::String, build_list::Tuple{Symbol, 
-Symbol})
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:60
-   [38] weave_file(folder::String, file::String)
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:20
-   [39] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmark.jl:13
-Benchmark: Error During Test at /cache/julia-buildkite-plugin/depots/5b3002
-54-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/
-src/test_differentiation.jl:193
-  Got exception outside of a @test
-  MethodError: no method matching run_benchmark!(::DifferentiationInterface
-Test.DifferentiationBenchmark{Float64}, ::ADTypes.AutoMooncake{Nothing}, ::
-DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var
-&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{
-}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; l
-ogging::Bool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benc
-hmark_seconds::Int64, benchmark_aggregation::typeof(minimum))
-  Stacktrace:
-    [1] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [2] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-    [3] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [4] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [5] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:137 [inlined]
-    [6] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [7] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:135 [inlined]
-    [8] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [9] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:132 [inlined]
-   [10] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-   [11] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scen
-arios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, t
-ypeof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, N
-othing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts
-::Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Sym
-bol, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, deta
-iled::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::F
-loat64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_mod
-ules::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;,
- skip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark
-_seconds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize
-::Bool)
-      @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5
-b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/m
-itFS/src/test_differentiation.jl:132
-   [12] test_differentiation
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:98 [inlined]
-   [13] #benchmark_differentiation#311
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:248 [inlined]
-   [14] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmarks/AutomaticDifferentiation/JuliaAD.jmd:27
-   [15] eval
-      @ ./boot.jl:385 [inlined]
-   [16] include_string(mapexpr::typeof(identity), mod::Module, code::String
-, filename::String)
-      @ Base ./loading.jl:2160
-   [17] include_string
-      @ ./loading.jl:2170 [inlined]
-   [18] (::Weave.var&quot;#32#34&quot;{String, Module, String, Bool, Task, Base.PipeE
-ndpoint, Base.PipeEndpoint, Base.TTY})()
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:218
-   [19] task_local_storage(body::Weave.var&quot;#32#34&quot;{String, Module, String, 
-Bool, Task, Base.PipeEndpoint, Base.PipeEndpoint, Base.TTY}, key::Symbol, v
-al::String)
-      @ Base ./task.jl:304
-   [20] capture_output(code::String, mod::Module, path::String, error::Bool
-, report::Weave.Report)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:216
-   [21] #29
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/run.jl:191 [inlined]
-   [22] _broadcast_getindex_evalf
-      @ ./broadcast.jl:709 [inlined]
-   [23] _broadcast_getindex
-      @ ./broadcast.jl:682 [inlined]
-   [24] getindex
-      @ ./broadcast.jl:636 [inlined]
-   [25] macro expansion
-      @ ./broadcast.jl:1004 [inlined]
-   [26] macro expansion
-      @ ./simdloop.jl:77 [inlined]
-   [27] copyto!
-      @ ./broadcast.jl:1003 [inlined]
-   [28] copyto!
-      @ ./broadcast.jl:956 [inlined]
-   [29] copy
-      @ ./broadcast.jl:928 [inlined]
-   [30] materialize(bc::Base.Broadcast.Broadcasted{Base.Broadcast.DefaultAr
-rayStyle{1}, Nothing, Weave.var&quot;#29#30&quot;{Weave.Report, Module, Bool, String}
-, Tuple{Vector{String}}})
-      @ Base.Broadcast ./broadcast.jl:903
-   [31] run_code(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Weave
-.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:192
-   [32] eval_chunk(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Wea
-ve.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:263
-   [33] run_chunk(chunk::Weave.CodeChunk, doc::Weave.WeaveDoc, report::Weav
-e.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:133
-   [34] run_doc(doc::Weave.WeaveDoc; doctype::String, out_path::String, arg
-s::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_ext::Nothing,
- cache_path::String, cache::Symbol)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:74
-   [35] weave(source::String; doctype::String, informat::Nothing, out_path:
-:String, args::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_e
-xt::Nothing, cache_path::String, cache::Symbol, template::Nothing, css::Not
-hing, highlight_theme::Nothing, pandoc_options::Vector{String}, latex_cmd::
-Vector{String}, keep_unicode::Bool)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/Weave.jl:176
-   [36] weave
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/Weave.jl:124 [inlined]
-   [37] weave_file(folder::String, file::String, build_list::Tuple{Symbol, 
-Symbol})
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:60
-   [38] weave_file(folder::String, file::String)
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:20
-   [39] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmark.jl:13
-Benchmark: Error During Test at /cache/julia-buildkite-plugin/depots/5b3002
-54-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/
-src/test_differentiation.jl:193
-  Got exception outside of a @test
-  MethodError: no method matching run_benchmark!(::DifferentiationInterface
-Test.DifferentiationBenchmark{Float64}, ::ADTypes.AutoZygote, ::Differentia
-tionInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##WeaveSan
-dBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothing,
- Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::Boo
-l, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_secon
-ds::Int64, benchmark_aggregation::typeof(minimum))
-  Stacktrace:
-    [1] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [2] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-    [3] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [4] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [5] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:137 [inlined]
-    [6] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [7] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:135 [inlined]
-    [8] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [9] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:132 [inlined]
-   [10] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-   [11] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scen
-arios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, t
-ypeof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, N
-othing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts
-::Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Sym
-bol, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, deta
-iled::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::F
-loat64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_mod
-ules::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;,
- skip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark
-_seconds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize
-::Bool)
-      @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5
-b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/m
-itFS/src/test_differentiation.jl:132
-   [12] test_differentiation
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:98 [inlined]
-   [13] #benchmark_differentiation#311
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:248 [inlined]
-   [14] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmarks/AutomaticDifferentiation/JuliaAD.jmd:27
-   [15] eval
-      @ ./boot.jl:385 [inlined]
-   [16] include_string(mapexpr::typeof(identity), mod::Module, code::String
-, filename::String)
-      @ Base ./loading.jl:2160
-   [17] include_string
-      @ ./loading.jl:2170 [inlined]
-   [18] (::Weave.var&quot;#32#34&quot;{String, Module, String, Bool, Task, Base.PipeE
-ndpoint, Base.PipeEndpoint, Base.TTY})()
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:218
-   [19] task_local_storage(body::Weave.var&quot;#32#34&quot;{String, Module, String, 
-Bool, Task, Base.PipeEndpoint, Base.PipeEndpoint, Base.TTY}, key::Symbol, v
-al::String)
-      @ Base ./task.jl:304
-   [20] capture_output(code::String, mod::Module, path::String, error::Bool
-, report::Weave.Report)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:216
-   [21] #29
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/run.jl:191 [inlined]
-   [22] _broadcast_getindex_evalf
-      @ ./broadcast.jl:709 [inlined]
-   [23] _broadcast_getindex
-      @ ./broadcast.jl:682 [inlined]
-   [24] getindex
-      @ ./broadcast.jl:636 [inlined]
-   [25] macro expansion
-      @ ./broadcast.jl:1004 [inlined]
-   [26] macro expansion
-      @ ./simdloop.jl:77 [inlined]
-   [27] copyto!
-      @ ./broadcast.jl:1003 [inlined]
-   [28] copyto!
-      @ ./broadcast.jl:956 [inlined]
-   [29] copy
-      @ ./broadcast.jl:928 [inlined]
-   [30] materialize(bc::Base.Broadcast.Broadcasted{Base.Broadcast.DefaultAr
-rayStyle{1}, Nothing, Weave.var&quot;#29#30&quot;{Weave.Report, Module, Bool, String}
-, Tuple{Vector{String}}})
-      @ Base.Broadcast ./broadcast.jl:903
-   [31] run_code(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Weave
-.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:192
-   [32] eval_chunk(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Wea
-ve.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:263
-   [33] run_chunk(chunk::Weave.CodeChunk, doc::Weave.WeaveDoc, report::Weav
-e.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:133
-   [34] run_doc(doc::Weave.WeaveDoc; doctype::String, out_path::String, arg
-s::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_ext::Nothing,
- cache_path::String, cache::Symbol)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:74
-   [35] weave(source::String; doctype::String, informat::Nothing, out_path:
-:String, args::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_e
-xt::Nothing, cache_path::String, cache::Symbol, template::Nothing, css::Not
-hing, highlight_theme::Nothing, pandoc_options::Vector{String}, latex_cmd::
-Vector{String}, keep_unicode::Bool)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/Weave.jl:176
-   [36] weave
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/Weave.jl:124 [inlined]
-   [37] weave_file(folder::String, file::String, build_list::Tuple{Symbol, 
-Symbol})
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:60
-   [38] weave_file(folder::String, file::String)
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:20
-   [39] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmark.jl:13
-Benchmark: Error During Test at /cache/julia-buildkite-plugin/depots/5b3002
-54-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/
-src/test_differentiation.jl:193
-  Got exception outside of a @test
-  MethodError: no method matching run_benchmark!(::DifferentiationInterface
-Test.DifferentiationBenchmark{Float64}, ::ADTypes.AutoZygote, ::Differentia
-tionInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##WeaveSan
-dBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothing,
- Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::Boo
-l, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_secon
-ds::Int64, benchmark_aggregation::typeof(minimum))
-  Stacktrace:
-    [1] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [2] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-    [3] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:194 [inlined]
-    [4] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [5] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:137 [inlined]
-    [6] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [7] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:135 [inlined]
-    [8] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 
-[inlined]
-    [9] macro expansion
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:132 [inlined]
-   [10] macro expansion
-      @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/jul
-ia-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 
-[inlined]
-   [11] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scen
-arios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, t
-ypeof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, N
-othing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts
-::Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Sym
-bol, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, deta
-iled::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::F
-loat64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_mod
-ules::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;,
- skip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark
-_seconds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize
-::Bool)
-      @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5
-b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/m
-itFS/src/test_differentiation.jl:132
-   [12] test_differentiation
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:98 [inlined]
-   [13] #benchmark_differentiation#311
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation
-.jl:248 [inlined]
-   [14] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmarks/AutomaticDifferentiation/JuliaAD.jmd:27
-   [15] eval
-      @ ./boot.jl:385 [inlined]
-   [16] include_string(mapexpr::typeof(identity), mod::Module, code::String
-, filename::String)
-      @ Base ./loading.jl:2160
-   [17] include_string
-      @ ./loading.jl:2170 [inlined]
-   [18] (::Weave.var&quot;#32#34&quot;{String, Module, String, Bool, Task, Base.PipeE
-ndpoint, Base.PipeEndpoint, Base.TTY})()
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:218
-   [19] task_local_storage(body::Weave.var&quot;#32#34&quot;{String, Module, String, 
-Bool, Task, Base.PipeEndpoint, Base.PipeEndpoint, Base.TTY}, key::Symbol, v
-al::String)
-      @ Base ./task.jl:304
-   [20] capture_output(code::String, mod::Module, path::String, error::Bool
-, report::Weave.Report)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:216
-   [21] #29
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/run.jl:191 [inlined]
-   [22] _broadcast_getindex_evalf
-      @ ./broadcast.jl:709 [inlined]
-   [23] _broadcast_getindex
-      @ ./broadcast.jl:682 [inlined]
-   [24] getindex
-      @ ./broadcast.jl:636 [inlined]
-   [25] macro expansion
-      @ ./broadcast.jl:1004 [inlined]
-   [26] macro expansion
-      @ ./simdloop.jl:77 [inlined]
-   [27] copyto!
-      @ ./broadcast.jl:1003 [inlined]
-   [28] copyto!
-      @ ./broadcast.jl:956 [inlined]
-   [29] copy
-      @ ./broadcast.jl:928 [inlined]
-   [30] materialize(bc::Base.Broadcast.Broadcasted{Base.Broadcast.DefaultAr
-rayStyle{1}, Nothing, Weave.var&quot;#29#30&quot;{Weave.Report, Module, Bool, String}
-, Tuple{Vector{String}}})
-      @ Base.Broadcast ./broadcast.jl:903
-   [31] run_code(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Weave
-.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:192
-   [32] eval_chunk(doc::Weave.WeaveDoc, chunk::Weave.CodeChunk, report::Wea
-ve.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:263
-   [33] run_chunk(chunk::Weave.CodeChunk, doc::Weave.WeaveDoc, report::Weav
-e.Report, mod::Module)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:133
-   [34] run_doc(doc::Weave.WeaveDoc; doctype::String, out_path::String, arg
-s::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_ext::Nothing,
- cache_path::String, cache::Symbol)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/run.jl:74
-   [35] weave(source::String; doctype::String, informat::Nothing, out_path:
-:String, args::Dict{Symbol, String}, mod::Nothing, fig_path::Nothing, fig_e
-xt::Nothing, cache_path::String, cache::Symbol, template::Nothing, css::Not
-hing, highlight_theme::Nothing, pandoc_options::Vector{String}, latex_cmd::
-Vector{String}, keep_unicode::Bool)
-      @ Weave /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-
-f4d2d937f953/packages/Weave/f7Ly3/src/Weave.jl:176
-   [36] weave
-      @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d9
-37f953/packages/Weave/f7Ly3/src/Weave.jl:124 [inlined]
-   [37] weave_file(folder::String, file::String, build_list::Tuple{Symbol, 
-Symbol})
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:60
-   [38] weave_file(folder::String, file::String)
-      @ SciMLBenchmarks /cache/build/exclusive-amdci1-0/julialang/scimlbenc
-hmarks-dot-jl/src/SciMLBenchmarks.jl:20
-   [39] top-level scope
-      @ /cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/be
-nchmark.jl:13
+Markdown.parse(table)</code></pre><pre><code class="nohighlight hljs">Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:42
+  Expression: bench_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoEnzyme{EnzymeCore.ReverseMode{false, f
+alse, false, EnzymeCore.FFIABI, false, false}, Nothing}, scenario::Differen
+tiationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##Weave
+SandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothi
+ng, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::
+Bool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_se
+conds::Int64, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:42
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:53
+  Expression: count_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoEnzyme{EnzymeCore.ReverseMode{false, f
+alse, false, EnzymeCore.FFIABI, false, false}, Nothing}, scenario::Differen
+tiationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##Weave
+SandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothi
+ng, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::
+Bool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_se
+conds::Int64, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:53
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:42
+  Expression: bench_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoEnzyme{EnzymeCore.ReverseMode{false, f
+alse, false, EnzymeCore.FFIABI, false, false}, Nothing}, scenario::Differen
+tiationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##Weave
+SandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothi
+ng, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::
+Bool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_se
+conds::Int64, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:42
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:53
+  Expression: count_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoEnzyme{EnzymeCore.ReverseMode{false, f
+alse, false, EnzymeCore.FFIABI, false, false}, Nothing}, scenario::Differen
+tiationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##Weave
+SandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothi
+ng, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::
+Bool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_se
+conds::Int64, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:53
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:42
+  Expression: bench_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoMooncake{Nothing}, scenario::Different
+iationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##WeaveS
+andBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothin
+g, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::B
+ool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_sec
+onds::Int64, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:42
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:53
+  Expression: count_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoMooncake{Nothing}, scenario::Different
+iationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##WeaveS
+andBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothin
+g, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::B
+ool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_sec
+onds::Int64, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:53
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:42
+  Expression: bench_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoMooncake{Nothing}, scenario::Different
+iationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##WeaveS
+andBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothin
+g, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::B
+ool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_sec
+onds::Int64, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:42
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:53
+  Expression: count_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoMooncake{Nothing}, scenario::Different
+iationInterfaceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##WeaveS
+andBox#225&quot;.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothin
+g, Nothing, @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::B
+ool, subset::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_sec
+onds::Int64, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:53
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:42
+  Expression: bench_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoZygote, scenario::DifferentiationInter
+faceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##WeaveSandBox#225&quot;
+.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothing, Nothing,
+ @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::Bool, subset
+::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_seconds::Int64
+, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:42
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:53
+  Expression: count_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoZygote, scenario::DifferentiationInter
+faceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##WeaveSandBox#225&quot;
+.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothing, Nothing,
+ @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::Bool, subset
+::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_seconds::Int64
+, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:53
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:42
+  Expression: bench_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoZygote, scenario::DifferentiationInter
+faceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##WeaveSandBox#225&quot;
+.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothing, Nothing,
+ @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::Bool, subset
+::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_seconds::Int64
+, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:42
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
+Benchmark: Test Failed at /cache/julia-buildkite-plugin/depots/5b300254-173
+8-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mitFS/ext/Di
+fferentiationInterfaceTestChairmarksExt/benchmark_eval.jl:53
+  Expression: count_success
+
+Stacktrace:
+  [1] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:673 [in
+lined]
+  [2] run_benchmark!(data::DifferentiationInterfaceTest.DifferentiationBenc
+hmark{Float64}, backend::ADTypes.AutoZygote, scenario::DifferentiationInter
+faceTest.Scenario{:gradient, :in, :out, typeof(Main.var&quot;##WeaveSandBox#225&quot;
+.paritytrig), Vector{Float64}, Float64, Nothing, Tuple{}, Nothing, Nothing,
+ @NamedTuple{x::Vector{Float64}, contexts::Tuple{}}}; logging::Bool, subset
+::Symbol, count_calls::Bool, benchmark_test::Bool, benchmark_seconds::Int64
+, benchmark_aggregation::Function)
+    @ DifferentiationInterfaceTestChairmarksExt /cache/julia-buildkite-plug
+in/depots/5b300254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInte
+rfaceTest/mitFS/ext/DifferentiationInterfaceTestChairmarksExt/benchmark_eva
+l.jl:53
+  [3] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [4] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+  [5] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:194 [inlined]
+  [6] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [7] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:137 [inlined]
+  [8] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+  [9] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:135 [inlined]
+ [10] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1674 [i
+nlined]
+ [11] macro expansion
+    @ /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937
+f953/packages/DifferentiationInterfaceTest/mitFS/src/test_differentiation.j
+l:132 [inlined]
+ [12] macro expansion
+    @ /cache/julia-buildkite-plugin/julia_installs/bin/linux/x64/1.10/julia
+-1.10-latest-linux-x86_64/share/julia/stdlib/v1.10/Test/src/Test.jl:1582 [i
+nlined]
+ [13] test_differentiation(backends::Vector{ADTypes.AbstractADType}, scenar
+ios::Vector{DifferentiationInterfaceTest.Scenario{:gradient, :in, :out, typ
+eof(Main.var&quot;##WeaveSandBox#225&quot;.paritytrig), Vector{Float64}, Float64, Not
+hing, Tuple{}, Nothing, Nothing, @NamedTuple{x::Vector{Float64}, contexts::
+Tuple{}}}}; testset_name::Nothing, correctness::Bool, type_stability::Symbo
+l, allocations::Symbol, benchmark::Symbol, excluded::Vector{Symbol}, detail
+ed::Bool, logging::Bool, isapprox::typeof(isapprox), atol::Int64, rtol::Flo
+at64, scenario_intact::Bool, sparsity::Bool, reprepare::Bool, ignored_modul
+es::Nothing, function_filter::DifferentiationInterfaceTest.var&quot;#302#309&quot;, s
+kip_allocations::Bool, count_calls::Bool, benchmark_test::Bool, benchmark_s
+econds::Int64, benchmark_aggregation::typeof(minimum), adaptive_batchsize::
+Bool)
+    @ DifferentiationInterfaceTest /cache/julia-buildkite-plugin/depots/5b3
+00254-1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterfaceTest/mit
+FS/src/test_differentiation.jl:132
 Test Summary:                                                              
-                               | Error  Total  Time
+                               | Fail  Total   Time
 Testing benchmarks                                                         
-                               |     6      6  3.3s
+                               |   12     12  38.8s
   ADTypes.AutoEnzyme(mode=EnzymeCore.ReverseMode{false, false, false, Enzym
-eCore.FFIABI, false, false}()) |     2      2  2.2s
+eCore.FFIABI, false, false}()) |    4      4   3.1s
     gradient                                                               
-                               |     2      2  2.1s
+                               |    4      4   3.0s
       Scenario{:gradient,:in} paritytrig : Vector{Float64} -&gt; Float64      
-                               |     1      1  1.8s
+                               |    2      2   2.8s
         Benchmark                                                          
-                               |     1      1  1.8s
+                               |    2      2   2.8s
       Scenario{:gradient,:in} paritytrig : Vector{Float64} -&gt; Float64      
-                               |     1      1  0.3s
+                               |    2      2   0.2s
         Benchmark                                                          
-                               |     1      1  0.2s
+                               |    2      2   0.0s
   ADTypes.AutoMooncake()                                                   
-                               |     2      2  0.4s
+                               |    4      4  35.2s
     gradient                                                               
-                               |     2      2  0.4s
+                               |    4      4  35.1s
       Scenario{:gradient,:in} paritytrig : Vector{Float64} -&gt; Float64      
-                               |     1      1  0.3s
+                               |    2      2  35.1s
         Benchmark                                                          
-                               |     1      1  0.2s
+                               |    2      2  35.0s
       Scenario{:gradient,:in} paritytrig : Vector{Float64} -&gt; Float64      
-                               |     1      1  0.2s
+                               |    2      2   0.1s
         Benchmark                                                          
-                               |     1      1  0.2s
+                               |    2      2   0.1s
   ADTypes.AutoZygote()                                                     
-                               |     2      2  0.5s
+                               |    4      4   0.4s
     gradient                                                               
-                               |     2      2  0.5s
+                               |    4      4   0.4s
       Scenario{:gradient,:in} paritytrig : Vector{Float64} -&gt; Float64      
-                               |     1      1  0.3s
+                               |    2      2   0.3s
         Benchmark                                                          
-                               |     1      1  0.2s
+                               |    2      2   0.3s
       Scenario{:gradient,:in} paritytrig : Vector{Float64} -&gt; Float64      
-                               |     1      1  0.2s
+                               |    2      2   0.0s
         Benchmark                                                          
-                               |     1      1  0.2s
-Error: Some tests did not pass: 0 passed, 0 failed, 6 errored, 0 broken.</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+                               |    2      2   0.0s
+Error: Some tests did not pass: 0 passed, 12 failed, 0 errored, 0 broken.</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/AutomaticDifferentiation&quot;,&quot;JuliaAD.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.11
 Commit a2b11907d7b (2026-03-09 14:59 UTC)
 Build Info:
@@ -1031,12 +1003,13 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953:
 </code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.3
+  [0ca39b1e] Chairmarks v1.3.1
   [a93c6f00] DataFrames v1.8.1
   [1313f7d8] DataFramesMeta v0.15.6
   [a0c0ee7d] DifferentiationInterface v0.7.16
@@ -1048,7 +1021,7 @@ Environment:
   [1dea7af3] OrdinaryDiffEq v6.108.0
   [65888b18] ParameterizedFunctions v5.22.0
   [91a5bcdd] Plots v1.41.6
-⌅ [08abe8d2] PrettyTables v2.4.0
+  [08abe8d2] PrettyTables v3.2.3
   [37e2e3b7] ReverseDiff v1.16.2
   [31c91b34] SciMLBenchmarks v0.1.3
 ⌃ [1ed8b502] SciMLSensitivity v7.96.0
@@ -1059,7 +1032,7 @@ Environment:
   [d6f4376e] Markdown
   [de0858da] Printf
   [8dfed614] Test
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
   [47edcb42] ADTypes v1.21.0
   [621f4979] AbstractFFTs v1.5.0
   [6e696c72] AbstractPlutoDingetjes v1.3.2
@@ -1085,6 +1058,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [8be319e6] Chain v1.0.0
   [082447d4] ChainRules v1.73.0
   [d360d2e6] ChainRulesCore v1.26.0
+  [0ca39b1e] Chairmarks v1.3.1
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [944b1d66] CodecZlib v0.7.8
   [35d6a980] ColorSchemes v3.31.0
@@ -1123,7 +1097,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [ffbed154] DocStringExtensions v0.9.5
   [5b8099bc] DomainSets v0.7.16
   [7c1d4256] DynamicPolynomials v0.6.4
-⌃ [4e289a0a] EnumX v1.0.6
+  [4e289a0a] EnumX v1.0.7
 ⌃ [7da242da] Enzyme v0.13.129
   [f151be2c] EnzymeCore v0.8.18
   [460bff9d] ExceptionUnwrapping v0.1.11
@@ -1156,7 +1130,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [076d061b] HashArrayMappedTries v0.2.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.28
-⌃ [7073ff75] IJulia v1.34.3
+  [7073ff75] IJulia v1.34.4
   [7869d1d1] IRTools v0.4.15
   [615f187c] IfElse v0.1.1
 ⌃ [3263718b] ImplicitDiscreteSolve v1.7.0
@@ -1172,7 +1146,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [692b3bcd] JLLWrappers v1.7.1
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-⌃ [ccbc3e58] JumpProcesses v9.22.1
+⌃ [ccbc3e58] JumpProcesses v9.22.2
   [63c18a36] KernelAbstractions v0.9.40
 ⌃ [ba0b0d4f] Krylov v0.10.5
   [929cbde3] LLVM v9.4.6
@@ -1256,8 +1230,8 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.1.2
 ⌅ [aea7be01] PrecompileTools v1.2.1
-⌃ [21216c6a] Preferences v1.5.1
-⌅ [08abe8d2] PrettyTables v2.4.0
+  [21216c6a] Preferences v1.5.2
+  [08abe8d2] PrettyTables v3.2.3
   [27ebfcd6] Primes v0.5.7
   [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
@@ -1278,7 +1252,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [7e49a35a] RuntimeGeneratedFunctions v0.5.17
   [9dfe8606] SCCNonlinearSolve v1.11.0
   [94e857df] SIMDTypes v0.1.0
-⌃ [0bca4576] SciMLBase v2.144.0
+⌃ [0bca4576] SciMLBase v2.144.2
   [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.12
   [a6db7da4] SciMLLogging v1.9.1
@@ -1309,14 +1283,14 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [4c63d2b9] StatsFuns v1.5.2
   [7792a7ef] StrideArraysCore v0.5.8
   [69024149] StringEncodings v0.3.7
-⌃ [892a3eda] StringManipulation v0.4.2
+  [892a3eda] StringManipulation v0.4.4
   [09ab397b] StructArrays v0.7.2
   [53d494c1] StructIO v0.3.1
   [3384d301] SymbolicCompilerPasses v0.1.2
-⌃ [2efcf032] SymbolicIndexingInterface v0.3.44
+  [2efcf032] SymbolicIndexingInterface v0.3.46
   [19f23fe9] SymbolicLimits v1.1.0
 ⌃ [d1185830] SymbolicUtils v4.18.5
-⌃ [0c5d862f] Symbolics v7.15.1
+  [0c5d862f] Symbolics v7.15.3
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.1
@@ -1480,4 +1454,4 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BrussScaling/">« Bruss Scaling PDE Differentaition Benchmarks</a><a class="docs-footer-nextpage" href="../SimpleODEAD/">Differentiation of Simple ODE Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Friday 13 March 2026 13:26">Friday 13 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../BrussScaling/">« Bruss Scaling PDE Differentaition Benchmarks</a><a class="docs-footer-nextpage" href="../SimpleODEAD/">Differentiation of Simple ODE Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Friday 13 March 2026 23:11">Friday 13 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
