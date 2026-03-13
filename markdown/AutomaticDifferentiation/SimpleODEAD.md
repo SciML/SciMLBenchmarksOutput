@@ -570,12 +570,12 @@ end
 
 ```
 6-element Vector{Float64}:
- 9.8869e-5
- 4.7199e-5
- 0.000445627
- 0.000675694
- 0.000457006
- 0.000238348
+ 0.000100759
+ 4.627e-5
+ 0.000399487
+ 0.000647775
+ 0.000455057
+ 0.000242498
 ```
 
 
@@ -628,24 +628,24 @@ end
 ```
 
 ```
-5.689380 seconds (7.16 M allocations: 729.112 MiB, 3.94% gc time, 86.40% 
+5.489964 seconds (7.16 M allocations: 729.196 MiB, 3.88% gc time, 85.74% 
 compilation time)
- 14.423444 seconds (13.42 M allocations: 916.200 MiB, 2.27% gc time, 90.02%
+ 13.717323 seconds (13.42 M allocations: 915.981 MiB, 2.04% gc time, 89.66%
  compilation time)
-163.090284 seconds (25.44 M allocations: 24.370 GiB, 1.96% gc time, 7.84% c
+161.127989 seconds (23.81 M allocations: 24.256 GiB, 2.58% gc time, 7.14% c
 ompilation time)
-166.258767 seconds (8.38 M allocations: 23.536 GiB, 1.38% gc time, 2.76% co
+171.357774 seconds (8.37 M allocations: 23.536 GiB, 1.97% gc time, 2.81% co
 mpilation time)
-123.259072 seconds (4.21 M allocations: 23.045 GiB, 1.75% gc time, 1.99% co
+128.592884 seconds (4.21 M allocations: 23.045 GiB, 2.41% gc time, 1.89% co
 mpilation time)
 
 6-element Vector{Float64}:
- 119.133324424
-   1.417457925
- 160.454763786
- 136.439440118
- 151.342611927
-   0.66192902
+ 121.700331685
+   1.421836372
+ 162.331793897
+ 139.367959523
+ 153.437449874
+   0.660885146
 ```
 
 
@@ -685,11 +685,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.021434588
- 0.624191755
- 0.670061048
- 0.66175936
- 0.012386426
+ 0.021311427
+ 0.585078671
+ 0.649033497
+ 0.766433549
+ 0.012270771
 ```
 
 
@@ -733,11 +733,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.002118943
- 0.007826891
- 0.006097995
- 0.008568525
- 0.008595075
+ 0.002003415
+ 0.007639365
+ 0.006116326
+ 0.008520468
+ 0.00833677
 ```
 
 
@@ -759,18 +759,18 @@ display(forward_timings)
 64  ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ Compile-time CSA           9.8869e-5    119.133     0.0        0.0  
+   1 │ Compile-time CSA           0.000100759  121.7       0.0        0.0  
     ⋯
-   2 │ DSA                        4.7199e-5      1.41746   0.0214346  0.002
-118
-   3 │ CSA user-Jacobian          0.000445627  160.455     0.624192   0.007
-826
-   4 │ AD-Jacobian                0.000675694  136.439     0.670061   0.006
-098
-   5 │ AD-Jv seeding              0.000457006  151.343     0.661759   0.008
-568 ⋯
-   6 │ Numerical Differentiation  0.000238348    0.661929  0.0123864  0.008
-595
+   2 │ DSA                        4.627e-5       1.42184   0.0213114  0.002
+003
+   3 │ CSA user-Jacobian          0.000399487  162.332     0.585079   0.007
+639
+   4 │ AD-Jacobian                0.000647775  139.368     0.649033   0.006
+116
+   5 │ AD-Jv seeding              0.000455057  153.437     0.766434   0.008
+520 ⋯
+   6 │ Numerical Differentiation  0.000242498    0.660885  0.0122708  0.008
+336
                                                                 1 column om
 itted
 ```
@@ -990,7 +990,7 @@ adjoint_timings = DataFrame(
     methods = adjoint_methods, LV = adjoint_lv, Bruss = adjoint_bruss,
     Pollution = adjoint_pollution, PKPD = adjoint_pkpd)
 Markdown.parse(PrettyTables.pretty_table(
-    String, adjoint_timings; backend = Val(:markdown), header = names(adjoint_timings)))
+    String, adjoint_timings; backend = :markdown))
 ```
 
 ```
@@ -1028,7 +1028,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953:
@@ -1040,6 +1040,7 @@ Package Information:
 ```
 Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/AutomaticDifferentiation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.6.3
+  [0ca39b1e] Chairmarks v1.3.1
   [a93c6f00] DataFrames v1.8.1
   [1313f7d8] DataFramesMeta v0.15.6
   [a0c0ee7d] DifferentiationInterface v0.7.16
@@ -1051,7 +1052,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [1dea7af3] OrdinaryDiffEq v6.108.0
   [65888b18] ParameterizedFunctions v5.22.0
   [91a5bcdd] Plots v1.41.6
-⌅ [08abe8d2] PrettyTables v2.4.0
+  [08abe8d2] PrettyTables v3.2.3
   [37e2e3b7] ReverseDiff v1.16.2
   [31c91b34] SciMLBenchmarks v0.1.3
 ⌃ [1ed8b502] SciMLSensitivity v7.96.0
@@ -1062,7 +1063,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [d6f4376e] Markdown
   [de0858da] Printf
   [8dfed614] Test
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
@@ -1094,6 +1095,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8be319e6] Chain v1.0.0
   [082447d4] ChainRules v1.73.0
   [d360d2e6] ChainRulesCore v1.26.0
+  [0ca39b1e] Chairmarks v1.3.1
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [944b1d66] CodecZlib v0.7.8
   [35d6a980] ColorSchemes v3.31.0
@@ -1132,7 +1134,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ffbed154] DocStringExtensions v0.9.5
   [5b8099bc] DomainSets v0.7.16
   [7c1d4256] DynamicPolynomials v0.6.4
-⌃ [4e289a0a] EnumX v1.0.6
+  [4e289a0a] EnumX v1.0.7
 ⌃ [7da242da] Enzyme v0.13.129
   [f151be2c] EnzymeCore v0.8.18
   [460bff9d] ExceptionUnwrapping v0.1.11
@@ -1165,7 +1167,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [076d061b] HashArrayMappedTries v0.2.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.28
-⌃ [7073ff75] IJulia v1.34.3
+  [7073ff75] IJulia v1.34.4
   [7869d1d1] IRTools v0.4.15
   [615f187c] IfElse v0.1.1
 ⌃ [3263718b] ImplicitDiscreteSolve v1.7.0
@@ -1181,7 +1183,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [692b3bcd] JLLWrappers v1.7.1
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-⌃ [ccbc3e58] JumpProcesses v9.22.1
+⌃ [ccbc3e58] JumpProcesses v9.22.2
   [63c18a36] KernelAbstractions v0.9.40
 ⌃ [ba0b0d4f] Krylov v0.10.5
   [929cbde3] LLVM v9.4.6
@@ -1265,8 +1267,8 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.1.2
 ⌅ [aea7be01] PrecompileTools v1.2.1
-⌃ [21216c6a] Preferences v1.5.1
-⌅ [08abe8d2] PrettyTables v2.4.0
+  [21216c6a] Preferences v1.5.2
+  [08abe8d2] PrettyTables v3.2.3
   [27ebfcd6] Primes v0.5.7
   [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
@@ -1287,7 +1289,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [7e49a35a] RuntimeGeneratedFunctions v0.5.17
   [9dfe8606] SCCNonlinearSolve v1.11.0
   [94e857df] SIMDTypes v0.1.0
-⌃ [0bca4576] SciMLBase v2.144.0
+⌃ [0bca4576] SciMLBase v2.144.2
   [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.12
   [a6db7da4] SciMLLogging v1.9.1
@@ -1318,14 +1320,14 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [4c63d2b9] StatsFuns v1.5.2
   [7792a7ef] StrideArraysCore v0.5.8
   [69024149] StringEncodings v0.3.7
-⌃ [892a3eda] StringManipulation v0.4.2
+  [892a3eda] StringManipulation v0.4.4
   [09ab397b] StructArrays v0.7.2
   [53d494c1] StructIO v0.3.1
   [3384d301] SymbolicCompilerPasses v0.1.2
-⌃ [2efcf032] SymbolicIndexingInterface v0.3.44
+  [2efcf032] SymbolicIndexingInterface v0.3.46
   [19f23fe9] SymbolicLimits v1.1.0
 ⌃ [d1185830] SymbolicUtils v4.18.5
-⌃ [0c5d862f] Symbolics v7.15.1
+  [0c5d862f] Symbolics v7.15.3
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.1
