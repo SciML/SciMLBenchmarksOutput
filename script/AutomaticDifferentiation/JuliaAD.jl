@@ -1,6 +1,6 @@
 
 using DifferentiationInterface, DifferentiationInterfaceTest, DataFrames, DataFramesMeta
-import Chairmarks
+using Chairmarks
 import Enzyme, Zygote, Mooncake
 import Markdown, PrettyTables, Printf
 
@@ -23,16 +23,17 @@ backends = [
 ];
 
 scenarios = [
-    Scenario{:gradient, :in}(paritytrig, rand(100)),
-    Scenario{:gradient, :in}(paritytrig, rand(10_000))
+    Scenario{:gradient, :out}(paritytrig, rand(100)),
+    Scenario{:gradient, :out}(paritytrig, rand(10_000)),
 ];
 
-data = benchmark_differentiation(backends, scenarios, logging=true);
+data = DataFrame(benchmark_differentiation(backends, scenarios; logging=true));
 
 table = PrettyTables.pretty_table(
     String,
     data;
     backend=:markdown,
+    column_labels=names(data),
     formatters=[PrettyTables.fmt__printf("%.1e")],
 )
 
