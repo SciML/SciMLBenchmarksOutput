@@ -64,7 +64,7 @@ S2 = ADTypes.jacobian_sparsity(
     brusselator_2d!, similar(x0_32), x0_32, SymbolicsSparsityDetector()
 )
 @test S1 == S2</code></pre><pre><code class="nohighlight hljs">Test Passed</code></pre><h3 id="Coloring"><a class="docs-heading-anchor" href="#Coloring">Coloring</a><a id="Coloring-1"></a><a class="docs-heading-anchor-permalink" href="#Coloring" title="Permalink"></a></h3><pre><code class="language-julia hljs">c1 = ADTypes.column_coloring(S1, GreedyColoringAlgorithm())
-@test length(unique(c1)) &gt; 0</code></pre><pre><code class="nohighlight hljs">Test Passed</code></pre><h3 id="Differentiation"><a class="docs-heading-anchor" href="#Differentiation">Differentiation</a><a id="Differentiation-1"></a><a class="docs-heading-anchor-permalink" href="#Differentiation" title="Permalink"></a></h3><pre><code class="language-julia hljs">backend = AutoSparse(
+@test length(unique(c1)) &gt; 0  # basic sanity check</code></pre><pre><code class="nohighlight hljs">Test Passed</code></pre><h3 id="Differentiation"><a class="docs-heading-anchor" href="#Differentiation">Differentiation</a><a id="Differentiation-1"></a><a class="docs-heading-anchor-permalink" href="#Differentiation" title="Permalink"></a></h3><pre><code class="language-julia hljs">backend = AutoSparse(
     AutoForwardDiff();
     sparsity_detector = TracerSparsityDetector(),
     coloring_algorithm = GreedyColoringAlgorithm()
@@ -75,7 +75,7 @@ J1 = DI.jacobian!(
     brusselator_2d!, similar(x0_32), similar(S1, eltype(x0_32)), prep, backend, x0_32
 )
 
-@test nnz(J1) &gt; 0</code></pre><pre><code class="nohighlight hljs">Error: MethodError: no method matching _prepare_pushforward_aux(::Val{true}
+@test nnz(J1) &gt; 0  # basic sanity check</code></pre><pre><code class="nohighlight hljs">Error: MethodError: no method matching _prepare_pushforward_aux(::Val{true}
 , ::DifferentiationInterface.PushforwardFast, ::typeof(Main.var&quot;##WeaveSand
 Box#225&quot;.brusselator_2d!), ::Array{Float64, 3}, ::ADTypes.AutoForwardDiff{n
 othing, Nothing}, ::Array{Float64, 3}, ::Tuple{Array{Float64, 3}})
@@ -226,12 +226,12 @@ rst_order/pushforward.jl:283</code></pre><h3 id="Summary"><a class="docs-heading
         N_values,
         td2 ./ td1;
         lw = 2,
-        linestyle = :dot,
-        markershape = :utriangle,
+        linestyle = :auto,
+        markershape = :auto,
         label = &quot;sparsity detection speedup&quot;
     )
     plot!(
         pl, N_values, ones(length(N_values)); lw = 3, color = :black, label = &quot;same speed&quot;)
     plot!(pl; xscale = :log10, yscale = :log10, minorgrid = true, legend = :right)
     pl
-end</code></pre><p><img src="../figures/BrusselatorSparseAD_11_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../AutomaticDifferentiation/SimpleODEAD/">« Differentiation of Simple ODE Benchmarks</a><a class="docs-footer-nextpage" href="../ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 18 March 2026 09:45">Wednesday 18 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre><p><img src="../figures/BrusselatorSparseAD_11_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../AutomaticDifferentiation/SimpleODEAD/">« Differentiation of Simple ODE Benchmarks</a><a class="docs-footer-nextpage" href="../ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 18 March 2026 10:00">Wednesday 18 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
