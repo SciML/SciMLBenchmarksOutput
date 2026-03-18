@@ -76,7 +76,7 @@ S2 = ADTypes.jacobian_sparsity(
 
 
 c1 = ADTypes.column_coloring(S1, GreedyColoringAlgorithm())
-@test length(unique(c1)) > 0
+@test length(unique(c1)) > 0  # basic sanity check
 
 
 backend = AutoSparse(
@@ -90,7 +90,7 @@ J1 = DI.jacobian!(
     brusselator_2d!, similar(x0_32), similar(S1, eltype(x0_32)), prep, backend, x0_32
 )
 
-@test nnz(J1) > 0
+@test nnz(J1) > 0  # basic sanity check
 
 
 N_values = 2 .^ (2:8)
@@ -203,8 +203,8 @@ let
         N_values,
         td2 ./ td1;
         lw = 2,
-        linestyle = :dot,
-        markershape = :utriangle,
+        linestyle = :auto,
+        markershape = :auto,
         label = "sparsity detection speedup"
     )
     plot!(

@@ -1,6 +1,7 @@
 
 using DifferentiationInterface
 using DifferentiationInterfaceTest
+using Chairmarks, DataFrames
 using LinearAlgebra
 using SparseConnectivityTracer: TracerSparsityDetector
 using SparseMatrixColorings
@@ -61,12 +62,13 @@ u = rand(1000)
 scenarios = [Scenario{:jacobian, :out}(Diffusion, u; res1 = DDiffusion(u))];
 
 
-df = benchmark_differentiation(bcks, scenarios)
+df = DataFrame(benchmark_differentiation(bcks, scenarios))
 table = PrettyTables.pretty_table(
     String,
     df;
     backend = :markdown,
-    formatters = [PrettyTables.fmt__printf("%.1e")]
+    column_labels = names(df),
+    formatters = [PrettyTables.fmt__printf("%.1e")],
 )
 
 Markdown.parse(table)
