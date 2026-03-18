@@ -455,7 +455,7 @@ function diffeq_sen_l2(df, u0, tspan, p, t, alg = Tsit5();
         abstol = 1e-5, reltol = 1e-7,
         sensalg = InterpolatingAdjoint(), kwargs...)
     prob = ODEProblem(df, u0, tspan, p)
-    sol = solve(prob, alg, sensealg = SensitivityADPassThrough(),
+    sol = solve(prob, alg, sensealg = SciMLSensitivity.SensitivityADPassThrough(),
         abstol = abstol, reltol = reltol; kwargs...)
     dg(out, u, p, t, i) = (out.=u .- 1.0)
     adjoint_sensitivities(sol, alg; t, abstol = abstol, dgdu_discrete = dg,
@@ -466,7 +466,7 @@ function auto_sen_l2(
         f, u0, tspan, p, t, alg = Tsit5(); diffalg = ReverseDiff.gradient, kwargs...)
     test_f(p) = begin
         prob = ODEProblem{true, SciMLBase.FullSpecialize}(f, eltype(p).(u0), tspan, p)
-        sol = solve(prob, alg; sensealg = SensitivityADPassThrough(), kwargs...)(t)
+        sol = solve(prob, alg; sensealg = SciMLSensitivity.SensitivityADPassThrough(), kwargs...)(t)
         sum(sol.u) do x
             sum(z->(1-z)^2/2, x)
         end
@@ -570,12 +570,12 @@ end
 
 ```
 6-element Vector{Float64}:
- 0.000100759
- 4.627e-5
- 0.000399487
- 0.000647775
- 0.000455057
- 0.000242498
+ 9.908e-5
+ 4.635e-5
+ 0.000415257
+ 0.000646965
+ 0.000462966
+ 0.000238998
 ```
 
 
@@ -628,24 +628,24 @@ end
 ```
 
 ```
-5.489964 seconds (7.16 M allocations: 729.196 MiB, 3.88% gc time, 85.74% 
+5.672426 seconds (7.16 M allocations: 729.230 MiB, 3.63% gc time, 86.62% 
 compilation time)
- 13.717323 seconds (13.42 M allocations: 915.981 MiB, 2.04% gc time, 89.66%
+ 14.451520 seconds (13.41 M allocations: 915.535 MiB, 2.97% gc time, 89.20%
  compilation time)
-161.127989 seconds (23.81 M allocations: 24.256 GiB, 2.58% gc time, 7.14% c
+161.759422 seconds (22.91 M allocations: 24.190 GiB, 2.23% gc time, 7.49% c
 ompilation time)
-171.357774 seconds (8.37 M allocations: 23.536 GiB, 1.97% gc time, 2.81% co
+164.991275 seconds (8.36 M allocations: 23.535 GiB, 1.43% gc time, 2.84% co
 mpilation time)
-128.592884 seconds (4.21 M allocations: 23.045 GiB, 2.41% gc time, 1.89% co
+125.299715 seconds (4.21 M allocations: 23.045 GiB, 1.93% gc time, 1.96% co
 mpilation time)
 
 6-element Vector{Float64}:
- 121.700331685
-   1.421836372
- 162.331793897
- 139.367959523
- 153.437449874
-   0.660885146
+ 119.404342363
+   1.423966599
+ 164.948309049
+ 142.86665872
+ 152.751051491
+   0.659537272
 ```
 
 
@@ -685,11 +685,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.021311427
- 0.585078671
- 0.649033497
- 0.766433549
- 0.012270771
+ 0.022042546
+ 0.574981624
+ 0.653482901
+ 0.602860608
+ 0.012306228
 ```
 
 
@@ -733,11 +733,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.002003415
- 0.007639365
- 0.006116326
- 0.008520468
- 0.00833677
+ 0.001980265
+ 0.007708673
+ 0.005891347
+ 0.008529136
+ 0.008444917
 ```
 
 
@@ -759,18 +759,18 @@ display(forward_timings)
 64  ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ Compile-time CSA           0.000100759  121.7       0.0        0.0  
+   1 │ Compile-time CSA           9.908e-5     119.404     0.0        0.0  
     ⋯
-   2 │ DSA                        4.627e-5       1.42184   0.0213114  0.002
-003
-   3 │ CSA user-Jacobian          0.000399487  162.332     0.585079   0.007
-639
-   4 │ AD-Jacobian                0.000647775  139.368     0.649033   0.006
-116
-   5 │ AD-Jv seeding              0.000455057  153.437     0.766434   0.008
-520 ⋯
-   6 │ Numerical Differentiation  0.000242498    0.660885  0.0122708  0.008
-336
+   2 │ DSA                        4.635e-5       1.42397   0.0220425  0.001
+980
+   3 │ CSA user-Jacobian          0.000415257  164.948     0.574982   0.007
+708
+   4 │ AD-Jacobian                0.000646965  142.867     0.653483   0.005
+891
+   5 │ AD-Jv seeding              0.000462966  152.751     0.602861   0.008
+529 ⋯
+   6 │ Numerical Differentiation  0.000238998    0.659537  0.0123062  0.008
+444
                                                                 1 column om
 itted
 ```
@@ -819,7 +819,27 @@ end
 ```
 
 ```
-Error: UndefVarError: `SensitivityADPassThrough` not defined
+3.552873 seconds (4.87 M allocations: 330.343 MiB, 3.78% gc time, 99.97% 
+compilation time)
+  5.224977 seconds (6.02 M allocations: 410.323 MiB, 1.45% gc time, 99.84% 
+compilation time)
+ 79.164362 seconds (85.55 M allocations: 5.796 GiB, 2.73% gc time, 99.90% c
+ompilation time)
+  0.631780 seconds (629.03 k allocations: 43.311 MiB, 99.27% compilation ti
+me)
+12-element Vector{Float64}:
+ 0.000116379
+ 0.005383269
+ 0.000589735
+ 0.001112532
+ 0.000860373
+ 0.001500329
+ 0.002923628
+ 0.004275179
+ 0.001074902
+ 0.001629078
+ 0.001092652
+ 0.002919679
 ```
 
 
@@ -869,7 +889,25 @@ end
 ```
 
 ```
-Error: UndefVarError: `SensitivityADPassThrough` not defined
+14.008573 seconds (12.36 M allocations: 864.436 MiB, 2.47% gc time, 89.26%
+ compilation time)
+109.872843 seconds (55.53 M allocations: 4.247 GiB, 1.05% gc time, 86.24% c
+ompilation time)
+  4.410434 seconds (2.62 M allocations: 661.947 MiB, 3.23% gc time, 55.92% 
+compilation time)
+12-element Vector{Float64}:
+   1.426976066
+ NaN
+   4.228929733
+   2.19601197
+   0.609090635
+   0.245021316
+   0.37500611
+   0.167354125
+ NaN
+ NaN
+ NaN
+   1.821994714
 ```
 
 
@@ -922,7 +960,25 @@ end
 ```
 
 ```
-Error: UndefVarError: `SensitivityADPassThrough` not defined
+16.530452 seconds (13.24 M allocations: 871.309 MiB, 2.07% gc time, 99.87%
+ compilation time)
+ 78.483841 seconds (52.82 M allocations: 3.846 GiB, 1.35% gc time, 90.54% c
+ompilation time)
+  2.307349 seconds (2.14 M allocations: 150.700 MiB, 98.93% compilation tim
+e)
+12-element Vector{Float64}:
+   0.019041353
+ NaN
+   1.066901612
+   1.662611386
+   0.364254968
+   0.2945228
+   0.795662524
+   0.652061647
+ NaN
+ NaN
+ NaN
+   0.023790578
 ```
 
 
@@ -975,7 +1031,27 @@ end
 ```
 
 ```
-Error: UndefVarError: `SensitivityADPassThrough` not defined
+3.721435 seconds (4.70 M allocations: 319.270 MiB, 2.12% gc time, 99.88% 
+compilation time)
+  3.784623 seconds (5.65 M allocations: 318.446 MiB, 95.66% compilation tim
+e)
+ 34.411373 seconds (37.82 M allocations: 2.516 GiB, 2.50% gc time, 99.73% c
+ompilation time)
+  0.255944 seconds (369.29 k allocations: 29.314 MiB, 91.80% compilation ti
+me)
+12-element Vector{Float64}:
+   0.00275472
+   0.147475379
+   0.007774834
+   0.005835227
+   0.002892819
+   0.007283558
+   0.00978936
+   0.013056866
+ NaN
+ NaN
+ NaN
+   0.017430845
 ```
 
 
@@ -990,13 +1066,24 @@ adjoint_timings = DataFrame(
     methods = adjoint_methods, LV = adjoint_lv, Bruss = adjoint_bruss,
     Pollution = adjoint_pollution, PKPD = adjoint_pkpd)
 Markdown.parse(PrettyTables.pretty_table(
-    String, adjoint_timings; backend = :markdown))
+    String, adjoint_timings; backend = :markdown, column_labels = names(adjoint_timings)))
 ```
 
-```
-Error: UndefVarError: `adjoint_lv` not defined
-```
 
+|                   **methods** |      **LV** | **Bruss** | **Pollution** |   **PKPD** |
+| -----------------------------:| -----------:| ---------:| -------------:| ----------:|
+|                   ForwardDiff | 0.000116379 |   1.42698 |     0.0190414 | 0.00275472 |
+|                   ReverseDiff |  0.00538327 |       NaN |           NaN |   0.147475 |
+| InterpolatingAdjoint User Jac | 0.000589735 |   4.22893 |        1.0669 | 0.00777483 |
+|   InterpolatingAdjoint AD Jac |  0.00111253 |   2.19601 |       1.66261 | 0.00583523 |
+|      InterpolatingAdjoint v'J | 0.000860373 |  0.609091 |      0.364255 | 0.00289282 |
+|    QuadratureAdjoint User Jac |  0.00150033 |  0.245021 |      0.294523 | 0.00728356 |
+|      QuadratureAdjoint AD Jac |  0.00292363 |  0.375006 |      0.795663 | 0.00978936 |
+|         QuadratureAdjoint v'J |  0.00427518 |  0.167354 |      0.652062 |  0.0130569 |
+|     BacksolveAdjoint User Jac |   0.0010749 |       NaN |           NaN |        NaN |
+|       BacksolveAdjoint AD Jac |  0.00162908 |       NaN |           NaN |        NaN |
+|          BacksolveAdjoint v'J |  0.00109265 |       NaN |           NaN |        NaN |
+|     Numerical Differentiation |  0.00291968 |   1.82199 |     0.0237906 |  0.0174308 |
 
 
 
@@ -1028,7 +1115,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953:
@@ -1327,7 +1414,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2efcf032] SymbolicIndexingInterface v0.3.46
   [19f23fe9] SymbolicLimits v1.1.0
 ⌃ [d1185830] SymbolicUtils v4.18.5
-  [0c5d862f] Symbolics v7.15.3
+⌃ [0c5d862f] Symbolics v7.15.3
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.1
