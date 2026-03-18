@@ -4,7 +4,7 @@ title: "Test"
 ---
 
 
-This is a test of the builder system.  It often gets bumped in PRs related to CI.
+This is a test of the builder system. It often gets bumped in PRs related to CI.
 
 ```julia
 using InteractiveUtils
@@ -18,15 +18,13 @@ Build Info:
   Official https://julialang.org/ release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
-  CPU: 128 × AMD EPYC 7502 32-Core Processor
+  CPU: 64 × AMD EPYC 9354 32-Core Processor
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+  LLVM: libLLVM-15.0.7 (ORCJIT, znver3)
+Threads: 64 default, 0 interactive, 32 GC (on 64 virtual cores)
 Environment:
-  JULIA_CPU_THREADS = 128
-  JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-498
-9-ae0a-f4d2d937f953:
+  JULIA_NUM_THREADS = auto
 ```
 
 
@@ -36,7 +34,7 @@ Threads.nthreads()
 ```
 
 ```
-1
+64
 ```
 
 
@@ -83,21 +81,20 @@ Build Info:
   Official https://julialang.org/ release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
-  CPU: 128 × AMD EPYC 7502 32-Core Processor
+  CPU: 64 × AMD EPYC 9354 32-Core Processor
   WORD_SIZE: 64
   LIBM: libopenlibm
-  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+  LLVM: libLLVM-15.0.7 (ORCJIT, znver3)
+Threads: 64 default, 0 interactive, 32 GC (on 64 virtual cores)
 Environment:
-  JULIA_CPU_THREADS = 128
-  JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953:
+  JULIA_NUM_THREADS = auto
 
 ```
 
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Testing/Project.toml`
+Status `~/github-runners/demeter3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Testing/Project.toml`
 ⌃ [91a5bcdd] Plots v1.38.17
   [31c91b34] SciMLBenchmarks v0.1.4 `../..`
 Info Packages marked with ⌃ have new versions available and may be upgradable.
@@ -106,7 +103,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci3-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Testing/Manifest.toml`
+Status `~/github-runners/demeter3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Testing/Manifest.toml`
 ⌃ [d1d4a3ce] BitFlags v0.1.7
   [336ed68f] CSV v0.10.16
 ⌃ [944b1d66] CodecZlib v0.7.2
