@@ -1,7 +1,7 @@
 
 using OrdinaryDiffEq, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA,
       DiffEqDevTools, Sundials
-using LinearAlgebra, StaticArrays, RecursiveFactorization
+using LinearAlgebra, StaticArrays, RecursiveFactorization, Polyester
 
 gr() #gr(fmt=:png)
 
@@ -257,13 +257,13 @@ setups = [
     Dict(:alg=>radau()),
     Dict(:alg=>seulex()),
     Dict(:alg=>ImplicitEulerExtrapolation(
-        min_order = 4, init_order = 7, threading = OrdinaryDiffEq.PolyesterThreads())),
+        min_order = 4, init_order = 7, threading = OrdinaryDiffEqCore.PolyesterThreads())),
     Dict(:alg=>ImplicitEulerExtrapolation(min_order = 4, init_order = 7, threading = false)),
     Dict(:alg=>ImplicitEulerBarycentricExtrapolation(
-        min_order = 4, init_order = 7, threading = OrdinaryDiffEq.PolyesterThreads())),
+        min_order = 4, init_order = 7, threading = OrdinaryDiffEqCore.PolyesterThreads())),
     Dict(:alg=>ImplicitEulerBarycentricExtrapolation(min_order = 4, init_order = 7, threading = false)),
     Dict(:alg=>ImplicitHairerWannerExtrapolation(
-        min_order = 3, init_order = 6, threading = OrdinaryDiffEq.PolyesterThreads())),
+        min_order = 3, init_order = 6, threading = OrdinaryDiffEqCore.PolyesterThreads())),
     Dict(:alg=>ImplicitHairerWannerExtrapolation(min_order = 3, init_order = 6, threading = false))
 ]
 

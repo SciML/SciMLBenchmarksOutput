@@ -813,16 +813,18 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [5960d6e9] OrdinaryDiffEqFIRK v1.23.0
   [65888b18] ParameterizedFunctions v5.22.0
   [91a5bcdd] Plots v1.41.6
+  [f517fe37] Polyester v0.7.19
   [132c30aa] ProfileSVG v0.2.2
   [f2c3362d] RecursiveFactorization v0.2.26
   [31c91b34] SciMLBenchmarks v0.1.3
 ⌃ [90137ffa] StaticArrays v1.9.17
   [c3572dad] Sundials v5.1.0
-  [0c5d862f] Symbolics v7.15.3
+⌃ [0c5d862f] Symbolics v7.15.3
   [a759f4b9] TimerOutputs v0.5.29
   [37e2e46d] LinearAlgebra
   [2f01184e] SparseArrays v1.10.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -923,7 +925,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [14197337] GenericLinearAlgebra v0.3.19
   [c145ed77] GenericSchur v0.5.6
 ⌅ [9a0b12b7] GeometricBase v0.12.10
-⌃ [c85262ba] GeometricEquations v0.20.4
+⌅ [c85262ba] GeometricEquations v0.20.4
   [dcce2d33] GeometricIntegrators v0.15.5
   [71212ab4] GeometricIntegratorsBase v0.1.11
   [5a33fad7] GeometricIntegratorsDiffEq v1.1.0
@@ -1068,7 +1070,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [ae5879a3] ResettableStacks v1.2.0
   [79098fc4] Rmath v0.9.0
   [47965b36] RootedTrees v2.25.0
-  [fb486d5c] RungeKutta v0.5.18
+⌃ [fb486d5c] RungeKutta v0.5.18
   [7e49a35a] RuntimeGeneratedFunctions v0.5.17
   [9dfe8606] SCCNonlinearSolve v1.11.0
   [94e857df] SIMDTypes v0.1.0
@@ -1109,7 +1111,7 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [2efcf032] SymbolicIndexingInterface v0.3.46
   [19f23fe9] SymbolicLimits v1.1.0
 ⌃ [d1185830] SymbolicUtils v4.18.5
-  [0c5d862f] Symbolics v7.15.3
+⌃ [0c5d862f] Symbolics v7.15.3
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.1
   [ed4db957] TaskLocalValues v0.1.3
@@ -1279,5 +1281,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

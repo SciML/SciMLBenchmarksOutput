@@ -1,7 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA
 gr()
-using LinearAlgebra, StaticArrays, RecursiveFactorization
+using LinearAlgebra, StaticArrays, RecursiveFactorization, Polyester
 
 van = @ode_def begin
   dy = μ*((1-x^2)*y - x)
@@ -297,7 +297,7 @@ abstols = 1.0 ./ 10.0 .^ (7:11)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 setups = [Dict(:alg=>ImplicitHairerWannerExtrapolation()),
 		      Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = true)),
-          Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEq.PolyesterThreads())),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEqCore.PolyesterThreads())),
           ]
 
 names = ["unthreaded","threaded","Polyester"];

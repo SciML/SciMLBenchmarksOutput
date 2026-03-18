@@ -1,7 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA, Sundials
 gr() #gr(fmt=:png)
-using LinearAlgebra, StaticArrays, RecursiveFactorization
+using LinearAlgebra, StaticArrays, RecursiveFactorization, Polyester
 
 f = @ode_def Orego begin
   dy1 = p1*(y2+y1*(1-p2*y1-y2))
@@ -234,11 +234,11 @@ setups = [
             Dict(:alg=>lsoda()),
             Dict(:alg=>radau()),
             Dict(:alg=>seulex()),
-            Dict(:alg=>ImplicitEulerExtrapolation(init_order = 4,threading = OrdinaryDiffEq.PolyesterThreads())),
+            Dict(:alg=>ImplicitEulerExtrapolation(init_order = 4,threading = OrdinaryDiffEqCore.PolyesterThreads())),
             Dict(:alg=>ImplicitEulerExtrapolation(init_order = 4,threading = false)),
-            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(init_order = 4, threading = OrdinaryDiffEq.PolyesterThreads())),
+            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(init_order = 4, threading = OrdinaryDiffEqCore.PolyesterThreads())),
             Dict(:alg=>ImplicitEulerBarycentricExtrapolation(init_order = 4, threading = false)),
-            Dict(:alg=>ImplicitHairerWannerExtrapolation(init_order = 5,threading = OrdinaryDiffEq.PolyesterThreads())),
+            Dict(:alg=>ImplicitHairerWannerExtrapolation(init_order = 5,threading = OrdinaryDiffEqCore.PolyesterThreads())),
             Dict(:alg=>ImplicitHairerWannerExtrapolation(init_order = 5,threading = false)),
             ]
 
