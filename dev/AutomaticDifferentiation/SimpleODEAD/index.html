@@ -389,7 +389,7 @@ function diffeq_sen_l2(df, u0, tspan, p, t, alg = Tsit5();
         abstol = 1e-5, reltol = 1e-7,
         sensalg = InterpolatingAdjoint(), kwargs...)
     prob = ODEProblem(df, u0, tspan, p)
-    sol = solve(prob, alg, sensealg = SensitivityADPassThrough(),
+    sol = solve(prob, alg, sensealg = SciMLSensitivity.SensitivityADPassThrough(),
         abstol = abstol, reltol = reltol; kwargs...)
     dg(out, u, p, t, i) = (out.=u .- 1.0)
     adjoint_sensitivities(sol, alg; t, abstol = abstol, dgdu_discrete = dg,
@@ -400,7 +400,7 @@ function auto_sen_l2(
         f, u0, tspan, p, t, alg = Tsit5(); diffalg = ReverseDiff.gradient, kwargs...)
     test_f(p) = begin
         prob = ODEProblem{true, SciMLBase.FullSpecialize}(f, eltype(p).(u0), tspan, p)
-        sol = solve(prob, alg; sensealg = SensitivityADPassThrough(), kwargs...)(t)
+        sol = solve(prob, alg; sensealg = SciMLSensitivity.SensitivityADPassThrough(), kwargs...)(t)
         sum(sol.u) do x
             sum(z-&gt;(1-z)^2/2, x)
         end
@@ -474,12 +474,12 @@ e, false, false, EnzymeCore.FFIABI, false, false}()), true, false)</code></pre><
     print(&#39;\n&#39;)
     [t1, t2, t3, t4, t5, t6]
 end</code></pre><pre><code class="nohighlight hljs">6-element Vector{Float64}:
- 0.000100759
- 4.627e-5
- 0.000399487
- 0.000647775
- 0.000455057
- 0.000242498</code></pre><pre><code class="language-julia hljs">forward_bruss = let
+ 9.908e-5
+ 4.635e-5
+ 0.000415257
+ 0.000646965
+ 0.000462966
+ 0.000238998</code></pre><pre><code class="language-julia hljs">forward_bruss = let
     @info &quot;Running the Brusselator model:&quot;
     n = 5
     # Run low tolerance to test correctness
@@ -522,24 +522,24 @@ end</code></pre><pre><code class="nohighlight hljs">6-element Vector{Float64}:
     t6 = @belapsed numerical_sen($bfun, $b_u0, $((0.0, 10.0)), $b_p, $(Rodas5()); $tols...);
     print(&#39;\n&#39;)
     [t1, t2, t3, t4, t5, t6]
-end</code></pre><pre><code class="nohighlight hljs">5.489964 seconds (7.16 M allocations: 729.196 MiB, 3.88% gc time, 85.74% 
+end</code></pre><pre><code class="nohighlight hljs">5.672426 seconds (7.16 M allocations: 729.230 MiB, 3.63% gc time, 86.62% 
 compilation time)
- 13.717323 seconds (13.42 M allocations: 915.981 MiB, 2.04% gc time, 89.66%
+ 14.451520 seconds (13.41 M allocations: 915.535 MiB, 2.97% gc time, 89.20%
  compilation time)
-161.127989 seconds (23.81 M allocations: 24.256 GiB, 2.58% gc time, 7.14% c
+161.759422 seconds (22.91 M allocations: 24.190 GiB, 2.23% gc time, 7.49% c
 ompilation time)
-171.357774 seconds (8.37 M allocations: 23.536 GiB, 1.97% gc time, 2.81% co
+164.991275 seconds (8.36 M allocations: 23.535 GiB, 1.43% gc time, 2.84% co
 mpilation time)
-128.592884 seconds (4.21 M allocations: 23.045 GiB, 2.41% gc time, 1.89% co
+125.299715 seconds (4.21 M allocations: 23.045 GiB, 1.93% gc time, 1.96% co
 mpilation time)
 
 6-element Vector{Float64}:
- 121.700331685
-   1.421836372
- 162.331793897
- 139.367959523
- 153.437449874
-   0.660885146</code></pre><pre><code class="language-julia hljs">forward_pollution = let
+ 119.404342363
+   1.423966599
+ 164.948309049
+ 142.86665872
+ 152.751051491
+   0.659537272</code></pre><pre><code class="language-julia hljs">forward_pollution = let
     @info &quot;Running the pollution model:&quot;
     pcomp, pu0, pp, pcompu0 = make_pollution()
     ptspan = (0.0, 60.0)
@@ -569,11 +569,11 @@ mpilation time)
     [t1, t2, t3, t4, t5, t6]
 end</code></pre><pre><code class="nohighlight hljs">6-element Vector{Float64}:
  0.0
- 0.021311427
- 0.585078671
- 0.649033497
- 0.766433549
- 0.012270771</code></pre><pre><code class="language-julia hljs">forward_pkpd = let
+ 0.022042546
+ 0.574981624
+ 0.653482901
+ 0.602860608
+ 0.012306228</code></pre><pre><code class="language-julia hljs">forward_pkpd = let
     @info &quot;Running the PKPD model:&quot;
     #sol1 = solve(pkpdcompprob, Tsit5(),abstol=1e-5,reltol=1e-7,callback=pkpdcb,tstops=0:24:240,)[end][6:end]
     sol2 = vec(auto_sen(pkpdprob, Tsit5(), abstol = 1e-5, reltol = 1e-7,
@@ -607,11 +607,11 @@ end</code></pre><pre><code class="nohighlight hljs">6-element Vector{Float64}:
     [0, t2, t3, t4, t5, t6]
 end</code></pre><pre><code class="nohighlight hljs">6-element Vector{Float64}:
  0.0
- 0.002003415
- 0.007639365
- 0.006116326
- 0.008520468
- 0.00833677</code></pre><pre><code class="language-julia hljs">forward_methods = [&quot;Compile-time CSA&quot;, &quot;DSA&quot;, &quot;CSA user-Jacobian&quot;,
+ 0.001980265
+ 0.007708673
+ 0.005891347
+ 0.008529136
+ 0.008444917</code></pre><pre><code class="language-julia hljs">forward_methods = [&quot;Compile-time CSA&quot;, &quot;DSA&quot;, &quot;CSA user-Jacobian&quot;,
     &quot;AD-Jacobian&quot;, &quot;AD-Jv seeding&quot;, &quot;Numerical Differentiation&quot;]
 forward_timings = DataFrame(
     methods = forward_methods, LV = forward_lv, Bruss = forward_bruss,
@@ -623,18 +623,18 @@ display(forward_timings)</code></pre><pre><code class="nohighlight hljs">6×5 Da
 64  ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ Compile-time CSA           0.000100759  121.7       0.0        0.0  
+   1 │ Compile-time CSA           9.908e-5     119.404     0.0        0.0  
     ⋯
-   2 │ DSA                        4.627e-5       1.42184   0.0213114  0.002
-003
-   3 │ CSA user-Jacobian          0.000399487  162.332     0.585079   0.007
-639
-   4 │ AD-Jacobian                0.000647775  139.368     0.649033   0.006
-116
-   5 │ AD-Jv seeding              0.000455057  153.437     0.766434   0.008
-520 ⋯
-   6 │ Numerical Differentiation  0.000242498    0.660885  0.0122708  0.008
-336
+   2 │ DSA                        4.635e-5       1.42397   0.0220425  0.001
+980
+   3 │ CSA user-Jacobian          0.000415257  164.948     0.574982   0.007
+708
+   4 │ AD-Jacobian                0.000646965  142.867     0.653483   0.005
+891
+   5 │ AD-Jv seeding              0.000462966  152.751     0.602861   0.008
+529 ⋯
+   6 │ Numerical Differentiation  0.000238998    0.659537  0.0123062  0.008
+444
                                                                 1 column om
 itted</code></pre><h2 id="Run-Adjoint-Benchmarks"><a class="docs-heading-anchor" href="#Run-Adjoint-Benchmarks">Run Adjoint Benchmarks</a><a id="Run-Adjoint-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#Run-Adjoint-Benchmarks" title="Permalink"></a></h2><p>Adjoint requires a slightly different setup even with forward mode ADs since it requires a loss function choice. For that we simply take the L2 norm of the solution.</p><pre><code class="language-julia hljs">adjoint_lv = let
     @info &quot;Running the Lotka-Volerra model:&quot;
@@ -666,7 +666,27 @@ itted</code></pre><h2 id="Run-Adjoint-Benchmarks"><a class="docs-heading-anchor"
     t4 = @belapsed numerical_sen_l2(
         $lvdf, $lvu0, $lvtspan, $lvp, $lvt, $(Tsit5()); $tols...);
     [t1; t2; t3; t4]
-end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `SensitivityADPassThrough` not defined</code></pre><pre><code class="language-julia hljs">adjoint_bruss = let
+end</code></pre><pre><code class="nohighlight hljs">3.552873 seconds (4.87 M allocations: 330.343 MiB, 3.78% gc time, 99.97% 
+compilation time)
+  5.224977 seconds (6.02 M allocations: 410.323 MiB, 1.45% gc time, 99.84% 
+compilation time)
+ 79.164362 seconds (85.55 M allocations: 5.796 GiB, 2.73% gc time, 99.90% c
+ompilation time)
+  0.631780 seconds (629.03 k allocations: 43.311 MiB, 99.27% compilation ti
+me)
+12-element Vector{Float64}:
+ 0.000116379
+ 0.005383269
+ 0.000589735
+ 0.001112532
+ 0.000860373
+ 0.001500329
+ 0.002923628
+ 0.004275179
+ 0.001074902
+ 0.001629078
+ 0.001092652
+ 0.002919679</code></pre><pre><code class="language-julia hljs">adjoint_bruss = let
     @info &quot;Running the Brusselator model:&quot;
     bt = 0:0.1:10
     tspan = (0.0, 10.0)
@@ -706,7 +726,25 @@ end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `Sensi
     t3 = [t3; fill(NaN, length(ADJOINT_METHODS)÷3)]
     t4 = @belapsed numerical_sen_l2($bfun, $b_u0, $tspan, $b_p, $bt, $(Rodas5()); $tols...);
     [t1; t2; t3; t4]
-end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `SensitivityADPassThrough` not defined</code></pre><pre><code class="language-julia hljs">adjoint_pollution = let
+end</code></pre><pre><code class="nohighlight hljs">14.008573 seconds (12.36 M allocations: 864.436 MiB, 2.47% gc time, 89.26%
+ compilation time)
+109.872843 seconds (55.53 M allocations: 4.247 GiB, 1.05% gc time, 86.24% c
+ompilation time)
+  4.410434 seconds (2.62 M allocations: 661.947 MiB, 3.23% gc time, 55.92% 
+compilation time)
+12-element Vector{Float64}:
+   1.426976066
+ NaN
+   4.228929733
+   2.19601197
+   0.609090635
+   0.245021316
+   0.37500611
+   0.167354125
+ NaN
+ NaN
+ NaN
+   1.821994714</code></pre><pre><code class="language-julia hljs">adjoint_pollution = let
     @info &quot;Running the Pollution model:&quot;
     pcomp, pu0, pp, pcompu0 = make_pollution();
     ptspan = (0.0, 60.0)
@@ -749,7 +787,25 @@ end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `Sensi
         $(ODEFunction{true, SciMLBase.FullSpecialize}(pollution.f)),
         $pu0, $ptspan, $pp, $pts, $(Rodas5(autodiff = false)); $tols...);
     [t1; t2; t3; t4]
-end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `SensitivityADPassThrough` not defined</code></pre><pre><code class="language-julia hljs">adjoint_pkpd = let
+end</code></pre><pre><code class="nohighlight hljs">16.530452 seconds (13.24 M allocations: 871.309 MiB, 2.07% gc time, 99.87%
+ compilation time)
+ 78.483841 seconds (52.82 M allocations: 3.846 GiB, 1.35% gc time, 90.54% c
+ompilation time)
+  2.307349 seconds (2.14 M allocations: 150.700 MiB, 98.93% compilation tim
+e)
+12-element Vector{Float64}:
+   0.019041353
+ NaN
+   1.066901612
+   1.662611386
+   0.364254968
+   0.2945228
+   0.795662524
+   0.652061647
+ NaN
+ NaN
+ NaN
+   0.023790578</code></pre><pre><code class="language-julia hljs">adjoint_pkpd = let
     @info &quot;Running the PKPD model:&quot;
     pts = 0:0.5:50
     # need to use lower tolerances to avoid running into the complex domain because of exponentiation
@@ -792,7 +848,27 @@ end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `Sensi
         $pkpdtspan, $pkpdp, $pts, $(Tsit5()); tstops = 0:24:240,
         callback = $pkpdcb, $tols...);
     [t1; t2; t3; t4]
-end</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `SensitivityADPassThrough` not defined</code></pre><pre><code class="language-julia hljs">adjoint_methods = [&quot;ForwardDiff&quot;, &quot;ReverseDiff&quot;,
+end</code></pre><pre><code class="nohighlight hljs">3.721435 seconds (4.70 M allocations: 319.270 MiB, 2.12% gc time, 99.88% 
+compilation time)
+  3.784623 seconds (5.65 M allocations: 318.446 MiB, 95.66% compilation tim
+e)
+ 34.411373 seconds (37.82 M allocations: 2.516 GiB, 2.50% gc time, 99.73% c
+ompilation time)
+  0.255944 seconds (369.29 k allocations: 29.314 MiB, 91.80% compilation ti
+me)
+12-element Vector{Float64}:
+   0.00275472
+   0.147475379
+   0.007774834
+   0.005835227
+   0.002892819
+   0.007283558
+   0.00978936
+   0.013056866
+ NaN
+ NaN
+ NaN
+   0.017430845</code></pre><pre><code class="language-julia hljs">adjoint_methods = [&quot;ForwardDiff&quot;, &quot;ReverseDiff&quot;,
     &quot;InterpolatingAdjoint User Jac&quot;, &quot;InterpolatingAdjoint AD Jac&quot;, &quot;InterpolatingAdjoint v&#39;J&quot;,
     &quot;QuadratureAdjoint User Jac&quot;, &quot;QuadratureAdjoint AD Jac&quot;, &quot;QuadratureAdjoint v&#39;J&quot;,
     &quot;BacksolveAdjoint User Jac&quot;, &quot;BacksolveAdjoint AD Jac&quot;, &quot;BacksolveAdjoint v&#39;J&quot;,
@@ -801,7 +877,7 @@ adjoint_timings = DataFrame(
     methods = adjoint_methods, LV = adjoint_lv, Bruss = adjoint_bruss,
     Pollution = adjoint_pollution, PKPD = adjoint_pkpd)
 Markdown.parse(PrettyTables.pretty_table(
-    String, adjoint_timings; backend = :markdown))</code></pre><pre><code class="nohighlight hljs">Error: UndefVarError: `adjoint_lv` not defined</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+    String, adjoint_timings; backend = :markdown, column_labels = names(adjoint_timings)))</code></pre><table><tr><th style="text-align: right"><strong>methods</strong></th><th style="text-align: right"><strong>LV</strong></th><th style="text-align: right"><strong>Bruss</strong></th><th style="text-align: right"><strong>Pollution</strong></th><th style="text-align: right"><strong>PKPD</strong></th></tr><tr><td style="text-align: right">ForwardDiff</td><td style="text-align: right">0.000116379</td><td style="text-align: right">1.42698</td><td style="text-align: right">0.0190414</td><td style="text-align: right">0.00275472</td></tr><tr><td style="text-align: right">ReverseDiff</td><td style="text-align: right">0.00538327</td><td style="text-align: right">NaN</td><td style="text-align: right">NaN</td><td style="text-align: right">0.147475</td></tr><tr><td style="text-align: right">InterpolatingAdjoint User Jac</td><td style="text-align: right">0.000589735</td><td style="text-align: right">4.22893</td><td style="text-align: right">1.0669</td><td style="text-align: right">0.00777483</td></tr><tr><td style="text-align: right">InterpolatingAdjoint AD Jac</td><td style="text-align: right">0.00111253</td><td style="text-align: right">2.19601</td><td style="text-align: right">1.66261</td><td style="text-align: right">0.00583523</td></tr><tr><td style="text-align: right">InterpolatingAdjoint v&#39;J</td><td style="text-align: right">0.000860373</td><td style="text-align: right">0.609091</td><td style="text-align: right">0.364255</td><td style="text-align: right">0.00289282</td></tr><tr><td style="text-align: right">QuadratureAdjoint User Jac</td><td style="text-align: right">0.00150033</td><td style="text-align: right">0.245021</td><td style="text-align: right">0.294523</td><td style="text-align: right">0.00728356</td></tr><tr><td style="text-align: right">QuadratureAdjoint AD Jac</td><td style="text-align: right">0.00292363</td><td style="text-align: right">0.375006</td><td style="text-align: right">0.795663</td><td style="text-align: right">0.00978936</td></tr><tr><td style="text-align: right">QuadratureAdjoint v&#39;J</td><td style="text-align: right">0.00427518</td><td style="text-align: right">0.167354</td><td style="text-align: right">0.652062</td><td style="text-align: right">0.0130569</td></tr><tr><td style="text-align: right">BacksolveAdjoint User Jac</td><td style="text-align: right">0.0010749</td><td style="text-align: right">NaN</td><td style="text-align: right">NaN</td><td style="text-align: right">NaN</td></tr><tr><td style="text-align: right">BacksolveAdjoint AD Jac</td><td style="text-align: right">0.00162908</td><td style="text-align: right">NaN</td><td style="text-align: right">NaN</td><td style="text-align: right">NaN</td></tr><tr><td style="text-align: right">BacksolveAdjoint v&#39;J</td><td style="text-align: right">0.00109265</td><td style="text-align: right">NaN</td><td style="text-align: right">NaN</td><td style="text-align: right">NaN</td></tr><tr><td style="text-align: right">Numerical Differentiation</td><td style="text-align: right">0.00291968</td><td style="text-align: right">1.82199</td><td style="text-align: right">0.0237906</td><td style="text-align: right">0.0174308</td></tr></table><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><h2 id="Appendix-2"><a class="docs-heading-anchor" href="#Appendix-2">Appendix</a><a class="docs-heading-anchor-permalink" href="#Appendix-2" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/AutomaticDifferentiation&quot;,&quot;SimpleODEAD.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.11
 Commit a2b11907d7b (2026-03-09 14:59 UTC)
 Build Info:
@@ -812,7 +888,7 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_CPU_THREADS = 128
   JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953:
@@ -1099,7 +1175,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [2efcf032] SymbolicIndexingInterface v0.3.46
   [19f23fe9] SymbolicLimits v1.1.0
 ⌃ [d1185830] SymbolicUtils v4.18.5
-  [0c5d862f] Symbolics v7.15.3
+⌃ [0c5d862f] Symbolics v7.15.3
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.12.1
@@ -1263,4 +1339,4 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../JuliaAD/">« Julia AD Benchmarks</a><a class="docs-footer-nextpage" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 18 March 2026 08:33">Wednesday 18 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../JuliaAD/">« Julia AD Benchmarks</a><a class="docs-footer-nextpage" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Wednesday 18 March 2026 09:35">Wednesday 18 March 2026</span>. Using Julia version 1.12.5.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
