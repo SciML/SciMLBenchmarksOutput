@@ -1,6 +1,6 @@
 
 using Surrogates
-using SurrogatesRandomForest
+using XGBoost
 using Plots
 using Statistics
 using PrettyTables
@@ -46,7 +46,7 @@ kriging_surrogate_smt.set_training_values(np.array(x_train), np.array(y_train))
 kriging_surrogate_smt.train()
 
 # Julia
-randomforest_surrogate = RandomForestSurrogate(x_train, y_train, lb, ub, num_round = 10)
+xgboost_surrogate = XGBoostSurrogate(x_train, y_train, lb, ub, num_round = 10)
 radial_surrogate = RadialBasis(x_train, y_train, lb, ub)
 kriging_surrogate = Kriging(x_train, y_train, lb, ub)
 loba_surrogate = LobachevskySurrogate(x_train, y_train, lb, ub, alpha = 2.0, n = 6)
@@ -57,7 +57,7 @@ radial_train_pred_smt = radial_surrogate_smt.predict_values(np.array(x_train))
 radial_train_pred_smt = pyconvert(Matrix{Float64}, radial_train_pred_smt)[:, 1]
 kriging_train_pred_smt = kriging_surrogate_smt.predict_values(np.array(x_train))
 kriging_train_pred_smt = pyconvert(Matrix{Float64}, kriging_train_pred_smt)[:, 1]
-random_forest_train_pred = randomforest_surrogate.(x_train)
+xgboost_train_pred = xgboost_surrogate.(x_train)
 radial_train_pred = radial_surrogate.(x_train)
 kriging_train_pred = kriging_surrogate.(x_train)
 loba_train_pred = loba_surrogate.(x_train)
@@ -67,7 +67,7 @@ radial_test_pred_smt = radial_surrogate_smt.predict_values(np.array(x_test))
 radial_test_pred_smt = pyconvert(Matrix{Float64}, radial_test_pred_smt)[:, 1]
 kriging_test_pred_smt = kriging_surrogate_smt.predict_values(np.array(x_test))
 kriging_test_pred_smt = pyconvert(Matrix{Float64}, kriging_test_pred_smt)[:, 1]
-random_forest_test_pred = randomforest_surrogate.(x_test)
+xgboost_test_pred = xgboost_surrogate.(x_test)
 radial_test_pred = radial_surrogate.(x_test)
 kriging_test_pred = kriging_surrogate.(x_test)
 loba_test_pred = loba_surrogate.(x_test)
@@ -81,7 +81,7 @@ end
 ## Training MSE
 mse_radial_train_smt = calculate_mse(radial_train_pred_smt, y_train)
 mse_krig_train_smt = calculate_mse(kriging_train_pred_smt, y_train)
-mse_rf_train = calculate_mse(random_forest_train_pred, y_train)
+mse_xgb_train = calculate_mse(xgboost_train_pred, y_train)
 mse_radial_train = calculate_mse(radial_train_pred, y_train)
 mse_krig_train = calculate_mse(kriging_train_pred, y_train)
 mse_loba_train = calculate_mse(loba_train_pred, y_train)
@@ -89,17 +89,17 @@ mse_loba_train = calculate_mse(loba_train_pred, y_train)
 ## Test MSE
 mse_radial_test_smt = calculate_mse(radial_test_pred_smt, y_test)
 mse_krig_test_smt = calculate_mse(kriging_test_pred_smt, y_test)
-mse_rf_test = calculate_mse(random_forest_test_pred, y_test)
+mse_xgb_test = calculate_mse(xgboost_test_pred, y_test)
 mse_radial_test = calculate_mse(radial_test_pred, y_test)
 mse_krig_test = calculate_mse(kriging_test_pred, y_test)
 mse_loba_test = calculate_mse(loba_test_pred, y_test)
 
 
-models = ["Random Forest", "Radial Basis", "Kriging", "Lobachevsky", "Radial Basis (SMT)", "Kriging (SMT)"]
-train_mses = [mse_rf_train, mse_radial_train, mse_krig_train, mse_loba_train, mse_radial_train_smt, mse_krig_train_smt]
-test_mses = [mse_rf_test, mse_radial_test, mse_krig_test, mse_loba_test, mse_radial_test_smt, mse_krig_test_smt]
+models = ["XGBoost", "Radial Basis", "Kriging", "Lobachevsky", "Radial Basis (SMT)", "Kriging (SMT)"]
+train_mses = [mse_xgb_train, mse_radial_train, mse_krig_train, mse_loba_train, mse_radial_train_smt, mse_krig_train_smt]
+test_mses = [mse_xgb_test, mse_radial_test, mse_krig_test, mse_loba_test, mse_radial_test_smt, mse_krig_test_smt]
 mses = sort(collect(zip(test_mses, train_mses, models)))
-pretty_table(hcat(getindex.(mses, 3), getindex.(mses, 2), getindex.(mses, 1)), header=["Model", "Training MSE", "Test MSE"])
+pretty_table(hcat(getindex.(mses, 3), getindex.(mses, 2), getindex.(mses, 1)), column_labels=["Model", "Training MSE", "Test MSE"])
 
 
 xs = -5:0.01:5
@@ -112,7 +112,7 @@ kriging_pred_smt = pyconvert(Matrix{Float64}, kriging_pred_smt)[:, 1]
 plot(xs, radial_pred_smt, label="Radial Basis (SMT)", legend=:top, color=:cyan)
 plot!(xs, kriging_surrogate.(xs), label="Kriging (SMT)", legend=:top, color=:magenta)
 plot!(xs, tensor_product_function.(xs), label="True function", legend=:top, color=:black)
-plot!(xs, randomforest_surrogate.(xs), label="Random Forest", legend=:top, color=:green)
+plot!(xs, xgboost_surrogate.(xs), label="XGBoost", legend=:top, color=:green)
 plot!(xs, radial_surrogate.(xs), label="Radial Basis", legend=:top, color=:red)
 plot!(xs, kriging_surrogate.(xs), label="Kriging", legend=:top, color=:blue)
 plot!(xs, loba_surrogate.(xs), label="Lobachevsky", legend=:top, color=:purple)
@@ -121,13 +121,13 @@ plot!(xs, loba_surrogate.(xs), label="Lobachevsky", legend=:top, color=:purple)
 time_original = @belapsed tensor_product_function.(x_test)
 time_radial_smt = @belapsed radial_surrogate_smt.predict_values(np.array(x_test))
 time_krig_smt = @belapsed kriging_surrogate_smt.predict_values(np.array(x_test))
-time_rf = @belapsed randomforest_surrogate.(x_test)
+time_xgb = @belapsed xgboost_surrogate.(x_test)
 time_radial = @belapsed radial_surrogate.(x_test)
 time_krig = @belapsed kriging_surrogate.(x_test)
 time_loba = @belapsed loba_surrogate.(x_test)
 
 
-times = ["Random Forest" => time_rf, "Radial Basis" => time_radial, "Kriging" => time_krig, "Lobachevsky" => time_loba, "Radial Basis (SMT)" => time_radial_smt, "Kriging (SMT)" => time_krig_smt, "Original Function" => time_original]
+times = ["XGBoost" => time_xgb, "Radial Basis" => time_radial, "Kriging" => time_krig, "Lobachevsky" => time_loba, "Radial Basis (SMT)" => time_radial_smt, "Kriging (SMT)" => time_krig_smt, "Original Function" => time_original]
 sorted_times = sort(times, by=x->x[2])
-pretty_table(hcat(first.(sorted_times), last.(sorted_times)), header=["Model", "Time(s)"])
+pretty_table(hcat(first.(sorted_times), last.(sorted_times)), column_labels=["Model", "Time(s)"])
 
