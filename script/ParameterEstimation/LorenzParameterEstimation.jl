@@ -65,7 +65,7 @@ data = convert(Array, data_sol)
 
 plot(data_sol_short, vars = (1, 2, 3)) # the short solution
 plot(data_sol, vars = (1, 2, 3)) # the longer solution
-interpolation_sol = solve(prob, Vern7(), saveat = t, reltol = 1e-12, abstol = 1e-12)
+interpolation_sol = solve(prob, Vern7(), saveat = time_points, reltol = 1e-12, abstol = 1e-12)
 plot(interpolation_sol, vars = (1, 2, 3))
 
 
@@ -215,9 +215,6 @@ opt = Opt(:LN_NELDERMEAD, 3)
 
 opt = Opt(:LD_SLSQP, 3)
 @btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Inaccurate final values
-
-
-minimum(root)
 
 
 using SciMLBenchmarks
