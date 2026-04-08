@@ -7,7 +7,7 @@ y0 = [
     -5.3500183933132319E+06,
     -5528.612564911408,
     1216.8442360202787,
-    4845.114446429901,
+    4845.114446429901
 ]
 init_val = [
     -4.7763169762853989E+06,
@@ -15,7 +15,7 @@ init_val = [
     -5.3500183933132319E+06,
     7.0526926403748598E+06,
     -7.9650476230388973E+05,
-    -1.1911128863666430E+06,
+    -1.1911128863666430E+06
 ]
 J2 = 1.08262668E-3
 req = 6378137
@@ -54,21 +54,22 @@ bvp = BVProblem(orbital, cur_bc!, y0, tspan)
 @btime sol = solve(bvp, Shooting(DP5()), abstol = 1e-13, reltol = 1e-13)
 
 
-@btime sol = solve(bvp, MIRK2(), abstol = 1e-13, reltol = 1e-13)
+dt = (t1 - t0) / 100
+@btime sol = solve(bvp, MIRK2(), dt = $dt, abstol = 1e-13, reltol = 1e-13)
 
 
-@btime sol = solve(bvp, MIRK3(), abstol = 1e-13, reltol = 1e-13)
+@btime sol = solve(bvp, MIRK3(), dt = $dt, abstol = 1e-13, reltol = 1e-13)
 
 
-@btime sol = solve(bvp, MIRK4(), abstol = 1e-13, reltol = 1e-13)
+@btime sol = solve(bvp, MIRK4(), dt = $dt, abstol = 1e-13, reltol = 1e-13)
 
 
-@btime sol = solve(bvp, MIRK5(), abstol = 1e-13, reltol = 1e-13)
+@btime sol = solve(bvp, MIRK5(), dt = $dt, abstol = 1e-13, reltol = 1e-13)
 
 
-@btime sol = solve(bvp, MIRK6(), abstol = 1e-13, reltol = 1e-13)
+@btime sol = solve(bvp, MIRK6(), dt = $dt, abstol = 1e-13, reltol = 1e-13)
 
 
 using SciMLBenchmarks
-SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
 
