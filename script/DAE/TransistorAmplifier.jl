@@ -1,7 +1,6 @@
 
-using DiffEqDevTools, Sundials, ODEInterfaceDiffEq,
-      Plots, DASSL, DASKR
-using ModelingToolkit, OrdinaryDiffEq
+using DiffEqDevTools, ODEInterfaceDiffEq, Plots
+using ModelingToolkit, OrdinaryDiffEq, Symbolics
 using ModelingToolkit: t_nounits as t, D_nounits as D
 using LinearAlgebra
 
@@ -71,15 +70,10 @@ u0 = [y₁ => 0.0
       y₇ => 6.0
       y₈ => 0.0]
 
-@mtkbuild sys = ODESystem(eqs, t)
+@mtkcompile sys = System(eqs, t)
 tspan = (0.0, 0.2)
 mtkprob = ODEProblem(sys, u0, tspan)
 ref_sol = solve(mtkprob, Rodas5P(), abstol = 1e-10, reltol = 1e-10)
-
-du = mtkprob.f(mtkprob.u0, mtkprob.p, 0.0)
-du0 = D.(unknowns(sys)) .=> du
-daeprob = DAEProblem(sys, du0, [], tspan)
-dae_ref_sol = solve(daeprob, IDA(), abstol = 1/10^7, reltol = 1/10^7)
 
 function transamp(du, u, p, t)
     y₁, y₂, y₃, y₄, y₅, y₆, y₇, y₈ = u
@@ -116,7 +110,7 @@ function transamp(du, u, p, t)
     nothing
 end
 
-dirMassMatrix = Float64.(ModelingToolkit.unwrap.(substitute.(
+dirMassMatrix = Float64.(Symbolics.value.(substitute.(
     [-C₁ C₁ 0 0 0 0 0 0
      C₁ -C₁ 0 0 0 0 0 0
      0 0 -C₂ 0 0 0 0 0
@@ -130,8 +124,8 @@ mmf = ODEFunction(transamp, mass_matrix = dirMassMatrix)
 mmprob = ODEProblem(mmf, [0.0, 3.0, 3.0, 6.0, 3.0, 3.0, 6.0, 0.0], tspan)
 mm_refsol = solve(mmprob, Rodas5(), reltol = 1e-12, abstol = 1e-12)
 
-probs = [mtkprob, daeprob, mmprob]
-refs = [ref_sol, ref_sol, mm_refsol];
+probs = [mtkprob, mmprob]
+refs = [ref_sol, mm_refsol];
 
 
 plot(ref_sol, idxs = [y₁, y₂, y₃, y₄, y₅, y₆, y₇, y₈])
@@ -145,10 +139,8 @@ reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 1, :alg=>radau()),
+    Dict(:prob_choice => 2, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
-    Dict(:prob_choice => 2, :alg=>DFBDF()),
-    Dict(:prob_choice => 2, :alg=>IDA())
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
@@ -160,13 +152,10 @@ abstols = 1.0 ./ 10.0 .^ (6:8)
 reltols = 1.0 ./ 10.0 .^ (2:4);
 setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
     Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 3, :alg=>Rodas5P()),
-    Dict(:prob_choice => 3, :alg=>Rodas4()),
-    Dict(:prob_choice => 3, :alg=>rodas()),
-    Dict(:prob_choice => 3, :alg=>FBDF()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 2, :alg=>DASKR.daskr())
+    Dict(:prob_choice => 2, :alg=>Rodas5P()),
+    Dict(:prob_choice => 2, :alg=>Rodas4()),
+    Dict(:prob_choice => 2, :alg=>rodas()),
+    Dict(:prob_choice => 2, :alg=>FBDF()),
 ]
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
@@ -179,10 +168,8 @@ setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
     Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 1, :alg=>radau()),
+    Dict(:prob_choice => 2, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
-    Dict(:prob_choice => 2, :alg=>DFBDF()),
-    Dict(:prob_choice => 2, :alg=>IDA())
 ]
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
     save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
@@ -193,13 +180,10 @@ abstols = 1.0 ./ 10.0 .^ (6:8)
 reltols = 1.0 ./ 10.0 .^ (2:4);
 setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
     Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 3, :alg=>Rodas5P()),
-    Dict(:prob_choice => 3, :alg=>Rodas4()),
-    Dict(:prob_choice => 3, :alg=>rodas()),
-    Dict(:prob_choice => 3, :alg=>FBDF()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 2, :alg=>DASKR.daskr())
+    Dict(:prob_choice => 2, :alg=>Rodas5P()),
+    Dict(:prob_choice => 2, :alg=>Rodas4()),
+    Dict(:prob_choice => 2, :alg=>rodas()),
+    Dict(:prob_choice => 2, :alg=>FBDF()),
 ]
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
     save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
@@ -210,16 +194,13 @@ abstols = 1.0 ./ 10.0 .^ (7:12)
 reltols = 1.0 ./ 10.0 .^ (4:9)
 
 setups = [Dict(:prob_choice => 1, :alg=>Rodas5P()),
-    Dict(:prob_choice => 3, :alg=>Rodas5P()),
+    Dict(:prob_choice => 2, :alg=>Rodas5P()),
     Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 3, :alg=>Rodas4()),
+    Dict(:prob_choice => 2, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 1, :alg=>radau()),
+    Dict(:prob_choice => 2, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
-    Dict(:prob_choice => 2, :alg=>DFBDF()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 2, :alg=>DASKR.daskr())
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
