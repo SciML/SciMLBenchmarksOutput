@@ -2590,17 +2590,14 @@ title!("Vsp")
 fig = plot(xlabel = "N", ylabel = "Time");
 for (i, algo) in enumerate(algorithms)
     res = results[i]
-    plot!(res.t, res.XD[1, :], label = algo.label)
+    xd_arr = Array(res.XD)
+    n_xd = size(xd_arr, 2)
+    plot!(res.t[1:n_xd], xd_arr[1, :], label = algo.label)
 end
 title!("2line-Go, AMPA")
 ```
 
-```
-Error: BoundsError: attempt to access 10004-element Vector{Float64} at inde
-x [1:21256]
-```
-
-
+![](figures/Synapse_23_1.png)
 
 
 
