@@ -1,5 +1,6 @@
 
 using StochasticDiffEq, DiffEqDevTools, ParameterizedFunctions
+using SciMLLogging
 using Plots;
 gr()
 const N = 100
@@ -36,7 +37,7 @@ test_dt = 1/10^2
 appxsol_setup = Dict(:alg=>SRIW1(), :abstol=>1e-4, :reltol=>1e-4)
 wp = WorkPrecisionSet(prob, abstols, reltols, setups, test_dt;
     maxiters = 1e7,
-    verbose = false, save_everystep = false,
+    verbose = SciMLLogging.None(), save_everystep = false,
     parallel_type = :threads,
     appxsol_setup = appxsol_setup,
     numruns_error = N, error_estimate = :final)
@@ -56,7 +57,7 @@ test_dt = 1e-2
 appxsol_setup = Dict(:alg=>SRIW1(), :abstol=>1e-4, :reltol=>1e-4)
 wp = WorkPrecisionSet(prob, abstols, reltols, setups, test_dt;
     maxiters = 1e7,
-    verbose = false, save_everystep = false,
+    verbose = SciMLLogging.None(), save_everystep = false,
     parallel_type = :none,
     appxsol_setup = appxsol_setup,
     numruns_error = N, error_estimate = :weak_final)

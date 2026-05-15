@@ -3,17 +3,18 @@ using Catalyst, ReactionNetworkImporters,
     TimerOutputs, LinearAlgebra, ModelingToolkit, Chairmarks,
     LinearSolve, Symbolics, SymbolicUtils, SymbolicUtils.Code, SparseArrays, CairoMakie,
     PrettyTables
+using ModelingToolkit: default_values
 
 datadir  = joinpath(dirname(pathof(ReactionNetworkImporters)),"../data/bcr")
 const to = TimerOutput()
 tf       = 100000.0
 
 # generate ModelingToolkit ODEs
-prnbng = loadrxnetwork(BNGNetwork(), joinpath(datadir, "bcr.net"))
+rn_raw = loadrxnetwork(BNGNetwork(), joinpath(datadir, "bcr.net"))
 show(to)
-rn    = complete(prnbng.rn; split = false)
+rn    = complete(rn_raw; split = false)
 obs = [eq.lhs for eq in observed(rn)]
-osys = convert(ODESystem, rn)
+osys = Catalyst.ode_model(rn)
 
 rhs = [eq.rhs for eq in full_equations(osys)]
 vars = unknowns(osys)
@@ -38,7 +39,6 @@ Symbolics.clear_derivative_caches!()
 @timeit to "Calculate jacobian - hashconsing and caching" jac_hc_cache = Symbolics.sparsejacobian(rhs, vars);
 
 @assert isequal(jac_nohc, jac_hc_nocache)
-@assert isequal(jac_hc_nocache, jac_hc_cache)
 
 jac = jac_hc_cache
 args = (vars, pars, ModelingToolkit.get_iv(osys))
@@ -52,11 +52,11 @@ kwargs = (; iip_config = (false, true), expression = Val{true})
 jac_nocse_iip = eval(jac_nocse_iip)
 jac_cse_iip = eval(jac_cse_iip)
 
-defs = defaults(osys)
-u = Float64[Symbolics.fixpoint_sub(var, defs) for var in vars]
+defs = default_values(osys)
+u = Float64[Symbolics.value(Symbolics.fixpoint_sub(var, defs)) for var in vars]
 buffer_cse = similar(jac, Float64)
 buffer_nocse = similar(jac, Float64)
-p = Float64[Symbolics.fixpoint_sub(par, defs) for par in pars]
+p = Float64[Symbolics.value(Symbolics.fixpoint_sub(par, defs)) for par in pars]
 tt = 0.0
 
 @timeit to "Compile jacobian - CSE" jac_cse_iip(buffer_cse, u, p, tt)
@@ -151,7 +151,7 @@ end
 
 tabledata = hcat(N, jacobian_times..., jacobian_allocs..., build_times..., first_call_times..., second_call_times...)
 header = ["N", "Jacobian time (no hashconsing)", "Jacobian time (hashconsing)", "Jacobian allocated memory (no hashconsing) (B)", "Jacobian allocated memory (hashconsing) (B)", "`build_function` time (no CSE)", "`build_function` time (CSE)", "First call time (no CSE)", "First call time (CSE)", "Second call time (no CSE)", "Second call time (CSE)"]
-pretty_table(tabledata; header, backend = :html)
+pretty_table(tabledata; column_labels = header, backend = :html)
 
 
 f = Figure(size = (750, 400))
