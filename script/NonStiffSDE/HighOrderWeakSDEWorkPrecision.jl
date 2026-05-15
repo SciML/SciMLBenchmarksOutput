@@ -1,0 +1,198 @@
+
+using StochasticDiffEq, DiffEqDevTools, Random, Plots
+using SciMLLogging
+gr()
+
+u₀ = [1.0, 1.0]
+function f_noncommutative!(du, u, p, t)
+    @inbounds begin
+        du[1] = -273 // 512 * u[1]
+        du[2] = -1 // 160 * u[1] - (-785 // 512 + sqrt(2) / 8) * u[2]
+    end
+    return nothing
+end
+function g_noncommutative!(du, u, p, t)
+    @inbounds begin
+        du[1, 1] = 1 // 4 * u[1]
+        du[1, 2] = 1 // 16 * u[1]
+        du[2, 1] = (1 - 2 * sqrt(2)) / 4 * u[1]
+        du[2, 2] = 1 // 10 * u[1] + 1 // 16 * u[2]
+    end
+    return nothing
+end
+tspan = (0.0, 3.0)
+
+prob = SDEProblem(f_noncommutative!, g_noncommutative!, u₀, tspan,
+    noise_rate_prototype = zeros(2, 2))
+
+
+numtraj = Int(1e5)
+seed = 100
+Random.seed!(seed)
+seeds = rand(UInt, numtraj)
+
+function prob_func(prob, ctx)
+    remake(prob, seed = seeds[ctx.i])
+end
+
+h2(z) = z^2
+
+ensemble_prob = EnsembleProblem(prob;
+    output_func = (sol, ctx) -> (h2(sol.u[end][1]), false),
+    prob_func = prob_func)
+
+dts = 1 .// 2 .^ (3:-1:0)
+
+sim_dri1 = test_convergence(dts, ensemble_prob, DRI1(),
+    save_everystep = false, trajectories = numtraj, save_start = false,
+    adaptive = false, weak_timeseries_errors = false,
+    weak_dense_errors = false, expected_value = exp(-3.0))
+
+sim_pl1wm = test_convergence(dts, ensemble_prob, PL1WM(),
+    save_everystep = false, trajectories = numtraj, save_start = false,
+    adaptive = false, weak_timeseries_errors = false,
+    weak_dense_errors = false, expected_value = exp(-3.0))
+
+sim_rdi1wm = test_convergence(dts, ensemble_prob, RDI1WM(),
+    save_everystep = false, trajectories = numtraj, save_start = false,
+    adaptive = false, weak_timeseries_errors = false,
+    weak_dense_errors = false, expected_value = exp(-3.0))
+
+sim_rdi2wm = test_convergence(dts, ensemble_prob, RDI2WM(),
+    save_everystep = false, trajectories = numtraj, save_start = false,
+    adaptive = false, weak_timeseries_errors = false,
+    weak_dense_errors = false, expected_value = exp(-3.0))
+
+sim_em = test_convergence(dts, ensemble_prob, EM(),
+    save_everystep = false, trajectories = numtraj, save_start = false,
+    adaptive = false, weak_timeseries_errors = false,
+    weak_dense_errors = false, expected_value = exp(-3.0))
+
+sim_simplified_em = test_convergence(dts, ensemble_prob, SimplifiedEM(),
+    save_everystep = false, trajectories = numtraj, save_start = false,
+    adaptive = false, weak_timeseries_errors = false,
+    weak_dense_errors = false, expected_value = exp(-3.0))
+
+plot(
+    plot(sim_dri1, title = "DRI1 (order 2.0)"),
+    plot(sim_rdi1wm, title = "RDI1WM (order 2.0)"),
+    plot(sim_rdi2wm, title = "RDI2WM (order 2.0)"),
+    plot(sim_pl1wm, title = "PL1WM (order 2.0)"),
+    plot(sim_em, title = "EM (order 1.0)"),
+    plot(sim_simplified_em, title = "SimplifiedEM (order 1.0)"),
+    layout = (3, 2), size = (800, 900))
+
+
+reltols = 1.0 ./ 4.0 .^ (1:4)
+abstols = reltols
+
+setups = [
+    Dict(:alg => DRI1(), :dts => dts, :adaptive => false),
+    Dict(:alg => PL1WM(), :dts => dts, :adaptive => false),
+    Dict(:alg => RDI1WM(), :dts => dts, :adaptive => false),
+    Dict(:alg => RDI2WM(), :dts => dts, :adaptive => false),
+    Dict(:alg => EM(), :dts => dts, :adaptive => false),
+    Dict(:alg => SimplifiedEM(), :dts => dts, :adaptive => false)]
+
+test_dt = 1 // 10000
+appxsol_setup = Dict(:alg => EM(), :dt => test_dt)
+
+wp = WorkPrecisionSet(ensemble_prob,
+    abstols, reltols, setups, test_dt;
+    maxiters = 1e7, verbose = SciMLLogging.None(),
+    save_everystep = false, save_start = false,
+    appxsol_setup = appxsol_setup,
+    expected_value = exp(-3.0),
+    trajectories = numtraj, error_estimate = :weak_final)
+plot(wp; legend = :bottomleft)
+
+
+using DiffEqNoiseProcess
+
+function brusselator_f!(du, u, p, t)
+    @inbounds begin
+        du[1] = (p[1] - 1) * u[1] + p[1] * u[1]^2 + (u[1] + 1)^2 * u[2]
+        du[2] = -p[1] * u[1] - p[1] * u[1]^2 - (u[1] + 1)^2 * u[2]
+    end
+    nothing
+end
+
+function brusselator_scalar_noise!(du, u, p, t)
+    @inbounds begin
+        du[1] = p[2] * u[1] * (1 + u[1])
+        du[2] = -p[2] * u[1] * (1 + u[1])
+    end
+    nothing
+end
+
+seed = 100
+Random.seed!(seed)
+numtraj_bruss = 100
+seeds_bruss = rand(UInt, numtraj_bruss)
+
+function prob_func_bruss(prob, ctx)
+    Random.seed!(seeds_bruss[ctx.i])
+    W = WienerProcess(0.0, 0.0, 0.0)
+    remake(prob, noise = W)
+end
+
+u0_bruss = [-0.1, 0.0]
+tspan_bruss = (0.0, 100.0)
+p_bruss = [1.9, 0.1]
+
+W = WienerProcess(0.0, 0.0, 0.0)
+prob_bruss = SDEProblem(brusselator_f!, brusselator_scalar_noise!, u0_bruss,
+    tspan_bruss, p_bruss, noise = W)
+
+ensembleprob_bruss = EnsembleProblem(prob_bruss,
+    prob_func = prob_func_bruss)
+
+
+sol_adaptive = solve(ensembleprob_bruss, DRI1(), dt = 0.1,
+    trajectories = numtraj_bruss)
+sol_fixed = solve(ensembleprob_bruss, DRI1(), dt = 0.8,
+    adaptive = false, trajectories = numtraj_bruss)
+
+summ = EnsembleSummary(sol_adaptive, 0.0:0.5:100.0)
+plot(summ, fillalpha = 0.5, xlabel = "time t", yaxis = "X(t)",
+    label = ["x₁(t)" "x₂(t)"], legend = true,
+    title = "Stochastic Brusselator (DRI1, adaptive)")
+
+
+summ_fixed = EnsembleSummary(sol_fixed, 0.0:0.5:100.0)
+plot(summ_fixed, fillalpha = 0.5, xlabel = "time t", yaxis = "X(t)",
+    label = ["x₁(t)" "x₂(t)"], legend = true,
+    title = "Stochastic Brusselator (DRI1, fixed step)")
+
+
+ensembleprob_bruss2 = EnsembleProblem(prob_bruss,
+    prob_func = prob_func_bruss)
+
+reltols_bruss = 1.0 ./ 4.0 .^ (1:4)
+abstols_bruss = reltols_bruss
+dts_bruss = 1.0 ./ 2.0 .^ (1:4)
+
+setups_bruss = [
+    Dict(:alg => DRI1(), :dts => dts_bruss, :adaptive => false),
+    Dict(:alg => PL1WM(), :dts => dts_bruss, :adaptive => false),
+    Dict(:alg => RDI1WM(), :dts => dts_bruss, :adaptive => false),
+    Dict(:alg => RDI2WM(), :dts => dts_bruss, :adaptive => false),
+    Dict(:alg => EM(), :dts => dts_bruss, :adaptive => false),
+    Dict(:alg => SimplifiedEM(), :dts => dts_bruss, :adaptive => false)]
+
+test_dt_bruss = 1 // 1000
+appxsol_setup_bruss = Dict(:alg => EM(), :dt => test_dt_bruss)
+
+wp_bruss = WorkPrecisionSet(ensembleprob_bruss2,
+    abstols_bruss, reltols_bruss, setups_bruss, test_dt_bruss;
+    maxiters = 1e7, verbose = SciMLLogging.None(),
+    save_everystep = false, save_start = false,
+    appxsol_setup = appxsol_setup_bruss,
+    trajectories = numtraj_bruss, error_estimate = :weak_final)
+plot(wp_bruss; legend = :bottomleft,
+    title = "Stochastic Brusselator Work-Precision")
+
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+

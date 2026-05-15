@@ -5,6 +5,7 @@ means = Array{Float64}(undef, length(qs), 4)
 
 using StochasticDiffEq, SDEProblemLibrary, Random,
       Plots, ParallelDataTransfer, DiffEqMonteCarlo, Distributed
+using SciMLLogging
 Random.seed!(99)
 
 full_prob = SDEProblemLibrary.oval2ModelExample(largeFluctuations = true, useBigs = false)
@@ -36,7 +37,7 @@ println("Setup Complete")
 
 function runAdaptive(i, k)
     sol = solve(prob, SRIW1(), dt = 1/2^(8), abstol = 2.0^(-15), reltol = 2.0^(-10),
-        verbose = false, maxIters = Int(1e12), qmax = qs[k])
+        verbose = SciMLLogging.None(), maxIters = Int(1e12), qmax = qs[k])
     Int(any(isnan, sol[end]) || sol.t[end] != 1)
 end
 

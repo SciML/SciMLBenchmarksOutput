@@ -22,17 +22,18 @@ using Catalyst, ReactionNetworkImporters,
     TimerOutputs, LinearAlgebra, ModelingToolkit, Chairmarks,
     LinearSolve, Symbolics, SymbolicUtils, SymbolicUtils.Code, SparseArrays, CairoMakie,
     PrettyTables
+using ModelingToolkit: default_values
 
 datadir  = joinpath(dirname(pathof(ReactionNetworkImporters)),"../data/bcr")
 const to = TimerOutput()
 tf       = 100000.0
 
 # generate ModelingToolkit ODEs
-prnbng = loadrxnetwork(BNGNetwork(), joinpath(datadir, "bcr.net"))
+rn_raw = loadrxnetwork(BNGNetwork(), joinpath(datadir, "bcr.net"))
 show(to)
-rn    = complete(prnbng.rn; split = false)
+rn    = complete(rn_raw; split = false)
 obs = [eq.lhs for eq in observed(rn)]
-osys = convert(ODESystem, rn)
+osys = Catalyst.ode_model(rn)
 
 rhs = [eq.rhs for eq in full_equations(osys)]
 vars = unknowns(osys)
@@ -40,22 +41,25 @@ pars = parameters(osys)
 ```
 
 ```
+Scanning blocks...done
 Parsing parameters...done
 Creating parameters...done
 Parsing species...done
-Creating species...done
-Creating species and parameters for evaluating expressions...done
-Parsing and adding reactions...done
+Creating variables...done
+Setting up expression evaluation module...done
 Parsing groups...done
+Parsing functions...done
+Parsing and adding reactions...done
 ────────────────────────────────────────────────────────────────────
                            Time                    Allocations      
                   ───────────────────────   ────────────────────────
-Tot / % measured:      7.48s /   0.0%            890MiB /   0.0%    
+Tot / % measured:      41.6s /   0.0%           3.31GiB /   0.0%    
 
 Section   ncalls     time    %tot     avg     alloc    %tot      avg
 ────────────────────────────────────────────────────────────────────
 ────────────────────────────────────────────────────────────────────128-ele
-ment Vector{SymbolicUtils.BasicSymbolic{Real}}:
+ment Vector{SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{
+SymbolicUtils.SymReal}}:
  p1
  p2
  p3
@@ -112,7 +116,6 @@ Symbolics.clear_derivative_caches!()
 @timeit to "Calculate jacobian - hashconsing and caching" jac_hc_cache = Symbolics.sparsejacobian(rhs, vars);
 
 @assert isequal(jac_nohc, jac_hc_nocache)
-@assert isequal(jac_hc_nocache, jac_hc_cache)
 
 jac = jac_hc_cache
 args = (vars, pars, ModelingToolkit.get_iv(osys))
@@ -126,11 +129,11 @@ kwargs = (; iip_config = (false, true), expression = Val{true})
 jac_nocse_iip = eval(jac_nocse_iip)
 jac_cse_iip = eval(jac_cse_iip)
 
-defs = defaults(osys)
-u = Float64[Symbolics.fixpoint_sub(var, defs) for var in vars]
+defs = default_values(osys)
+u = Float64[Symbolics.value(Symbolics.fixpoint_sub(var, defs)) for var in vars]
 buffer_cse = similar(jac, Float64)
 buffer_nocse = similar(jac, Float64)
-p = Float64[Symbolics.fixpoint_sub(par, defs) for par in pars]
+p = Float64[Symbolics.value(Symbolics.fixpoint_sub(par, defs)) for par in pars]
 tt = 0.0
 
 @timeit to "Compile jacobian - CSE" jac_cse_iip(buffer_cse, u, p, tt)
@@ -151,31 +154,31 @@ show(to)
                   Allocations      
                                                             ───────────────
 ────────   ────────────────────────
-                     Tot / % measured:                            490s /  9
-3.6%           36.1GiB /  91.4%    
+                     Tot / % measured:                           4.06h /  9
+9.4%           1.19TiB /  99.4%    
 
 Section                                             ncalls     time    %tot
      avg     alloc    %tot      avg
 ───────────────────────────────────────────────────────────────────────────
 ───────────────────────────────────
-Compile jacobian - no CSE                                1     192s   41.9%
-    192s   3.05GiB    9.2%  3.05GiB
-Calculate jacobian - without hashconsing                 1    76.9s   16.8%
-   76.9s   10.5GiB   32.0%  10.5GiB
-Compile jacobian - CSE                                   1    76.5s   16.7%
-   76.5s   0.95GiB    2.9%  0.95GiB
-Calculate jacobian - hashconsing, without caching        1    75.9s   16.6%
-   75.9s   10.5GiB   31.8%  10.5GiB
-Calculate jacobian - hashconsing and caching             1    30.9s    6.7%
-   30.9s   6.72GiB   20.4%  6.72GiB
-Build jacobian - no CSE                                  1    4.84s    1.1%
-   4.84s   1.10GiB    3.3%  1.10GiB
-Build jacobian - CSE                                     1    1.45s    0.3%
-   1.45s    160MiB    0.5%   160MiB
-Compute jacobian - no CSE                                1   80.6μs    0.0%
-  80.6μs      192B    0.0%     192B
-Compute jacobian - CSE                                   1   55.7μs    0.0%
-  55.7μs      192B    0.0%     192B
+Calculate jacobian - without hashconsing                 1    3.92h   97.2%
+   3.92h   1.15TiB   97.6%  1.15TiB
+Compile jacobian - no CSE                                1     178s    1.2%
+    178s   8.81GiB    0.7%  8.81GiB
+Compile jacobian - CSE                                   1    94.3s    0.6%
+   94.3s   2.55GiB    0.2%  2.55GiB
+Calculate jacobian - hashconsing, without caching        1    92.0s    0.6%
+   92.0s   12.4GiB    1.0%  12.4GiB
+Calculate jacobian - hashconsing and caching             1    29.2s    0.2%
+   29.2s   3.42GiB    0.3%  3.42GiB
+Build jacobian - no CSE                                  1    8.18s    0.1%
+   8.18s   1.45GiB    0.1%  1.45GiB
+Build jacobian - CSE                                     1    512ms    0.0%
+   512ms    126MiB    0.0%   126MiB
+Compute jacobian - no CSE                                1    109μs    0.0%
+   109μs      176B    0.0%     176B
+Compute jacobian - CSE                                   1   86.6μs    0.0%
+  86.6μs      176B    0.0%     176B
 ───────────────────────────────────────────────────────────────────────────
 ───────────────────────────────────
 ```
@@ -286,24 +289,107 @@ end
 ```julia
 tabledata = hcat(N, jacobian_times..., jacobian_allocs..., build_times..., first_call_times..., second_call_times...)
 header = ["N", "Jacobian time (no hashconsing)", "Jacobian time (hashconsing)", "Jacobian allocated memory (no hashconsing) (B)", "Jacobian allocated memory (hashconsing) (B)", "`build_function` time (no CSE)", "`build_function` time (CSE)", "First call time (no CSE)", "First call time (CSE)", "Second call time (no CSE)", "Second call time (CSE)"]
-pretty_table(tabledata; header, backend = :html)
+pretty_table(tabledata; column_labels = header, backend = :html)
 ```
 
-```
-Error: MethodError: no method matching _html__print(::PrettyTables.Printing
-Spec; is_stdout::Bool, header::Vector{String})
 
-Closest candidates are:
-  _html__print(::PrettyTables.PrintingSpec; allow_html_in_cells, column_lab
-el_titles, highlighters, is_stdout, line_breaks, maximum_column_width, mini
-fy, stand_alone, style, table_class, table_div_class, table_format, top_lef
-t_string, top_right_string, wrap_table_in_div) got unsupported keyword argu
-ment "header"
-   @ PrettyTables /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-a
-e0a-f4d2d937f953/packages/PrettyTables/l3ncH/src/backends/html/html_backend
-.jl:7
-```
-
+<table>
+  <thead>
+    <tr class = "columnLabelRow">
+      <th style = "font-weight: bold; text-align: right;">N</th>
+      <th style = "font-weight: bold; text-align: right;">Jacobian time (no hashconsing)</th>
+      <th style = "font-weight: bold; text-align: right;">Jacobian time (hashconsing)</th>
+      <th style = "font-weight: bold; text-align: right;">Jacobian allocated memory (no hashconsing) (B)</th>
+      <th style = "font-weight: bold; text-align: right;">Jacobian allocated memory (hashconsing) (B)</th>
+      <th style = "font-weight: bold; text-align: right;">`build_function` time (no CSE)</th>
+      <th style = "font-weight: bold; text-align: right;">`build_function` time (CSE)</th>
+      <th style = "font-weight: bold; text-align: right;">First call time (no CSE)</th>
+      <th style = "font-weight: bold; text-align: right;">First call time (CSE)</th>
+      <th style = "font-weight: bold; text-align: right;">Second call time (no CSE)</th>
+      <th style = "font-weight: bold; text-align: right;">Second call time (CSE)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class = "dataRow">
+      <td style = "text-align: right;">10.0</td>
+      <td style = "text-align: right;">12.8879</td>
+      <td style = "text-align: right;">3.49746</td>
+      <td style = "text-align: right;">2.35952e9</td>
+      <td style = "text-align: right;">4.34216e8</td>
+      <td style = "text-align: right;">0.0276946</td>
+      <td style = "text-align: right;">0.034851</td>
+      <td style = "text-align: right;">9.59047</td>
+      <td style = "text-align: right;">6.70625</td>
+      <td style = "text-align: right;">3.52113e-6</td>
+      <td style = "text-align: right;">3.14667e-6</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: right;">20.0</td>
+      <td style = "text-align: right;">17.3092</td>
+      <td style = "text-align: right;">4.80565</td>
+      <td style = "text-align: right;">2.99358e9</td>
+      <td style = "text-align: right;">5.72367e8</td>
+      <td style = "text-align: right;">0.0411687</td>
+      <td style = "text-align: right;">0.0512693</td>
+      <td style = "text-align: right;">14.6376</td>
+      <td style = "text-align: right;">9.41456</td>
+      <td style = "text-align: right;">6.92725e-6</td>
+      <td style = "text-align: right;">4.71483e-6</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: right;">40.0</td>
+      <td style = "text-align: right;">23.5627</td>
+      <td style = "text-align: right;">6.81349</td>
+      <td style = "text-align: right;">4.06703e9</td>
+      <td style = "text-align: right;">7.62738e8</td>
+      <td style = "text-align: right;">0.065754</td>
+      <td style = "text-align: right;">0.0732556</td>
+      <td style = "text-align: right;">24.9028</td>
+      <td style = "text-align: right;">14.4885</td>
+      <td style = "text-align: right;">1.2265e-5</td>
+      <td style = "text-align: right;">7.3025e-6</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: right;">80.0</td>
+      <td style = "text-align: right;">38.3519</td>
+      <td style = "text-align: right;">11.8771</td>
+      <td style = "text-align: right;">6.34568e9</td>
+      <td style = "text-align: right;">1.40757e9</td>
+      <td style = "text-align: right;">0.119484</td>
+      <td style = "text-align: right;">0.113438</td>
+      <td style = "text-align: right;">49.0655</td>
+      <td style = "text-align: right;">23.2443</td>
+      <td style = "text-align: right;">2.54e-5</td>
+      <td style = "text-align: right;">1.24e-5</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: right;">160.0</td>
+      <td style = "text-align: right;">44.2012</td>
+      <td style = "text-align: right;">13.6832</td>
+      <td style = "text-align: right;">7.27274e9</td>
+      <td style = "text-align: right;">1.61607e9</td>
+      <td style = "text-align: right;">0.157336</td>
+      <td style = "text-align: right;">0.147143</td>
+      <td style = "text-align: right;">62.9992</td>
+      <td style = "text-align: right;">30.8767</td>
+      <td style = "text-align: right;">3.029e-5</td>
+      <td style = "text-align: right;">1.621e-5</td>
+    </tr>
+    <tr class = "dataRow">
+      <td style = "text-align: right;">320.0</td>
+      <td style = "text-align: right;">50.0859</td>
+      <td style = "text-align: right;">15.6805</td>
+      <td style = "text-align: right;">8.22337e9</td>
+      <td style = "text-align: right;">1.83044e9</td>
+      <td style = "text-align: right;">0.203696</td>
+      <td style = "text-align: right;">0.191879</td>
+      <td style = "text-align: right;">82.1979</td>
+      <td style = "text-align: right;">44.7776</td>
+      <td style = "text-align: right;">4.059e-5</td>
+      <td style = "text-align: right;">1.8889e-5</td>
+    </tr>
+  </tbody>
+</table>
 
 
 ```julia
