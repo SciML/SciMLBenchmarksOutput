@@ -7,6 +7,7 @@ using ADTypes
 using LinearAlgebra, SparseArrays
 using BenchmarkTools
 import DifferentiationInterface as DI
+import ForwardDiff
 using Plots
 using SparseConnectivityTracer: TracerSparsityDetector
 using SparseMatrixColorings: GreedyColoringAlgorithm
@@ -109,7 +110,7 @@ Test Passed
 
 ```julia
 c1 = ADTypes.column_coloring(S1, GreedyColoringAlgorithm())
-@test length(unique(c1)) > 0  # basic sanity check
+@test length(unique(c1)) <= size(S1, 2)
 ```
 
 ```
@@ -134,34 +135,11 @@ J1 = DI.jacobian!(
     brusselator_2d!, similar(x0_32), similar(S1, eltype(x0_32)), prep, backend, x0_32
 )
 
-@test nnz(J1) > 0  # basic sanity check
+@test nnz(J1) > 0
 ```
 
 ```
-Error: MethodError: no method matching _prepare_pushforward_aux(::Val{true}
-, ::DifferentiationInterface.PushforwardFast, ::typeof(Main.var"##WeaveSand
-Box#225".brusselator_2d!), ::Array{Float64, 3}, ::ADTypes.AutoForwardDiff{n
-othing, Nothing}, ::Array{Float64, 3}, ::Tuple{Array{Float64, 3}})
-
-The autodiff backend you chose requires a package which may not be loaded. 
-Please run the following command and try again:
-
-	import ForwardDiff
-
-Closest candidates are:
-  _prepare_pushforward_aux(::Val, !Matched::DifferentiationInterface.Pushfo
-rwardSlow, ::F, ::Any, ::ADTypes.AbstractADType, ::Any, ::Tuple{Vararg{T, N
-}} where {N, T}, DifferentiationInterface.Context...) where {F, C}
-   @ DifferentiationInterface /cache/julia-buildkite-plugin/depots/5b300254
--1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterface/afUhd/src/fi
-rst_order/pushforward.jl:303
-  _prepare_pushforward_aux(::Val, !Matched::DifferentiationInterface.Pushfo
-rwardSlow, ::F, !Matched::ADTypes.AbstractADType, ::Any, !Matched::Tuple{Va
-rarg{T, N}} where {N, T}, !Matched::DifferentiationInterface.Context...) wh
-ere {F, C}
-   @ DifferentiationInterface /cache/julia-buildkite-plugin/depots/5b300254
--1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterface/afUhd/src/fi
-rst_order/pushforward.jl:283
+Test Passed
 ```
 
 
@@ -302,34 +280,7 @@ let
 end
 ```
 
-```
-Error: MethodError: no method matching _prepare_pushforward_aux(::Val{true}
-, ::DifferentiationInterface.PushforwardFast, ::typeof(Main.var"##WeaveSand
-Box#225".brusselator_2d!), ::Array{Float64, 3}, ::ADTypes.AutoForwardDiff{n
-othing, Nothing}, ::Array{Float64, 3}, ::Tuple{Array{Float64, 3}})
-
-The autodiff backend you chose requires a package which may not be loaded. 
-Please run the following command and try again:
-
-	import ForwardDiff
-
-Closest candidates are:
-  _prepare_pushforward_aux(::Val, !Matched::DifferentiationInterface.Pushfo
-rwardSlow, ::F, ::Any, ::ADTypes.AbstractADType, ::Any, ::Tuple{Vararg{T, N
-}} where {N, T}, DifferentiationInterface.Context...) where {F, C}
-   @ DifferentiationInterface /cache/julia-buildkite-plugin/depots/5b300254
--1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterface/afUhd/src/fi
-rst_order/pushforward.jl:303
-  _prepare_pushforward_aux(::Val, !Matched::DifferentiationInterface.Pushfo
-rwardSlow, ::F, !Matched::ADTypes.AbstractADType, ::Any, !Matched::Tuple{Va
-rarg{T, N}} where {N, T}, !Matched::DifferentiationInterface.Context...) wh
-ere {F, C}
-   @ DifferentiationInterface /cache/julia-buildkite-plugin/depots/5b300254
--1738-4989-ae0a-f4d2d937f953/packages/DifferentiationInterface/afUhd/src/fi
-rst_order/pushforward.jl:283
-```
-
-
+![](figures/BrusselatorSparseAD_10_1.png)
 
 
 
@@ -338,22 +289,47 @@ rst_order/pushforward.jl:283
 ```julia
 let
     pl = plot(;
-        title = "Sparsity detection: Symbolics vs SparseConnectivityTracer\nTest case: Brusselator",
+        title = "Sparse AD pipeline on the Brusselator",
         xlabel = "Input size N",
-        ylabel = "Runtime ratio Symbolics / SCT"
+        ylabel = "Runtime [s]"
     )
     plot!(
         pl,
         N_values,
-        td2 ./ td1;
+        td1;
         lw = 2,
-        linestyle = :auto,
-        markershape = :auto,
-        label = "sparsity detection speedup"
+        linestyle = :dot,
+        markershape = :utriangle,
+        label = "sparsity detection (SCT)"
     )
     plot!(
-        pl, N_values, ones(length(N_values)); lw = 3, color = :black, label = "same speed")
-    plot!(pl; xscale = :log10, yscale = :log10, minorgrid = true, legend = :right)
+        pl,
+        N_values,
+        td2;
+        lw = 2,
+        linestyle = :dot,
+        markershape = :dtriangle,
+        label = "sparsity detection (Symbolics)"
+    )
+    plot!(
+        pl,
+        N_values,
+        tc1;
+        lw = 2,
+        linestyle = :dashdot,
+        markershape = :diamond,
+        label = "coloring (SparseMatrixColorings)"
+    )
+    plot!(
+        pl,
+        N_values,
+        tj1;
+        lw = 2,
+        linestyle = :dash,
+        markershape = :pentagon,
+        label = "differentiation (DI + ForwardDiff)"
+    )
+    plot!(pl; xscale = :log10, yscale = :log10, minorgrid = true, legend = :topleft)
     pl
 end
 ```

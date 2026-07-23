@@ -1,7 +1,8 @@
 
 using DifferentiationInterface
 using DifferentiationInterfaceTest
-using Chairmarks, DataFrames
+using Chairmarks
+using DataFrames
 using LinearAlgebra
 using SparseConnectivityTracer: TracerSparsityDetector
 using SparseMatrixColorings
@@ -68,7 +69,7 @@ table = PrettyTables.pretty_table(
     df;
     backend = :markdown,
     column_labels = names(df),
-    formatters = [PrettyTables.fmt__printf("%.1e")],
+    formatters = [PrettyTables.fmt__printf("%.1e")]
 )
 
 Markdown.parse(table)
