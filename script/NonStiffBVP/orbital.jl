@@ -1,5 +1,6 @@
 
 using BoundaryValueDiffEq, OrdinaryDiffEq, BenchmarkTools
+using OrdinaryDiffEqLowOrderRK
 
 y0 = [
     -4.7763169762853989E+06,
@@ -39,12 +40,12 @@ function orbital(dy, y, p, t)
 end
 
 function bc!_generator(resid, sol, init_val)
-    resid[1] = sol[1][1] - init_val[1]
-    resid[2] = sol[1][2] - init_val[2]
-    resid[3] = sol[1][3] - init_val[3]
-    resid[4] = sol[end][1] - init_val[4]
-    resid[5] = sol[end][2] - init_val[5]
-    resid[6] = sol[end][3] - init_val[6]
+    resid[1] = sol.u[1][1] - init_val[1]
+    resid[2] = sol.u[1][2] - init_val[2]
+    resid[3] = sol.u[1][3] - init_val[3]
+    resid[4] = sol.u[end][1] - init_val[4]
+    resid[5] = sol.u[end][2] - init_val[5]
+    resid[6] = sol.u[end][3] - init_val[6]
 end
 cur_bc! = (resid, sol, p, t) -> bc!_generator(resid, sol, init_val)
 resid_f = Array{Float64}(undef, 6)

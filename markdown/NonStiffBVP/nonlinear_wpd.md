@@ -1,427 +1,402 @@
 ---
-author: "Chris Rackauckas"
-title: "Orbital Dynamics BVP Benchmark"
+author: "Qingyu Qu"
+title: "Nonlinear BVP Benchmarks"
 ---
 
 
-This is a benchmark of a small non-stiff BVP.
+This benchmark compares the runtime and error of BVP solvers, including MIRK solvers, FIRK solvers, Shooting solvers and FORTRAN BVP solvers on nonlinear boundary value problems.
+The testing BVPs are a set of standard BVP test problems as described [here](https://archimede.uniba.it/~bvpsolvers/testsetbvpsolvers/?page_id=29).
+The problems are implemented in [BVProblemLibrary.jl](https://github.com/SciML/DiffEqProblemLibrary.jl/blob/master/lib/BVProblemLibrary/src/BVProblemLibrary.jl), where you can find the problem function declarations.
+For each problem, we test the following solvers:
+
+- BoundaryValueDiffEq.jl's MIRK methods(including `MIRK4`, `MIRK5`, `MIRK6`).
+- BoundaryValueDiffEq.jl's Shooting methods(including `Shooting`, `MultipleShooting`).
+- BoundaryValueDiffEq.jl's FIRK methods(including `RadauIIa3`, `RadauIIa5`, `RadauIIa7`, `LobattoIIIa4`, `LobattoIIIa5`, `LobattoIIIb4`, `LobattoIIIb5`, `LobattoIIIc4`, `LobattoIIIc5`).
+- SimpleBoundaryValueDiffEq.jl's MIRK methods(including `SimpleMIRK4`, `SimpleMIRK5`, `SimpleMIRK6`).
+- FORTRAN BVP solvers from ODEInterface.jl(including `BVPM2` and `COLNEW`).
+
+# Setup
+
+Fetch required packages.
 
 ```julia
-using BoundaryValueDiffEq, OrdinaryDiffEq, BenchmarkTools
-using OrdinaryDiffEqLowOrderRK
+using BoundaryValueDiffEq, SimpleBoundaryValueDiffEq, OrdinaryDiffEq, ODEInterface, DiffEqDevTools, BenchmarkTools,
+      BVProblemLibrary, CairoMakie, NonlinearSolveFirstOrder
+```
 
-y0 = [
-    -4.7763169762853989E+06,
-    -3.8386398704441520E+05,
-    -5.3500183933132319E+06,
-    -5528.612564911408,
-    1216.8442360202787,
-    4845.114446429901
-]
-init_val = [
-    -4.7763169762853989E+06,
-    -3.8386398704441520E+05,
-    -5.3500183933132319E+06,
-    7.0526926403748598E+06,
-    -7.9650476230388973E+05,
-    -1.1911128863666430E+06
-]
-J2 = 1.08262668E-3
-req = 6378137
-myu = 398600.4418E+9
-t0 = 86400 * 2.3577475462484435E+04
-t1 = 86400 * 2.3577522023524125E+04
-tspan = (t0, t1)
 
-# ODE solver
-function orbital(dy, y, p, t)
-    r2 = (y[1]^2 + y[2]^2 + y[3]^2)
-    r3 = r2^(3 / 2)
-    w = 1 + 1.5J2 * (req * req / r2) * (1 - 5y[3] * y[3] / r2)
-    w2 = 1 + 1.5J2 * (req * req / r2) * (3 - 5y[3] * y[3] / r2)
-    dy[1] = y[4]
-    dy[2] = y[5]
-    dy[3] = y[6]
-    dy[4] = -myu * y[1] * w / r3
-    dy[5] = -myu * y[2] * w / r3
-    dy[6] = -myu * y[3] * w2 / r3
+
+
+Set up the benchmarked solvers.
+
+```julia
+solvers_all = [
+    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK4",                solver = Dict(:alg => MIRK4(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK5",                solver = Dict(:alg => MIRK5(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :mirk,         name = "MIRK6",                solver = Dict(:alg => MIRK6(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "RadauIIa3",            solver = Dict(:alg => RadauIIa3(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "RadauIIa5",            solver = Dict(:alg => RadauIIa5(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "RadauIIa7",            solver = Dict(:alg => RadauIIa7(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIa4",         solver = Dict(:alg => LobattoIIIa4(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIa5",         solver = Dict(:alg => LobattoIIIa5(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIb4",         solver = Dict(:alg => LobattoIIIb4(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIb5",         solver = Dict(:alg => LobattoIIIb5(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIc4",         solver = Dict(:alg => LobattoIIIc4(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :firk,         name = "LobattoIIIc5",         solver = Dict(:alg => LobattoIIIc5(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,          type = :shooting,     name = "Single Shooting",      solver = Dict(:alg => Shooting(Tsit5(), NewtonRaphson()))),
+    (; pkg = :boundaryvaluediffeq,          type = :shooting,     name = "Multiple Shooting",    solver = Dict(:alg => MultipleShooting(10, Tsit5()))),
+    (; pkg = :wrapper,                      type = :general,      name = "BVPM2",                solver = Dict(:alg => BVPM2(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+    (; pkg = :wrapper,                      type = :general,      name = "COLNEW",               solver = Dict(:alg => COLNEW(), :dts=>1.0 ./ 5.0 .^ (1:4))),
+];
+
+solver_tracker = [];
+wp_general_tracker = [];
+```
+
+
+
+
+Sets tolerances.
+
+```julia
+abstols = 1.0 ./ 10.0 .^ (1:4)
+reltols = 1.0 ./ 10.0 .^ (1:4);
+```
+
+
+
+
+Prepares helper function for benchmarking a specific problem.
+
+```julia
+function benchmark(prob)
+    sol = solve(prob, MIRK6(), dt = 0.01, abstol = 1e-6)
+    testsol = TestSolution(sol)
+    wps = WorkPrecisionSet(prob, abstols, reltols, getfield.(solvers_all, :solver); names = getfield.(solvers_all, :name), appxsol = testsol, maxiters=Int(1e4))
+    push!(wp_general_tracker, wps)
+    return wps
 end
 
-function bc!_generator(resid, sol, init_val)
-    resid[1] = sol.u[1][1] - init_val[1]
-    resid[2] = sol.u[1][2] - init_val[2]
-    resid[3] = sol.u[1][3] - init_val[3]
-    resid[4] = sol.u[end][1] - init_val[4]
-    resid[5] = sol.u[end][2] - init_val[5]
-    resid[6] = sol.u[end][3] - init_val[6]
+function plot_wpd(wp_set)
+    fig = begin
+        LINESTYLES = Dict(:boundaryvaluediffeq => :solid, :simpleboundaryvaluediffeq => :dash, :wrapper => :dot)
+        ASPECT_RATIO = 0.7
+        WIDTH = 1200
+        HEIGHT = round(Int, WIDTH * ASPECT_RATIO)
+        STROKEWIDTH = 2.5
+
+    colors = cgrad(:seaborn_bright, length(solvers_all); categorical = true)
+    cycle = Cycle([:marker], covary = true)
+        plot_theme = Theme(Lines = (; cycle), Scatter = (; cycle))
+
+        with_theme(plot_theme) do 
+            fig = Figure(; size = (WIDTH, HEIGHT))
+            ax = Axis(fig[1, 1], ylabel = L"Time $\mathbf{(s)}$",
+                xlabelsize = 22, ylabelsize = 22,
+                xlabel = L"Error: $\mathbf{||f(u^\ast)||_2}$",
+                xscale = log10, yscale = log10, xtickwidth = STROKEWIDTH,
+                ytickwidth = STROKEWIDTH, spinewidth = STROKEWIDTH,
+                xticklabelsize = 20, yticklabelsize = 20)
+
+            idxs = sortperm(median.(getfield.(wp_set.wps, :times)))
+
+            ls, scs = [], []
+
+            for (i, (wp, solver)) in enumerate(zip(wp_set.wps[idxs], solvers_all[idxs]))
+                (; name, times, errors) = wp
+                errors = [err.l∞ for err in errors]
+                l = lines!(ax, errors, times; linestyle = LINESTYLES[solver.pkg], label = name,
+                    linewidth = 5, color = colors[i])
+                sc = scatter!(ax, errors, times; label = name, markersize = 16, strokewidth = 2,
+                    color = colors[i])
+                push!(ls, l)
+                push!(scs, sc)
+            end
+
+            xlims!(ax; high=1)
+            ylims!(ax; low=5e-7)
+
+            Legend(fig[1,2], [[l, sc] for (l, sc) in zip(ls, scs)],
+                [solver.name for solver in solvers_all[idxs]], "BVP Solvers";
+                framevisible=true, framewidth = STROKEWIDTH, position = :rb,
+                titlesize = 20, labelsize = 16, patchsize = (40.0f0, 20.0f0))
+
+            fig[0, :] = Label(fig, "Nonlinear BVP Benchmark",
+                fontsize = 24, tellwidth = false, font = :bold)
+            fig
+        end
+    end
 end
-cur_bc! = (resid, sol, p, t) -> bc!_generator(resid, sol, init_val)
-resid_f = Array{Float64}(undef, 6)
-bvp = BVProblem(orbital, cur_bc!, y0, tspan)
 ```
 
 ```
-BVProblem with uType Vector{Float64} and tType Float64. In-place: true
-Non-trivial mass matrix: false
-timespan: (2.037093879958655e9, 2.0370979028324845e9)
-u0: 6-element Vector{Float64}:
-      -4.776316976285399e6
- -383863.9870444152
-      -5.350018393313232e6
-   -5528.612564911408
-    1216.8442360202787
-    4845.114446429901
+plot_wpd (generic function with 1 method)
 ```
 
 
+
+
+
+# Benchmarks
+
+We here run benchmarks for each of the 18 test problems.
+
+### Nonlinear BVP 1
 
 ```julia
-@btime sol = solve(bvp, Shooting(DP5()), abstol = 1e-13, reltol = 1e-13)
+prob_1 = BVProblemLibrary.prob_bvp_nonlinear_1
+wps = benchmark(prob_1)
+plot_wpd(wps)
 ```
 
-```
-7.031 s (167262117 allocations: 5.29 GiB)
-retcode: MaxIters
-Interpolation: specialized 4th order "free" interpolation
-t: 355-element Vector{Float64}:
- 2.037093879958655e9
- 2.0370938799641182e9
- 2.0370938801512384e9
- 2.0370938820224414e9
- 2.0370938884329865e9
- 2.0370938961465425e9
- 2.0370939059647732e9
- 2.0370939165297284e9
- 2.0370939277397585e9
- 2.0370939392171311e9
- ⋮
- 2.037097814756031e9
- 2.0370978258130968e9
- 2.0370978368880422e9
- 2.0370978479810276e9
- 2.0370978590921814e9
- 2.0370978702215917e9
- 2.0370978813693345e9
- 2.03709789253547e9
- 2.0370979028324845e9
-u: 355-element Vector{Vector{Float64}}:
- [-4.776316976285399e6, -383863.9870444152, -5.350018393313232e6, -5528.612
-564592406, 1216.844236143174, 4845.11444692655]
- [-4.776347179792942e6, -383857.33924793167, -5.349991923689111e6, -5528.58
-45539234515, 1216.8464872835436, 4845.145902432757]
- [-4.77738160040319e6, -383629.6353603916, -5.349085197757464e6, -5527.6250
-41330385, 1216.9235685398828, 4846.223204762534]
- [-4.787715924054188e6, -381351.80483926245, -5.340006857800779e6, -5518.01
-8440865948, 1217.6918692278336, 4856.986237086682]
- [-4.822983565016326e6, -373537.3820244497, -5.308753069112733e6, -5484.949
-477723145, 1220.2893285183677, 4893.7210703411365]
- [-4.865137549905013e6, -364112.7825462858, -5.270835501096294e6, -5444.836
-759806182, 1223.3434965157032, 4937.637265190414]
- [-4.918343546720241e6, -352083.08017841296, -5.222084040354701e6, -5393.27
-3966799285, 1227.1181296397822, 4993.081025796064]
- [-4.975027409430064e6, -339097.79502990143, -5.169019720130798e6, -5337.16
-3225160314, 1231.0381951823358, 5052.165942002851]
- [-5.034520198782796e6, -325275.2539965115, -5.1120364576515565e6, -5276.92
-3778854683, 1235.0365231368196, 5114.198171291298]
- [-5.094727939435949e6, -311077.6093978765, -5.052977823428799e6, -5214.506
-375855925, 1238.9577896796543, 5176.996707248864]
- ⋮
- [7.141567748365133e6, -707593.1814534625, -548146.7780403654, -673.5762689
-706605, -1044.2596544786438, -7336.153503505562]
- [7.133652847776803e6, -719093.0781515416, -629225.3783519891, -758.0541589
-816306, -1035.816811322863, -7329.168300485946]
- [7.124789334576335e6, -730517.2370616008, -710352.3267160401, -842.5709167
-034634, -1027.2242620339368, -7321.2077385888815]
- [7.114973672226476e6, -741863.8586729293, -791517.6872949702, -927.1160768
-521991, -1018.4823539870123, -7312.268028668644]
- [7.1042024307257375e6, -753131.1031313551, -872711.1937436154, -1011.67883
-02408288, -1009.5914806709006, -7302.345488640358]
- [7.092472311383038e6, -764317.083147447, -953922.1876374753, -1096.2479599
-402618, -1000.552090971004, -7291.436568115281]
- [7.079780132271668e6, -775419.8941703003, -1.0351398275940476e6, -1180.812
-0593279841, -991.3646682873698, -7279.537836443597]
- [7.066122839858354e6, -786437.6115810609, -1.1163530638488934e6, -1265.359
-5058005674, -982.0297345781847, -7266.645994334698]
- [7.052692640378164e6, -796504.7623015011, -1.1911128863488333e6, -1343.177
-8210169875, -973.3050713280891, -7253.895584588747]
-```
+![](figures/nonlinear_wpd_5_1.png)
 
 
+
+### Nonlinear BVP 2
 
 ```julia
-dt = (t1 - t0) / 100
-@btime sol = solve(bvp, MIRK2(), dt = $dt, abstol = 1e-13, reltol = 1e-13)
+prob_2 = BVProblemLibrary.prob_bvp_nonlinear_2
+wps = benchmark(prob_2)
+plot_wpd(wps)
 ```
 
-```
-28.320 s (327932617 allocations: 6.29 GiB)
-retcode: Unstable
-Interpolation: MIRK Order 2 Interpolation
-t: 1617-element Vector{Float64}:
- 2.037093879958655e9
- 2.0370938824480572e9
- 2.0370938849374595e9
- 2.0370938874268615e9
- 2.0370938899162636e9
- 2.0370938924056656e9
- 2.0370938948950677e9
- 2.03709389738447e9
- 2.037093899873872e9
- 2.037093902363274e9
- ⋮
- 2.0370978829172676e9
- 2.0370978854066696e9
- 2.037097887896072e9
- 2.037097890385474e9
- 2.037097892874876e9
- 2.037097895364278e9
- 2.0370978978536801e9
- 2.0370979003430824e9
- 2.0370979028324845e9
-u: 1617-element Vector{Vector{Float64}}:
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- ⋮
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-```
+![](figures/nonlinear_wpd_6_1.png)
 
 
+
+### Nonlinear BVP 3
 
 ```julia
-@btime sol = solve(bvp, MIRK3(), dt = $dt, abstol = 1e-13, reltol = 1e-13)
+prob_3 = BVProblemLibrary.prob_bvp_nonlinear_3
+wps = benchmark(prob_3)
+plot_wpd(wps)
 ```
 
-```
-28.757 s (335619565 allocations: 6.75 GiB)
-retcode: Unstable
-Interpolation: MIRK Order 3 Interpolation
-t: 1617-element Vector{Float64}:
- 2.037093879958655e9
- 2.0370938824480572e9
- 2.0370938849374595e9
- 2.0370938874268615e9
- 2.0370938899162636e9
- 2.0370938924056656e9
- 2.0370938948950677e9
- 2.03709389738447e9
- 2.037093899873872e9
- 2.037093902363274e9
- ⋮
- 2.0370978829172676e9
- 2.0370978854066696e9
- 2.037097887896072e9
- 2.037097890385474e9
- 2.037097892874876e9
- 2.037097895364278e9
- 2.0370978978536801e9
- 2.0370979003430824e9
- 2.0370979028324845e9
-u: 1617-element Vector{Vector{Float64}}:
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- ⋮
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-```
+![](figures/nonlinear_wpd_7_1.png)
 
 
+
+### Nonlinear BVP 4
 
 ```julia
-@btime sol = solve(bvp, MIRK4(), dt = $dt, abstol = 1e-13, reltol = 1e-13)
+prob_4 = BVProblemLibrary.prob_bvp_nonlinear_4
+wps = benchmark(prob_4)
+plot_wpd(wps)
 ```
 
-```
-33.394 s (450572505 allocations: 8.93 GiB)
-retcode: Unstable
-Interpolation: MIRK Order 4 Interpolation
-t: 1617-element Vector{Float64}:
- 2.037093879958655e9
- 2.0370938824480572e9
- 2.0370938849374595e9
- 2.0370938874268615e9
- 2.0370938899162636e9
- 2.0370938924056656e9
- 2.0370938948950677e9
- 2.03709389738447e9
- 2.037093899873872e9
- 2.037093902363274e9
- ⋮
- 2.0370978829172676e9
- 2.0370978854066696e9
- 2.037097887896072e9
- 2.037097890385474e9
- 2.037097892874876e9
- 2.037097895364278e9
- 2.0370978978536801e9
- 2.0370979003430824e9
- 2.0370979028324845e9
-u: 1617-element Vector{Vector{Float64}}:
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- ⋮
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-```
+![](figures/nonlinear_wpd_8_1.png)
 
 
+
+### Nonlinear BVP 5
 
 ```julia
-@btime sol = solve(bvp, MIRK5(), dt = $dt, abstol = 1e-13, reltol = 1e-13)
+prob_5 = BVProblemLibrary.prob_bvp_nonlinear_5
+wps = benchmark(prob_5)
+plot_wpd(wps)
 ```
 
-```
-41.460 s (676165609 allocations: 12.80 GiB)
-retcode: Unstable
-Interpolation: MIRK Order 5 Interpolation
-t: 1617-element Vector{Float64}:
- 2.037093879958655e9
- 2.0370938824480572e9
- 2.0370938849374595e9
- 2.0370938874268615e9
- 2.0370938899162636e9
- 2.0370938924056656e9
- 2.0370938948950677e9
- 2.03709389738447e9
- 2.037093899873872e9
- 2.037093902363274e9
- ⋮
- 2.0370978829172676e9
- 2.0370978854066696e9
- 2.037097887896072e9
- 2.037097890385474e9
- 2.037097892874876e9
- 2.037097895364278e9
- 2.0370978978536801e9
- 2.0370979003430824e9
- 2.0370979028324845e9
-u: 1617-element Vector{Vector{Float64}}:
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- ⋮
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-```
+![](figures/nonlinear_wpd_9_1.png)
 
 
+
+### Nonlinear BVP 6
 
 ```julia
-@btime sol = solve(bvp, MIRK6(), dt = $dt, abstol = 1e-13, reltol = 1e-13)
+prob_6 = BVProblemLibrary.prob_bvp_nonlinear_6
+wps = benchmark(prob_6)
+plot_wpd(wps)
 ```
 
-```
-54.744 s (1015817632 allocations: 18.59 GiB)
-retcode: Unstable
-Interpolation: MIRK Order 6 Interpolation
-t: 1617-element Vector{Float64}:
- 2.037093879958655e9
- 2.0370938824480572e9
- 2.0370938849374595e9
- 2.0370938874268615e9
- 2.0370938899162636e9
- 2.0370938924056656e9
- 2.0370938948950677e9
- 2.03709389738447e9
- 2.037093899873872e9
- 2.037093902363274e9
- ⋮
- 2.0370978829172676e9
- 2.0370978854066696e9
- 2.037097887896072e9
- 2.037097890385474e9
- 2.037097892874876e9
- 2.037097895364278e9
- 2.0370978978536801e9
- 2.0370979003430824e9
- 2.0370979028324845e9
-u: 1617-element Vector{Vector{Float64}}:
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- ⋮
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+![](figures/nonlinear_wpd_10_1.png)
+
+
+
+### Nonlinear BVP 7
+
+```julia
+prob_7 = BVProblemLibrary.prob_bvp_nonlinear_7
+wps = benchmark(prob_7)
+plot_wpd(wps)
 ```
 
+![](figures/nonlinear_wpd_11_1.png)
 
 
 
+### Nonlinear BVP 8
 
-## Appendix
+```julia
+prob_8 = BVProblemLibrary.prob_bvp_nonlinear_8
+wps = benchmark(prob_8)
+plot_wpd(wps)
+```
+
+![](figures/nonlinear_wpd_12_1.png)
+
+
+
+### Nonlinear BVP 9
+
+```julia
+prob_9 = BVProblemLibrary.prob_bvp_nonlinear_9
+wps = benchmark(prob_9)
+plot_wpd(wps)
+```
+
+![](figures/nonlinear_wpd_13_1.png)
+
+
+
+### Nonlinear BVP 10
+
+```julia
+prob_10 = BVProblemLibrary.prob_bvp_nonlinear_10
+wps = benchmark(prob_10)
+plot_wpd(wps)
+```
+
+![](figures/nonlinear_wpd_14_1.png)
+
+
+
+### Nonlinear BVP 11
+
+```julia
+prob_11 = BVProblemLibrary.prob_bvp_nonlinear_11
+wps = benchmark(prob_11)
+plot_wpd(wps)
+```
+
+![](figures/nonlinear_wpd_15_1.png)
+
+
+
+### Nonlinear BVP 12
+
+```julia
+prob_12 = BVProblemLibrary.prob_bvp_nonlinear_12
+wps = benchmark(prob_12)
+plot_wpd(wps)
+```
+
+![](figures/nonlinear_wpd_16_1.png)
+
+
+
+### Nonlinear BVP 13
+
+```julia
+prob_13 = BVProblemLibrary.prob_bvp_nonlinear_13
+wps = benchmark(prob_13)
+plot_wpd(wps)
+```
+
+![](figures/nonlinear_wpd_17_1.png)
+
+
+
+### Nonlinear BVP 14
+
+```julia
+prob_14 = BVProblemLibrary.prob_bvp_nonlinear_14
+wps = benchmark(prob_14)
+plot_wpd(wps)
+```
+
+![](figures/nonlinear_wpd_18_1.png)
+
+
+
+### Nonlinear BVP 15
+
+```julia
+prob_15 = BVProblemLibrary.prob_bvp_nonlinear_15
+wps = benchmark(prob_15)
+plot_wpd(wps)
+```
+
+![](figures/nonlinear_wpd_19_1.png)
+
+
+
+# Summary of General Solvers Performance on All Problems
+
+```julia
+fig = begin
+    LINESTYLES = Dict(:boundaryvaluediffeq => :solid, :wrapper => :dot)
+    ASPECT_RATIO = 0.7
+    WIDTH = 1800
+    HEIGHT = round(Int, WIDTH * ASPECT_RATIO)
+    STROKEWIDTH = 2.5
+
+    colors = cgrad(:seaborn_bright, length(solvers_all); categorical = true)
+    cycle = Cycle([:marker], covary = true)
+    plot_theme = Theme(Lines = (; cycle), Scatter = (; cycle))
+
+    with_theme(plot_theme) do
+        fig = Figure(; size = (WIDTH, HEIGHT))
+
+        ls = []
+        scs = []
+        labels = []
+        solver_times = []
+
+        for i in 1:3, j in 1:5
+            idx = 5 * (i - 1) + j
+
+            idx > length(wp_general_tracker) && break
+
+            wp = wp_general_tracker[idx]
+
+            ax = Axis(fig[i, j],
+                xscale = log10, yscale = log10,
+                xtickwidth = STROKEWIDTH,
+                ytickwidth = STROKEWIDTH, spinewidth = STROKEWIDTH,
+                title = "No. $(idx) Nonlinear BVP benchmarking", titlegap = 10,
+                xticklabelsize = 16, yticklabelsize = 16)
+
+            for wpᵢ in wp.wps
+                idx = findfirst(s -> s.name == wpᵢ.name, solvers_all)
+                errs = getindex.(wpᵢ.errors, :l∞)
+                times = wpᵢ.times
+
+                l = lines!(ax, errs, times; color = colors[idx], linewidth = 5,
+                    linestyle = LINESTYLES[solvers_all[idx].pkg], alpha = 0.8,
+                    label = wpᵢ.name)
+                sc = scatter!(ax, errs, times; color = colors[idx], markersize = 16,
+                    strokewidth = 2, marker = Cycled(idx), alpha = 0.8, label = wpᵢ.name)
+
+                if wpᵢ.name ∉ labels
+                    push!(ls, l)
+                    push!(scs, sc)
+                    push!(labels, wpᵢ.name)
+                end
+            end
+        end
+
+        fig[0, :] = Label(fig, "Work-Precision Diagram for 15 Nonlinear Test Problems",
+            fontsize = 24, tellwidth = false, font = :bold)
+
+        fig[:, 0] = Label(fig, "Time (s)", fontsize = 20, tellheight = false, font = :bold,
+            rotation = π / 2)
+        fig[end + 1, :] = Label(fig,
+            L"Error: $\mathbf{||f(u^\ast)||_2}$",
+            fontsize = 20, tellwidth = false, font = :bold)
+
+        Legend(fig[:, 6], [[l, sc] for (l, sc) in zip(ls, scs)],
+            labels, "BVP Solvers";
+            framevisible=true, framewidth = STROKEWIDTH, orientation = :vertical,
+            titlesize = 20, nbanks = 1, labelsize = 20, halign = :center,
+            tellheight = false, tellwidth = false, patchsize = (40.0f0, 20.0f0))
+
+        return fig
+    end
+end
+```
+
+![](figures/nonlinear_wpd_20_1.png)
 
 
 ## Appendix
@@ -432,7 +407,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/NonStiffBVP","orbital.jmd")
+SciMLBenchmarks.weave_file("benchmarks/NonStiffBVP","nonlinear_wpd.jmd")
 ```
 
 Computer Information:

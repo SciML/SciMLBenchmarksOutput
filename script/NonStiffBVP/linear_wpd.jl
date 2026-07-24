@@ -1,28 +1,51 @@
 
-using BoundaryValueDiffEq, SimpleBoundaryValueDiffEq, OrdinaryDiffEq, ODEInterface, DiffEqDevTools, BenchmarkTools,
-      BVProblemLibrary, CairoMakie
+using BoundaryValueDiffEq, SimpleBoundaryValueDiffEq, OrdinaryDiffEq, ODEInterface,
+      DiffEqDevTools, BenchmarkTools,
+      BVProblemLibrary, CairoMakie, NonlinearSolveFirstOrder
 
 
 solvers_all = [
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,              name = "MIRK4",                solver = Dict(:alg => MIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,              name = "MIRK5",                solver = Dict(:alg => MIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :mirk,              name = "MIRK6",                solver = Dict(:alg => MIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "RadauIIa3",            solver = Dict(:alg => RadauIIa3(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "RadauIIa5",            solver = Dict(:alg => RadauIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "RadauIIa7",            solver = Dict(:alg => RadauIIa7(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIa4",         solver = Dict(:alg => LobattoIIIa4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIa5",         solver = Dict(:alg => LobattoIIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIb4",         solver = Dict(:alg => LobattoIIIb4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIb5",         solver = Dict(:alg => LobattoIIIb5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIc4",         solver = Dict(:alg => LobattoIIIc4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :firk,              name = "LobattoIIIc5",         solver = Dict(:alg => LobattoIIIc5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :shooting,          name = "Single Shooting",      solver = Dict(:alg => Shooting(Tsit5(), NewtonRaphson()), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :boundaryvaluediffeq,          type = :shooting,          name = "Multiple Shooting",    solver = Dict(:alg => MultipleShooting(10, Tsit5()), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,        name = "SimpleMIRK4",          solver = Dict(:alg => SimpleMIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,        name = "SimpleMIRK5",          solver = Dict(:alg => SimpleMIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :simpleboundaryvaluediffeq,    type = :simplemirk,        name = "SimpleMIRK6",          solver = Dict(:alg => SimpleMIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :wrapper,                      type = :general,           name = "BVPM2",                solver = Dict(:alg => BVPM2(), :dts=>1.0 ./ 10.0 .^ (1:4))),
-    (; pkg = :wrapper,                      type = :general,           name = "COLNEW",               solver = Dict(:alg => COLNEW(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :mirk, name = "MIRK4",
+        solver = Dict(:alg => MIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :mirk, name = "MIRK5",
+        solver = Dict(:alg => MIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :mirk, name = "MIRK6",
+        solver = Dict(:alg => MIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :firk, name = "RadauIIa3",
+        solver = Dict(:alg => RadauIIa3(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :firk, name = "RadauIIa5",
+        solver = Dict(:alg => RadauIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :firk, name = "RadauIIa7",
+        solver = Dict(:alg => RadauIIa7(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :firk, name = "LobattoIIIa4",
+        solver = Dict(:alg => LobattoIIIa4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :firk, name = "LobattoIIIa5",
+        solver = Dict(:alg => LobattoIIIa5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :firk, name = "LobattoIIIb4",
+        solver = Dict(:alg => LobattoIIIb4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :firk, name = "LobattoIIIb5",
+        solver = Dict(:alg => LobattoIIIb5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :firk, name = "LobattoIIIc4",
+        solver = Dict(:alg => LobattoIIIc4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :firk, name = "LobattoIIIc5",
+        solver = Dict(:alg => LobattoIIIc5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq,
+        type = :shooting,
+        name = "Single Shooting",
+        solver = Dict(:alg => Shooting(Tsit5(), NewtonRaphson()), :dts=>1.0 ./
+                                                                        10.0 .^ (1:4))),
+    (; pkg = :boundaryvaluediffeq, type = :shooting, name = "Multiple Shooting",
+        solver = Dict(:alg => MultipleShooting(10, Tsit5()), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :simpleboundaryvaluediffeq, type = :simplemirk, name = "SimpleMIRK4",
+        solver = Dict(:alg => SimpleMIRK4(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :simpleboundaryvaluediffeq, type = :simplemirk, name = "SimpleMIRK5",
+        solver = Dict(:alg => SimpleMIRK5(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :simpleboundaryvaluediffeq, type = :simplemirk, name = "SimpleMIRK6",
+        solver = Dict(:alg => SimpleMIRK6(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :wrapper, type = :general, name = "BVPM2",
+        solver = Dict(:alg => BVPM2(), :dts=>1.0 ./ 10.0 .^ (1:4))),
+    (; pkg = :wrapper, type = :general, name = "COLNEW",
+        solver = Dict(:alg => COLNEW(), :dts=>1.0 ./ 10.0 .^ (1:4)))
 ];
 
 solver_tracker = [];
@@ -34,9 +57,10 @@ reltols = 1.0 ./ 10.0 .^ (1:3);
 
 
 function benchmark(prob)
-    sol = solve(prob, Shooting(Vern7()), abstol=1e-14, reltol=1e-14)
+    sol = solve(prob, Shooting(Vern7()), abstol = 1e-14, reltol = 1e-14)
     testsol = TestSolution(sol)
-    wps = WorkPrecisionSet(prob, abstols, reltols, getfield.(solvers_all, :solver); names = getfield.(solvers_all, :name), appxsol = testsol, maxiters=Int(1e4))
+    wps = WorkPrecisionSet(prob, abstols, reltols, getfield.(solvers_all, :solver);
+        names = getfield.(solvers_all, :name), appxsol = testsol, maxiters = Int(1e4))
     push!(wp_general_tracker, wps)
     return wps
 end
@@ -49,11 +73,11 @@ function plot_wpd(wp_set)
         HEIGHT = round(Int, WIDTH * ASPECT_RATIO)
         STROKEWIDTH = 2.5
 
-    colors = cgrad(:seaborn_bright, length(solvers_all); categorical = true)
-    cycle = Cycle([:marker], covary = true)
+        colors = cgrad(:seaborn_bright, length(solvers_all); categorical = true)
+        cycle = Cycle([:marker], covary = true)
         plot_theme = Theme(Lines = (; cycle), Scatter = (; cycle))
 
-        with_theme(plot_theme) do 
+        with_theme(plot_theme) do
             fig = Figure(; size = (WIDTH, HEIGHT))
             ax = Axis(fig[1, 1], ylabel = L"Time $\mathbf{(s)}$",
                 xlabelsize = 22, ylabelsize = 22,
@@ -69,20 +93,22 @@ function plot_wpd(wp_set)
             for (i, (wp, solver)) in enumerate(zip(wp_set.wps[idxs], solvers_all[idxs]))
                 (; name, times, errors) = wp
                 errors = [err.l∞ for err in errors]
-                l = lines!(ax, errors, times; linestyle = LINESTYLES[solver.pkg], label = name,
+                l = lines!(
+                    ax, errors, times; linestyle = LINESTYLES[solver.pkg], label = name,
                     linewidth = 5, color = colors[i])
-                sc = scatter!(ax, errors, times; label = name, markersize = 16, strokewidth = 2,
+                sc = scatter!(
+                    ax, errors, times; label = name, markersize = 16, strokewidth = 2,
                     color = colors[i])
                 push!(ls, l)
                 push!(scs, sc)
             end
 
-            xlims!(ax; high=1)
-            ylims!(ax; low=5e-6)
+            xlims!(ax; high = 1)
+            ylims!(ax; low = 5e-6)
 
             axislegend(ax, [[l, sc] for (l, sc) in zip(ls, scs)],
                 [solver.name for solver in solvers_all[idxs]], "BVP Solvers";
-                framevisible=true, framewidth = STROKEWIDTH, position = :rb,
+                framevisible = true, framewidth = STROKEWIDTH, position = :rb,
                 titlesize = 20, labelsize = 16, patchsize = (40.0f0, 20.0f0))
 
             fig[0, :] = Label(fig, "Linear BVP Benchmark",
@@ -205,6 +231,7 @@ fig = begin
         solver_times = []
 
         for i in 1:4, j in 1:5
+
             idx = 5 * (i - 1) + j
 
             idx > length(wp_general_tracker) && break
@@ -248,7 +275,7 @@ fig = begin
 
         Legend(fig[4, 4:5], [[l, sc] for (l, sc) in zip(ls, scs)],
             labels, "BVP Solvers";
-            framevisible=true, framewidth = STROKEWIDTH, orientation = :horizontal,
+            framevisible = true, framewidth = STROKEWIDTH, orientation = :horizontal,
             titlesize = 20, nbanks = 9, labelsize = 20, halign = :center,
             tellheight = false, tellwidth = false, patchsize = (40.0f0, 20.0f0))
 
@@ -257,6 +284,9 @@ fig = begin
 end
 
 
+save("summary_wp_18test_problems.svg", fig)
+
+
 using SciMLBenchmarks
-SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
 
