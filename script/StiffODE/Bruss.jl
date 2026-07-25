@@ -3,6 +3,7 @@ using OrdinaryDiffEq, DiffEqDevTools, Sundials, ParameterizedFunctions, Plots,
       ODEInterfaceDiffEq, LSODA, SparseArrays, LinearSolve,
       LinearAlgebra, IncompleteLU, AlgebraicMultigrid, Symbolics, ModelingToolkit,
       RecursiveFactorization
+using OrdinaryDiffEqBDF, OrdinaryDiffEqSDIRK, OrdinaryDiffEqStabilizedRK
 gr()
 
 const N = 8
@@ -265,22 +266,22 @@ plot(sol, idxs = 1)
 plot(sol, idxs = 10)
 
 
-function incompletelu(W, du, u, p, t, newW, Plprev, Prprev, solverdata)
-    if newW === nothing || newW
-        Pl = ilu(convert(AbstractMatrix, W), τ = 50.0)
-    else
-        Pl = Plprev
-    end
-    Pl, nothing
+function incompletelu(A, p)
+    W = convert(AbstractMatrix, A)
+    W = W isa SparseMatrixCSC ? W : sparse(W)
+
+    Pl = ilu(W; τ = 50.0)
+
+    return Pl, I
 end
 
-function algebraicmultigrid(W, du, u, p, t, newW, Plprev, Prprev, solverdata)
-    if newW === nothing || newW
-        Pl = aspreconditioner(ruge_stuben(convert(AbstractMatrix, W)))
-    else
-        Pl = Plprev
-    end
-    Pl, nothing
+function algebraicmultigrid(A, p)
+    W = convert(AbstractMatrix, A)
+    W = W isa SparseMatrixCSC ? W : sparse(W)
+
+    Pl = aspreconditioner(ruge_stuben(W))
+
+    return Pl, I
 end
 
 
@@ -383,18 +384,20 @@ setups = [
     Dict(:alg=>KenCarp47(linsolve = UMFPACKFactorization()), :prob_choice => 2),
     Dict(:alg=>KenCarp47(linsolve = KrylovJL_GMRES())),
     Dict(:alg=>KenCarp47(linsolve = KrylovJL_GMRES()), :prob_choice => 2),
-    Dict(:alg=>KenCarp47(linsolve = KrylovJL_GMRES(), precs = incompletelu, concrete_jac = true)),
+    Dict(:alg=>KenCarp47(linsolve = KrylovJL_GMRES(; precs = incompletelu), concrete_jac = true)),
     Dict(
-        :alg=>KenCarp47(linsolve = KrylovJL_GMRES(), precs = incompletelu, concrete_jac = true),
+        :alg=>KenCarp47(linsolve = KrylovJL_GMRES(; precs = incompletelu), concrete_jac = true),
         :prob_choice => 2),
-    Dict(:alg=>KenCarp47(linsolve = KrylovJL_GMRES(), precs = algebraicmultigrid, concrete_jac = true)),
-    Dict(
-        :alg=>KenCarp47(linsolve = KrylovJL_GMRES(), precs = algebraicmultigrid, concrete_jac = true),
-        :prob_choice => 2)]
+    #Dict(:alg=>KenCarp47(linsolve = KrylovJL_GMRES(; precs = algebraicmultigrid), concrete_jac = true)),
+    #Dict(
+    #    :alg=>KenCarp47(linsolve = KrylovJL_GMRES(; precs = algebraicmultigrid), concrete_jac = true),
+    #    :prob_choice => 2)
+]
 names = ["KenCarp47 KLU", "KenCarp47 KLU MTK", "KenCarp47 UMFPACK",
     "KenCarp47 UMFPACK MTK", "KenCarp47 GMRES",
-    "KenCarp47 GMRES MTK", "KenCarp47 iLU GMRES", "KenCarp47 iLU GMRES MTK", "KenCarp47 AMG GMRES",
-    "KenCarp47 AMG GMRES MTK"];
+    "KenCarp47 GMRES MTK", "KenCarp47 iLU GMRES", "KenCarp47 iLU GMRES MTK"
+    #, "KenCarp47 AMG GMRES", "KenCarp47 AMG GMRES MTK"
+];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; names = names,
     save_everystep = false, appxsol = test_sol, maxiters = Int(1e5), numruns = 10)
 plot(wp)
@@ -420,11 +423,14 @@ setups = [
     Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 2),
     Dict(
         :alg=>CVODE_BDF(linear_solver = :GMRES, prec = precilu, psetup = psetupilu, prec_side = 1),
-        :prob_choice => 2)
+        :prob_choice => 2),
+    Dict(:alg=>ROCK4(), :prob_choice => 2),
+    Dict(:alg=>TSRKC3(), :prob_choice => 2),
 ]
 names = ["KenCarp47 KLU MTK", "KenCarp47 GMRES MTK",
     "FBDF KLU MTK", "FBDF GMRES MTK",
-    "CVODE MTK KLU", "CVODE iLU MTK GMRES"
+    "CVODE MTK KLU", "CVODE iLU MTK GMRES",
+    "ROCK4 MTK", "TSRKC3 MTK"
 ];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; names = names,
     save_everystep = false, appxsol = test_sol, maxiters = Int(1e5), numruns = 10)
@@ -463,12 +469,15 @@ setups = [
     Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 2),
     Dict(
         :alg=>CVODE_BDF(linear_solver = :GMRES, prec = precilu, psetup = psetupilu, prec_side = 1),
-        :prob_choice => 2)
+        :prob_choice => 2),
+    Dict(:alg=>ROCK4(), :prob_choice => 2),
+    Dict(:alg=>TSRKC3(), :prob_choice => 2),
 ]
 names = ["KenCarp47 KLU MTK", "KenCarp47 GMRES MTK",
     "FBDF KLU MTK", "FBDF GMRES MTK",
     "Rodas5P GMRES MTK",
-    "CVODE MTK KLU", "CVODE iLU MTK GMRES"
+    "CVODE MTK KLU", "CVODE iLU MTK GMRES",
+    "ROCK4 MTK", "TSRKC3 MTK"
 ];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; names = names,
     save_everystep = false, appxsol = test_sol, maxiters = Int(1e5), numruns = 10)
