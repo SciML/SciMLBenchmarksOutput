@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Turing.jl Model AD Backend Comparison · The SciML Benchmarks</title><meta name="title" content="Turing.jl Model AD Backend Comparison · The SciML Benchmarks"/><meta property="og:title" content="Turing.jl Model AD Backend Comparison · The SciML Benchmarks"/><meta property="twitter:title" content="Turing.jl Model AD Backend Comparison · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/AutomaticDifferentiationTuring/TuringADTests/"/><meta property="twitter:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/AutomaticDifferentiationTuring/TuringADTests/"/><link rel="canonical" href="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/AutomaticDifferentiationTuring/TuringADTests/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.050/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Turing.jl Automatic Differentiation</span><ul><li class="is-active"><a class="tocitem" href>Turing.jl Model AD Backend Comparison</a><ul class="internal"><li><a class="tocitem" href="#What-is-measured"><span>What is measured</span></a></li><li><a class="tocitem" href="#Relative-gradient-time-by-model"><span>Relative gradient time by model</span></a></li><li><a class="tocitem" href="#Absolute-gradient-time-by-model"><span>Absolute gradient time by model</span></a></li><li><a class="tocitem" href="#Summary"><span>Summary</span></a></li><li><a class="tocitem" href="#Failures"><span>Failures</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li><li><a class="tocitem" href="../../DAE/andrews_mechanism/">Andrews&#39; Squeezing Mechanism DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/caraxis/">Car Axis DAE Benchmark</a></li><li><a class="tocitem" href="../../DAE/charge_pump/">Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/fekete/">Fekete Problem DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/two_bit_adder/">Two-Bit Adding Unit DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/water_tube/">Water Tube System DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/wheelset/">Wheelset DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/Multibody_Robot/">Multibody Robot, compilation and simulation performance</a></li><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li><li><a class="tocitem" href="../../HybridJumps/VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimization/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_quadratic/">CUTEst Quadratic Programming with Linear Constraints Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unbounded/">CUTEst Unbounded Constrained Nonlinear Optimization Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unconstrained/">CUTEst Unconstrained Nonlinear Optimization Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Neural Network Framework Benchmarks</span></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li><li><span class="tocitem">Optimizaton</span><ul><li><a class="tocitem" href="../../Optimizaton/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Turing.jl Automatic Differentiation</a></li><li class="is-active"><a href>Turing.jl Model AD Backend Comparison</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Turing.jl Model AD Backend Comparison</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/AutomaticDifferentiationTuring/TuringADTests.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Turing.jl-Model-AD-Backend-Comparison"><a class="docs-heading-anchor" href="#Turing.jl-Model-AD-Backend-Comparison">Turing.jl Model AD Backend Comparison</a><a id="Turing.jl-Model-AD-Backend-Comparison-1"></a><a class="docs-heading-anchor-permalink" href="#Turing.jl-Model-AD-Backend-Comparison" title="Permalink"></a></h1><p>This benchmark differentiates the log density of a large collection of <a href="https://turinglang.org/">Turing.jl</a> probabilistic models with every AD backend that Turing supports, and reports both whether each backend gets the right answer and how much it costs relative to a single evaluation of the log density.</p><p>The models and the measurement methodology are taken from <a href="https://github.com/TuringLang/ADTests">TuringLang/ADTests</a>, whose live results are published at <a href="https://turinglang.org/ADTests/">https://turinglang.org/ADTests/</a>. The models are deliberately diverse rather than uniformly large: they cover base Julia control flow and threading, the corners of the <code>@model</code> DSL, individual distributions (including constrained and matrix-variate ones), the models from the DynamicPPL arXiv paper, a slice of <a href="https://github.com/stan-dev/posteriordb">PosteriorDB</a>, and models that call out to ODE/DDE solvers, Lux neural networks, and Gaussian processes. Between them they exercise most of the Julia language features that an AD backend has to cope with, which is what makes this a useful stress test of the AD ecosystem rather than only of Turing.</p><h2 id="What-is-measured"><a class="docs-heading-anchor" href="#What-is-measured">What is measured</a><a id="What-is-measured-1"></a><a class="docs-heading-anchor-permalink" href="#What-is-measured" title="Permalink"></a></h2><p>For each (model, backend) pair we call <code>DynamicPPL.TestUtils.AD.run_ad</code>, which</p><ol><li>builds the <code>LogDensityFunction</code> for the model with all variables linked to unconstrained space,</li><li>checks the gradient against a reference backend (<code>FiniteDifferences</code>, except on <code>dppl_hmm_semisup</code> where finite differences itself fails and <code>ForwardDiff</code> is used instead), and</li><li>benchmarks the primal evaluation and the gradient evaluation with <a href="https://github.com/LilithHafner/Chairmarks.jl">Chairmarks.jl</a>.</li></ol><p>The headline number is the <strong>relative gradient time</strong>, <code>gradient time / primal time</code>. That ratio is the quantity of interest for a sampler: it is how much more expensive one leapfrog step of NUTS is than one likelihood evaluation. Reporting a ratio rather than an absolute time also makes the numbers comparable across models of very different sizes. Absolute gradient times are reported separately below.</p><p>A cell that is not a number is a failure, and failures are as much the point of this benchmark as the timings:</p><table><tr><th style="text-align: left">Status</th><th style="text-align: left">Meaning</th></tr><tr><td style="text-align: left"><code>wrong</code></td><td style="text-align: left">The backend returned a gradient that disagrees with the reference</td></tr><tr><td style="text-align: left"><code>NaN</code></td><td style="text-align: left">The backend returned a gradient containing <code>NaN</code></td></tr><tr><td style="text-align: left"><code>error</code></td><td style="text-align: left">The backend threw an exception</td></tr><tr><td style="text-align: left"><code>crash</code></td><td style="text-align: left">The backend took the whole Julia process down (usually a segfault)</td></tr></table><p>Because of that last row, each model is benchmarked in a separate worker process; if the worker dies, the results already collected are kept and the worker is restarted with the backends that have not run yet.</p><pre><code class="language-julia hljs">using DataFrames, Markdown, Plots, PrettyTables, Printf, Statistics
+
+include(&quot;turing_ad_models.jl&quot;)
+
+const WORKER_SCRIPT = joinpath(@__DIR__, &quot;turing_ad_worker.jl&quot;)
+
+struct Measurement
+    status::String
+    relative::Float64
+    gradient::Float64
+    primal::Float64
+end
+
+Measurement(status) = Measurement(status, NaN, NaN, NaN)
+
+function worker_command(model_name, backends)
+    # The threaded models are written to be run with 4 threads; everything else
+    # is single threaded so that the timings are not at the mercy of how many
+    # cores the benchmark machine happens to have.
+    nthreads = startswith(model_name, &quot;threaded_&quot;) ? 4 : 1
+    return `$(Base.julia_cmd()) --project=$(Base.active_project()) --threads=$nthreads
+            $WORKER_SCRIPT $model_name $backends`
+end</code></pre><pre><code class="nohighlight hljs">worker_command (generic function with 1 method)</code></pre><p>Driving the worker: read its records as they arrive, and restart it if it dies partway through.</p><pre><code class="language-julia hljs">function benchmark_model(model_name)
+    remaining = copy(BACKEND_NAMES)
+    results = Dict{String, Measurement}()
+    messages = Dict{String, String}()
+    dimension = -1
+
+    while !isempty(remaining)
+        inflight = nothing
+        try
+            open(worker_command(model_name, remaining), &quot;r&quot;) do io
+                for line in eachline(io)
+                    # Anything that is not a well-formed record is either the
+                    # worker&#39;s own chatter or a line truncated by a crash.
+                    fields = split(line, &#39;\t&#39;)
+                    if fields[1] == &quot;META&quot; &amp;&amp; length(fields) == 3
+                        dimension = parse(Int, fields[3])
+                    elseif fields[1] == &quot;BEGIN&quot; &amp;&amp; length(fields) == 2
+                        inflight = fields[2]
+                    elseif fields[1] == &quot;MSG&quot; &amp;&amp; length(fields) == 3
+                        messages[fields[2]] = fields[3]
+                    elseif fields[1] == &quot;RESULT&quot; &amp;&amp; length(fields) == 6
+                        results[fields[2]] = Measurement(
+                            fields[3], parse.(Float64, fields[4:6])...
+                        )
+                        inflight = nothing
+                    end
+                end
+            end
+        catch err
+            err isa ProcessFailedException || rethrow()
+        end
+
+        if inflight !== nothing
+            # Record the backend that killed the worker before restarting, so
+            # that the restart does not walk straight back into the same crash.
+            results[inflight] = Measurement(&quot;crash&quot;)
+            messages[inflight] = &quot;the worker process died while running this backend&quot;
+        end
+        filter!(backend -&gt; !haskey(results, backend), remaining)
+        if inflight === nothing &amp;&amp; !isempty(remaining)
+            # The worker died without starting any of the backends it was given,
+            # so it never got as far as building the model; restarting it would
+            # only reproduce that.
+            for backend in remaining
+                results[backend] = Measurement(&quot;crash&quot;)
+                messages[backend] = &quot;the worker process died before building the model&quot;
+            end
+            empty!(remaining)
+        end
+    end
+
+    return (dimension = dimension, results = results, messages = messages)
+end</code></pre><pre><code class="nohighlight hljs">benchmark_model (generic function with 1 method)</code></pre><p>Now run every model. This is the expensive part: each model pays for a fresh Julia process, and <code>FiniteDifferences</code> alone needs <code>4 * dimension + 1</code> log density evaluations for every reference gradient.</p><pre><code class="language-julia hljs">runs = Dict{String, Any}()
+for (i, model_name) in enumerate(MODEL_NAMES)
+    @info &quot;[$i/$(length(MODEL_NAMES))] benchmarking $model_name&quot;
+    # The workers write to the inherited file descriptor rather than through
+    # Julia, so without this the progress log lags hours behind their output.
+    flush(stderr)
+    runs[model_name] = benchmark_model(model_name)
+end</code></pre><pre><code class="language-julia hljs">measurement(model_name, backend) = runs[model_name].results[backend]
+
+df = DataFrame(
+    [
+        (
+            category = CATEGORY_OF[model_name],
+            model = model_name,
+            dimension = runs[model_name].dimension,
+            backend = backend,
+            status = measurement(model_name, backend).status,
+            relative = measurement(model_name, backend).relative,
+            gradient = measurement(model_name, backend).gradient,
+            primal = measurement(model_name, backend).primal,
+        )
+        for model_name in MODEL_NAMES, backend in BACKEND_NAMES
+    ][:]
+)
+first(df, 10)</code></pre><pre><code class="nohighlight hljs">10×8 DataFrame
+ Row │ category             model                          dimension  backe
+nd  ⋯
+     │ String               String                         Int64      Strin
+g   ⋯
+─────┼─────────────────────────────────────────────────────────────────────
+─────
+   1 │ Base Julia features  control_flow                           2  Finit
+eDi ⋯
+   2 │ Base Julia features  threaded_assume                       50  Finit
+eDi
+   3 │ Base Julia features  threaded_observe                       1  Finit
+eDi
+   4 │ Core Turing syntax   assume_submodel                        2  Finit
+eDi
+   5 │ Core Turing syntax   broadcast_macro                        2  Finit
+eDi ⋯
+   6 │ Core Turing syntax   dot_assume                             5  Finit
+eDi
+   7 │ Core Turing syntax   dot_observe                            1  Finit
+eDi
+   8 │ Core Turing syntax   dynamic_constraint                     2  Finit
+eDi
+   9 │ Core Turing syntax   multiple_constraints_same_var          4  Finit
+eDi ⋯
+  10 │ Core Turing syntax   observe_index                          1  Finit
+eDi
+                                                               5 columns om
+itted</code></pre><h2 id="Relative-gradient-time-by-model"><a class="docs-heading-anchor" href="#Relative-gradient-time-by-model">Relative gradient time by model</a><a id="Relative-gradient-time-by-model-1"></a><a class="docs-heading-anchor-permalink" href="#Relative-gradient-time-by-model" title="Permalink"></a></h2><p>Each cell is <code>gradient time / primal time</code>; lower is better. Non-numeric cells are failures, as described above.</p><pre><code class="language-julia hljs">function cell(m)
+    m.status == &quot;ok&quot; || return m.status
+    return m.relative &lt; 100 ? @sprintf(&quot;%.1f&quot;, m.relative) : @sprintf(&quot;%.0f&quot;, m.relative)
+end
+
+function category_table(category, model_names)
+    table = DataFrame(
+        &quot;Model&quot; =&gt; model_names,
+        &quot;Dim&quot; =&gt; [runs[name].dimension for name in model_names],
+    )
+    for backend in BACKEND_NAMES
+        table[!, backend] = [cell(measurement(name, backend)) for name in model_names]
+    end
+    return Markdown.parse(
+        &quot;### $category\n\n&quot; * PrettyTables.pretty_table(
+            String, table; backend = :markdown, column_labels = names(table)
+        )
+    )
+end
+
+for (category, model_names) in MODEL_CATEGORIES
+    display(category_table(category, model_names))
+end</code></pre><h3 id="Base-Julia-features"><a class="docs-heading-anchor" href="#Base-Julia-features">Base Julia features</a><a id="Base-Julia-features-1"></a><a class="docs-heading-anchor-permalink" href="#Base-Julia-features" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Dim</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">control_flow</td><td style="text-align: right">2</td><td style="text-align: right">486</td><td style="text-align: right">5.6</td><td style="text-align: right">585</td><td style="text-align: right">48.8</td><td style="text-align: right">22.5</td><td style="text-align: right">47.3</td><td style="text-align: right">22.3</td><td style="text-align: right">3.7</td></tr><tr><td style="text-align: right">threaded_assume</td><td style="text-align: right">50</td><td style="text-align: right">427</td><td style="text-align: right">4.2</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">227</td><td style="text-align: right">30.3</td><td style="text-align: right">9.7</td></tr><tr><td style="text-align: right">threaded_observe</td><td style="text-align: right">1</td><td style="text-align: right">11.0</td><td style="text-align: right">1.0</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">6.9</td><td style="text-align: right">3.7</td><td style="text-align: right">9.8</td></tr></table><h3 id="Core-Turing-syntax"><a class="docs-heading-anchor" href="#Core-Turing-syntax">Core Turing syntax</a><a id="Core-Turing-syntax-1"></a><a class="docs-heading-anchor-permalink" href="#Core-Turing-syntax" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Dim</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">assume_submodel</td><td style="text-align: right">2</td><td style="text-align: right">238</td><td style="text-align: right">3.0</td><td style="text-align: right">358</td><td style="text-align: right">25.0</td><td style="text-align: right">9.3</td><td style="text-align: right">24.0</td><td style="text-align: right">11.7</td><td style="text-align: right">1.8</td></tr><tr><td style="text-align: right">broadcast_macro</td><td style="text-align: right">2</td><td style="text-align: right">120</td><td style="text-align: right">1.9</td><td style="text-align: right">324</td><td style="text-align: right">22.3</td><td style="text-align: right">7.9</td><td style="text-align: right">13.3</td><td style="text-align: right">5.3</td><td style="text-align: right">1.6</td></tr><tr><td style="text-align: right">dot_assume</td><td style="text-align: right">5</td><td style="text-align: right">185</td><td style="text-align: right">1.7</td><td style="text-align: right">158</td><td style="text-align: right">11.9</td><td style="text-align: right">5.7</td><td style="text-align: right">23.0</td><td style="text-align: right">3.5</td><td style="text-align: right">1.0</td></tr><tr><td style="text-align: right">dot_observe</td><td style="text-align: right">1</td><td style="text-align: right">163</td><td style="text-align: right">4.3</td><td style="text-align: right">1310</td><td style="text-align: right">86.4</td><td style="text-align: right">29.1</td><td style="text-align: right">24.9</td><td style="text-align: right">22.3</td><td style="text-align: right">3.6</td></tr><tr><td style="text-align: right">dynamic_constraint</td><td style="text-align: right">2</td><td style="text-align: right">88.0</td><td style="text-align: right">1.6</td><td style="text-align: right">173</td><td style="text-align: right">13.8</td><td style="text-align: right">5.2</td><td style="text-align: right">10.1</td><td style="text-align: right">4.1</td><td style="text-align: right">2.4</td></tr><tr><td style="text-align: right">multiple<em>constraints</em>same_var</td><td style="text-align: right">4</td><td style="text-align: right">60.8</td><td style="text-align: right">1.2</td><td style="text-align: right">29.8</td><td style="text-align: right">2.7</td><td style="text-align: right">6.2</td><td style="text-align: right">14.6</td><td style="text-align: right">3.1</td><td style="text-align: right">3.2</td></tr><tr><td style="text-align: right">observe_index</td><td style="text-align: right">1</td><td style="text-align: right">266</td><td style="text-align: right">7.6</td><td style="text-align: right">1377</td><td style="text-align: right">89.8</td><td style="text-align: right">29.4</td><td style="text-align: right">24.6</td><td style="text-align: right">22.1</td><td style="text-align: right">3.6</td></tr><tr><td style="text-align: right">observe_literal</td><td style="text-align: right">1</td><td style="text-align: right">586</td><td style="text-align: right">11.9</td><td style="text-align: right">1663</td><td style="text-align: right">113</td><td style="text-align: right">31.0</td><td style="text-align: right">50.4</td><td style="text-align: right">49.1</td><td style="text-align: right">7.4</td></tr><tr><td style="text-align: right">observe_multivariate</td><td style="text-align: right">3</td><td style="text-align: right">111</td><td style="text-align: right">1.4</td><td style="text-align: right">144</td><td style="text-align: right">10.2</td><td style="text-align: right">6.5</td><td style="text-align: right">14.0</td><td style="text-align: right">4.0</td><td style="text-align: right">13.7</td></tr><tr><td style="text-align: right">observe_submodel</td><td style="text-align: right">1</td><td style="text-align: right">574</td><td style="text-align: right">13.1</td><td style="text-align: right">1693</td><td style="text-align: right">118</td><td style="text-align: right">32.5</td><td style="text-align: right">54.6</td><td style="text-align: right">49.5</td><td style="text-align: right">7.9</td></tr></table><h3 id="Distributions"><a class="docs-heading-anchor" href="#Distributions">Distributions</a><a id="Distributions-1"></a><a class="docs-heading-anchor-permalink" href="#Distributions" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Dim</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">assume_beta</td><td style="text-align: right">1</td><td style="text-align: right">44.6</td><td style="text-align: right">2.2</td><td style="text-align: right">91.8</td><td style="text-align: right">6.0</td><td style="text-align: right">4.0</td><td style="text-align: right">5.6</td><td style="text-align: right">3.4</td><td style="text-align: right">1.4</td></tr><tr><td style="text-align: right">assume_dirichlet</td><td style="text-align: right">1</td><td style="text-align: right">29.1</td><td style="text-align: right">1.2</td><td style="text-align: right">30.2</td><td style="text-align: right">3.7</td><td style="text-align: right">6.2</td><td style="text-align: right">4.7</td><td style="text-align: right">6.6</td><td style="text-align: right">10.3</td></tr><tr><td style="text-align: right">assume_lkjcholu</td><td style="text-align: right">10</td><td style="text-align: right">158</td><td style="text-align: right">2.1</td><td style="text-align: right">79.6</td><td style="text-align: right">8.6</td><td style="text-align: right">6.3</td><td style="text-align: right">24.9</td><td style="text-align: right">3.8</td><td style="text-align: right">27.5</td></tr><tr><td style="text-align: right">assume_mvnormal</td><td style="text-align: right">2</td><td style="text-align: right">38.2</td><td style="text-align: right">0.8</td><td style="text-align: right">15.3</td><td style="text-align: right">1.0</td><td style="text-align: right">9.9</td><td style="text-align: right">18.2</td><td style="text-align: right">error</td><td style="text-align: right">4.4</td></tr><tr><td style="text-align: right">assume_normal</td><td style="text-align: right">1</td><td style="text-align: right">639</td><td style="text-align: right">10.2</td><td style="text-align: right">1009</td><td style="text-align: right">70.0</td><td style="text-align: right">26.7</td><td style="text-align: right">52.0</td><td style="text-align: right">53.0</td><td style="text-align: right">7.3</td></tr><tr><td style="text-align: right">assume_wishart</td><td style="text-align: right">3</td><td style="text-align: right">45.1</td><td style="text-align: right">0.7</td><td style="text-align: right">37.9</td><td style="text-align: right">3.0</td><td style="text-align: right">15.5</td><td style="text-align: right">25.0</td><td style="text-align: right">17.3</td><td style="text-align: right">13.3</td></tr><tr><td style="text-align: right">observe_bernoulli</td><td style="text-align: right">1</td><td style="text-align: right">33.4</td><td style="text-align: right">1.9</td><td style="text-align: right">113</td><td style="text-align: right">6.6</td><td style="text-align: right">4.5</td><td style="text-align: right">4.9</td><td style="text-align: right">2.9</td><td style="text-align: right">2.2</td></tr><tr><td style="text-align: right">observe_categorical</td><td style="text-align: right">1</td><td style="text-align: right">21.4</td><td style="text-align: right">1.2</td><td style="text-align: right">24.4</td><td style="text-align: right">3.8</td><td style="text-align: right">7.5</td><td style="text-align: right">4.1</td><td style="text-align: right">1.9</td><td style="text-align: right">7.6</td></tr><tr><td style="text-align: right">observe<em>von</em>mises</td><td style="text-align: right">1</td><td style="text-align: right">31.5</td><td style="text-align: right">NaN</td><td style="text-align: right">NaN</td><td style="text-align: right">5.8</td><td style="text-align: right">3.7</td><td style="text-align: right">5.0</td><td style="text-align: right">3.7</td><td style="text-align: right">3.1</td></tr></table><h3 id="DynamicPPL-arXiv-paper"><a class="docs-heading-anchor" href="#DynamicPPL-arXiv-paper">DynamicPPL arXiv paper</a><a id="DynamicPPL-arXiv-paper-1"></a><a class="docs-heading-anchor-permalink" href="#DynamicPPL-arXiv-paper" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Dim</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">dppl<em>gauss</em>unknown</td><td style="text-align: right">2</td><td style="text-align: right">25.5</td><td style="text-align: right">3.3</td><td style="text-align: right">1788</td><td style="text-align: right">224</td><td style="text-align: right">31.8</td><td style="text-align: right">5.1</td><td style="text-align: right">2.1</td><td style="text-align: right">6.0</td></tr><tr><td style="text-align: right">dppl<em>hier</em>poisson</td><td style="text-align: right">13</td><td style="text-align: right">180</td><td style="text-align: right">5.9</td><td style="text-align: right">97.6</td><td style="text-align: right">7.7</td><td style="text-align: right">6.9</td><td style="text-align: right">29.0</td><td style="text-align: right">5.9</td><td style="text-align: right">1.8</td></tr><tr><td style="text-align: right">dppl<em>high</em>dim_gauss</td><td style="text-align: right">10000</td><td style="text-align: right">234725</td><td style="text-align: right">39134</td><td style="text-align: right">948</td><td style="text-align: right">130</td><td style="text-align: right">35.0</td><td style="text-align: right">58846</td><td style="text-align: right">46651</td><td style="text-align: right">5.4</td></tr><tr><td style="text-align: right">dppl<em>hmm</em>semisup</td><td style="text-align: right">115</td><td style="text-align: right">NaN</td><td style="text-align: right">24.3</td><td style="text-align: right">76.3</td><td style="text-align: right">11.6</td><td style="text-align: right">6.1</td><td style="text-align: right">4647</td><td style="text-align: right">62.0</td><td style="text-align: right">9.4</td></tr><tr><td style="text-align: right">dppl_lda</td><td style="text-align: right">535</td><td style="text-align: right">8251</td><td style="text-align: right">133</td><td style="text-align: right">215</td><td style="text-align: right">26.4</td><td style="text-align: right">10.8</td><td style="text-align: right">1617</td><td style="text-align: right">423</td><td style="text-align: right">3.4</td></tr><tr><td style="text-align: right">dppl<em>logistic</em>regression</td><td style="text-align: right">100</td><td style="text-align: right">1341</td><td style="text-align: right">60.9</td><td style="text-align: right">106</td><td style="text-align: right">16.3</td><td style="text-align: right">8.7</td><td style="text-align: right">223</td><td style="text-align: right">26.1</td><td style="text-align: right">9.7</td></tr><tr><td style="text-align: right">dppl<em>naive</em>bayes</td><td style="text-align: right">400</td><td style="text-align: right">5573</td><td style="text-align: right">332</td><td style="text-align: right">314</td><td style="text-align: right">37.4</td><td style="text-align: right">8.5</td><td style="text-align: right">910</td><td style="text-align: right">304</td><td style="text-align: right">1.7</td></tr><tr><td style="text-align: right">dppl<em>sto</em>volatility</td><td style="text-align: right">503</td><td style="text-align: right">5969</td><td style="text-align: right">116</td><td style="text-align: right">226</td><td style="text-align: right">20.9</td><td style="text-align: right">4.8</td><td style="text-align: right">1068</td><td style="text-align: right">67.5</td><td style="text-align: right">4.5</td></tr></table><h3 id="DynamicPPL-demo-models"><a class="docs-heading-anchor" href="#DynamicPPL-demo-models">DynamicPPL demo models</a><a id="DynamicPPL-demo-models-1"></a><a class="docs-heading-anchor-permalink" href="#DynamicPPL-demo-models" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Dim</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">demo<em>assume</em>dot_observe</td><td style="text-align: right">2</td><td style="text-align: right">112</td><td style="text-align: right">3.4</td><td style="text-align: right">295</td><td style="text-align: right">21.8</td><td style="text-align: right">7.4</td><td style="text-align: right">12.4</td><td style="text-align: right">5.0</td><td style="text-align: right">1.7</td></tr><tr><td style="text-align: right">demo<em>assume</em>dot<em>observe</em>literal</td><td style="text-align: right">2</td><td style="text-align: right">90.6</td><td style="text-align: right">2.6</td><td style="text-align: right">206</td><td style="text-align: right">15.4</td><td style="text-align: right">6.2</td><td style="text-align: right">11.0</td><td style="text-align: right">3.9</td><td style="text-align: right">1.5</td></tr><tr><td style="text-align: right">demo<em>assume</em>index_observe</td><td style="text-align: right">4</td><td style="text-align: right">99.1</td><td style="text-align: right">1.8</td><td style="text-align: right">124</td><td style="text-align: right">9.2</td><td style="text-align: right">5.9</td><td style="text-align: right">15.0</td><td style="text-align: right">7.5</td><td style="text-align: right">21.1</td></tr><tr><td style="text-align: right">demo<em>assume</em>matrix<em>observe</em>matrix_index</td><td style="text-align: right">4</td><td style="text-align: right">83.2</td><td style="text-align: right">1.4</td><td style="text-align: right">76.7</td><td style="text-align: right">6.4</td><td style="text-align: right">7.0</td><td style="text-align: right">16.3</td><td style="text-align: right">9.6</td><td style="text-align: right">18.9</td></tr><tr><td style="text-align: right">demo<em>assume</em>multivariate_observe</td><td style="text-align: right">4</td><td style="text-align: right">92.2</td><td style="text-align: right">1.5</td><td style="text-align: right">94.6</td><td style="text-align: right">7.9</td><td style="text-align: right">7.1</td><td style="text-align: right">17.0</td><td style="text-align: right">11.4</td><td style="text-align: right">21.4</td></tr><tr><td style="text-align: right">demo<em>assume</em>multivariate<em>observe</em>literal</td><td style="text-align: right">4</td><td style="text-align: right">88.9</td><td style="text-align: right">1.4</td><td style="text-align: right">86.1</td><td style="text-align: right">7.3</td><td style="text-align: right">6.1</td><td style="text-align: right">15.9</td><td style="text-align: right">11.3</td><td style="text-align: right">20.2</td></tr><tr><td style="text-align: right">demo<em>assume</em>observe_literal</td><td style="text-align: right">2</td><td style="text-align: right">115</td><td style="text-align: right">1.9</td><td style="text-align: right">297</td><td style="text-align: right">22.2</td><td style="text-align: right">6.3</td><td style="text-align: right">12.3</td><td style="text-align: right">5.0</td><td style="text-align: right">1.5</td></tr><tr><td style="text-align: right">demo<em>assume</em>submodel<em>observe</em>index_literal</td><td style="text-align: right">4</td><td style="text-align: right">86.7</td><td style="text-align: right">1.3</td><td style="text-align: right">104</td><td style="text-align: right">8.5</td><td style="text-align: right">6.2</td><td style="text-align: right">14.8</td><td style="text-align: right">7.1</td><td style="text-align: right">9.0</td></tr><tr><td style="text-align: right">demo<em>dot</em>assume_observe</td><td style="text-align: right">4</td><td style="text-align: right">82.8</td><td style="text-align: right">1.4</td><td style="text-align: right">86.4</td><td style="text-align: right">6.9</td><td style="text-align: right">6.7</td><td style="text-align: right">16.4</td><td style="text-align: right">9.7</td><td style="text-align: right">17.3</td></tr><tr><td style="text-align: right">demo<em>dot</em>assume<em>observe</em>index</td><td style="text-align: right">4</td><td style="text-align: right">84.9</td><td style="text-align: right">1.8</td><td style="text-align: right">97.9</td><td style="text-align: right">8.0</td><td style="text-align: right">5.9</td><td style="text-align: right">13.5</td><td style="text-align: right">6.8</td><td style="text-align: right">13.0</td></tr><tr><td style="text-align: right">demo<em>dot</em>assume<em>observe</em>index_literal</td><td style="text-align: right">4</td><td style="text-align: right">90.8</td><td style="text-align: right">1.4</td><td style="text-align: right">110</td><td style="text-align: right">9.2</td><td style="text-align: right">6.1</td><td style="text-align: right">15.4</td><td style="text-align: right">7.4</td><td style="text-align: right">7.9</td></tr><tr><td style="text-align: right">demo<em>dot</em>assume<em>observe</em>matrix_index</td><td style="text-align: right">4</td><td style="text-align: right">79.6</td><td style="text-align: right">1.3</td><td style="text-align: right">78.3</td><td style="text-align: right">6.1</td><td style="text-align: right">7.4</td><td style="text-align: right">15.5</td><td style="text-align: right">9.2</td><td style="text-align: right">16.2</td></tr><tr><td style="text-align: right">demo<em>dot</em>assume<em>observe</em>submodel</td><td style="text-align: right">4</td><td style="text-align: right">85.8</td><td style="text-align: right">1.3</td><td style="text-align: right">88.3</td><td style="text-align: right">7.1</td><td style="text-align: right">6.9</td><td style="text-align: right">15.5</td><td style="text-align: right">9.8</td><td style="text-align: right">17.7</td></tr></table><h3 id="Effect-of-model-size"><a class="docs-heading-anchor" href="#Effect-of-model-size">Effect of model size</a><a id="Effect-of-model-size-1"></a><a class="docs-heading-anchor-permalink" href="#Effect-of-model-size" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Dim</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">n010</td><td style="text-align: right">10</td><td style="text-align: right">257</td><td style="text-align: right">2.9</td><td style="text-align: right">158</td><td style="text-align: right">12.5</td><td style="text-align: right">5.4</td><td style="text-align: right">39.9</td><td style="text-align: right">2.8</td><td style="text-align: right">0.8</td></tr><tr><td style="text-align: right">n050</td><td style="text-align: right">50</td><td style="text-align: right">738</td><td style="text-align: right">17.3</td><td style="text-align: right">143</td><td style="text-align: right">12.5</td><td style="text-align: right">5.0</td><td style="text-align: right">144</td><td style="text-align: right">9.7</td><td style="text-align: right">0.6</td></tr><tr><td style="text-align: right">n100</td><td style="text-align: right">100</td><td style="text-align: right">1349</td><td style="text-align: right">20.4</td><td style="text-align: right">148</td><td style="text-align: right">12.0</td><td style="text-align: right">5.2</td><td style="text-align: right">284</td><td style="text-align: right">16.3</td><td style="text-align: right">0.6</td></tr><tr><td style="text-align: right">n500</td><td style="text-align: right">500</td><td style="text-align: right">5714</td><td style="text-align: right">85.4</td><td style="text-align: right">142</td><td style="text-align: right">12.7</td><td style="text-align: right">4.7</td><td style="text-align: right">1367</td><td style="text-align: right">76.6</td><td style="text-align: right">0.7</td></tr></table><h3 id="PosteriorDB"><a class="docs-heading-anchor" href="#PosteriorDB">PosteriorDB</a><a id="PosteriorDB-1"></a><a class="docs-heading-anchor-permalink" href="#PosteriorDB" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Dim</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">pdb_arma11</td><td style="text-align: right">4</td><td style="text-align: right">63.6</td><td style="text-align: right">4.9</td><td style="text-align: right">828</td><td style="text-align: right">82.2</td><td style="text-align: right">19.1</td><td style="text-align: right">13.9</td><td style="text-align: right">4.1</td><td style="text-align: right">2.8</td></tr><tr><td style="text-align: right">pdb_earnings</td><td style="text-align: right">3</td><td style="text-align: right">37.8</td><td style="text-align: right">3.5</td><td style="text-align: right">805</td><td style="text-align: right">90.4</td><td style="text-align: right">30.0</td><td style="text-align: right">8.5</td><td style="text-align: right">3.6</td><td style="text-align: right">6.6</td></tr><tr><td style="text-align: right">pdb<em>earnings</em>male</td><td style="text-align: right">4</td><td style="text-align: right">48.7</td><td style="text-align: right">2.8</td><td style="text-align: right">414</td><td style="text-align: right">55.0</td><td style="text-align: right">22.8</td><td style="text-align: right">8.1</td><td style="text-align: right">3.3</td><td style="text-align: right">4.8</td></tr><tr><td style="text-align: right">pdb<em>eightsch</em>centered</td><td style="text-align: right">10</td><td style="text-align: right">260</td><td style="text-align: right">3.2</td><td style="text-align: right">246</td><td style="text-align: right">20.1</td><td style="text-align: right">6.9</td><td style="text-align: right">38.6</td><td style="text-align: right">6.0</td><td style="text-align: right">2.5</td></tr><tr><td style="text-align: right">pdb<em>eightsch</em>noncentered</td><td style="text-align: right">10</td><td style="text-align: right">259</td><td style="text-align: right">4.1</td><td style="text-align: right">259</td><td style="text-align: right">20.2</td><td style="text-align: right">6.8</td><td style="text-align: right">39.4</td><td style="text-align: right">5.7</td><td style="text-align: right">2.5</td></tr><tr><td style="text-align: right">pdb_garch11</td><td style="text-align: right">4</td><td style="text-align: right">51.6</td><td style="text-align: right">2.1</td><td style="text-align: right">348</td><td style="text-align: right">29.8</td><td style="text-align: right">4.7</td><td style="text-align: right">6.8</td><td style="text-align: right">1.4</td><td style="text-align: right">1.8</td></tr><tr><td style="text-align: right">pdb_kidiq</td><td style="text-align: right">3</td><td style="text-align: right">39.8</td><td style="text-align: right">2.0</td><td style="text-align: right">350</td><td style="text-align: right">47.0</td><td style="text-align: right">17.5</td><td style="text-align: right">8.6</td><td style="text-align: right">4.1</td><td style="text-align: right">4.7</td></tr><tr><td style="text-align: right">pdb_radon</td><td style="text-align: right">90</td><td style="text-align: right">1075</td><td style="text-align: right">31.7</td><td style="text-align: right">437</td><td style="text-align: right">38.7</td><td style="text-align: right">9.1</td><td style="text-align: right">156</td><td style="text-align: right">28.4</td><td style="text-align: right">1.8</td></tr><tr><td style="text-align: right">pdb_rats</td><td style="text-align: right">65</td><td style="text-align: right">885</td><td style="text-align: right">24.4</td><td style="text-align: right">385</td><td style="text-align: right">33.5</td><td style="text-align: right">8.5</td><td style="text-align: right">124</td><td style="text-align: right">24.7</td><td style="text-align: right">1.9</td></tr><tr><td style="text-align: right">pdb_sblrc</td><td style="text-align: right">6</td><td style="text-align: right">118</td><td style="text-align: right">6.1</td><td style="text-align: right">261</td><td style="text-align: right">36.6</td><td style="text-align: right">12.2</td><td style="text-align: right">27.1</td><td style="text-align: right">7.8</td><td style="text-align: right">3.3</td></tr><tr><td style="text-align: right">pdb_sblri</td><td style="text-align: right">6</td><td style="text-align: right">110</td><td style="text-align: right">5.7</td><td style="text-align: right">252</td><td style="text-align: right">35.5</td><td style="text-align: right">11.9</td><td style="text-align: right">24.9</td><td style="text-align: right">7.3</td><td style="text-align: right">2.8</td></tr></table><h3 id="External-libraries"><a class="docs-heading-anchor" href="#External-libraries">External libraries</a><a id="External-libraries-1"></a><a class="docs-heading-anchor-permalink" href="#External-libraries" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Dim</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">abstractgps</td><td style="text-align: right">7</td><td style="text-align: right">86.2</td><td style="text-align: right">1.7</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">10.5</td><td style="text-align: right">30.2</td><td style="text-align: right">error</td><td style="text-align: right">10.0</td></tr><tr><td style="text-align: right">delaydiffeq</td><td style="text-align: right">5</td><td style="text-align: right">59.7</td><td style="text-align: right">0.8</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td></tr><tr><td style="text-align: right">lux_nn</td><td style="text-align: right">20</td><td style="text-align: right">222</td><td style="text-align: right">2.8</td><td style="text-align: right">62.3</td><td style="text-align: right">wrong</td><td style="text-align: right">17.3</td><td style="text-align: right">40.1</td><td style="text-align: right">error</td><td style="text-align: right">15.2</td></tr><tr><td style="text-align: right">ordinarydiffeq</td><td style="text-align: right">5</td><td style="text-align: right">58.0</td><td style="text-align: right">4.4</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">5.4</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">66.3</td></tr></table><h2 id="Absolute-gradient-time-by-model"><a class="docs-heading-anchor" href="#Absolute-gradient-time-by-model">Absolute gradient time by model</a><a id="Absolute-gradient-time-by-model-1"></a><a class="docs-heading-anchor-permalink" href="#Absolute-gradient-time-by-model" title="Permalink"></a></h2><p>The same runs, reported as the wall time of a single gradient evaluation in milliseconds. This is what matters when comparing models rather than backends.</p><pre><code class="language-julia hljs">function ms_cell(m)
+    m.status == &quot;ok&quot; || return m.status
+    return @sprintf(&quot;%.3g&quot;, 1000 * m.gradient)
+end
+
+# All backends time the same primal evaluation, so any spread across the row is
+# measurement noise; take the fastest as the estimate.
+function primal_time(model_name)
+    times = [
+        measurement(model_name, backend).primal
+        for backend in BACKEND_NAMES if isfinite(measurement(model_name, backend).primal)
+    ]
+    return isempty(times) ? NaN : minimum(times)
+end
+
+function absolute_table(category, model_names)
+    table = DataFrame(
+        &quot;Model&quot; =&gt; model_names,
+        &quot;Primal (ms)&quot; =&gt; [
+            @sprintf(&quot;%.3g&quot;, 1000 * primal_time(name)) for name in model_names
+        ],
+    )
+    for backend in BACKEND_NAMES
+        table[!, backend] = [ms_cell(measurement(name, backend)) for name in model_names]
+    end
+    return Markdown.parse(
+        &quot;### $category\n\n&quot; * PrettyTables.pretty_table(
+            String, table; backend = :markdown, column_labels = names(table)
+        )
+    )
+end
+
+for (category, model_names) in MODEL_CATEGORIES
+    display(absolute_table(category, model_names))
+end</code></pre><h3 id="Base-Julia-features-2"><a class="docs-heading-anchor" href="#Base-Julia-features-2">Base Julia features</a><a class="docs-heading-anchor-permalink" href="#Base-Julia-features-2" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Primal (ms)</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">control_flow</td><td style="text-align: right">1.97e-05</td><td style="text-align: right">0.00962</td><td style="text-align: right">0.000112</td><td style="text-align: right">0.0137</td><td style="text-align: right">0.000965</td><td style="text-align: right">0.000446</td><td style="text-align: right">0.000935</td><td style="text-align: right">0.00044</td><td style="text-align: right">7.24e-05</td></tr><tr><td style="text-align: right">threaded_assume</td><td style="text-align: right">0.0847</td><td style="text-align: right">36.4</td><td style="text-align: right">0.359</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">19.4</td><td style="text-align: right">2.75</td><td style="text-align: right">0.927</td></tr><tr><td style="text-align: right">threaded_observe</td><td style="text-align: right">0.0714</td><td style="text-align: right">0.784</td><td style="text-align: right">0.0743</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">0.523</td><td style="text-align: right">0.304</td><td style="text-align: right">0.9</td></tr></table><h3 id="Core-Turing-syntax-2"><a class="docs-heading-anchor" href="#Core-Turing-syntax-2">Core Turing syntax</a><a class="docs-heading-anchor-permalink" href="#Core-Turing-syntax-2" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Primal (ms)</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">assume_submodel</td><td style="text-align: right">3.82e-05</td><td style="text-align: right">0.00985</td><td style="text-align: right">0.000113</td><td style="text-align: right">0.0142</td><td style="text-align: right">0.000989</td><td style="text-align: right">0.000357</td><td style="text-align: right">0.000918</td><td style="text-align: right">0.000446</td><td style="text-align: right">6.81e-05</td></tr><tr><td style="text-align: right">broadcast_macro</td><td style="text-align: right">0.000102</td><td style="text-align: right">0.0122</td><td style="text-align: right">0.000199</td><td style="text-align: right">0.0333</td><td style="text-align: right">0.00226</td><td style="text-align: right">0.000799</td><td style="text-align: right">0.00136</td><td style="text-align: right">0.000541</td><td style="text-align: right">0.000167</td></tr><tr><td style="text-align: right">dot_assume</td><td style="text-align: right">0.000184</td><td style="text-align: right">0.0346</td><td style="text-align: right">0.000315</td><td style="text-align: right">0.0293</td><td style="text-align: right">0.00218</td><td style="text-align: right">0.00106</td><td style="text-align: right">0.00427</td><td style="text-align: right">0.000657</td><td style="text-align: right">0.000191</td></tr><tr><td style="text-align: right">dot_observe</td><td style="text-align: right">1.83e-05</td><td style="text-align: right">0.00482</td><td style="text-align: right">0.000139</td><td style="text-align: right">0.025</td><td style="text-align: right">0.00165</td><td style="text-align: right">0.000539</td><td style="text-align: right">0.000468</td><td style="text-align: right">0.000409</td><td style="text-align: right">6.63e-05</td></tr><tr><td style="text-align: right">dynamic_constraint</td><td style="text-align: right">0.000157</td><td style="text-align: right">0.014</td><td style="text-align: right">0.000256</td><td style="text-align: right">0.0276</td><td style="text-align: right">0.00219</td><td style="text-align: right">0.00081</td><td style="text-align: right">0.00159</td><td style="text-align: right">0.000651</td><td style="text-align: right">0.000381</td></tr><tr><td style="text-align: right">multiple<em>constraints</em>same_var</td><td style="text-align: right">0.00142</td><td style="text-align: right">0.0865</td><td style="text-align: right">0.00176</td><td style="text-align: right">0.0431</td><td style="text-align: right">0.00396</td><td style="text-align: right">0.00914</td><td style="text-align: right">0.0219</td><td style="text-align: right">0.00456</td><td style="text-align: right">0.00478</td></tr><tr><td style="text-align: right">observe_index</td><td style="text-align: right">1.82e-05</td><td style="text-align: right">0.00494</td><td style="text-align: right">0.000139</td><td style="text-align: right">0.0256</td><td style="text-align: right">0.00163</td><td style="text-align: right">0.00055</td><td style="text-align: right">0.000459</td><td style="text-align: right">0.000405</td><td style="text-align: right">6.73e-05</td></tr><tr><td style="text-align: right">observe_literal</td><td style="text-align: right">8.25e-06</td><td style="text-align: right">0.00483</td><td style="text-align: right">9.82e-05</td><td style="text-align: right">0.0137</td><td style="text-align: right">0.000949</td><td style="text-align: right">0.000256</td><td style="text-align: right">0.000417</td><td style="text-align: right">0.000407</td><td style="text-align: right">6.11e-05</td></tr><tr><td style="text-align: right">observe_multivariate</td><td style="text-align: right">0.000196</td><td style="text-align: right">0.0218</td><td style="text-align: right">0.000287</td><td style="text-align: right">0.0285</td><td style="text-align: right">0.00201</td><td style="text-align: right">0.00128</td><td style="text-align: right">0.0028</td><td style="text-align: right">0.000786</td><td style="text-align: right">0.00272</td></tr><tr><td style="text-align: right">observe_submodel</td><td style="text-align: right">7.85e-06</td><td style="text-align: right">0.00466</td><td style="text-align: right">0.000103</td><td style="text-align: right">0.0139</td><td style="text-align: right">0.000948</td><td style="text-align: right">0.000256</td><td style="text-align: right">0.000428</td><td style="text-align: right">0.00039</td><td style="text-align: right">6.22e-05</td></tr></table><h3 id="Distributions-2"><a class="docs-heading-anchor" href="#Distributions-2">Distributions</a><a class="docs-heading-anchor-permalink" href="#Distributions-2" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Primal (ms)</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">assume_beta</td><td style="text-align: right">0.000163</td><td style="text-align: right">0.00725</td><td style="text-align: right">0.000357</td><td style="text-align: right">0.015</td><td style="text-align: right">0.000998</td><td style="text-align: right">0.000659</td><td style="text-align: right">0.00091</td><td style="text-align: right">0.000553</td><td style="text-align: right">0.000225</td></tr><tr><td style="text-align: right">assume_dirichlet</td><td style="text-align: right">0.000306</td><td style="text-align: right">0.00901</td><td style="text-align: right">0.000386</td><td style="text-align: right">0.0094</td><td style="text-align: right">0.00114</td><td style="text-align: right">0.00192</td><td style="text-align: right">0.00143</td><td style="text-align: right">0.00202</td><td style="text-align: right">0.00317</td></tr><tr><td style="text-align: right">assume_lkjcholu</td><td style="text-align: right">0.00111</td><td style="text-align: right">0.176</td><td style="text-align: right">0.00233</td><td style="text-align: right">0.0888</td><td style="text-align: right">0.00951</td><td style="text-align: right">0.00695</td><td style="text-align: right">0.0277</td><td style="text-align: right">0.00423</td><td style="text-align: right">0.0307</td></tr><tr><td style="text-align: right">assume_mvnormal</td><td style="text-align: right">0.000751</td><td style="text-align: right">0.0291</td><td style="text-align: right">0.000591</td><td style="text-align: right">0.0117</td><td style="text-align: right">0.000748</td><td style="text-align: right">0.00764</td><td style="text-align: right">0.014</td><td style="text-align: right">error</td><td style="text-align: right">0.0033</td></tr><tr><td style="text-align: right">assume_normal</td><td style="text-align: right">7.62e-06</td><td style="text-align: right">0.00488</td><td style="text-align: right">7.82e-05</td><td style="text-align: right">0.0077</td><td style="text-align: right">0.000534</td><td style="text-align: right">0.000204</td><td style="text-align: right">0.000396</td><td style="text-align: right">0.000403</td><td style="text-align: right">5.68e-05</td></tr><tr><td style="text-align: right">assume_wishart</td><td style="text-align: right">0.00163</td><td style="text-align: right">0.0741</td><td style="text-align: right">0.00117</td><td style="text-align: right">0.0623</td><td style="text-align: right">0.00508</td><td style="text-align: right">0.026</td><td style="text-align: right">0.0421</td><td style="text-align: right">0.0296</td><td style="text-align: right">0.0224</td></tr><tr><td style="text-align: right">observe_bernoulli</td><td style="text-align: right">0.000208</td><td style="text-align: right">0.00779</td><td style="text-align: right">0.0004</td><td style="text-align: right">0.0236</td><td style="text-align: right">0.00138</td><td style="text-align: right">0.000954</td><td style="text-align: right">0.00103</td><td style="text-align: right">0.000615</td><td style="text-align: right">0.000465</td></tr><tr><td style="text-align: right">observe_categorical</td><td style="text-align: right">0.00064</td><td style="text-align: right">0.0138</td><td style="text-align: right">0.000757</td><td style="text-align: right">0.0157</td><td style="text-align: right">0.00248</td><td style="text-align: right">0.00483</td><td style="text-align: right">0.00267</td><td style="text-align: right">0.00121</td><td style="text-align: right">0.00495</td></tr><tr><td style="text-align: right">observe<em>von</em>mises</td><td style="text-align: right">0.000304</td><td style="text-align: right">0.00958</td><td style="text-align: right">NaN</td><td style="text-align: right">NaN</td><td style="text-align: right">0.00179</td><td style="text-align: right">0.00115</td><td style="text-align: right">0.00155</td><td style="text-align: right">0.00114</td><td style="text-align: right">0.000956</td></tr></table><h3 id="DynamicPPL-arXiv-paper-2"><a class="docs-heading-anchor" href="#DynamicPPL-arXiv-paper-2">DynamicPPL arXiv paper</a><a class="docs-heading-anchor-permalink" href="#DynamicPPL-arXiv-paper-2" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Primal (ms)</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">dppl<em>gauss</em>unknown</td><td style="text-align: right">0.00628</td><td style="text-align: right">0.166</td><td style="text-align: right">0.0213</td><td style="text-align: right">11.4</td><td style="text-align: right">1.44</td><td style="text-align: right">0.205</td><td style="text-align: right">0.0357</td><td style="text-align: right">0.0134</td><td style="text-align: right">0.0374</td></tr><tr><td style="text-align: right">dppl<em>hier</em>poisson</td><td style="text-align: right">0.00215</td><td style="text-align: right">0.385</td><td style="text-align: right">0.0129</td><td style="text-align: right">0.21</td><td style="text-align: right">0.0167</td><td style="text-align: right">0.0151</td><td style="text-align: right">0.0632</td><td style="text-align: right">0.0129</td><td style="text-align: right">0.00393</td></tr><tr><td style="text-align: right">dppl<em>high</em>dim_gauss</td><td style="text-align: right">0.00568</td><td style="text-align: right">1.58e+03</td><td style="text-align: right">222</td><td style="text-align: right">6.1</td><td style="text-align: right">0.893</td><td style="text-align: right">0.221</td><td style="text-align: right">377</td><td style="text-align: right">551</td><td style="text-align: right">0.0483</td></tr><tr><td style="text-align: right">dppl<em>hmm</em>semisup</td><td style="text-align: right">0.271</td><td style="text-align: right">NaN</td><td style="text-align: right">6.57</td><td style="text-align: right">20.7</td><td style="text-align: right">3.18</td><td style="text-align: right">1.67</td><td style="text-align: right">1.27e+03</td><td style="text-align: right">17</td><td style="text-align: right">2.61</td></tr><tr><td style="text-align: right">dppl_lda</td><td style="text-align: right">0.0976</td><td style="text-align: right">814</td><td style="text-align: right">12.9</td><td style="text-align: right">21.3</td><td style="text-align: right">2.6</td><td style="text-align: right">1.07</td><td style="text-align: right">160</td><td style="text-align: right">42.5</td><td style="text-align: right">0.347</td></tr><tr><td style="text-align: right">dppl<em>logistic</em>regression</td><td style="text-align: right">0.328</td><td style="text-align: right">643</td><td style="text-align: right">29.4</td><td style="text-align: right">34.9</td><td style="text-align: right">5.37</td><td style="text-align: right">2.92</td><td style="text-align: right">75.7</td><td style="text-align: right">12.7</td><td style="text-align: right">3.19</td></tr><tr><td style="text-align: right">dppl<em>naive</em>bayes</td><td style="text-align: right">0.587</td><td style="text-align: right">3.27e+03</td><td style="text-align: right">195</td><td style="text-align: right">184</td><td style="text-align: right">22</td><td style="text-align: right">5.03</td><td style="text-align: right">535</td><td style="text-align: right">179</td><td style="text-align: right">1.01</td></tr><tr><td style="text-align: right">dppl<em>sto</em>volatility</td><td style="text-align: right">0.0297</td><td style="text-align: right">178</td><td style="text-align: right">3.45</td><td style="text-align: right">6.77</td><td style="text-align: right">0.619</td><td style="text-align: right">0.143</td><td style="text-align: right">32.4</td><td style="text-align: right">2.01</td><td style="text-align: right">0.134</td></tr></table><h3 id="DynamicPPL-demo-models-2"><a class="docs-heading-anchor" href="#DynamicPPL-demo-models-2">DynamicPPL demo models</a><a class="docs-heading-anchor-permalink" href="#DynamicPPL-demo-models-2" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Primal (ms)</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">demo<em>assume</em>dot_observe</td><td style="text-align: right">0.00011</td><td style="text-align: right">0.0123</td><td style="text-align: right">0.000378</td><td style="text-align: right">0.0325</td><td style="text-align: right">0.0024</td><td style="text-align: right">0.000809</td><td style="text-align: right">0.00136</td><td style="text-align: right">0.000554</td><td style="text-align: right">0.000189</td></tr><tr><td style="text-align: right">demo<em>assume</em>dot<em>observe</em>literal</td><td style="text-align: right">0.000154</td><td style="text-align: right">0.0141</td><td style="text-align: right">0.000397</td><td style="text-align: right">0.0321</td><td style="text-align: right">0.00237</td><td style="text-align: right">0.000957</td><td style="text-align: right">0.0017</td><td style="text-align: right">0.000605</td><td style="text-align: right">0.000226</td></tr><tr><td style="text-align: right">demo<em>assume</em>index_observe</td><td style="text-align: right">0.000377</td><td style="text-align: right">0.0376</td><td style="text-align: right">0.000689</td><td style="text-align: right">0.0475</td><td style="text-align: right">0.0036</td><td style="text-align: right">0.00225</td><td style="text-align: right">0.00571</td><td style="text-align: right">0.00284</td><td style="text-align: right">0.00808</td></tr><tr><td style="text-align: right">demo<em>assume</em>matrix<em>observe</em>matrix_index</td><td style="text-align: right">0.000549</td><td style="text-align: right">0.0457</td><td style="text-align: right">0.000768</td><td style="text-align: right">0.0424</td><td style="text-align: right">0.00354</td><td style="text-align: right">0.0039</td><td style="text-align: right">0.00913</td><td style="text-align: right">0.00539</td><td style="text-align: right">0.0105</td></tr><tr><td style="text-align: right">demo<em>assume</em>multivariate_observe</td><td style="text-align: right">0.000448</td><td style="text-align: right">0.0414</td><td style="text-align: right">0.000672</td><td style="text-align: right">0.0424</td><td style="text-align: right">0.00361</td><td style="text-align: right">0.00322</td><td style="text-align: right">0.00765</td><td style="text-align: right">0.00512</td><td style="text-align: right">0.0096</td></tr><tr><td style="text-align: right">demo<em>assume</em>multivariate<em>observe</em>literal</td><td style="text-align: right">0.000485</td><td style="text-align: right">0.0433</td><td style="text-align: right">0.000712</td><td style="text-align: right">0.0417</td><td style="text-align: right">0.0036</td><td style="text-align: right">0.00301</td><td style="text-align: right">0.00792</td><td style="text-align: right">0.00556</td><td style="text-align: right">0.0098</td></tr><tr><td style="text-align: right">demo<em>assume</em>observe_literal</td><td style="text-align: right">0.000109</td><td style="text-align: right">0.0126</td><td style="text-align: right">0.000208</td><td style="text-align: right">0.0324</td><td style="text-align: right">0.00243</td><td style="text-align: right">0.000689</td><td style="text-align: right">0.00134</td><td style="text-align: right">0.000542</td><td style="text-align: right">0.000166</td></tr><tr><td style="text-align: right">demo<em>assume</em>submodel<em>observe</em>index_literal</td><td style="text-align: right">0.000464</td><td style="text-align: right">0.0405</td><td style="text-align: right">0.000616</td><td style="text-align: right">0.049</td><td style="text-align: right">0.00394</td><td style="text-align: right">0.00291</td><td style="text-align: right">0.00697</td><td style="text-align: right">0.00342</td><td style="text-align: right">0.00419</td></tr><tr><td style="text-align: right">demo<em>dot</em>assume_observe</td><td style="text-align: right">0.00054</td><td style="text-align: right">0.0447</td><td style="text-align: right">0.000735</td><td style="text-align: right">0.0471</td><td style="text-align: right">0.00373</td><td style="text-align: right">0.00367</td><td style="text-align: right">0.00891</td><td style="text-align: right">0.00527</td><td style="text-align: right">0.00939</td></tr><tr><td style="text-align: right">demo<em>dot</em>assume<em>observe</em>index</td><td style="text-align: right">0.000502</td><td style="text-align: right">0.0428</td><td style="text-align: right">0.000884</td><td style="text-align: right">0.0494</td><td style="text-align: right">0.00404</td><td style="text-align: right">0.00297</td><td style="text-align: right">0.00686</td><td style="text-align: right">0.00343</td><td style="text-align: right">0.0066</td></tr><tr><td style="text-align: right">demo<em>dot</em>assume<em>observe</em>index_literal</td><td style="text-align: right">0.00044</td><td style="text-align: right">0.0402</td><td style="text-align: right">0.000634</td><td style="text-align: right">0.0488</td><td style="text-align: right">0.00405</td><td style="text-align: right">0.00269</td><td style="text-align: right">0.00681</td><td style="text-align: right">0.00335</td><td style="text-align: right">0.0035</td></tr><tr><td style="text-align: right">demo<em>dot</em>assume<em>observe</em>matrix_index</td><td style="text-align: right">0.000601</td><td style="text-align: right">0.0482</td><td style="text-align: right">0.000804</td><td style="text-align: right">0.0471</td><td style="text-align: right">0.00373</td><td style="text-align: right">0.00447</td><td style="text-align: right">0.0095</td><td style="text-align: right">0.00557</td><td style="text-align: right">0.0098</td></tr><tr><td style="text-align: right">demo<em>dot</em>assume<em>observe</em>submodel</td><td style="text-align: right">0.000535</td><td style="text-align: right">0.0465</td><td style="text-align: right">0.000715</td><td style="text-align: right">0.0481</td><td style="text-align: right">0.00378</td><td style="text-align: right">0.00373</td><td style="text-align: right">0.00849</td><td style="text-align: right">0.00529</td><td style="text-align: right">0.00979</td></tr></table><h3 id="Effect-of-model-size-2"><a class="docs-heading-anchor" href="#Effect-of-model-size-2">Effect of model size</a><a class="docs-heading-anchor-permalink" href="#Effect-of-model-size-2" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Primal (ms)</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">n010</td><td style="text-align: right">0.000332</td><td style="text-align: right">0.0852</td><td style="text-align: right">0.000987</td><td style="text-align: right">0.0527</td><td style="text-align: right">0.00414</td><td style="text-align: right">0.00181</td><td style="text-align: right">0.0135</td><td style="text-align: right">0.000936</td><td style="text-align: right">0.00028</td></tr><tr><td style="text-align: right">n050</td><td style="text-align: right">0.00156</td><td style="text-align: right">1.15</td><td style="text-align: right">0.0272</td><td style="text-align: right">0.226</td><td style="text-align: right">0.0196</td><td style="text-align: right">0.00776</td><td style="text-align: right">0.226</td><td style="text-align: right">0.0153</td><td style="text-align: right">0.000952</td></tr><tr><td style="text-align: right">n100</td><td style="text-align: right">0.00309</td><td style="text-align: right">4.17</td><td style="text-align: right">0.0631</td><td style="text-align: right">0.461</td><td style="text-align: right">0.038</td><td style="text-align: right">0.0162</td><td style="text-align: right">0.88</td><td style="text-align: right">0.0509</td><td style="text-align: right">0.00183</td></tr><tr><td style="text-align: right">n500</td><td style="text-align: right">0.0156</td><td style="text-align: right">95.1</td><td style="text-align: right">1.4</td><td style="text-align: right">2.22</td><td style="text-align: right">0.201</td><td style="text-align: right">0.0734</td><td style="text-align: right">21.6</td><td style="text-align: right">1.19</td><td style="text-align: right">0.0108</td></tr></table><h3 id="PosteriorDB-2"><a class="docs-heading-anchor" href="#PosteriorDB-2">PosteriorDB</a><a class="docs-heading-anchor-permalink" href="#PosteriorDB-2" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Primal (ms)</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">pdb_arma11</td><td style="text-align: right">0.00113</td><td style="text-align: right">0.072</td><td style="text-align: right">0.00572</td><td style="text-align: right">0.942</td><td style="text-align: right">0.0935</td><td style="text-align: right">0.0227</td><td style="text-align: right">0.0162</td><td style="text-align: right">0.00471</td><td style="text-align: right">0.00328</td></tr><tr><td style="text-align: right">pdb_earnings</td><td style="text-align: right">0.00183</td><td style="text-align: right">0.0772</td><td style="text-align: right">0.00721</td><td style="text-align: right">1.47</td><td style="text-align: right">0.193</td><td style="text-align: right">0.0667</td><td style="text-align: right">0.0173</td><td style="text-align: right">0.00803</td><td style="text-align: right">0.0132</td></tr><tr><td style="text-align: right">pdb<em>earnings</em>male</td><td style="text-align: right">0.0036</td><td style="text-align: right">0.178</td><td style="text-align: right">0.0104</td><td style="text-align: right">1.49</td><td style="text-align: right">0.204</td><td style="text-align: right">0.0893</td><td style="text-align: right">0.0332</td><td style="text-align: right">0.0136</td><td style="text-align: right">0.0193</td></tr><tr><td style="text-align: right">pdb<em>eightsch</em>centered</td><td style="text-align: right">0.000299</td><td style="text-align: right">0.0795</td><td style="text-align: right">0.000971</td><td style="text-align: right">0.0739</td><td style="text-align: right">0.006</td><td style="text-align: right">0.00208</td><td style="text-align: right">0.0118</td><td style="text-align: right">0.00182</td><td style="text-align: right">0.000751</td></tr><tr><td style="text-align: right">pdb<em>eightsch</em>noncentered</td><td style="text-align: right">0.000302</td><td style="text-align: right">0.0796</td><td style="text-align: right">0.00124</td><td style="text-align: right">0.0796</td><td style="text-align: right">0.00622</td><td style="text-align: right">0.0021</td><td style="text-align: right">0.0121</td><td style="text-align: right">0.00173</td><td style="text-align: right">0.00075</td></tr><tr><td style="text-align: right">pdb_garch11</td><td style="text-align: right">0.00538</td><td style="text-align: right">0.278</td><td style="text-align: right">0.0114</td><td style="text-align: right">1.89</td><td style="text-align: right">0.162</td><td style="text-align: right">0.0255</td><td style="text-align: right">0.0374</td><td style="text-align: right">0.00758</td><td style="text-align: right">0.00997</td></tr><tr><td style="text-align: right">pdb_kidiq</td><td style="text-align: right">0.00161</td><td style="text-align: right">0.0726</td><td style="text-align: right">0.00334</td><td style="text-align: right">0.575</td><td style="text-align: right">0.0758</td><td style="text-align: right">0.0308</td><td style="text-align: right">0.0153</td><td style="text-align: right">0.00723</td><td style="text-align: right">0.00773</td></tr><tr><td style="text-align: right">pdb_radon</td><td style="text-align: right">0.0158</td><td style="text-align: right">17</td><td style="text-align: right">0.525</td><td style="text-align: right">6.97</td><td style="text-align: right">0.639</td><td style="text-align: right">0.152</td><td style="text-align: right">2.58</td><td style="text-align: right">0.471</td><td style="text-align: right">0.0298</td></tr><tr><td style="text-align: right">pdb_rats</td><td style="text-align: right">0.00245</td><td style="text-align: right">2.18</td><td style="text-align: right">0.0599</td><td style="text-align: right">0.944</td><td style="text-align: right">0.0823</td><td style="text-align: right">0.0211</td><td style="text-align: right">0.305</td><td style="text-align: right">0.0608</td><td style="text-align: right">0.00481</td></tr><tr><td style="text-align: right">pdb_sblrc</td><td style="text-align: right">0.000588</td><td style="text-align: right">0.0694</td><td style="text-align: right">0.00381</td><td style="text-align: right">0.156</td><td style="text-align: right">0.0219</td><td style="text-align: right">0.00738</td><td style="text-align: right">0.0165</td><td style="text-align: right">0.00481</td><td style="text-align: right">0.00202</td></tr><tr><td style="text-align: right">pdb_sblri</td><td style="text-align: right">0.000619</td><td style="text-align: right">0.0698</td><td style="text-align: right">0.00362</td><td style="text-align: right">0.156</td><td style="text-align: right">0.022</td><td style="text-align: right">0.00757</td><td style="text-align: right">0.0159</td><td style="text-align: right">0.00485</td><td style="text-align: right">0.00187</td></tr></table><h3 id="External-libraries-2"><a class="docs-heading-anchor" href="#External-libraries-2">External libraries</a><a class="docs-heading-anchor-permalink" href="#External-libraries-2" title="Permalink"></a></h3><table><tr><th style="text-align: right"><strong>Model</strong></th><th style="text-align: right"><strong>Primal (ms)</strong></th><th style="text-align: right"><strong>FiniteDifferences</strong></th><th style="text-align: right"><strong>ForwardDiff</strong></th><th style="text-align: right"><strong>ReverseDiff</strong></th><th style="text-align: right"><strong>ReverseDiffCompiled</strong></th><th style="text-align: right"><strong>MooncakeRvs</strong></th><th style="text-align: right"><strong>MooncakeFwd</strong></th><th style="text-align: right"><strong>EnzymeFwd</strong></th><th style="text-align: right"><strong>EnzymeRvs</strong></th></tr><tr><td style="text-align: right">abstractgps</td><td style="text-align: right">0.00369</td><td style="text-align: right">0.318</td><td style="text-align: right">0.00641</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">0.0394</td><td style="text-align: right">0.115</td><td style="text-align: right">error</td><td style="text-align: right">0.0383</td></tr><tr><td style="text-align: right">delaydiffeq</td><td style="text-align: right">0.778</td><td style="text-align: right">48.7</td><td style="text-align: right">0.636</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">error</td></tr><tr><td style="text-align: right">lux_nn</td><td style="text-align: right">0.0565</td><td style="text-align: right">12.7</td><td style="text-align: right">0.159</td><td style="text-align: right">3.52</td><td style="text-align: right">wrong</td><td style="text-align: right">1.02</td><td style="text-align: right">2.35</td><td style="text-align: right">error</td><td style="text-align: right">1.03</td></tr><tr><td style="text-align: right">ordinarydiffeq</td><td style="text-align: right">0.115</td><td style="text-align: right">6.72</td><td style="text-align: right">0.512</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">0.638</td><td style="text-align: right">error</td><td style="text-align: right">error</td><td style="text-align: right">7.91</td></tr></table><h2 id="Summary"><a class="docs-heading-anchor" href="#Summary">Summary</a><a id="Summary-1"></a><a class="docs-heading-anchor-permalink" href="#Summary" title="Permalink"></a></h2><p>How often does each backend work at all, and how fast is it when it does?</p><pre><code class="language-julia hljs">statuses = [&quot;ok&quot;, &quot;wrong&quot;, &quot;NaN&quot;, &quot;error&quot;, &quot;crash&quot;]
+
+summary = DataFrame(
+    &quot;Backend&quot; =&gt; BACKEND_NAMES,
+    [
+        status =&gt; [count(
+            name -&gt; measurement(name, backend).status == status, MODEL_NAMES
+        ) for backend in BACKEND_NAMES]
+        for status in statuses
+    ]...,
+)
+Markdown.parse(
+    PrettyTables.pretty_table(
+        String, summary; backend = :markdown, column_labels = names(summary)
+    )
+)</code></pre><table><tr><th style="text-align: right"><strong>Backend</strong></th><th style="text-align: right"><strong>ok</strong></th><th style="text-align: right"><strong>wrong</strong></th><th style="text-align: right"><strong>NaN</strong></th><th style="text-align: right"><strong>error</strong></th><th style="text-align: right"><strong>crash</strong></th></tr><tr><td style="text-align: right">FiniteDifferences</td><td style="text-align: right">61</td><td style="text-align: right">0</td><td style="text-align: right">1</td><td style="text-align: right">0</td><td style="text-align: right">0</td></tr><tr><td style="text-align: right">ForwardDiff</td><td style="text-align: right">61</td><td style="text-align: right">0</td><td style="text-align: right">1</td><td style="text-align: right">0</td><td style="text-align: right">0</td></tr><tr><td style="text-align: right">ReverseDiff</td><td style="text-align: right">56</td><td style="text-align: right">0</td><td style="text-align: right">1</td><td style="text-align: right">5</td><td style="text-align: right">0</td></tr><tr><td style="text-align: right">ReverseDiffCompiled</td><td style="text-align: right">56</td><td style="text-align: right">1</td><td style="text-align: right">0</td><td style="text-align: right">5</td><td style="text-align: right">0</td></tr><tr><td style="text-align: right">MooncakeRvs</td><td style="text-align: right">59</td><td style="text-align: right">0</td><td style="text-align: right">0</td><td style="text-align: right">3</td><td style="text-align: right">0</td></tr><tr><td style="text-align: right">MooncakeFwd</td><td style="text-align: right">60</td><td style="text-align: right">0</td><td style="text-align: right">0</td><td style="text-align: right">2</td><td style="text-align: right">0</td></tr><tr><td style="text-align: right">EnzymeFwd</td><td style="text-align: right">57</td><td style="text-align: right">0</td><td style="text-align: right">0</td><td style="text-align: right">5</td><td style="text-align: right">0</td></tr><tr><td style="text-align: right">EnzymeRvs</td><td style="text-align: right">61</td><td style="text-align: right">0</td><td style="text-align: right">0</td><td style="text-align: right">1</td><td style="text-align: right">0</td></tr></table><p>Aggregating the timings needs some care, because every backend fails on a different subset of the models. The first three columns below summarise each backend over the models <em>it</em> handles, so they are not directly comparable to one another: a backend that only works on the easy models will look good. The last two columns are the comparable ones — they compare each backend against ForwardDiff over exactly the models that both of them get right.</p><pre><code class="language-julia hljs">geomean(xs) = isempty(xs) ? NaN : exp(mean(log, xs))
+safe_median(xs) = isempty(xs) ? NaN : median(xs)
+succeeded(backend) = [
+    name for name in MODEL_NAMES if measurement(name, backend).status == &quot;ok&quot;
+]
+relative_times(backend) = [
+    measurement(name, backend).relative for name in succeeded(backend)
+]
+
+function ratio_to_forwarddiff(backend)
+    shared = intersect(succeeded(backend), succeeded(&quot;ForwardDiff&quot;))
+    ratios = [
+        measurement(name, backend).relative / measurement(name, &quot;ForwardDiff&quot;).relative
+        for name in shared
+    ]
+    return length(shared), geomean(ratios)
+end
+
+comparison = DataFrame(
+    &quot;Backend&quot; =&gt; BACKEND_NAMES,
+    &quot;Models OK&quot; =&gt; [length(succeeded(b)) for b in BACKEND_NAMES],
+    &quot;Geometric mean&quot; =&gt; [geomean(relative_times(b)) for b in BACKEND_NAMES],
+    &quot;Median&quot; =&gt; [safe_median(relative_times(b)) for b in BACKEND_NAMES],
+    &quot;Shared with FD&quot; =&gt; [first(ratio_to_forwarddiff(b)) for b in BACKEND_NAMES],
+    &quot;vs ForwardDiff&quot; =&gt; [last(ratio_to_forwarddiff(b)) for b in BACKEND_NAMES],
+)
+Markdown.parse(
+    PrettyTables.pretty_table(
+        String, comparison;
+        backend = :markdown, column_labels = names(comparison),
+        formatters = [PrettyTables.fmt__printf(&quot;%.2f&quot;, [3, 4, 6])],
+    )
+)</code></pre><table><tr><th style="text-align: right"><strong>Backend</strong></th><th style="text-align: right"><strong>Models OK</strong></th><th style="text-align: right"><strong>Geometric mean</strong></th><th style="text-align: right"><strong>Median</strong></th><th style="text-align: right"><strong>Shared with FD</strong></th><th style="text-align: right"><strong>vs ForwardDiff</strong></th></tr><tr><td style="text-align: right">FiniteDifferences</td><td style="text-align: right">61</td><td style="text-align: right">176.71</td><td style="text-align: right">109.83</td><td style="text-align: right">60</td><td style="text-align: right">39.67</td></tr><tr><td style="text-align: right">ForwardDiff</td><td style="text-align: right">61</td><td style="text-align: right">4.71</td><td style="text-align: right">2.81</td><td style="text-align: right">61</td><td style="text-align: right">1.00</td></tr><tr><td style="text-align: right">ReverseDiff</td><td style="text-align: right">56</td><td style="text-align: right">195.40</td><td style="text-align: right">165.54</td><td style="text-align: right">56</td><td style="text-align: right">38.29</td></tr><tr><td style="text-align: right">ReverseDiffCompiled</td><td style="text-align: right">56</td><td style="text-align: right">17.40</td><td style="text-align: right">14.61</td><td style="text-align: right">55</td><td style="text-align: right">3.44</td></tr><tr><td style="text-align: right">MooncakeRvs</td><td style="text-align: right">59</td><td style="text-align: right">9.09</td><td style="text-align: right">7.01</td><td style="text-align: right">58</td><td style="text-align: right">1.85</td></tr><tr><td style="text-align: right">MooncakeFwd</td><td style="text-align: right">60</td><td style="text-align: right">34.45</td><td style="text-align: right">20.63</td><td style="text-align: right">59</td><td style="text-align: right">7.33</td></tr><tr><td style="text-align: right">EnzymeFwd</td><td style="text-align: right">57</td><td style="text-align: right">11.38</td><td style="text-align: right">7.44</td><td style="text-align: right">56</td><td style="text-align: right">2.25</td></tr><tr><td style="text-align: right">EnzymeRvs</td><td style="text-align: right">61</td><td style="text-align: right">4.69</td><td style="text-align: right">4.48</td><td style="text-align: right">60</td><td style="text-align: right">0.97</td></tr></table><p>The scaling behaviour is the clearest signal in the whole benchmark: forward mode costs a pass per parameter, so it climbs with the dimension of the model, while reverse mode is bounded by a constant multiple of the primal.</p><pre><code class="language-julia hljs">scaling = plot(
+    xscale = :log10, yscale = :log10,
+    xlabel = &quot;model dimension&quot;, ylabel = &quot;gradient time / primal time&quot;,
+    title = &quot;Cost of a gradient against the number of parameters&quot;,
+    legend = :outertopright, size = (900, 500),
+)
+for backend in BACKEND_NAMES
+    names = succeeded(backend)
+    isempty(names) &amp;&amp; continue
+    scatter!(
+        scaling,
+        [max(runs[name].dimension, 1) for name in names],
+        [measurement(name, backend).relative for name in names];
+        label = backend, markersize = 4, markerstrokewidth = 0,
+    )
+end
+scaling</code></pre><p><img src="../figures/TuringADTests_9_1.png" alt/></p><pre><code class="language-julia hljs">relatives = [
+    measurement(name, backend).relative
+    for backend in BACKEND_NAMES, name in MODEL_NAMES
+]
+heatmap(
+    log10.(relatives);
+    xticks = (1:length(MODEL_NAMES), MODEL_NAMES), xrotation = 90,
+    yticks = (1:length(BACKEND_NAMES), BACKEND_NAMES),
+    colorbar_title = &quot;log10(gradient time / primal time)&quot;,
+    title = &quot;Relative gradient time (blank = failure)&quot;,
+    size = (1600, 620), bottom_margin = 60Plots.mm, left_margin = 12Plots.mm,
+)</code></pre><p><img src="../figures/TuringADTests_10_1.png" alt/></p><h2 id="Failures"><a class="docs-heading-anchor" href="#Failures">Failures</a><a id="Failures-1"></a><a class="docs-heading-anchor-permalink" href="#Failures" title="Permalink"></a></h2><p>Every non-<code>ok</code> result, with the error it produced. Backends that a model&#39;s maintainers already know to be unsupported show up here too, so this table is long by design.</p><pre><code class="language-julia hljs"># `|` would be read as a column separator by the markdown table, and the longer
+# Enzyme messages run to several hundred characters.
+function readable(message)
+    trimmed = length(message) &gt; 120 ? first(message, 117) * &quot;...&quot; : message
+    return replace(trimmed, &#39;|&#39; =&gt; &#39;/&#39;)
+end
+
+failures = filter(:status =&gt; !=(&quot;ok&quot;), df)[:, [:model, :backend, :status]]
+failures.message = [
+    readable(get(runs[row.model].messages, row.backend, &quot;&quot;)) for row in eachrow(failures)
+]
+Markdown.parse(
+    PrettyTables.pretty_table(
+        String, failures; backend = :markdown, column_labels = names(failures)
+    )
+)</code></pre><table><tr><th style="text-align: right"><strong>model</strong></th><th style="text-align: right"><strong>backend</strong></th><th style="text-align: right"><strong>status</strong></th><th style="text-align: right"><strong>message</strong></th></tr><tr><td style="text-align: right">dppl<em>hmm</em>semisup</td><td style="text-align: right">FiniteDifferences</td><td style="text-align: right">NaN</td><td style="text-align: right">ADIncorrectException: The AD backend returned an incorrect gradient.</td></tr><tr><td style="text-align: right">observe<em>von</em>mises</td><td style="text-align: right">ForwardDiff</td><td style="text-align: right">NaN</td><td style="text-align: right">ADIncorrectException: The AD backend returned an incorrect gradient.</td></tr><tr><td style="text-align: right">threaded_assume</td><td style="text-align: right">ReverseDiff</td><td style="text-align: right">error</td><td style="text-align: right">TaskFailedException</td></tr><tr><td style="text-align: right">threaded_observe</td><td style="text-align: right">ReverseDiff</td><td style="text-align: right">error</td><td style="text-align: right">TaskFailedException</td></tr><tr><td style="text-align: right">observe<em>von</em>mises</td><td style="text-align: right">ReverseDiff</td><td style="text-align: right">NaN</td><td style="text-align: right">ADIncorrectException: The AD backend returned an incorrect gradient.</td></tr><tr><td style="text-align: right">abstractgps</td><td style="text-align: right">ReverseDiff</td><td style="text-align: right">error</td><td style="text-align: right">MethodError: -(::ReverseDiff.TrackedArray{Float64, Float64, 1, Vector{Float64}, Vector{Float64}}, ::FillArrays.Zeros{...</td></tr><tr><td style="text-align: right">delaydiffeq</td><td style="text-align: right">ReverseDiff</td><td style="text-align: right">error</td><td style="text-align: right">MethodError: no method matching arraydist(::Distributions.Poisson{ReverseDiff.TrackedReal{Float64, Float64, Nothing}})</td></tr><tr><td style="text-align: right">ordinarydiffeq</td><td style="text-align: right">ReverseDiff</td><td style="text-align: right">error</td><td style="text-align: right">DimensionMismatch: inconsistent array dimensions</td></tr><tr><td style="text-align: right">threaded_assume</td><td style="text-align: right">ReverseDiffCompiled</td><td style="text-align: right">error</td><td style="text-align: right">TaskFailedException</td></tr><tr><td style="text-align: right">threaded_observe</td><td style="text-align: right">ReverseDiffCompiled</td><td style="text-align: right">error</td><td style="text-align: right">TaskFailedException</td></tr><tr><td style="text-align: right">abstractgps</td><td style="text-align: right">ReverseDiffCompiled</td><td style="text-align: right">error</td><td style="text-align: right">MethodError: -(::ReverseDiff.TrackedArray{Float64, Float64, 1, Vector{Float64}, Vector{Float64}}, ::FillArrays.Zeros{...</td></tr><tr><td style="text-align: right">delaydiffeq</td><td style="text-align: right">ReverseDiffCompiled</td><td style="text-align: right">error</td><td style="text-align: right">MethodError: no method matching arraydist(::Distributions.Poisson{ReverseDiff.TrackedReal{Float64, Float64, Nothing}})</td></tr><tr><td style="text-align: right">lux_nn</td><td style="text-align: right">ReverseDiffCompiled</td><td style="text-align: right">wrong</td><td style="text-align: right">ADIncorrectException: The AD backend returned an incorrect value and gradient.</td></tr><tr><td style="text-align: right">ordinarydiffeq</td><td style="text-align: right">ReverseDiffCompiled</td><td style="text-align: right">error</td><td style="text-align: right">DimensionMismatch: inconsistent array dimensions</td></tr><tr><td style="text-align: right">threaded_assume</td><td style="text-align: right">MooncakeRvs</td><td style="text-align: right">error</td><td style="text-align: right">Differentiating through threading is not safe and is unsupported in reverse mode. Use forward mode instead.</td></tr><tr><td style="text-align: right">threaded_observe</td><td style="text-align: right">MooncakeRvs</td><td style="text-align: right">error</td><td style="text-align: right">Differentiating through threading is not safe and is unsupported in reverse mode. Use forward mode instead.</td></tr><tr><td style="text-align: right">delaydiffeq</td><td style="text-align: right">MooncakeRvs</td><td style="text-align: right">error</td><td style="text-align: right">MethodError: no method matching increment!!(::Mooncake.NoRData, ::Mooncake.RData{@NamedTuple{u::Mooncake.NoRData, u_a...</td></tr><tr><td style="text-align: right">delaydiffeq</td><td style="text-align: right">MooncakeFwd</td><td style="text-align: right">error</td><td style="text-align: right">MethodError: no method matching frule!!(::Mooncake.Dual{typeof(getindex), Mooncake.NoTangent}, ::Mooncake.Dual{SciMLB...</td></tr><tr><td style="text-align: right">ordinarydiffeq</td><td style="text-align: right">MooncakeFwd</td><td style="text-align: right">error</td><td style="text-align: right">MethodError: Cannot <code>convert</code> an object of type</td></tr><tr><td style="text-align: right">assume_mvnormal</td><td style="text-align: right">EnzymeFwd</td><td style="text-align: right">error</td><td style="text-align: right">EnzymeNoDerivativeError: Current scope:</td></tr><tr><td style="text-align: right">abstractgps</td><td style="text-align: right">EnzymeFwd</td><td style="text-align: right">error</td><td style="text-align: right">EnzymeNoDerivativeError: Current scope:</td></tr><tr><td style="text-align: right">delaydiffeq</td><td style="text-align: right">EnzymeFwd</td><td style="text-align: right">error</td><td style="text-align: right">IllegalTypeAnalysisException: Enzyme compilation failed due to illegal type analysis.</td></tr><tr><td style="text-align: right">lux_nn</td><td style="text-align: right">EnzymeFwd</td><td style="text-align: right">error</td><td style="text-align: right">EnzymeRuntimeException: Enzyme execution failed.</td></tr><tr><td style="text-align: right">ordinarydiffeq</td><td style="text-align: right">EnzymeFwd</td><td style="text-align: right">error</td><td style="text-align: right">EnzymeNoDerivativeError: Current scope:</td></tr><tr><td style="text-align: right">delaydiffeq</td><td style="text-align: right">EnzymeRvs</td><td style="text-align: right">error</td><td style="text-align: right">MethodError: no method matching EnzymeCore.MixedDuplicated(::SciMLBase.ODESolution{Float64, 2, Vector{Vector{Float64}...</td></tr></table><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+SciMLBenchmarks.weave_file(&quot;benchmarks/AutomaticDifferentiationTuring&quot;,&quot;TuringADTests.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.11.9
+Commit 53a02c0720c (2026-02-06 00:27 UTC)
+Build Info:
+  Official https://julialang.org/ release
+Platform Info:
+  OS: Linux (x86_64-linux-gnu)
+  CPU: 128 × AMD EPYC 7502 32-Core Processor
+  WORD_SIZE: 64
+  LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Environment:
+  JULIA_NUM_THREADS = auto
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AutomaticDifferentiationTuring/Project.toml`
+  [47edcb42] ADTypes v1.22.2
+  [99985d1d] AbstractGPs v0.5.24
+  [0ca39b1e] Chairmarks v1.3.1
+  [a93c6f00] DataFrames v1.8.2
+⌅ [bcd4f6db] DelayDiffEq v5.74.1
+  [8bb1440f] DelimitedFiles v1.9.1
+  [a0c0ee7d] DifferentiationInterface v0.7.20
+⌃ [31c24e10] Distributions v0.25.129
+⌅ [366bfd00] DynamicPPL v0.41.8
+  [7da242da] Enzyme v0.13.195
+  [1a297f60] FillArrays v1.17.0
+  [26cc04aa] FiniteDifferences v0.12.34
+⌃ [f6369f11] ForwardDiff v1.4.1
+  [d9f16b24] Functors v0.5.2
+  [6fdf6af0] LogDensityProblems v2.2.0
+⌅ [2ab3a3ac] LogExpFunctions v0.3.29
+  [b2108857] Lux v1.31.4
+  [da2b9cff] Mooncake v0.5.40
+⌃ [1dea7af3] OrdinaryDiffEq v6.111.0
+⌅ [b1df2697] OrdinaryDiffEqTsit5 v1.12.0
+  [91a5bcdd] Plots v1.41.6
+⌅ [1c4bc282] PosteriorDB v0.5.3
+  [08abe8d2] PrettyTables v3.4.2
+  [37e2e3b7] ReverseDiff v1.17.0
+⌃ [31c91b34] SciMLBenchmarks v0.1.3
+⌃ [1ed8b502] SciMLSensitivity v7.106.0
+  [10745b16] Statistics v1.11.1
+⌅ [4c63d2b9] StatsFuns v1.5.2
+⌅ [fce5fe82] Turing v0.44.5
+  [37e2e46d] LinearAlgebra v1.11.0
+  [d6f4376e] Markdown v1.11.0
+  [de0858da] Printf v1.11.0
+  [9a3f8284] Random v1.11.0
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AutomaticDifferentiationTuring/Manifest.toml`
+  [47edcb42] ADTypes v1.22.2
+  [14f7f29c] AMD v0.5.3
+  [621f4979] AbstractFFTs v1.5.0
+  [99985d1d] AbstractGPs v0.5.24
+  [80f14c24] AbstractMCMC v5.16.0
+⌅ [7a57a42e] AbstractPPL v0.14.2
+  [1520ce14] AbstractTrees v0.4.5
+  [7d9f7c33] Accessors v0.1.45
+  [79e6a3ab] Adapt v4.7.0
+  [0bf59076] AdvancedHMC v0.8.6
+  [5b7e9947] AdvancedMH v0.8.10
+⌅ [576499cb] AdvancedPS v0.7.2
+⌅ [b5ca4192] AdvancedVI v0.6.2
+  [66dad0bd] AliasTables v1.1.3
+  [dce04be8] ArgCheck v2.5.0
+  [4fba245c] ArrayInterface v7.28.1
+  [a9b6321e] Atomix v1.1.3
+  [13072b0f] AxisAlgorithms v1.1.0
+  [39de3d68] AxisArrays v0.4.8
+  [198e06fe] BangBang v0.4.9
+⌅ [76274a88] Bijectors v0.15.24
+  [d1d4a3ce] BitFlags v0.1.10
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
+⌃ [70df07ce] BracketingNonlinearSolve v1.12.1
+  [fa961155] CEnum v0.5.0
+  [2a0fbf3d] CPUSummary v0.2.7
+  [082447d4] ChainRules v1.73.0
+  [d360d2e6] ChainRulesCore v1.26.1
+  [0ca39b1e] Chairmarks v1.3.1
+  [9e997f8a] ChangesOfVariables v0.1.10
+  [fb6a15b2] CloseOpenIntervals v0.1.13
+  [944b1d66] CodecZlib v0.7.8
+  [35d6a980] ColorSchemes v3.31.0
+  [3da002f7] ColorTypes v0.12.1
+  [c3611d14] ColorVectorSpace v0.11.0
+  [5ae59095] Colors v0.13.1
+  [38540f10] CommonSolve v0.2.11
+  [bbf7d656] CommonSubexpressions v0.3.1
+  [f70d9fcc] CommonWorldInvalidations v1.1.1
+  [34da2185] Compat v4.18.1
+  [a33af91c] CompositionsBase v0.1.2
+  [2569d6c7] ConcreteStructs v0.2.6
+  [f0e56b4a] ConcurrentUtilities v2.5.1
+  [8f4d0f93] Conda v1.10.3
+  [88cd18e8] ConsoleProgressMonitor v0.1.2
+  [187b0558] ConstructionBase v1.6.0
+  [d38c429a] Contour v0.6.3
+  [adafc99b] CpuId v0.3.1
+  [a8cc5b0e] Crayons v4.2.0
+  [9a962f9c] DataAPI v1.16.0
+  [a93c6f00] DataFrames v1.8.2
+  [864edb3b] DataStructures v0.19.6
+  [e2d170a0] DataValueInterfaces v1.0.0
+⌅ [bcd4f6db] DelayDiffEq v5.74.1
+  [8bb1440f] DelimitedFiles v1.9.1
+  [b429d917] DensityInterface v0.4.0
+⌅ [2b5f629d] DiffEqBase v6.218.0
+  [459566f4] DiffEqCallbacks v4.18.3
+⌃ [77a26b50] DiffEqNoiseProcess v5.32.0
+  [163ba53b] DiffResults v1.1.0
+  [b552c78f] DiffRules v1.16.0
+  [a0c0ee7d] DifferentiationInterface v0.7.20
+  [8d63f2c5] DispatchDoctor v0.4.28
+  [b4f34e82] Distances v0.10.12
+⌃ [31c24e10] Distributions v0.25.129
+  [ffbed154] DocStringExtensions v0.9.5
+⌅ [366bfd00] DynamicPPL v0.41.8
+  [cad2338a] EllipticalSliceSampling v2.0.0
+  [4e289a0a] EnumX v1.0.7
+  [7da242da] Enzyme v0.13.195
+  [f151be2c] EnzymeCore v0.8.21
+  [460bff9d] ExceptionUnwrapping v0.1.11
+⌃ [d4d017d3] ExponentialUtilities v1.31.0
+  [e2ba6199] ExprTools v0.1.11
+  [21656369] ExpressionExplorer v1.1.4
+  [55351af7] ExproniconLite v0.10.14
+  [c87230d0] FFMPEG v0.4.5
+  [b86e33f2] FFTA v0.3.1
+  [7034ab61] FastBroadcast v1.3.4
+  [9aa1b823] FastClosures v0.3.2
+  [442a2c76] FastGaussQuadrature v1.3.0
+  [a4df4552] FastPower v1.3.4
+  [1a297f60] FillArrays v1.17.0
+  [6a86dc24] FiniteDiff v2.32.0
+  [26cc04aa] FiniteDifferences v0.12.34
+⌅ [53c48c17] FixedPointNumbers v0.8.6
+  [1fa38f19] Format v1.3.7
+⌃ [f6369f11] ForwardDiff v1.4.1
+⌅ [f62d2435] FunctionProperties v0.1.7
+  [069b7b12] FunctionWrappers v1.1.3
+  [77dc65aa] FunctionWrappersWrappers v1.10.1
+  [d9f16b24] Functors v0.5.2
+  [46192b85] GPUArraysCore v0.2.0
+⌅ [61eb1bfa] GPUCompiler v1.23.0
+  [28b8d3ca] GR v0.73.26
+  [a0844989] Gamma v1.1.0
+  [c145ed77] GenericSchur v0.5.6
+  [d7ba0133] Git v1.5.0
+  [42e2da0e] Grisu v1.0.2
+⌅ [cd3eb016] HTTP v1.11.0
+  [076d061b] HashArrayMappedTries v0.2.0
+⌅ [eafb193a] Highlights v0.5.3
+  [34004b35] HypergeometricFunctions v0.3.29
+  [7073ff75] IJulia v1.34.4
+  [7869d1d1] IRTools v0.4.19
+  [615f187c] IfElse v0.1.1
+  [22cec73e] InitialValues v0.3.1
+  [842dd82b] InlineStrings v1.4.5
+  [18e54dd8] IntegerMathUtils v0.1.4
+  [a98d9a8b] Interpolations v0.16.3
+  [8197267c] IntervalSets v0.7.14
+  [3587e190] InverseFunctions v0.1.17
+  [41ab1584] InvertedIndices v1.3.1
+  [92d709cd] IrrationalConstants v0.2.6
+  [c8e1da08] IterTools v1.10.0
+  [82899510] IteratorInterfaceExtensions v1.0.0
+  [1019f520] JLFzf v0.1.11
+  [692b3bcd] JLLWrappers v1.8.0
+⌅ [682c06a0] JSON v0.21.4
+  [0f8b85d8] JSON3 v1.14.3
+  [ae98c720] Jieko v0.2.1
+  [63c18a36] KernelAbstractions v0.9.42
+  [5ab0869b] KernelDensity v0.6.12
+⌅ [ec8451be] KernelFunctions v0.10.67
+  [ba0b0d4f] Krylov v0.10.8
+  [929cbde3] LLVM v9.11.0
+  [b964fa9f] LaTeXStrings v1.4.0
+  [23fbe1c1] Latexify v0.16.11
+  [10f19ff3] LayoutPointers v0.1.17
+⌅ [1d6d02ad] LeftChildRightSiblingTrees v0.2.1
+  [6f1fad26] Libtask v0.9.18
+  [87fe0de2] LineSearch v0.1.12
+  [d3d80556] LineSearches v7.7.1
+⌅ [7ed4a6bd] LinearSolve v3.87.0
+  [6fdf6af0] LogDensityProblems v2.2.0
+  [996a588d] LogDensityProblemsAD v1.13.1
+⌅ [2ab3a3ac] LogExpFunctions v0.3.29
+  [e6f89c97] LoggingExtras v1.2.0
+  [b2108857] Lux v1.31.4
+  [bb33d45b] LuxCore v1.5.3
+  [82251201] LuxLib v1.15.9
+  [c7f686f2] MCMCChains v7.7.0
+  [be115224] MCMCDiagnosticTools v0.3.19
+  [7e8f7934] MLDataDevices v1.17.10
+  [e80e1ace] MLJModelInterface v1.12.1
+  [1914dd2f] MacroTools v0.5.16
+  [d125e4d3] ManualMemory v0.1.8
+  [dbb5928d] MappedArrays v0.4.3
+⌃ [bb5d69b7] MaybeInplace v0.1.6
+  [739be429] MbedTLS v1.1.10
+  [442fdcdd] Measures v0.3.3
+  [e1d29d7a] Missings v1.2.0
+  [dbe65cb8] MistyClosures v2.1.0
+  [da2b9cff] Mooncake v0.5.40
+  [2e0e35c7] Moshi v0.3.12
+  [46d2c3a1] MuladdMacro v0.2.6
+  [ffc61752] Mustache v1.0.21
+  [d41bc354] NLSolversBase v8.0.0
+⌃ [872c559c] NNlib v0.9.38
+  [77ba4419] NaNMath v1.1.4
+  [c020b1a1] NaturalSort v1.0.0
+⌃ [8913a72c] NonlinearSolve v4.19.1
+⌅ [be0214bd] NonlinearSolveBase v2.30.3
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.1.1
+⌃ [9a2c21bd] NonlinearSolveQuasiNewton v1.13.1
+⌃ [26075421] NonlinearSolveSpectralMethods v1.7.1
+  [d8793406] ObjectFile v0.5.1
+  [6fe1bfb0] OffsetArrays v1.17.0
+  [4d8831e6] OpenSSL v1.6.1
+  [429524aa] Optim v2.2.1
+  [3bd65402] Optimisers v0.4.7
+  [7f7a1694] Optimization v5.6.5
+  [bca83a33] OptimizationBase v5.2.2
+  [36348300] OptimizationOptimJL v0.4.16
+⌅ [bac558e1] OrderedCollections v1.8.2
+⌃ [1dea7af3] OrdinaryDiffEq v6.111.0
+⌅ [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.11.0
+⌅ [6ad6398a] OrdinaryDiffEqBDF v1.26.0
+⌅ [bbf590c4] OrdinaryDiffEqCore v3.33.1
+⌅ [50262376] OrdinaryDiffEqDefault v1.14.0
+⌅ [4302a76b] OrdinaryDiffEqDifferentiation v2.9.0
+⌅ [9286f039] OrdinaryDiffEqExplicitRK v1.12.0
+⌅ [e0540318] OrdinaryDiffEqExponentialRK v1.15.0
+⌅ [becaefa8] OrdinaryDiffEqExtrapolation v1.18.0
+⌅ [5960d6e9] OrdinaryDiffEqFIRK v1.26.0
+⌅ [101fe9f7] OrdinaryDiffEqFeagin v1.10.0
+⌅ [d3585ca7] OrdinaryDiffEqFunctionMap v1.11.0
+⌅ [d28bc4f8] OrdinaryDiffEqHighOrderRK v1.12.0
+⌅ [9f002381] OrdinaryDiffEqIMEXMultistep v1.14.0
+⌅ [521117fe] OrdinaryDiffEqLinear v1.12.0
+⌅ [1344f307] OrdinaryDiffEqLowOrderRK v1.13.0
+⌅ [b0944070] OrdinaryDiffEqLowStorageRK v1.15.0
+⌅ [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.28.0
+⌅ [c9986a66] OrdinaryDiffEqNordsieck v1.11.0
+⌅ [5dd0a6cf] OrdinaryDiffEqPDIRK v1.14.0
+⌅ [5b33eab2] OrdinaryDiffEqPRK v1.10.0
+⌅ [04162be5] OrdinaryDiffEqQPRK v1.10.0
+⌅ [af6ede74] OrdinaryDiffEqRKN v1.12.0
+⌅ [43230ef6] OrdinaryDiffEqRosenbrock v1.31.1
+⌅ [2d112036] OrdinaryDiffEqSDIRK v1.14.0
+⌅ [669c94d9] OrdinaryDiffEqSSPRK v1.14.0
+⌅ [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.14.0
+⌅ [358294b1] OrdinaryDiffEqStabilizedRK v1.11.1
+⌅ [fa646aed] OrdinaryDiffEqSymplecticRK v1.13.0
+⌅ [b1df2697] OrdinaryDiffEqTsit5 v1.12.0
+⌅ [79d7bb75] OrdinaryDiffEqVerner v1.14.0
+  [90014a1f] PDMats v0.11.40
+  [69de0a69] Parsers v2.8.6
+⌅ [569bd051] PartitionedDistributions v0.0.1
+  [ccf2f8ad] PlotThemes v3.3.0
+  [995b91a9] PlotUtils v1.4.4
+  [91a5bcdd] Plots v1.41.6
+  [e409e4f3] PoissonRandom v0.4.12
+  [f517fe37] Polyester v0.7.19
+  [1d0040c9] PolyesterWeave v0.2.2
+  [2dfb63ee] PooledArrays v1.4.3
+  [85a6dd25] PositiveFactorizations v0.2.4
+⌅ [1c4bc282] PosteriorDB v0.5.3
+  [d236fae5] PreallocationTools v1.3.0
+⌅ [aea7be01] PrecompileTools v1.2.1
+  [21216c6a] Preferences v1.5.2
+  [08abe8d2] PrettyTables v3.4.2
+  [27ebfcd6] Primes v0.5.7
+  [33c8b6b6] ProgressLogging v0.1.6
+  [92933f4c] ProgressMeter v1.11.0
+  [43287f4e] PtrArrays v1.4.0
+  [0c0d3e7f] PureKLU v1.1.1
+  [1fd47b50] QuadGK v2.11.3
+  [74087812] Random123 v1.7.1
+  [e6cf234a] RandomNumbers v1.6.0
+  [b3c3ace0] RangeArrays v0.3.2
+  [c84ed2f1] Ratios v0.4.5
+  [a3311ec8] ReactantCore v0.1.21
+  [c1ae055f] RealDot v0.1.0
+  [3cdcf5f2] RecipesBase v1.3.4
+  [01d81517] RecipesPipeline v0.6.12
+⌅ [731186ca] RecursiveArrayTools v3.54.0
+  [189a3867] Reexport v1.2.2
+  [05181044] RelocatableFolders v1.0.1
+  [ae029012] Requires v1.3.1
+  [ae5879a3] ResettableStacks v1.2.3
+  [37e2e3b7] ReverseDiff v1.17.0
+  [708f8203] Richardson v1.4.3
+  [79098fc4] Rmath v0.9.0
+  [f2b01f46] Roots v3.0.6
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.22
+  [94e857df] SIMDTypes v0.1.0
+  [26aad666] SSMProblems v0.6.1
+⌅ [0bca4576] SciMLBase v2.155.1
+⌃ [31c91b34] SciMLBenchmarks v0.1.3
+  [19f34311] SciMLJacobianOperators v0.1.16
+⌅ [a6db7da4] SciMLLogging v1.10.1
+⌃ [c0aeaf25] SciMLOperators v1.24.4
+  [431bcebd] SciMLPublic v1.2.3
+⌃ [1ed8b502] SciMLSensitivity v7.106.0
+  [53ae85a6] SciMLStructures v1.10.3
+  [30f210dd] ScientificTypesBase v3.1.0
+  [7e506255] ScopedValues v1.6.2
+  [6c6a2e73] Scratch v1.3.0
+  [91c51154] SentinelArrays v1.4.10
+  [efcf1570] Setfield v1.1.2
+  [992d4aef] Showoff v1.0.3
+  [777ac1f9] SimpleBufferStream v1.2.0
+⌃ [727e6d20] SimpleNonlinearSolve v2.12.0
+  [a2af1166] SortingAlgorithms v1.2.3
+  [a57abbd0] SparseColumnPivotedQR v2.1.4
+  [9f842d2f] SparseConnectivityTracer v1.2.2
+  [dc90abb0] SparseInverseSubset v0.1.2
+  [0a514795] SparseMatrixColorings v0.4.27
+  [276daf66] SpecialFunctions v2.8.0
+  [860ef19b] StableRNGs v1.0.4
+  [aedffcd0] Static v1.4.4
+  [0d7ed370] StaticArrayInterface v1.10.0
+  [90137ffa] StaticArrays v1.9.18
+  [1e83bf80] StaticArraysCore v1.4.4
+  [64bff920] StatisticalTraits v3.5.0
+  [10745b16] Statistics v1.11.1
+  [82ae8749] StatsAPI v1.8.0
+  [2913bbd2] StatsBase v0.34.12
+⌅ [4c63d2b9] StatsFuns v1.5.2
+  [7792a7ef] StrideArraysCore v0.5.9
+  [69024149] StringEncodings v0.3.7
+  [892a3eda] StringManipulation v0.4.6
+  [09ab397b] StructArrays v0.7.3
+  [53d494c1] StructIO v0.3.1
+  [856f2bd8] StructTypes v1.11.0
+  [2efcf032] SymbolicIndexingInterface v0.3.51
+  [3783bdb8] TableTraits v1.0.1
+  [bd369af6] Tables v1.13.0
+  [62fd8b95] TensorCore v0.1.1
+  [5d786b92] TerminalLoggers v0.1.7
+  [8290d209] ThreadingUtilities v0.5.6
+⌅ [a759f4b9] TimerOutputs v0.5.29
+  [9f7883ad] Tracker v0.2.38
+  [e689c965] Tracy v0.1.6
+  [3bb67fe8] TranscodingStreams v0.11.3
+  [781d530d] TruncatedStacktraces v1.4.0
+⌅ [fce5fe82] Turing v0.44.5
+  [5c2747f8] URIs v1.6.1
+  [1cfade01] UnicodeFun v0.4.1
+  [013be700] UnsafeAtomics v0.3.1
+  [41fe7b60] Unzip v0.2.0
+  [81def892] VersionParsing v1.3.0
+  [44d3d7a6] Weave v0.10.12
+  [d49dbf32] WeightInitializers v1.3.4
+  [efce3f68] WoodburyMatrices v1.1.0
+  [ddb6d928] YAML v0.4.16
+  [c2297ded] ZMQ v1.5.1
+  [a5390f91] ZipFile v0.10.1
+  [e88e6eb3] Zygote v0.7.12
+  [700de1a5] ZygoteRules v0.2.7
+  [6e34b625] Bzip2_jll v1.0.9+0
+  [83423d85] Cairo_jll v1.18.7+0
+  [ee1fde0b] Dbus_jll v1.16.2+0
+  [7cc45869] Enzyme_jll v0.0.289+0
+  [2702e6a9] EpollShim_jll v0.0.20230411+1
+  [2e619515] Expat_jll v2.8.2+0
+  [b22a6f82] FFMPEG_jll v8.1.2+0
+  [a3f928ae] Fontconfig_jll v2.17.1+0
+  [d7e528f0] FreeType2_jll v2.14.3+1
+  [559328eb] FriBidi_jll v1.0.17+0
+  [0656b61e] GLFW_jll v3.4.1+1
+  [d2c73de3] GR_jll v0.73.26+0
+⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
+  [61579ee1] Ghostscript_jll v9.55.1+0
+  [020c3dae] Git_LFS_jll v3.7.1+0
+  [f8c6e375] Git_jll v2.54.0+0
+  [7746bdde] Glib_jll v2.86.3+0
+  [3b182d85] Graphite2_jll v1.3.16+0
+⌅ [2e76f6c2] HarfBuzz_jll v8.5.1+0
+  [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
+  [aacddb02] JpegTurbo_jll v3.2.0+0
+  [c1c5ebd0] LAME_jll v3.100.3+0
+  [88015f11] LERC_jll v4.1.0+0
+  [dad2f222] LLVMExtra_jll v0.0.44+0
+  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+  [ad6e5548] LibTracyClient_jll v0.13.1+0
+⌅ [e9f186c6] Libffi_jll v3.4.7+0
+  [7e76a0d4] Libglvnd_jll v1.7.1+1
+  [94ce4f54] Libiconv_jll v1.18.0+0
+  [4b2f31a3] Libmount_jll v2.42.0+0
+  [89763e89] Libtiff_jll v4.7.3+0
+  [38a345b3] Libuuid_jll v2.42.0+0
+  [856f044c] MKL_jll v2025.2.0+0
+  [e7412a2a] Ogg_jll v1.3.6+0
+  [9bd350c2] OpenSSH_jll v10.4.1+0
+  [458c3c95] OpenSSL_jll v3.5.7+0
+  [efe28fd5] OpenSpecFun_jll v0.5.6+0
+  [91d4177d] Opus_jll v1.6.1+0
+  [36c8627f] Pango_jll v1.57.1+0
+  [30392449] Pixman_jll v0.46.4+0
+  [c0090381] Qt6Base_jll v6.10.2+2
+  [629bc702] Qt6Declarative_jll v6.10.2+2
+  [ce943373] Qt6ShaderTools_jll v6.10.2+1
+  [6de9746b] Qt6Svg_jll v6.10.2+0
+  [e99dba38] Qt6Wayland_jll v6.10.2+1
+  [f50d1b31] Rmath_jll v0.5.1+0
+  [a44049a8] Vulkan_Loader_jll v1.3.243+0
+  [a2964d1f] Wayland_jll v1.24.0+0
+  [ffd25f8a] XZ_jll v5.8.3+0
+  [f67eecfb] Xorg_libICE_jll v1.1.2+0
+  [c834827a] Xorg_libSM_jll v1.2.6+0
+  [4f6342f7] Xorg_libX11_jll v1.8.13+0
+  [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
+  [935fb764] Xorg_libXcursor_jll v1.2.4+0
+  [a3789734] Xorg_libXdmcp_jll v1.1.6+0
+  [1082639a] Xorg_libXext_jll v1.3.8+0
+  [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
+  [a51aa0fd] Xorg_libXi_jll v1.8.3+0
+  [d1454406] Xorg_libXinerama_jll v1.1.7+0
+  [ec84b674] Xorg_libXrandr_jll v1.5.6+0
+  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+  [a65dc6b1] Xorg_libpciaccess_jll v0.19.0+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
+  [cc61e674] Xorg_libxkbfile_jll v1.2.0+0
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.6+0
+  [12413925] Xorg_xcb_util_image_jll v0.4.1+0
+  [2def613f] Xorg_xcb_util_jll v0.4.1+0
+  [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
+  [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
+  [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
+  [35661453] Xorg_xkbcomp_jll v1.4.7+0
+  [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
+  [c5fb5394] Xorg_xtrans_jll v1.6.0+0
+  [8f1865be] ZeroMQ_jll v4.3.6+0
+  [3161d3a3] Zstd_jll v1.5.7+1
+  [35ca27e7] eudev_jll v3.2.14+0
+  [214eeab7] fzf_jll v0.61.1+0
+  [a4ae2306] libaom_jll v3.13.3+0
+  [0ac62f75] libass_jll v0.17.4+0
+  [1183f4f0] libdecor_jll v0.2.2+0
+  [8e53e030] libdrm_jll v2.4.134+0
+  [2db6ffa8] libevdev_jll v1.13.4+0
+  [f638f0a6] libfdk_aac_jll v2.0.4+0
+  [36db933b] libinput_jll v1.28.1+0
+  [b53b4c65] libpng_jll v1.6.58+0
+  [a9144af2] libsodium_jll v1.0.21+0
+  [9a156e7d] libva_jll v2.23.0+0
+  [f27f6e37] libvorbis_jll v1.3.8+0
+  [009596ad] mtdev_jll v1.1.7+0
+  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌅ [1270edf5] x264_jll v10164.0.1+0
+  [dfaa095f] x265_jll v4.1.0+0
+  [d8fb68d0] xkbcommon_jll v1.13.0+0
+  [0dad84c5] ArgTools v1.1.2
+  [56f22d72] Artifacts v1.11.0
+  [2a0f44e3] Base64 v1.11.0
+  [ade2ca70] Dates v1.11.0
+  [8ba89e20] Distributed v1.11.0
+  [f43a241f] Downloads v1.6.0
+  [7b1f6079] FileWatching v1.11.0
+  [9fa8497b] Future v1.11.0
+  [b77e0a4c] InteractiveUtils v1.11.0
+  [4af54fe1] LazyArtifacts v1.11.0
+  [b27032c2] LibCURL v0.6.4
+  [76f85450] LibGit2 v1.11.0
+  [8f399da3] Libdl v1.11.0
+  [37e2e46d] LinearAlgebra v1.11.0
+  [56ddb016] Logging v1.11.0
+  [d6f4376e] Markdown v1.11.0
+  [a63ad114] Mmap v1.11.0
+  [ca575930] NetworkOptions v1.2.0
+  [44cfe95a] Pkg v1.11.0
+  [de0858da] Printf v1.11.0
+  [3fa0cd96] REPL v1.11.0
+  [9a3f8284] Random v1.11.0
+  [ea8e919c] SHA v0.7.0
+  [9e88b42a] Serialization v1.11.0
+  [1a1011a3] SharedArrays v1.11.0
+  [6462fe0b] Sockets v1.11.0
+  [2f01184e] SparseArrays v1.11.0
+  [f489334b] StyledStrings v1.11.0
+  [4607b0f0] SuiteSparse
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
+  [8dfed614] Test v1.11.0
+  [cf7118a7] UUIDs v1.11.0
+  [4ec0a83e] Unicode v1.11.0
+  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
+  [deac9b47] LibCURL_jll v8.6.0+0
+  [e37daf67] LibGit2_jll v1.7.2+0
+  [29816b5a] LibSSH2_jll v1.11.0+1
+  [c8ffd9c3] MbedTLS_jll v2.28.6+0
+  [14a3606d] MozillaCACerts_jll v2023.12.12
+  [4536629a] OpenBLAS_jll v0.3.27+1
+  [05823500] OpenLibm_jll v0.8.5+0
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.7.0+0
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.11.0+0
+  [8e850ede] nghttp2_jll v1.59.0+0
+  [3f19e933] p7zip_jll v17.4.0+2
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../AutomaticDifferentiationSparse/ManualLoopDissusionSparseAD/">« Diffusion operator loop sparse AD benchmarks</a><a class="docs-footer-nextpage" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Tuesday 28 July 2026 11:33">Tuesday 28 July 2026</span>. Using Julia version 1.12.6.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
