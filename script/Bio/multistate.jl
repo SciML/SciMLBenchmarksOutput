@@ -3,6 +3,7 @@ using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
       Sundials, Plots, DiffEqDevTools, ODEInterface, ODEInterfaceDiffEq,
       LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit, BenchmarkTools,
       RecursiveFactorization
+using OrdinaryDiffEqAdamsBashforthMoulton, OrdinaryDiffEqBDF, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK, OrdinaryDiffEqStabilizedRK, OrdinaryDiffEqVerner, OrdinaryDiffEqLowOrderRK
 
 gr()
 const to = TimerOutput()
@@ -11,10 +12,10 @@ tf = 20.0
 # generate ModelingToolkit ODEs
 @timeit to "Parse Network" prnbng = loadrxnetwork(BNGNetwork(), joinpath(@__DIR__, "Models/multistate.net"))
 show(to)
-rn = complete(prnbng.rn)
+rn = complete(prnbng)
 obs = [eq.lhs for eq in observed(rn)]
 
-@timeit to "Create ODESys" osys = complete(convert(ODESystem, rn))
+@timeit to "Create ODESys" osys = complete(Catalyst.ode_model(rn))
 show(to)
 
 tspan = (0.0, tf)
@@ -29,7 +30,7 @@ show(to)
 
 
 @show numspecies(rn) # Number of ODEs
-@show numreactions(rn) # Apprx. number of terms in the ODE
+@show numreactions(rn) # Approx. number of terms in the ODE
 @show length(parameters(rn)); # Number of Parameters
 
 
@@ -112,11 +113,34 @@ names = ["lsoda" "Tsit5" "BS5" "VCABM" "Vern6" "Vern7" "Vern8" "Vern9" "ROCK4"]
 plot(wp; label = names)
 
 
-setups = [Dict(:alg=>CVODE_Adams()), Dict(:alg=>ROCK2())];
-wp = WorkPrecisionSet(oprob, abstols, reltols, setups; error_estimate = :l2,
-    saveat = tf/10000.0, appxsol = test_sol, maxiters = Int(1e9), numruns = 200)
-names = ["CVODE_Adams" "ROCK2"]
-plot(wp; label = names)
+const _loser_tol = 1e-6
+const _loser_maxiters = Int(1e7)
+_solve_kwargs = (; abstol = _loser_tol, reltol = _loser_tol, maxiters = _loser_maxiters,
+    save_everystep = false)
+
+loser_labels = String[]
+loser_elapsed = Float64[]
+
+function _time_loser!(label, alg)
+    println("--- $label ---")
+    t = @elapsed sol = solve(oprob, alg; _solve_kwargs...)
+    @show sol.retcode
+    println("elapsed = ", t, " s")
+    push!(loser_labels, label)
+    push!(loser_elapsed, t)
+    return sol
+end
+
+_time_loser!("Vern7 (reference)", Vern7())
+_time_loser!("CVODE_Adams (loser)", CVODE_Adams())
+_time_loser!("ROCK2 (loser)", ROCK2())
+
+
+ref_t = loser_elapsed[1]
+bar(loser_labels, loser_elapsed ./ ref_t; legend = false, xrotation = 20,
+    ylabel = "wall time / Vern7 reference",
+    title = "multistate loser isolation (tol=$_loser_tol, one solve each)",
+    size = (700, 400), bottom_margin = 8Plots.mm)
 
 
 setups = [

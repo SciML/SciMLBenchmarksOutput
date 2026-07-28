@@ -3,6 +3,7 @@ using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
       Sundials, Plots, DiffEqDevTools, ODEInterface, ODEInterfaceDiffEq,
       LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit, BenchmarkTools,
       LinearSolve, RecursiveFactorization
+using OrdinaryDiffEqBDF, OrdinaryDiffEqSDIRK
 
 gr()
 datadir = joinpath(dirname(pathof(ReactionNetworkImporters)), "../data/bcr")
@@ -12,10 +13,10 @@ tf = 100000.0
 # generate ModelingToolkit ODEs
 @timeit to "Parse Network" prnbng = loadrxnetwork(BNGNetwork(), joinpath(datadir, "bcr.net"))
 show(to)
-rn = complete(prnbng.rn)
+rn = complete(prnbng)
 obs = [eq.lhs for eq in observed(rn)]
 
-@timeit to "Create ODESys" osys = complete(convert(ODESystem, rn))
+@timeit to "Create ODESys" osys = complete(Catalyst.ode_model(rn))
 show(to)
 
 tspan = (0.0, tf)
@@ -32,7 +33,7 @@ show(to)
 
 
 @show numspecies(rn) # Number of ODEs
-@show numreactions(rn) # Apprx. number of terms in the ODE
+@show numreactions(rn) # Approx. number of terms in the ODE
 @show length(parameters(rn)); # Number of Parameters
 
 
@@ -92,13 +93,9 @@ function precilu(z, r, p, t, y, fy, gamma, delta, lr)
     ldiv!(z, preccache[], r)
 end
 
-function incompletelu(W, du, u, p, t, newW, Plprev, Prprev, solverdata)
-    if newW === nothing || newW
-        Pl = ilu(convert(AbstractMatrix, W), τ = τ2)
-    else
-        Pl = Plprev
-    end
-    Pl, nothing
+function incompletelu(A, p)
+    Pl = ilu(convert(AbstractMatrix, A); τ = τ2)
+    return Pl, I
 end;
 
 
@@ -106,14 +103,16 @@ abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (5:8);
 
 
-solve(sparsejacprob, CVODE_BDF(linear_solver = :KLU), abstol = 1e-8, reltol = 1e-8);
+try
+    solve(sparsejacprob, CVODE_BDF(linear_solver = :KLU), abstol = 1e-8, reltol = 1e-8);
+catch e
+    println("CVODE_BDF with KLU failed: $e")
+end
 
 
 setups = [
     Dict(:alg=>lsoda(), :prob_choice => 1),
     Dict(:alg=>CVODE_BDF(), :prob_choice => 1),
-    Dict(:alg=>CVODE_BDF(linear_solver = :LapackDense), :prob_choice => 1),
-    Dict(:alg=>CVODE_BDF(linear_solver = :GMRES), :prob_choice => 1),
     Dict(
         :alg=>CVODE_BDF(linear_solver = :GMRES, prec = precilu, psetup = psetupilu, prec_side = 1),
         :prob_choice => 2)
@@ -124,47 +123,17 @@ wp = WorkPrecisionSet(
     [oprob, oprob_sparse, sparsejacprob], abstols, reltols, setups; error_estimate = :l2,
     saveat = tf/10000.0, appxsol = [test_sol, test_sol, test_sol], maxiters = Int(1e6), numruns = 1)
 
-names = ["lsoda" "CVODE_BDF" "CVODE_BDF (LapackDense)" "CVODE_BDF (GMRES)" "CVODE_BDF (GMRES, iLU)" "CVODE_BDF (KLU, sparse jac)"]
-plot(wp; label = names)
-
-
-setups = [
-    Dict(:alg=>TRBDF2(autodiff = false)),
-    Dict(:alg=>QNDF(autodiff = false)),
-    Dict(:alg=>FBDF(autodiff = false)),
-    Dict(:alg=>KenCarp4(autodiff = false))
-];
-
-
-wp = WorkPrecisionSet(oprob, abstols, reltols, setups; error_estimate = :l2,
-    saveat = tf/10000.0, appxsol = test_sol, maxiters = Int(1e6), numruns = 1)
-
-names = ["TRBDF2" "QNDF" "FBDF" "KenCarp4"]
-plot(wp; label = names)
-
-
-setups = [
-    Dict(:alg=>TRBDF2(linsolve = KrylovJL_GMRES(), autodiff = false)),
-    Dict(:alg=>QNDF(linsolve = KrylovJL_GMRES(), autodiff = false)),
-    Dict(:alg=>FBDF(linsolve = KrylovJL_GMRES(), autodiff = false)),
-    Dict(:alg=>KenCarp4(linsolve = KrylovJL_GMRES(), autodiff = false))
-];
-
-
-wp = WorkPrecisionSet(oprob, abstols, reltols, setups; error_estimate = :l2,
-    saveat = tf/10000.0, appxsol = test_sol, maxiters = Int(1e6), numruns = 1)
-
-names = ["TRBDF2 (GMRES)" "QNDF (GMRES)" "FBDF (GMRES)" "KenCarp4 (GMRES)"]
+names = ["lsoda" "CVODE_BDF" "CVODE_BDF (GMRES, iLU)"]
 plot(wp; label = names)
 
 
 setups = [
     Dict(:alg=>TRBDF2(
-        linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true)),
-    Dict(:alg=>QNDF(linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true)),
-    Dict(:alg=>FBDF(linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true)),
+        linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true)),
+    Dict(:alg=>QNDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true)),
+    Dict(:alg=>FBDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true)),
     Dict(:alg=>KenCarp4(
-        linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true))
+        linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true))
 ];
 
 
@@ -176,10 +145,10 @@ plot(wp; label = names)
 
 
 setups = [
-    Dict(:alg=>TRBDF2(linsolve = KLUFactorization(), autodiff = false)),
-    Dict(:alg=>QNDF(linsolve = KLUFactorization(), autodiff = false)),
-    Dict(:alg=>FBDF(linsolve = KLUFactorization(), autodiff = false)),
-    Dict(:alg=>KenCarp4(linsolve = KLUFactorization(), autodiff = false))
+    Dict(:alg=>TRBDF2(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff())),
+    Dict(:alg=>QNDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff())),
+    Dict(:alg=>FBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff())),
+    Dict(:alg=>KenCarp4(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()))
 ];
 
 
@@ -190,19 +159,72 @@ names = ["TRBDF2 (KLU, sparse jac)" "QNDF (KLU, sparse jac)" "FBDF (KLU, sparse 
 plot(wp; label = names)
 
 
+const _loser_tol = 1e-6
+const _loser_maxiters = Int(1e6)
+_solve_kwargs = (; abstol = _loser_tol, reltol = _loser_tol, maxiters = _loser_maxiters,
+    save_everystep = false)
+
+loser_labels = String[]
+loser_elapsed = Float64[]
+
+function _time_loser!(label, prob, alg)
+    println("--- $label ---")
+    t = @elapsed sol = solve(prob, alg; _solve_kwargs...)
+    @show sol.retcode
+    println("elapsed = ", t, " s")
+    push!(loser_labels, label)
+    push!(loser_elapsed, t)
+    return sol
+end
+
+# Competitive reference (sparse KLU)
+_time_loser!("FBDF + KLU (reference)", sparsejacprob,
+    FBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()))
+
+# Dense CVODE Lapack
+_time_loser!("CVODE_BDF LapackDense", oprob, CVODE_BDF(linear_solver = :LapackDense))
+
+# Bare CVODE GMRES (no preconditioner)
+_time_loser!("CVODE_BDF GMRES (no prec)", oprob, CVODE_BDF(linear_solver = :GMRES))
+
+# Default dense Julia factorizations on the non-sparse problem
+_time_loser!("TRBDF2 (default dense)", oprob, TRBDF2(autodiff = AutoFiniteDiff()))
+_time_loser!("QNDF (default dense)", oprob, QNDF(autodiff = AutoFiniteDiff()))
+_time_loser!("FBDF (default dense)", oprob, FBDF(autodiff = AutoFiniteDiff()))
+_time_loser!("KenCarp4 (default dense)", oprob, KenCarp4(autodiff = AutoFiniteDiff()))
+
+# Unpreconditioned GMRES on the dense residual problem
+_time_loser!("TRBDF2 GMRES (no prec)", oprob,
+    TRBDF2(linsolve = KrylovJL_GMRES(), autodiff = AutoFiniteDiff()))
+_time_loser!("QNDF GMRES (no prec)", oprob,
+    QNDF(linsolve = KrylovJL_GMRES(), autodiff = AutoFiniteDiff()))
+_time_loser!("FBDF GMRES (no prec)", oprob,
+    FBDF(linsolve = KrylovJL_GMRES(), autodiff = AutoFiniteDiff()))
+_time_loser!("KenCarp4 GMRES (no prec)", oprob,
+    KenCarp4(linsolve = KrylovJL_GMRES(), autodiff = AutoFiniteDiff()))
+
+
+# Relative cost vs the sparse KLU reference (first entry)
+ref_t = loser_elapsed[1]
+bar(loser_labels, loser_elapsed ./ ref_t; xrotation = 45, legend = false,
+    ylabel = "wall time / (FBDF+KLU reference)",
+    title = "BCR loser isolation (tol=$_loser_tol, one solve each)",
+    size = (900, 500), left_margin = 5Plots.mm, bottom_margin = 15Plots.mm)
+
+
 setups = [
     Dict(
         :alg=>CVODE_BDF(linear_solver = :GMRES, prec = precilu, psetup = psetupilu, prec_side = 1),
         :prob_choice => 2),
     Dict(
-        :alg=>QNDF(linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true),
+        :alg=>QNDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true),
         :prob_choice => 3),
     Dict(
-        :alg=>FBDF(linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true),
+        :alg=>FBDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true),
         :prob_choice => 3),
-    Dict(:alg=>QNDF(linsolve = KLUFactorization(), autodiff = false), :prob_choice => 3),
-    Dict(:alg=>FBDF(linsolve = KLUFactorization(), autodiff = false), :prob_choice => 3),
-    Dict(:alg=>KenCarp4(linsolve = KLUFactorization(), autodiff = false), :prob_choice => 3)
+    Dict(:alg=>QNDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()), :prob_choice => 3),
+    Dict(:alg=>FBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()), :prob_choice => 3),
+    Dict(:alg=>KenCarp4(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()), :prob_choice => 3)
 ];
 
 

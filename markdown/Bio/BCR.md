@@ -18,6 +18,7 @@ using DiffEqBase, OrdinaryDiffEq, Catalyst, ReactionNetworkImporters,
       Sundials, Plots, DiffEqDevTools, ODEInterface, ODEInterfaceDiffEq,
       LSODA, TimerOutputs, LinearAlgebra, ModelingToolkit, BenchmarkTools,
       LinearSolve, RecursiveFactorization
+using OrdinaryDiffEqBDF, OrdinaryDiffEqSDIRK
 
 gr()
 datadir = joinpath(dirname(pathof(ReactionNetworkImporters)), "../data/bcr")
@@ -27,10 +28,10 @@ tf = 100000.0
 # generate ModelingToolkit ODEs
 @timeit to "Parse Network" prnbng = loadrxnetwork(BNGNetwork(), joinpath(datadir, "bcr.net"))
 show(to)
-rn = complete(prnbng.rn)
+rn = complete(prnbng)
 obs = [eq.lhs for eq in observed(rn)]
 
-@timeit to "Create ODESys" osys = complete(convert(ODESystem, rn))
+@timeit to "Create ODESys" osys = complete(Catalyst.ode_model(rn))
 show(to)
 
 tspan = (0.0, tf)
@@ -42,42 +43,44 @@ oprob_sparse = ODEProblem{true, SciMLBase.FullSpecialize}(
 ```
 
 ```
+Scanning blocks...done
 Parsing parameters...done
 Creating parameters...done
 Parsing species...done
-Creating species...done
-Creating species and parameters for evaluating expressions...done
-Parsing and adding reactions...done
+Creating variables...done
+Setting up expression evaluation module...done
 Parsing groups...done
+Parsing functions...done
+Parsing and adding reactions...done
 ──────────────────────────────────────────────────────────────────────────
                                  Time                    Allocations      
                         ───────────────────────   ────────────────────────
-   Tot / % measured:         7.52s /  97.1%            824MiB /  98.6%    
+   Tot / % measured:         10.0s /  98.4%            639MiB /  99.5%    
 
 Section         ncalls     time    %tot     avg     alloc    %tot      avg
 ──────────────────────────────────────────────────────────────────────────
-Parse Network        1    7.30s  100.0%   7.30s    813MiB  100.0%   813MiB
+Parse Network        1    9.86s  100.0%   9.86s    636MiB  100.0%   636MiB
 ───────────────────────────────────────────────────────────────────────────
 ─────────────────────────────────────────────────────────────────────────
                                  Time                    Allocations      
                         ───────────────────────   ────────────────────────
-   Tot / % measured:         15.0s /  87.4%           2.41GiB /  91.9%    
+   Tot / % measured:         25.8s /  87.3%           2.24GiB /  79.3%    
 
 Section         ncalls     time    %tot     avg     alloc    %tot      avg
 ──────────────────────────────────────────────────────────────────────────
-Parse Network        1    7.30s   55.9%   7.30s    813MiB   35.8%   813MiB
-Create ODESys        1    5.77s   44.1%   5.77s   1.42GiB   64.2%  1.42GiB
+Create ODESys        1    12.6s   56.2%   12.6s   1.16GiB   65.1%  1.16GiB
+Parse Network        1    9.86s   43.8%   9.86s    636MiB   34.9%   636MiB
 ───────────────────────────────────────────────────────────────────────────
 ──────────────────────────────────────────────────────────────────────────
                                   Time                    Allocations      
                          ───────────────────────   ────────────────────────
-    Tot / % measured:         27.9s /  93.2%           5.51GiB /  96.5%    
+    Tot / % measured:         67.5s /  95.1%           5.33GiB /  91.3%    
 
 Section          ncalls     time    %tot     avg     alloc    %tot      avg
 ───────────────────────────────────────────────────────────────────────────
-ODEProb No Jac        1    13.0s   49.8%   13.0s   3.10GiB   58.3%  3.10GiB
-Parse Network         1    7.30s   28.1%   7.30s    813MiB   14.9%   813MiB
-Create ODESys         1    5.77s   22.2%   5.77s   1.42GiB   26.8%  1.42GiB
+ODEProb No Jac        1    41.7s   64.9%   41.7s   3.08GiB   63.4%  3.08GiB
+Create ODESys         1    12.6s   19.7%   12.6s   1.16GiB   23.8%  1.16GiB
+Parse Network         1    9.86s   15.4%   9.86s    636MiB   12.8%   636MiB
 ───────────────────────────────────────────────────────────────────────────
 ```
 
@@ -96,21 +99,21 @@ show(to)
    
                             ───────────────────────   ─────────────────────
 ───
-     Tot / % measured:            261s /  95.3%            115GiB /  97.5% 
+     Tot / % measured:            143s /  92.2%           13.1GiB /  90.0% 
    
 
 Section             ncalls     time    %tot     avg     alloc    %tot      
 avg
 ───────────────────────────────────────────────────────────────────────────
 ───
-ODEProb SparseJac        1     222s   89.5%    222s    107GiB   95.3%   107
+ODEProb SparseJac        1    68.1s   51.5%   68.1s   6.97GiB   58.9%  6.97
 GiB
-ODEProb No Jac           1    13.0s    5.2%   13.0s   3.10GiB    2.8%  3.10
+ODEProb No Jac           1    41.7s   31.5%   41.7s   3.08GiB   26.1%  3.08
 GiB
-Parse Network            1    7.30s    2.9%   7.30s    813MiB    0.7%   813
+Create ODESys            1    12.6s    9.6%   12.6s   1.16GiB    9.8%  1.16
+GiB
+Parse Network            1    9.86s    7.5%   9.86s    636MiB    5.2%   636
 MiB
-Create ODESys            1    5.77s    2.3%   5.77s   1.42GiB    1.3%  1.42
-GiB
 ───────────────────────────────────────────────────────────────────────────
 ───
 ```
@@ -119,7 +122,7 @@ GiB
 
 ```julia
 @show numspecies(rn) # Number of ODEs
-@show numreactions(rn) # Apprx. number of terms in the ODE
+@show numreactions(rn) # Approx. number of terms in the ODE
 @show length(parameters(rn)); # Number of Parameters
 ```
 
@@ -155,25 +158,25 @@ show(to)
      
                               ───────────────────────   ───────────────────
 ─────
-      Tot / % measured:             404s /  97.0%            118GiB /  97.5
+      Tot / % measured:             234s /  95.2%           14.8GiB /  91.1
 %    
 
 Section               ncalls     time    %tot     avg     alloc    %tot    
   avg
 ───────────────────────────────────────────────────────────────────────────
 ─────
-ODEProb SparseJac          1     222s   56.7%    222s    107GiB   93.1%   1
-07GiB
-ODE rhs Eval1              1     144s   36.6%    144s   2.64GiB    2.3%  2.
-64GiB
-ODEProb No Jac             1    13.0s    3.3%   13.0s   3.10GiB    2.7%  3.
-10GiB
-Parse Network              1    7.30s    1.9%   7.30s    813MiB    0.7%   8
-13MiB
-Create ODESys              1    5.77s    1.5%   5.77s   1.42GiB    1.2%  1.
-42GiB
-ODE rhs spjac Eval1        1   8.30ms    0.0%  8.30ms    296KiB    0.0%   2
-96KiB
+ODE rhs Eval1              1    90.5s   40.6%   90.5s   1.63GiB   12.1%  1.
+63GiB
+ODEProb SparseJac          1    68.1s   30.6%   68.1s   6.97GiB   51.8%  6.
+97GiB
+ODEProb No Jac             1    41.7s   18.7%   41.7s   3.08GiB   22.9%  3.
+08GiB
+Create ODESys              1    12.6s    5.7%   12.6s   1.16GiB    8.6%  1.
+16GiB
+Parse Network              1    9.86s    4.4%   9.86s    636MiB    4.6%   6
+36MiB
+ODE rhs spjac Eval1        1   20.1ms    0.0%  20.1ms    121KiB    0.0%   1
+21KiB
 ───────────────────────────────────────────────────────────────────────────
 ─────
 ```
@@ -190,7 +193,28 @@ given how fast evaluating `f` is:
 ```
 
 ```
-38.490 μs (2 allocations: 832 bytes)
+58.649 μs (2 allocations: 336 bytes)
+1122-element Vector{Float64}:
+ -61.02808204566638
+   5.9419803819100936e-5
+  -0.00017585529782112702
+   1.0927337921851077e-5
+  -2.3758222191985274e-10
+   0.0
+  -0.021580601559230476
+  -1.6747517751920672e-11
+  -2.0210137082353793e-9
+  -0.021503434568330704
+   ⋮
+  -1.3438401881877296e-31
+  -1.821220440363728e-23
+  -2.0469563355048894e-23
+  -1.5706889177081996e-14
+  -3.706165528698637e-21
+  -3.422527865770079e-13
+  -7.529912023768182e-13
+  -5.534288429900883e-23
+  -1.6608675645848637e-17
 ```
 
 
@@ -209,29 +233,29 @@ show(to)
      
                               ───────────────────────   ───────────────────
 ─────
-      Tot / % measured:            1.35h /  99.5%            122GiB /  97.5
+      Tot / % measured:             353s /  94.4%           15.5GiB /  91.1
 %    
 
 Section               ncalls     time    %tot     avg     alloc    %tot    
   avg
 ───────────────────────────────────────────────────────────────────────────
 ─────
-SparseJac Eval1            1    1.23h   91.9%   1.23h   3.75GiB    3.2%  3.
-75GiB
-ODEProb SparseJac          1     222s    4.6%    222s    107GiB   90.1%   1
-07GiB
-ODE rhs Eval1              1     144s    3.0%    144s   2.64GiB    2.2%  2.
-64GiB
-ODEProb No Jac             1    13.0s    0.3%   13.0s   3.10GiB    2.6%  3.
-10GiB
-Parse Network              1    7.30s    0.2%   7.30s    813MiB    0.7%   8
-13MiB
-Create ODESys              1    5.77s    0.1%   5.77s   1.42GiB    1.2%  1.
-42GiB
-ODE rhs spjac Eval1        1   8.30ms    0.0%  8.30ms    296KiB    0.0%   2
-96KiB
-SparseJac Eval2            1    122μs    0.0%   122μs   1.86KiB    0.0%  1.
-86KiB
+SparseJac Eval1            1     111s   33.2%    111s    674MiB    4.7%   6
+74MiB
+ODE rhs Eval1              1    90.5s   27.1%   90.5s   1.63GiB   11.5%  1.
+63GiB
+ODEProb SparseJac          1    68.1s   20.4%   68.1s   6.97GiB   49.4%  6.
+97GiB
+ODEProb No Jac             1    41.7s   12.5%   41.7s   3.08GiB   21.8%  3.
+08GiB
+Create ODESys              1    12.6s    3.8%   12.6s   1.16GiB    8.2%  1.
+16GiB
+Parse Network              1    9.86s    3.0%   9.86s    636MiB    4.4%   6
+36MiB
+ODE rhs spjac Eval1        1   20.1ms    0.0%  20.1ms    121KiB    0.0%   1
+21KiB
+SparseJac Eval2            1    139μs    0.0%   139μs   1.06KiB    0.0%  1.
+06KiB
 ───────────────────────────────────────────────────────────────────────────
 ─────
 ```
@@ -259,7 +283,7 @@ test_sol = TestSolution(sol);
 ```
 
 ```
-617.343973 seconds (6.65 M allocations: 2.124 GiB, 0.35% gc time, 0.10% com
+840.055012 seconds (6.95 M allocations: 2.148 GiB, 0.17% gc time, 0.13% com
 pilation time)
 ```
 
@@ -309,13 +333,9 @@ function precilu(z, r, p, t, y, fy, gamma, delta, lr)
     ldiv!(z, preccache[], r)
 end
 
-function incompletelu(W, du, u, p, t, newW, Plprev, Prprev, solverdata)
-    if newW === nothing || newW
-        Pl = ilu(convert(AbstractMatrix, W), τ = τ2)
-    else
-        Pl = Plprev
-    end
-    Pl, nothing
+function incompletelu(A, p)
+    Pl = ilu(convert(AbstractMatrix, A); τ = τ2)
+    return Pl, I
 end;
 ```
 
@@ -334,26 +354,170 @@ reltols = 1.0 ./ 10.0 .^ (5:8);
 
 ## Failures
 
-Before proceeding to the results, we note the notable omissions. CVODE with KLU diverges in the solution, and
-thus it is omitted from the results:
+CVODE with KLU diverges on this problem and is omitted from all suites:
 
 ```julia
-solve(sparsejacprob, CVODE_BDF(linear_solver = :KLU), abstol = 1e-8, reltol = 1e-8);
+try
+    solve(sparsejacprob, CVODE_BDF(linear_solver = :KLU), abstol = 1e-8, reltol = 1e-8);
+catch e
+    println("CVODE_BDF with KLU failed: $e")
+end
+```
+
+```
+retcode: Success
+Interpolation: 3rd order Hermite
+t: 21415-element Vector{Float64}:
+      0.0
+      8.530416743262686e-10
+      8.531269784937012e-6
+      9.383543721756388e-5
+      0.00017913960465019074
+      0.0002644437720828176
+      0.00039384307861352184
+      0.000606975227463128
+      0.0009765102032007519
+      0.001694692142693193
+      ⋮
+  99686.1707218609
+  99709.42668023035
+  99753.27826653022
+  99797.1298528301
+  99840.98143912997
+  99884.83302542985
+  99928.68461172972
+  99972.5361980296
+ 100000.0
+u: 21415-element Vector{Vector{Float64}}:
+ [299717.8348854, 47149.15480798, 46979.01102231, 290771.2428252, 299980.73
+96749, 300000.0, 141.3151575495, 0.1256496403614, 0.4048783555301, 140.8052
+338618  …  5.279974499715e-11, 1.005585387399e-24, 6.724953378237e-17, 3.39
+5560698281e-16, 1.787990228838e-5, 8.761844379939e-13, 0.0002517949074779, 
+0.0005539124513976, 2.281251822741e-14, 1.78232055967e-8]
+ [299717.834885348, 47149.15480798, 46979.01102231, 290771.2428252, 299980.
+7396749, 300000.0, 141.31515754948157, 0.1256496403614, 0.4048783555301, 14
+0.80523386178166  …  5.279974499715e-11, 1.0055853873989998e-24, 6.72495337
+8236999e-17, 3.395560698281e-16, 1.787990228838e-5, 8.761844379939e-13, 0.0
+002517949074779, 0.0005539124513976, 2.281251822741e-14, 1.78232055967e-8]
+ [299717.8343647574, 47149.154807977386, 46979.011022305385, 290771.2428252
+0014, 299980.7396749, 300000.0, 141.31515736537588, 0.12564964037709234, 0.
+4048783555457002, 140.8052336783343  …  5.279974499714919e-11, 1.0055853873
+97986e-24, 6.724953378223368e-17, 3.3955606982794407e-16, 1.787990228837986
+5e-5, 8.761844379938684e-13, 0.0002517949074778971, 0.0005539124513975936, 
+2.281251822740953e-14, 1.7823205596699857e-8]
+ [299717.8291591478, 47149.154807742954, 46979.01102205176, 290771.24282520
+113, 299980.7396749, 300000.0, 141.3151555233761, 0.1256496415779975, 0.404
+8783567406875, 140.8052318429211  …  5.2799744997137034e-11, 1.005585387444
+9137e-24, 6.724953378866749e-17, 3.395560698361107e-16, 1.7879902288378527e
+-5, 8.76184437993553e-13, 0.00025179490747786787, 0.0005539124513975294, 2.
+2812518227404943e-14, 1.7823205596698444e-8]
+ [299717.8239539325, 47149.15480723098, 46979.01102152158, 290771.242825202
+35, 299980.7396749, 300000.0, 141.31515368011995, 0.12564964416810973, 0.40
+48783593182312, 140.80523000625607  …  5.2799744997115184e-11, 1.0055853876
+29334e-24, 6.724953381328821e-17, 3.395560698691282e-16, 1.787990228837719e
+-5, 8.761844379932404e-13, 0.00025179490747783865, 0.0005539124513974652, 2
+.281251822740051e-14, 1.7823205596697038e-8]
+ [299717.8187491442, 47149.15480641848, 46979.01102069197, 290771.242825203
+87, 299980.7396749, 300000.0, 141.31515183550403, 0.12564964825951233, 0.40
+48783633898745, 140.80522816823617  …  5.279974499707762e-11, 1.00558538804
+15089e-24, 6.724953386690722e-17, 3.395560699459465e-16, 1.787990228837585e
+-5, 8.761844379929337e-13, 0.00025179490747780943, 0.0005539124513974011, 2
+.281251822739625e-14, 1.7823205596695638e-8]
+ [299717.81085475476, 47149.154804595026, 46979.01101884468, 290771.2428252
+0724, 299980.7396749, 300000.0, 141.31514903470352, 0.12564965740882778, 0.
+40487837249511016, 140.8052253774509  …  5.2799744996974964e-11, 1.00558538
+93523886e-24, 6.724953402949404e-17, 3.395560702084003e-16, 1.7879902288373
+817e-5, 8.761844379924924e-13, 0.00025179490747776514, 0.000553912451397303
+6, 2.2812518227390188e-14, 1.7823205596693524e-8]
+ [299717.7978542127, 47149.1548000324, 46979.01101424841, 290771.2428252169
+6, 299980.7396749, 300000.0, 141.3151444144936, 0.12564968020861525, 0.4048
+783951852038, 140.80522077376244  …  5.2799744996631736e-11, 1.005585394230
+0045e-24, 6.724953457910728e-17, 3.3955607130383976e-16, 1.787990228837047e
+-5, 8.761844379918892e-13, 0.0002517949074776922, 0.0005539124513971431, 2.
+2812518227381624e-14, 1.7823205596690066e-8]
+ [299717.77532002697, 47149.15478752479, 46979.01100169908, 290771.24282525
+317, 299980.7396749, 300000.0, 141.3151363831068, 0.12564974235602455, 0.40
+487845703373515, 140.80521277109582  …  5.2799744995230104e-11, 1.005585415
+748168e-24, 6.72495365744463e-17, 3.395560768853695e-16, 1.7879902288364666
+e-5, 8.761844379915418e-13, 0.0002517949074775657, 0.0005539124513968649, 2
+.2812518227373304e-14, 1.7823205596684167e-8]
+ [299717.73154913925, 47149.15474659125, 46979.01096074444, 290771.24282544
+18, 299980.7396749, 300000.0, 141.31512069959203, 0.12564994375625899, 0.40
+48786574651034, 140.8051971436676  …  5.279974498722368e-11, 1.005585545977
+7648e-24, 6.724954488272696e-17, 3.3955611488601857e-16, 1.7879902288353377
+e-5, 8.761844379954985e-13, 0.0002517949074773199, 0.0005539124513963241, 2
+.2812518227400765e-14, 1.7823205596673804e-8]
+ ⋮
+ [299192.1776928896, 32397.537475143454, 32383.04594003225, 293610.36449529
+085, 299991.33484080224, 299999.9867560122, 96.93075233424827, 0.0641376867
+3805303, 0.207715544538133, 96.887410071658  …  1.820459577736317e-11, 1.70
+37015887485397e-25, 1.659165351393343e-17, 8.299954916909853e-17, 8.2439782
+91644055e-6, 2.259435875098404e-13, 9.430327346823399e-5, 0.000207494372042
+24035, 8.023378703538285e-15, 8.217853558588529e-9]
+ [299181.86631367204, 32510.633659459185, 32495.88965143785, 293588.3601008
+626, 299991.25729581143, 299999.98640834965, 97.26577187553171, 0.064661265
+12483265, 0.2094022599200431, 97.22167588203222  …  1.842079842793155e-11, 
+1.7421415183492513e-25, 1.6874350284478157e-17, 8.442284830017389e-17, 8.32
+061802241455e-6, 2.2966078775553616e-13, 9.534682909784557e-5, 0.0002097902
+2329443672, 8.133610365373978e-15, 8.294250191383691e-9]
+ [299162.0377413547, 32721.888539092477, 32706.66265400436, 293547.26188124
+03, 299991.1106013818, 299999.9857265722, 97.89131382219941, 0.065651822318
+25258, 0.2125929574705013, 97.84577940120214  …  1.8831177967735367e-11, 1.
+8164104747026386e-25, 1.741574859561675e-17, 8.714877666207676e-17, 8.46566
+107393065e-6, 2.367761356050585e-13, 9.732600267648284e-5, 0.00021414445857
+496223, 8.343970646460164e-15, 8.43883317267181e-9]
+ [299141.69032208907, 32930.51124961882, 32914.79593669229, 293506.68107732
+97, 299990.9632821226, 299999.9850088129, 98.50872691463411, 0.066646841233
+25593, 0.21579750241491208, 98.4617317524655  …  1.9245088250296365e-11, 1.
+8930757522604111e-25, 1.796822392501866e-17, 8.993064635873785e-17, 8.61141
+147939676e-6, 2.4403249971258715e-13, 9.932014353633849e-5, 0.0002185316213
+540706, 8.55768168592629e-15, 8.584121264677801e-9]
+ [299120.805220407, 33136.48000096773, 33120.26776453989, 293466.6215690106
+6, 299990.8153308411, 299999.98425291525, 99.1179380870041, 0.0676465333214
+5451, 0.21901656707919764, 99.06946005016084  …  1.9662529305358815e-11, 1.
+972215293402204e-25, 1.8532000910043323e-17, 9.276957507676495e-17, 8.75788
+922380441e-6, 2.514328203817845e-13, 0.00010132931272227687, 0.000222951846
+96044762, 8.774841347479999e-15, 8.730134389295033e-9]
+ [299099.3624500974, 33339.77286011933, 33323.05626069919, 293427.087258326
+8, 299990.6667369568, 299999.9834565519, 99.71887338442623, 0.0686511459457
+0704, 0.22225093866896317, 99.66889052357612  …  2.008351209083993e-11, 2.0
+539144198775387e-25, 1.91073345950793e-17, 9.566683264202864e-17, 8.9051192
+39940221e-6, 2.5898043357030217e-13, 0.00010335362660885497, 0.000227405392
+6691548, 8.995561005285067e-15, 8.876897400507493e-9]
+ [299077.34091285046, 33540.36773031579, 33523.13938526587, 293388.08207337
+46, 299990.51748632424, 299999.98261723004, 100.31145795731064, 0.069660959
+97678382, 0.2255015124300607, 100.2599485100854  …  2.0508057559505026e-11,
+ 2.1382646505132125e-25, 1.969450490603882e-17, 9.862381318647812e-17, 9.05
+3131021477028e-6, 2.6667901531800353e-13, 0.00010539325464590981, 0.0002318
+926322119747, 9.2199637871204e-15, 9.024439698764589e-9]
+ [299054.71841349185, 33738.24230317002, 33720.49488709381, 293349.60997774
+755, 299990.3675611525, 299999.9817322816, 100.89561589994369, 0.0706762927
+4812391, 0.22876929994467207, 100.84255829292351  …  2.093619742436753e-11,
+ 2.2253648536477813e-25, 2.029382261167284e-17, 1.0164206448017759e-16, 9.2
+01959025324636e-6, 2.745326356840963e-13, 0.00010744842038148226, 0.0002364
+140586897642, 9.448186564734197e-15, 9.172795631969945e-9]
+ [299040.23375720624, 33860.773730303416, 33842.69752036722, 293325.7885646
+959, 299990.27331156074, 299999.9811535395, 101.25714233696189, 0.071315154
+36760952, 0.23082515390892103, 101.20310423151403  …  2.1206186565191402e-1
+1, 2.2813634149480017e-25, 2.0675508494456712e-17, 1.0356433140271744e-16, 
+9.295601828861896e-6, 2.795322445070044e-13, 0.0001087435870732461, 0.00023
+92634669060992, 9.59313320389037e-15, 9.266141408908529e-9]
 ```
 
 
 
 
-## Work-Precision Diagrams (CVODE and lsoda solvers)
 
-#### Declare solvers.
+## Work-Precision Diagrams (competitive CVODE / lsoda)
+
+Main suite: methods that remain competitive on this large sparse stiff system.
+Dense Lapack and bare GMRES (no preconditioner) are timed only in the loser
+section below.
 
 ```julia
 setups = [
     Dict(:alg=>lsoda(), :prob_choice => 1),
     Dict(:alg=>CVODE_BDF(), :prob_choice => 1),
-    Dict(:alg=>CVODE_BDF(linear_solver = :LapackDense), :prob_choice => 1),
-    Dict(:alg=>CVODE_BDF(linear_solver = :GMRES), :prob_choice => 1),
     Dict(
         :alg=>CVODE_BDF(linear_solver = :GMRES, prec = precilu, psetup = psetupilu, prec_side = 1),
         :prob_choice => 2)
@@ -361,16 +525,12 @@ setups = [
 ```
 
 
-
-
-#### Plot Work-Precision Diagram.
-
 ```julia
 wp = WorkPrecisionSet(
     [oprob, oprob_sparse, sparsejacprob], abstols, reltols, setups; error_estimate = :l2,
     saveat = tf/10000.0, appxsol = [test_sol, test_sol, test_sol], maxiters = Int(1e6), numruns = 1)
 
-names = ["lsoda" "CVODE_BDF" "CVODE_BDF (LapackDense)" "CVODE_BDF (GMRES)" "CVODE_BDF (GMRES, iLU)" "CVODE_BDF (KLU, sparse jac)"]
+names = ["lsoda" "CVODE_BDF" "CVODE_BDF (GMRES, iLU)"]
 plot(wp; label = names)
 ```
 
@@ -378,81 +538,24 @@ plot(wp; label = names)
 
 
 
-## Work-Precision Diagrams (various Julia solvers)
+## Work-Precision Diagrams (competitive Julia solvers)
 
-#### Declare solvers (using default linear solver).
+Only preconditioned GMRES and sparse KLU variants; default dense factorizations
+and unpreconditioned GMRES are in the loser section.
 
-```julia
-setups = [
-    Dict(:alg=>TRBDF2(autodiff = false)),
-    Dict(:alg=>QNDF(autodiff = false)),
-    Dict(:alg=>FBDF(autodiff = false)),
-    Dict(:alg=>KenCarp4(autodiff = false))
-];
-```
-
-
-
-
-#### Plot Work-Precision Diagram (using default linear solver).
-
-```julia
-wp = WorkPrecisionSet(oprob, abstols, reltols, setups; error_estimate = :l2,
-    saveat = tf/10000.0, appxsol = test_sol, maxiters = Int(1e6), numruns = 1)
-
-names = ["TRBDF2" "QNDF" "FBDF" "KenCarp4"]
-plot(wp; label = names)
-```
-
-![](figures/BCR_16_1.png)
-
-
-
-#### Declare solvers (using GMRES linear solver).
-
-```julia
-setups = [
-    Dict(:alg=>TRBDF2(linsolve = KrylovJL_GMRES(), autodiff = false)),
-    Dict(:alg=>QNDF(linsolve = KrylovJL_GMRES(), autodiff = false)),
-    Dict(:alg=>FBDF(linsolve = KrylovJL_GMRES(), autodiff = false)),
-    Dict(:alg=>KenCarp4(linsolve = KrylovJL_GMRES(), autodiff = false))
-];
-```
-
-
-
-
-#### Plot Work-Precision Diagram (using GMRES linear solver).
-
-```julia
-wp = WorkPrecisionSet(oprob, abstols, reltols, setups; error_estimate = :l2,
-    saveat = tf/10000.0, appxsol = test_sol, maxiters = Int(1e6), numruns = 1)
-
-names = ["TRBDF2 (GMRES)" "QNDF (GMRES)" "FBDF (GMRES)" "KenCarp4 (GMRES)"]
-plot(wp; label = names)
-```
-
-![](figures/BCR_18_1.png)
-
-
-
-#### Declare solvers (using GMRES linear solver, with pre-conditioner).
+#### GMRES + incomplete LU
 
 ```julia
 setups = [
     Dict(:alg=>TRBDF2(
-        linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true)),
-    Dict(:alg=>QNDF(linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true)),
-    Dict(:alg=>FBDF(linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true)),
+        linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true)),
+    Dict(:alg=>QNDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true)),
+    Dict(:alg=>FBDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true)),
     Dict(:alg=>KenCarp4(
-        linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true))
+        linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true))
 ];
 ```
 
-
-
-
-#### Plot Work-Precision Diagram (using GMRES linear solver, with pre-conditioner).
 
 ```julia
 wp = WorkPrecisionSet(sparsejacprob, abstols, reltols, setups; error_estimate = :l2,
@@ -462,29 +565,21 @@ names = ["TRBDF2 (GMRES, iLU)" "QNDF (GMRES, iLU)" "FBDF (GMRES, iLU)" "KenCarp4
 plot(wp; label = names)
 ```
 
-![](figures/BCR_20_1.png)
+![](figures/BCR_16_1.png)
 
 
 
-#### Declare solvers (using sparse jacobian)
-
-We designate the solvers we wish to use.
+#### Sparse Jacobian + KLU
 
 ```julia
 setups = [
-    Dict(:alg=>TRBDF2(linsolve = KLUFactorization(), autodiff = false)),
-    Dict(:alg=>QNDF(linsolve = KLUFactorization(), autodiff = false)),
-    Dict(:alg=>FBDF(linsolve = KLUFactorization(), autodiff = false)),
-    Dict(:alg=>KenCarp4(linsolve = KLUFactorization(), autodiff = false))
+    Dict(:alg=>TRBDF2(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff())),
+    Dict(:alg=>QNDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff())),
+    Dict(:alg=>FBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff())),
+    Dict(:alg=>KenCarp4(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()))
 ];
 ```
 
-
-
-
-#### Plot Work-Precision Diagram (using sparse jacobian)
-
-Finally, we generate a work-precision diagram for the selection of solvers.
 
 ```julia
 wp = WorkPrecisionSet(sparsejacprob, abstols, reltols, setups; error_estimate = :l2,
@@ -494,7 +589,129 @@ names = ["TRBDF2 (KLU, sparse jac)" "QNDF (KLU, sparse jac)" "FBDF (KLU, sparse 
 plot(wp; label = names)
 ```
 
-![](figures/BCR_22_1.png)
+![](figures/BCR_18_1.png)
+
+
+
+## Loser methods (large cost in isolation)
+
+On this ~1122-ODE sparse chemistry system, the following are not competitive:
+dense Lapack factorization, default dense Julia Newton/linear solves, and GMRES
+without a preconditioner. We do **not** fold them into the main work-precision
+suites. Instead each is timed **once**, in isolation, at a fixed tolerance, next
+to a competitive sparse reference so the wall-time gap is obvious.
+
+```julia
+const _loser_tol = 1e-6
+const _loser_maxiters = Int(1e6)
+_solve_kwargs = (; abstol = _loser_tol, reltol = _loser_tol, maxiters = _loser_maxiters,
+    save_everystep = false)
+
+loser_labels = String[]
+loser_elapsed = Float64[]
+
+function _time_loser!(label, prob, alg)
+    println("--- $label ---")
+    t = @elapsed sol = solve(prob, alg; _solve_kwargs...)
+    @show sol.retcode
+    println("elapsed = ", t, " s")
+    push!(loser_labels, label)
+    push!(loser_elapsed, t)
+    return sol
+end
+
+# Competitive reference (sparse KLU)
+_time_loser!("FBDF + KLU (reference)", sparsejacprob,
+    FBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()))
+
+# Dense CVODE Lapack
+_time_loser!("CVODE_BDF LapackDense", oprob, CVODE_BDF(linear_solver = :LapackDense))
+
+# Bare CVODE GMRES (no preconditioner)
+_time_loser!("CVODE_BDF GMRES (no prec)", oprob, CVODE_BDF(linear_solver = :GMRES))
+
+# Default dense Julia factorizations on the non-sparse problem
+_time_loser!("TRBDF2 (default dense)", oprob, TRBDF2(autodiff = AutoFiniteDiff()))
+_time_loser!("QNDF (default dense)", oprob, QNDF(autodiff = AutoFiniteDiff()))
+_time_loser!("FBDF (default dense)", oprob, FBDF(autodiff = AutoFiniteDiff()))
+_time_loser!("KenCarp4 (default dense)", oprob, KenCarp4(autodiff = AutoFiniteDiff()))
+
+# Unpreconditioned GMRES on the dense residual problem
+_time_loser!("TRBDF2 GMRES (no prec)", oprob,
+    TRBDF2(linsolve = KrylovJL_GMRES(), autodiff = AutoFiniteDiff()))
+_time_loser!("QNDF GMRES (no prec)", oprob,
+    QNDF(linsolve = KrylovJL_GMRES(), autodiff = AutoFiniteDiff()))
+_time_loser!("FBDF GMRES (no prec)", oprob,
+    FBDF(linsolve = KrylovJL_GMRES(), autodiff = AutoFiniteDiff()))
+_time_loser!("KenCarp4 GMRES (no prec)", oprob,
+    KenCarp4(linsolve = KrylovJL_GMRES(), autodiff = AutoFiniteDiff()))
+```
+
+```
+--- FBDF + KLU (reference) ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 60.756217418 s
+--- CVODE_BDF LapackDense ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 71.397652055 s
+--- CVODE_BDF GMRES (no prec) ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 285.199355122 s
+--- TRBDF2 (default dense) ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 212.453022077 s
+--- QNDF (default dense) ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 56.834017052 s
+--- FBDF (default dense) ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 64.52339954 s
+--- KenCarp4 (default dense) ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 107.909357233 s
+--- TRBDF2 GMRES (no prec) ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 3762.973416512 s
+--- QNDF GMRES (no prec) ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 4706.819251871 s
+--- FBDF GMRES (no prec) ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 2110.312270133 s
+--- KenCarp4 GMRES (no prec) ---
+sol.retcode = SciMLBase.ReturnCode.Success
+elapsed = 7267.065334826 s
+retcode: Success
+Interpolation: 1st order linear
+t: 2-element Vector{Float64}:
+      0.0
+ 100000.0
+u: 2-element Vector{Vector{Float64}}:
+ [299717.8348854, 47149.15480798, 46979.01102231, 290771.2428252, 299980.73
+96749, 300000.0, 141.3151575495, 0.1256496403614, 0.4048783555301, 140.8052
+338618  …  5.279974499715e-11, 1.005585387399e-24, 6.724953378237e-17, 3.39
+5560698281e-16, 1.787990228838e-5, 8.761844379939e-13, 0.0002517949074779, 
+0.0005539124513976, 2.281251822741e-14, 1.78232055967e-8]
+ [299040.33255916083, 33860.76438499603, 33842.76249557482, 293325.66636335
+663, 299990.27459320816, 300000.0164764621, 101.25714786413562, 0.071315231
+7622316, 0.23082585397216704, 101.20333196945859  …  2.120621812490319e-11,
+ 3.2904210961000654e-21, 2.0674982494183862e-17, 1.0356484112320113e-16, 9.
+295614054454647e-6, 2.7953321397923366e-13, 0.00010874377408536652, 0.00023
+926387740864748, 9.593144592836493e-15, 9.266153596817558e-9]
+```
+
+
+
+```julia
+# Relative cost vs the sparse KLU reference (first entry)
+ref_t = loser_elapsed[1]
+bar(loser_labels, loser_elapsed ./ ref_t; xrotation = 45, legend = false,
+    ylabel = "wall time / (FBDF+KLU reference)",
+    title = "BCR loser isolation (tol=$_loser_tol, one solve each)",
+    size = (900, 500), left_margin = 5Plots.mm, bottom_margin = 15Plots.mm)
+```
+
+![](figures/BCR_20_1.png)
 
 
 
@@ -512,14 +729,14 @@ setups = [
         :alg=>CVODE_BDF(linear_solver = :GMRES, prec = precilu, psetup = psetupilu, prec_side = 1),
         :prob_choice => 2),
     Dict(
-        :alg=>QNDF(linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true),
+        :alg=>QNDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true),
         :prob_choice => 3),
     Dict(
-        :alg=>FBDF(linsolve = KrylovJL_GMRES(), autodiff = false, precs = incompletelu, concrete_jac = true),
+        :alg=>FBDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true),
         :prob_choice => 3),
-    Dict(:alg=>QNDF(linsolve = KLUFactorization(), autodiff = false), :prob_choice => 3),
-    Dict(:alg=>FBDF(linsolve = KLUFactorization(), autodiff = false), :prob_choice => 3),
-    Dict(:alg=>KenCarp4(linsolve = KLUFactorization(), autodiff = false), :prob_choice => 3)
+    Dict(:alg=>QNDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()), :prob_choice => 3),
+    Dict(:alg=>FBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()), :prob_choice => 3),
+    Dict(:alg=>KenCarp4(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()), :prob_choice => 3)
 ];
 ```
 
@@ -546,7 +763,7 @@ plot(wp; label = names, left_margin = 10Plots.mm, right_margin = 10Plots.mm,
     gridalpha = 0.3, gridlinewidth = 7.5, size = (1100, 1000))
 ```
 
-![](figures/BCR_24_1.png)
+![](figures/BCR_22_1.png)
 
 
 ## Appendix
@@ -563,8 +780,8 @@ SciMLBenchmarks.weave_file("benchmarks/Bio","BCR.jmd")
 Computer Information:
 
 ```
-Julia Version 1.10.10
-Commit 95f30e51f41 (2025-06-27 09:51 UTC)
+Julia Version 1.10.11
+Commit a2b11907d7b (2026-03-09 14:59 UTC)
 Build Info:
   Official https://julialang.org/ release
 Platform Info:
@@ -573,409 +790,402 @@ Platform Info:
   WORD_SIZE: 64
   LIBM: libopenlibm
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
-  JULIA_CPU_THREADS = 128
-  JULIA_DEPOT_PATH = /cache/julia-buildkite-plugin/depots/5b300254-1738-4989-ae0a-f4d2d937f953
+  JULIA_NUM_THREADS = auto
 
 ```
 
 Package Information:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Project.toml`
-⌃ [6e4b80f9] BenchmarkTools v1.5.0
-⌅ [479239e8] Catalyst v14.4.1
-⌃ [2b5f629d] DiffEqBase v6.160.0
-⌃ [f3b72e0c] DiffEqDevTools v2.45.1
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Bio/Project.toml`
+⌃ [47edcb42] ADTypes v1.22.1
+  [6e4b80f9] BenchmarkTools v1.8.0
+⌃ [479239e8] Catalyst v16.2.0
+  [d360d2e6] ChainRulesCore v1.26.1
+⌃ [2b5f629d] DiffEqBase v7.6.0
+⌃ [f3b72e0c] DiffEqDevTools v3.1.1
   [40713840] IncompleteLU v0.2.1
-⌃ [033835bb] JLD2 v0.5.8
-  [7f56f5a3] LSODA v0.7.5
-⌅ [7ed4a6bd] LinearSolve v2.37.0
-⌅ [961ee093] ModelingToolkit v9.50.0
-  [54ca160b] ODEInterface v0.5.0
-  [09606e27] ODEInterfaceDiffEq v3.13.4
-⌃ [1dea7af3] OrdinaryDiffEq v6.90.1
-⌃ [91a5bcdd] Plots v1.40.9
-⌅ [b4db0fb7] ReactionNetworkImporters v0.15.1
-  [f2c3362d] RecursiveFactorization v0.2.23
-  [31c91b34] SciMLBenchmarks v0.1.3
-⌃ [c3572dad] Sundials v4.26.1
-⌃ [a759f4b9] TimerOutputs v0.5.25
+⌃ [033835bb] JLD2 v0.6.4
+  [7f56f5a3] LSODA v1.1.0
+⌅ [7ed4a6bd] LinearSolve v3.87.0
+⌃ [961ee093] ModelingToolkit v11.30.1
+  [54ca160b] ODEInterface v0.5.1
+⌅ [09606e27] ODEInterfaceDiffEq v4.1.0
+⌃ [1dea7af3] OrdinaryDiffEq v7.1.1
+⌃ [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v2.0.1
+⌃ [6ad6398a] OrdinaryDiffEqBDF v2.2.2
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.5.0
+⌃ [becaefa8] OrdinaryDiffEqExtrapolation v2.2.1
+⌃ [1344f307] OrdinaryDiffEqLowOrderRK v2.1.1
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.3.1
+⌃ [2d112036] OrdinaryDiffEqSDIRK v2.7.1
+⌃ [358294b1] OrdinaryDiffEqStabilizedRK v2.3.0
+⌃ [79d7bb75] OrdinaryDiffEqVerner v2.1.1
+  [91a5bcdd] Plots v1.41.6
+⌃ [b4db0fb7] ReactionNetworkImporters v1.3.1
+  [f2c3362d] RecursiveFactorization v0.2.26
+⌃ [31c91b34] SciMLBenchmarks v0.1.3
+⌃ [c3572dad] Sundials v6.2.2
+⌅ [a759f4b9] TimerOutputs v0.5.29
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
 
 ```
-Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchmarks/Bio/Manifest.toml`
-⌃ [47edcb42] ADTypes v1.10.0
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Bio/Manifest.toml`
+⌃ [47edcb42] ADTypes v1.22.1
+  [14f7f29c] AMD v0.5.3
+  [6e696c72] AbstractPlutoDingetjes v1.4.0
   [1520ce14] AbstractTrees v0.4.5
-⌃ [7d9f7c33] Accessors v0.1.38
-⌃ [79e6a3ab] Adapt v4.1.1
+  [7d9f7c33] Accessors v0.1.45
+  [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
-⌃ [4fba245c] ArrayInterface v7.17.0
-⌃ [4c555306] ArrayLayouts v1.10.4
-⌃ [6e4b80f9] BenchmarkTools v1.5.0
-⌅ [e2ed5e7c] Bijections v0.1.9
-  [d1d4a3ce] BitFlags v0.1.9
+⌃ [4fba245c] ArrayInterface v7.27.0
+  [4c555306] ArrayLayouts v1.12.2
+  [aae01518] BandedMatrices v1.11.0
+  [6e4b80f9] BenchmarkTools v1.8.0
+  [e2ed5e7c] Bijections v0.2.2
+⌃ [b2a6c25c] BinaryHeaps v1.0.1
+⌃ [caf10ac8] BipartiteGraphs v0.1.8
+  [d1d4a3ce] BitFlags v0.1.10
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
-⌃ [8e7c35d0] BlockArrays v1.1.1
-⌃ [70df07ce] BracketingNonlinearSolve v1.1.0
+⌃ [8e7c35d0] BlockArrays v1.9.5
+⌃ [70df07ce] BracketingNonlinearSolve v1.12.2
   [fa961155] CEnum v0.5.0
-⌃ [2a0fbf3d] CPUSummary v0.2.6
-  [00ebfdb7] CSTParser v3.4.3
-  [7057c7e9] Cassette v0.3.14
-⌅ [479239e8] Catalyst v14.4.1
-⌃ [d360d2e6] ChainRulesCore v1.25.0
+  [2a0fbf3d] CPUSummary v0.2.7
+⌃ [479239e8] Catalyst v16.2.0
+  [d360d2e6] ChainRulesCore v1.26.1
+  [0b6fb165] ChunkCodecCore v1.0.1
+⌃ [4c0bbee4] ChunkCodecLibZlib v1.0.0
+  [55437552] ChunkCodecLibZstd v1.0.0
   [fb6a15b2] CloseOpenIntervals v0.1.13
-⌃ [944b1d66] CodecZlib v0.7.6
-⌃ [35d6a980] ColorSchemes v3.27.1
-⌃ [3da002f7] ColorTypes v0.12.0
+  [944b1d66] CodecZlib v0.7.8
+  [35d6a980] ColorSchemes v3.31.0
+  [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
-⌃ [5ae59095] Colors v0.13.0
-⌃ [861a8166] Combinatorics v1.0.2
-⌅ [a80b9123] CommonMark v0.8.15
-  [38540f10] CommonSolve v0.2.4
+  [5ae59095] Colors v0.13.1
+⌅ [861a8166] Combinatorics v1.0.2
+⌃ [38540f10] CommonSolve v0.2.9
   [bbf7d656] CommonSubexpressions v0.3.1
-  [f70d9fcc] CommonWorldInvalidations v1.0.0
-⌃ [34da2185] Compat v4.16.0
+⌃ [f70d9fcc] CommonWorldInvalidations v1.1.0
+  [34da2185] Compat v4.18.1
   [b152e2b5] CompositeTypes v0.1.4
   [a33af91c] CompositionsBase v0.1.2
-  [2569d6c7] ConcreteStructs v0.2.3
-⌃ [f0e56b4a] ConcurrentUtilities v2.4.2
-  [8f4d0f93] Conda v1.10.2
-⌃ [187b0558] ConstructionBase v1.5.8
+⌃ [2569d6c7] ConcreteStructs v0.2.5
+  [f0e56b4a] ConcurrentUtilities v2.5.1
+  [8f4d0f93] Conda v1.10.3
+  [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
   [adafc99b] CpuId v0.3.1
-  [a8cc5b0e] Crayons v4.1.1
   [9a962f9c] DataAPI v1.16.0
-⌅ [864edb3b] DataStructures v0.18.20
+⌃ [864edb3b] DataStructures v0.19.5
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v6.160.0
-⌃ [459566f4] DiffEqCallbacks v4.2.0
-⌃ [f3b72e0c] DiffEqDevTools v2.45.1
-⌃ [77a26b50] DiffEqNoiseProcess v5.23.0
+⌃ [2b5f629d] DiffEqBase v7.6.0
+⌃ [459566f4] DiffEqCallbacks v4.18.1
+⌃ [f3b72e0c] DiffEqDevTools v3.1.1
+⌃ [77a26b50] DiffEqNoiseProcess v5.33.0
   [163ba53b] DiffResults v1.1.0
-  [b552c78f] DiffRules v1.15.1
-⌅ [a0c0ee7d] DifferentiationInterface v0.6.22
-⌃ [8d63f2c5] DispatchDoctor v0.4.17
+  [b552c78f] DiffRules v1.16.0
+⌃ [a0c0ee7d] DifferentiationInterface v0.7.18
+  [8d63f2c5] DispatchDoctor v0.4.28
   [b4f34e82] Distances v0.10.12
-⌃ [31c24e10] Distributions v0.25.113
-⌃ [ffbed154] DocStringExtensions v0.9.3
-⌃ [5b8099bc] DomainSets v0.7.14
-⌃ [7c1d4256] DynamicPolynomials v0.6.0
-⌃ [06fc5a27] DynamicQuantities v1.3.0
-⌃ [4e289a0a] EnumX v1.0.4
-⌃ [f151be2c] EnzymeCore v0.8.6
-⌃ [460bff9d] ExceptionUnwrapping v0.1.10
-⌃ [d4d017d3] ExponentialUtilities v1.26.1
-  [e2ba6199] ExprTools v0.1.10
-⌅ [6b7a57c9] Expronicon v0.8.5
-⌃ [c87230d0] FFMPEG v0.4.2
-  [7034ab61] FastBroadcast v0.3.5
+  [31c24e10] Distributions v0.25.129
+  [ffbed154] DocStringExtensions v0.9.5
+  [5b8099bc] DomainSets v0.8.1
+  [7c1d4256] DynamicPolynomials v0.6.6
+  [06fc5a27] DynamicQuantities v1.13.0
+  [4e289a0a] EnumX v1.0.7
+  [f151be2c] EnzymeCore v0.8.21
+  [460bff9d] ExceptionUnwrapping v0.1.11
+⌃ [e2ba6199] ExprTools v0.1.10
+  [55351af7] ExproniconLite v0.10.14
+  [c87230d0] FFMPEG v0.4.5
+⌃ [7034ab61] FastBroadcast v1.3.3
   [9aa1b823] FastClosures v0.3.2
-  [29a986be] FastLapackInterface v2.0.4
-⌃ [a4df4552] FastPower v1.1.1
-⌃ [5789e2e9] FileIO v1.16.5
-⌃ [1a297f60] FillArrays v1.13.0
-⌃ [64ca27bc] FindFirstFunctions v1.4.1
-⌃ [6a86dc24] FiniteDiff v2.26.0
-  [53c48c17] FixedPointNumbers v0.8.5
+⌃ [a4df4552] FastPower v1.3.3
+⌃ [5789e2e9] FileIO v1.19.0
+⌃ [1a297f60] FillArrays v1.16.0
+⌅ [64ca27bc] FindFirstFunctions v2.1.0
+⌃ [6a86dc24] FiniteDiff v2.31.1
+⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-⌅ [f6369f11] ForwardDiff v0.10.38
-  [f62d2435] FunctionProperties v0.1.2
+  [f6369f11] ForwardDiff v1.4.1
+  [a85aefff] FunctionMaps v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
-  [77dc65aa] FunctionWrappersWrappers v0.1.3
-⌃ [d9f16b24] Functors v0.5.1
-⌅ [46192b85] GPUArraysCore v0.1.6
-⌃ [28b8d3ca] GR v0.73.8
-⌃ [14197337] GenericLinearAlgebra v0.3.14
-⌃ [c145ed77] GenericSchur v0.5.4
-⌃ [d7ba0133] Git v1.3.1
-  [c27321d9] Glob v1.3.1
-⌃ [86223c79] Graphs v1.12.0
+⌃ [77dc65aa] FunctionWrappersWrappers v1.9.3
+  [46192b85] GPUArraysCore v0.2.0
+  [28b8d3ca] GR v0.73.26
+  [d7ba0133] Git v1.5.0
+  [86223c79] Graphs v1.14.0
   [42e2da0e] Grisu v1.0.2
-⌃ [cd3eb016] HTTP v1.10.10
-  [eafb193a] Highlights v0.5.3
-  [3e5b6fbb] HostCPUFeatures v0.1.17
-⌃ [34004b35] HypergeometricFunctions v0.3.25
-⌃ [7073ff75] IJulia v1.26.0
+⌅ [cd3eb016] HTTP v1.11.0
+  [076d061b] HashArrayMappedTries v0.2.0
+⌅ [eafb193a] Highlights v0.5.3
+  [3e5b6fbb] HostCPUFeatures v0.1.18
+⌃ [34004b35] HypergeometricFunctions v0.3.28
+  [7073ff75] IJulia v1.34.4
   [615f187c] IfElse v0.1.1
+⌃ [3263718b] ImplicitDiscreteSolve v2.1.2
   [40713840] IncompleteLU v0.2.1
   [d25df0c9] Inflate v0.1.5
-⌃ [18e54dd8] IntegerMathUtils v0.1.2
-⌃ [8197267c] IntervalSets v0.7.10
+⌃ [18e54dd8] IntegerMathUtils v0.1.3
+  [8197267c] IntervalSets v0.7.14
   [3587e190] InverseFunctions v0.1.17
-⌃ [92d709cd] IrrationalConstants v0.2.2
+  [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
-⌃ [033835bb] JLD2 v0.5.8
-⌃ [1019f520] JLFzf v0.1.8
-⌃ [692b3bcd] JLLWrappers v1.6.1
-  [682c06a0] JSON v0.21.4
-⌅ [98e50ef6] JuliaFormatter v1.0.62
-⌃ [ccbc3e58] JumpProcesses v9.14.0
-  [ef3ab10e] KLU v0.6.0
-⌅ [ba0b0d4f] Krylov v0.9.8
-  [7f56f5a3] LSODA v0.7.5
+⌃ [033835bb] JLD2 v0.6.4
+  [1019f520] JLFzf v0.1.11
+  [692b3bcd] JLLWrappers v1.8.0
+⌅ [682c06a0] JSON v0.21.4
+  [ae98c720] Jieko v0.2.1
+⌃ [ccbc3e58] JumpProcesses v9.29.0
+  [ba0b0d4f] Krylov v0.10.8
+  [7f56f5a3] LSODA v1.1.0
   [b964fa9f] LaTeXStrings v1.4.0
-⌃ [23fbe1c1] Latexify v0.16.5
+⌃ [23fbe1c1] Latexify v0.16.10
   [10f19ff3] LayoutPointers v0.1.17
-⌃ [5078a376] LazyArrays v2.2.2
-  [87fe0de2] LineSearch v0.1.4
-⌃ [d3d80556] LineSearches v7.3.0
-⌅ [7ed4a6bd] LinearSolve v2.37.0
-⌃ [2ab3a3ac] LogExpFunctions v0.3.28
-  [e6f89c97] LoggingExtras v1.1.0
-⌃ [bdcacae8] LoopVectorization v0.12.171
-  [d8e11817] MLStyle v0.4.17
-⌃ [1914dd2f] MacroTools v0.5.13
+⌃ [87fe0de2] LineSearch v0.1.10
+⌃ [d3d80556] LineSearches v7.5.1
+⌅ [7ed4a6bd] LinearSolve v3.87.0
+  [2ab3a3ac] LogExpFunctions v1.0.1
+  [e6f89c97] LoggingExtras v1.2.0
+  [bdcacae8] LoopVectorization v0.12.174
+  [1914dd2f] MacroTools v0.5.16
   [d125e4d3] ManualMemory v0.1.8
-  [bb5d69b7] MaybeInplace v0.1.4
-  [739be429] MbedTLS v1.1.9
-  [442fdcdd] Measures v0.3.2
+⌃ [bb5d69b7] MaybeInplace v0.1.5
+  [739be429] MbedTLS v1.1.10
+  [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
-⌅ [961ee093] ModelingToolkit v9.50.0
-  [46d2c3a1] MuladdMacro v0.2.4
-⌃ [102ac46a] MultivariatePolynomials v0.5.7
-⌃ [ffc61752] Mustache v1.0.20
-⌃ [d8a4904e] MutableArithmetics v1.5.2
-⌃ [d41bc354] NLSolversBase v7.8.3
+⌃ [961ee093] ModelingToolkit v11.30.1
+⌃ [7771a370] ModelingToolkitBase v1.50.0
+⌃ [6bb917b9] ModelingToolkitTearing v1.17.2
+⌃ [2e0e35c7] Moshi v0.3.8
+  [46d2c3a1] MuladdMacro v0.2.6
+  [102ac46a] MultivariatePolynomials v0.5.19
+  [ffc61752] Mustache v1.0.21
+  [d8a4904e] MutableArithmetics v1.8.0
+⌅ [d41bc354] NLSolversBase v7.10.0
   [2774e3e8] NLsolve v4.5.1
-⌃ [77ba4419] NaNMath v1.0.2
-⌃ [8913a72c] NonlinearSolve v4.1.0
-⌃ [be0214bd] NonlinearSolveBase v1.3.3
-⌃ [5959db7a] NonlinearSolveFirstOrder v1.0.0
-⌃ [9a2c21bd] NonlinearSolveQuasiNewton v1.0.0
-⌃ [26075421] NonlinearSolveSpectralMethods v1.0.0
-  [54ca160b] ODEInterface v0.5.0
-  [09606e27] ODEInterfaceDiffEq v3.13.4
-⌃ [6fe1bfb0] OffsetArrays v1.14.1
-⌃ [4d8831e6] OpenSSL v1.4.3
-⌃ [429524aa] Optim v1.10.0
-⌃ [bac558e1] OrderedCollections v1.6.3
-⌃ [1dea7af3] OrdinaryDiffEq v6.90.1
-⌃ [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.1.0
-⌃ [6ad6398a] OrdinaryDiffEqBDF v1.1.2
-⌃ [bbf590c4] OrdinaryDiffEqCore v1.10.2
-⌃ [50262376] OrdinaryDiffEqDefault v1.1.0
-⌃ [4302a76b] OrdinaryDiffEqDifferentiation v1.2.0
-⌃ [9286f039] OrdinaryDiffEqExplicitRK v1.1.0
-⌃ [e0540318] OrdinaryDiffEqExponentialRK v1.1.0
-⌃ [becaefa8] OrdinaryDiffEqExtrapolation v1.2.1
-⌃ [5960d6e9] OrdinaryDiffEqFIRK v1.3.0
-⌃ [101fe9f7] OrdinaryDiffEqFeagin v1.1.0
-⌃ [d3585ca7] OrdinaryDiffEqFunctionMap v1.1.1
-⌃ [d28bc4f8] OrdinaryDiffEqHighOrderRK v1.1.0
-⌃ [9f002381] OrdinaryDiffEqIMEXMultistep v1.1.0
-⌃ [521117fe] OrdinaryDiffEqLinear v1.1.0
-⌃ [1344f307] OrdinaryDiffEqLowOrderRK v1.2.0
-⌃ [b0944070] OrdinaryDiffEqLowStorageRK v1.2.1
-⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.2.4
-⌃ [c9986a66] OrdinaryDiffEqNordsieck v1.1.0
-⌃ [5dd0a6cf] OrdinaryDiffEqPDIRK v1.1.0
-⌃ [5b33eab2] OrdinaryDiffEqPRK v1.1.0
-⌃ [04162be5] OrdinaryDiffEqQPRK v1.1.0
-⌃ [af6ede74] OrdinaryDiffEqRKN v1.1.0
-⌃ [43230ef6] OrdinaryDiffEqRosenbrock v1.3.1
-⌃ [2d112036] OrdinaryDiffEqSDIRK v1.1.0
-⌃ [669c94d9] OrdinaryDiffEqSSPRK v1.2.0
-⌃ [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.1.0
-⌃ [358294b1] OrdinaryDiffEqStabilizedRK v1.1.0
-⌃ [fa646aed] OrdinaryDiffEqSymplecticRK v1.1.0
-⌃ [b1df2697] OrdinaryDiffEqTsit5 v1.1.0
-⌃ [79d7bb75] OrdinaryDiffEqVerner v1.1.1
-⌃ [90014a1f] PDMats v0.11.31
-  [65ce6f38] PackageExtensionCompat v1.0.2
-  [d96e819e] Parameters v0.12.3
-⌃ [69de0a69] Parsers v2.8.1
-  [b98c9c47] Pipe v1.3.0
+  [77ba4419] NaNMath v1.1.4
+⌃ [8913a72c] NonlinearSolve v4.20.1
+⌅ [be0214bd] NonlinearSolveBase v2.31.3
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.1.2
+⌃ [9a2c21bd] NonlinearSolveQuasiNewton v1.13.2
+⌃ [26075421] NonlinearSolveSpectralMethods v1.7.2
+  [54ca160b] ODEInterface v0.5.1
+⌅ [09606e27] ODEInterfaceDiffEq v4.1.0
+  [6fe1bfb0] OffsetArrays v1.17.0
+  [4d8831e6] OpenSSL v1.6.1
+⌅ [bac558e1] OrderedCollections v1.8.2
+⌃ [1dea7af3] OrdinaryDiffEq v7.1.1
+⌃ [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v2.0.1
+⌃ [6ad6398a] OrdinaryDiffEqBDF v2.2.2
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.5.0
+⌃ [50262376] OrdinaryDiffEqDefault v2.2.1
+⌅ [4302a76b] OrdinaryDiffEqDifferentiation v3.2.1
+⌃ [becaefa8] OrdinaryDiffEqExtrapolation v2.2.1
+⌃ [1344f307] OrdinaryDiffEqLowOrderRK v2.1.1
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.0.1
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.3.1
+⌃ [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.1.1
+⌃ [2d112036] OrdinaryDiffEqSDIRK v2.7.1
+⌃ [358294b1] OrdinaryDiffEqStabilizedRK v2.3.0
+⌃ [b1df2697] OrdinaryDiffEqTsit5 v2.0.2
+⌃ [79d7bb75] OrdinaryDiffEqVerner v2.1.1
+  [90014a1f] PDMats v0.11.40
+⌅ [d96e819e] Parameters v0.12.3
+  [69de0a69] Parsers v2.8.6
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.3
-⌃ [91a5bcdd] Plots v1.40.9
-⌃ [e409e4f3] PoissonRandom v0.4.4
-⌃ [f517fe37] Polyester v0.7.16
+  [995b91a9] PlotUtils v1.4.4
+  [91a5bcdd] Plots v1.41.6
+⌃ [e409e4f3] PoissonRandom v0.4.10
+  [f517fe37] Polyester v0.7.19
   [1d0040c9] PolyesterWeave v0.2.2
-⌃ [f27b6e38] Polynomials v4.0.12
-  [85a6dd25] PositiveFactorizations v0.2.4
-⌃ [d236fae5] PreallocationTools v0.4.24
+⌃ [d236fae5] PreallocationTools v1.2.1
 ⌅ [aea7be01] PrecompileTools v1.2.1
-⌃ [21216c6a] Preferences v1.4.3
-⌃ [27ebfcd6] Primes v0.5.6
-⌃ [43287f4e] PtrArrays v1.2.1
-⌃ [1fd47b50] QuadGK v2.11.1
-⌃ [74087812] Random123 v1.7.0
-  [e6cf234a] RandomNumbers v1.6.0
-⌅ [b4db0fb7] ReactionNetworkImporters v0.15.1
+  [21216c6a] Preferences v1.5.2
+  [27ebfcd6] Primes v0.5.7
+  [43287f4e] PtrArrays v1.4.0
+⌃ [0c0d3e7f] PureKLU v1.1.0
+  [1fd47b50] QuadGK v2.11.3
+⌃ [b4db0fb7] ReactionNetworkImporters v1.3.1
+  [988b38a3] ReadOnlyArrays v0.2.0
+  [795d4caa] ReadOnlyDicts v1.0.1
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-⌃ [731186ca] RecursiveArrayTools v3.27.3
-  [f2c3362d] RecursiveFactorization v0.2.23
+⌃ [731186ca] RecursiveArrayTools v4.3.2
+  [f2c3362d] RecursiveFactorization v0.2.26
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
-⌃ [ae029012] Requires v1.3.0
-  [ae5879a3] ResettableStacks v1.1.1
-  [79098fc4] Rmath v0.8.0
-  [47965b36] RootedTrees v2.23.1
-⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.13
+  [ae029012] Requires v1.3.1
+⌃ [ae5879a3] ResettableStacks v1.2.1
+  [79098fc4] Rmath v0.9.0
+⌃ [47965b36] RootedTrees v2.25.1
+⌃ [f2b01f46] Roots v3.0.0
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.21
+⌃ [9dfe8606] SCCNonlinearSolve v1.13.2
   [94e857df] SIMDTypes v0.1.0
-  [476501e8] SLEEFPirates v0.6.43
-⌅ [0bca4576] SciMLBase v2.61.0
-  [31c91b34] SciMLBenchmarks v0.1.3
-⌃ [19f34311] SciMLJacobianOperators v0.1.1
-⌅ [c0aeaf25] SciMLOperators v0.3.12
-⌃ [53ae85a6] SciMLStructures v1.5.0
-⌃ [6c6a2e73] Scratch v1.2.1
-⌃ [efcf1570] Setfield v1.1.1
+  [476501e8] SLEEFPirates v0.6.46
+⌃ [0bca4576] SciMLBase v3.30.1
+⌃ [31c91b34] SciMLBenchmarks v0.1.3
+⌃ [19f34311] SciMLJacobianOperators v0.1.14
+⌃ [a6db7da4] SciMLLogging v2.0.1
+⌃ [c0aeaf25] SciMLOperators v1.22.1
+⌃ [431bcebd] SciMLPublic v1.2.1
+⌃ [53ae85a6] SciMLStructures v1.10.1
+  [7e506255] ScopedValues v1.6.2
+  [6c6a2e73] Scratch v1.3.0
+  [efcf1570] Setfield v1.1.2
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
-⌃ [727e6d20] SimpleNonlinearSolve v2.0.0
-⌃ [699a6c99] SimpleTraits v0.9.4
-  [ce78b400] SimpleUnPack v1.1.0
-  [b85f4697] SoftGlobalScope v1.1.0
-⌃ [a2af1166] SortingAlgorithms v1.2.1
-⌃ [47a9eef4] SparseDiffTools v2.23.0
-⌃ [0a514795] SparseMatrixColorings v0.4.10
-⌃ [e56a9233] Sparspak v0.3.9
-⌃ [276daf66] SpecialFunctions v2.4.0
-⌃ [860ef19b] StableRNGs v1.0.2
-⌃ [aedffcd0] Static v1.1.1
-  [0d7ed370] StaticArrayInterface v1.8.0
-⌃ [90137ffa] StaticArrays v1.9.8
-  [1e83bf80] StaticArraysCore v1.4.3
-⌃ [82ae8749] StatsAPI v1.7.0
-⌃ [2913bbd2] StatsBase v0.34.3
-⌃ [4c63d2b9] StatsFuns v1.3.2
-⌃ [7792a7ef] StrideArraysCore v0.5.7
+⌃ [727e6d20] SimpleNonlinearSolve v2.12.1
+  [699a6c99] SimpleTraits v0.9.6
+  [a2af1166] SortingAlgorithms v1.2.3
+⌃ [bd59d7e1] SparseBandedMatrices v1.3.2
+⌃ [a57abbd0] SparseColumnPivotedQR v2.1.2
+  [0a514795] SparseMatrixColorings v0.4.27
+  [276daf66] SpecialFunctions v2.8.0
+  [860ef19b] StableRNGs v1.0.4
+  [0c0c59c1] StarAlgebras v0.3.0
+⌃ [64909d44] StateSelection v1.10.1
+⌃ [aedffcd0] Static v1.4.2
+  [0d7ed370] StaticArrayInterface v1.10.0
+  [90137ffa] StaticArrays v1.9.18
+  [1e83bf80] StaticArraysCore v1.4.4
+  [82ae8749] StatsAPI v1.8.0
+  [2913bbd2] StatsBase v0.34.12
+  [4c63d2b9] StatsFuns v2.2.0
+  [7792a7ef] StrideArraysCore v0.5.9
   [69024149] StringEncodings v0.3.7
-⌅ [09ab397b] StructArrays v0.6.18
-⌃ [c3572dad] Sundials v4.26.1
-⌃ [2efcf032] SymbolicIndexingInterface v0.3.35
-⌃ [19f23fe9] SymbolicLimits v0.2.2
-⌃ [d1185830] SymbolicUtils v3.7.2
-⌃ [0c5d862f] Symbolics v6.21.0
+  [09ab397b] StructArrays v0.7.3
+⌃ [c3572dad] Sundials v6.2.2
+⌃ [2efcf032] SymbolicIndexingInterface v0.3.49
+⌃ [19f23fe9] SymbolicLimits v1.1.1
+⌃ [d1185830] SymbolicUtils v4.38.1
+⌃ [0c5d862f] Symbolics v7.29.0
   [3783bdb8] TableTraits v1.0.1
-⌃ [bd369af6] Tables v1.12.0
+  [bd369af6] Tables v1.13.0
+  [ed4db957] TaskLocalValues v0.1.3
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
   [1c621080] TestItems v1.0.0
-⌃ [8290d209] ThreadingUtilities v0.5.2
-⌃ [a759f4b9] TimerOutputs v0.5.25
-  [0796e94c] Tokenize v0.5.29
+  [8290d209] ThreadingUtilities v0.5.6
+⌅ [a759f4b9] TimerOutputs v0.5.29
   [3bb67fe8] TranscodingStreams v0.11.3
   [d5829a12] TriangularSolve v0.2.1
-⌃ [410a4b4d] Tricks v0.1.9
+  [410a4b4d] Tricks v0.1.13
   [781d530d] TruncatedStacktraces v1.4.0
-⌃ [5c2747f8] URIs v1.5.1
+  [5c2747f8] URIs v1.6.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-⌅ [1986cc42] Unitful v1.21.0
-⌃ [45397f5d] UnitfulLatexify v1.6.4
-  [a7c27f48] Unityper v0.1.6
   [41fe7b60] Unzip v0.2.0
-⌃ [3d5dd08c] VectorizationBase v0.21.71
+  [3d5dd08c] VectorizationBase v0.21.74
+  [33b4df10] VectorizedRNG v0.2.26
   [81def892] VersionParsing v1.3.0
-  [19fa3120] VertexSafeGraphs v0.2.0
+  [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
-⌃ [ddb6d928] YAML v0.4.12
-⌃ [c2297ded] ZMQ v1.3.0
-⌃ [6e34b625] Bzip2_jll v1.0.8+2
-⌃ [83423d85] Cairo_jll v1.18.2+1
-⌃ [ee1fde0b] Dbus_jll v1.14.10+0
-⌃ [2702e6a9] EpollShim_jll v0.0.20230411+0
-⌃ [2e619515] Expat_jll v2.6.4+0
-⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
-⌃ [a3f928ae] Fontconfig_jll v2.13.96+0
-⌃ [d7e528f0] FreeType2_jll v2.13.2+0
-⌃ [559328eb] FriBidi_jll v1.0.14+0
-⌃ [0656b61e] GLFW_jll v3.4.0+1
-⌅ [d2c73de3] GR_jll v0.73.8+0
-  [78b55507] Gettext_jll v0.21.0+0
-⌃ [f8c6e375] Git_jll v2.46.2+0
-⌃ [7746bdde] Glib_jll v2.80.5+0
-⌃ [3b182d85] Graphite2_jll v1.3.14+0
-⌃ [2e76f6c2] HarfBuzz_jll v8.3.1+0
-⌅ [1d5cc7b8] IntelOpenMP_jll v2024.2.1+0
-⌃ [aacddb02] JpegTurbo_jll v3.0.4+0
-⌃ [c1c5ebd0] LAME_jll v3.100.2+0
-⌃ [88015f11] LERC_jll v4.0.0+0
-⌃ [1d63c593] LLVMOpenMP_jll v18.1.7+0
+  [ddb6d928] YAML v0.4.16
+  [c2297ded] ZMQ v1.5.1
+  [6e34b625] Bzip2_jll v1.0.9+0
+  [83423d85] Cairo_jll v1.18.7+0
+  [ee1fde0b] Dbus_jll v1.16.2+0
+  [2702e6a9] EpollShim_jll v0.0.20230411+1
+⌃ [2e619515] Expat_jll v2.8.1+0
+  [b22a6f82] FFMPEG_jll v8.1.2+0
+  [a3f928ae] Fontconfig_jll v2.17.1+0
+  [d7e528f0] FreeType2_jll v2.14.3+1
+  [559328eb] FriBidi_jll v1.0.17+0
+  [0656b61e] GLFW_jll v3.4.1+1
+  [d2c73de3] GR_jll v0.73.26+0
+⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
+  [61579ee1] Ghostscript_jll v9.55.1+0
+  [020c3dae] Git_LFS_jll v3.7.1+0
+  [f8c6e375] Git_jll v2.54.0+0
+  [7746bdde] Glib_jll v2.86.3+0
+  [3b182d85] Graphite2_jll v1.3.16+0
+⌅ [2e76f6c2] HarfBuzz_jll v8.5.1+0
+  [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
+⌃ [aacddb02] JpegTurbo_jll v3.1.5+0
+  [c1c5ebd0] LAME_jll v3.100.3+0
+  [88015f11] LERC_jll v4.1.0+0
+⌃ [1d63c593] LLVMOpenMP_jll v18.1.8+0
   [aae0fff6] LSODA_jll v0.1.2+0
-⌃ [dd4b983a] LZO_jll v2.10.2+1
-⌅ [e9f186c6] Libffi_jll v3.2.2+1
-⌃ [d4300ac3] Libgcrypt_jll v1.11.0+0
-⌃ [7e76a0d4] Libglvnd_jll v1.6.0+0
-⌃ [7add5ba3] Libgpg_error_jll v1.50.0+0
-⌃ [94ce4f54] Libiconv_jll v1.17.0+1
-⌃ [4b2f31a3] Libmount_jll v2.40.1+0
-⌃ [89763e89] Libtiff_jll v4.7.0+0
-⌃ [38a345b3] Libuuid_jll v2.40.1+0
-⌃ [856f044c] MKL_jll v2024.2.0+0
-⌃ [c771fb93] ODEInterface_jll v0.0.1+0
-⌃ [e7412a2a] Ogg_jll v1.3.5+1
-⌃ [458c3c95] OpenSSL_jll v3.0.15+1
-⌃ [efe28fd5] OpenSpecFun_jll v0.5.5+0
-⌃ [91d4177d] Opus_jll v1.3.3+0
-⌃ [36c8627f] Pango_jll v1.54.1+0
-⌅ [30392449] Pixman_jll v0.43.4+0
-⌅ [c0090381] Qt6Base_jll v6.7.1+1
-⌅ [629bc702] Qt6Declarative_jll v6.7.1+2
-⌅ [ce943373] Qt6ShaderTools_jll v6.7.1+1
-⌃ [e99dba38] Qt6Wayland_jll v6.7.1+1
+⌅ [e9f186c6] Libffi_jll v3.4.7+0
+  [7e76a0d4] Libglvnd_jll v1.7.1+1
+  [94ce4f54] Libiconv_jll v1.18.0+0
+  [4b2f31a3] Libmount_jll v2.42.0+0
+⌃ [89763e89] Libtiff_jll v4.7.2+0
+  [38a345b3] Libuuid_jll v2.42.0+0
+  [856f044c] MKL_jll v2025.2.0+0
+  [c771fb93] ODEInterface_jll v0.0.2+0
+  [e7412a2a] Ogg_jll v1.3.6+0
+⌅ [656ef2d0] OpenBLAS32_jll v0.3.24+0
+⌃ [9bd350c2] OpenSSH_jll v10.3.1+0
+  [458c3c95] OpenSSL_jll v3.5.7+0
+  [efe28fd5] OpenSpecFun_jll v0.5.6+0
+  [91d4177d] Opus_jll v1.6.1+0
+  [36c8627f] Pango_jll v1.57.1+0
+  [30392449] Pixman_jll v0.46.4+0
+  [c0090381] Qt6Base_jll v6.10.2+2
+  [629bc702] Qt6Declarative_jll v6.10.2+2
+  [ce943373] Qt6ShaderTools_jll v6.10.2+1
+  [6de9746b] Qt6Svg_jll v6.10.2+0
+  [e99dba38] Qt6Wayland_jll v6.10.2+1
   [f50d1b31] Rmath_jll v0.5.1+0
-⌅ [fb77eaff] Sundials_jll v5.2.2+0
+⌅ [ca45d3f4] SuiteSparse32_jll v5.10.1+0
+  [fb77eaff] Sundials_jll v7.5.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
-⌃ [a2964d1f] Wayland_jll v1.21.0+1
-⌃ [2381bf8a] Wayland_protocols_jll v1.31.0+0
-⌅ [02c8fc9c] XML2_jll v2.13.5+0
-⌃ [aed1982a] XSLT_jll v1.1.41+0
-⌃ [ffd25f8a] XZ_jll v5.6.3+0
-⌃ [f67eecfb] Xorg_libICE_jll v1.1.1+0
-⌃ [c834827a] Xorg_libSM_jll v1.2.4+0
-⌃ [4f6342f7] Xorg_libX11_jll v1.8.6+0
-⌃ [0c0b7dd1] Xorg_libXau_jll v1.0.11+0
-⌃ [935fb764] Xorg_libXcursor_jll v1.2.0+4
-⌃ [a3789734] Xorg_libXdmcp_jll v1.1.4+0
-⌃ [1082639a] Xorg_libXext_jll v1.3.6+0
-⌃ [d091e8ba] Xorg_libXfixes_jll v5.0.3+4
-⌃ [a51aa0fd] Xorg_libXi_jll v1.7.10+4
-⌃ [d1454406] Xorg_libXinerama_jll v1.1.4+4
-⌃ [ec84b674] Xorg_libXrandr_jll v1.5.2+4
-⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.11+0
-⌃ [14d82f49] Xorg_libpthread_stubs_jll v0.1.1+0
-⌃ [c7cfdc94] Xorg_libxcb_jll v1.17.0+0
-⌃ [cc61e674] Xorg_libxkbfile_jll v1.1.2+0
-⌃ [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.4+0
-⌃ [12413925] Xorg_xcb_util_image_jll v0.4.0+1
-⌃ [2def613f] Xorg_xcb_util_jll v0.4.0+1
-⌃ [975044d2] Xorg_xcb_util_keysyms_jll v0.4.0+1
-⌃ [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.9+1
-⌃ [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.1+1
-⌃ [35661453] Xorg_xkbcomp_jll v1.4.6+0
-⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
-⌃ [c5fb5394] Xorg_xtrans_jll v1.5.0+0
-⌃ [8f1865be] ZeroMQ_jll v4.3.5+1
-⌃ [3161d3a3] Zstd_jll v1.5.6+1
-⌃ [35ca27e7] eudev_jll v3.2.9+0
-⌅ [214eeab7] fzf_jll v0.53.0+0
-⌃ [1a1c6b14] gperf_jll v3.1.1+0
-⌃ [a4ae2306] libaom_jll v3.9.0+0
-⌅ [0ac62f75] libass_jll v0.15.2+0
+  [a2964d1f] Wayland_jll v1.24.0+0
+  [ffd25f8a] XZ_jll v5.8.3+0
+  [f67eecfb] Xorg_libICE_jll v1.1.2+0
+  [c834827a] Xorg_libSM_jll v1.2.6+0
+  [4f6342f7] Xorg_libX11_jll v1.8.13+0
+  [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
+  [935fb764] Xorg_libXcursor_jll v1.2.4+0
+  [a3789734] Xorg_libXdmcp_jll v1.1.6+0
+  [1082639a] Xorg_libXext_jll v1.3.8+0
+  [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
+  [a51aa0fd] Xorg_libXi_jll v1.8.3+0
+  [d1454406] Xorg_libXinerama_jll v1.1.7+0
+  [ec84b674] Xorg_libXrandr_jll v1.5.6+0
+  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+  [a65dc6b1] Xorg_libpciaccess_jll v0.19.0+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
+  [cc61e674] Xorg_libxkbfile_jll v1.2.0+0
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.6+0
+  [12413925] Xorg_xcb_util_image_jll v0.4.1+0
+  [2def613f] Xorg_xcb_util_jll v0.4.1+0
+  [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
+  [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
+  [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
+  [35661453] Xorg_xkbcomp_jll v1.4.7+0
+⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+1
+  [c5fb5394] Xorg_xtrans_jll v1.6.0+0
+  [8f1865be] ZeroMQ_jll v4.3.6+0
+  [3161d3a3] Zstd_jll v1.5.7+1
+  [35ca27e7] eudev_jll v3.2.14+0
+  [214eeab7] fzf_jll v0.61.1+0
+  [a4ae2306] libaom_jll v3.13.3+0
+  [0ac62f75] libass_jll v0.17.4+0
   [1183f4f0] libdecor_jll v0.2.2+0
-⌃ [2db6ffa8] libevdev_jll v1.11.0+0
-⌃ [f638f0a6] libfdk_aac_jll v2.0.3+0
-⌃ [36db933b] libinput_jll v1.18.0+0
-⌃ [b53b4c65] libpng_jll v1.6.44+0
-⌃ [a9144af2] libsodium_jll v1.0.20+1
-⌃ [f27f6e37] libvorbis_jll v1.3.7+2
-⌃ [009596ad] mtdev_jll v1.1.6+0
-⌃ [1317d2d5] oneTBB_jll v2021.12.0+0
-⌅ [1270edf5] x264_jll v2021.5.5+0
-⌅ [dfaa095f] x265_jll v3.5.0+0
-⌃ [d8fb68d0] xkbcommon_jll v1.4.1+1
+⌃ [8e53e030] libdrm_jll v2.4.125+1
+  [2db6ffa8] libevdev_jll v1.13.4+0
+  [f638f0a6] libfdk_aac_jll v2.0.4+0
+  [36db933b] libinput_jll v1.28.1+0
+  [b53b4c65] libpng_jll v1.6.58+0
+  [a9144af2] libsodium_jll v1.0.21+0
+  [9a156e7d] libva_jll v2.23.0+0
+  [f27f6e37] libvorbis_jll v1.3.8+0
+  [009596ad] mtdev_jll v1.1.7+0
+  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌅ [1270edf5] x264_jll v10164.0.1+0
+  [dfaa095f] x265_jll v4.1.0+0
+  [d8fb68d0] xkbcommon_jll v1.13.0+0
   [0dad84c5] ArgTools v1.1.1
   [56f22d72] Artifacts
   [2a0f44e3] Base64
@@ -1001,7 +1211,6 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [9a3f8284] Random
   [ea8e919c] SHA v0.7.0
   [9e88b42a] Serialization
-  [1a1011a3] SharedArrays
   [6462fe0b] Sockets
   [2f01184e] SparseArrays v1.10.0
   [10745b16] Statistics v1.10.0
@@ -1015,17 +1224,16 @@ Status `/cache/build/exclusive-amdci1-0/julialang/scimlbenchmarks-dot-jl/benchma
   [deac9b47] LibCURL_jll v8.4.0+0
   [e37daf67] LibGit2_jll v1.6.4+0
   [29816b5a] LibSSH2_jll v1.11.0+1
-  [c8ffd9c3] MbedTLS_jll v2.28.2+1
-  [14a3606d] MozillaCACerts_jll v2023.1.10
-  [4536629a] OpenBLAS_jll v0.3.23+4
-  [05823500] OpenLibm_jll v0.8.1+2
+  [c8ffd9c3] MbedTLS_jll v2.28.1010+0
+  [14a3606d] MozillaCACerts_jll v2025.12.2
+  [4536629a] OpenBLAS_jll v0.3.23+5
+  [05823500] OpenLibm_jll v0.8.5+0
   [efcefdf7] PCRE2_jll v10.42.0+1
   [bea87d4a] SuiteSparse_jll v7.2.1+1
   [83775a58] Zlib_jll v1.2.13+1
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
-  [3f19e933] p7zip_jll v17.4.0+2
+  [3f19e933] p7zip_jll v17.6.1+0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
