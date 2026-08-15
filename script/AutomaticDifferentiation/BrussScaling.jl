@@ -1,5 +1,6 @@
 
 using OrdinaryDiffEq, ReverseDiff, ForwardDiff, FiniteDiff, SciMLSensitivity
+using OrdinaryDiffEqRosenbrock
 using LinearAlgebra, Tracker, Mooncake, Plots
 
 
@@ -260,8 +261,8 @@ end
 #=
 reversediff = map(reversediffn) do n
   bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
-  @elapsed auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5(autodiff=false)); diffalg=(ReverseDiff.gradient), tols...)
-  t = @elapsed auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5(autodiff=false)); diffalg=(ReverseDiff.gradient), tols...)
+  @elapsed auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5(autodiff=AutoFiniteDiff())); diffalg=(ReverseDiff.gradient), tols...)
+  t = @elapsed auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5(autodiff=AutoFiniteDiff())); diffalg=(ReverseDiff.gradient), tols...)
   @show n,t
   t
 end
@@ -281,7 +282,7 @@ end
 
 let n = first(csan)
     bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
-    solver = Rodas5(autodiff = false)
+    solver = Rodas5(autodiff = AutoFiniteDiff())
     for alg in ADJOINT_METHODS_IQ
         f = SciMLSensitivity.alg_autodiff(alg) ? bfun :
             ODEFunction(bfun, jac = brusselator_jac)
@@ -299,7 +300,7 @@ csa_iq = map(csan) do n
         @info "Running $alg"
         f = SciMLSensitivity.alg_autodiff(alg) ? bfun :
             ODEFunction(bfun, jac = brusselator_jac)
-        solver = Rodas5(autodiff = false)
+        solver = Rodas5(autodiff = AutoFiniteDiff())
         @time diffeq_sen_l2(f, b_u0, tspan, b_p, bt, solver; sensalg = alg, tols...)
         t = @elapsed diffeq_sen_l2(f, b_u0, tspan, b_p, bt, solver; sensalg = alg, tols...)
         return t
@@ -313,7 +314,7 @@ csa_g = map(csan) do n
     bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
     @time ts = map(ADJOINT_METHODS_G) do alg
         @info "Running $alg"
-        solver = Rodas5(autodiff = false)
+        solver = Rodas5(autodiff = AutoFiniteDiff())
         @time diffeq_sen_l2(bfun, b_u0, tspan, b_p, bt, solver; sensalg = alg, tols...)
         t = @elapsed diffeq_sen_l2(bfun, b_u0, tspan, b_p, bt, solver; sensalg = alg, tols...)
         return t
@@ -383,7 +384,7 @@ adjoint_methods = mapreduce(collect, vcat, _adjoint_methods)
 
 let n = first(csan)
     bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
-    solver = Rodas5(autodiff = false)
+    solver = Rodas5(autodiff = AutoFiniteDiff())
     for alg in adjoint_methods
         f = SciMLSensitivity.alg_autodiff(alg) ? bfun :
             ODEFunction(bfun, jac = brusselator_jac)
@@ -398,7 +399,7 @@ csavjp = map(csan) do n
         @info "Running $alg"
         f = SciMLSensitivity.alg_autodiff(alg) ? bfun :
             ODEFunction(bfun, jac = brusselator_jac)
-        solver = Rodas5(autodiff = false)
+        solver = Rodas5(autodiff = AutoFiniteDiff())
         @time diffeq_sen_l2(f, b_u0, tspan, b_p, bt, solver; sensalg = alg, tols...)
         t = @elapsed diffeq_sen_l2(f, b_u0, tspan, b_p, bt, solver; sensalg = alg, tols...)
         return t
@@ -474,8 +475,196 @@ yaxis!(plt_gk, "Runtime (s)", :log10);
 plot!(plt_gk, legend = :outertopleft, size = (1200, 600))
 
 
+using Sundials
+
+sundials_configs = [
+    ("CVODES Dense EnzymeVJP", CVODE_BDF(),
+        SundialsAdjoint(autojacvec = EnzymeVJP())),
+    ("CVODES Dense Compiled ReverseDiffVJP", CVODE_BDF(),
+        SundialsAdjoint(autojacvec = ReverseDiffVJP(true))),
+    ("CVODES GMRES EnzymeVJP", CVODE_BDF(linear_solver = :GMRES),
+        SundialsAdjoint(autojacvec = EnzymeVJP())),
+    ("CVODES GMRES Compiled ReverseDiffVJP", CVODE_BDF(linear_solver = :GMRES),
+        SundialsAdjoint(autojacvec = ReverseDiffVJP(true))),
+]
+
+
+let n = first(csan)
+    bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
+    solver = Rodas5(autodiff = AutoFiniteDiff())
+    gauss = GaussAdjoint(autodiff = true, autojacvec = EnzymeVJP())
+    du0_ref, dp_ref = diffeq_sen_l2(
+        bfun, b_u0, tspan, b_p, bt, solver; sensalg = gauss, tols...)
+    for (name, alg, sensealg) in sundials_configs
+        du0, dp = diffeq_sen_l2(
+            bfun, b_u0, tspan, b_p, bt, alg; sensalg = sensealg, tols...)
+        err_du0 = norm(du0 - du0_ref) / norm(du0_ref)
+        err_dp = norm(vec(dp) - vec(dp_ref)) / norm(vec(dp_ref))
+        @show name, err_du0, err_dp
+    end
+end
+
+
+csa_sundials = map(csan) do n
+    bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
+    @time ts = map(sundials_configs) do (name, alg, sensealg)
+        @info "Running $name"
+        @time diffeq_sen_l2(bfun, b_u0, tspan, b_p, bt, alg; sensalg = sensealg, tols...)
+        t = @elapsed diffeq_sen_l2(
+            bfun, b_u0, tspan, b_p, bt, alg; sensalg = sensealg, tols...)
+        return t
+    end
+    @show n, ts
+    ts
+end
+
+
+csadata_sundials = [[csa_sundials[j][i] for j in eachindex(csa_sundials)]
+                    for i in eachindex(csa_sundials[1])]
+
+plt_sundials = plot(title = "Brusselator CVODES C adjoint vs native adjoints");
+plot!(plt_sundials, n_to_param.(csan), csadata_g[2],
+    lab = raw"GaussAdjoint EnzymeVJP (Rodas5)",
+    lw = lw, marksize = ms, linestyle = :auto, marker = :auto);
+plot!(plt_sundials, n_to_param.(csan), csacompare[3 + 8],
+    lab = raw"GaussAdjoint Compiled ReverseDiffVJP (Rodas5)",
+    lw = lw, marksize = ms, linestyle = :auto, marker = :auto);
+plot!(plt_sundials, n_to_param.(csan), csacompare[1],
+    lab = raw"InterpolatingAdjoint EnzymeVJP (Rodas5)",
+    lw = lw, marksize = ms, linestyle = :auto, marker = :auto);
+for (i, (name, _, _)) in enumerate(sundials_configs)
+    plot!(plt_sundials, n_to_param.(csan), csadata_sundials[i], lab = name,
+        lw = lw, marksize = ms, linestyle = :auto, marker = :auto)
+end
+xaxis!(plt_sundials, "Number of Parameters", :log10);
+yaxis!(plt_sundials, "Runtime (s)", :log10);
+plot!(plt_sundials, legend = :outertopleft, size = (1200, 600))
+
+
+using LinearSolve
+
+function diffeq_sen_l2_dense(df, u0, tspan, p, t, alg;
+        abstol = 1e-5, reltol = 1e-7, sensalg, kwargs...)
+    prob = ODEProblem{true, SciMLBase.FullSpecialize}(df, u0, tspan, p)
+    sol = solve(prob, alg, abstol = abstol, reltol = reltol, dense = true; kwargs...)
+    dg(out, u, p, t, i) = (out.=u .- 1.0)
+    adjoint_sensitivities(sol, alg; t, abstol = abstol, dgdu_discrete = dg,
+        reltol = reltol, sensealg = sensalg)
+end
+
+gauss_enz = GaussAdjoint(autodiff = true, autojacvec = EnzymeVJP())
+sundials_enz = SundialsAdjoint(autojacvec = EnzymeVJP())
+
+same_solver_configs = [
+    ("CVODE_BDF Dense + SundialsAdjoint", CVODE_BDF(), sundials_enz, false),
+    ("CVODE_BDF Dense + GaussAdjoint", CVODE_BDF(), gauss_enz, true),
+    ("CVODE_BDF GMRES + SundialsAdjoint",
+        CVODE_BDF(linear_solver = :GMRES), sundials_enz, false),
+    ("CVODE_BDF GMRES + GaussAdjoint",
+        CVODE_BDF(linear_solver = :GMRES), gauss_enz, true),
+    ("FBDF + GaussAdjoint", FBDF(autodiff = AutoFiniteDiff()), gauss_enz, true),
+    ("FBDF GMRES + GaussAdjoint",
+        FBDF(linsolve = KrylovJL_GMRES(), autodiff = AutoFiniteDiff()), gauss_enz, true),
+]
+
+function run_same_solver(bfun, b_u0, b_p, alg, sensealg, dense_forward)
+    return dense_forward ?
+        diffeq_sen_l2_dense(bfun, b_u0, tspan, b_p, bt, alg; sensalg = sensealg, tols...) :
+        diffeq_sen_l2(bfun, b_u0, tspan, b_p, bt, alg; sensalg = sensealg, tols...)
+end
+
+
+let n = first(csan)
+    bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
+    solver = Rodas5(autodiff = AutoFiniteDiff())
+    du0_ref, dp_ref = diffeq_sen_l2(
+        bfun, b_u0, tspan, b_p, bt, solver; sensalg = gauss_enz, tols...)
+    for (name, alg, sensealg, dense_forward) in same_solver_configs
+        du0, dp = run_same_solver(bfun, b_u0, b_p, alg, sensealg, dense_forward)
+        err_du0 = norm(du0 - du0_ref) / norm(du0_ref)
+        err_dp = norm(vec(dp) - vec(dp_ref)) / norm(vec(dp_ref))
+        @show name, err_du0, err_dp
+    end
+end
+
+
+csa_same_solver = map(csan) do n
+    bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
+    @time ts = map(same_solver_configs) do (name, alg, sensealg, dense_forward)
+        @info "Running $name"
+        @time run_same_solver(bfun, b_u0, b_p, alg, sensealg, dense_forward)
+        t = @elapsed run_same_solver(bfun, b_u0, b_p, alg, sensealg, dense_forward)
+        return t
+    end
+    @show n, ts
+    ts
+end
+
+
+csadata_same_solver = [[csa_same_solver[j][i] for j in eachindex(csa_same_solver)]
+                       for i in eachindex(csa_same_solver[1])]
+
+plt_same = plot(title = "Brusselator same-solver adjoint comparison (EnzymeVJP)");
+for (i, (name, _, _, _)) in enumerate(same_solver_configs)
+    plot!(plt_same, n_to_param.(csan), csadata_same_solver[i], lab = name,
+        lw = lw, marksize = ms, linestyle = :auto, marker = :auto)
+end
+xaxis!(plt_same, "Number of Parameters", :log10);
+yaxis!(plt_same, "Runtime (s)", :log10);
+plot!(plt_same, legend = :outertopleft, size = (1200, 600))
+
+
+accuracy_configs = vcat(
+    same_solver_configs,
+    [("Rodas5 + GaussAdjoint", Rodas5(autodiff = AutoFiniteDiff()), gauss_enz, false)],
+)
+
+relerr(a, b) = norm(vec(a) .- vec(b)) / norm(vec(b))
+
+csa_accuracy = map(csan) do n
+    bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator!(PROBS, n)
+    prob = ODEProblem{true, SciMLBase.FullSpecialize}(bfun, b_u0, tspan, b_p)
+    dg(out, u, p, t, i) = (out .= u .- 1.0)
+
+    ref_sol = solve(prob, CVODE_BDF(linear_solver = :GMRES),
+        abstol = 1e-12, reltol = 1e-12, dense = true)
+    du0_ref, dp_ref = adjoint_sensitivities(
+        ref_sol, CVODE_BDF(linear_solver = :GMRES); t = collect(bt),
+        dgdu_discrete = dg, abstol = 1e-12, reltol = 1e-12, sensealg = gauss_enz)
+
+    ref_sol2 = solve(prob, CVODE_BDF(linear_solver = :GMRES),
+        abstol = 1e-12, reltol = 1e-12, saveat = bt)
+    du0_ref2, dp_ref2 = adjoint_sensitivities(
+        ref_sol2, CVODE_BDF(linear_solver = :GMRES); t = collect(bt),
+        dgdu_discrete = dg, abstol = 1e-12, reltol = 1e-12,
+        sensealg = SundialsAdjoint(autojacvec = EnzymeVJP()))
+    agreement = max(relerr(dp_ref2, dp_ref), relerr(du0_ref2, du0_ref))
+
+    errs = map(accuracy_configs) do (name, alg, sensealg, dense_forward)
+        du0, dp = run_same_solver(bfun, b_u0, b_p, alg, sensealg, dense_forward)
+        relerr(dp, dp_ref)
+    end
+    @show n, agreement, errs
+    errs
+end
+
+
+csadata_accuracy = [[csa_accuracy[j][i] for j in eachindex(csa_accuracy)]
+                    for i in eachindex(csa_accuracy[1])]
+
+plt_acc = plot(title = "Brusselator adjoint gradient accuracy scaling");
+for (i, (name, _, _, _)) in enumerate(accuracy_configs)
+    plot!(plt_acc, n_to_param.(csan), csadata_accuracy[i], lab = name,
+        lw = lw, marksize = ms, linestyle = :auto, marker = :auto)
+end
+xaxis!(plt_acc, "Number of Parameters", :log10);
+yaxis!(plt_acc, "Relative L2 error of dG/dp", :log10);
+plot!(plt_acc, legend = :outertopleft, size = (1200, 600))
+
+
 const CHILD_PREAMBLE = raw"""
-using OrdinaryDiffEq, ReverseDiff, ForwardDiff, FiniteDiff, SciMLSensitivity
+using OrdinaryDiffEq, OrdinaryDiffEqRosenbrock, ReverseDiff, ForwardDiff, FiniteDiff,
+      SciMLSensitivity
 using LinearAlgebra, Mooncake
 
 function get_rss_mib()
@@ -712,7 +901,7 @@ adjoint_ad_mem = map(adjoint_ad_configs) do (name, sensalg_str, needs_jac)
         result = run_memory_benchmark(n, """
         sensalg = $(sensalg_str)
         f = $(f_expr)
-        solver = Rodas5(autodiff = false)
+        solver = Rodas5(autodiff = AutoFiniteDiff())
         diffeq_sen_l2(f, b_u0, tspan, b_p, bt, solver; sensalg = sensalg, tols...)
         t = @elapsed diffeq_sen_l2(f, b_u0, tspan, b_p, bt, solver;
             sensalg = sensalg, tols...)
