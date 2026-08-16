@@ -1,5 +1,6 @@
 
 using StochasticDiffEq, SDEProblemLibrary, Random
+import OrdinaryDiffEqCore: PIController
 Random.seed!(200)
 prob = SDEProblemLibrary.oval2ModelExample(largeFluctuations=true,useBigs=false)
 
@@ -9,7 +10,7 @@ BLAS.set_num_threads(1)
 
 Random.seed!(200)
 @time for i in 1:10
-    sol = solve(prob,SRIW1(),dt=(1/2)^(18),qmax=1.125,
+    sol = solve(prob,SRIW1(),dt=(1/2)^(18), controller=PIController(SRIW1(); qmax=1.125),
         saveat=0.1,maxiters=1e7,abstol=1e-5,reltol=1e-3)
 end
 
@@ -30,63 +31,63 @@ end
 
 Random.seed!(200)
 @time for i in 1:10
-    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18), controller=PIController(SOSRI(); qmax=1.125),
           saveat=0.1,maxiters=1e7,abstol=1e-4,reltol=1e-2)
 end
 
 
 Random.seed!(200)
 @time for i in 1:10
-    sol = solve(prob,SOSRI2(),dt=(1/2)^(18),qmax=1.125,
+    sol = solve(prob,SOSRI2(),dt=(1/2)^(18), controller=PIController(SOSRI2(); qmax=1.125),
           saveat=0.1,maxiters=1e7,abstol=1e-4,reltol=1e-4)
 end
 
 
 Random.seed!(200)
 @time for i in 1:10
-    sol = solve(prob,SOSRI2(),dt=(1/2)^(18),qmax=1.125,
+    sol = solve(prob,SOSRI2(),dt=(1/2)^(18), controller=PIController(SOSRI2(); qmax=1.125),
           saveat=0.1,maxiters=1e7,abstol=1e-5,reltol=1e-3)
 end
 
 
 Random.seed!(200)
 @time for i in 1:10
-    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18), controller=PIController(SOSRI(); qmax=1.125),
           saveat=0.1,maxiters=1e7,abstol=1e-3,reltol=1e-2)
 end
 
 
 Random.seed!(200)
 @time for i in 1:10
-    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18), controller=PIController(SOSRI(); qmax=1.125),
           saveat=0.1,maxiters=1e7,abstol=1e-4,reltol=1e-4)
 end
 
 
 Random.seed!(200)
 @time for i in 1:10
-    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18), controller=PIController(SOSRI(); qmax=1.125),
           saveat=0.1,maxiters=1e7,abstol=1e-2,reltol=1e-2)
 end
 
 
 Random.seed!(200)
 @time for i in 1:10
-    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18), controller=PIController(SOSRI(); qmax=1.125),
           saveat=0.1,maxiters=1e7,abstol=1e-5,reltol=1e-3)
 end
 
 
 Random.seed!(200)
 @time for i in 1:10
-    sol = solve(prob,SOSRI(),dt=(1/2)^(18),qmax=1.125,
+    sol = solve(prob,SOSRI(),dt=(1/2)^(18), controller=PIController(SOSRI(); qmax=1.125),
           saveat=0.1,maxiters=1e7,abstol=1e-2,reltol=1e-1)
 end
 
 
 Random.seed!(200)
 @time for i in 1:10
-    sol = solve(prob,SOSRI2(),dt=(1/2)^(18),qmax=1.125,
+    sol = solve(prob,SOSRI2(),dt=(1/2)^(18), controller=PIController(SOSRI2(); qmax=1.125),
           saveat=0.1,maxiters=1e7,abstol=1e-4,reltol=1e-1)
 end
 
