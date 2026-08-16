@@ -1,5 +1,5 @@
 
-using StochasticDiffEq, DiffEqNoiseProcess, LinearAlgebra, Statistics
+using StochasticDiffEq, DiffEqNoiseProcess, LinearAlgebra, Statistics, SciMLBase
 
 function generate_stiff_stoch_heat(D=1,k=1;N = 100, t_end = 3.0, adaptivealg = :RSwM3)
     A = Array(Tridiagonal([1.0 for i in 1:N-1],[-2.0 for i in 1:N],[1.0 for i in 1:N-1]))
@@ -53,20 +53,21 @@ prob = generate_stiff_stoch_heat(1.0,1.0)
 
 function simple_error(alg;kwargs...)
     sol = solve(generate_stiff_stoch_heat(1.0,1.0,t_end=0.25),alg;kwargs...);
-    sum(abs2,sol[end] - exp(A*sol.t[end]+sol.W[end]*I)*prob.u0)
+    W_end = sol.W.u[end]
+    sum(abs2, sol.u[end] .- exp(A * sol.t[end] + W_end * I) * prob.u0)
 end
 
 
 mean(simple_error(EulerHeun(),dt=0.00005) for i in 1:400)
 
 
-mean(simple_error(ImplicitRKMil(interpretation=:Stratanovich),dt=0.1) for i in 1:400)
+mean(simple_error(ImplicitRKMil(interpretation=SciMLBase.AlgorithmInterpretation.Stratonovich),dt=0.1) for i in 1:400)
 
 
-mean(simple_error(ImplicitRKMil(interpretation=:Stratanovich),dt=0.01) for i in 1:400)
+mean(simple_error(ImplicitRKMil(interpretation=SciMLBase.AlgorithmInterpretation.Stratonovich),dt=0.01) for i in 1:400)
 
 
-mean(simple_error(ImplicitRKMil(interpretation=:Stratanovich),dt=0.001) for i in 1:400)
+mean(simple_error(ImplicitRKMil(interpretation=SciMLBase.AlgorithmInterpretation.Stratonovich),dt=0.001) for i in 1:400)
 
 
 mean(simple_error(ImplicitEulerHeun(),dt=0.001) for i in 1:400)
