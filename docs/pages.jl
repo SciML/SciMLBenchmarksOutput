@@ -73,7 +73,6 @@ section_titles = [
     "Optimization" => "Nonlinear Optimization Solver Benchmarks",
     "OptimizationCUTEst" => "CUTEst Optimization Solver Benchmarks",
     "GlobalOptimization" => "Global Optimization Benchmarks",
-    "PSOGlobalOptimization" => "PSO Global Optimization Benchmarks",
     "OptimizationFrameworks" => "Optimization Framework Benchmarks",
     "ParameterEstimation" => "Parameter Estimation and Inverse Problem Benchmarks",
     "BayesianInference" => "Bayesian Inference and Probabilistic Inverse Problem Benchmarks",
