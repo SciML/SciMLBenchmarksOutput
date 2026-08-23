@@ -2,6 +2,7 @@
 using NonlinearSolve, LinearSolve, StaticArrays, Sundials, SpeedMapping,
       BenchmarkTools, LinearAlgebra, DiffEqDevTools, PolyesterForwardDiff, CairoMakie,
       RecursiveFactorization, Enzyme
+using SciMLLogging
 import MINPACK, NLsolve, PETSc
 import LineSearches
 
@@ -281,7 +282,7 @@ function generate_wpset(prob, solvers)
     return WorkPrecisionSet(prob.prob, abstols, reltols,
         getfield.(successful_solvers, :solver);
         names = getfield.(successful_solvers, :name), numruns = 50, error_estimate = :l∞,
-        maxiters = 10000, verbose = true),
+        maxiters = 10000, verbose = SciMLLogging.Standard()),
     successful_solvers
 end
 
@@ -352,8 +353,8 @@ solver_successes = [(solver in successful_solvers) ? "✔" : "✖" for solver in
 using PrettyTables
 io = IOBuffer()
 println(io, "```@raw html")
-pretty_table(io, reshape(solver_successes, 1, :); backend = Val(:html),
-    header = getfield.(solvers_all, :name), alignment = :c)
+pretty_table(io, reshape(solver_successes, 1, :); backend = :html,
+    column_labels = getfield.(solvers_all, :name), alignment = :c)
 println(io, "```")
 Docs.Text(String(take!(io)))
 

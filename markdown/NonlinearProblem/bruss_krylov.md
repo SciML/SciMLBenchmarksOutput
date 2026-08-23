@@ -253,15 +253,15 @@ for (j, solver) in enumerate(solvers_scaling_jacobian_free)
     for (i, N) in enumerate(Ns)
         prob = generate_brusselator_problem(N; sparsity = TracerSparsityDetector())
 
+        # Cascade on -1 (timeout): leave -1 so later solvers at this N also skip.
         if (j > 1 && runtimes_scaling[j - 1, i] == -1)
-            # The last benchmark failed so skip this too
-            runtimes_scaling[j, i] = NaN
+            runtimes_scaling[j, i] = -1
             @warn "$(name): Would Have Timed out"
         else
             function benchmark_function()
                 termination_condition = (alg isa PETScSNES || alg isa KINSOL) ?
                                         nothing :
-                                        NonlinearSolveBase.AbsNormTerminationMode(Base.Fix1(maximum, abs))
+                                        AbsNormTerminationMode(Base.Fix1(maximum, abs))
                 # PETSc doesn't converge properly
                 tol = alg isa PETScSNES ? 1e-6 : 1e-4
                 sol = solve(prob, alg; abstol = tol, reltol = tol,
@@ -280,16 +280,47 @@ for (j, solver) in enumerate(solvers_scaling_jacobian_free)
 
             timeout(benchmark_function, 600)
 
+            # Keep -1 on timeout so subsequent solvers at this N cascade-skip.
             if runtimes_scaling[j, i] == -1
                 @warn "$(name): Timed out"
-                runtimes_scaling[j, i] = NaN
             end
         end
     end
 
     println()
 end
+
+# Normalize timeout sentinels for plotting (log-scale).
+runtimes_scaling = map(x -> x == -1 ? NaN : x, runtimes_scaling)
 ```
+
+```
+17×6 Matrix{Float64}:
+ 5.7109e-5    0.000272357    0.00261883    0.0203502    0.402056    15.1733
+ 0.000188068  0.000759682    0.00211192    0.0139037    0.145314     1.3895
+7
+ 0.000421126  0.00176478     0.00426494    0.0161382    0.0735894    0.4330
+46
+ 0.000629114  0.00284002     0.0127874     0.0667835    0.394484     2.0621
+3
+ 6.4119e-5    0.000293107    0.00172145    0.0207714    0.394258    16.8082
+ 0.000124359  0.000589473    0.00209429    0.0136325    0.136165     1.4475
+3
+ 0.000420426  0.00129237     0.0041954     0.0163917    0.0742011    0.4512
+62
+ 0.000629063  0.00286748     0.012808      0.0666145    0.395676     1.9246
+1
+ 0.00891858   0.00892489     0.0155139     0.0518271    0.602281    12.4616
+ 0.00922147   0.0101349      0.013798      0.0375557    0.301459   NaN
+ 0.00909462   0.0099236      0.0133803   NaN          NaN          NaN
+ 0.0100573    0.0110818      0.0167193   NaN          NaN          NaN
+ 0.00984355   0.0111326      0.016836      0.039087     0.178814   NaN
+ 0.00949398   0.0119664    NaN             0.0439015  NaN          NaN
+ 0.00949676   0.0119919    NaN             0.0439336  NaN          NaN
+ 0.0107887    0.0127186      0.0229652   NaN          NaN          NaN
+ 0.0103668    0.0123166    NaN           NaN          NaN          NaN
+```
+
 
 
 
