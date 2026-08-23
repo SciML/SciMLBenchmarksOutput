@@ -1,5 +1,7 @@
 
 using OrdinaryDiffEq, Plots, DiffEqCallbacks
+using OrdinaryDiffEqRKN, OrdinaryDiffEqSymplecticRK
+using OrdinaryDiffEqTaylorSeries
 using SciMLBenchmarks
 using TaylorIntegration, LinearAlgebra, StaticArrays
 gr(fmt = :png)
@@ -46,6 +48,14 @@ function hamilton(du, u, p, t)
     return nothing
 end
 
+function hamilton_taylor!(du, u, p, t)
+    du[1] = -u[3] * (1 + 2u[4])
+    du[2] = -u[4] - (u[3]^2 - u[4]^2)
+    du[3] = u[1]
+    du[4] = u[2]
+    return nothing
+end
+
 function g(resid, u, p)
     resid[1] = H([u[1], u[2]], [u[3], u[4]], nothing) - E
     resid[2:4] .= 0
@@ -79,21 +89,36 @@ function compare(mode = :inplace, all = true, plt = nothing; tmax = 1e2)
         prob = DynamicalODEProblem(oop_dp, oop_dq, oop_p0, oop_q0, (0.0, tmax))
     end
     prob_linear = ODEProblem(hamilton, vcat(iip_p0, iip_q0), (0.0, tmax))
+    prob_taylor = ODEProblem{true, SciMLBase.FullSpecialize}(
+        hamilton_taylor!, vcat(iip_p0, iip_q0), (0.0, tmax))
+
+    # Cap saved points so energy-error plots stay CI-friendly. Default
+    # save_everystep+dense at tmax=5e4 stores ~5e6 states per symplectic
+    # solve and Plots.jl of multi-million-point series is what pinned the
+    # self-hosted runner for multi-day runs (see CI run 30654781033).
+    nsave = clamp(Int(round(tmax)) + 1, 101, 1001)
+    saveat = range(0.0, tmax; length = nsave)
+    common = (; dense = false, saveat)
 
     GC.gc()
     (mode == :inplace && all) &&
-        @time sol1 = solve(prob, Vern9(), callback = cb, abstol = 1e-14, reltol = 1e-14)
+        @time sol1 = solve(prob, Vern9(), callback = cb, abstol = 1e-14, reltol = 1e-14;
+            common...)
     GC.gc()
-    @time sol2 = solve(prob, KahanLi8(), dt = 1e-2, maxiters = 1e10)
+    @time sol2 = solve(prob, KahanLi8(), dt = 1e-2, maxiters = 1e7; common...)
     GC.gc()
-    @time sol3 = solve(prob, SofSpa10(), dt = 1e-2, maxiters = 1e8)
+    @time sol3 = solve(prob, SofSpa10(), dt = 1e-2, maxiters = 1e7; common...)
     GC.gc()
-    @time sol4 = solve(prob, Vern9(), abstol = 1e-14, reltol = 1e-14)
+    @time sol4 = solve(prob, Vern9(), abstol = 1e-14, reltol = 1e-14; common...)
     GC.gc()
-    @time sol5 = solve(prob, DPRKN12(), abstol = 1e-14, reltol = 1e-14)
+    @time sol5 = solve(prob, DPRKN12(), abstol = 1e-14, reltol = 1e-14; common...)
     GC.gc()
     (mode == :inplace && all) &&
-        @time sol6 = solve(prob_linear, TaylorMethod(50), abstol = 1e-20)
+        @time sol6 = solve(prob_linear, TaylorMethod(50), abstol = 1e-20; common...)
+    GC.gc()
+    (mode == :inplace && all) &&
+        @time sol7 = solve(prob_taylor, ExplicitTaylor(order = Val(8)),
+            abstol = 1e-14, reltol = 1e-14; common...)
 
     (mode == :inplace && all) && println("Vern9 + ManifoldProjection max energy error:\t" *
             "$(maximum(abs_energy_err(sol1)))\tin\t$(length(sol1.u))\tsteps.")
@@ -103,6 +128,8 @@ function compare(mode = :inplace, all = true, plt = nothing; tmax = 1e2)
     println("DPRKN12 max energy error:\t\t\t$(maximum(abs_energy_err(sol5)))\tin\t$(length(sol5.u))\tsteps.")
     (mode == :inplace && all) &&
         println("TaylorMethod max energy error:\t\t\t$(maximum(abs_energy_err(sol6)))\tin\t$(length(sol6.u))\tsteps.")
+    (mode == :inplace && all) &&
+        println("ExplicitTaylor max energy error:\t\t\t$(maximum(abs_energy_err(sol7)))\tin\t$(length(sol7.u))\tsteps.")
 
     if plt === nothing
         plt = plot(xlabel = "t", ylabel = "Energy error")
@@ -117,6 +144,7 @@ function compare(mode = :inplace, all = true, plt = nothing; tmax = 1e2)
     plot!(sol5.t, energy_err(sol5), label = "DPRKN12", ls = mode == :inplace ? :solid :
                                                             :dash)
     (mode == :inplace && all) && plot!(sol6.t, energy_err(sol6), label = "TaylorMethod")
+    (mode == :inplace && all) && plot!(sol7.t, energy_err(sol7), label = "ExplicitTaylor")
 
     return plt
 end
@@ -128,10 +156,10 @@ compare(tmax = 1e2)
 compare(tmax = 1e3)
 
 
-compare(tmax = 1e4)
-
-
-compare(tmax = 5e4)
+# Long-horizon comparison without Taylor / ExplicitTaylor / ManifoldProjection
+# (those are the expensive paths; energy-trend story is carried by the symplectic
+# and high-order RK methods already).
+compare(:inplace, false; tmax = 1e4)
 
 
 function in_vs_out(; all = false, tmax = 1e2)
@@ -142,19 +170,13 @@ function in_vs_out(; all = false, tmax = 1e2)
 end
 
 
-in_vs_out(all = true, tmax = 1e3)
+in_vs_out(all = true, tmax = 1e2)
 
 
 in_vs_out(tmax = 1e2)
 
 
 in_vs_out(tmax = 1e3)
-
-
-in_vs_out(tmax = 1e4)
-
-
-in_vs_out(tmax = 5e4)
 
 
 using SciMLBenchmarks
