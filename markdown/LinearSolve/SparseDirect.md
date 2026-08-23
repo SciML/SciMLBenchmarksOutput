@@ -1,9 +1,32 @@
 ---
-author: "Jürgen Fuhrmann"
-title: "Finite Difference Sparse PDE Jacobian Factorization Benchmarks"
+author: "Jash"
+title: "Sparse Direct Solver Comparison — Factorization and Cached Re-solve"
 ---
+
+
+Which sparse direct solver should you use? This benchmark compares every sparse LU
+backend LinearSolve.jl ships — including the new pure-Julia
+`SupernodalLUFactorization` (Schenk–Gärtner supernodal LU) — on finite-difference
+matrices in 1, 2, and 3 space dimensions, across sizes from 10 to ~40,000 unknowns.
+
+Two costs are reported separately, because real workloads pay them differently:
+
+* **First solve** — `init` + numeric factorization + triangular solve. What you pay
+  the first time, or every time if you throw the factorization away.
+* **Cached re-solve** — a new right-hand side through the *existing* factorization
+  via `solve!` on the cache. This is the cost that dominates ODE/nonlinear workflows,
+  and the reason LinearSolve's `init`/`solve!` API exists.
+
+The **Default** line runs `LinearProblem` with no algorithm specified — it shows what
+LinearSolve's automatic selection actually picks for these matrices, so you can judge
+whether hand-picking is worth it.
+
+CI budget note: the size sweep is bounded by `kmax` below (~40k unknowns max per
+dimension). Expected wall time is well under two hours on the benchmark runner; if
+sizes are raised, raise the folder timeout to match.
+
 ```julia
-using BenchmarkTools, Random, VectorizationBase
+using BenchmarkTools, Random
 using LinearAlgebra, SparseArrays, LinearSolve, Sparspak
 # PureUMFPACK backs PureUMFPACKFactorization via LinearSolvePureUMFPACKExt.
 # Use `import` (not `using`): PureUMFPACK ≤0.1 exports `solve`, which collides
@@ -14,13 +37,11 @@ import ParU_jll
 using Plots
 
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 0.5
-
-# Why do I need to set this ?
 BenchmarkTools.DEFAULT_PARAMETERS.samples = 10
 
-# Sparse matrix generation on  a n-dimensional rectangular grid. After
+# Sparse matrix generation on an n-dimensional rectangular grid. After
 # https://discourse.julialang.org/t/seven-lines-of-julia-examples-sought/50416/135
-# by A. Braunstein.
+# by A. Braunstein (same generator as SparsePDE.jmd).
 
 A ⊕ B = kron(I(size(B, 1)), A) + kron(B, I(size(A, 1)))
 
@@ -34,109 +55,249 @@ end
 lattice(L...; Tv = Float64) = lattice(L[1]; Tv) ⊕ lattice(L[2:end]...; Tv)
 
 #
-# Create a matrix similar to that of a finite difference discretization in a `dim`-dimensional
-# unit cube of  ``-Δu + δu`` with approximately N unknowns. It is strictly diagonally dominant.
+# Matrix like a finite difference discretization of ``-Δu + δu`` in a
+# `dim`-dimensional unit cube with approximately N unknowns; strictly diagonally
+# dominant, so every method here should succeed — and we verify that they do.
 #
 function fdmatrix(N; dim = 2, Tv = Float64, δ = 1.0e-2)
     n = N^(1 / dim) |> ceil |> Int
     lattice([n for i in 1:dim]...; Tv) + Tv(δ) * I
 end
 
+# `nothing` = LinearSolve's automatic default selection.
 algs = [
-    UMFPACKFactorization(),
-    KLUFactorization(),
-    PureKLUFactorization(),
-    PureUMFPACKFactorization(),
-    SupernodalLUFactorization(),
-    MKLPardisoFactorize(),
-    SparspakFactorization()
-    # ParUFactorization() is EXCLUDED: repeated ParU factorizations in one
-    # process ratchet Julia's GC allocation accounting irreversibly (ParU's
-    # METIS ordering allocates through the counted-malloc path; GC.gc(true)
-    # does not reset the pressure). This sweep's ~400 cumulative ParU
-    # factorizations at up to ~40k unknowns are far past the ~140 where a
-    # minimal reproducer wedges — sub-second solves become hours, and the
-    # slowdown also lands on other solvers' analysis phases as collateral.
-    # Two benchmark-runner CI runs of this folder wedged this way (9h and 23h)
-    # before diagnosis. Standalone ParU solves are unaffected. See the
-    # LinearSolve.jl issue for the reproducer and status.
+    ("UMFPACK", UMFPACKFactorization()),
+    ("KLU", KLUFactorization()),
+    ("Pardiso", MKLPardisoFactorize()),
+    ("Sparspak", SparspakFactorization()),
+    ("PureKLU", PureKLUFactorization()),
+    ("PureUMFPACK", PureUMFPACKFactorization()),
+    # ParU is EXCLUDED from this sweep. Its METIS-based analysis routes every
+    # allocation through Julia's counted-malloc path, and across many
+    # factorizations this ratchets the GC's allocation accounting upward
+    # irreversibly (GC.gc(true) does not reset it). Once tripped, EVERY
+    # allocation-heavy code path in the process crawls — a later sweep wedged
+    # inside SupernodalLU's symbolic analysis purely as collateral. Sub-second
+    # solves become hours. See the LinearSolve.jl issue for the reproducer.
+    ("SupernodalLU", SupernodalLUFactorization()),
+    ("SupernodalLU (threaded)", SupernodalLUFactorization(threaded = true)),
+    ("Default", nothing),
 ]
-cols = [:red, :blue, :green, :magenta, :turquoise, :orange, :purple] # one color per alg
+algnames = first.(algs)
+cols = [:red, :blue, :green, :magenta, :gold, :brown, :turquoise, :orange, :black]
+```
 
-__parameterless_type(T) = Base.typename(T).wrapper
-parameterless_type(x) = __parameterless_type(typeof(x))
-parameterless_type(::Type{T}) where {T} = __parameterless_type(T)
+```
+9-element Vector{Symbol}:
+ :red
+ :blue
+ :green
+ :magenta
+ :gold
+ :brown
+ :turquoise
+ :orange
+ :black
+```
 
-#
-# kmax=12 gives ≈ 40_000 unknowns max, can be watched in real time
-# kmax=15 gives ≈ 328_000 unknows, you can go make a coffee.
-# Main culprit is KLU factorization in 3D.
-#
-function run_and_plot(dim; kmax = 12)
-    ns = [10 * 2^k for k in 0:kmax]
 
-    res = [Float64[] for i in 1:length(algs)]
 
-    for i in 1:length(ns)
-        rng = MersenneTwister(123)
-        A = fdmatrix(ns[i]; dim)
-        n = size(A, 1)
-        @info "dim=$(dim): $n × $n"
-        b = rand(rng, n)
-        u0 = rand(rng, n)
 
-        for j in 1:length(algs)
-            bt = @belapsed solve(prob, $(algs[j])).u setup=(prob = LinearProblem(copy($A),
-                copy($b);
-                u0 = copy($u0),
-                alias = LinearAliasSpecifier(alias_A = true, alias_b = true)))
-            push!(res[j], bt)
-        end
+
+## Methodology
+
+For each matrix and algorithm we measure:
+
+1. `t_first`: `init` + `solve!` from scratch, fresh per sample. Includes symbolic
+   analysis, numeric factorization, and one triangular solve.
+2. `t_resolve`: `solve!` on the already-factorized cache. LinearSolve only refactors
+   when the matrix changes, so this isolates the backsolve.
+
+Every timed configuration is first checked for correctness (relative residual
+`< 1e-8`); a failing method is recorded as `NaN` and reported, never silently
+plotted. A fast wrong answer must not appear in these curves.
+
+```julia
+function bench_alg(A, b, alg)
+    prob = LinearProblem(A, b)
+    mk() = alg === nothing ? init(prob) : init(prob, alg)
+
+    # Correctness gate before any timing.
+    cache = mk()
+    sol = solve!(cache)
+    res = norm(A * sol.u - b) / norm(b)
+    if !(res < 1e-8)
+        @warn "correctness gate failed — omitting from plot" alg res
+        return (first = NaN, resolve = NaN)
     end
 
-    p = plot(;
-        ylabel = "Time/s",
-        xlabel = "N",
-        yscale = :log10,
-        xscale = :log10,
-        title = "Time for NxN  sparse LU Factorization $(dim)D",
-        label = string(Symbol(parameterless_type(algs[1]))),
-        legend = :outertopright)
+    t_first = @belapsed solve!(c) setup=(c = $mk()) evals=1
+    # `cache` is factorized above; repeated solve! reuses the factorization.
+    t_resolve = @belapsed solve!($cache)
 
-    for i in 1:length(algs)
-        plot!(p, ns, res[i];
-            linecolor = cols[i],
-            label = "$(string(Symbol(parameterless_type(algs[i]))))")
+    return (first = t_first, resolve = t_resolve)
+end
+
+# kmax=12 gives ≈ 40_000 unknowns max — the historical bound this folder's sweeps
+# have used (SparsePDE.jmd), chosen so 3-D KLU stays tractable.
+function sweep(dim; kmax = 12)
+    ns = [10 * 2^k for k in 0:kmax]
+    tfirst = fill(NaN, length(ns), length(algs))
+    tresolve = fill(NaN, length(ns), length(algs))
+    sizes = zeros(Int, length(ns))
+    for (i, N) in enumerate(ns)
+        rng = MersenneTwister(123)
+        A = fdmatrix(N; dim)
+        n = size(A, 1)
+        sizes[i] = n
+        b = rand(rng, n)
+        @info "dim=$dim: $n × $n, nnz=$(nnz(A))"
+        for (j, (name, alg)) in enumerate(algs)
+            try
+                r = bench_alg(A, b, alg)
+                tfirst[i, j] = r.first
+                tresolve[i, j] = r.resolve
+            catch e
+                @warn "$(name) failed at n=$(n)" exception=(e,)
+            end
+        end
+    end
+    return (; sizes, tfirst, tresolve)
+end
+
+function plot_sweep(sizes, times, dim, phase)
+    p = plot(;
+        ylabel = "Time / s", xlabel = "N",
+        yscale = :log10, xscale = :log10,
+        title = "$(phase), $(dim)D FD matrix",
+        legend = :outertopright)
+    for j in 1:length(algs)
+        mask = .!isnan.(times[:, j])
+        any(mask) && plot!(p, sizes[mask], times[mask, j];
+            linecolor = cols[j], marker = :circle, markersize = 2,
+            label = algnames[j])
     end
     p
 end
 ```
 
 ```
-run_and_plot (generic function with 1 method)
+plot_sweep (generic function with 1 method)
 ```
 
 
+
+
+
+## 1D
 
 ```julia
-run_and_plot(1)
+r1 = sweep(1)
+plot_sweep(r1.sizes, r1.tfirst, 1, "Factor + first solve")
 ```
 
-![](figures/SparsePDE_2_1.png)
+![](figures/SparseDirect_3_1.png)
 
 ```julia
-run_and_plot(2)
+plot_sweep(r1.sizes, r1.tresolve, 1, "Cached re-solve")
 ```
 
-![](figures/SparsePDE_3_1.png)
+![](figures/SparseDirect_4_1.png)
+
+
+
+## 2D
 
 ```julia
-run_and_plot(3)
+r2 = sweep(2)
+plot_sweep(r2.sizes, r2.tfirst, 2, "Factor + first solve")
 ```
 
-![](figures/SparsePDE_4_1.png)
+![](figures/SparseDirect_5_1.png)
+
+```julia
+plot_sweep(r2.sizes, r2.tresolve, 2, "Cached re-solve")
+```
+
+![](figures/SparseDirect_6_1.png)
 
 
+
+## 3D
+
+```julia
+r3 = sweep(3)
+plot_sweep(r3.sizes, r3.tfirst, 3, "Factor + first solve")
+```
+
+![](figures/SparseDirect_7_1.png)
+
+```julia
+plot_sweep(r3.sizes, r3.tresolve, 3, "Cached re-solve")
+```
+
+![](figures/SparseDirect_8_1.png)
+
+
+
+## Reading the result
+
+```julia
+using Printf
+# Winner-per-regime table: for each dimension, which algorithm is fastest at the
+# largest size, for each phase. A concrete recommendation, not just curves.
+println("dim | phase           | fastest at N=max | time (s)")
+println("----+-----------------+------------------+---------")
+for (dim, r) in ((1, r1), (2, r2), (3, r3))
+    for (phase, times) in (("first solve", r.tfirst), ("cached re-solve", r.tresolve))
+        row = times[end, :]
+        valid = findall(!isnan, row)
+        isempty(valid) && continue
+        j = valid[argmin(row[valid])]
+        @printf("%3d | %-15s | %-16s | %.3g\n", dim, phase, algnames[j], row[j])
+    end
+end
+```
+
+```
+dim | phase           | fastest at N=max | time (s)
+----+-----------------+------------------+---------
+  1 | first solve     | PureKLU          | 0.007
+  1 | cached re-solve | PureKLU          | 0.000748
+  2 | first solve     | Sparspak         | 0.134
+  2 | cached re-solve | Pardiso          | 0.00428
+  3 | first solve     | Pardiso          | 0.357
+  3 | cached re-solve | Pardiso          | 0.0124
+```
+
+
+
+
+
+Two things to look for, beyond the raw winner:
+
+* **Does the Default line track the best hand-picked method?** LinearSolve routes
+  structured-sparse LU problems automatically; if the black line hugs the winner, the
+  automatic choice is doing its job and most users never need to pick by hand.
+* **First solve vs re-solve can have different winners.** A method with expensive
+  analysis but fast backsolves wins workloads that re-solve many times (ODE Jacobians,
+  Newton iterations); a method with cheap factorization wins one-shot solves. This is
+  why the two phases are plotted separately.
+
+What this document does *not* show: fill-in (factor nnz), peak memory, and
+non-grid sparsity structures (see the SuiteSparse benchmark in this folder for
+structure variety). **ParU is omitted from this sweep entirely**: repeated ParU
+factorizations within one process ratchet Julia's GC allocation accounting
+upward irreversibly (its METIS ordering routes every allocation through the
+counted-malloc path, and `GC.gc(true)` does not reset the pressure). Once
+tripped, *every* allocation-heavy code path in the process slows to a crawl —
+one sweep run wedged inside a different solver's symbolic analysis purely as
+collateral damage. Standalone ParU solves are unaffected, and a capped variant
+(N ≤ 10,240) still poisoned the process for later sizes, so exclusion is the
+only honest option until the upstream issue is resolved. Found by this
+benchmark's own runs and reported upstream rather than silently plotted. Matrices here are diagonally dominant FD discretizations —
+well-conditioned, no pivoting stress; conclusions transfer to problems of similar
+structure, not to arbitrary sparse matrices.
 
 ## Appendix
 
@@ -149,7 +310,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/LinearSolve","SparsePDE.jmd")
+SciMLBenchmarks.weave_file("benchmarks/LinearSolve","SparseDirect.jmd")
 ```
 
 Computer Information:

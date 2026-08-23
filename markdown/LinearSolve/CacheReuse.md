@@ -1,142 +1,269 @@
 ---
-author: "Jürgen Fuhrmann"
-title: "Finite Difference Sparse PDE Jacobian Factorization Benchmarks"
+author: "Jash"
+title: "Cache Reuse — What the init/solve! API Buys You"
 ---
+
+
+LinearSolve.jl's headline API difference from `A \ b` is the **cache**: build a
+problem once with `init`, then call `solve!` repeatedly while updating `b` or `A`
+in place. Every downstream SciML solver (ODE Jacobians, Newton iterations) leans on
+this. This benchmark quantifies what it's worth, for each algorithm family:
+
+1. **Naive** — `solve(LinearProblem(A, b), alg)` from scratch every time. What you
+   pay without the cache.
+2. **Cached, new `b`** — `cache.b = b′; solve!(cache)`. Direct methods skip
+   factorization entirely: this isolates the backsolve.
+3. **Cached, new `A`** (same sparsity) — `cache.A = A′; solve!(cache)`. Forces
+   numeric refactorization but reuses symbolic analysis, orderings, and workspaces
+   (this path exercises the recent direct-BLAS workspace reuse and sparse
+   symbolic-reuse work in LinearSolve v5).
+
+Also reported: **allocations per cached re-solve** — for direct methods a warm cache
+should allocate (near) zero, which is what makes the API safe inside tight loops.
+
+CI budget note: two fixed problem sizes per family, three modes, ~10 algorithms —
+minutes, not hours.
+
 ```julia
-using BenchmarkTools, Random, VectorizationBase
+using BenchmarkTools, Random
 using LinearAlgebra, SparseArrays, LinearSolve, Sparspak
-# PureUMFPACK backs PureUMFPACKFactorization via LinearSolvePureUMFPACKExt.
-# Use `import` (not `using`): PureUMFPACK ≤0.1 exports `solve`, which collides
-# with LinearSolve/CommonSolve. PureKLU / SupernodalLU need no extra load.
-import PureUMFPACK
+using RecursiveFactorization, FastLapackInterface
 import Pardiso
 import ParU_jll
 using Plots
 
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 0.5
+BenchmarkTools.DEFAULT_PARAMETERS.samples = 20
 
-# Why do I need to set this ?
-BenchmarkTools.DEFAULT_PARAMETERS.samples = 10
-
-# Sparse matrix generation on  a n-dimensional rectangular grid. After
-# https://discourse.julialang.org/t/seven-lines-of-julia-examples-sought/50416/135
-# by A. Braunstein.
-
+# Same FD generator as the folder's other sparse documents.
 A ⊕ B = kron(I(size(B, 1)), A) + kron(B, I(size(A, 1)))
-
 function lattice(n; Tv = Float64)
-    d = fill(2 * one(Tv), n)
-    d[1] = one(Tv)
-    d[end] = one(Tv)
+    d = fill(2 * one(Tv), n); d[1] = one(Tv); d[end] = one(Tv)
     spdiagm(1 => -ones(Tv, n - 1), 0 => d, -1 => -ones(Tv, n - 1))
 end
-
 lattice(L...; Tv = Float64) = lattice(L[1]; Tv) ⊕ lattice(L[2:end]...; Tv)
-
-#
-# Create a matrix similar to that of a finite difference discretization in a `dim`-dimensional
-# unit cube of  ``-Δu + δu`` with approximately N unknowns. It is strictly diagonally dominant.
-#
 function fdmatrix(N; dim = 2, Tv = Float64, δ = 1.0e-2)
     n = N^(1 / dim) |> ceil |> Int
     lattice([n for i in 1:dim]...; Tv) + Tv(δ) * I
 end
 
+# (family, name, alg). Dense algs get a dense A; sparse algs the 2-D FD matrix.
 algs = [
-    UMFPACKFactorization(),
-    KLUFactorization(),
-    PureKLUFactorization(),
-    PureUMFPACKFactorization(),
-    SupernodalLUFactorization(),
-    MKLPardisoFactorize(),
-    SparspakFactorization()
-    # ParUFactorization() is EXCLUDED: repeated ParU factorizations in one
-    # process ratchet Julia's GC allocation accounting irreversibly (ParU's
-    # METIS ordering allocates through the counted-malloc path; GC.gc(true)
-    # does not reset the pressure). This sweep's ~400 cumulative ParU
-    # factorizations at up to ~40k unknowns are far past the ~140 where a
-    # minimal reproducer wedges — sub-second solves become hours, and the
-    # slowdown also lands on other solvers' analysis phases as collateral.
-    # Two benchmark-runner CI runs of this folder wedged this way (9h and 23h)
-    # before diagnosis. Standalone ParU solves are unaffected. See the
-    # LinearSolve.jl issue for the reproducer and status.
+    (:dense,  "LU",           LUFactorization()),
+    (:dense,  "RFLU",         RFLUFactorization()),
+    (:dense,  "MKL LU",       MKLLUFactorization()),
+    (:sparse, "UMFPACK",      UMFPACKFactorization()),
+    (:sparse, "KLU",          KLUFactorization()),
+    (:sparse, "SupernodalLU", SupernodalLUFactorization()),
+    (:sparse, "Sparspak",     SparspakFactorization()),
+    (:sparse, "ParU",         ParUFactorization()),
 ]
-cols = [:red, :blue, :green, :magenta, :turquoise, :orange, :purple] # one color per alg
 
-__parameterless_type(T) = Base.typename(T).wrapper
-parameterless_type(x) = __parameterless_type(typeof(x))
-parameterless_type(::Type{T}) where {T} = __parameterless_type(T)
+const DENSE_N = 500
+const SPARSE_N = 40_000    # ~200×200 grid, 2-D
 
-#
-# kmax=12 gives ≈ 40_000 unknowns max, can be watched in real time
-# kmax=15 gives ≈ 328_000 unknows, you can go make a coffee.
-# Main culprit is KLU factorization in 3D.
-#
-function run_and_plot(dim; kmax = 12)
-    ns = [10 * 2^k for k in 0:kmax]
-
-    res = [Float64[] for i in 1:length(algs)]
-
-    for i in 1:length(ns)
-        rng = MersenneTwister(123)
-        A = fdmatrix(ns[i]; dim)
-        n = size(A, 1)
-        @info "dim=$(dim): $n × $n"
-        b = rand(rng, n)
-        u0 = rand(rng, n)
-
-        for j in 1:length(algs)
-            bt = @belapsed solve(prob, $(algs[j])).u setup=(prob = LinearProblem(copy($A),
-                copy($b);
-                u0 = copy($u0),
-                alias = LinearAliasSpecifier(alias_A = true, alias_b = true)))
-            push!(res[j], bt)
-        end
-    end
-
-    p = plot(;
-        ylabel = "Time/s",
-        xlabel = "N",
-        yscale = :log10,
-        xscale = :log10,
-        title = "Time for NxN  sparse LU Factorization $(dim)D",
-        label = string(Symbol(parameterless_type(algs[1]))),
-        legend = :outertopright)
-
-    for i in 1:length(algs)
-        plot!(p, ns, res[i];
-            linecolor = cols[i],
-            label = "$(string(Symbol(parameterless_type(algs[i]))))")
-    end
-    p
+function make_problem(family)
+    rng = MersenneTwister(123)
+    A = family === :dense ? (rand(rng, DENSE_N, DENSE_N) + DENSE_N * I) :
+        fdmatrix(SPARSE_N; dim = 2)
+    n = size(A, 1)
+    b = rand(rng, n)
+    # Same-sparsity update: scale values, keep the pattern (dense: fresh matrix).
+    A2 = family === :dense ? (rand(rng, n, n) + n * I) :
+        SparseMatrixCSC(n, n, copy(A.colptr), copy(A.rowval), 1.1 .* A.nzval)
+    b2 = rand(rng, n)
+    return A, A2, b, b2
 end
 ```
 
 ```
-run_and_plot (generic function with 1 method)
+make_problem (generic function with 1 method)
+```
+
+
+
+
+
+## Methodology
+
+For each algorithm we measure four numbers:
+
+```julia
+function bench_reuse(family, alg)
+    A, A2, b, b2 = make_problem(family)
+
+    # Correctness gate on both the fresh solve and the A-update path — a cache
+    # that silently returns the OLD factorization's answer after `cache.A = A2`
+    # would be fast and wrong, which is the failure mode this guards against.
+    # NOTE: `cache.A = X` hands the backend the array itself, and several
+    # factorizations (RFLU, MKL) factorize it IN PLACE — the caller's matrix is
+    # destroyed. Others (LU) copy into an internal workspace. Always assign a copy
+    # if you still need the matrix; this benchmark does, so its residual checks
+    # test the solve rather than the wreckage.
+    cache = init(LinearProblem(copy(A), b), alg)
+    u1 = copy(solve!(cache).u)
+    cache.b = b2
+    u2 = copy(solve!(cache).u)
+    cache.A = copy(A2)
+    u3 = copy(solve!(cache).u)
+    r1 = norm(A * u1 - b) / norm(b)
+    r2 = norm(A * u2 - b2) / norm(b2)
+    r3 = norm(A2 * u3 - b2) / norm(b2)
+    if !(r1 < 1e-8 && r2 < 1e-8 && r3 < 1e-8)
+        @warn "correctness gate failed" alg r1 r2 r3
+        return nothing
+    end
+
+    t_naive = @belapsed solve(LinearProblem($A, $b), $alg).u
+
+    t_newb = @belapsed solve!(c).u setup=(
+        c = init(LinearProblem($A, $b), $alg); solve!(c); c.b = $b2) evals=1
+
+    t_newA = @belapsed solve!(c).u setup=(
+        c = init(LinearProblem($A, $b), $alg); solve!(c); c.A = copy($A2)) evals=1
+
+    # Steady-state allocations: repeated solve! on a warm cache, same b.
+    warm = init(LinearProblem(A, b), alg)
+    solve!(warm); solve!(warm)
+    allocs = @allocated solve!(warm)
+
+    return (; t_naive, t_newb, t_newA, allocs)
+end
+
+results = []
+for (family, name, alg) in algs
+    r = try
+        bench_reuse(family, alg)
+    catch e
+        @warn "$name failed" exception=(e,)
+        nothing
+    end
+    r === nothing || push!(results, (; family, name, r...))
+    r === nothing || @info name t_naive=r.t_naive t_newb=r.t_newb t_newA=r.t_newA allocs=r.allocs
+end
+```
+
+
+
+
+## Results
+
+```julia
+using Printf
+println("alg           | family |  naive (s) | new-b (s) | new-A (s) | b-speedup | A-speedup | allocs/solve")
+println("--------------+--------+------------+-----------+-----------+-----------+-----------+-------------")
+for r in results
+    @printf("%-13s | %-6s | %10.3g | %9.3g | %9.3g | %8.1fx | %8.2fx | %d\n",
+        r.name, r.family, r.t_naive, r.t_newb, r.t_newA,
+        r.t_naive / r.t_newb, r.t_naive / r.t_newA, r.allocs)
+end
+```
+
+```
+alg           | family |  naive (s) | new-b (s) | new-A (s) | b-speedup | A
+-speedup | allocs/solve
+--------------+--------+------------+-----------+-----------+-----------+--
+---------+-------------
+LU            | dense  |    0.00476 |   5.7e-05 |   0.00449 |     83.6x |  
+   1.06x | 0
+RFLU          | dense  |    0.00223 |  5.72e-05 |    0.0019 |     39.0x |  
+   1.17x | 0
+MKL LU        | dense  |    0.00279 |    0.0001 |   0.00228 |     27.8x |  
+   1.22x | 0
+UMFPACK       | sparse |      0.194 |   0.00617 |     0.153 |     31.4x |  
+   1.27x | 0
+KLU           | sparse |      0.231 |   0.00952 |     0.156 |     24.3x |  
+   1.48x | 0
+SupernodalLU  | sparse |      0.248 |    0.0109 |    0.0559 |     22.7x |  
+   4.44x | 0
+Sparspak      | sparse |      0.125 |    0.0211 |     0.105 |      5.9x |  
+   1.19x | 965928
+ParU          | sparse |       0.61 |    0.0188 |     0.297 |     32.5x |  
+   2.05x | 968360
 ```
 
 
 
 ```julia
-run_and_plot(1)
+sparse_res = filter(r -> r.family === :sparse, results)
+vals = hcat([ [r.t_naive for r in sparse_res],
+              [r.t_newA  for r in sparse_res],
+              [r.t_newb  for r in sparse_res] ]...)
+p = plot()   # grouped bars via repeated bar! calls keep deps minimal
+xs = 1:length(sparse_res)
+w = 0.25
+for (k, (lab, col)) in enumerate(zip(("naive", "new A (refactor)", "new b (backsolve)"),
+                                     (:gray, :steelblue, :seagreen)))
+    bar!(p, xs .+ (k - 2) * w, vals[:, k]; bar_width = w, label = lab, color = col)
+end
+plot!(p; xticks = (xs, [r.name for r in sparse_res]), yscale = :log10,
+    ylabel = "time / s (log)", title = "Sparse (N = $(SPARSE_N)): cost per solve by reuse mode",
+    legend = :topright)
+p
 ```
 
-![](figures/SparsePDE_2_1.png)
+![](figures/CacheReuse_4_1.png)
+
+
+
+## Krylov warm start
+
+For iterative methods the cache carries a different asset: the previous solution.
+With `warm_start`, repeated solves against slowly-varying right-hand sides start
+from the last `u` instead of zero — the payoff is *iterations*, which we report
+directly (time follows iterations for a fixed operator).
 
 ```julia
-run_and_plot(2)
+A = fdmatrix(SPARSE_N; dim = 2)
+n = size(A, 1)
+rng = MersenneTwister(42)
+b = rand(rng, n)
+db = 0.01 .* rand(rng, n)   # small perturbation: the "time-stepping" regime
+
+for (label, ws) in (("WarmStart.Previous", KrylovJL_GMRES(warm_start = WarmStart.Previous)),
+                    ("WarmStart.None", KrylovJL_GMRES(warm_start = WarmStart.None)))
+    cache = init(LinearProblem(A, b), ws; reltol = 1e-8)
+    iters = Int[]
+    for step in 1:5
+        sol = solve!(cache)
+        push!(iters, sol.iters)
+        cache.b = cache.b .+ db
+    end
+    println(rpad(label, 18), " iters per step: ", iters)
+end
 ```
 
-![](figures/SparsePDE_3_1.png)
-
-```julia
-run_and_plot(3)
+```
+WarmStart.Previous iters per step: [224, 159, 159, 159, 159]
+WarmStart.None     iters per step: [224, 224, 224, 224, 224]
 ```
 
-![](figures/SparsePDE_4_1.png)
 
 
+
+
+## Reading the result
+
+* **new-b speedup is the headline.** For direct methods this is
+  factor-time / backsolve-time — typically one to two orders of magnitude. If your
+  workload solves against many right-hand sides (adjoints, multiple loads), the
+  cache API is the difference.
+* **new-A speedup measures symbolic reuse.** Same-pattern refactorization skips
+  ordering/analysis; how much that's worth varies strongly by algorithm — this
+  column is effectively a benchmark of each backend's refactorization path.
+* **allocs/solve near zero** is what makes `solve!` safe inside hot loops. Nonzero
+  values here are worth filing as issues.
+* **`cache.A = X` aliasing differs by backend.** Some factorizations (RFLU, MKL LU)
+  factorize the assigned array in place, destroying it; others (LU) copy into a
+  reused workspace. If you need your matrix afterwards, assign a copy. This
+  benchmark's correctness gate is what surfaced the difference.
+* **Warm start** converts cache reuse into iteration savings for Krylov methods in
+  the time-stepping regime; with a fixed matrix and slowly-moving `b`, the
+  iteration counts tell the story without timing noise.
+
+What this does *not* show: changed-sparsity-pattern updates (a rebuild, by design),
+and multi-threaded interactions. Problem sizes are fixed per family; the size
+dependence of these ratios is covered by the SparseDirect document's sweep.
 
 ## Appendix
 
@@ -149,7 +276,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/LinearSolve","SparsePDE.jmd")
+SciMLBenchmarks.weave_file("benchmarks/LinearSolve","CacheReuse.jmd")
 ```
 
 Computer Information:

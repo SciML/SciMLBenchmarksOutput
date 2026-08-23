@@ -1,7 +1,12 @@
 
 using BenchmarkTools, Random, VectorizationBase, Statistics
 using LinearAlgebra, SparseArrays, LinearSolve, Sparspak
+# PureUMFPACK backs PureUMFPACKFactorization via LinearSolvePureUMFPACKExt.
+# Use `import` (not `using`): PureUMFPACK ≤0.1 exports `solve`, which collides
+# with LinearSolve/CommonSolve. PureKLU / SupernodalLU need no extra load.
+import PureUMFPACK
 import Pardiso
+import ParU_jll
 using Plots
 using MatrixDepot
 
@@ -13,16 +18,29 @@ BenchmarkTools.DEFAULT_PARAMETERS.samples = 10
 algs = [
     UMFPACKFactorization(),
     KLUFactorization(),
+    PureKLUFactorization(),
+    PureUMFPACKFactorization(),
+    SupernodalLUFactorization(),
     MKLPardisoFactorize(),
     SparspakFactorization(),
+    ParUFactorization()
 ]
-algnames = ["UMFPACK", "KLU", "Pardiso", "Sparspak"]
+algnames = ["UMFPACK", "KLU", "PureKLU", "PureUMFPACK", "SupernodalLU",
+    "Pardiso", "Sparspak", "ParU"]
 algnames_transpose = reshape(algnames, 1, length(algnames))
 
-cols = [:red, :blue, :green, :magenta, :turqoise] # one color per alg
+cols = [:red, :blue, :green, :magenta, :turquoise, :orange, :purple, :cyan] # one color per alg
 
 # matrices = ["HB/1138_bus", "HB/494_bus", "HB/662_bus", "HB/685_bus", "HB/bcsstk01", "HB/bcsstk02", "HB/bcsstk03", "HB/bcsstk04",  "HB/bcsstk05", "HB/bcsstk06", "HB/bcsstk07", "HB/bcsstk08", "HB/bcsstk09", "HB/bcsstk10", "HB/bcsstk11", "HB/bcsstk12", "HB/bcsstk13", "HB/bcsstk14", "HB/bcsstk15", "HB/bcsstk16"]
-allmatrices_md = listnames("*/*")
+#
+# Filter on the (already-local) index metadata rather than downloading everything.
+# `listnames("*/*")` returns all 2905 remote matrices, and the loop below then
+# downloads each one only to discard it via `n > 100 && error(...)`. Applying the
+# same n <= 100 bound up front leaves 53 matrices — the exact set that was being
+# benchmarked anyway — so no reported number changes, but the document drops from
+# ~9 hours (it exceeded the CI runner's limit) to minutes. The `n > 100` guard
+# below is kept as a belt-and-suspenders check.
+allmatrices_md = listnames("*/*" & @pred(n <= 100))
 
 @info "Total number of matrices: $(allmatrices_md.content[1].rows)"
 
@@ -66,33 +84,33 @@ for z in 1:length(allmatrices_md.content[1].rows)
         A = mdopen(currMTX).A
         A = convert(SparseMatrixCSC, A)
         n = size(A, 1)
-        
+
         mtx_copy = copy(A)
 
         @info "$n × $n"
         n > 100 && error("Skipping too large matrices")
-        
+
         ## COMPUTING SPACED OUT SPARSITY
         rows, cols = size(mtx_copy)
         new_rows = div(rows, 2)
         new_cols = div(cols, 2)
-        condensed = zeros(Int, new_rows, new_cols) 
+        condensed = zeros(Int, new_rows, new_cols)
         while size(mtx_copy, 1) > 32 || size(mtx_copy, 2) > 32
-           
             rows, cols = size(mtx_copy)
             new_rows = div(rows, 2)
             new_cols = div(cols, 2)
             condensed = sparse(zeros(Int, new_rows, new_cols))
 
-            for r in 1:2:rows-1
-                for c in 1:2:cols-1
-                    block = mtx_copy[r:min(r+1, rows), c:min(c+1, cols)]
-                    condensed[div(r-1, 2) + 1, div(c-1, 2) + 1] = (length(nonzeros(block)) >= 2) ? 1 : 0
+            for r in 1:2:(rows - 1)
+                for c in 1:2:(cols - 1)
+                    block = mtx_copy[r:min(r + 1, rows), c:min(c + 1, cols)]
+                    condensed[div(r - 1, 2) + 1, div(c - 1, 2) + 1] = (length(nonzeros(block)) >=
+                                                                       2) ? 1 : 0
                 end
-            end        
-            mtx_copy = condensed 
+            end
+            mtx_copy = condensed
         end
-       
+
         ## COMPUTING FACTORIZATION TIME
         b = rand(rng, n)
         u0 = rand(rng, n)
@@ -101,9 +119,8 @@ for z in 1:length(allmatrices_md.content[1].rows)
             bt = @belapsed solve(prob, $(algs[j])).u setup=(prob = LinearProblem(copy($A),
                 copy($b);
                 u0 = copy($u0),
-                alias_A = true,
-                alias_b = true))
-            times[z,j] = bt
+                alias = LinearAliasSpecifier(alias_A = true, alias_b = true)))
+            times[z, j] = bt
         end
 
         bandedness_five[z] = compute_bandedness(A, 5)
@@ -145,11 +162,11 @@ bandedness_ten = replace(bandedness_ten, 0 => 1e-10)
 bandedness_twenty = bandedness_twenty[.!isnan.(bandedness_twenty)]
 bandedness_twenty = replace(bandedness_twenty, 0 => 1e-10)
 matrix_size = matrix_size[.!isnan.(matrix_size)]
-nanrows = any(isnan, times; dims=2)
+nanrows = any(isnan, times; dims = 2)
 times = times[.!vec(nanrows), :]
 
 
-meantimes = vec(mean(times, dims=1))
+meantimes = vec(mean(times, dims = 1))
 p = bar(algnames, meantimes;
     ylabel = "Time/s",
     yscale = :log10,
@@ -225,5 +242,5 @@ p = scatter(bandedness_twenty, times;
 
 
 using SciMLBenchmarks
-SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
 

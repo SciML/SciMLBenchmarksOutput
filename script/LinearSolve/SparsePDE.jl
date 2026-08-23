@@ -1,7 +1,12 @@
 
 using BenchmarkTools, Random, VectorizationBase
 using LinearAlgebra, SparseArrays, LinearSolve, Sparspak
+# PureUMFPACK backs PureUMFPACKFactorization via LinearSolvePureUMFPACKExt.
+# Use `import` (not `using`): PureUMFPACK ≤0.1 exports `solve`, which collides
+# with LinearSolve/CommonSolve. PureKLU / SupernodalLU need no extra load.
+import PureUMFPACK
 import Pardiso
+import ParU_jll
 using Plots
 
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 0.5
@@ -36,10 +41,23 @@ end
 algs = [
     UMFPACKFactorization(),
     KLUFactorization(),
+    PureKLUFactorization(),
+    PureUMFPACKFactorization(),
+    SupernodalLUFactorization(),
     MKLPardisoFactorize(),
-    SparspakFactorization(),
+    SparspakFactorization()
+    # ParUFactorization() is EXCLUDED: repeated ParU factorizations in one
+    # process ratchet Julia's GC allocation accounting irreversibly (ParU's
+    # METIS ordering allocates through the counted-malloc path; GC.gc(true)
+    # does not reset the pressure). This sweep's ~400 cumulative ParU
+    # factorizations at up to ~40k unknowns are far past the ~140 where a
+    # minimal reproducer wedges — sub-second solves become hours, and the
+    # slowdown also lands on other solvers' analysis phases as collateral.
+    # Two benchmark-runner CI runs of this folder wedged this way (9h and 23h)
+    # before diagnosis. Standalone ParU solves are unaffected. See the
+    # LinearSolve.jl issue for the reproducer and status.
 ]
-cols = [:red, :blue, :green, :magenta, :turqoise] # one color per alg
+cols = [:red, :blue, :green, :magenta, :turquoise, :orange, :purple] # one color per alg
 
 __parameterless_type(T) = Base.typename(T).wrapper
 parameterless_type(x) = __parameterless_type(typeof(x))
@@ -67,8 +85,7 @@ function run_and_plot(dim; kmax = 12)
             bt = @belapsed solve(prob, $(algs[j])).u setup=(prob = LinearProblem(copy($A),
                 copy($b);
                 u0 = copy($u0),
-                alias_A = true,
-                alias_b = true))
+                alias = LinearAliasSpecifier(alias_A = true, alias_b = true)))
             push!(res[j], bt)
         end
     end
@@ -101,5 +118,5 @@ run_and_plot(3)
 
 
 using SciMLBenchmarks
-SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
 
