@@ -135,16 +135,16 @@ N   | UMF first | KLU first | GPU first | UMF re   | KLU re   | GPU re
   | H2D
 --------+-----------+-----------+-----------+----------+----------+--------
 --+--------
-   2500 |   0.00404 |   0.00196 |   0.00128 | 7.15e-05 | 5.72e-05 | 0.00021
-5 | 0.000177
-  10000 |     0.017 |    0.0148 |   0.00243 | 0.000346 | 0.000334 | 0.00036
-3 | 0.000211
-  40000 |    0.0881 |     0.128 |    0.0067 |  0.00189 |  0.00307 | 0.00080
-8 | 0.000474
- 102400 |       0.3 |     0.524 |    0.0144 |  0.00878 |   0.0127 |  0.0014
-8 | 0.000978
- 202500 |     0.688 |      1.34 |    0.0262 |   0.0199 |   0.0281 |  0.0021
-2 | 0.00184
+   2500 |   0.00737 |   0.00201 |   0.00128 | 6.72e-05 | 5.69e-05 | 0.00021
+7 | 0.000153
+  10000 |    0.0169 |    0.0158 |   0.00247 | 0.000341 | 0.000335 | 0.00036
+1 | 0.000209
+  40000 |    0.0888 |     0.127 |   0.00674 |  0.00184 |  0.00299 | 0.00081
+3 | 0.000469
+ 102400 |     0.301 |     0.525 |    0.0156 |  0.00895 |   0.0128 |  0.0014
+8 | 0.000985
+ 202500 |     0.695 |      1.34 |    0.0259 |     0.02 |   0.0286 |  0.0021
+2 | 0.00182
 ```
 
 
@@ -181,8 +181,8 @@ SciMLBenchmarks.weave_file("benchmarks/LinearSolveGPU","SparseGPU.jmd")
 Computer Information:
 
 ```
-Julia Version 1.12.6
-Commit 15346901f00 (2026-04-09 19:20 UTC)
+Julia Version 1.12.7
+Commit 6d172b025e4 (2026-08-15 08:05 UTC)
 Build Info:
   Official https://julialang.org release
 Platform Info:
@@ -207,8 +207,10 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
 ⌃ [052768ef] CUDA v6.2.0
 ⌅ [45b445bb] CUDSS v0.7.0
 ⌃ [7ed4a6bd] LinearSolve v5.9.0
-  [91a5bcdd] Plots v1.41.6
+⌃ [91a5bcdd] Plots v1.41.6
+  [f2c3362d] RecursiveFactorization v0.2.30
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.1.5]
+  [856f044c] MKL_jll v2025.2.0+0
   [37e2e46d] LinearAlgebra v1.12.0
   [de0858da] Printf v1.11.0
   [9a3f8284] Random v1.11.0
@@ -226,24 +228,28 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
-  [4fba245c] ArrayInterface v7.28.1
+⌃ [4fba245c] ArrayInterface v7.28.1
   [a9b6321e] Atomix v1.1.3
   [ab4f0b2a] BFloat16s v0.6.1
   [6e4b80f9] BenchmarkTools v1.8.0
   [d1d4a3ce] BitFlags v0.1.10
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [fa961155] CEnum v0.5.0
+  [2a0fbf3d] CPUSummary v0.2.7
 ⌃ [052768ef] CUDA v6.2.0
 ⌅ [bd0ed864] CUDACore v6.2.0
 ⌅ [9ec180c6] CUDATools v6.2.0
   [1af6417a] CUDA_Runtime_Discovery v2.1.0
 ⌅ [45b445bb] CUDSS v0.7.0
 ⌅ [9e67e8f6] CUPTI v6.2.0
-  [944b1d66] CodecZlib v0.7.8
+  [fb6a15b2] CloseOpenIntervals v0.1.13
+⌃ [944b1d66] CodecZlib v0.7.8
   [35d6a980] ColorSchemes v3.31.0
   [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
   [38540f10] CommonSolve v0.2.13
+  [f70d9fcc] CommonWorldInvalidations v1.1.2
   [34da2185] Compat v4.18.1
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.7
@@ -251,6 +257,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
   [8f4d0f93] Conda v1.10.3
   [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
+  [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.2.0
   [9a962f9c] DataAPI v1.16.0
   [864edb3b] DataStructures v0.19.6
@@ -265,8 +272,8 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
   [069b7b12] FunctionWrappers v1.1.3
-  [77dc65aa] FunctionWrappersWrappers v1.12.1
-  [0c68f7d7] GPUArrays v11.5.10
+⌃ [77dc65aa] FunctionWrappersWrappers v1.12.1
+⌃ [0c68f7d7] GPUArrays v11.5.10
   [46192b85] GPUArraysCore v0.2.0
 ⌅ [61eb1bfa] GPUCompiler v1.23.0
 ⌅ [096a3bc2] GPUToolbox v1.1.1
@@ -276,7 +283,9 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
 ⌅ [cd3eb016] HTTP v1.11.0
   [076d061b] HashArrayMappedTries v0.2.0
 ⌅ [eafb193a] Highlights v0.5.3
+  [3e5b6fbb] HostCPUFeatures v0.1.18
   [7073ff75] IJulia v1.34.4
+  [615f187c] IfElse v0.1.1
   [3587e190] InverseFunctions v0.1.17
   [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
@@ -287,12 +296,15 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
   [ba0b0d4f] Krylov v0.10.9
 ⌃ [929cbde3] LLVM v9.11.0
   [8b046642] LLVMLoopInfo v1.0.0
-  [b964fa9f] LaTeXStrings v1.4.0
-  [23fbe1c1] Latexify v0.16.11
+⌃ [b964fa9f] LaTeXStrings v1.4.0
+⌃ [23fbe1c1] Latexify v0.16.11
+  [10f19ff3] LayoutPointers v0.1.17
 ⌃ [7ed4a6bd] LinearSolve v5.9.0
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
+  [bdcacae8] LoopVectorization v0.12.174
   [1914dd2f] MacroTools v0.5.16
+  [d125e4d3] ManualMemory v0.1.8
   [739be429] MbedTLS v1.1.10
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
@@ -300,16 +312,19 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
 ⌅ [611af6d1] NVML v6.2.0
   [5da4648a] NVTX v1.0.3
   [77ba4419] NaNMath v1.1.4
+  [6fe1bfb0] OffsetArrays v1.17.0
   [4d8831e6] OpenSSL v1.6.1
 ⌅ [bac558e1] OrderedCollections v1.8.2
   [69de0a69] Parsers v2.8.7
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.4
-  [91a5bcdd] Plots v1.41.6
+⌃ [91a5bcdd] Plots v1.41.6
+  [f517fe37] Polyester v0.7.19
+  [1d0040c9] PolyesterWeave v0.2.2
 ⌃ [d236fae5] PreallocationTools v1.4.1
   [aea7be01] PrecompileTools v1.3.4
   [21216c6a] Preferences v1.5.2
-  [08abe8d2] PrettyTables v3.4.6
+⌃ [08abe8d2] PrettyTables v3.4.6
   [43287f4e] PtrArrays v1.4.0
 ⌃ [0c0d3e7f] PureKLU v1.4.0
   [74087812] Random123 v1.7.1
@@ -317,14 +332,17 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
 ⌃ [731186ca] RecursiveArrayTools v4.3.6
+  [f2c3362d] RecursiveFactorization v0.2.30
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.24
+  [94e857df] SIMDTypes v0.1.0
+  [476501e8] SLEEFPirates v0.6.46
 ⌃ [0bca4576] SciMLBase v3.44.0
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.1.5]
   [a6db7da4] SciMLLogging v2.0.4
-  [c0aeaf25] SciMLOperators v1.26.1
+⌃ [c0aeaf25] SciMLOperators v1.26.1
   [431bcebd] SciMLPublic v1.2.4
   [53ae85a6] SciMLStructures v1.10.4
   [7e506255] ScopedValues v1.6.2
@@ -333,25 +351,34 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
   [a2af1166] SortingAlgorithms v1.2.3
+⌃ [bd59d7e1] SparseBandedMatrices v1.3.4
   [a57abbd0] SparseColumnPivotedQR v2.1.6
   [860ef19b] StableRNGs v1.0.4
-  [90137ffa] StaticArrays v1.9.18
+  [aedffcd0] Static v1.4.6
+  [0d7ed370] StaticArrayInterface v1.10.0
+⌃ [90137ffa] StaticArrays v1.9.18
   [1e83bf80] StaticArraysCore v1.4.4
   [10745b16] Statistics v1.11.1
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.12
+  [7792a7ef] StrideArraysCore v0.5.9
   [69024149] StringEncodings v0.3.7
-  [892a3eda] StringManipulation v0.4.7
+⌅ [892a3eda] StringManipulation v0.4.7
 ⌃ [2efcf032] SymbolicIndexingInterface v0.3.53
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.13.0
   [62fd8b95] TensorCore v0.1.1
+  [8290d209] ThreadingUtilities v0.5.6
   [e689c965] Tracy v0.1.6
   [3bb67fe8] TranscodingStreams v0.11.3
+  [d5829a12] TriangularSolve v0.2.6
 ⌃ [5c2747f8] URIs v1.6.3
+  [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [013be700] UnsafeAtomics v0.3.1
+⌃ [013be700] UnsafeAtomics v0.3.1
   [41fe7b60] Unzip v0.2.0
+  [3d5dd08c] VectorizationBase v0.21.74
+  [33b4df10] VectorizedRNG v0.2.26
   [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.16
@@ -363,13 +390,13 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
 ⌅ [b26da814] cuSPARSE v6.2.0
   [6e34b625] Bzip2_jll v1.0.9+0
 ⌅ [d1e2174e] CUDA_Compiler_jll v0.4.4+1
-  [4ee394cb] CUDA_Driver_jll v13.3.0+1
+⌃ [4ee394cb] CUDA_Driver_jll v13.3.0+1
 ⌅ [76a88914] CUDA_Runtime_jll v0.23.0+1
 ⌅ [4889d778] CUDSS_jll v0.7.1+0
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-  [2e619515] Expat_jll v2.8.2+0
+⌃ [2e619515] Expat_jll v2.8.2+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1

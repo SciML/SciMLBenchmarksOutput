@@ -11,9 +11,16 @@ pays PCIe both ways (H2D for the matrix, D2H for the solution), and below some
 crossover on the folder's GPU runner, with transfer cost reported explicitly —
 a GPU benchmark that hides transfer is marketing, not evidence.
 
+A crossover claim is only as strong as its CPU baseline, so the CPU side is not
+one algorithm but the best of several — including LinearSolve's *default*
+choice, which is the number a user gets by not specifying an algorithm at all.
 Compared, all through the same `LinearProblem` API:
 
-* `LUFactorization` — CPU baseline (BLAS, all cores)
+* CPU: `LUFactorization` (OpenBLAS), `RFLUFactorization`
+  (RecursiveFactorization), the LinearSolve default algorithm choice, and
+  `MKLLUFactorization` on machines where LinearSolve loads MKL at all — it
+  deliberately does not on AMD EPYC, which is this folder's runner CPU, and
+  the document prints a note instead of a broken column when that applies
 * `CudaOffloadLUFactorization` — full-precision GPU offload
 * `CudaOffloadQRFactorization` — QR variant
 * `CUDAOffload32MixedLUFactorization` — Float32 factorization with Float64
@@ -22,7 +29,7 @@ Compared, all through the same `LinearProblem` API:
 
 ```julia
 using BenchmarkTools, Random, Printf
-using LinearAlgebra, LinearSolve
+using LinearAlgebra, LinearSolve, RecursiveFactorization, MKL_jll
 using CUDA
 
 BenchmarkTools.DEFAULT_PARAMETERS.seconds = 0.5
@@ -30,19 +37,50 @@ BenchmarkTools.DEFAULT_PARAMETERS.samples = 5
 
 @assert CUDA.functional() "This benchmark requires a functional CUDA GPU"
 println("GPU: ", CUDA.name(CUDA.device()))
+println("CPU: ", Sys.cpu_info()[1].model, " — ", Sys.CPU_THREADS,
+    " hardware threads, ", BLAS.get_num_threads(), " BLAS threads, ",
+    Threads.nthreads(), " Julia threads")
 
-algs = [
-    ("CPU LU", LUFactorization(), 1e-10),
-    ("GPU LU offload", CudaOffloadLUFactorization(), 1e-10),
-    ("GPU QR offload", CudaOffloadQRFactorization(), 1e-10),
-    ("GPU 32-mixed LU", CUDAOffload32MixedLUFactorization(), 1e-4),
+# (name, algorithm, gate tolerance, device class); `nothing` is LinearSolve's
+# default algorithm choice for the problem — the baseline a non-expert gets.
+algs = Any[
+    ("CPU OpenBLAS LU", LUFactorization(), 1e-10, :cpu),
+    ("CPU RFLU", RFLUFactorization(), 1e-10, :cpu),
+    ("CPU default choice", nothing, 1e-10, :cpu),
+    ("GPU LU offload", CudaOffloadLUFactorization(), 1e-10, :gpu),
+    ("GPU QR offload", CudaOffloadQRFactorization(), 1e-10, :gpu),
+    ("GPU 32-mixed LU", CUDAOffload32MixedLUFactorization(), 1e-4, :gpu),
 ]
+
+# LinearSolve deliberately does not load MKL on CPUs where it defaults away
+# from it — notably AMD EPYC, this folder's runner CPU (LinearSolve.jl#518,
+# the LoadMKL_JLL preference). Probe once and include the MKL row only where
+# it actually runs, so the CPU baselines are exactly the options a user of
+# this machine has; a NaN column with load errors is not a baseline.
+mkl_works = try
+    solve(LinearProblem(Matrix(8.0I, 8, 8), ones(8)), MKLLUFactorization())
+    true
+catch
+    false
+end
+if mkl_works
+    insert!(algs, 2, ("CPU MKL LU", MKLLUFactorization(), 1e-10, :cpu))
+else
+    println("MKL LU excluded: LinearSolve does not load MKL_jll on this CPU ",
+        "by default (LoadMKL_JLL preference; see LinearSolve.jl#518).")
+end
+cpu_idx = findall(a -> a[4] == :cpu, algs)
+gpu_idx = findall(a -> a[4] == :gpu, algs)
 
 ns = [256, 512, 1024, 2048, 4096, 8192]
 ```
 
 ```
 GPU: Tesla V100-PCIE-32GB
+CPU: AMD EPYC 9354 32-Core Processor — 58 hardware threads, 29 BLAS threads
+, 58 Julia threads
+MKL LU excluded: LinearSolve does not load MKL_jll on this CPU by default (
+LoadMKL_JLL preference; see LinearSolve.jl#518).
 6-element Vector{Int64}:
   256
   512
@@ -75,7 +113,7 @@ for (i, n) in enumerate(ns)
     ref = A \ b
     @info "n=$n"
 
-    for (j, (name, alg, tol)) in enumerate(algs)
+    for (j, (name, alg, tol, _)) in enumerate(algs)
         try
             sol = solve(LinearProblem(A, b), alg)
             err = norm(sol.u - ref) / norm(ref)
@@ -108,10 +146,10 @@ end
 using Plots
 p = plot(; xlabel = "N", ylabel = "time / s", xscale = :log2, yscale = :log10,
     title = "Dense solve: CPU vs GPU offload", legend = :topleft)
-for (j, (name, _, _)) in enumerate(algs)
+for (j, (name, _, _, class)) in enumerate(algs)
     mask = .!isnan.(res_time[:, j])
     any(mask) && plot!(p, ns[mask], res_time[mask, j];
-        marker = :circle, label = name)
+        marker = class == :cpu ? :circle : :diamond, label = name)
 end
 plot!(p, ns, res_xfer; linestyle = :dash, color = :gray,
     label = "transfer round-trip only")
@@ -121,43 +159,63 @@ p
 ![](figures/DenseGPUOffload_3_1.png)
 
 ```julia
-println("   N   | CPU LU (s) | GPU LU (s) | 32-mixed (s) | transfer (s) | transfer % of GPU LU")
-println("-------+------------+------------+--------------+--------------+---------------------")
+println("   N   | " * join([rpad(a[1], 18) for a in algs], "| ") * "| transfer (s)")
+println("-"^(9 + 20 * length(algs) + 13))
 for (i, n) in enumerate(ns)
-    tcpu, tgpu, tmix = res_time[i, 1], res_time[i, 2], res_time[i, 4]
-    @printf("%6d | %10.4g | %10.4g | %12.4g | %12.4g | %18.1f%%\n",
-        n, tcpu, tgpu, tmix, res_xfer[i],
-        isnan(tgpu) ? NaN : 100 * res_xfer[i] / tgpu)
+    vals = join([@sprintf("%17.4g ", res_time[i, j]) for j in 1:length(algs)], "| ")
+    @printf("%6d | %s| %12.4g\n", n, vals, res_xfer[i])
 end
 
-# Crossover: first size where the best GPU variant beats CPU.
-best_gpu = [minimum(filter(!isnan, res_time[i, 2:end]); init = Inf) for i in 1:length(ns)]
-cross = findfirst(i -> best_gpu[i] < res_time[i, 1], 1:length(ns))
+# Crossover: first size where the best GPU variant beats the BEST CPU option
+# (not just one CPU algorithm — a crossover against a slow baseline is not a
+# crossover). The best-CPU column names which algorithm set the bar.
+best_cpu = [minimum(filter(!isnan, res_time[i, cpu_idx]); init = Inf) for i in 1:length(ns)]
+best_gpu = [minimum(filter(!isnan, res_time[i, gpu_idx]); init = Inf) for i in 1:length(ns)]
+println()
+for (i, n) in enumerate(ns)
+    j = cpu_idx[argmin(replace(res_time[i, cpu_idx], NaN => Inf))]
+    @printf("%6d | best CPU: %-18s %.4g s | best GPU: %.4g s | GPU/CPU: %.2fx\n",
+        n, algs[j][1], best_cpu[i], best_gpu[i], best_cpu[i] / best_gpu[i])
+end
+cross = findfirst(i -> best_gpu[i] < best_cpu[i], 1:length(ns))
 println()
 println(cross === nothing ?
-    "No crossover in the measured range — CPU wins throughout." :
-    "Crossover: GPU offload first beats CPU at N = $(ns[cross]).")
+    "No crossover in the measured range — the best CPU option wins throughout." :
+    "Crossover: GPU offload first beats the best CPU option at N = $(ns[cross]).")
 ```
 
 ```
-N   | CPU LU (s) | GPU LU (s) | 32-mixed (s) | transfer (s) | transfer %
- of GPU LU
--------+------------+------------+--------------+--------------+-----------
-----------
-   256 |   0.001213 |   0.001049 |    0.0007586 |    8.444e-05 |           
-     8.1%
-   512 |   0.007409 |   0.003039 |     0.003134 |    0.0002292 |           
-     7.5%
-  1024 |    0.02227 |   0.009174 |     0.009402 |    0.0007221 |           
-     7.9%
-  2048 |    0.07606 |     0.0291 |      0.01228 |     0.002688 |           
-     9.2%
-  4096 |     0.2807 |     0.1039 |       0.1247 |      0.01054 |           
-    10.1%
-  8192 |      1.009 |      0.409 |       0.4864 |      0.04193 |           
-    10.3%
+N   | CPU OpenBLAS LU   | CPU RFLU          | CPU default choice| GPU LU
+ offload    | GPU QR offload    | GPU 32-mixed LU   | transfer (s)
+---------------------------------------------------------------------------
+-------------------------------------------------------------------
+   256 |          0.001182 |         0.0002462 |         0.0002652 |       
+  0.0009261 |          0.003256 |         0.0007535 |    8.475e-05
+   512 |             1.133 |           0.01199 |          0.007805 |       
+   0.002215 |           0.00809 |          0.002074 |    0.0002329
+  1024 |           0.02306 |          0.008911 |           0.02603 |       
+   0.005602 |           0.01842 |          0.004234 |    0.0007239
+  2048 |           0.07961 |           0.03984 |           0.09721 |       
+    0.03332 |           0.06457 |           0.02972 |     0.002685
+  4096 |            0.2803 |            0.1672 |            0.3506 |       
+     0.1027 |            0.2186 |            0.1236 |      0.01053
+  8192 |             1.184 |            0.8811 |             1.464 |       
+     0.4114 |            0.9035 |            0.4871 |      0.04187
 
-Crossover: GPU offload first beats CPU at N = 256.
+   256 | best CPU: CPU RFLU           0.0002462 s | best GPU: 0.0007535 s |
+ GPU/CPU: 0.33x
+   512 | best CPU: CPU default choice 0.007805 s | best GPU: 0.002074 s | G
+PU/CPU: 3.76x
+  1024 | best CPU: CPU RFLU           0.008911 s | best GPU: 0.004234 s | G
+PU/CPU: 2.10x
+  2048 | best CPU: CPU RFLU           0.03984 s | best GPU: 0.02972 s | GPU
+/CPU: 1.34x
+  4096 | best CPU: CPU RFLU           0.1672 s | best GPU: 0.1027 s | GPU/C
+PU: 1.63x
+  8192 | best CPU: CPU RFLU           0.8811 s | best GPU: 0.4114 s | GPU/C
+PU: 2.14x
+
+Crossover: GPU offload first beats the best CPU option at N = 512.
 ```
 
 
@@ -169,9 +227,16 @@ Crossover: GPU offload first beats CPU at N = 256.
 The dashed transfer line is the floor no offload algorithm can beat: where a
 solver's curve approaches it, the algorithm is transfer-bound and further GPU
 speedup is irrelevant at that size. The stated crossover `N` is the actionable
-number — below it, stay on the CPU; above it, offload pays. The 32-mixed
-variant's gap to full-precision GPU LU shows what halving the factorization's
-memory traffic buys; its residual (gated at 1e-4) is the accuracy price.
+number — below it, stay on the CPU; above it, offload pays. It is computed
+against the *best* CPU option at each size, and the best-CPU column shows which
+algorithm sets that bar — on the runner's EPYC, where LinearSolve deliberately
+does not load MKL, that is RFLU across this sweep; a GPU "win" over plain
+OpenBLAS alone would say more about BLAS libraries than about the GPU. The spread among the CPU rows is itself a result — the gap between the
+slowest CPU row and the default choice is what hand-picking the wrong
+algorithm costs, and how close the default sits to the best row is the
+value of LinearSolve's automatic selection. The 32-mixed variant's gap to
+full-precision GPU LU shows what halving the factorization's memory traffic
+buys; its residual (gated at 1e-4) is the accuracy price.
 
 Caveats: one GPU model per run (the runner's), `Float64` inputs, well-conditioned
 random matrices (no pivoting stress). The size dependence of the crossover on
@@ -195,8 +260,8 @@ SciMLBenchmarks.weave_file("benchmarks/LinearSolveGPU","DenseGPUOffload.jmd")
 Computer Information:
 
 ```
-Julia Version 1.12.6
-Commit 15346901f00 (2026-04-09 19:20 UTC)
+Julia Version 1.12.7
+Commit 6d172b025e4 (2026-08-15 08:05 UTC)
 Build Info:
   Official https://julialang.org release
 Platform Info:
@@ -221,8 +286,10 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
 ⌃ [052768ef] CUDA v6.2.0
 ⌅ [45b445bb] CUDSS v0.7.0
 ⌃ [7ed4a6bd] LinearSolve v5.9.0
-  [91a5bcdd] Plots v1.41.6
+⌃ [91a5bcdd] Plots v1.41.6
+  [f2c3362d] RecursiveFactorization v0.2.30
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.1.5]
+  [856f044c] MKL_jll v2025.2.0+0
   [37e2e46d] LinearAlgebra v1.12.0
   [de0858da] Printf v1.11.0
   [9a3f8284] Random v1.11.0
@@ -240,24 +307,28 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
-  [4fba245c] ArrayInterface v7.28.1
+⌃ [4fba245c] ArrayInterface v7.28.1
   [a9b6321e] Atomix v1.1.3
   [ab4f0b2a] BFloat16s v0.6.1
   [6e4b80f9] BenchmarkTools v1.8.0
   [d1d4a3ce] BitFlags v0.1.10
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [fa961155] CEnum v0.5.0
+  [2a0fbf3d] CPUSummary v0.2.7
 ⌃ [052768ef] CUDA v6.2.0
 ⌅ [bd0ed864] CUDACore v6.2.0
 ⌅ [9ec180c6] CUDATools v6.2.0
   [1af6417a] CUDA_Runtime_Discovery v2.1.0
 ⌅ [45b445bb] CUDSS v0.7.0
 ⌅ [9e67e8f6] CUPTI v6.2.0
-  [944b1d66] CodecZlib v0.7.8
+  [fb6a15b2] CloseOpenIntervals v0.1.13
+⌃ [944b1d66] CodecZlib v0.7.8
   [35d6a980] ColorSchemes v3.31.0
   [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
   [38540f10] CommonSolve v0.2.13
+  [f70d9fcc] CommonWorldInvalidations v1.1.2
   [34da2185] Compat v4.18.1
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.7
@@ -265,6 +336,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
   [8f4d0f93] Conda v1.10.3
   [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
+  [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.2.0
   [9a962f9c] DataAPI v1.16.0
   [864edb3b] DataStructures v0.19.6
@@ -279,8 +351,8 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
   [069b7b12] FunctionWrappers v1.1.3
-  [77dc65aa] FunctionWrappersWrappers v1.12.1
-  [0c68f7d7] GPUArrays v11.5.10
+⌃ [77dc65aa] FunctionWrappersWrappers v1.12.1
+⌃ [0c68f7d7] GPUArrays v11.5.10
   [46192b85] GPUArraysCore v0.2.0
 ⌅ [61eb1bfa] GPUCompiler v1.23.0
 ⌅ [096a3bc2] GPUToolbox v1.1.1
@@ -290,7 +362,9 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
 ⌅ [cd3eb016] HTTP v1.11.0
   [076d061b] HashArrayMappedTries v0.2.0
 ⌅ [eafb193a] Highlights v0.5.3
+  [3e5b6fbb] HostCPUFeatures v0.1.18
   [7073ff75] IJulia v1.34.4
+  [615f187c] IfElse v0.1.1
   [3587e190] InverseFunctions v0.1.17
   [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
@@ -301,12 +375,15 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
   [ba0b0d4f] Krylov v0.10.9
 ⌃ [929cbde3] LLVM v9.11.0
   [8b046642] LLVMLoopInfo v1.0.0
-  [b964fa9f] LaTeXStrings v1.4.0
-  [23fbe1c1] Latexify v0.16.11
+⌃ [b964fa9f] LaTeXStrings v1.4.0
+⌃ [23fbe1c1] Latexify v0.16.11
+  [10f19ff3] LayoutPointers v0.1.17
 ⌃ [7ed4a6bd] LinearSolve v5.9.0
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
+  [bdcacae8] LoopVectorization v0.12.174
   [1914dd2f] MacroTools v0.5.16
+  [d125e4d3] ManualMemory v0.1.8
   [739be429] MbedTLS v1.1.10
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
@@ -314,16 +391,19 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
 ⌅ [611af6d1] NVML v6.2.0
   [5da4648a] NVTX v1.0.3
   [77ba4419] NaNMath v1.1.4
+  [6fe1bfb0] OffsetArrays v1.17.0
   [4d8831e6] OpenSSL v1.6.1
 ⌅ [bac558e1] OrderedCollections v1.8.2
   [69de0a69] Parsers v2.8.7
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.4
-  [91a5bcdd] Plots v1.41.6
+⌃ [91a5bcdd] Plots v1.41.6
+  [f517fe37] Polyester v0.7.19
+  [1d0040c9] PolyesterWeave v0.2.2
 ⌃ [d236fae5] PreallocationTools v1.4.1
   [aea7be01] PrecompileTools v1.3.4
   [21216c6a] Preferences v1.5.2
-  [08abe8d2] PrettyTables v3.4.6
+⌃ [08abe8d2] PrettyTables v3.4.6
   [43287f4e] PtrArrays v1.4.0
 ⌃ [0c0d3e7f] PureKLU v1.4.0
   [74087812] Random123 v1.7.1
@@ -331,14 +411,17 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
 ⌃ [731186ca] RecursiveArrayTools v4.3.6
+  [f2c3362d] RecursiveFactorization v0.2.30
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.24
+  [94e857df] SIMDTypes v0.1.0
+  [476501e8] SLEEFPirates v0.6.46
 ⌃ [0bca4576] SciMLBase v3.44.0
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.1.5]
   [a6db7da4] SciMLLogging v2.0.4
-  [c0aeaf25] SciMLOperators v1.26.1
+⌃ [c0aeaf25] SciMLOperators v1.26.1
   [431bcebd] SciMLPublic v1.2.4
   [53ae85a6] SciMLStructures v1.10.4
   [7e506255] ScopedValues v1.6.2
@@ -347,25 +430,34 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
   [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
   [a2af1166] SortingAlgorithms v1.2.3
+⌃ [bd59d7e1] SparseBandedMatrices v1.3.4
   [a57abbd0] SparseColumnPivotedQR v2.1.6
   [860ef19b] StableRNGs v1.0.4
-  [90137ffa] StaticArrays v1.9.18
+  [aedffcd0] Static v1.4.6
+  [0d7ed370] StaticArrayInterface v1.10.0
+⌃ [90137ffa] StaticArrays v1.9.18
   [1e83bf80] StaticArraysCore v1.4.4
   [10745b16] Statistics v1.11.1
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.12
+  [7792a7ef] StrideArraysCore v0.5.9
   [69024149] StringEncodings v0.3.7
-  [892a3eda] StringManipulation v0.4.7
+⌅ [892a3eda] StringManipulation v0.4.7
 ⌃ [2efcf032] SymbolicIndexingInterface v0.3.53
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.13.0
   [62fd8b95] TensorCore v0.1.1
+  [8290d209] ThreadingUtilities v0.5.6
   [e689c965] Tracy v0.1.6
   [3bb67fe8] TranscodingStreams v0.11.3
+  [d5829a12] TriangularSolve v0.2.6
 ⌃ [5c2747f8] URIs v1.6.3
+  [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [013be700] UnsafeAtomics v0.3.1
+⌃ [013be700] UnsafeAtomics v0.3.1
   [41fe7b60] Unzip v0.2.0
+  [3d5dd08c] VectorizationBase v0.21.74
+  [33b4df10] VectorizedRNG v0.2.26
   [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.16
@@ -377,13 +469,13 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveGPU/
 ⌅ [b26da814] cuSPARSE v6.2.0
   [6e34b625] Bzip2_jll v1.0.9+0
 ⌅ [d1e2174e] CUDA_Compiler_jll v0.4.4+1
-  [4ee394cb] CUDA_Driver_jll v13.3.0+1
+⌃ [4ee394cb] CUDA_Driver_jll v13.3.0+1
 ⌅ [76a88914] CUDA_Runtime_jll v0.23.0+1
 ⌅ [4889d778] CUDSS_jll v0.7.1+0
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-  [2e619515] Expat_jll v2.8.2+0
+⌃ [2e619515] Expat_jll v2.8.2+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
