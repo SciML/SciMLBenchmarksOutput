@@ -1,5 +1,6 @@
 
 using OrdinaryDiffEq
+using OrdinaryDiffEqBDF, OrdinaryDiffEqExtrapolation, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 using DiffEqDevTools, Plots
 using Sundials, LSODA
 using ODEInterface, ODEInterfaceDiffEq
@@ -164,6 +165,7 @@ reltols = 1.0 ./ 10.0 .^ (8:10)
 setups = [
     Dict(:alg=>FBDF()),
     Dict(:alg=>QNDF()),
+    Dict(:alg=>NordsieckBDF()),
     #Dict(:alg=>Rodas4P()),
     Dict(:alg=>CVODE_BDF()),
     #Dict(:alg=>ddebdf()),
@@ -172,7 +174,8 @@ setups = [
     Dict(:alg=>KenCarp4()),
     Dict(:alg=>KenCarp47()),
     Dict(:alg=>RadauIIA9()),
-    Dict(:alg=>lsoda())    #Dict(:alg=>rodas()),
+    Dict(:alg=>lsoda())
+    #Dict(:alg=>rodas()),
     #Dict(:alg=>radau()),
     #Dict(:alg=>lsoda()),
     #Dict(:alg=>ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = OrdinaryDiffEqCore.PolyesterThreads())),
