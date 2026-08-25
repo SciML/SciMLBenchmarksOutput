@@ -8,6 +8,7 @@ see https://discourse.julialang.org/t/boundserror-on-odeproblem-accelerated-with
 
 ```julia
 using OrdinaryDiffEq, Symbolics, ModelingToolkit, Sundials, LinearSolve, SparseArrays
+using OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 using NonlinearSolve
 using GaussianRandomFields
 using StableRNGs
