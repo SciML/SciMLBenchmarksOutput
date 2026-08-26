@@ -1,4 +1,3 @@
-
 using ProgressLogging
 using NBodySimulator, OrdinaryDiffEq, OrdinaryDiffEqRKN, OrdinaryDiffEqSymplecticRK
 using StaticArrays
@@ -10,13 +9,13 @@ function setup(t)
     ϵ = T * kb # J
     σ = 3.4e-10 # m
     ρ = 1374 # kg/m^3
-    m = 39.95 * 1.6747 * 1e-27 # kg
+    m = 39.95 * 1.6747 * 1.0e-27 # kg
     # N=128 keeps the relative-cost calibration in `c_symplectic`/`c_adaptive`
     # below valid (per-step cost ratios are essentially N-independent) while
     # keeping CI wall time tractable; the larger N=350 case took >40h per
     # parameter sweep under the OrdinaryDiffEq v7 stack.
     N = 128
-    L = (m*N/ρ)^(1/3)
+    L = (m * N / ρ)^(1 / 3)
     # `CubicPeriodicBoundaryConditions` applies the minimum-image convention,
     # which is only valid when the interaction cutoff satisfies R <= L/2.
     # At N=128 the box is L = 5.41σ, so the historical R = 3.5σ exceeded
@@ -35,8 +34,8 @@ function setup(t)
     bodies = generate_bodies_in_cell_nodes(N, _m, _v, _L)
     lj_parameters = LennardJonesParameters(_ϵ, _σ, _R)
     pbc = CubicPeriodicBoundaryConditions(_L)
-    lj_system = PotentialNBodySystem(bodies, Dict(:lennard_jones => lj_parameters));
-    simulation = NBodySimulation(lj_system, (0.0, t), pbc, _ϵ/T)
+    lj_system = PotentialNBodySystem(bodies, Dict(:lennard_jones => lj_parameters))
+    simulation = NBodySimulation(lj_system, (0.0, t), pbc, _ϵ / T)
 
     return simulation
 end
@@ -49,10 +48,12 @@ function benchmark(energyerr, rts, bytes, allocs, nt, nf, t, configs)
         alg = config.alg
         solver_kwargs = Base.structdiff(config, NamedTuple{(:alg,)})
         sol, rt,
-        b,
-        gc,
-        memalloc = @timed solve(prob, alg();
-            save_everystep = false, progress = true, progress_name = "$alg", solver_kwargs...)
+            b,
+            gc,
+            memalloc = @timed solve(
+            prob, alg();
+            save_everystep = false, progress = true, progress_name = "$alg", solver_kwargs...
+        )
         result = NBodySimulator.SimulationResult(sol, simulation)
         ΔE = total_energy(result, t) - total_energy(result, 0)
         energyerr[alg] = ΔE
@@ -62,6 +63,7 @@ function benchmark(energyerr, rts, bytes, allocs, nt, nf, t, configs)
         nt[alg] = sol.stats.naccept
         nf[alg] = sol.stats.nf + sol.stats.nf2
     end
+    return
 end
 
 function run_benchmark!(results, t, integrators, tol...; c = ones(length(integrators)))
@@ -77,11 +79,14 @@ function run_benchmark!(results, t, integrators, tol...; c = ones(length(integra
         GC.gc()
         benchmark(ΔE, runtime, b, allocs, nt, nf, t, cfg)
         get_tol(idx) = haskey(cfg[idx], :dt) ? cfg[idx].dt :
-                       (cfg[idx].abstol, cfg[idx].reltol)
+            (cfg[idx].abstol, cfg[idx].reltol)
 
         for (idx, i) in enumerate(integrators)
-            push!(results, [
-                string(i), runtime[i], get_tol(idx)..., abs(ΔE[i]), nt[i], nf[i], c[idx]])
+            push!(
+                results, [
+                    string(i), runtime[i], get_tol(idx)..., abs(ΔE[i]), nt[i], nf[i], c[idx],
+                ]
+            )
         end
     end
     return results
@@ -97,19 +102,21 @@ symplectic_integrators = [
     McAte5,
     Yoshida6,
     KahanLi8,
-    SofSpa10
+    SofSpa10,
 ];
 
 
-config(integrators, c, τ) = [(alg = a, dt = τ*cₐ) for (a, cₐ) in zip(integrators, c)]
+config(integrators, c, τ) = [(alg = a, dt = τ * cₐ) for (a, cₐ) in zip(integrators, c)]
 
 t = 35.0
-τs = 1e-3
+τs = 1.0e-3
 
 # warmup
 c_symplectic = ones(length(symplectic_integrators))
-benchmark(Dict(), Dict(), Dict(), Dict(), Dict(), Dict(), 10.0,
-    config(symplectic_integrators, c_symplectic, τs))
+benchmark(
+    Dict(), Dict(), Dict(), Dict(), Dict(), Dict(), 10.0,
+    config(symplectic_integrators, c_symplectic, τs)
+)
 
 # results = DataFrame(:integrator=>String[], :runtime=>Float64[], :τ=>Float64[],
 #     :EnergyError=>Float64[], :timesteps=>Int[], :f_evals=>Int[], :cost=>Float64[]);
@@ -120,7 +127,7 @@ benchmark(Dict(), Dict(), Dict(), Dict(), Dict(), Dict(), 10.0,
 # c_symplectic /= c_Verlet
 
 c_symplectic = [
-    1.00,   # VelocityVerlet
+    1.0,   # VelocityVerlet
     1.05,   # VerletLeapfrog
     0.98,   # PseudoVerletLeapfrog
     1.02,   # McAte2
@@ -128,24 +135,30 @@ c_symplectic = [
     2.92,   # McAte5
     3.74,   # Yoshida6
     8.44,   # KahanLi8
-    15.76   # SofSpa10
+    15.76,   # SofSpa10
 ]
 
 
 t = 10.0
 τs = 10 .^ range(-4, -3, length = 10)
 
-results = DataFrame(:integrator=>String[], :runtime=>Float64[], :τ=>Float64[],
-    :EnergyError=>Float64[], :timesteps=>Int[], :f_evals=>Int[], :cost=>Float64[]);
+results = DataFrame(
+    :integrator => String[], :runtime => Float64[], :τ => Float64[],
+    :EnergyError => Float64[], :timesteps => Int[], :f_evals => Int[], :cost => Float64[]
+);
 run_benchmark!(results, t, symplectic_integrators, τs, c = c_symplectic)
 
 
-@df results plot(:EnergyError, :runtime, group = :integrator,
-    xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)")
+@df results plot(
+    :EnergyError, :runtime, group = :integrator,
+    xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)"
+)
 
 
-@df results plot(:timesteps, :runtime, group = :integrator,
-    xscale = :log10, yscale = :log10, xlabel = "Number of timesteps", ylabel = "Runtime (s)")
+@df results plot(
+    :timesteps, :runtime, group = :integrator,
+    xscale = :log10, yscale = :log10, xlabel = "Number of timesteps", ylabel = "Runtime (s)"
+)
 
 
 function benchmark(energyerr, rts, ts, t, configs)
@@ -155,13 +168,14 @@ function benchmark(energyerr, rts, ts, t, configs)
         alg = config.alg
         solver_kwargs = Base.structdiff(config, NamedTuple{(:alg,)})
         sol,
-        rt = @timed solve(prob, alg(); progress = true, progress_name = "$alg", solver_kwargs...)
+            rt = @timed solve(prob, alg(); progress = true, progress_name = "$alg", solver_kwargs...)
         result = NBodySimulator.SimulationResult(sol, simulation)
         ΔE(t) = total_energy(result, t) - total_energy(result, 0)
-        energyerr[alg] = [ΔE(t) for t in sol.t[2:(10 ^ 2):end]]
+        energyerr[alg] = [ΔE(t) for t in sol.t[2:(10^2):end]]
         rts[alg] = rt
-        ts[alg] = sol.t[2:(10 ^ 2):end]
+        ts[alg] = sol.t[2:(10^2):end]
     end
+    return
 end
 
 ΔE = Dict()
@@ -177,7 +191,7 @@ end
 plt
 
 
-adaptive_integrators=[
+adaptive_integrators = [
     # Non-stiff ODE methods
     Tsit5,
     Vern7,
@@ -185,12 +199,12 @@ adaptive_integrators=[
     # DPRKN
     DPRKN6,
     DPRKN8,
-    DPRKN12
+    DPRKN12,
 ];
 
 
 function config(integrators, c, at, rt)
-    [(alg = a, abstol = at*2^cₐ, reltol = rt*2^cₐ) for (a, cₐ) in zip(integrators, c)]
+    return [(alg = a, abstol = at * 2^cₐ, reltol = rt * 2^cₐ) for (a, cₐ) in zip(integrators, c)]
 end
 
 t = 35.0
@@ -201,8 +215,10 @@ rts = 10 .^ range(-9, -5, length = 5)
 # tolerance of the grid. It used to use `ats[1]`/`rts[1]`, i.e. the tightest,
 # which made the warmup alone more expensive than the whole sweep below.
 c_adaptive = ones(length(adaptive_integrators))
-benchmark(Dict(), Dict(), Dict(), Dict(), Dict(), Dict(), 10.0,
-    config(adaptive_integrators, 1, ats[end], rts[end]))
+benchmark(
+    Dict(), Dict(), Dict(), Dict(), Dict(), Dict(), 10.0,
+    config(adaptive_integrators, 1, ats[end], rts[end])
+)
 
 # results = DataFrame(:integrator=>String[], :runtime=>Float64[], :abstol=>Float64[],
 #    :reltol=>Float64[], :EnergyError=>Float64[], :timesteps=>Int[], :f_evals=>Int[], :cost=>Float64[]);
@@ -216,24 +232,30 @@ c_adaptive = [
     7.84,   # Vern7,
     11.38,  # Vern9
     3.56,   # DPRKN6,
-    5.10,   # DPRKN8,
-    8.85    # DPRKN12,
+    5.1,   # DPRKN8,
+    8.85,    # DPRKN12,
 ]
 
 
 t = 10.0
 
-results = DataFrame(:integrator=>String[], :runtime=>Float64[], :abstol=>Float64[],
-    :reltol=>Float64[], :EnergyError=>Float64[], :timesteps=>Int[], :f_evals=>Int[], :cost=>Float64[]);
+results = DataFrame(
+    :integrator => String[], :runtime => Float64[], :abstol => Float64[],
+    :reltol => Float64[], :EnergyError => Float64[], :timesteps => Int[], :f_evals => Int[], :cost => Float64[]
+);
 run_benchmark!(results, t, adaptive_integrators, ats, rts, c = c_adaptive)
 
 
-@df results plot(:EnergyError, :runtime, group = :integrator,
-    xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)")
+@df results plot(
+    :EnergyError, :runtime, group = :integrator,
+    xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)"
+)
 
 
-@df results plot(:EnergyError, :f_evals, group = :integrator,
-    xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Number of f evals")
+@df results plot(
+    :EnergyError, :f_evals, group = :integrator,
+    xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Number of f evals"
+)
 
 
 t = 10.0
@@ -243,45 +265,50 @@ symplectic_integrators = [
     VerletLeapfrog,
     PseudoVerletLeapfrog,
     McAte2,
-    CalvoSanz4
+    CalvoSanz4,
 ]
 
 c_symplectic = [
-    1.00,   # VelocityVerlet
+    1.0,   # VelocityVerlet
     1.05,   # VerletLeapfrog
     0.98,   # PseudoVerletLeapfrog
     1.02,   # McAte2
-    2.38   # CalvoSanz4
+    2.38,   # CalvoSanz4
 ]
 
-results1 = DataFrame(:integrator=>String[], :runtime=>Float64[], :τ=>Float64[],
-    :EnergyError=>Float64[], :timesteps=>Int[], :f_evals=>Int[], :cost=>Float64[]);
+results1 = DataFrame(
+    :integrator => String[], :runtime => Float64[], :τ => Float64[],
+    :EnergyError => Float64[], :timesteps => Int[], :f_evals => Int[], :cost => Float64[]
+);
 run_benchmark!(results1, t, symplectic_integrators, τs, c = c_symplectic)
 
-adaptive_integrators=[
+adaptive_integrators = [
     DPRKN6,
     DPRKN8,
-    DPRKN12
+    DPRKN12,
 ]
 
 c_adaptive = [
     3.56,   # DPRKN6,
-    5.10,   # DPRKN8,
-    8.85    # DPRKN12,
+    5.1,   # DPRKN8,
+    8.85,    # DPRKN12,
 ]
 
-results2 = DataFrame(:integrator=>String[], :runtime=>Float64[], :abstol=>Float64[],
-    :reltol=>Float64[], :EnergyError=>Float64[], :timesteps=>Int[], :f_evals=>Int[], :cost=>Float64[]);
+results2 = DataFrame(
+    :integrator => String[], :runtime => Float64[], :abstol => Float64[],
+    :reltol => Float64[], :EnergyError => Float64[], :timesteps => Int[], :f_evals => Int[], :cost => Float64[]
+);
 run_benchmark!(results2, t, adaptive_integrators, ats, rts, c = c_adaptive)
 
 append!(results1, results2, cols = :union)
 results1
 
 
-@df results1 plot(:EnergyError, :runtime, group = :integrator,
-    xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)")
+@df results1 plot(
+    :EnergyError, :runtime, group = :integrator,
+    xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)"
+)
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
-
