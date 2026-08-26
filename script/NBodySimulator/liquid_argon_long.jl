@@ -11,17 +11,11 @@ function setup(t)
     σ = 3.4e-10 # m
     ρ = 1374 # kg/m^3
     m = 39.95 * 1.6747 * 1e-27 # kg
-    # N=128 keeps the relative-cost calibration in `c_symplectic`/`c_adaptive`
-    # below valid (per-step cost ratios are essentially N-independent) while
-    # keeping CI wall time tractable; the larger N=350 case took >40h per
-    # parameter sweep under the OrdinaryDiffEq v7 stack.
+    # See liquid_argon.jmd for the reasoning behind N=128 (was 350) and
+    # R = 2.5σ (was 3.5σ, which violated the minimum-image convention since
+    # the N=128 box has L/2 = 2.71σ).
     N = 128
     L = (m*N/ρ)^(1/3)
-    # `CubicPeriodicBoundaryConditions` applies the minimum-image convention,
-    # which is only valid when the interaction cutoff satisfies R <= L/2.
-    # At N=128 the box is L = 5.41σ, so the historical R = 3.5σ exceeded
-    # L/2 = 2.71σ and the pair interactions were wrong. 2.5σ is the standard
-    # Lennard-Jones cutoff and fits inside this box.
     R = 2.5σ
     v_dev = sqrt(kb * T / m) # m/s
 
@@ -132,8 +126,7 @@ c_symplectic = [
 ]
 
 
-t = 10.0
-τs = 10 .^ range(-4, -3, length = 10)
+t = 50.0
 
 results = DataFrame(:integrator=>String[], :runtime=>Float64[], :τ=>Float64[],
     :EnergyError=>Float64[], :timesteps=>Int[], :f_evals=>Int[], :cost=>Float64[]);
@@ -142,39 +135,6 @@ run_benchmark!(results, t, symplectic_integrators, τs, c = c_symplectic)
 
 @df results plot(:EnergyError, :runtime, group = :integrator,
     xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)")
-
-
-@df results plot(:timesteps, :runtime, group = :integrator,
-    xscale = :log10, yscale = :log10, xlabel = "Number of timesteps", ylabel = "Runtime (s)")
-
-
-function benchmark(energyerr, rts, ts, t, configs)
-    simulation = setup(t)
-    prob = SecondOrderODEProblem(simulation)
-    for config in configs
-        alg = config.alg
-        solver_kwargs = Base.structdiff(config, NamedTuple{(:alg,)})
-        sol,
-        rt = @timed solve(prob, alg(); progress = true, progress_name = "$alg", solver_kwargs...)
-        result = NBodySimulator.SimulationResult(sol, simulation)
-        ΔE(t) = total_energy(result, t) - total_energy(result, 0)
-        energyerr[alg] = [ΔE(t) for t in sol.t[2:(10 ^ 2):end]]
-        rts[alg] = rt
-        ts[alg] = sol.t[2:(10 ^ 2):end]
-    end
-end
-
-ΔE = Dict()
-rt = Dict()
-ts = Dict()
-configs = config(symplectic_integrators, c_symplectic, 2.3e-4)
-benchmark(ΔE, rt, ts, 10.0, configs)
-
-plt = plot(xlabel = "Rescaled Time", ylabel = "Energy error", legend = :bottomleft);
-for c in configs
-    plot!(plt, ts[c.alg], abs.(ΔE[c.alg]), label = "$(c.alg), $(rt[c.alg])s")
-end
-plt
 
 
 adaptive_integrators=[
@@ -194,8 +154,8 @@ function config(integrators, c, at, rt)
 end
 
 t = 35.0
-ats = 10 .^ range(-9, -5, length = 5)
-rts = 10 .^ range(-9, -5, length = 5)
+ats = 10 .^ range(-8, -5, length = 4)
+rts = 10 .^ range(-8, -5, length = 4)
 
 # warmup -- this only exists to force compilation, so it runs at the *loosest*
 # tolerance of the grid. It used to use `ats[1]`/`rts[1]`, i.e. the tightest,
@@ -221,7 +181,7 @@ c_adaptive = [
 ]
 
 
-t = 10.0
+t = 50.0
 
 results = DataFrame(:integrator=>String[], :runtime=>Float64[], :abstol=>Float64[],
     :reltol=>Float64[], :EnergyError=>Float64[], :timesteps=>Int[], :f_evals=>Int[], :cost=>Float64[]);
@@ -232,11 +192,7 @@ run_benchmark!(results, t, adaptive_integrators, ats, rts, c = c_adaptive)
     xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)")
 
 
-@df results plot(:EnergyError, :f_evals, group = :integrator,
-    xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Number of f evals")
-
-
-t = 10.0
+t = 50.0
 
 symplectic_integrators = [
     VelocityVerlet,

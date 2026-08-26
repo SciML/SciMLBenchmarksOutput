@@ -1,20 +1,20 @@
 
 using BenchmarkTools, NBodySimulator
-using NBodySimulator: gather_bodies_initial_coordinates, gather_accelerations_for_potentials,
-    gather_simultaneous_acceleration, gather_group_accelerations
+using NBodySimulator: gather_bodies_initial_coordinates,
+                      gather_accelerations_for_potentials,
+                      gather_simultaneous_acceleration, gather_group_accelerations
 using StaticArrays
 
 const SUITE = BenchmarkGroup();
 
 function acceleration(simulation)
-
     (u0, v0, n) = gather_bodies_initial_coordinates(simulation)
 
     acceleration_functions = gather_accelerations_for_potentials(simulation)
     simultaneous_acceleration = gather_simultaneous_acceleration(simulation)
 
     function soode_system!(dv, v, u, p, t)
-        @inbounds for i = 1:n
+        @inbounds for i in 1:n
             a = MVector(0.0, 0.0, 0.0)
             for acceleration! in acceleration_functions
                 acceleration!(a, u, v, t, i);
@@ -47,7 +47,7 @@ let SUITE=SUITE
     u0, v0, n = gather_bodies_initial_coordinates(simulation)
     dv = zero(v0)
 
-    b = @benchmarkable $f(dv, $v0, $u0, $g_parameters, 0.) setup=(dv=zero($v0)) evals=1
+    b = @benchmarkable $f(dv, $v0, $u0, $g_parameters, 0.0) setup=(dv=zero($v0)) evals=1
 
     SUITE["gravitational"] = b
 end
@@ -61,12 +61,12 @@ let SUITE=SUITE
     q = 1.0
     count = 1
     dL = L / (ceil(n^(1 / 3)) + 1)
-    for x = dL / 2:dL:L, y = dL / 2:dL:L, z = dL / 2:dL:L
+    for x in (dL / 2):dL:L, y in (dL / 2):dL:L, z in (dL / 2):dL:L
         if count > n
             break
         end
         r = SVector(x, y, z)
-        v = SVector(.0, .0, .0)
+        v = SVector(0.0, 0.0, 0.0)
         body = ChargedParticle(r, v, m, q)
         push!(bodies, body)
         count += 1
@@ -86,7 +86,7 @@ let SUITE=SUITE
     u0, v0, n = gather_bodies_initial_coordinates(simulation)
     dv = zero(v0)
 
-    b = @benchmarkable $f(dv, $v0, $u0, $potential, 0.) setup=(dv=zero($v0)) evals=1
+    b = @benchmarkable $f(dv, $v0, $u0, $potential, 0.0) setup=(dv=zero($v0)) evals=1
 
     SUITE["coulomb"] = b
 end
@@ -99,12 +99,12 @@ let SUITE=SUITE
     m = 1.0
     count = 1
     dL = L / (ceil(n^(1 / 3)) + 1)
-    for x = dL / 2:dL:L, y = dL / 2:dL:L, z = dL / 2:dL:L
+    for x in (dL / 2):dL:L, y in (dL / 2):dL:L, z in (dL / 2):dL:L
         if count > n
             break
         end
         r = SVector(x, y, z)
-        v = SVector(.0, .0, .0)
+        v = SVector(0.0, 0.0, 0.0)
         mm = rand(SVector{3})
         body = MagneticParticle(r, v, m, mm)
         push!(bodies, body)
@@ -124,7 +124,7 @@ let SUITE=SUITE
     u0, v0, n = gather_bodies_initial_coordinates(simulation)
     dv = zero(v0)
 
-    b = @benchmarkable $f(dv, $v0, $u0, $parameters, 0.) setup=(dv=zero($v0)) evals=1
+    b = @benchmarkable $f(dv, $v0, $u0, $parameters, 0.0) setup=(dv=zero($v0)) evals=1
 
     SUITE["magnetic_dipole"] = b
 end
@@ -158,36 +158,36 @@ let SUITE=SUITE
     u0, v0, n = gather_bodies_initial_coordinates(simulation)
     dv = zero(v0)
 
-    b = @benchmarkable $f(dv, $v0, $u0, $lj_parameters, 0.) setup=(dv=zero($v0)) evals=1
+    b = @benchmarkable $f(dv, $v0, $u0, $lj_parameters, 0.0) setup=(dv=zero($v0)) evals=1
 
     SUITE["lennard_jones"] = b
 end
 
 
 function acceleration(simulation::NBodySimulation{<:WaterSPCFw})
-
     (u0, v0, n) = gather_bodies_initial_coordinates(simulation)
 
-    (o_acelerations, h_acelerations) = gather_accelerations_for_potentials(simulation)
+    (o_accelerations, h_accelerations) = gather_accelerations_for_potentials(simulation)
     group_accelerations = gather_group_accelerations(simulation)
     simultaneous_acceleration = gather_simultaneous_acceleration(simulation)
 
     function soode_system!(dv, v, u, p, t)
-        @inbounds for i = 1:n
+        @inbounds for i in 1:n
             a = MVector(0.0, 0.0, 0.0)
-            for acceleration! in o_acelerations
+            for acceleration! in o_accelerations
                 acceleration!(a, u, v, t, 3 * (i - 1) + 1);
             end
-            dv[:, 3 * (i - 1) + 1]  .= a
+            dv[:, 3 * (i - 1) + 1] .= a
         end
         @inbounds for i in 1:n, j in (2, 3)
+
             a = MVector(0.0, 0.0, 0.0)
-            for acceleration! in h_acelerations
+            for acceleration! in h_accelerations
                 acceleration!(a, u, v, t, 3 * (i - 1) + j);
             end
-            dv[:, 3 * (i - 1) + j]   .= a
+            dv[:, 3 * (i - 1) + j] .= a
         end
-        @inbounds for i = 1:n
+        @inbounds for i in 1:n
             for acceleration! in group_accelerations
                 acceleration!(dv, u, v, t, i);
             end
@@ -214,7 +214,7 @@ let SUITE=SUITE
     L = (mH2O*N/ρ)^(1/3)
     R = 0.9 # ~3*σOO
     Rel = 0.49*L
-    v_dev = sqrt(kb * T /mH2O)
+    v_dev = sqrt(kb * T / mH2O)
     τ = 0.5e-3 # ps
     t1 = 0τ
     t2 = 5τ # ps
@@ -230,14 +230,14 @@ let SUITE=SUITE
     e_parameters = ElectrostaticParameters(k, Rel)
     spc_parameters = SPCFwParameters(rOH, ∠HOH, k_bond, k_angle)
     pbc = CubicPeriodicBoundaryConditions(L)
-    water = WaterSPCFw(bodies, mH, mO, qH, qO,  jl_parameters, e_parameters, spc_parameters);
+    water = WaterSPCFw(bodies, mH, mO, qH, qO, jl_parameters, e_parameters, spc_parameters);
     simulation = NBodySimulation(water, (t1, t2), pbc, kb);
 
     f = acceleration(simulation)
     u0, v0, n = gather_bodies_initial_coordinates(simulation)
     dv = zero(v0)
 
-    b = @benchmarkable $f(dv, $v0, $u0, $spc_parameters, 0.) setup=(dv=zero($v0)) evals=1
+    b = @benchmarkable $f(dv, $v0, $u0, $spc_parameters, 0.0) setup=(dv=zero($v0)) evals=1
 
     SUITE["water_spcfw"] = b
 end
@@ -252,5 +252,5 @@ memory(r)
 
 
 using SciMLBenchmarks
-SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
 
