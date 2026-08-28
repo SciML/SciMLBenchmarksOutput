@@ -1,7 +1,7 @@
-
 using DifferentiationInterface
 using DifferentiationInterfaceTest
-using Chairmarks, DataFrames
+using Chairmarks
+using DataFrames
 using LinearAlgebra
 using SparseConnectivityTracer: TracerSparsityDetector
 using SparseMatrixColorings
@@ -24,7 +24,7 @@ bcks = [
         AutoEnzyme(mode = Enzyme.Forward);
         sparsity_detector = TracerSparsityDetector(),
         coloring_algorithm = GreedyColoringAlgorithm()
-    )
+    ),
 ]
 
 
@@ -43,7 +43,7 @@ function Diffusion(u)
             ug = u[i - 1]
             ud = u[i + 1]
         end
-        du[i] = ug + ud - 2*u[i]
+        du[i] = ug + ud - 2 * u[i]
     end
     return du
 end;
@@ -51,9 +51,10 @@ end;
 
 function DDiffusion(u)
     A = diagm(
-        -1 => ones(length(u)-1),
-        0=>-2 .* ones(length(u)),
-        1 => ones(length(u)-1))
+        -1 => ones(length(u) - 1),
+        0 => -2 .* ones(length(u)),
+        1 => ones(length(u) - 1)
+    )
     return A
 end;
 
@@ -68,8 +69,7 @@ table = PrettyTables.pretty_table(
     df;
     backend = :markdown,
     column_labels = names(df),
-    formatters = [PrettyTables.fmt__printf("%.1e")],
+    formatters = [PrettyTables.fmt__printf("%.1e")]
 )
 
 Markdown.parse(table)
-

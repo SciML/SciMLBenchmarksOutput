@@ -1,8 +1,8 @@
-
 using ADTypes
 using LinearAlgebra, SparseArrays
 using BenchmarkTools
 import DifferentiationInterface as DI
+import ForwardDiff
 using Plots
 using SparseConnectivityTracer: TracerSparsityDetector
 using SparseMatrixColorings: GreedyColoringAlgorithm
@@ -13,13 +13,13 @@ using Test
 brusselator_f(x, y, t) = (((x - 0.3)^2 + (y - 0.6)^2) <= 0.1^2) * (t >= 1.1) * 5.0
 
 limit(a, N) =
-    if a == N + 1
-        1
-    elseif a == 0
-        N
-    else
-        a
-    end;
+if a == N + 1
+    1
+elseif a == 0
+    N
+else
+    a
+end;
 
 function brusselator_2d!(du, u)
     t = 0.0
@@ -29,23 +29,27 @@ function brusselator_2d!(du, u)
     A, B, alpha, dx = p
     alpha = alpha / dx^2
 
-    @inbounds for I in CartesianIndices((N, N))
+    return @inbounds for I in CartesianIndices((N, N))
         i, j = Tuple(I)
         x, y = xyd[I[1]], xyd[I[2]]
         ip1, im1, jp1,
-        jm1 = limit(i + 1, N),
-        limit(i - 1, N), limit(j + 1, N),
-        limit(j - 1, N)
+            jm1 = limit(i + 1, N),
+            limit(i - 1, N), limit(j + 1, N),
+            limit(j - 1, N)
         du[i, j, 1] = alpha *
-                      (u[im1, j, 1] + u[ip1, j, 1] + u[i, jp1, 1] + u[i, jm1, 1] -
-                       4u[i, j, 1]) +
-                      B +
-                      u[i, j, 1]^2 * u[i, j, 2] - (A + 1) * u[i, j, 1] +
-                      brusselator_f(x, y, t)
+            (
+            u[im1, j, 1] + u[ip1, j, 1] + u[i, jp1, 1] + u[i, jm1, 1] -
+                4u[i, j, 1]
+        ) +
+            B +
+            u[i, j, 1]^2 * u[i, j, 2] - (A + 1) * u[i, j, 1] +
+            brusselator_f(x, y, t)
         du[i, j, 2] = alpha *
-                      (u[im1, j, 2] + u[ip1, j, 2] + u[i, jp1, 2] + u[i, jm1, 2] -
-                       4u[i, j, 2]) +
-                      A * u[i, j, 1] - u[i, j, 1]^2 * u[i, j, 2]
+            (
+            u[im1, j, 2] + u[ip1, j, 2] + u[i, jp1, 2] + u[i, jm1, 2] -
+                4u[i, j, 2]
+        ) +
+            A * u[i, j, 1] - u[i, j, 1]^2 * u[i, j, 2]
     end
 end;
 
@@ -76,7 +80,7 @@ S2 = ADTypes.jacobian_sparsity(
 
 
 c1 = ADTypes.column_coloring(S1, GreedyColoringAlgorithm())
-@test length(unique(c1)) > 0  # basic sanity check
+@test length(unique(c1)) <= size(S1, 2)
 
 
 backend = AutoSparse(
@@ -90,7 +94,7 @@ J1 = DI.jacobian!(
     brusselator_2d!, similar(x0_32), similar(S1, eltype(x0_32)), prep, backend, x0_32
 )
 
-@test nnz(J1) > 0  # basic sanity check
+@test nnz(J1) > 0
 
 
 N_values = 2 .^ (2:8)
@@ -123,8 +127,10 @@ let
         markershape = :auto,
         label = "SparseConnectivityTracer"
     )
-    plot!(pld, N_values, td2; lw = 2, linestyle = :auto,
-        markershape = :auto, label = "Symbolics")
+    plot!(
+        pld, N_values, td2; lw = 2, linestyle = :auto,
+        markershape = :auto, label = "Symbolics"
+    )
     plot!(pld; xscale = :log10, yscale = :log10, legend = :topleft, minorgrid = true)
     pld
 end
@@ -167,11 +173,11 @@ for (i, N) in enumerate(N_values)
     )
     J = similar(S, eltype(x0))
 
-    tj1[i] = @belapsed DI.jacobian!($brusselator_2d!, _y, _J, _prep, $backend, $x0) setup=(
+    tj1[i] = @belapsed DI.jacobian!($brusselator_2d!, _y, _J, _prep, $backend, $x0) setup = (
         _y = similar($x0);
         _J = similar($J);
         _prep = DI.prepare_jacobian($brusselator_2d!, similar($x0), $backend, $x0)
-    ) evals=1
+    ) evals = 1
 end
 
 let
@@ -194,22 +200,46 @@ end
 
 let
     pl = plot(;
-        title = "Sparsity detection: Symbolics vs SparseConnectivityTracer\nTest case: Brusselator",
+        title = "Sparse AD pipeline on the Brusselator",
         xlabel = "Input size N",
-        ylabel = "Runtime ratio Symbolics / SCT"
+        ylabel = "Runtime [s]"
     )
     plot!(
         pl,
         N_values,
-        td2 ./ td1;
+        td1;
         lw = 2,
-        linestyle = :auto,
-        markershape = :auto,
-        label = "sparsity detection speedup"
+        linestyle = :dot,
+        markershape = :utriangle,
+        label = "sparsity detection (SCT)"
     )
     plot!(
-        pl, N_values, ones(length(N_values)); lw = 3, color = :black, label = "same speed")
-    plot!(pl; xscale = :log10, yscale = :log10, minorgrid = true, legend = :right)
+        pl,
+        N_values,
+        td2;
+        lw = 2,
+        linestyle = :dot,
+        markershape = :dtriangle,
+        label = "sparsity detection (Symbolics)"
+    )
+    plot!(
+        pl,
+        N_values,
+        tc1;
+        lw = 2,
+        linestyle = :dashdot,
+        markershape = :diamond,
+        label = "coloring (SparseMatrixColorings)"
+    )
+    plot!(
+        pl,
+        N_values,
+        tj1;
+        lw = 2,
+        linestyle = :dash,
+        markershape = :pentagon,
+        label = "differentiation (DI + ForwardDiff)"
+    )
+    plot!(pl; xscale = :log10, yscale = :log10, minorgrid = true, legend = :topleft)
     pl
 end
-
