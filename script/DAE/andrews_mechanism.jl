@@ -1,5 +1,7 @@
 
 using OrdinaryDiffEq, Sundials, DiffEqDevTools, ModelingToolkit, Plots
+using OrdinaryDiffEqBDF
+using OrdinaryDiffEqRosenbrock
 using ODEInterfaceDiffEq, LinearAlgebra
 using ModelingToolkit: t_nounits as t, D_nounits as D
 
@@ -390,8 +392,8 @@ plot(ref_sol.t, max_g, yscale = :log10,
 
 
 println("=== Mass-Matrix ODE Form ===")
-for (name, alg) in [("Rodas5P(autodiff=false)", Rodas5P(autodiff = false)),
-                     ("FBDF(autodiff=false)",    FBDF(autodiff = false)),
+for (name, alg) in [("Rodas5P(autodiff=AutoFiniteDiff())", Rodas5P(autodiff = AutoFiniteDiff())),
+                     ("FBDF(autodiff=AutoFiniteDiff())",    FBDF(autodiff = AutoFiniteDiff())), ("NordsieckBDF(autodiff=AutoFiniteDiff())",    NordsieckBDF(autodiff = AutoFiniteDiff())),
                      ("radau()",                 radau()),
                      ("radau5()",                radau5())]
     print("  $name: ")
@@ -425,7 +427,7 @@ end
 
 println("\n=== MTK Index-Reduced Form ===")
 for (name, alg) in [("Rodas5P", Rodas5P()),
-                     ("FBDF",    FBDF()),
+                     ("FBDF",    FBDF()), ("NordsieckBDF",    NordsieckBDF()),
                      ("Rodas4P", Rodas4P())]
     print("  $name: ")
     try

@@ -1,6 +1,7 @@
 
 using OrdinaryDiffEq, Sundials, DiffEqDevTools, ModelingToolkit, ODEInterfaceDiffEq,
       Plots, DASSL, DASKR
+using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock
 using LinearAlgebra
 using ModelingToolkit: t_nounits as t, D_nounits as D
 
@@ -224,7 +225,7 @@ println("=== Solver Verification ===")
 
 # Mass-matrix form
 for (name, alg) in [("Rodas5P", Rodas5P()), ("Rodas4P", Rodas4P()),
-                     ("FBDF", FBDF()), ("QNDF", QNDF()),
+                     ("FBDF", FBDF()), ("QNDF", QNDF()), ("NordsieckBDF", NordsieckBDF()),
                      ("rodas (ODEInterface)", rodas()),
                      ("RadauIIA5", RadauIIA5())]
     try
@@ -236,7 +237,7 @@ for (name, alg) in [("Rodas5P", Rodas5P()), ("Rodas4P", Rodas4P()),
 end
 
 # DAE form
-for (name, alg) in [("IDA", IDA()), ("DFBDF", DFBDF())]
+for (name, alg) in [("IDA", IDA()), ("DFBDF", DFBDF()), ("DNordsieckBDF", DNordsieckBDF())]
     try
         sol = solve(prob_dae, alg, reltol=1e-6, abstol=1e-6, maxiters=1_000_000)
         println("  $name (DAE): retcode=$(sol.retcode), npts=$(length(sol.t))")
@@ -246,7 +247,7 @@ for (name, alg) in [("IDA", IDA()), ("DFBDF", DFBDF())]
 end
 
 # MTK form
-for (name, alg) in [("Rodas5P", Rodas5P()), ("FBDF", FBDF())]
+for (name, alg) in [("Rodas5P", Rodas5P()), ("FBDF", FBDF()), ("NordsieckBDF", NordsieckBDF())]
     try
         sol = solve(prob_mtk, alg, reltol=1e-6, abstol=1e-6, maxiters=1_000_000)
         println("  $name (MTK): retcode=$(sol.retcode), npts=$(length(sol.t))")
@@ -344,12 +345,14 @@ setups = [
     Dict(:prob_choice => 1, :alg => Rodas4P()),
     Dict(:prob_choice => 1, :alg => FBDF()),
     Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
     Dict(:prob_choice => 1, :alg => rodas()),
     Dict(:prob_choice => 2, :alg => IDA()),
     Dict(:prob_choice => 2, :alg => DFBDF()),
+    Dict(:prob_choice => 2, :alg => DNordsieckBDF()),
     Dict(:prob_choice => 3, :alg => Rodas5P()),
 ]
-labels = ["Rodas5P (MM)" "Rodas4P (MM)" "FBDF (MM)" "QNDF (MM)" "rodas (MM)" "IDA (DAE)" "DFBDF (DAE)" "Rodas5P (MTK)"]
+labels = ["Rodas5P (MM)" "Rodas4P (MM)" "FBDF (MM)" "QNDF (MM)" "NordsieckBDF (MM)" "rodas (MM)" "IDA (DAE)" "DFBDF (DAE)" "DNordsieckBDF (DAE)" "Rodas5P (MTK)"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     names = labels, appxsol = refs, save_everystep = false,
@@ -364,12 +367,14 @@ setups = [
     Dict(:prob_choice => 1, :alg => Rodas4P()),
     Dict(:prob_choice => 1, :alg => FBDF()),
     Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
     Dict(:prob_choice => 1, :alg => rodas()),
     Dict(:prob_choice => 2, :alg => IDA()),
     Dict(:prob_choice => 2, :alg => DFBDF()),
+    Dict(:prob_choice => 2, :alg => DNordsieckBDF()),
     Dict(:prob_choice => 3, :alg => Rodas5P()),
 ]
-labels = ["Rodas5P (MM)" "Rodas4P (MM)" "FBDF (MM)" "QNDF (MM)" "rodas (MM)" "IDA (DAE)" "DFBDF (DAE)" "Rodas5P (MTK)"]
+labels = ["Rodas5P (MM)" "Rodas4P (MM)" "FBDF (MM)" "QNDF (MM)" "NordsieckBDF (MM)" "rodas (MM)" "IDA (DAE)" "DFBDF (DAE)" "DNordsieckBDF (DAE)" "Rodas5P (MTK)"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     names = labels, appxsol = refs, save_everystep = false,
@@ -384,12 +389,14 @@ setups = [
     Dict(:prob_choice => 1, :alg => Rodas4P()),
     Dict(:prob_choice => 1, :alg => FBDF()),
     Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
     Dict(:prob_choice => 1, :alg => rodas()),
     Dict(:prob_choice => 2, :alg => IDA()),
     Dict(:prob_choice => 2, :alg => DFBDF()),
+    Dict(:prob_choice => 2, :alg => DNordsieckBDF()),
     Dict(:prob_choice => 3, :alg => Rodas5P()),
 ]
-labels = ["Rodas5P (MM)" "Rodas4P (MM)" "FBDF (MM)" "QNDF (MM)" "rodas (MM)" "IDA (DAE)" "DFBDF (DAE)" "Rodas5P (MTK)"]
+labels = ["Rodas5P (MM)" "Rodas4P (MM)" "FBDF (MM)" "QNDF (MM)" "NordsieckBDF (MM)" "rodas (MM)" "IDA (DAE)" "DFBDF (DAE)" "DNordsieckBDF (DAE)" "Rodas5P (MTK)"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
     names = labels, appxsol = refs, save_everystep = false,
@@ -404,11 +411,13 @@ setups = [
     Dict(:prob_choice => 1, :alg => Rodas5P()),
     Dict(:prob_choice => 1, :alg => Rodas4()),
     Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
     Dict(:prob_choice => 1, :alg => rodas()),
     Dict(:prob_choice => 2, :alg => IDA()),
     Dict(:prob_choice => 2, :alg => DFBDF()),
+    Dict(:prob_choice => 2, :alg => DNordsieckBDF()),
 ]
-labels = ["Rodas5 (MM)" "Rodas5P (MM)" "Rodas4 (MM)" "FBDF (MM)" "rodas (MM)" "IDA (DAE)" "DFBDF (DAE)"]
+labels = ["Rodas5 (MM)" "Rodas5P (MM)" "Rodas4 (MM)" "FBDF (MM)" "NordsieckBDF (MM)" "rodas (MM)" "IDA (DAE)" "DFBDF (DAE)" "DNordsieckBDF (DAE)"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     names = labels, appxsol = refs, save_everystep = false,

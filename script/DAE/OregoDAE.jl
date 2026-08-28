@@ -1,6 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ModelingToolkit, ODEInterfaceDiffEq,
       Plots, DASSL, DASKR
+using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 using LinearAlgebra
 using ModelingToolkit: t_nounits as t, D_nounits as D
 
@@ -10,22 +11,30 @@ using ModelingToolkit: t_nounits as t, D_nounits as D
 eqs = [D(y1) ~ p1*(y2+y1*(1-p2*y1-y2))
        D(y2) ~ (y3-(1+y1)*y2)/p1
        D(y3) ~ p3*(y1-y3)]
-@mtkbuild sys = ODESystem(eqs, t)
-mtkprob = ODEProblem(sys, [], (0.0, 30.0))
+@mtkcompile sys = System(eqs, t)
+mtkprob = ODEProblem(sys, [], (0.0, 30.0); warn_initialize_determined = false)
 daeprob = DAEProblem(
     sys, [D(y1)=>77.26935286375,
         D(y2)=>-0.012941633234114146,
-        D(y3)=>-0.322], [], (0.0, 30.0))
-odaeprob = ODAEProblem(sys, [], (0.0, 30.0))
+        D(y3)=>-0.322], (0.0, 30.0); warn_initialize_determined = false)
+odaeprob = ODEProblem(sys, [], (0.0, 30.0); warn_initialize_determined = false)
 
-ref_sol = solve(daeprob, IDA(), abstol = 1/10^14, reltol = 1/10^14);
-ode_ref_sol = solve(odaeprob, CVODE_BDF(), abstol = 1/10^14, reltol = 1/10^14);
+ode_ref_sol = solve(odaeprob, CVODE_BDF(), abstol = 1/10^14, reltol = 1/10^14)
 
 probs = [mtkprob, daeprob, odaeprob]
-refs = [ref_sol, ref_sol, ode_ref_sol];
+refs = [ode_ref_sol, ode_ref_sol, ode_ref_sol];
 
 
-plot(ref_sol)
+try
+    ida_sol = solve(daeprob, IDA(), abstol = 1/10^14, reltol = 1/10^14)
+    println("IDA retcode: ", ida_sol.retcode,
+            ", t_final: ", ida_sol.t[end], " (tspan ends at 30.0)")
+catch e
+    println("IDA solve failed: ", e)
+end
+
+
+plot(ode_ref_sol)
 
 
 abstols = 1.0 ./ 10.0 .^ (6:9)
@@ -34,10 +43,12 @@ setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
     Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 1, :alg=>rodas()),
     Dict(:prob_choice => 1, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
     Dict(:prob_choice => 2, :alg=>DFBDF()),
+    Dict(:prob_choice => 2, :alg=>DNordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>IDA())
 ]
 
@@ -79,10 +90,12 @@ setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
     Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 1, :alg=>rodas()),
     Dict(:prob_choice => 1, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
     Dict(:prob_choice => 2, :alg=>DFBDF()),
+    Dict(:prob_choice => 2, :alg=>DNordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>IDA())
 ]
 gr()
@@ -116,10 +129,12 @@ setups = [Dict(:prob_choice => 1, :alg=>Rodas5()),
     Dict(:prob_choice => 3, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 1, :alg=>rodas()),
     Dict(:prob_choice => 1, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
     Dict(:prob_choice => 2, :alg=>DFBDF()),
+    Dict(:prob_choice => 2, :alg=>DNordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>IDA())
 ]
 gr()

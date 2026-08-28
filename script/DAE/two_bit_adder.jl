@@ -1,5 +1,6 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ModelingToolkit, Plots
+using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock
 using DASSL, DASKR
 using LinearAlgebra, SparseArrays
 
@@ -834,9 +835,10 @@ setups = [
     Dict(:prob_choice => 2, :alg => Rodas4P()),
     Dict(:prob_choice => 2, :alg => FBDF()),
     Dict(:prob_choice => 2, :alg => QNDF()),
+    Dict(:prob_choice => 2, :alg => NordsieckBDF()),
     Dict(:prob_choice => 2, :alg => RadauIIA5()),
 ]
-labels = ["IDA (DAE)", "Rodas5P (MM)", "Rodas4P (MM)", "FBDF (MM)", "QNDF (MM)", "RadauIIA5 (MM)"]
+labels = ["IDA (DAE)", "Rodas5P (MM)", "Rodas4P (MM)", "FBDF (MM)", "QNDF (MM)", "NordsieckBDF (MM)", "RadauIIA5 (MM)"]
 
 if mtk_success
     push!(setups, Dict(:prob_choice => 3, :alg => Rodas5P()))
@@ -857,9 +859,10 @@ setups = [
     Dict(:prob_choice => 2, :alg => Rodas5P()),
     Dict(:prob_choice => 2, :alg => Rodas4P()),
     Dict(:prob_choice => 2, :alg => FBDF()),
+    Dict(:prob_choice => 2, :alg => NordsieckBDF()),
     Dict(:prob_choice => 2, :alg => RadauIIA5()),
 ]
-labels = ["IDA (DAE)", "DASKR (DAE)", "Rodas5P (MM)", "Rodas4P (MM)", "FBDF (MM)", "RadauIIA5 (MM)"]
+labels = ["IDA (DAE)", "DASKR (DAE)", "Rodas5P (MM)", "Rodas4P (MM)", "FBDF (MM)", "NordsieckBDF (MM)", "RadauIIA5 (MM)"]
 
 if mtk_success
     push!(setups, Dict(:prob_choice => 3, :alg => Rodas5P()))
@@ -881,9 +884,10 @@ setups = [
     Dict(:prob_choice => 2, :alg => Rodas5P()),
     Dict(:prob_choice => 2, :alg => Rodas4P()),
     Dict(:prob_choice => 2, :alg => FBDF()),
+    Dict(:prob_choice => 2, :alg => NordsieckBDF()),
     Dict(:prob_choice => 2, :alg => RadauIIA5()),
 ]
-labels = ["IDA (DAE)", "Rodas5P (MM)", "Rodas4P (MM)", "FBDF (MM)", "RadauIIA5 (MM)"]
+labels = ["IDA (DAE)", "Rodas5P (MM)", "Rodas4P (MM)", "FBDF (MM)", "NordsieckBDF (MM)", "RadauIIA5 (MM)"]
 
 if mtk_success
     push!(setups, Dict(:prob_choice => 3, :alg => Rodas5P()))

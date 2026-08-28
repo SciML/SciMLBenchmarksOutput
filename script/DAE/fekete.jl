@@ -1,6 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ModelingToolkit,
       ODEInterfaceDiffEq, Plots, DASKR
+using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock
 using ModelingToolkit: t_nounits as t, D_nounits as D
 using LinearAlgebra, Statistics
 
@@ -240,6 +241,26 @@ function fekete_jac!(J, y, p, t)
     nothing
 end
 
+# Out-of-place method for the same function object. It is never used by the
+# solvers themselves (they call the in-place method above through `calc_J!`),
+# but OrdinaryDiffEq's numerical-instability diagnostic calls the Jacobian
+# out-of-place: when a solve aborts, `SciMLBase.check_error` ->
+# `OrdinaryDiffEqCore.log_numerical_instability` ->
+# `OrdinaryDiffEqDifferentiation.get_fresh_jacobian` -> `calc_J` evaluates
+# `f.jac(u, p, t)` regardless of whether the problem is in-place. Without this
+# method that diagnostic throws instead of printing, which turns an ordinary
+# failed work-precision point into a hard error that kills the whole weave.
+# (This is an upstream bug, fixed in OrdinaryDiffEqDifferentiation v3.9.0 --
+# `get_fresh_jacobian` there branches on `isinplace` and calls `calc_J!`. This
+# folder's Manifest pins v3.7.0, which does not. The workaround here is
+# version-independent, so it stays correct either way; verified in isolation on
+# 2026-08-24 against both v3.7.0 (throws without it) and v3.10.0.)
+function fekete_jac!(y, p, t)
+    J = zeros(eltype(y), length(y), length(y))
+    fekete_jac!(J, y, p, t)
+    return J
+end
+
 
 y0 = fekete_init()
 
@@ -249,7 +270,20 @@ for i in 1:6*N_ART
     M[i,i] = 1.0
 end
 
-mmf = ODEFunction(fekete_rhs!, mass_matrix = M, jac = fekete_jac!)
+# `FullSpecialize` rather than the default `AutoSpecialize`: under
+# `AutoSpecialize`, `DiffEqBase.promote_f` replaces `f.jac` at solve time with a
+# `FunctionWrappersWrapper` built from the in-place signature
+# `(Matrix, u, p, t)` only. The out-of-place `f.jac(u, p, t)` call made by the
+# instability diagnostic (see the Jacobian section above) then finds no matching
+# wrapper and throws `No matching function wrapper was found!`. With
+# `FullSpecialize` nothing is wrapped, so `f.jac` is `fekete_jac!` itself and
+# that call dispatches to the out-of-place method defined above.
+# SciMLBase's own docstring for `AutoSpecialize` also recommends against it for
+# benchmarking ("callable wrapping can affect runtime"), so this is the right
+# specialization level for this file regardless. `SciMLBase` is not a direct
+# dependency of this environment, so it is reached through `OrdinaryDiffEq`.
+mmf = ODEFunction{true, OrdinaryDiffEq.SciMLBase.FullSpecialize}(
+    fekete_rhs!, mass_matrix = M, jac = fekete_jac!)
 tspan = (0.0, 1000.0)
 mmprob = ODEProblem(mmf, y0, tspan)
 
@@ -499,14 +533,11 @@ ref_sol = solve(mmprob, Rodas5P(), reltol = 1e-8, abstol = 1e-8,
 println("  retcode = $(ref_sol.retcode), npoints = $(length(ref_sol.t)), ",
         "t_final = $(ref_sol.t[end])")
 
-println("Computing MTK reference solution with Rodas5P...")
-mtk_ref = solve(mtkprob, Rodas5P(), reltol = 1e-8, abstol = 1e-8,
-                maxiters = 10_000_000)
-println("  retcode = $(mtk_ref.retcode), npoints = $(length(mtk_ref.t))")
-
-# We use separate references: the canonical mass-matrix reference for
-# mass-matrix and DAE forms, and an MTK reference for the MTK form
-# (structural_simplify may change the state layout).
+# The mass-matrix reference above is the reference for both the mass-matrix
+# and the DAE residual forms. There is no MTK reference: as of 2026-08-23 the
+# index-reduced MTK problem does not solve at all — see
+# "MTK Index-Reduced Formulation: Currently Dropped" below, which reproduces
+# and documents the failure.
 
 
 sol_final = ref_sol.u[end]
@@ -553,128 +584,237 @@ plot(ref_sol, idxs = [121, 122, 123, 124, 125],
      xlabel = "Time", ylabel = "λ", lw = 1.5)
 
 
-probs = [mmprob, daeprob, mtkprob]
-refs  = [ref_sol, ref_sol, mtk_ref]
+probs = [mmprob, daeprob]
+refs  = [ref_sol, ref_sol]
 
 
+# Diagnostics for the index-reduced MTK problem as this document builds it.
+const MTK = ModelingToolkit
+println("ModelingToolkit version : ", pkgversion(ModelingToolkit))
+println("unknowns(sys_mtk)       : ", length(unknowns(sys_mtk)))
+println("equations(sys_mtk)      : ", length(equations(sys_mtk)))
+
+# Which unknowns survive index reduction, and which carry a hard initial condition?
+uns = unknowns(sys_mtk)
+ics = MTK.initial_conditions(sys_mtk)
+isdd(u) = occursin("ˍt", string(u))
+groups = (("positions p",        u -> startswith(string(u), "p") && !isdd(u)),
+          ("dummy derivatives",  u -> startswith(string(u), "p") &&  isdd(u)),
+          ("velocities q",       u -> startswith(string(u), "q")),
+          ("multipliers λ",      u -> startswith(string(u), "lam")))
+for (name, pred) in groups
+    sel = filter(pred, uns)
+    println(rpad(name, 20), " count = ", rpad(length(sel), 4),
+            " prescribed as initial conditions = ", count(u -> haskey(ics, u), sel))
+end
+
+# The initialization system MTK builds from those prescriptions.
+iprob = mtkprob.f.initialization_data.initializeprob
+isys  = iprob.f.sys
+println("initialization system   : ", length(equations(isys)), " equations, ",
+        length(unknowns(isys)), " unknowns")
+res = zeros(length(equations(isys)))
+iprob.f(res, iprob.u0, iprob.p)
+println("‖init residual at guess‖∞           : ", maximum(abs, res))
+isol = solve(iprob)
+iprob.f(res, isol.u, iprob.p)
+println("init solve retcode                  : ", isol.retcode)
+println("‖init residual at least-squares pt‖∞: ", maximum(abs, res))
+
+# Residual of the simplified RHS at the prescribed u0, split by equation type.
+# Only the algebraic rows are evidence of inconsistency: the differential rows
+# are derivatives and are legitimately nonzero.
+mm  = mtkprob.f.mass_matrix
+alg = [i for i in 1:size(mm, 1) if all(iszero, @view mm[i, :])]
+dif = setdiff(1:size(mm, 1), alg)
+du0 = similar(mtkprob.u0)
+mtkprob.f(du0, mtkprob.u0, mtkprob.p, mtkprob.tspan[1])
+println("algebraic equations                 : ", length(alg))
+println("‖f(u0)‖∞ over ALGEBRAIC rows        : ", maximum(abs, du0[alg]))
+println("‖f(u0)‖∞ over DIFFERENTIAL rows     : ", maximum(abs, du0[dif]))
+
+# Is the prescribed data even self-consistent? The positions are on the sphere;
+# the multipliers are not (the reference solution above has λ → −4.75).
+println("max |‖p_i(0)‖² − 1| over particles  : ",
+        maximum(abs(sum(y0[3*(i-1)+k]^2 for k in 1:3) - 1) for i in 1:N_ART))
+
+for (solver_name, alg_) in (("Rodas5P", Rodas5P()), ("FBDF", FBDF()))
+    for (init_name, initalg) in (("default", nothing),
+                                 ("BrownFullBasicInit", BrownFullBasicInit()))
+        solver_name == "Rodas5P" && init_name != "default" && continue
+        elapsed = @elapsed sol = if initalg === nothing
+            solve(mtkprob, alg_; abstol = 1e-8, reltol = 1e-8,
+                  save_everystep = false, maxiters = Int(1e6))
+        else
+            solve(mtkprob, alg_; abstol = 1e-8, reltol = 1e-8,
+                  save_everystep = false, maxiters = Int(1e6),
+                  initializealg = initalg)
+        end
+        println(rpad(solver_name, 8), " / ", rpad(init_name, 19),
+                " retcode = ", rpad(string(sol.retcode), 15),
+                " reached t = ", round(sol.t[end], sigdigits = 5),
+                " of ", tspan[2], "  (", round(elapsed, digits = 1), " s)")
+    end
+end
+
+
+# Same model, one change: velocities and multipliers are declared WITHOUT
+# default values and supplied as `guesses` instead, so only the 60 positions
+# are prescribed as initial conditions.
+ps_g = Vector{Num}(undef, 3*N_ART)
+qs_g = Vector{Num}(undef, 3*N_ART)
+λs_g = Vector{Num}(undef, N_ART)
+for i in 1:N_ART
+    for k in 1:3
+        idx = 3*(i-1) + k
+        ps_g[idx] = only(@variables $(Symbol("P$(i)_$(k)"))(t) = y0[idx])
+        qs_g[idx] = only(@variables $(Symbol("Q$(i)_$(k)"))(t))   # no default
+    end
+    λs_g[i] = only(@variables $(Symbol("LAM$(i)"))(t))            # no default
+end
+
+eqs_g = Equation[]
+for idx in 1:3*N_ART
+    push!(eqs_g, D(ps_g[idx]) ~ qs_g[idx])
+end
+for i in 1:N_ART, k in 1:3
+    idx = 3*(i-1) + k
+    coulomb = sum((ps_g[idx] - ps_g[3*(j-1)+k]) /
+                  sum((ps_g[3*(i-1)+m] - ps_g[3*(j-1)+m])^2 for m in 1:3)
+                  for j in 1:N_ART if j != i)
+    push!(eqs_g, D(qs_g[idx]) ~ -ALPHA_DAMP*qs_g[idx] + 2*λs_g[i]*ps_g[idx] + coulomb)
+end
+for i in 1:N_ART
+    push!(eqs_g, sum(ps_g[3*(i-1)+k]^2 for k in 1:3) ~ 1)
+end
+
+guess_map = Dict{Any, Float64}()
+for v in qs_g; guess_map[v] = 0.0; end
+for v in λs_g; guess_map[v] = 0.0; end
+
+@named sys_raw_g = ODESystem(eqs_g, t)
+sys_g  = structural_simplify(sys_raw_g)
+prob_g = ODEProblem(sys_g, [], tspan; guesses = guess_map)
+
+println("unknowns prescribed as initial conditions : ",
+        count(u -> haskey(MTK.initial_conditions(sys_g), u), unknowns(sys_g)),
+        " / ", length(unknowns(sys_g)))
+ig    = prob_g.f.initialization_data.initializeprob
+resg  = zeros(length(equations(ig.f.sys)))
+println("initialization system                     : ",
+        length(equations(ig.f.sys)), " equations, ",
+        length(unknowns(ig.f.sys)), " unknowns")
+isolg = solve(ig)
+ig.f(resg, isolg.u, ig.p)
+println("init solve retcode                        : ", isolg.retcode)
+println("‖init residual at solution‖∞              : ", maximum(abs, resg))
+
+elapsed_g = @elapsed sol_g = solve(prob_g, FBDF(); abstol = 1e-8, reltol = 1e-8,
+                                   save_everystep = false, maxiters = Int(1e6))
+println("FBDF, positions-only ICs: retcode = ", sol_g.retcode,
+        "  reached t = ", round(sol_g.t[end], sigdigits = 5), " of ", tspan[2],
+        "  (", round(elapsed_g, digits = 1), " s)")
+
+
+# Tightened reltols (was 10.0.^-(1:4)) so that IDA/DASKR are not asked for the
+# loose (abstol=1e-5, reltol=1e-1) pairing — Sundials grinds with repeated
+# error-test failures for hours on that pairing. Pairing abstol with reltol
+# 4 orders of magnitude tighter keeps the per-step error control sane.
+# `verbose=false` silences Sundials' repeated-error-test warnings on the still
+# moderately-loose end of the grid.
 abstols = 1.0 ./ 10.0 .^ (5:8)
-reltols = 1.0 ./ 10.0 .^ (1:4)
+reltols = 1.0 ./ 10.0 .^ (4:7)
+# RadauIIA5 is not in this list: on this mass-matrix form it aborts
+# (`DtLessThanMin`) at every tolerance tried on these grids, so it contributes
+# no usable point while costing minutes per attempt. (Its aborts used to be a
+# hard error as well; that part is fixed at the problem level — see the
+# out-of-place `fekete_jac!` method and the `FullSpecialize` note above.)
+# numruns was 5; each point here is a multi-second-to-minute solve of a 160-equation
+# index-2 DAE over t in [0, 1000], so run-to-run timing noise is far below the
+# cost of repeating it. numruns=1 cuts this block ~3x (6 solves/point -> 2).
 setups = [
     Dict(:prob_choice => 1, :alg => Rodas4()),
     Dict(:prob_choice => 1, :alg => Rodas5P()),
     Dict(:prob_choice => 1, :alg => FBDF()),
     Dict(:prob_choice => 1, :alg => QNDF()),
-    Dict(:prob_choice => 1, :alg => radau()),
-    Dict(:prob_choice => 1, :alg => RadauIIA5()),
-    Dict(:prob_choice => 2, :alg => IDA()),
-    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
-    Dict(:prob_choice => 3, :alg => Rodas5P()),
-    Dict(:prob_choice => 3, :alg => Rodas4()),
-    Dict(:prob_choice => 3, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
+    Dict(:prob_choice => 2, :alg => IDA(), :verbose => false),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr(), :verbose => false),
 ]
 
-labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "QNDF (MM)" "radau (MM)" "RadauIIA5 (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "Rodas4 (MTK)" "FBDF (MTK)"]
+labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "QNDF (MM)" "NordsieckBDF (MM)" "IDA (DAE)" "DASKR (DAE)"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
+    maxiters = Int(1e7), numruns = 1)
 plot(wp, title = "Fekete Problem: All Formulations (High Tol)")
 
 
-abstols = 1.0 ./ 10.0 .^ (6:8)
-reltols = 1.0 ./ 10.0 .^ (2:4)
-setups = [
-    Dict(:prob_choice => 1, :alg => Rodas4()),
-    Dict(:prob_choice => 1, :alg => Rodas5P()),
-    Dict(:prob_choice => 1, :alg => FBDF()),
-    Dict(:prob_choice => 2, :alg => IDA()),
-    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
-    Dict(:prob_choice => 3, :alg => Rodas5P()),
-    Dict(:prob_choice => 3, :alg => FBDF()),
-]
-
-labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "FBDF (MTK)"]
-
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
-plot(wp, title = "Fekete Problem: MM vs DAE vs MTK (High Tol)")
-
-
+# Same tightening as above (was reltols = 10.0.^-(1:4)) and verbose=false on
+# IDA/DASKR so the loose abstol/reltol pairings don't fail Sundials' error test
+# repeatedly.
+#
+# RadauIIA5 is *not* in this list: on 2026-08-23, with the current Manifest,
+# `solve(mmprob, RadauIIA5(); abstol <= 1e-7)` aborted at every tolerance tried.
+# The abort additionally threw `No matching function wrapper was found!` out of
+# the instability diagnostic, which failed the whole chunk and therefore the
+# whole folder build. That throw is fixed at the problem level (see the
+# out-of-place `fekete_jac!` method), but the solver still has nothing to
+# contribute on this grid, so it stays out.
 abstols = 1.0 ./ 10.0 .^ (5:8)
-reltols = 1.0 ./ 10.0 .^ (1:4)
+reltols = 1.0 ./ 10.0 .^ (4:7)
 setups = [
     Dict(:prob_choice => 1, :alg => Rodas4()),
     Dict(:prob_choice => 1, :alg => Rodas5P()),
     Dict(:prob_choice => 1, :alg => FBDF()),
     Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
     Dict(:prob_choice => 1, :alg => radau()),
-    Dict(:prob_choice => 1, :alg => RadauIIA5()),
-    Dict(:prob_choice => 2, :alg => IDA()),
-    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
-    Dict(:prob_choice => 3, :alg => Rodas5P()),
-    Dict(:prob_choice => 3, :alg => Rodas4()),
-    Dict(:prob_choice => 3, :alg => FBDF()),
+    Dict(:prob_choice => 2, :alg => IDA(), :verbose => false),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr(), :verbose => false),
 ]
 
-labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "QNDF (MM)" "radau (MM)" "RadauIIA5 (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "Rodas4 (MTK)" "FBDF (MTK)"]
+labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "QNDF (MM)" "NordsieckBDF (MM)" "radau (MM)" "IDA (DAE)" "DASKR (DAE)"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
     names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
+    maxiters = Int(1e7), numruns = 1)
 plot(wp, title = "Fekete Problem: Timeseries (L2)")
 
 
-abstols = 1.0 ./ 10.0 .^ (6:8)
-reltols = 1.0 ./ 10.0 .^ (2:4)
-setups = [
-    Dict(:prob_choice => 1, :alg => Rodas4()),
-    Dict(:prob_choice => 1, :alg => Rodas5P()),
-    Dict(:prob_choice => 1, :alg => FBDF()),
-    Dict(:prob_choice => 2, :alg => IDA()),
-    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
-    Dict(:prob_choice => 3, :alg => Rodas5P()),
-    Dict(:prob_choice => 3, :alg => FBDF()),
-]
+# Grid was `abstols = 10.0 .^ -(7:12)`, `reltols = 10.0 .^ -(4:9)`. Measured on
+# 2026-08-23, one solve per (solver, tolerance) point on the mass-matrix form:
+# past abstol = 1e-10 every mass-matrix solver either bails out
+# (FBDF/QNDF/NordsieckBDF return `Unstable`, radau returns `DtLessThanMin`) or
+# costs minutes per solve while doing so, so the last two columns of the grid
+# were buying failed points at the highest price on the whole grid. This block
+# was 1h48m of the 4h52m weave on 2026-06-18. Trimmed to 4 points.
+abstols = 1.0 ./ 10.0 .^ (7:10)
+reltols = 1.0 ./ 10.0 .^ (4:7)
 
-labels = ["Rodas4 (MM)" "Rodas5P (MM)" "FBDF (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "FBDF (MTK)"]
-
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
-plot(wp, title = "Fekete Problem: MM vs DAE vs MTK Timeseries (L2)")
-
-
-abstols = 1.0 ./ 10.0 .^ (7:12)
-reltols = 1.0 ./ 10.0 .^ (4:9)
-
+# RadauIIA5 dropped: aborts on every point of this grid (see the timeseries
+# block above). `radau()` (ODEInterface) is kept — it is a different
+# implementation and does produce points here.
 setups = [
     Dict(:prob_choice => 1, :alg => Rodas5()),
     Dict(:prob_choice => 1, :alg => Rodas5P()),
     Dict(:prob_choice => 1, :alg => Rodas4()),
     Dict(:prob_choice => 1, :alg => FBDF()),
     Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
     Dict(:prob_choice => 1, :alg => radau()),
-    Dict(:prob_choice => 1, :alg => RadauIIA5()),
-    Dict(:prob_choice => 2, :alg => IDA()),
-    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
-    Dict(:prob_choice => 3, :alg => Rodas5P()),
-    Dict(:prob_choice => 3, :alg => Rodas4()),
-    Dict(:prob_choice => 3, :alg => FBDF()),
+    # verbose=false to match the two blocks above: at abstol 1e-10 Sundials
+    # reports repeated error-test failures on every retry.
+    Dict(:prob_choice => 2, :alg => IDA(), :verbose => false),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr(), :verbose => false),
 ]
 
-labels = ["Rodas5 (MM)" "Rodas5P (MM)" "Rodas4 (MM)" "FBDF (MM)" "QNDF (MM)" "radau (MM)" "RadauIIA5 (MM)" "IDA (DAE)" "DASKR (DAE)" "Rodas5P (MTK)" "Rodas4 (MTK)" "FBDF (MTK)"]
+labels = ["Rodas5 (MM)" "Rodas5P (MM)" "Rodas4 (MM)" "FBDF (MM)" "QNDF (MM)" "NordsieckBDF (MM)" "radau (MM)" "IDA (DAE)" "DASKR (DAE)"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
+    maxiters = Int(1e7), numruns = 1)
 plot(wp, title = "Fekete Problem: Low Tolerances")
-
-
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    names = labels, save_everystep = false, appxsol = refs,
-    maxiters = Int(1e7), numruns = 5)
-plot(wp, title = "Fekete Problem: Low Tolerances (L2)")
 
 
 using SciMLBenchmarks

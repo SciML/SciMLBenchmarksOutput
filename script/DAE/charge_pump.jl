@@ -145,12 +145,11 @@ for (fn, dfn_prefix) in [(qgate, :dqgate), (qsrc, :dqsrc), (qdrain, :dqdrain)]
                 x -> $fn(ntuple(j -> j == $i ? x : [vgb, vgs, vgd][j], 3)...),
                 Float64([vgb, vgs, vgd][$i]))
             @register_symbolic $dfn_name(vgb, vgs, vgd)
-            Symbolics.derivative(::typeof($fn), args::NTuple{3, Any}, ::Val{$i}) =
-                $dfn_name(args...)
+            @register_derivative $fn(vgb, vgs, vgd) $i $(Expr(:call, dfn_name, :vgb, :vgs, :vgd))
         end
     end
 end
-Symbolics.derivative(::typeof(vin), args::NTuple{1, Any}, ::Val{1}) = dvin(args...)
+@register_derivative vin(t_val) 1 dvin(t_val)
 
 
 @variables begin
@@ -185,7 +184,7 @@ println("States: ", unknowns(sys))
 
 
 mtkprob = ODEProblem(sys, [], tspan)
-mtk_test = solve(mtkprob, Rodas5P(autodiff = false), abstol = 1e-4, reltol = 1e-4,
+mtk_test = solve(mtkprob, Rodas5P(autodiff = AutoFiniteDiff()), abstol = 1e-4, reltol = 1e-4,
                  tstops = disc_times, maxiters = Int(1e6), dt = 1e-15)
 println("Rodas5P on MTK-reduced system: retcode = $(mtk_test.retcode), ",
         "steps = $(length(mtk_test.t)), final t = $(mtk_test.t[end])")

@@ -1,6 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ModelingToolkit, ODEInterfaceDiffEq,
       Plots, DASSL, DASKR
+using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 using LinearAlgebra
 using ModelingToolkit: t_nounits as t, D_nounits as D
 
@@ -10,11 +11,11 @@ using ModelingToolkit: t_nounits as t, D_nounits as D
 eqs = [D(y₁) ~ -k₁*y₁ + k₃*y₂*y₃
        D(y₂) ~ k₁*y₁ - k₃*y₂*y₃ - k₂*y₂^2
        0 ~ y₁ + y₂ + y₃ - 1]
-@mtkbuild sys = ODESystem(eqs, t)
+@mtkcompile sys = System(eqs, t)
 mtkprob = ODEProblem(sys, [], (0.0, 1e5))
 daeprob = DAEProblem(sys, [D(y₁)=>-0.04,
-        D(y₂)=>0.04], [], (0.0, 1e5))
-odaeprob = ODAEProblem(sys, [], (0.0, 1e5))
+        D(y₂)=>0.04], (0.0, 1e5))
+odaeprob = ODEProblem(sys, [], (0.0, 1e5))
 
 ref_sol = solve(daeprob, IDA(), abstol = 1/10^14, reltol = 1/10^14);
 ode_ref_sol = solve(odaeprob, CVODE_BDF(), abstol = 1/10^14, reltol = 1/10^14);
@@ -47,10 +48,12 @@ setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
     Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 1, :alg=>rodas()),
     Dict(:prob_choice => 1, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
     Dict(:prob_choice => 2, :alg=>DFBDF()),
+    Dict(:prob_choice => 2, :alg=>DNordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>IDA())
 ]
 
@@ -96,10 +99,12 @@ setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
     Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 1, :alg=>rodas()),
     Dict(:prob_choice => 1, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
     Dict(:prob_choice => 2, :alg=>DFBDF()),
+    Dict(:prob_choice => 2, :alg=>DNordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>IDA())
 ]
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
@@ -134,10 +139,12 @@ setups = [Dict(:prob_choice => 1, :alg=>Rodas5()),
     Dict(:prob_choice => 4, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 1, :alg=>rodas()),
     Dict(:prob_choice => 1, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
     Dict(:prob_choice => 2, :alg=>DFBDF()),
+    Dict(:prob_choice => 2, :alg=>DNordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>IDA()),
     Dict(:prob_choice => 2, :alg=>DASKR.daskr())
 ]

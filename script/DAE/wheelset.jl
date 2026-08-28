@@ -1,6 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ODEInterfaceDiffEq,
       Plots, DASSL, DASKR, ModelingToolkit
+using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock
 using ModelingToolkit: t_nounits as t, D_nounits as D
 using LinearAlgebra
 
@@ -520,9 +521,11 @@ function wheelset_rhs_vec(state::AbstractVector)
     return delta
 end
 
+# ndims=1 so promote_symtype is Array{Float64,1} (DataType), not Array{Float64}.
 @register_array_symbolic wheelset_rhs_vec(state::AbstractVector) begin
     size = (17,)
-    eltype = Real
+    ndims = 1
+    eltype = Float64
 end
 
 @variables begin
@@ -561,7 +564,7 @@ eqs_mtk = [
     0 ~ delta_sym[16],  0 ~ delta_sym[17],
 ]
 
-@mtkbuild sys_wh = ODESystem(eqs_mtk, t)
+@mtkcompile sys_wh = System(eqs_mtk, t)
 prob_mtk = ODEProblem(sys_wh, [], tspan; warn_initialize_determined = false)
 
 
@@ -647,6 +650,8 @@ probs = [prob_dae, prob_mm, prob_mtk]
 refs  = [ref_sol, ref_sol, ref_sol_mtk];
 
 
+# RadauIIA5 / radau() hit SingularException on the singular mass-matrix form
+# (algebraic zero rows); keep Rosenbrock/BDF/IDA and MTK solvers only.
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 setups = [
@@ -654,12 +659,12 @@ setups = [
     Dict(:prob_choice => 2, :alg => Rodas4P()),
     Dict(:prob_choice => 2, :alg => FBDF()),
     Dict(:prob_choice => 2, :alg => QNDF()),
+    Dict(:prob_choice => 2, :alg => NordsieckBDF()),
     Dict(:prob_choice => 2, :alg => rodas()),
-    Dict(:prob_choice => 2, :alg => radau()),
-    Dict(:prob_choice => 2, :alg => RadauIIA5()),
     Dict(:prob_choice => 1, :alg => IDA()),
     Dict(:prob_choice => 3, :alg => Rodas5P()),
     Dict(:prob_choice => 3, :alg => FBDF()),
+    Dict(:prob_choice => 3, :alg => NordsieckBDF()),
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
@@ -673,11 +678,11 @@ setups = [
     Dict(:prob_choice => 2, :alg => Rodas5P()),
     Dict(:prob_choice => 2, :alg => Rodas4P()),
     Dict(:prob_choice => 2, :alg => FBDF()),
-    Dict(:prob_choice => 2, :alg => radau()),
-    Dict(:prob_choice => 2, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => NordsieckBDF()),
     Dict(:prob_choice => 1, :alg => IDA()),
     Dict(:prob_choice => 3, :alg => Rodas5P()),
     Dict(:prob_choice => 3, :alg => FBDF()),
+    Dict(:prob_choice => 3, :alg => NordsieckBDF()),
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
@@ -692,12 +697,12 @@ setups = [
     Dict(:prob_choice => 2, :alg => Rodas4P()),
     Dict(:prob_choice => 2, :alg => FBDF()),
     Dict(:prob_choice => 2, :alg => QNDF()),
+    Dict(:prob_choice => 2, :alg => NordsieckBDF()),
     Dict(:prob_choice => 2, :alg => rodas()),
-    Dict(:prob_choice => 2, :alg => radau()),
-    Dict(:prob_choice => 2, :alg => RadauIIA5()),
     Dict(:prob_choice => 1, :alg => IDA()),
     Dict(:prob_choice => 3, :alg => Rodas5P()),
     Dict(:prob_choice => 3, :alg => FBDF()),
+    Dict(:prob_choice => 3, :alg => NordsieckBDF()),
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
@@ -713,11 +718,11 @@ setups = [
     Dict(:prob_choice => 2, :alg => Rodas5()),
     Dict(:prob_choice => 2, :alg => Rodas4P()),
     Dict(:prob_choice => 2, :alg => FBDF()),
-    Dict(:prob_choice => 2, :alg => radau()),
-    Dict(:prob_choice => 2, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => NordsieckBDF()),
     Dict(:prob_choice => 1, :alg => IDA()),
     Dict(:prob_choice => 3, :alg => Rodas5P()),
     Dict(:prob_choice => 3, :alg => FBDF()),
+    Dict(:prob_choice => 3, :alg => NordsieckBDF()),
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;

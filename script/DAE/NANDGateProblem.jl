@@ -1,6 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, ModelingToolkit, ODEInterfaceDiffEq,
       Plots, Sundials, DASSL, DASKR
+using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock
 using LinearAlgebra
 using ModelingToolkit: t_nounits as t, D_nounits as D
 
@@ -31,7 +32,7 @@ const BETA_ENH = 1.748e-3
 
 function pulse(t, t_start, v_low, t_rise, v_high, t_high, t_fall, t_period)
     t_mod = mod(t, t_period)
-    
+
     if t_mod < t_start
         return v_low
     elseif t_mod < t_start + t_rise
@@ -142,26 +143,26 @@ function nand_rhs!(f, y, p, t)
     v2 = V2(t)
     v1d = V1_derivative(t)
     v2d = V2_derivative(t)
-    
+
     y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14 = y
-    
+
     f[1] = -(y1 - y5) / RGS - ids(1, y2 - y1, y5 - y1, y3 - y5, y5 - y2, y4 - VDD)
     f[2] = -(y2 - VDD) / RGD + ids(1, y2 - y1, y5 - y1, y3 - y5, y5 - y2, y4 - VDD)
     f[3] = -(y3 - VBB) / RBS + ibs(y3 - y5)
     f[4] = -(y4 - VBB) / RBD + ibd(y4 - VDD)
     f[5] = -(y5 - y1) / RGS - ibs(y3 - y5) - (y5 - y7) / RGD - ibd(y9 - y5)
-    
+
     f[6] = CGS * v1d - (y6 - y10) / RGS - ids(2, y7 - y6, v1 - y6, y8 - y10, v1 - y7, y9 - y5)
     f[7] = CGD * v1d - (y7 - y5) / RGD + ids(2, y7 - y6, v1 - y6, y8 - y10, v1 - y7, y9 - y5)
     f[8] = -(y8 - VBB) / RBS + ibs(y8 - y10)
     f[9] = -(y9 - VBB) / RBD + ibd(y9 - y5)
     f[10] = -(y10 - y6) / RGS - ibs(y8 - y10) - (y10 - y12) / RGD - ibd(y14 - y10)
-    
+
     f[11] = CGS * v2d - y11 / RGS - ids(2, y12 - y11, v2 - y11, y13, v2 - y12, y14 - y10)
     f[12] = CGD * v2d - (y12 - y10) / RGD + ids(2, y12 - y11, v2 - y11, y13, v2 - y12, y14 - y10)
     f[13] = -(y13 - VBB) / RBS + ibs(y13)
     f[14] = -(y14 - VBB) / RBD + ibd(y14 - y10)
-    
+
     return nothing
 end
 
@@ -197,33 +198,33 @@ function nand_dae!(out, du, u, p, t)
     v2 = V2(t)
     v1d = V1_derivative(t)
     v2d = V2_derivative(t)
-    
+
     y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14 = u
     dy1, dy2, dy3, dy4, dy5, dy6, dy7, dy8, dy9, dy10, dy11, dy12, dy13, dy14 = du
-    
+
     # Differential equations: M*dy/dt - f = 0
     # Convert from mass matrix form: M*dy/dt = f  =>  M*dy/dt - f = 0
     out[1] = CGS * dy1 - (-(y1 - y5) / RGS - ids(1, y2 - y1, y5 - y1, y3 - y5, y5 - y2, y4 - VDD))
     out[2] = CGD * dy2 - (-(y2 - VDD) / RGD + ids(1, y2 - y1, y5 - y1, y3 - y5, y5 - y2, y4 - VDD))
     out[3] = CBS * dy3 - (-(y3 - VBB) / RBS + ibs(y3 - y5))
     out[4] = CBD * dy4 - (-(y4 - VBB) / RBD + ibd(y4 - VDD))
-    
+
     # Algebraic equations: g(y) = 0
     out[5] = -(y5 - y1) / RGS - ibs(y3 - y5) - (y5 - y7) / RGD - ibd(y9 - y5)
-    
+
     out[6] = CGS * dy6 - (CGS * v1d - (y6 - y10) / RGS - ids(2, y7 - y6, v1 - y6, y8 - y10, v1 - y7, y9 - y5))
     out[7] = CGD * dy7 - (CGD * v1d - (y7 - y5) / RGD + ids(2, y7 - y6, v1 - y6, y8 - y10, v1 - y7, y9 - y5))
     out[8] = CBS * dy8 - (-(y8 - VBB) / RBS + ibs(y8 - y10))
     out[9] = CBD * dy9 - (-(y9 - VBB) / RBD + ibd(y9 - y5))
-    
+
     # Algebraic equation: g(y) = 0
     out[10] = -(y10 - y6) / RGS - ibs(y8 - y10) - (y10 - y12) / RGD - ibd(y14 - y10)
-    
+
     out[11] = CGS * dy11 - (CGS * v2d - y11 / RGS - ids(2, y12 - y11, v2 - y11, y13, v2 - y12, y14 - y10))
     out[12] = CGD * dy12 - (CGD * v2d - (y12 - y10) / RGD + ids(2, y12 - y11, v2 - y11, y13, v2 - y12, y14 - y10))
     out[13] = CBS * dy13 - (-(y13 - VBB) / RBS + ibs(y13))
     out[14] = CBD * dy14 - (-(y14 - VBB) / RBD + ibd(y14 - y10))
-    
+
     return nothing
 end
 
@@ -240,11 +241,11 @@ probs = [mmprob, daeprob]
 refs = [ref_sol, dae_ref_sol]
 
 
-plot(ref_sol, title="NAND Gate Circuit - Node Potentials (Mass Matrix)", 
+plot(ref_sol, title="NAND Gate Circuit - Node Potentials (Mass Matrix)",
      xlabel="Time", ylabel="Voltage (V)", legend=:outertopright)
 
 
-plot(dae_ref_sol, title="NAND Gate Circuit - Node Potentials (DAE)", 
+plot(dae_ref_sol, title="NAND Gate Circuit - Node Potentials (DAE)",
      xlabel="Time", ylabel="Voltage (V)", legend=:outertopright)
 
 
@@ -255,6 +256,7 @@ setups = [
     Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 1, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
     Dict(:prob_choice => 2, :alg=>IDA()),
@@ -262,7 +264,7 @@ setups = [
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-                      save_everystep=false, appxsol=refs, 
+                      save_everystep=false, appxsol=refs,
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Work-Precision (High Tolerances)")
@@ -276,12 +278,13 @@ setups = [
     Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>Rodas5P()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>IDA()),
     Dict(:prob_choice => 2, :alg=>DASKR.daskr())
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-                      save_everystep=false, appxsol=refs, 
+                      save_everystep=false, appxsol=refs,
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Work-Precision (Medium Tolerances)")
@@ -295,13 +298,14 @@ setups = [
     Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 1, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
     Dict(:prob_choice => 2, :alg=>IDA())
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate=:l2,
-                      save_everystep=false, appxsol=refs, 
+                      save_everystep=false, appxsol=refs,
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Timeseries Errors (High Tolerances)")
@@ -315,12 +319,13 @@ setups = [
     Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>Rodas5P()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>IDA()),
     Dict(:prob_choice => 2, :alg=>DASKR.daskr())
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate=:l2,
-                      save_everystep=false, appxsol=refs, 
+                      save_everystep=false, appxsol=refs,
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Timeseries Errors (Medium Tolerances)")
@@ -334,6 +339,7 @@ setups = [
     Dict(:prob_choice => 1, :alg=>Rodas4()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 1, :alg=>radau()),
     Dict(:prob_choice => 1, :alg=>RadauIIA5()),
     Dict(:prob_choice => 2, :alg=>IDA()),
@@ -341,14 +347,14 @@ setups = [
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-                      save_everystep=false, appxsol=refs, 
+                      save_everystep=false, appxsol=refs,
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Work-Precision (Low Tolerances)")
 
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate=:l2,
-                      save_everystep=false, appxsol=refs, 
+                      save_everystep=false, appxsol=refs,
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Timeseries Errors (Low Tolerances)")
@@ -360,10 +366,10 @@ node_names = ["Node 1", "Node 5", "Node 6", "Node 10", "Node 11", "Node 12"]
 
 p_nodes = plot()
 for (i, node) in enumerate(key_nodes)
-    plot!(ref_sol.t, [u[node] for u in ref_sol.u], 
+    plot!(ref_sol.t, [u[node] for u in ref_sol.u],
           label=node_names[i], linewidth=2)
 end
-plot!(p_nodes, title="NAND Gate - Key Node Potentials", 
+plot!(p_nodes, title="NAND Gate - Key Node Potentials",
       xlabel="Time (s)", ylabel="Voltage (V)", legend=:outertopright)
 
 

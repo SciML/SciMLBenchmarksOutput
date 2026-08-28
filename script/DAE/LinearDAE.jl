@@ -1,6 +1,7 @@
 
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ModelingToolkit, ODEInterfaceDiffEq,
       Plots, DASSL, DASKR, StaticArrays
+using OrdinaryDiffEqBDF, OrdinaryDiffEqRosenbrock
 using LinearAlgebra, SparseArrays
 using ModelingToolkit: t_nounits as t, D_nounits as D
 const SA = StaticArrays.SA
@@ -40,14 +41,14 @@ u(t) = 1.0
 # E*Dx = A*x + B*u
 rlc_eqs = E_rlc * Dx ~ A_rlc * x + B_rlc .* u(t)
 
-@mtkbuild rlc_sys = ODESystem(rlc_eqs, t)
+@mtkcompile rlc_sys = System(rlc_eqs, t)
 
 # Problems using constant voltage input
 rlc_prob = ODEProblem(rlc_sys, [i_R => 0.0, v_C => 0.0], (0.0, 1e-3))
 rlc_static_prob = ODEProblem{false}(rlc_sys, SA[i_R => 0.0, v_C => 0.0], (0.0, 1e-3))
 
 
-# Two Masses Parameters  
+# Two Masses Parameters
 J1_masses, J2_masses = 1.0, 1.0
 
 # System matrices from DAEV repository
@@ -79,7 +80,7 @@ u(t) = [u1(t), u2(t)]
 # E*Dx = A*x + B*u
 masses_eqs = E_masses * Dx ~ A_masses * x + B_masses * u(t)
 
-@mtkbuild masses_sys = ODESystem(masses_eqs, t)
+@mtkcompile masses_sys = System(masses_eqs, t)
 
 # Problems using torque inputs
 masses_prob = ODEProblem(masses_sys, [], (0.0, 1.0))
@@ -89,7 +90,7 @@ masses_static_prob = ODEProblem{false}(masses_sys, SA[], (0.0, 1.0))
 # RL Network Parameters
 R_rl, L_rl = 1.0, 1.0
 
-# System matrices from DAEV repository  
+# System matrices from DAEV repository
 E_rl = [0 0 0
         0 0 0
         0 0 L_rl]
@@ -114,7 +115,7 @@ u(t) = 1.0
 # E*Dx = A*x + B*u
 rl_eqs = E_rl * Dx ~ A_rl * x + B_rl .* u(t)
 
-@mtkbuild rl_sys = ODESystem(rl_eqs, t)
+@mtkcompile rl_sys = System(rl_eqs, t)
 
 # Problems using current source input
 rl_prob = ODEProblem(rl_sys, [v_L => 1.0], (0.0, 1.0))
@@ -144,7 +145,7 @@ A_cart = [0 0 0 1 0 0 0
 B_cart = [0; 0; 0; 1; 0; 0; 0]
 C_cart = [1 0 0 0 0 0 0; 0 0 1 0 0 0 0]
 
-# ModelingToolkit formulation using E*Dx = A*x + B*u  
+# ModelingToolkit formulation using E*Dx = A*x + B*u
 @variables x_cart(t)=0.0 y_cart(t)=0.0 φ_cart(t)=0.1
 @variables dx_cart(t)=0.0 dy_cart(t)=0.0 dφ_cart(t)=0.0 λ_cart(t)=0.0
 
@@ -158,7 +159,7 @@ u(t) = 1.0 * exp(-t)  # Decaying force input
 # E*Dx = A*x + B*u
 cart_eqs = E_cart * Dx ~ A_cart * x + B_cart .* u(t)
 
-@mtkbuild cart_sys = ODESystem(cart_eqs, t)
+@mtkcompile cart_sys = System(cart_eqs, t)
 
 # Problems using force input
 cart_prob = ODEProblem(cart_sys, [dy_cart => 0.0, y_cart => 0.0], (0.0, 1.0))
@@ -167,18 +168,26 @@ cart_static_prob = ODEProblem{false}(cart_sys, SA[dy_cart => 0.0, y_cart => 0.0]
 
 
 # Electric Generator Parameters
-J_gen, L_gen, R1_gen, R2_gen, k_gen = 1.0, 1.0, 1.0, 1.0, 1.0
+J_gen = 1.0    # rotor inertia
+R1_gen = 1.0   # winding resistance
+R2_gen = 1.0   # load resistance
+k_gen = 1.0    # back-EMF / torque constant
 
-# System matrices (simplified 4x4 version)
+# System matrices (4x4)
+# State: [ω, i, v_emf, v_load]
+# Row 1  (differential): J*dω/dt = -k*i + u(t)
+# Row 2  (algebraic):    0 = k*ω - v_emf
+# Row 3  (algebraic):    0 = v_emf - R1*i - v_load
+# Row 4  (algebraic):    0 = v_load - R2*i
 E_gen = [J_gen 0 0 0
          0 0 0 0
          0 0 0 0
          0 0 0 0]
 
-A_gen = [0 0 0 0
-         0 0 0 1
-         0 0 0 -R2_gen
-         0 -k_gen 1 0]
+A_gen = [0      -k_gen  0   0
+         k_gen   0     -1   0
+         0      -R1_gen 1  -1
+         0      -R2_gen 0   1]
 
 B_gen = [1; 0; 0; 0]
 C_gen = [1 0 0 0; 0 0 0 1]
@@ -196,7 +205,7 @@ u(t) = 1.0 + 0.5*cos(2π*t)  # Oscillating torque
 # E*Dx = A*x + B*u
 gen_eqs = E_gen * Dx ~ A_gen * x + B_gen .* u(t)
 
-@mtkbuild gen_sys = ODESystem(gen_eqs, t)
+@mtkcompile gen_sys = System(gen_eqs, t)
 
 # Problems using torque input
 gen_prob = ODEProblem(gen_sys, [ω_gen => 1.0], (0.0, 1.0))
@@ -255,7 +264,7 @@ u(t) = ifelse((t < 0.1), 10.0, 0.1*exp(-5*t))  # Initial impulse then decay
 # E*Dx = A*x + B*u
 spring_eqs = E_spring_5 * Dx ~ A_spring_5 * x + B_spring_5 .* u(t)
 
-@mtkbuild spring_sys = ODESystem(spring_eqs, t)
+@mtkcompile spring_sys = System(spring_eqs, t)
 
 # Problems using force input
 spring_prob = ODEProblem(spring_sys, [λ_spring => 0.0, v1_spring => 1.0], (0.0, 20.0))
@@ -331,6 +340,7 @@ setups_rlc = [
     Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
     Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
@@ -346,6 +356,7 @@ setups_masses = [
     #Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
     Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
@@ -362,6 +373,7 @@ setups_rl = [
     #Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
     Dict(:prob_choice => 2, :alg=>Rodas5P()),
 ]
@@ -378,6 +390,7 @@ setups_cart = [
     #Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
     Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
@@ -393,6 +406,7 @@ setups_gen = [
     Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
     Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
@@ -408,6 +422,7 @@ setups_spring = [
     #Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>Rodas4()),
     Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
@@ -427,6 +442,7 @@ all_setups = [
     #Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
 
@@ -449,6 +465,7 @@ high_setups = [
     #Dict(:prob_choice => 1, :alg=>CVODE_BDF()),
     Dict(:prob_choice => 1, :alg=>FBDF()),
     Dict(:prob_choice => 1, :alg=>QNDF()),
+    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
     Dict(:prob_choice => 2, :alg=>Rodas5P())
 ]
 

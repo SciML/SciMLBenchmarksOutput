@@ -1,5 +1,7 @@
 
 using OrdinaryDiffEq, Sundials, DiffEqDevTools, ModelingToolkit, Plots
+using OrdinaryDiffEqBDF
+using OrdinaryDiffEqRosenbrock
 using LinearAlgebra
 using ModelingToolkit: t_nounits as t, D_nounits as D
 
@@ -423,7 +425,7 @@ eqs = vcat(
      0 ~ φ1 - OMEGA*t]
 )
 
-@mtkbuild sys = ODESystem(eqs, t)
+@mtkcompile sys = System(eqs, t)
 prob_mtk = ODEProblem(sys, [], tspan; warn_initialize_determined = false)
 println("MTK index-reduced: $(length(ModelingToolkit.unknowns(sys))) states ",
         "(from 17 original)")
@@ -487,8 +489,9 @@ setups = [
     Dict(:prob_choice => 3, :alg => Rodas5P()),
     Dict(:prob_choice => 3, :alg => Rodas4P()),
     Dict(:prob_choice => 3, :alg => FBDF()),
+    Dict(:prob_choice => 3, :alg => NordsieckBDF()),
 ]
-labels = ["IDA (DAE)" "Rodas5P (MTK)" "Rodas4P (MTK)" "Rodas5P (MM)" "Rodas4P (MM)" "FBDF (MM)"]
+labels = ["IDA (DAE)" "Rodas5P (MTK)" "Rodas4P (MTK)" "Rodas5P (MM)" "Rodas4P (MM)" "FBDF (MM)" "NordsieckBDF (MM)"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     names = labels, appxsol = refs, save_everystep = false,
