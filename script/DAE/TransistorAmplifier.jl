@@ -1,4 +1,3 @@
-
 using DiffEqDevTools, ODEInterfaceDiffEq, Plots
 using OrdinaryDiffEq
 using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock
@@ -11,22 +10,22 @@ using LinearAlgebra
 const Ub = 6.0
 const UF = 0.026
 const α = 0.99
-const β = 1e-6
-const R₀ = 1e3
-const R₁ = 9e3
-const R₂ = 9e3
-const R₃ = 9e3
-const R₄ = 9e3
-const R₅ = 9e3
-const R₆ = 9e3
-const R₇ = 9e3
-const R₈ = 9e3
-const R₉ = 9e3
-const C₁ = 1e-6
-const C₂ = 2e-6
-const C₃ = 3e-6
-const C₄ = 4e-6
-const C₅ = 5e-6
+const β = 1.0e-6
+const R₀ = 1.0e3
+const R₁ = 9.0e3
+const R₂ = 9.0e3
+const R₃ = 9.0e3
+const R₄ = 9.0e3
+const R₅ = 9.0e3
+const R₆ = 9.0e3
+const R₇ = 9.0e3
+const R₈ = 9.0e3
+const R₉ = 9.0e3
+const C₁ = 1.0e-6
+const C₂ = 2.0e-6
+const C₃ = 3.0e-6
+const C₄ = 4.0e-6
+const C₅ = 5.0e-6
 
 tspan = (0.0, 0.2)
 
@@ -43,20 +42,22 @@ function transamp(du, u, p, t)
     du[6] = -g(y₅ - y₆) + y₆ / R₇
     du[7] = -Ub / R₈ + y₇ / R₈ + α * g(y₅ - y₆)
     du[8] = y₈ / R₉
-    nothing
+    return nothing
 end
 
-dirMassMatrix = [-C₁ C₁ 0 0 0 0 0 0
-                 C₁ -C₁ 0 0 0 0 0 0
-                 0 0 -C₂ 0 0 0 0 0
-                 0 0 0 -C₃ C₃ 0 0 0
-                 0 0 0 C₃ -C₃ 0 0 0
-                 0 0 0 0 0 -C₄ 0 0
-                 0 0 0 0 0 0 -C₅ C₅
-                 0 0 0 0 0 0 C₅ -C₅]
+dirMassMatrix = [
+    -C₁ C₁ 0 0 0 0 0 0
+    C₁ -C₁ 0 0 0 0 0 0
+    0 0 -C₂ 0 0 0 0 0
+    0 0 0 -C₃ C₃ 0 0 0
+    0 0 0 C₃ -C₃ 0 0 0
+    0 0 0 0 0 -C₄ 0 0
+    0 0 0 0 0 0 -C₅ C₅
+    0 0 0 0 0 0 C₅ -C₅
+]
 mmf = ODEFunction(transamp, mass_matrix = dirMassMatrix)
 mmprob = ODEProblem(mmf, [0.0, 3.0, 3.0, 6.0, 3.0, 3.0, 6.0, 0.0], tspan)
-mm_refsol = solve(mmprob, Rodas5(), reltol = 1e-12, abstol = 1e-12)
+mm_refsol = solve(mmprob, Rodas5(), reltol = 1.0e-12, abstol = 1.0e-12)
 
 probs = [mmprob]
 refs = [mm_refsol]
@@ -68,7 +69,8 @@ plot(mm_refsol)
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
 # Rosenbrock23 requires a diagonal mass matrix; this M is non-diagonal.
-setups = [Dict(:alg => Rodas4()),
+setups = [
+    Dict(:alg => Rodas4()),
     Dict(:alg => FBDF()),
     Dict(:alg => QNDF()),
     Dict(:alg => NordsieckBDF()),
@@ -77,54 +79,66 @@ setups = [Dict(:alg => Rodas4()),
     Dict(:alg => RadauIIA5()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (6:8)
 reltols = 1.0 ./ 10.0 .^ (2:4);
-setups = [Dict(:alg => Rodas4()),
+setups = [
+    Dict(:alg => Rodas4()),
     Dict(:alg => Rodas5P()),
     Dict(:alg => FBDF()),
     Dict(:alg => QNDF()),
     Dict(:alg => NordsieckBDF()),
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
-setups = [Dict(:alg => Rodas4()),
+setups = [
+    Dict(:alg => Rodas4()),
     Dict(:alg => FBDF()),
     Dict(:alg => QNDF()),
     Dict(:alg => NordsieckBDF()),
     Dict(:alg => radau()),
     Dict(:alg => RadauIIA5()),
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (6:8)
 reltols = 1.0 ./ 10.0 .^ (2:4);
-setups = [Dict(:alg => Rodas4()),
+setups = [
+    Dict(:alg => Rodas4()),
     Dict(:alg => Rodas5P()),
     Dict(:alg => FBDF()),
     Dict(:alg => NordsieckBDF()),
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (7:12)
 reltols = 1.0 ./ 10.0 .^ (4:9)
 
-setups = [Dict(:alg => Rodas5P()),
+setups = [
+    Dict(:alg => Rodas5P()),
     Dict(:alg => Rodas4()),
     Dict(:alg => FBDF()),
     Dict(:alg => QNDF()),
@@ -133,16 +147,19 @@ setups = [Dict(:alg => Rodas5P()),
     Dict(:alg => RadauIIA5()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
-

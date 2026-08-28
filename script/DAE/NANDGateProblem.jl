@@ -1,6 +1,5 @@
-
 using OrdinaryDiffEq, DiffEqDevTools, ModelingToolkit, ODEInterfaceDiffEq,
-      Plots, Sundials, DASSL, DASKR
+    Plots, Sundials, DASSL, DASKR
 using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock
 using LinearAlgebra
 using ModelingToolkit: t_nounits as t, D_nounits as D
@@ -10,13 +9,13 @@ const RGS = 4.0
 const RGD = 4.0
 const RBS = 10.0
 const RBD = 10.0
-const CGS = 6e-5
-const CGD = 6e-5
+const CGS = 6.0e-5
+const CGD = 6.0e-5
 const CBD = 2.4e-5
 const CBS = 2.4e-5
-const C9 = 5e-5
+const C9 = 5.0e-5
 const DELTA = 0.02
-const CURIS = 1e-14
+const CURIS = 1.0e-14
 const VTH = 25.85
 const VDD = 5.0
 const VBB = -2.5
@@ -62,9 +61,9 @@ end
 function V2_derivative(t)
     t_mod = mod(t, 40.0)
     if 0.0 < t_mod < 15.0
-        return 1.0/15.0
+        return 1.0 / 15.0
     elseif 20.0 < t_mod < 35.0
-        return -1.0/15.0
+        return -1.0 / 15.0
     else
         return 0.0
     end
@@ -77,8 +76,8 @@ function gdsp(ned, vds, vgs, vbs)
     else
         vt0, cgamma, phi, beta = VT0_ENH, CGAMMA_ENH, PHI_ENH, BETA_ENH
     end
-    phi_vbs = max(phi - vbs, 1e-12)
-    phi_safe = max(phi, 1e-12)
+    phi_vbs = max(phi - vbs, 1.0e-12)
+    phi_safe = max(phi, 1.0e-12)
     vte = vt0 + cgamma * (sqrt(phi_vbs) - sqrt(phi_safe))
     if vgs - vte <= 0.0
         return 0.0
@@ -97,8 +96,8 @@ function gdsm(ned, vds, vgd, vbd)
     else
         vt0, cgamma, phi, beta = VT0_ENH, CGAMMA_ENH, PHI_ENH, BETA_ENH
     end
-    phi_vbd = max(phi - vbd, 1e-12)
-    phi_safe = max(phi, 1e-12)
+    phi_vbd = max(phi - vbd, 1.0e-12)
+    phi_safe = max(phi, 1.0e-12)
     vte = vt0 + cgamma * (sqrt(phi_vbd) - sqrt(phi_safe))
     if vgd - vte <= 0.0
         return 0.0
@@ -189,7 +188,7 @@ y0 = [5.0, 5.0, VBB, VBB, 5.0, 3.62385, 5.0, VBB, VBB, 3.62385, 0.0, 3.62385, VB
 tspan = (0.0, 80.0)
 
 # Mass matrix problem (original approach)
-mmf = ODEFunction(nand_rhs!, mass_matrix=dirMassMatrix)
+mmf = ODEFunction(nand_rhs!, mass_matrix = dirMassMatrix)
 mmprob = ODEProblem(mmf, y0, tspan)
 
 # DAEProblem version using direct DAE formulation
@@ -234,130 +233,146 @@ du0_dae = zeros(14)
 daeprob = DAEProblem(nand_dae!, du0_dae, y0, tspan)
 
 # Generate reference solutions
-ref_sol = solve(mmprob, Rodas5P(), abstol=1e-12, reltol=1e-12, tstops=0.0:5.0:80.0)
-dae_ref_sol = solve(daeprob, DASKR.daskr(), abstol=1e-10, reltol=1e-10)
+ref_sol = solve(mmprob, Rodas5P(), abstol = 1.0e-12, reltol = 1.0e-12, tstops = 0.0:5.0:80.0)
+dae_ref_sol = solve(daeprob, DASKR.daskr(), abstol = 1.0e-10, reltol = 1.0e-10)
 
 probs = [mmprob, daeprob]
 refs = [ref_sol, dae_ref_sol]
 
 
-plot(ref_sol, title="NAND Gate Circuit - Node Potentials (Mass Matrix)",
-     xlabel="Time", ylabel="Voltage (V)", legend=:outertopright)
+plot(
+    ref_sol, title = "NAND Gate Circuit - Node Potentials (Mass Matrix)",
+    xlabel = "Time", ylabel = "Voltage (V)", legend = :outertopright
+)
 
 
-plot(dae_ref_sol, title="NAND Gate Circuit - Node Potentials (DAE)",
-     xlabel="Time", ylabel="Voltage (V)", legend=:outertopright)
-
-
-abstols = 1.0 ./ 10.0 .^ (5:8)
-reltols = 1.0 ./ 10.0 .^ (1:4)
-
-setups = [
-    Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 1, :alg=>FBDF()),
-    Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
-    Dict(:prob_choice => 1, :alg=>radau()),
-    Dict(:prob_choice => 1, :alg=>RadauIIA5()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 2, :alg=>DASKR.daskr())
-]
-
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-                      save_everystep=false, appxsol=refs,
-                      maxiters=Int(1e5), numruns=10,
-                      tstops=0.0:5.0:80.0)
-plot(wp, title="NAND Gate DAE - Work-Precision (High Tolerances)")
-
-
-abstols = 1.0 ./ 10.0 .^ (6:8)
-reltols = 1.0 ./ 10.0 .^ (2:4)
-
-setups = [
-    Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
-    Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 1, :alg=>Rodas5P()),
-    Dict(:prob_choice => 1, :alg=>FBDF()),
-    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 2, :alg=>DASKR.daskr())
-]
-
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-                      save_everystep=false, appxsol=refs,
-                      maxiters=Int(1e5), numruns=10,
-                      tstops=0.0:5.0:80.0)
-plot(wp, title="NAND Gate DAE - Work-Precision (Medium Tolerances)")
+plot(
+    dae_ref_sol, title = "NAND Gate Circuit - Node Potentials (DAE)",
+    xlabel = "Time", ylabel = "Voltage (V)", legend = :outertopright
+)
 
 
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
 setups = [
-    Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
-    Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 1, :alg=>FBDF()),
-    Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
-    Dict(:prob_choice => 1, :alg=>radau()),
-    Dict(:prob_choice => 1, :alg=>RadauIIA5()),
-    Dict(:prob_choice => 2, :alg=>IDA())
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
+    Dict(:prob_choice => 1, :alg => radau()),
+    Dict(:prob_choice => 1, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate=:l2,
-                      save_everystep=false, appxsol=refs,
-                      maxiters=Int(1e5), numruns=10,
-                      tstops=0.0:5.0:80.0)
-plot(wp, title="NAND Gate DAE - Timeseries Errors (High Tolerances)")
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs,
+    maxiters = Int(1.0e5), numruns = 10,
+    tstops = 0.0:5.0:80.0
+)
+plot(wp, title = "NAND Gate DAE - Work-Precision (High Tolerances)")
 
 
 abstols = 1.0 ./ 10.0 .^ (6:8)
 reltols = 1.0 ./ 10.0 .^ (2:4)
 
 setups = [
-    Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
-    Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 1, :alg=>Rodas5P()),
-    Dict(:prob_choice => 1, :alg=>FBDF()),
-    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 2, :alg=>DASKR.daskr())
+    Dict(:prob_choice => 1, :alg => Rosenbrock23()),
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => Rodas5P()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate=:l2,
-                      save_everystep=false, appxsol=refs,
-                      maxiters=Int(1e5), numruns=10,
-                      tstops=0.0:5.0:80.0)
-plot(wp, title="NAND Gate DAE - Timeseries Errors (Medium Tolerances)")
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs,
+    maxiters = Int(1.0e5), numruns = 10,
+    tstops = 0.0:5.0:80.0
+)
+plot(wp, title = "NAND Gate DAE - Work-Precision (Medium Tolerances)")
+
+
+abstols = 1.0 ./ 10.0 .^ (5:8)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [
+    Dict(:prob_choice => 1, :alg => Rosenbrock23()),
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
+    Dict(:prob_choice => 1, :alg => radau()),
+    Dict(:prob_choice => 1, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+]
+
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs,
+    maxiters = Int(1.0e5), numruns = 10,
+    tstops = 0.0:5.0:80.0
+)
+plot(wp, title = "NAND Gate DAE - Timeseries Errors (High Tolerances)")
+
+
+abstols = 1.0 ./ 10.0 .^ (6:8)
+reltols = 1.0 ./ 10.0 .^ (2:4)
+
+setups = [
+    Dict(:prob_choice => 1, :alg => Rosenbrock23()),
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => Rodas5P()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
+]
+
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs,
+    maxiters = Int(1.0e5), numruns = 10,
+    tstops = 0.0:5.0:80.0
+)
+plot(wp, title = "NAND Gate DAE - Timeseries Errors (Medium Tolerances)")
 
 
 abstols = 1.0 ./ 10.0 .^ (7:12)
 reltols = 1.0 ./ 10.0 .^ (4:9)
 
 setups = [
-    Dict(:prob_choice => 1, :alg=>Rodas5P()),
-    Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 1, :alg=>FBDF()),
-    Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
-    Dict(:prob_choice => 1, :alg=>radau()),
-    Dict(:prob_choice => 1, :alg=>RadauIIA5()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 2, :alg=>DASKR.daskr())
+    Dict(:prob_choice => 1, :alg => Rodas5P()),
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
+    Dict(:prob_choice => 1, :alg => radau()),
+    Dict(:prob_choice => 1, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-                      save_everystep=false, appxsol=refs,
-                      maxiters=Int(1e5), numruns=10,
-                      tstops=0.0:5.0:80.0)
-plot(wp, title="NAND Gate DAE - Work-Precision (Low Tolerances)")
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs,
+    maxiters = Int(1.0e5), numruns = 10,
+    tstops = 0.0:5.0:80.0
+)
+plot(wp, title = "NAND Gate DAE - Work-Precision (Low Tolerances)")
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate=:l2,
-                      save_everystep=false, appxsol=refs,
-                      maxiters=Int(1e5), numruns=10,
-                      tstops=0.0:5.0:80.0)
-plot(wp, title="NAND Gate DAE - Timeseries Errors (Low Tolerances)")
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs,
+    maxiters = Int(1.0e5), numruns = 10,
+    tstops = 0.0:5.0:80.0
+)
+plot(wp, title = "NAND Gate DAE - Timeseries Errors (Low Tolerances)")
 
 
 # Original 14-variable system: y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14
@@ -366,13 +381,16 @@ node_names = ["Node 1", "Node 5", "Node 6", "Node 10", "Node 11", "Node 12"]
 
 p_nodes = plot()
 for (i, node) in enumerate(key_nodes)
-    plot!(ref_sol.t, [u[node] for u in ref_sol.u],
-          label=node_names[i], linewidth=2)
+    plot!(
+        ref_sol.t, [u[node] for u in ref_sol.u],
+        label = node_names[i], linewidth = 2
+    )
 end
-plot!(p_nodes, title="NAND Gate - Key Node Potentials",
-      xlabel="Time (s)", ylabel="Voltage (V)", legend=:outertopright)
+plot!(
+    p_nodes, title = "NAND Gate - Key Node Potentials",
+    xlabel = "Time (s)", ylabel = "Voltage (V)", legend = :outertopright
+)
 
 
 using SciMLBenchmarks
-SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
-
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])

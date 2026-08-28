@@ -1,20 +1,19 @@
-
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ModelingToolkit, ODEInterfaceDiffEq,
-      Plots, DASSL, DASKR
+    Plots, DASSL, DASKR
 using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 using LinearAlgebra
 using ModelingToolkit: t_nounits as t, D_nounits as D
 
 ModelingToolkit.@parameters begin
-    k₁=18.7
-    k₂=0.58
-    k₃=0.09
-    k₄=0.42
-    kbig=34.4
-    kla=3.3
-    ks=115.83
-    po2=0.9
-    hen=737
+    k₁ = 18.7
+    k₂ = 0.58
+    k₃ = 0.09
+    k₄ = 0.42
+    kbig = 34.4
+    kla = 3.3
+    ks = 115.83
+    po2 = 0.9
+    hen = 737
 end
 
 @variables begin
@@ -23,22 +22,24 @@ end
     y₃(t) = 0.0
     y₄(t) = 0.007
     y₅(t) = 1.0
-    y₆(t) = 115.83*0.444*0.007 # ks*y₁*y₄
+    y₆(t) = 115.83 * 0.444 * 0.007 # ks*y₁*y₄
 end
 
 r₁ = k₁ * (y₁^4.0) * sqrt(abs(y₂))
 r₂ = k₂ * y₃ * y₄
-r₃ = k₂/kbig * y₁ * y₅
-r₄ = k₃*y₁*(y₄^2)
-r₅ = k₄*(y₆^2)*sqrt(abs(y₂))
-fin = kla*(po2/hen-y₂)
+r₃ = k₂ / kbig * y₁ * y₅
+r₄ = k₃ * y₁ * (y₄^2)
+r₅ = k₄ * (y₆^2) * sqrt(abs(y₂))
+fin = kla * (po2 / hen - y₂)
 
-eqs = [D(y₁) ~ -2.0 * r₁ + r₂ - r₃ - r₄
-       D(y₂) ~ -0.5 * r₁ - r₄ - 0.5*r₅ + fin
-       D(y₃) ~ r₁ - r₂ + r₃
-       D(y₄) ~ -r₂ + r₃ - 2.0 * r₄
-       D(y₅) ~ r₂ - r₃ + r₅
-       0.0 ~ ks * y₁ * y₄ - y₆]
+eqs = [
+    D(y₁) ~ -2.0 * r₁ + r₂ - r₃ - r₄
+    D(y₂) ~ -0.5 * r₁ - r₄ - 0.5 * r₅ + fin
+    D(y₃) ~ r₁ - r₂ + r₃
+    D(y₄) ~ -r₂ + r₃ - 2.0 * r₄
+    D(y₅) ~ r₂ - r₃ + r₅
+    0.0 ~ ks * y₁ * y₄ - y₆
+]
 
 # @mtkcompile drops y₆ (algebraic). Residual DAE form is hand-written so IDA
 # runs on the original 6-variable index-1 system (MTK DAEProblem + IDA hits a
@@ -77,7 +78,7 @@ function akzo(du, u, p, t)
     du[4] = -r₂ + r₃ - 2.0 * r₄
     du[5] = r₂ - r₃ + r₅
     du[6] = ks * y₁ * y₄ - y₆
-    nothing
+    return nothing
 end
 
 function akzo_dae!(res, du, u, p, t)
@@ -105,22 +106,24 @@ function akzo_dae!(res, du, u, p, t)
     res[4] = du[4] - (-r₂ + r₃ - 2.0 * r₄)
     res[5] = du[5] - (r₂ - r₃ + r₅)
     res[6] = ks * y₁ * y₄ - y₆
-    nothing
+    return nothing
 end
 
 u0_akzo = [0.444, 0.00123, 0.0, 0.007, 1.0, 115.83 * 0.444 * 0.007]
 du0_akzo = zeros(6)
 akzo(du0_akzo, u0_akzo, nothing, 0.0)
 du0_akzo[6] = 0.0
-daeprob = DAEProblem(akzo_dae!, du0_akzo, u0_akzo, tspan;
-    differential_vars = [true, true, true, true, true, false])
+daeprob = DAEProblem(
+    akzo_dae!, du0_akzo, u0_akzo, tspan;
+    differential_vars = [true, true, true, true, true, false]
+)
 ref_sol = solve(daeprob, IDA(), abstol = 1 / 10^14, reltol = 1 / 10^14)
 
 M = Matrix{Float64}(I, 6, 6)
 M[6, 6] = 0
 mmf = ODEFunction(akzo, mass_matrix = M)
 mmprob = ODEProblem(mmf, u0_akzo, tspan)
-mm_refsol = solve(mmprob, Rodas5(), reltol = 1e-12, abstol = 1e-12)
+mm_refsol = solve(mmprob, Rodas5(), reltol = 1.0e-12, abstol = 1.0e-12)
 
 # mtkprob/odaeprob are the 5-state reduced ODE; daeprob/mmprob are the
 # original 6-state index-1 form. Pair each with a matching reference.
@@ -136,120 +139,139 @@ plot(mm_refsol)
 
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
-setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
-    Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 1, :alg=>FBDF()),
-    Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
-    Dict(:prob_choice => 1, :alg=>rodas()),
-    Dict(:prob_choice => 1, :alg=>radau()),
-    Dict(:prob_choice => 1, :alg=>RadauIIA5()),
-    Dict(:prob_choice => 2, :alg=>DFBDF()),
-    Dict(:prob_choice => 2, :alg=>DNordsieckBDF()),
-    Dict(:prob_choice => 2, :alg=>IDA())
+setups = [
+    Dict(:prob_choice => 1, :alg => Rosenbrock23()),
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
+    Dict(:prob_choice => 1, :alg => rodas()),
+    Dict(:prob_choice => 1, :alg => radau()),
+    Dict(:prob_choice => 1, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => DFBDF()),
+    Dict(:prob_choice => 2, :alg => DNordsieckBDF()),
+    Dict(:prob_choice => 2, :alg => IDA()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (6:8)
 reltols = 1.0 ./ 10.0 .^ (2:4);
-setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
-    Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 3, :alg=>Rosenbrock23()),
-    Dict(:prob_choice => 3, :alg=>Rodas4()),
-    Dict(:prob_choice => 3, :alg=>CVODE_BDF()),
-    Dict(:prob_choice => 3, :alg=>TRBDF2()),
-    Dict(:prob_choice => 3, :alg=>KenCarp4()),
-    Dict(:prob_choice => 4, :alg=>Rodas4())
+setups = [
+    Dict(:prob_choice => 1, :alg => Rosenbrock23()),
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 3, :alg => Rosenbrock23()),
+    Dict(:prob_choice => 3, :alg => Rodas4()),
+    Dict(:prob_choice => 3, :alg => CVODE_BDF()),
+    Dict(:prob_choice => 3, :alg => TRBDF2()),
+    Dict(:prob_choice => 3, :alg => KenCarp4()),
+    Dict(:prob_choice => 4, :alg => Rodas4()),
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (6:8)
 reltols = 1.0 ./ 10.0 .^ (3:5);
-setups = [Dict(:prob_choice => 3, :alg=>Rosenbrock23()),
-    Dict(:prob_choice => 3, :alg=>Rodas4()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 2, :alg=>DASSL.dassl()),
-    Dict(:prob_choice => 2, :alg=>DASKR.daskr())
+setups = [
+    Dict(:prob_choice => 3, :alg => Rosenbrock23()),
+    Dict(:prob_choice => 3, :alg => Rodas4()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASSL.dassl()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (1:4);
-setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
-    Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 1, :alg=>FBDF()),
-    Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
-    Dict(:prob_choice => 1, :alg=>rodas()),
-    Dict(:prob_choice => 1, :alg=>radau()),
-    Dict(:prob_choice => 1, :alg=>RadauIIA5()),
-    Dict(:prob_choice => 2, :alg=>DFBDF()),
-    Dict(:prob_choice => 2, :alg=>DNordsieckBDF()),
-    Dict(:prob_choice => 2, :alg=>IDA())
+setups = [
+    Dict(:prob_choice => 1, :alg => Rosenbrock23()),
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
+    Dict(:prob_choice => 1, :alg => rodas()),
+    Dict(:prob_choice => 1, :alg => radau()),
+    Dict(:prob_choice => 1, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => DFBDF()),
+    Dict(:prob_choice => 2, :alg => DNordsieckBDF()),
+    Dict(:prob_choice => 2, :alg => IDA()),
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (6:8)
 reltols = 1.0 ./ 10.0 .^ (2:4);
-setups = [Dict(:prob_choice => 1, :alg=>Rosenbrock23()),
-    Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 3, :alg=>Rosenbrock23()),
-    Dict(:prob_choice => 3, :alg=>Rodas4()),
-    Dict(:prob_choice => 3, :alg=>CVODE_BDF()),
-    Dict(:prob_choice => 3, :alg=>TRBDF2()),
-    Dict(:prob_choice => 3, :alg=>KenCarp4())
+setups = [
+    Dict(:prob_choice => 1, :alg => Rosenbrock23()),
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 3, :alg => Rosenbrock23()),
+    Dict(:prob_choice => 3, :alg => Rodas4()),
+    Dict(:prob_choice => 3, :alg => CVODE_BDF()),
+    Dict(:prob_choice => 3, :alg => TRBDF2()),
+    Dict(:prob_choice => 3, :alg => KenCarp4()),
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (7:12)
 reltols = 1.0 ./ 10.0 .^ (4:9)
 
-setups = [Dict(:prob_choice => 1, :alg=>Rodas5()),
-    Dict(:prob_choice => 3, :alg=>Rodas5()),
-    Dict(:prob_choice => 4, :alg=>Rodas5()),
-    Dict(:prob_choice => 1, :alg=>Rodas4()),
-    Dict(:prob_choice => 3, :alg=>Rodas4()),
-    Dict(:prob_choice => 4, :alg=>Rodas4()),
-    Dict(:prob_choice => 1, :alg=>FBDF()),
-    Dict(:prob_choice => 1, :alg=>QNDF()),
-    Dict(:prob_choice => 1, :alg=>NordsieckBDF()),
-    Dict(:prob_choice => 1, :alg=>rodas()),
-    Dict(:prob_choice => 1, :alg=>radau()),
-    Dict(:prob_choice => 1, :alg=>RadauIIA5()),
-    Dict(:prob_choice => 2, :alg=>DFBDF()),
-    Dict(:prob_choice => 2, :alg=>DNordsieckBDF()),
-    Dict(:prob_choice => 2, :alg=>IDA()),
-    Dict(:prob_choice => 2, :alg=>DASKR.daskr())
+setups = [
+    Dict(:prob_choice => 1, :alg => Rodas5()),
+    Dict(:prob_choice => 3, :alg => Rodas5()),
+    Dict(:prob_choice => 4, :alg => Rodas5()),
+    Dict(:prob_choice => 1, :alg => Rodas4()),
+    Dict(:prob_choice => 3, :alg => Rodas4()),
+    Dict(:prob_choice => 4, :alg => Rodas4()),
+    Dict(:prob_choice => 1, :alg => FBDF()),
+    Dict(:prob_choice => 1, :alg => QNDF()),
+    Dict(:prob_choice => 1, :alg => NordsieckBDF()),
+    Dict(:prob_choice => 1, :alg => rodas()),
+    Dict(:prob_choice => 1, :alg => radau()),
+    Dict(:prob_choice => 1, :alg => RadauIIA5()),
+    Dict(:prob_choice => 2, :alg => DFBDF()),
+    Dict(:prob_choice => 2, :alg => DNordsieckBDF()),
+    Dict(:prob_choice => 2, :alg => IDA()),
+    Dict(:prob_choice => 2, :alg => DASKR.daskr()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 10
+)
 plot(wp)
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
-

@@ -1,48 +1,47 @@
-
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ODEInterfaceDiffEq,
-      Plots, DASSL, DASKR, ModelingToolkit
+    Plots, DASSL, DASKR, ModelingToolkit
 using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock
 using ModelingToolkit: t_nounits as t, D_nounits as D
 using LinearAlgebra
 
 
-const MR    = 16.08       # mass of wheelset [kg]
-const GG    = 9.81        # gravitational acceleration [m/s²]
-const V0    = 30.0        # nominal velocity [m/s]
-const RN0   = 0.1         # nominal rolling radius [m]
-const LI1   = 0.0605      # lateral moment of inertia [kg·m²]
-const LI2   = 0.366       # vertical moment of inertia [kg·m²]
-const MA    = 0.0          # mass of wagon body [kg]
-const HA    = 0.2          # height of wagon body [m]
-const MU    = 0.12         # friction coefficient
-const XL    = 0.19         # width of wheelset / 2 [m]
-const CX    = 6400.0       # lateral spring constant [N/m]
-const CZ    = 6400.0       # longitudinal spring constant [N/m]
-const FA0   = 0.0          # propulsion force [N]
-const LA0   = 0.0          # propulsion moment [kg·m²]
+const MR = 16.08       # mass of wheelset [kg]
+const GG = 9.81        # gravitational acceleration [m/s²]
+const V0 = 30.0        # nominal velocity [m/s]
+const RN0 = 0.1         # nominal rolling radius [m]
+const LI1 = 0.0605      # lateral moment of inertia [kg·m²]
+const LI2 = 0.366       # vertical moment of inertia [kg·m²]
+const MA = 0.0          # mass of wagon body [kg]
+const HA = 0.2          # height of wagon body [m]
+const MU = 0.12         # friction coefficient
+const XL = 0.19         # width of wheelset / 2 [m]
+const CX = 6400.0       # lateral spring constant [N/m]
+const CZ = 6400.0       # longitudinal spring constant [N/m]
+const FA0 = 0.0          # propulsion force [N]
+const LA0 = 0.0          # propulsion moment [kg·m²]
 const ALPHA0 = 0.0         # track geometry parameter [rad]
-const S0    = 0.0          # track curvature parameter
+const S0 = 0.0          # track curvature parameter
 const OMEGA0 = V0 / RN0   # nominal angular velocity [1/s]
 
 # Wheel profile constants
 const DELTA0 = 0.0262      # cone angle / 2 [rad]
-const AR     = 0.1506      # gauge / 2 [m]
+const AR = 0.1506      # gauge / 2 [m]
 const TAN_D0 = tan(DELTA0)
 const SIN_D0 = sin(DELTA0)
 const COS_D0 = cos(DELTA0)
 
 # Rail profile constants
-const RS     = 0.06        # rail radius [m]
-const SIR    = SIN_D0 * RS
+const RS = 0.06        # rail radius [m]
+const SIR = SIN_D0 * RS
 
 # Creep force constants
-const E_CRP  = 1.3537956    # parameter for contact ellipse
-const G_CRP  = 0.7115218    # parameter for contact ellipse
-const SIGMA  = 0.28         # Poisson-like parameter
-const GM     = 7.92e10      # glide module [N/m²]
-const C11    = 4.72772197   # Kalker coefficient
-const C22    = 4.27526987   # Kalker coefficient
-const C23    = 1.97203505   # Kalker coefficient
+const E_CRP = 1.3537956    # parameter for contact ellipse
+const G_CRP = 0.7115218    # parameter for contact ellipse
+const SIGMA = 0.28         # Poisson-like parameter
+const GM = 7.92e10      # glide module [N/m²]
+const C11 = 4.72772197   # Kalker coefficient
+const C22 = 4.27526987   # Kalker coefficient
+const C23 = 1.97203505   # Kalker coefficient
 
 # Scaling factor for Lagrange multipliers
 const C_SCALE = 1.0e4
@@ -52,8 +51,8 @@ const TOL_CONTACT = 1.0e-8  # tolerance for contact determinant
 
 function wheelp(x)
     xabs = abs(x)
-    rx   = RN0 + TAN_D0 * (AR - xabs)
-    drx  = sign(x) * (-TAN_D0)
+    rx = RN0 + TAN_D0 * (AR - xabs)
+    drx = sign(x) * (-TAN_D0)
     d2rx = 0.0
     d3rx = 0.0
     return rx, drx, d2rx, d3rx
@@ -83,69 +82,85 @@ function constm(xr, rx, dgx, sit, cot, sip, cop, sips, cops)
 end
 
 
-function creep_forces(y, fnl, fnr, rxl, rxr, drxl, drxr, d2rxl, d2rxr,
-                      dgxl, dgxr, d2gxl, d2gxr, deltal, deltar)
-    xx    = y[1]; yy    = y[2]; zz    = y[3]
-    sip   = sin(y[5]); cop   = cos(y[5])
-    xxp   = y[6]; yyp   = y[7]; zzp   = y[8]
-    tetap = y[9]; phip  = y[10]; betap = y[11]
-    sisl  = sin(y[12]); cosl  = cos(y[12]); xrl = y[13]
-    sisr  = sin(y[14]); cosr  = cos(y[14]); xrr = y[15]
-    sia   = sin(ALPHA0); coa   = cos(ALPHA0)
-    sidl  = sin(deltal); codl  = cos(deltal)
-    sidr  = sin(deltar); codr  = cos(deltar)
-    sitl  = sin(y[4] / codl); cotl  = cos(y[4] / codl)
-    sitr  = sin(y[4] / codr); cotr  = cos(y[4] / codr)
+function creep_forces(
+        y, fnl, fnr, rxl, rxr, drxl, drxr, d2rxl, d2rxr,
+        dgxl, dgxr, d2gxl, d2gxr, deltal, deltar
+    )
+    xx = y[1]; yy = y[2]; zz = y[3]
+    sip = sin(y[5]); cop = cos(y[5])
+    xxp = y[6]; yyp = y[7]; zzp = y[8]
+    tetap = y[9]; phip = y[10]; betap = y[11]
+    sisl = sin(y[12]); cosl = cos(y[12]); xrl = y[13]
+    sisr = sin(y[14]); cosr = cos(y[14]); xrr = y[15]
+    sia = sin(ALPHA0); coa = cos(ALPHA0)
+    sidl = sin(deltal); codl = cos(deltal)
+    sidr = sin(deltar); codr = cos(deltar)
+    sitl = sin(y[4] / codl); cotl = cos(y[4] / codl)
+    sitr = sin(y[4] / codr); cotr = cos(y[4] / codr)
 
     # Contact ellipses — left
-    rr    = rxl * sqrt(1.0 + drxl^2)
-    rhog  = -d2gxl / (1.0 + dgxl^2)^1.5
-    rhor  =  d2rxl / (1.0 + drxl^2)^1.5
-    aa    = 0.5 / rr
-    bb    = 0.5 * (rhog + rhor)
-    wabs  = abs(fnl) * 3.0
-    cl_   = ((wabs * (1.0 - SIGMA) * E_CRP) /
-            (2.0 * π * (aa + bb) * GM * sqrt(G_CRP)))^(1.0 / 3.0)
+    rr = rxl * sqrt(1.0 + drxl^2)
+    rhog = -d2gxl / (1.0 + dgxl^2)^1.5
+    rhor = d2rxl / (1.0 + drxl^2)^1.5
+    aa = 0.5 / rr
+    bb = 0.5 * (rhog + rhor)
+    wabs = abs(fnl) * 3.0
+    cl_ = (
+        (wabs * (1.0 - SIGMA) * E_CRP) /
+            (2.0 * π * (aa + bb) * GM * sqrt(G_CRP))
+    )^(1.0 / 3.0)
 
     # Contact ellipses — right
-    rr    = rxr * sqrt(1.0 + drxr^2)
-    rhog  = -d2gxr / (1.0 + dgxr^2)^1.5
-    rhor  =  d2rxr / (1.0 + drxr^2)^1.5
-    aa    = 0.5 / rr
-    bb    = 0.5 * (rhog + rhor)
-    wabs  = abs(fnr) * 3.0
-    cr_   = ((wabs * (1.0 - SIGMA) * E_CRP) /
-            (2.0 * π * (aa + bb) * GM * sqrt(G_CRP)))^(1.0 / 3.0)
+    rr = rxr * sqrt(1.0 + drxr^2)
+    rhog = -d2gxr / (1.0 + dgxr^2)^1.5
+    rhor = d2rxr / (1.0 + drxr^2)^1.5
+    aa = 0.5 / rr
+    bb = 0.5 * (rhog + rhor)
+    wabs = abs(fnr) * 3.0
+    cr_ = (
+        (wabs * (1.0 - SIGMA) * E_CRP) /
+            (2.0 * π * (aa + bb) * GM * sqrt(G_CRP))
+    )^(1.0 / 3.0)
 
     # Creepage left contact point — relative velocity
     wvk1 = -(OMEGA0 + betap) * rxl * (sitl * cosl + cotl * sip * sisl) +
-            V0 * S0 * coa * (rxl * (sitl * sip * cosl + cotl * sisl) +
-                             xrl * sitl * cop - zz) +
-            xxp - tetap * (rxl * (sitl * sip * cosl + cotl * sisl) +
-                           xrl * sitl * cop) -
-            phip * cotl * (xrl * sip - rxl * cop * cosl)
+        V0 * S0 * coa * (
+        rxl * (sitl * sip * cosl + cotl * sisl) +
+            xrl * sitl * cop - zz
+    ) +
+        xxp - tetap * (
+        rxl * (sitl * sip * cosl + cotl * sisl) +
+            xrl * sitl * cop
+    ) -
+        phip * cotl * (xrl * sip - rxl * cop * cosl)
     wvk2 = (OMEGA0 + betap) * rxl * cop * sisl +
-            V0 * S0 * sia * (zz - xrl * sitl * cop -
-                             rxl * (sitl * sip * cosl + cotl * sisl)) +
-            yyp + phip * (xrl * cop + rxl * sip * cosl)
+        V0 * S0 * sia * (
+        zz - xrl * sitl * cop -
+            rxl * (sitl * sip * cosl + cotl * sisl)
+    ) +
+        yyp + phip * (xrl * cop + rxl * sip * cosl)
     wvk3 = -(OMEGA0 + betap) * rxl * (cotl * cosl - sitl * sip * sisl) + V0 + zzp +
-            V0 * S0 * (xx * coa - yy * sia +
-                       coa * (rxl * (cotl * sip * cosl - sitl * sisl) + xrl * cotl * cop) +
-                       sia * (rxl * cop * cosl - xrl * sip)) -
-            tetap * (xrl * cotl * cop + rxl * (cotl * sip * cosl - sitl * sisl)) +
-            phip * sitl * (xrl * sip - rxl * cop * cosl)
+        V0 * S0 * (
+        xx * coa - yy * sia +
+            coa * (rxl * (cotl * sip * cosl - sitl * sisl) + xrl * cotl * cop) +
+            sia * (rxl * cop * cosl - xrl * sip)
+    ) -
+        tetap * (xrl * cotl * cop + rxl * (cotl * sip * cosl - sitl * sisl)) +
+        phip * sitl * (xrl * sip - rxl * cop * cosl)
 
     # Rolling velocity left
     wvk4 = wvk1 - 2.0 * xxp + 2.0 * V0 * S0 * zz * coa
     wvk5 = wvk2 - 2.0 * yyp - 2.0 * V0 * S0 * zz * sia
     wvk6 = wvk3 - 2.0 * zzp - 2.0 * V0 * S0 * (xx * coa - yy * sia) - 2.0 * V0
-    wvr  = 0.5 * sqrt(wvk4^2 + wvk5^2 + wvk6^2)
+    wvr = 0.5 * sqrt(wvk4^2 + wvk5^2 + wvk6^2)
 
     # Creepage left
-    wnux  = (sitl * wvk1 + cotl * wvk3) / wvr
-    wnuy  = (cotl * codl * wvk1 + sidl * wvk2 - sitl * codl * wvk3) / wvr
-    wphis = (-sidl * (OMEGA0 + betap - V0 * S0 * sia) +
-              codl * (tetap - V0 * S0 * coa)) / wvr
+    wnux = (sitl * wvk1 + cotl * wvk3) / wvr
+    wnuy = (cotl * codl * wvk1 + sidl * wvk2 - sitl * codl * wvk3) / wvr
+    wphis = (
+        -sidl * (OMEGA0 + betap - V0 * S0 * sia) +
+            codl * (tetap - V0 * S0 * coa)
+    ) / wvr
 
     # Creep forces left
     wt_l = MU * fnl
@@ -162,33 +177,43 @@ function creep_forces(y, fnl, fnr, rxl, rxr, drxl, drxr, d2rxl, d2rxr,
 
     # Creepage right contact point — relative velocity
     wvk1 = -(OMEGA0 + betap) * rxr * (sitr * cosr + cotr * sip * sisr) +
-            V0 * S0 * coa * (rxr * (sitr * sip * cosr + cotr * sisr) +
-                             xrr * sitr * cop - zz) +
-            xxp - tetap * (rxr * (sitr * sip * cosr + cotr * sisr) +
-                           xrr * sitr * cop) -
-            phip * cotr * (xrr * sip - rxr * cop * cosr)
+        V0 * S0 * coa * (
+        rxr * (sitr * sip * cosr + cotr * sisr) +
+            xrr * sitr * cop - zz
+    ) +
+        xxp - tetap * (
+        rxr * (sitr * sip * cosr + cotr * sisr) +
+            xrr * sitr * cop
+    ) -
+        phip * cotr * (xrr * sip - rxr * cop * cosr)
     wvk2 = (OMEGA0 + betap) * rxr * cop * sisr +
-            V0 * S0 * sia * (zz - xrr * sitr * cop -
-                             rxr * (sitr * sip * cosr + cotr * sisr)) +
-            yyp + phip * (xrr * cop + rxr * sip * cosr)
+        V0 * S0 * sia * (
+        zz - xrr * sitr * cop -
+            rxr * (sitr * sip * cosr + cotr * sisr)
+    ) +
+        yyp + phip * (xrr * cop + rxr * sip * cosr)
     wvk3 = -(OMEGA0 + betap) * rxr * (cotr * cosr - sitr * sip * sisr) + V0 + zzp +
-            V0 * S0 * (xx * coa - yy * sia +
-                       coa * (rxr * (cotr * sip * cosr - sitr * sisr) + xrr * cotr * cop) +
-                       sia * (rxr * cop * cosr - xrr * sip)) -
-            tetap * (xrr * cotr * cop + rxr * (cotr * sip * cosr - sitr * sisr)) +
-            phip * sitr * (xrr * sip - rxr * cop * cosr)
+        V0 * S0 * (
+        xx * coa - yy * sia +
+            coa * (rxr * (cotr * sip * cosr - sitr * sisr) + xrr * cotr * cop) +
+            sia * (rxr * cop * cosr - xrr * sip)
+    ) -
+        tetap * (xrr * cotr * cop + rxr * (cotr * sip * cosr - sitr * sisr)) +
+        phip * sitr * (xrr * sip - rxr * cop * cosr)
 
     # Rolling velocity right
     wvk4 = wvk1 - 2.0 * xxp + 2.0 * V0 * S0 * zz * coa
     wvk5 = wvk2 - 2.0 * yyp - 2.0 * V0 * S0 * zz * sia
     wvk6 = wvk3 - 2.0 * zzp - 2.0 * V0 * S0 * (xx * coa - yy * sia) - 2.0 * V0
-    wvr  = 0.5 * sqrt(wvk4^2 + wvk5^2 + wvk6^2)
+    wvr = 0.5 * sqrt(wvk4^2 + wvk5^2 + wvk6^2)
 
     # Creepage right
-    wnux  = (sitr * wvk1 + cotr * wvk3) / wvr
-    wnuy  = (cotr * codr * wvk1 - sidr * wvk2 - sitr * codr * wvk3) / wvr
-    wphis = (sidr * (OMEGA0 + betap - V0 * S0 * sia) +
-             codr * (tetap - V0 * S0 * coa)) / wvr
+    wnux = (sitr * wvk1 + cotr * wvk3) / wvr
+    wnuy = (cotr * codr * wvk1 - sidr * wvk2 - sitr * codr * wvk3) / wvr
+    wphis = (
+        sidr * (OMEGA0 + betap - V0 * S0 * sia) +
+            codr * (tetap - V0 * S0 * coa)
+    ) / wvr
 
     # Creep forces right
     wt_r = MU * fnr
@@ -216,27 +241,27 @@ end
 # [16:17] = (λ₁, λ₂) / C                   — scaled Lagrange multipliers
 
 u0 = zeros(17)
-u0[1]  =  0.14941e-2        # x
-u0[2]  =  0.40089e-6        # y
-u0[3]  =  0.11241e-5        # z
-u0[4]  = -0.28573e-3        # θ
-u0[5]  =  0.26459e-3        # φ
+u0[1] = 0.14941e-2        # x
+u0[2] = 0.40089e-6        # y
+u0[3] = 0.11241e-5        # z
+u0[4] = -0.28573e-3        # θ
+u0[5] = 0.26459e-3        # φ
 # u0[6:10] = 0               # velocities
 # u0[11] = 0                  # β̇
 u0[12] = -7.4122380357667139e-6   # ψ_L
 u0[13] = -0.1521364296121248      # ξ_L
-u0[14] =  7.5634406395172940e-6   # ψ_R
-u0[15] =  0.1490635714733819      # ξ_R
+u0[14] = 7.563440639517294e-6   # ψ_R
+u0[15] = 0.1490635714733819      # ξ_R
 u0[16] = -0.83593e-2              # λ₁/C
 u0[17] = -0.74144e-2              # λ₂/C
 
 # Consistent initial derivatives (IVP Test Set reference values)
 du0_ref = zeros(17)
 # du0_ref[1:5] = 0              # dp/dt = v = 0
-du0_ref[6]  = -1.975258894011285      # ẍ
-du0_ref[7]  = -1.0898297102811276e-3  # ÿ
-du0_ref[8]  =  7.8855083626142589e-2  # z̈
-du0_ref[9]  = -5.533362821731549      # θ̈
+du0_ref[6] = -1.975258894011285      # ẍ
+du0_ref[7] = -1.0898297102811276e-3  # ÿ
+du0_ref[8] = 7.8855083626142589e-2  # z̈
+du0_ref[9] = -5.533362821731549      # θ̈
 du0_ref[10] = -0.3487021489546511     # φ̈
 du0_ref[11] = -2.132968724380927      # β̈
 # du0_ref[12:17] = 0             # algebraic variables
@@ -246,29 +271,29 @@ tspan = (0.0, 10.0)
 
 function wheelset_residual!(delta, dy, y)
     # Unpack state — use the internal ordering of reswhs (after swap)
-    xx    = y[1]; yy    = y[2]; zz    = y[3]
-    teta  = y[4]; phi   = y[5]
-    xxp   = y[6]; yyp   = y[7]; zzp   = y[8]
-    tetap = y[9]; phip  = y[10]; betap = y[11]
+    xx = y[1]; yy = y[2]; zz = y[3]
+    teta = y[4]; phi = y[5]
+    xxp = y[6]; yyp = y[7]; zzp = y[8]
+    tetap = y[9]; phip = y[10]; betap = y[11]
     # Lagrange multipliers: y[16]=λ₁/C pairs with RIGHT constraint,
     # y[17]=λ₂/C pairs with LEFT constraint (matching Fortran RESWHS convention)
-    e1    = y[17] * C_SCALE
-    e2    = y[16] * C_SCALE
+    e1 = y[17] * C_SCALE
+    e2 = y[16] * C_SCALE
     # Contact coordinates
-    psil  = y[12]; xrl   = y[13]
-    psir  = y[14]; xrr   = y[15]
+    psil = y[12]; xrl = y[13]
+    psir = y[14]; xrr = y[15]
 
     # Accelerations from dy
-    xxpp   = dy[6]; yypp   = dy[7]; zzpp   = dy[8]
-    tetapp = dy[9]; phipp  = dy[10]; betapp = dy[11]
+    xxpp = dy[6]; yypp = dy[7]; zzpp = dy[8]
+    tetapp = dy[9]; phipp = dy[10]; betapp = dy[11]
 
     # Track parameters (straight track)
     s_trk = S0; alpha_trk = ALPHA0
 
     # Trigonometric quantities
-    sit  = sin(teta); cot_ = cos(teta)
-    sip  = sin(phi);  cop  = cos(phi)
-    sia  = sin(alpha_trk); coa = cos(alpha_trk)
+    sit = sin(teta); cot_ = cos(teta)
+    sip = sin(phi);  cop = cos(phi)
+    sia = sin(alpha_trk); coa = cos(alpha_trk)
     sisl = sin(psil); cosl = cos(psil)
     sisr = sin(psir); cosr = cos(psir)
 
@@ -292,7 +317,7 @@ function wheelset_residual!(delta, dy, y)
     w2 = -drxl * sip - cosl * cop
     deltal = atan(w1 / w2)
     w1 = (drxr * cop - sip * cosr) * cot_ + sisr * sit
-    w2 =  drxr * sip + cosr * cop
+    w2 = drxr * sip + cosr * cop
     deltar = atan(w1 / w2)
     sidl = sin(deltal); codl = cos(deltal)
     sidr = sin(deltar); codr = cos(deltar)
@@ -301,13 +326,15 @@ function wheelset_residual!(delta, dy, y)
     deter = -sidl * codr - sidr * codl
     w1 = ql[1] * e1 + qr[1] * e2
     w2 = ql[2] * e1 + qr[2] * e2
-    fnl = ( codr * w1 - sidr * w2) / deter
+    fnl = (codr * w1 - sidr * w2) / deter
     fnr = (-codl * w1 - sidl * w2) / deter
 
     # Build y_internal for creep force computation (uses [12:15] as contact coords)
     y_int = copy(y)
-    TL, TR = creep_forces(y_int, fnl, fnr, rxl, rxr, drxl, drxr, d2rxl, d2rxr,
-                          dgxl, dgxr, d2gxl, d2gxr, deltal, deltar)
+    TL, TR = creep_forces(
+        y_int, fnl, fnr, rxl, rxr, drxl, drxr, d2rxl, d2rxr,
+        dgxl, dgxr, d2gxl, d2gxr, deltal, deltar
+    )
 
     # Forces of chassis
     fq1 = MA * GG * (V0^2 * s_trk / GG - tan(alpha_trk)) / coa
@@ -320,69 +347,83 @@ function wheelset_residual!(delta, dy, y)
     # ── Residual equations ──
 
     # Kinematics: dp/dt = v
-    delta[1] = xxp  - dy[1]
-    delta[2] = yyp  - dy[2]
-    delta[3] = zzp  - dy[3]
+    delta[1] = xxp - dy[1]
+    delta[2] = yyp - dy[2]
+    delta[3] = zzp - dy[3]
     delta[4] = tetap - dy[4]
-    delta[5] = phip  - dy[5]
+    delta[5] = phip - dy[5]
 
     # Newton's law (momentum equations)
-    delta[6] = MR * (-xxpp + V0^2 * s_trk * coa * (1.0 + (xx * coa - yy * sia) * s_trk) +
-                2.0 * V0 * s_trk * coa * zzp) +
-                TL[1] + TR[1] + fq1 - MR * GG * sia +
-                ql[1] * e1 + qr[1] * e2 - 2.0 * CX * xx
-    delta[7] = MR * (-yypp - V0^2 * s_trk * sia * (1.0 + (xx * coa - yy * sia) * s_trk) -
-                2.0 * V0 * s_trk * sia * zzp) +
-                TL[2] + TR[2] + fq2 - MR * GG * coa +
-                ql[2] * e1 + qr[2] * e2
-    delta[8] = MR * (-zzpp - 2.0 * V0 * s_trk * (xxp * coa - yyp * sia) +
-                V0^2 * s_trk^2 * zz) +
-                TL[3] + TR[3] + FA0 + fq3 +
-                ql[3] * e1 + qr[3] * e2
+    delta[6] = MR * (
+        -xxpp + V0^2 * s_trk * coa * (1.0 + (xx * coa - yy * sia) * s_trk) +
+            2.0 * V0 * s_trk * coa * zzp
+    ) +
+        TL[1] + TR[1] + fq1 - MR * GG * sia +
+        ql[1] * e1 + qr[1] * e2 - 2.0 * CX * xx
+    delta[7] = MR * (
+        -yypp - V0^2 * s_trk * sia * (1.0 + (xx * coa - yy * sia) * s_trk) -
+            2.0 * V0 * s_trk * sia * zzp
+    ) +
+        TL[2] + TR[2] + fq2 - MR * GG * coa +
+        ql[2] * e1 + qr[2] * e2
+    delta[8] = MR * (
+        -zzpp - 2.0 * V0 * s_trk * (xxp * coa - yyp * sia) +
+            V0^2 * s_trk^2 * zz
+    ) +
+        TL[3] + TR[3] + FA0 + fq3 +
+        ql[3] * e1 + qr[3] * e2
 
     # Euler's law (spin equations)
     w1 = -(xrl * sit + rxl * sisl * cot_ * cop) * TL[1] - rxl * sisl * sip * TL[2] +
-         (-xrl * cot_ + rxl * sisl * sit * cop) * TL[3]
+        (-xrl * cot_ + rxl * sisl * sit * cop) * TL[3]
     w2 = -(xrr * sit + rxr * sisr * cot_ * cop) * TR[1] - rxr * sisr * sip * TR[2] +
-         (-xrr * cot_ + rxr * sisr * sit * cop) * TR[3]
-    delta[9] = -LI2 * (tetapp * cop - tetap * phip * sip +
-                V0 * s_trk * (phip * (sia * cot_ * cop + coa * sip) -
-                              tetap * sia * sit * sip)) -
-                LI1 * (OMEGA0 + betap) * (phip - V0 * s_trk * sit * sia) -
-                (LI1 - LI2) * (tetap * sip - V0 * s_trk * (cot_ * cop * sia + sip * coa)) *
-                              (phip - V0 * s_trk * sit * sia) +
-                w1 + w2 + cop * lm2 - cot_ * sip * lm1 + sit * sip * lm3 +
-                ql[4] * e1 + qr[4] * e2
+        (-xrr * cot_ + rxr * sisr * sit * cop) * TR[3]
+    delta[9] = -LI2 * (
+        tetapp * cop - tetap * phip * sip +
+            V0 * s_trk * (
+            phip * (sia * cot_ * cop + coa * sip) -
+                tetap * sia * sit * sip
+        )
+    ) -
+        LI1 * (OMEGA0 + betap) * (phip - V0 * s_trk * sit * sia) -
+        (LI1 - LI2) * (tetap * sip - V0 * s_trk * (cot_ * cop * sia + sip * coa)) *
+        (phip - V0 * s_trk * sit * sia) +
+        w1 + w2 + cop * lm2 - cot_ * sip * lm1 + sit * sip * lm3 +
+        ql[4] * e1 + qr[4] * e2
 
     w1 = -(xrl * cot_ * sip - rxl * cosl * cot_ * cop) * TL[1] +
-         (xrl * cop + rxl * cosl * sip) * TL[2] +
-         (xrl * sit * sip - rxl * cosl * sit * cop) * TL[3]
+        (xrl * cop + rxl * cosl * sip) * TL[2] +
+        (xrl * sit * sip - rxl * cosl * sit * cop) * TL[3]
     w2 = -(xrr * cot_ * sip - rxr * cosr * cot_ * cop) * TR[1] +
-         (xrr * cop + rxr * cosr * sip) * TR[2] +
-         (xrr * sit * sip - rxr * cosr * sit * cop) * TR[3]
+        (xrr * cop + rxr * cosr * sip) * TR[2] +
+        (xrr * sit * sip - rxr * cosr * sit * cop) * TR[3]
     delta[10] = -LI2 * (phipp - tetap * V0 * s_trk * sia * cot_) +
-                LI1 * (OMEGA0 + betap) * (tetap * cop + V0 * s_trk * (cot_ * sip * sia - cop * coa)) +
-                (LI1 - LI2) * (tetap * sip - V0 * s_trk * (cot_ * cop * sia + sip * coa)) *
-                              (tetap * cop + V0 * s_trk * (cot_ * sip * sia - cop * coa)) +
-                w1 + w2 + lm3 + ql[5] * e1 + qr[5] * e2
+        LI1 * (OMEGA0 + betap) * (tetap * cop + V0 * s_trk * (cot_ * sip * sia - cop * coa)) +
+        (LI1 - LI2) * (tetap * sip - V0 * s_trk * (cot_ * cop * sia + sip * coa)) *
+        (tetap * cop + V0 * s_trk * (cot_ * sip * sia - cop * coa)) +
+        w1 + w2 + lm3 + ql[5] * e1 + qr[5] * e2
 
     w1 = -rxl * (cosl * sit + sisl * cot_ * sip) * TL[1] + rxl * sisl * cop * TL[2] -
-          rxl * (cosl * cot_ - sisl * sit * sip) * TL[3]
+        rxl * (cosl * cot_ - sisl * sit * sip) * TL[3]
     w2 = -rxr * (cosr * sit + sisr * cot_ * sip) * TR[1] + rxr * sisr * cop * TR[2] -
-          rxr * (cosr * cot_ - sisr * sit * sip) * TR[3]
-    delta[11] = -LI1 * (betapp + tetapp * sip + tetap * phip * cop -
-                V0 * s_trk * (phip * (coa * cop - sia * cot_ * sip) -
-                              tetap * sia * sit * cop)) +
-                w1 + w2 + sip * lm2 + LA0
+        rxr * (cosr * cot_ - sisr * sit * sip) * TR[3]
+    delta[11] = -LI1 * (
+        betapp + tetapp * sip + tetap * phip * cop -
+            V0 * s_trk * (
+            phip * (coa * cop - sia * cot_ * sip) -
+                tetap * sia * sit * cop
+        )
+    ) +
+        w1 + w2 + sip * lm2 + LA0
 
     # Position constraints g₂ = 0 (tangent-plane conditions)
     # LEFT contact
     delta[12] = dgxl * (drxl * sip + cop * cosl) + drxl * cot_ * cop -
-                cot_ * sip * cosl + sit * sisl
+        cot_ * sip * cosl + sit * sisl
     delta[13] = drxl * sit * cop - sit * sip * cosl - cot_ * sisl
     # RIGHT contact
     delta[14] = dgxr * (drxr * sip + cop * cosr) + drxr * cot_ * cop -
-                cot_ * sip * cosr + sit * sisr
+        cot_ * sip * cosr + sit * sisr
     delta[15] = drxr * sit * cop - sit * sip * cosr - cot_ * sisr
 
     # Velocity constraints dg₁/dp · v = 0
@@ -391,8 +432,8 @@ function wheelset_residual!(delta, dy, y)
     delta[16] = zero(eltype(delta))
     delta[17] = zero(eltype(delta))
     for i in 1:5
-        delta[16] += qr[i] * y[5+i]
-        delta[17] += ql[i] * y[5+i]
+        delta[16] += qr[i] * y[5 + i]
+        delta[17] += ql[i] * y[5 + i]
     end
 
     return nothing
@@ -401,7 +442,7 @@ end
 
 function wheelset_dae!(res, du, u, p, t)
     wheelset_residual!(res, du, u)
-    nothing
+    return nothing
 end
 
 # Differential variables: positions (1:5), velocities (6:10), β̇ (11),
@@ -427,12 +468,14 @@ let dy_z = zeros(17), delta_z = zeros(17)
     du0[8] = delta_z[8] / MR
     phi0 = u0[5]; cop0 = cos(phi0); sip0 = sin(phi0)
     du0[10] = delta_z[10] / LI2
-    du0[9]  = delta_z[9] / (LI2 * cop0)
+    du0[9] = delta_z[9] / (LI2 * cop0)
     du0[11] = (delta_z[11] - LI1 * sip0 * du0[9]) / LI1
 end
 
-prob_dae = DAEProblem(wheelset_dae!, du0, u0, tspan,
-                      differential_vars = differential_vars)
+prob_dae = DAEProblem(
+    wheelset_dae!, du0, u0, tspan,
+    differential_vars = differential_vars
+)
 
 
 res0 = zeros(17)
@@ -459,9 +502,9 @@ function build_wheelset_mass_matrix(phi0)
     # Euler equations (extracted from the residual coefficients of accelerations)
     cop0 = cos(phi0)
     sip0 = sin(phi0)
-    M[9, 9]   = LI2 * cop0     # θ̈ coefficient in delta[9]
+    M[9, 9] = LI2 * cop0     # θ̈ coefficient in delta[9]
     M[10, 10] = LI2            # φ̈ coefficient in delta[10]
-    M[11, 9]  = LI1 * sip0     # θ̈ coefficient in delta[11]
+    M[11, 9] = LI1 * sip0     # θ̈ coefficient in delta[11]
     M[11, 11] = LI1            # β̈ coefficient in delta[11]
     # Rows 12-17: algebraic (zero mass)
     return M
@@ -491,7 +534,7 @@ function wheelset_mm!(du, u, p, t)
     du[8] = delta[8]
 
     # For rows 9-10: delta = -LI2*(...acc...) + rhs → with acc=0, delta = rhs
-    du[9]  = delta[9]
+    du[9] = delta[9]
     du[10] = delta[10]
 
     # For row 11: delta = -LI1*(...acc...) + rhs → with acc=0, delta = rhs
@@ -505,7 +548,7 @@ function wheelset_mm!(du, u, p, t)
     du[16] = delta[16]
     du[17] = delta[17]
 
-    nothing
+    return nothing
 end
 
 M_wh = build_wheelset_mass_matrix(u0[5])
@@ -538,8 +581,10 @@ end
     lam1_w(t) = u0[16];  lam2_w(t) = u0[17]
 end
 
-state_vec = [x_w, y_w, z_w, theta_w, phi_w, xp_w, yp_w, zp_w, tetap_w, phip_w,
-             betap_w, psiL_w, xiL_w, psiR_w, xiR_w, lam1_w, lam2_w]
+state_vec = [
+    x_w, y_w, z_w, theta_w, phi_w, xp_w, yp_w, zp_w, tetap_w, phip_w,
+    betap_w, psiL_w, xiL_w, psiR_w, xiR_w, lam1_w, lam2_w,
+]
 delta_sym = wheelset_rhs_vec(state_vec)
 phi0_mtk = u0[5]
 
@@ -559,41 +604,45 @@ eqs_mtk = [
     LI2 * D(phip_w) ~ delta_sym[10],
     LI1 * sin(phi0_mtk) * D(tetap_w) + LI1 * D(betap_w) ~ delta_sym[11],
     # Algebraic constraints
-    0 ~ delta_sym[12],  0 ~ delta_sym[13],
-    0 ~ delta_sym[14],  0 ~ delta_sym[15],
-    0 ~ delta_sym[16],  0 ~ delta_sym[17],
+    0 ~ delta_sym[12], 0 ~ delta_sym[13],
+    0 ~ delta_sym[14], 0 ~ delta_sym[15],
+    0 ~ delta_sym[16], 0 ~ delta_sym[17],
 ]
 
 @mtkcompile sys_wh = System(eqs_mtk, t)
 prob_mtk = ODEProblem(sys_wh, [], tspan; warn_initialize_determined = false)
 
 
-ref_sol = solve(prob_mm, Rodas5P(), reltol = 1e-10, abstol = 1e-10,
-                maxiters = 10_000_000);
+ref_sol = solve(
+    prob_mm, Rodas5P(), reltol = 1.0e-10, abstol = 1.0e-10,
+    maxiters = 10_000_000
+);
 println("Reference (MM): retcode = $(ref_sol.retcode), npoints = $(length(ref_sol.t))")
 
 
-ref_sol_mtk = solve(prob_mtk, Rodas5P(), reltol = 1e-10, abstol = 1e-10,
-                    maxiters = 10_000_000);
+ref_sol_mtk = solve(
+    prob_mtk, Rodas5P(), reltol = 1.0e-10, abstol = 1.0e-10,
+    maxiters = 10_000_000
+);
 println("Reference (MTK): retcode = $(ref_sol_mtk.retcode), npoints = $(length(ref_sol_mtk.t))")
 
 
 u_ref = zeros(17)
-u_ref[1]  =  0.86355386965811e-2
-u_ref[2]  =  0.13038281022727e-4
-u_ref[3]  = -0.93635784016818e-4
-u_ref[4]  = -0.13642299804033e-1
-u_ref[5]  =  0.15292895005422e-2
-u_ref[6]  = -0.76985374142666e-1
-u_ref[7]  = -0.25151106429207e-3
-u_ref[8]  =  0.20541188079539e-2
-u_ref[9]  = -0.23904837703692
+u_ref[1] = 0.86355386965811e-2
+u_ref[2] = 0.13038281022727e-4
+u_ref[3] = -0.93635784016818e-4
+u_ref[4] = -0.13642299804033e-1
+u_ref[5] = 0.15292895005422e-2
+u_ref[6] = -0.76985374142666e-1
+u_ref[7] = -0.25151106429207e-3
+u_ref[8] = 0.20541188079539e-2
+u_ref[9] = -0.23904837703692
 u_ref[10] = -0.13633468454173e-1
 u_ref[11] = -0.24421377661131
 u_ref[12] = -0.33666751972196e-3
 u_ref[13] = -0.15949425684022
-u_ref[14] =  0.37839614386969e-3
-u_ref[15] =  0.14173214964613
+u_ref[14] = 0.37839614386969e-3
+u_ref[15] = 0.14173214964613
 u_ref[16] = -0.10124044903201e-1
 u_ref[17] = -0.56285630573753e-2
 
@@ -602,52 +651,70 @@ if ref_sol.retcode == ReturnCode.Success
     println("\n=== Verification at t = $(tspan[2]) ===")
     println("Variable  | IVP Test Set Ref       | Our Solution          | Rel Error")
     println("-"^78)
-    names_wh = ["x", "y", "z", "θ", "φ", "ẋ", "ẏ", "ż", "θ̇", "φ̇", "β̇",
-                "ψ_L", "ξ_L", "ψ_R", "ξ_R", "λ₁/C", "λ₂/C"]
+    names_wh = [
+        "x", "y", "z", "θ", "φ", "ẋ", "ẏ", "ż", "θ̇", "φ̇", "β̇",
+        "ψ_L", "ξ_L", "ψ_R", "ξ_R", "λ₁/C", "λ₂/C",
+    ]
     for i in 1:17
         rv = u_ref[i]
         ov = sol_final[i]
-        re = abs(rv) > 1e-15 ? abs((ov - rv) / rv) : abs(ov)
-        flag = re < 1e-3 ? "✓" : (re < 1e-1 ? "~" : "✗")
-        println("$(rpad(names_wh[i], 10))| $(lpad(string(rv), 23)) | $(lpad(string(round(ov, sigdigits=10)), 22)) | $(round(re, sigdigits=3)) $flag")
+        re = abs(rv) > 1.0e-15 ? abs((ov - rv) / rv) : abs(ov)
+        flag = re < 1.0e-3 ? "✓" : (re < 1.0e-1 ? "~" : "✗")
+        println("$(rpad(names_wh[i], 10))| $(lpad(string(rv), 23)) | $(lpad(string(round(ov, sigdigits = 10)), 22)) | $(round(re, sigdigits = 3)) $flag")
     end
 end
 
 
 if ref_sol.retcode == ReturnCode.Success
     l = @layout [a b c; d e f]
-    p1 = plot(ref_sol, idxs = [1], title = "X (lateral)", xlabel = "t [s]",
-         ylabel = "displacement [m]", lw = 1, legend = false, color = :black)
-    p2 = plot(ref_sol, idxs = [2], title = "Y (vertical)", xlabel = "t [s]",
-         ylabel = "displacement [m]", lw = 1, legend = false, color = :black)
-    p3 = plot(ref_sol, idxs = [3], title = "Z (longitudinal)", xlabel = "t [s]",
-         ylabel = "displacement [m]", lw = 1, legend = false, color = :black)
-    p4 = plot(ref_sol, idxs = [4], title = "THETA (yaw)", xlabel = "t [s]",
-         ylabel = "angle [rad]", lw = 1, legend = false, color = :black)
-    p5 = plot(ref_sol, idxs = [5], title = "PHI (roll)", xlabel = "t [s]",
-         ylabel = "angle [rad]", lw = 1, legend = false, color = :black)
-    p6 = plot(ref_sol, idxs = [11], title = "BETA (ang. vel.)", xlabel = "t [s]",
-         ylabel = "deviation [1/s]", lw = 1, legend = false, color = :black)
+    p1 = plot(
+        ref_sol, idxs = [1], title = "X (lateral)", xlabel = "t [s]",
+        ylabel = "displacement [m]", lw = 1, legend = false, color = :black
+    )
+    p2 = plot(
+        ref_sol, idxs = [2], title = "Y (vertical)", xlabel = "t [s]",
+        ylabel = "displacement [m]", lw = 1, legend = false, color = :black
+    )
+    p3 = plot(
+        ref_sol, idxs = [3], title = "Z (longitudinal)", xlabel = "t [s]",
+        ylabel = "displacement [m]", lw = 1, legend = false, color = :black
+    )
+    p4 = plot(
+        ref_sol, idxs = [4], title = "THETA (yaw)", xlabel = "t [s]",
+        ylabel = "angle [rad]", lw = 1, legend = false, color = :black
+    )
+    p5 = plot(
+        ref_sol, idxs = [5], title = "PHI (roll)", xlabel = "t [s]",
+        ylabel = "angle [rad]", lw = 1, legend = false, color = :black
+    )
+    p6 = plot(
+        ref_sol, idxs = [11], title = "BETA (ang. vel.)", xlabel = "t [s]",
+        ylabel = "deviation [1/s]", lw = 1, legend = false, color = :black
+    )
     plot(p1, p2, p3, p4, p5, p6, layout = l, size = (900, 500))
 end
 
 
 if ref_sol.retcode == ReturnCode.Success
-    plot(ref_sol, idxs = [16, 17],
-         title = "Lagrange Multipliers (λ₁/C, λ₂/C)",
-         xlabel = "t [s]", ylabel = "scaled force", lw = 1)
+    plot(
+        ref_sol, idxs = [16, 17],
+        title = "Lagrange Multipliers (λ₁/C, λ₂/C)",
+        xlabel = "t [s]", ylabel = "scaled force", lw = 1
+    )
 end
 
 
 if ref_sol.retcode == ReturnCode.Success
-    plot(ref_sol, idxs = [12, 14],
-         title = "Contact Shift Angles (ψ_L, ψ_R)",
-         xlabel = "t [s]", ylabel = "angle [rad]", lw = 1)
+    plot(
+        ref_sol, idxs = [12, 14],
+        title = "Contact Shift Angles (ψ_L, ψ_R)",
+        xlabel = "t [s]", ylabel = "angle [rad]", lw = 1
+    )
 end
 
 
 probs = [prob_dae, prob_mm, prob_mtk]
-refs  = [ref_sol, ref_sol, ref_sol_mtk];
+refs = [ref_sol, ref_sol, ref_sol_mtk];
 
 
 # RadauIIA5 / radau() hit SingularException on the singular mass-matrix form
@@ -667,8 +734,10 @@ setups = [
     Dict(:prob_choice => 3, :alg => NordsieckBDF()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e6), numruns = 5)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e6), numruns = 5
+)
 plot(wp, title = "Wheelset: High Tolerances")
 
 
@@ -685,8 +754,10 @@ setups = [
     Dict(:prob_choice => 3, :alg => NordsieckBDF()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e6), numruns = 5)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e6), numruns = 5
+)
 plot(wp, title = "Wheelset: Medium Tolerances")
 
 
@@ -705,8 +776,10 @@ setups = [
     Dict(:prob_choice => 3, :alg => NordsieckBDF()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    save_everystep = false, appxsol = refs, maxiters = Int(1e6), numruns = 5)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e6), numruns = 5
+)
 plot(wp, title = "Wheelset: Timeseries Errors (L2)")
 
 
@@ -725,16 +798,19 @@ setups = [
     Dict(:prob_choice => 3, :alg => NordsieckBDF()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e6), numruns = 5)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e6), numruns = 5
+)
 plot(wp, title = "Wheelset: Low Tolerances")
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    save_everystep = false, appxsol = refs, maxiters = Int(1e6), numruns = 5)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e6), numruns = 5
+)
 plot(wp, title = "Wheelset: Low Tolerances (L2)")
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
-
