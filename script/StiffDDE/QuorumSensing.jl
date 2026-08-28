@@ -1,108 +1,120 @@
-
 using DelayDiffEq, DiffEqDevTools, DDEProblemLibrary, Plots
+using OrdinaryDiffEqHighOrderRK, OrdinaryDiffEqLowOrderRK, OrdinaryDiffEqRosenbrock,
+    OrdinaryDiffEqTsit5, OrdinaryDiffEqVerner
 import DDEProblemLibrary: prob_dde_qs
 gr()
 
-sol = solve(prob_dde_qs, MethodOfSteps(Vern9(); fpsolve = NLFunctional(; max_iter = 1000));
-    reltol = 1e-14, abstol = 1e-14)
+sol = solve(prob_dde_qs, MethodOfSteps(Vern9()); reltol = 1.0e-14, abstol = 1.0e-14)
 plot(sol)
 
 
-sol = solve(prob_dde_qs, MethodOfSteps(Vern9(); fpsolve = NLFunctional(; max_iter = 1000));
-    reltol = 1e-14, abstol = 1e-14, save_idxs = 3)
+sol = solve(
+    prob_dde_qs, MethodOfSteps(Vern9()); reltol = 1.0e-14, abstol = 1.0e-14,
+    save_idxs = 3
+)
 test_sol = TestSolution(sol)
 plot(sol)
 
 
-sol = solve(prob_dde_qs, MethodOfSteps(BS3()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+sol = solve(prob_dde_qs, MethodOfSteps(BS3()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
 sol = solve(
-    prob_dde_qs, MethodOfSteps(Tsit5()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+    prob_dde_qs, MethodOfSteps(Tsit5()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3
+)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
-sol = solve(prob_dde_qs, MethodOfSteps(RK4()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+sol = solve(prob_dde_qs, MethodOfSteps(RK4()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
-sol = solve(prob_dde_qs, MethodOfSteps(DP5()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+sol = solve(prob_dde_qs, MethodOfSteps(DP5()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
-sol = solve(prob_dde_qs, MethodOfSteps(DP8()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
-p = plot(sol);
-scatter!(p, sol.t, sol.u)
-p
-
-
-sol = solve(
-    prob_dde_qs, MethodOfSteps(OwrenZen3()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+sol = solve(prob_dde_qs, MethodOfSteps(DP8()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
 sol = solve(
-    prob_dde_qs, MethodOfSteps(OwrenZen4()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+    prob_dde_qs, MethodOfSteps(OwrenZen3()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3
+)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
 sol = solve(
-    prob_dde_qs, MethodOfSteps(OwrenZen5()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+    prob_dde_qs, MethodOfSteps(OwrenZen4()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3
+)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
 sol = solve(
-    prob_dde_qs, MethodOfSteps(Rosenbrock23()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+    prob_dde_qs, MethodOfSteps(OwrenZen5()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3
+)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
 sol = solve(
-    prob_dde_qs, MethodOfSteps(Rosenbrock32()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+    prob_dde_qs, MethodOfSteps(Rosenbrock23()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3
+)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
 sol = solve(
-    prob_dde_qs, MethodOfSteps(Rodas4()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+    prob_dde_qs, MethodOfSteps(Rosenbrock32()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3
+)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
 sol = solve(
-    prob_dde_qs, MethodOfSteps(Rodas5()); reltol = 1e-4, abstol = 1e-6, save_idxs = 3)
+    prob_dde_qs, MethodOfSteps(Rodas4()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3
+)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
 sol = solve(
-    prob_dde_qs, MethodOfSteps(Vern7()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+    prob_dde_qs, MethodOfSteps(Rodas5()); reltol = 1.0e-4, abstol = 1.0e-6, save_idxs = 3
+)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
 
 
 sol = solve(
-    prob_dde_qs, MethodOfSteps(Vern9()); reltol = 1e-3, abstol = 1e-6, save_idxs = 3)
+    prob_dde_qs, MethodOfSteps(Vern7()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3
+)
+p = plot(sol);
+scatter!(p, sol.t, sol.u)
+p
+
+
+sol = solve(
+    prob_dde_qs, MethodOfSteps(Vern9()); reltol = 1.0e-3, abstol = 1.0e-6, save_idxs = 3
+)
 p = plot(sol);
 scatter!(p, sol.t, sol.u)
 p
@@ -111,156 +123,203 @@ p
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [Dict(:alg=>MethodOfSteps(BS3())),
-    Dict(:alg=>MethodOfSteps(Tsit5())),
-    Dict(:alg=>MethodOfSteps(RK4())),
-    Dict(:alg=>MethodOfSteps(DP5())),
-    Dict(:alg=>MethodOfSteps(OwrenZen3())),
-    Dict(:alg=>MethodOfSteps(OwrenZen4())),
-    Dict(:alg=>MethodOfSteps(OwrenZen5()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
+setups = [
+    Dict(:alg => MethodOfSteps(BS3())),
+    Dict(:alg => MethodOfSteps(Tsit5())),
+    Dict(:alg => MethodOfSteps(RK4())),
+    Dict(:alg => MethodOfSteps(DP5())),
+    Dict(:alg => MethodOfSteps(OwrenZen3())),
+    Dict(:alg => MethodOfSteps(OwrenZen4())),
+    Dict(:alg => MethodOfSteps(OwrenZen5())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [Dict(:alg=>MethodOfSteps(BS3())),
-    Dict(:alg=>MethodOfSteps(Tsit5())),
-    Dict(:alg=>MethodOfSteps(RK4())),
-    Dict(:alg=>MethodOfSteps(DP5())),
-    Dict(:alg=>MethodOfSteps(OwrenZen3())),
-    Dict(:alg=>MethodOfSteps(OwrenZen4())),
-    Dict(:alg=>MethodOfSteps(OwrenZen5()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
+setups = [
+    Dict(:alg => MethodOfSteps(BS3())),
+    Dict(:alg => MethodOfSteps(Tsit5())),
+    Dict(:alg => MethodOfSteps(RK4())),
+    Dict(:alg => MethodOfSteps(DP5())),
+    Dict(:alg => MethodOfSteps(OwrenZen3())),
+    Dict(:alg => MethodOfSteps(OwrenZen4())),
+    Dict(:alg => MethodOfSteps(OwrenZen5())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [Dict(:alg=>MethodOfSteps(BS3())),
-    Dict(:alg=>MethodOfSteps(Tsit5())),
-    Dict(:alg=>MethodOfSteps(RK4())),
-    Dict(:alg=>MethodOfSteps(DP5())),
-    Dict(:alg=>MethodOfSteps(OwrenZen3())),
-    Dict(:alg=>MethodOfSteps(OwrenZen4())),
-    Dict(:alg=>MethodOfSteps(OwrenZen5()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L∞)
+setups = [
+    Dict(:alg => MethodOfSteps(BS3())),
+    Dict(:alg => MethodOfSteps(Tsit5())),
+    Dict(:alg => MethodOfSteps(RK4())),
+    Dict(:alg => MethodOfSteps(DP5())),
+    Dict(:alg => MethodOfSteps(OwrenZen3())),
+    Dict(:alg => MethodOfSteps(OwrenZen4())),
+    Dict(:alg => MethodOfSteps(OwrenZen5())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L∞
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
-    Dict(:alg=>MethodOfSteps(Rosenbrock32())),
-    Dict(:alg=>MethodOfSteps(Rodas4())),
-    Dict(:alg=>MethodOfSteps(RK4()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
+setups = [
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
+    Dict(:alg => MethodOfSteps(Rosenbrock32())),
+    Dict(:alg => MethodOfSteps(Rodas4())),
+    Dict(:alg => MethodOfSteps(RK4())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
-    Dict(:alg=>MethodOfSteps(Rosenbrock32())),
-    Dict(:alg=>MethodOfSteps(Rodas4())),
-    Dict(:alg=>MethodOfSteps(RK4()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
+setups = [
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
+    Dict(:alg => MethodOfSteps(Rosenbrock32())),
+    Dict(:alg => MethodOfSteps(Rodas4())),
+    Dict(:alg => MethodOfSteps(RK4())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
-    Dict(:alg=>MethodOfSteps(Rosenbrock32())),
-    Dict(:alg=>MethodOfSteps(Rodas4())),
-    Dict(:alg=>MethodOfSteps(RK4()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L∞)
+setups = [
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
+    Dict(:alg => MethodOfSteps(Rosenbrock32())),
+    Dict(:alg => MethodOfSteps(Rodas4())),
+    Dict(:alg => MethodOfSteps(RK4())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L∞
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [Dict(:alg=>MethodOfSteps(Vern6())),
-    Dict(:alg=>MethodOfSteps(Vern7())),
-    Dict(:alg=>MethodOfSteps(Vern8())),
-    Dict(:alg=>MethodOfSteps(Vern9())),
-    Dict(:alg=>MethodOfSteps(Rosenbrock23()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
+setups = [
+    Dict(:alg => MethodOfSteps(Vern6())),
+    Dict(:alg => MethodOfSteps(Vern7())),
+    Dict(:alg => MethodOfSteps(Vern8())),
+    Dict(:alg => MethodOfSteps(Vern9())),
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [Dict(:alg=>MethodOfSteps(Vern6())),
-    Dict(:alg=>MethodOfSteps(Vern7())),
-    Dict(:alg=>MethodOfSteps(Vern8())),
-    Dict(:alg=>MethodOfSteps(Vern9())),
-    Dict(:alg=>MethodOfSteps(Rosenbrock23()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
+setups = [
+    Dict(:alg => MethodOfSteps(Vern6())),
+    Dict(:alg => MethodOfSteps(Vern7())),
+    Dict(:alg => MethodOfSteps(Vern8())),
+    Dict(:alg => MethodOfSteps(Vern9())),
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [Dict(:alg=>MethodOfSteps(Vern6())),
-    Dict(:alg=>MethodOfSteps(Vern7())),
-    Dict(:alg=>MethodOfSteps(Vern8())),
-    Dict(:alg=>MethodOfSteps(Vern9())),
-    Dict(:alg=>MethodOfSteps(Rosenbrock23()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L∞)
+setups = [
+    Dict(:alg => MethodOfSteps(Vern6())),
+    Dict(:alg => MethodOfSteps(Vern7())),
+    Dict(:alg => MethodOfSteps(Vern8())),
+    Dict(:alg => MethodOfSteps(Vern9())),
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L∞
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (8:11)
 reltols = 1.0 ./ 10.0 .^ (5:8)
 
-setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
-    Dict(:alg=>MethodOfSteps(Rodas4())),
-    Dict(:alg=>MethodOfSteps(Rodas5()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
+setups = [
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
+    Dict(:alg => MethodOfSteps(Rodas4())),
+    Dict(:alg => MethodOfSteps(Rodas5())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (8:11)
 reltols = 1.0 ./ 10.0 .^ (5:8)
 
-setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
-    Dict(:alg=>MethodOfSteps(Rodas4())),
-    Dict(:alg=>MethodOfSteps(Rodas5()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
+setups = [
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
+    Dict(:alg => MethodOfSteps(Rodas4())),
+    Dict(:alg => MethodOfSteps(Rodas5())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2
+)
 plot(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (8:11)
 reltols = 1.0 ./ 10.0 .^ (5:8)
 
-setups = [Dict(:alg=>MethodOfSteps(Rosenbrock23())),
-    Dict(:alg=>MethodOfSteps(Rodas4())),
-    Dict(:alg=>MethodOfSteps(Rodas5()))]
-wp = WorkPrecisionSet(prob_dde_qs, abstols, reltols, setups;
-    save_idxs = 3, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L∞)
+setups = [
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
+    Dict(:alg => MethodOfSteps(Rodas4())),
+    Dict(:alg => MethodOfSteps(Rodas5())),
+]
+wp = WorkPrecisionSet(
+    prob_dde_qs, abstols, reltols, setups;
+    save_idxs = 3, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L∞
+)
 plot(wp)
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
-

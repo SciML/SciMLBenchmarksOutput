@@ -1,5 +1,5 @@
-
 using DelayDiffEq, DiffEqDevTools, Plots
+using OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 gr()
 
 
@@ -27,23 +27,27 @@ function f_hepatitis!(du, u, h, p, t)
     y8_τ5 = h(p, t - α[45]; idxs = 8)
 
     du[1] = α[1] * u[2] + α[2] * α[3] * u[2] * u[7] - α[4] * u[1] * u[10] -
-            α[5] * u[1] - α[6] * u[1] * (α[7] - u[2] - u[3])
+        α[5] * u[1] - α[6] * u[1] * (α[7] - u[2] - u[3])
     du[2] = α[8] * u[1] * (α[7] - u[2] - u[3]) - α[3] * u[2] * u[7] - α[9] * u[2]
     du[3] = α[3] * u[2] * u[7] + α[9] * u[2] - α[10] * u[3]
     du[4] = α[11] * α[12] * u[1] - α[13] * u[4]
     du[5] = α[14] * (xi(u[3]) * α[15] * y4_τ1 * y5_τ1 - u[4] * u[5]) -
-            α[16] * u[4] * u[5] * u[7] + α[17] * (α[18] - u[5])
+        α[16] * u[4] * u[5] * u[7] + α[17] * (α[18] - u[5])
     du[6] = α[19] * (xi(u[3]) * α[20] * y4_τ2 * y6_τ2 - u[4] * u[6]) -
-            α[21] * u[4] * u[6] * u[8] + α[22] * (α[23] - u[6])
-    du[7] = α[24] * (xi(u[3]) * α[25] * y4_τ3 * y5_τ3 * y7_τ3 -
-            u[4] * u[5] * u[7]) - α[26] * u[2] * u[7] + α[27] * (α[28] - u[7])
-    du[8] = α[29] * (xi(u[3]) * α[30] * y4_τ4 * y6_τ4 * y8_τ4 -
-            u[4] * u[6] * u[8]) + α[31] * (α[32] - u[8])
+        α[21] * u[4] * u[6] * u[8] + α[22] * (α[23] - u[6])
+    du[7] = α[24] * (
+        xi(u[3]) * α[25] * y4_τ3 * y5_τ3 * y7_τ3 -
+            u[4] * u[5] * u[7]
+    ) - α[26] * u[2] * u[7] + α[27] * (α[28] - u[7])
+    du[8] = α[29] * (
+        xi(u[3]) * α[30] * y4_τ4 * y6_τ4 * y8_τ4 -
+            u[4] * u[6] * u[8]
+    ) + α[31] * (α[32] - u[8])
     du[9] = α[33] * xi(u[3]) * α[34] * y4_τ5 * y6_τ5 * y8_τ5 +
-            α[35] * (α[36] - u[9])
+        α[35] * (α[36] - u[9])
     du[10] = α[37] * u[9] - α[38] * u[10] * u[1] - α[39] * u[10]
 
-    nothing
+    return nothing
 end
 
 α = zeros(45)
@@ -61,21 +65,27 @@ end
 
 function h_hepatitis(p, t; idxs::Union{Nothing, Int} = nothing)
     α = p
-    u0 = [2.9e-16, 0.0, 0.0, 0.0, α[18], α[23], α[28], α[32], α[36],
-        α[37] * α[36] / α[39]]
-    if idxs === nothing
+    u0 = [
+        2.9e-16, 0.0, 0.0, 0.0, α[18], α[23], α[28], α[32], α[36],
+        α[37] * α[36] / α[39],
+    ]
+    return if idxs === nothing
         u0
     else
         u0[idxs]
     end
 end
 
-prob = DDEProblem(f_hepatitis!, h_hepatitis, (0.0, 130.0), α;
-    constant_lags = [0.6, 2.0, 3.0])
+prob = DDEProblem(
+    f_hepatitis!, h_hepatitis, (0.0, 130.0), α;
+    constant_lags = [0.6, 2.0, 3.0]
+)
 
 
-sol = solve(prob, MethodOfSteps(Rodas5P());
-    reltol = 1e-12, abstol = 1e-20, dt = 1e-6)
+sol = solve(
+    prob, MethodOfSteps(Rodas5P());
+    reltol = 1.0e-12, abstol = 1.0e-20, dt = 1.0e-6
+)
 test_sol = TestSolution(sol)
 plot(sol; title = "Hepatitis B Solution")
 
@@ -86,71 +96,92 @@ plot(sol; idxs = [1, 2, 3], title = "Hepatitis B: Virus Dynamics")
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [Dict(:alg => MethodOfSteps(Rosenbrock23())),
+setups = [
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
     Dict(:alg => MethodOfSteps(Rodas4())),
     Dict(:alg => MethodOfSteps(Rodas5())),
-    Dict(:alg => MethodOfSteps(Rodas5P()))]
+    Dict(:alg => MethodOfSteps(Rodas5P())),
+]
 names = ["Rosenbrock23", "Rodas4", "Rodas5", "Rodas5P"]
-wp = WorkPrecisionSet(prob, abstols, reltols, setups;
-    names = names, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final,
-    dt = 1e-6)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups;
+    names = names, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final,
+    dt = 1.0e-6
+)
 plot(wp; title = "Hepatitis B: Rosenbrock Methods (final error)")
 
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups;
-    names = names, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2,
-    dt = 1e-6)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups;
+    names = names, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2,
+    dt = 1.0e-6
+)
 plot(wp; title = "Hepatitis B: Rosenbrock Methods (L2 error)")
 
 
-setups = [Dict(:alg => MethodOfSteps(TRBDF2())),
+setups = [
+    Dict(:alg => MethodOfSteps(TRBDF2())),
     Dict(:alg => MethodOfSteps(KenCarp4())),
-    Dict(:alg => MethodOfSteps(Kvaerno4()))]
+    Dict(:alg => MethodOfSteps(Kvaerno4())),
+]
 names = ["TRBDF2", "KenCarp4", "Kvaerno4"]
-wp = WorkPrecisionSet(prob, abstols, reltols, setups;
-    names = names, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final,
-    dt = 1e-6)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups;
+    names = names, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final,
+    dt = 1.0e-6
+)
 plot(wp; title = "Hepatitis B: SDIRK Methods (final error)")
 
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups;
-    names = names, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2,
-    dt = 1e-6)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups;
+    names = names, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2,
+    dt = 1.0e-6
+)
 plot(wp; title = "Hepatitis B: SDIRK Methods (L2 error)")
 
 
-setups = [Dict(:alg => MethodOfSteps(Rosenbrock23())),
+setups = [
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
     Dict(:alg => MethodOfSteps(Rodas5P())),
     Dict(:alg => MethodOfSteps(TRBDF2())),
-    Dict(:alg => MethodOfSteps(KenCarp4()))]
+    Dict(:alg => MethodOfSteps(KenCarp4())),
+]
 names = ["Rosenbrock23", "Rodas5P", "TRBDF2", "KenCarp4"]
-wp = WorkPrecisionSet(prob, abstols, reltols, setups;
-    names = names, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final,
-    dt = 1e-6)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups;
+    names = names, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final,
+    dt = 1.0e-6
+)
 plot(wp; title = "Hepatitis B: All Stiff Methods (final error)")
 
 
 abstols = 1.0 ./ 10.0 .^ (8:11)
 reltols = 1.0 ./ 10.0 .^ (5:8)
 
-setups = [Dict(:alg => MethodOfSteps(Rosenbrock23())),
+setups = [
+    Dict(:alg => MethodOfSteps(Rosenbrock23())),
     Dict(:alg => MethodOfSteps(Rodas4())),
     Dict(:alg => MethodOfSteps(Rodas5P())),
     Dict(:alg => MethodOfSteps(TRBDF2())),
-    Dict(:alg => MethodOfSteps(KenCarp4()))]
+    Dict(:alg => MethodOfSteps(KenCarp4())),
+]
 names = ["Rosenbrock23", "Rodas4", "Rodas5P", "TRBDF2", "KenCarp4"]
-wp = WorkPrecisionSet(prob, abstols, reltols, setups;
-    names = names, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final,
-    dt = 1e-6)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups;
+    names = names, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final,
+    dt = 1.0e-6
+)
 plot(wp; title = "Hepatitis B: Low Tolerances (final error)")
 
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups;
-    names = names, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2,
-    dt = 1e-6)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups;
+    names = names, appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2,
+    dt = 1.0e-6
+)
 plot(wp; title = "Hepatitis B: Low Tolerances (L2 error)")
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
-
