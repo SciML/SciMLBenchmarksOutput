@@ -1,4 +1,3 @@
-
 using Roots, BenchmarkTools, Random
 
 Random.seed!(42)
@@ -11,32 +10,52 @@ function froots(out, levels, u0)
     for i in 1:N
         out[i] = solve(ZeroProblem(myfun, u0), levels[i])
     end
+    return
 end
 
 @btime froots(out, levels, (0, 2))
 
 
-using NonlinearSolve, BenchmarkTools
+using BracketingNonlinearSolve, SimpleNonlinearSolve, BenchmarkTools
+using BracketingNonlinearSolve: Bisection # Roots also exports Bisection leading to a name conflict
 
 function f(out, levels, u0)
     for i in 1:N
-        out[i] = solve(IntervalNonlinearProblem{false}(IntervalNonlinearFunction{false}(myfun),
-                u0, levels[i]), ITP()).u
+        out[i] = solve(
+            IntervalNonlinearProblem{false}(
+                IntervalNonlinearFunction{false}(myfun),
+                u0, levels[i]
+            ),
+            ITP()
+        ).u
     end
+    return
 end
 
 function f2(out, levels, u0)
     for i in 1:N
-        out[i] = solve(IntervalNonlinearProblem{false}(IntervalNonlinearFunction{false}(myfun),
-                u0, levels[i]), NonlinearSolve.Bisection()).u
+        out[i] = solve(
+            IntervalNonlinearProblem{false}(
+                IntervalNonlinearFunction{false}(myfun),
+                u0, levels[i]
+            ),
+            Bisection()
+        ).u
     end
+    return
 end
 
 function f3(out, levels, u0)
     for i in 1:N
-        out[i] = solve(NonlinearProblem{false}(NonlinearFunction{false}(myfun),
-                u0, levels[i]), SimpleNewtonRaphson()).u
+        out[i] = solve(
+            NonlinearProblem{false}(
+                NonlinearFunction{false}(myfun),
+                u0, levels[i]
+            ),
+            SimpleNewtonRaphson()
+        ).u
     end
+    return
 end
 
 @btime f(out, levels, (0.0, 2.0))
@@ -45,5 +64,4 @@ end
 
 
 using SciMLBenchmarks
-SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
-
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
