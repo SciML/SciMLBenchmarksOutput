@@ -413,9 +413,9 @@ F_s = [
     0,
     [
         vφ2^2 * MQq_s[i] + RHO * (
-                vφ2^2 * c12[i] +
+            vφ2^2 * c12[i] +
                 L1 * vφ1^2 * (cφ12 * c1[i] + sφ12 * c2[i]) + 2 * vφ2 * BQvq_s[i]
-            ) -
+        ) -
             RHO * GRAV * (sφ2 * c1[i] + cφ2 * c2[i]) - KQq_s[i] - DQvq_s[i]
             for i in 1:NQ
     ]...,
