@@ -1,0 +1,172 @@
+---
+author: "Alex Jones"
+title: "PDESystemLibrary.jl Work-Precision Diagrams with Various MethodOfLines.jl Methods"
+---
+
+
+This benchmark is for the MethodOfLines.jl package, which is an automatic PDE discretization package.
+It is concerned with comparing the performance of various discretization methods for the Burgers equation.
+
+```julia
+using MethodOfLines, DomainSets, OrdinaryDiffEq, ModelingToolkit, DiffEqDevTools,
+      LinearAlgebra,
+      LinearSolve, Plots, RecursiveFactorization
+using PDESystemLibrary
+
+solver = FBDF()
+```
+
+```
+FBDF(; max_order = Val{5}(), linsolve = nothing, nlsolve = OrdinaryDiffEqNo
+nlinearSolve.NLNewton{Rational{Int64}, Rational{Int64}, Rational{Int64}, No
+thing}(1//100, 10, 1//5, 1//5, false, true, nothing), κ = nothing, tol = no
+thing, extrapolant = linear, step_limiter! = trivial_limiter!, autodiff = A
+DTypes.AutoForwardDiff(), stald = true, stald_rrcut = 0.98, stald_vrrtol =
+0.0001, stald_vrrt2 = 0.0005, stald_sqtol = 0.001, stald_rrtol = 0.01, stal
+d_tiny = 1.0e-90, concrete_jac = nothing, qmax = 10//1, qsteady_min = 9//10
+, qsteady_max = 2//1,)
+```
+
+
+
+
+
+Next we define some functions to generate appropriate discretizations for the PDESystemLibrary systems.
+
+```julia
+function center_uniform_grid(ex, ivs, N)
+    map(ivs) do x
+        xdomain = ex.domain[findfirst(d -> isequal(x, d.variables), ex.domain)]
+        x => (DomainSets.supremum(xdomain.domain) - DomainSets.infimum(xdomain.domain)) /
+             (floor(N^(1 / length(ivs))) - 1)
+    end
+end
+
+function edge_uniform_grid(ex, ivs, N)
+    map(ivs) do x
+        xdomain = ex.domain[findfirst(d -> isequal(x, d.variables), ex.domain)]
+        x => (DomainSets.supremum(xdomain.domain) - DomainSets.infimum(xdomain.domain)) /
+             (floor(N^(1 / length(ivs))))
+    end
+end
+
+function center_chebygrid(ex, ivs, N)
+    map(ivs) do x
+        xdomain = ex.domain[findfirst(d -> isequal(x, d.variables), ex.domain)]
+        chebyspace(trunc(Int, N^(1 / length(ivs))), xdomain)
+    end
+end
+
+function edge_chebygrid(ex, ivs, N)
+    map(ivs) do x
+        xdomain = ex.domain[findfirst(d -> isequal(x, d.variables), ex.domain)]
+        chebyspace(trunc(Int, N^(1 / length(ivs))) - 1, xdomain)
+    end
+end
+
+function uniformupwind1(ex, ivs, t, N)
+    dxs = center_uniform_grid(ex, ivs, N)
+
+    MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme())
+end
+
+function uniformupwind2(ex, ivs, t, N)
+    dxs = edge_uniform_grid(ex, ivs, N)
+
+    MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme(), grid_align = edge_align)
+end
+
+function chebyupwind1(ex, ivs, t, N)
+    dxs = center_chebygrid(ex, ivs, N)
+
+    MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme())
+end
+
+function chebyupwind2(ex, ivs, t, N)
+    dxs = edge_chebygrid(ex, ivs, N)
+
+    MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme(), grid_align = edge_align)
+end
+
+function discweno1(ex, ivs, t, N)
+    dxs = center_uniform_grid(ex, ivs, N)
+
+    MOLFiniteDifference(dxs, t, advection_scheme = WENOScheme())
+end
+
+function discweno2(ex, ivs, t, N)
+    dxs = edge_uniform_grid(ex, ivs, N)
+
+    MOLFiniteDifference(dxs, t, advection_scheme = WENOScheme(), grid_align = edge_align)
+end
+```
+
+```
+discweno2 (generic function with 1 method)
+```
+
+
+
+
+
+This script tests the Burgers systems in PDESystemLibrary against different MethodOfLines.jl discretizations.
+It then plots the work precision sets.
+
+```julia
+N = 100
+for ex in get_pdesys_with_tags(["Burgers"])
+    if ex.analytic_func === nothing
+        continue
+    end
+    ivs = filter(x -> !isequal(Symbol(x), :t), ex.ivs)
+    if length(ivs) == 0
+        continue
+    elseif length(ivs) == length(ex.ivs)
+        continue
+    else
+        @parameters t
+        # Create discretizations
+        # Note: Chebyshev (non-uniform) grids with UpwindScheme fail for
+        # parameterized advection terms due to a MethodOfLines pattern matching
+        # bug. Only use uniform grids for now.
+        discuu1 = uniformupwind1(ex, ivs, t, N)
+        discuu2 = uniformupwind2(ex, ivs, t, N)
+        discs = [discuu1, discuu2]
+        disc_names = ["Uniform Upwind, center_align", "Uniform Upwind, edge_align"]
+        if "Advection" in ex.metadata
+            discw1 = discweno1(ex, ivs, t, N)
+            discw2 = discweno2(ex, ivs, t, N)
+            push!(discs, discw1, discw2)
+            push!(disc_names, "Uniform WENO, center_align", "Uniform WENO, edge_align")
+        end
+
+        # Create problems
+        probs = map(discs) do disc
+            discretize(ex, disc, analytic = ex.analytic_func)
+        end
+
+        title = "Work Precision Diagram for $(ex.name), Tags: $(ex.metadata)"
+        println("Running $title")
+        dummy_appxsol = [nothing for i in 1:length(probs)]
+        abstols = 1.0 ./ 10.0 .^ (5:8)
+        reltols = 1.0 ./ 10.0 .^ (1:4);
+        setups = [Dict(:alg => solver, :prob_choice => i) for i in 1:length(probs)]
+
+        wp = WorkPrecisionSet(probs, abstols, reltols, setups; names = disc_names,
+            save_everystep = false, appxsol = dummy_appxsol, maxiters = Int(1e5),
+            numruns = 10, wrap = Val(false))
+        display(plot(wp, title = title))
+    end
+end
+```
+
+```
+Running Work Precision Diagram for inviscid_burgers_monotonic, Tags: ["1D",
+ "Monotonic", "Inviscid", "Burgers", "Advection", "Dirichlet"]
+Running Work Precision Diagram for burgers_2d, Tags: ["2D", "Non-Monotonic"
+, "Viscous", "Burgers", "Advection", "Dirichlet"]
+```
+
+
+![](figures/MOLxPDESystemLibrary_3_1.png)
+![](figures/MOLxPDESystemLibrary_3_2.png)
