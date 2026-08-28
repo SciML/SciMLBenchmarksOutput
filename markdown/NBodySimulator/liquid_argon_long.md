@@ -21,17 +21,11 @@ function setup(t)
     σ = 3.4e-10 # m
     ρ = 1374 # kg/m^3
     m = 39.95 * 1.6747 * 1e-27 # kg
-    # N=128 keeps the relative-cost calibration in `c_symplectic`/`c_adaptive`
-    # below valid (per-step cost ratios are essentially N-independent) while
-    # keeping CI wall time tractable; the larger N=350 case took >40h per
-    # parameter sweep under the OrdinaryDiffEq v7 stack.
+    # See liquid_argon.jmd for the reasoning behind N=128 (was 350) and
+    # R = 2.5σ (was 3.5σ, which violated the minimum-image convention since
+    # the N=128 box has L/2 = 2.71σ).
     N = 128
     L = (m*N/ρ)^(1/3)
-    # `CubicPeriodicBoundaryConditions` applies the minimum-image convention,
-    # which is only valid when the interaction cutoff satisfies R <= L/2.
-    # At N=128 the box is L = 5.41σ, so the historical R = 3.5σ exceeded
-    # L/2 = 2.71σ and the pair interactions were wrong. 2.5σ is the standard
-    # Lennard-Jones cutoff and fits inside this box.
     R = 2.5σ
     v_dev = sqrt(kb * T / m) # m/s
 
@@ -135,19 +129,6 @@ symplectic_integrators = [
 ```
 
 
-
-
-Since for each method there is a different cost for a timestep, we need to take that
-into account when choosing the tolerances (`dt`s or `abstol`&`reltol`) for the
-solvers. This cost was estimated using the commented code below and the
-results were hardcoded in order to prevent fluctuations in the results
-between runs due to differences in calibration times.
-
-The calibration is based on running a simulation with equal tolerances for all
-solvers and then computing the cost as the runtime / number of timesteps.
-The absolute value of the cost is not very relevant, so the cost was normalized
-to the cost of one `VelocityVerlet` step.
-
 ```julia
 config(integrators, c, τ) = [(alg = a, dt = τ*cₐ) for (a, cₐ) in zip(integrators, c)]
 
@@ -197,11 +178,10 @@ c_symplectic = [
 
 
 
-Let us now benchmark the solvers for a fixed simulation time and variable timestep
+We will consider a longer simulation time
 
 ```julia
-t = 10.0
-τs = 10 .^ range(-4, -3, length = 10)
+t = 50.0
 
 results = DataFrame(:integrator=>String[], :runtime=>Float64[], :τ=>Float64[],
     :EnergyError=>Float64[], :timesteps=>Int[], :f_evals=>Int[], :cost=>Float64[]);
@@ -209,35 +189,31 @@ run_benchmark!(results, t, symplectic_integrators, τs, c = c_symplectic)
 ```
 
 ```
-90×7 DataFrame
- Row │ integrator                         runtime   τ         EnergyError  
-tim ⋯
-     │ String                             Float64   Float64   Float64      
-Int ⋯
+9×7 DataFrame
+ Row │ integrator                         runtime  τ        EnergyError  ti
+mes ⋯
+     │ String                             Float64  Float64  Float64      In
+t64 ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ OrdinaryDiffEqSymplecticRK.Veloc…   81.2497  0.0001     0.00232702  
+   1 │ OrdinaryDiffEqSymplecticRK.Veloc…   53.748  0.001      0.168296     
+  5 ⋯
+   2 │ OrdinaryDiffEqSymplecticRK.Verle…   50.245  0.00105    0.153213     
+  4
+   3 │ OrdinaryDiffEqSymplecticRK.Pseud…  112.095  0.00098    0.0205448    
+  5
+   4 │ OrdinaryDiffEqSymplecticRK.McAte2  158.124  0.00102    0.0849349    
+  4
+   5 │ OrdinaryDiffEqSymplecticRK.Calvo…  112.95   0.00238    0.0211669    
+  2 ⋯
+   6 │ OrdinaryDiffEqSymplecticRK.McAte5  127.848  0.00292    0.263421     
+  1
+   7 │ OrdinaryDiffEqSymplecticRK.Yoshi…  114.871  0.00374    0.443979     
+  1
+   8 │ OrdinaryDiffEqSymplecticRK.Kahan…  114.544  0.00844    0.113046
+   9 │ OrdinaryDiffEqSymplecticRK.SofSp…  121.907  0.01576    1.56801      
     ⋯
-   2 │ OrdinaryDiffEqSymplecticRK.Verle…   77.6345  0.000105   0.00213909
-   3 │ OrdinaryDiffEqSymplecticRK.Pseud…  163.308   9.8e-5     0.00335772
-   4 │ OrdinaryDiffEqSymplecticRK.McAte2  241.215   0.000102   0.00334536
-   5 │ OrdinaryDiffEqSymplecticRK.Calvo…  170.74    0.000238   0.00415235  
-    ⋯
-   6 │ OrdinaryDiffEqSymplecticRK.McAte5  193.589   0.000292   7.96513e-5
-   7 │ OrdinaryDiffEqSymplecticRK.Yoshi…  172.68    0.000374   0.00135281
-   8 │ OrdinaryDiffEqSymplecticRK.Kahan…  172.996   0.000844   0.025281
-  ⋮  │                 ⋮                     ⋮         ⋮           ⋮       
-    ⋱
-  84 │ OrdinaryDiffEqSymplecticRK.Pseud…   16.8114  0.00098    0.0960019   
-    ⋯
-  85 │ OrdinaryDiffEqSymplecticRK.McAte2   24.3442  0.00102    0.0326157
-  86 │ OrdinaryDiffEqSymplecticRK.Calvo…   17.152   0.00238    0.011096
-  87 │ OrdinaryDiffEqSymplecticRK.McAte5   19.5887  0.00292    0.0648294
-  88 │ OrdinaryDiffEqSymplecticRK.Yoshi…   17.6389  0.00374    0.0583815   
-    ⋯
-  89 │ OrdinaryDiffEqSymplecticRK.Kahan…   17.198   0.00844    0.0647342
-  90 │ OrdinaryDiffEqSymplecticRK.SofSp…   18.8726  0.01576    2.26617
-                                                   3 columns and 75 rows om
+                                                               3 columns om
 itted
 ```
 
@@ -252,56 +228,7 @@ The energy error as a function of runtime is given by
     xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)")
 ```
 
-![](figures/liquid_argon_6_1.png)
-
-
-
-Looking at the runtime as a function of timesteps, we can observe that we have
-a linear dependency for each method, and the slope is the previously computed
-cost per step.
-
-```julia
-@df results plot(:timesteps, :runtime, group = :integrator,
-    xscale = :log10, yscale = :log10, xlabel = "Number of timesteps", ylabel = "Runtime (s)")
-```
-
-![](figures/liquid_argon_7_1.png)
-
-
-
-We can also look at the energy error history
-
-```julia
-function benchmark(energyerr, rts, ts, t, configs)
-    simulation = setup(t)
-    prob = SecondOrderODEProblem(simulation)
-    for config in configs
-        alg = config.alg
-        solver_kwargs = Base.structdiff(config, NamedTuple{(:alg,)})
-        sol,
-        rt = @timed solve(prob, alg(); progress = true, progress_name = "$alg", solver_kwargs...)
-        result = NBodySimulator.SimulationResult(sol, simulation)
-        ΔE(t) = total_energy(result, t) - total_energy(result, 0)
-        energyerr[alg] = [ΔE(t) for t in sol.t[2:(10 ^ 2):end]]
-        rts[alg] = rt
-        ts[alg] = sol.t[2:(10 ^ 2):end]
-    end
-end
-
-ΔE = Dict()
-rt = Dict()
-ts = Dict()
-configs = config(symplectic_integrators, c_symplectic, 2.3e-4)
-benchmark(ΔE, rt, ts, 10.0, configs)
-
-plt = plot(xlabel = "Rescaled Time", ylabel = "Energy error", legend = :bottomleft);
-for c in configs
-    plot!(plt, ts[c.alg], abs.(ΔE[c.alg]), label = "$(c.alg), $(rt[c.alg])s")
-end
-plt
-```
-
-![](figures/liquid_argon_8_1.png)
+![](figures/liquid_argon_long_6_1.png)
 
 
 
@@ -323,39 +250,17 @@ adaptive_integrators=[
 
 
 
-Similarly to the case of symplectic methods, we will take into account the average cost per timestep
-in order to have a fair comparison between the solvers.
-
-A note on the tolerance range. The Lennard-Jones potential used here is
-*truncated* at `R` and not shifted or smoothed, so the acceleration is
-discontinuous every time a pair of particles crosses the cutoff radius. An
-adaptive error controller cannot integrate through those jumps: below roughly
-`reltol = 1e-7` the majority of the proposed steps are rejected at cutoff
-crossings, the accepted step size collapses, and the cost diverges. Measured
-here (N=128, t=10, one solve of `Tsit5`, extrapolated from a step-capped run):
-
-| `reltol` | runtime for `t = 10` |
-|---|---|
-| 1.2e-13 | 2260 s |
-| 1.2e-10 | 1080 s |
-| 1.2e-09 | 340 s |
-| 1.2e-08 | 165 s |
-| 1.2e-07 | 66 s |
-| 1.2e-06 | 23 s |
-| 1.2e-05 | 9 s |
-| 1.2e-04 | 5 s |
-
-The *loose* end of the old grid is dangerous for a different reason: with
-`abstol = reltol = at*2^cₐ` the high-order solvers get a tolerance up to
-`2^11.38 = 2666` times looser than the grid point, and at that point they stop
-solving the problem at all. In the last successfully published build of this
-benchmark `Vern9` at `reltol = 0.267` took **55389 s** (15.4 h) for a single
-configuration, for an energy error of 325 -- i.e. no usable answer. That
-configuration reproduces on current versions.
-
-So the historical `10 .^ range(-14, -4, length = 10)` grid spent essentially
-all of its wall time outside the range where the error controller works, at
-both ends. We use a grid that stays inside it.
+The Lennard-Jones potential is truncated at `R` without shifting or smoothing,
+so the acceleration is discontinuous whenever a pair crosses the cutoff. Below
+roughly `reltol = 1e-7` the adaptive controllers reject most of their proposed
+steps at those crossings and the cost per solve diverges (measured for `Tsit5`
+at N=128, `t = 10`: 5 s at `reltol = 1.2e-4`, 66 s at `1.2e-7`, 2260 s at
+`1.2e-13`). At the loose end the `2^cₐ` cost scaling pushes the high-order
+solvers past the point where they solve the problem at all -- in the last
+published build `Vern9` at `reltol = 0.267` burned 15.4 h for an energy error
+of 325. This file integrates to `t = 50`, i.e. five times the cost per
+configuration of `liquid_argon.jmd`, so we use a correspondingly shorter grid
+inside the range the controller can track.
 
 ```julia
 function config(integrators, c, at, rt)
@@ -363,8 +268,8 @@ function config(integrators, c, at, rt)
 end
 
 t = 35.0
-ats = 10 .^ range(-9, -5, length = 5)
-rts = 10 .^ range(-9, -5, length = 5)
+ats = 10 .^ range(-8, -5, length = 4)
+rts = 10 .^ range(-8, -5, length = 4)
 
 # warmup -- this only exists to force compilation, so it runs at the *loosest*
 # tolerance of the grid. It used to use `ats[1]`/`rts[1]`, i.e. the tightest,
@@ -404,10 +309,10 @@ c_adaptive = [
 
 
 
-Let us now benchmark the solvers for a fixed simulation time and variable timestep
+We will consider a longer simulation time
 
 ```julia
-t = 10.0
+t = 50.0
 
 results = DataFrame(:integrator=>String[], :runtime=>Float64[], :abstol=>Float64[],
     :reltol=>Float64[], :EnergyError=>Float64[], :timesteps=>Int[], :f_evals=>Int[], :cost=>Float64[]);
@@ -415,46 +320,46 @@ run_benchmark!(results, t, adaptive_integrators, ats, rts, c = c_adaptive)
 ```
 
 ```
-30×8 DataFrame
+24×8 DataFrame
  Row │ integrator                  runtime    abstol       reltol       Ene
 rgy ⋯
      │ String                      Float64    Float64      Float64      Flo
 at6 ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ OrdinaryDiffEqTsit5.Tsit5   311.415    1.17127e-8   1.17127e-8     0
-.20 ⋯
-   2 │ OrdinaryDiffEqVerner.Vern7  238.067    2.29126e-7   2.29126e-7     0
-.00
-   3 │ OrdinaryDiffEqVerner.Vern9  320.873    2.66515e-6   2.66515e-6     0
-.00
-   4 │ OrdinaryDiffEqRKN.DPRKN6    931.021    1.17942e-8   1.17942e-8     0
-.03
-   5 │ OrdinaryDiffEqRKN.DPRKN8    995.65     3.42968e-8   3.42968e-8     0
-.00 ⋯
-   6 │ OrdinaryDiffEqRKN.DPRKN12   442.838    4.6144e-7    4.6144e-7      0
-.00
-   7 │ OrdinaryDiffEqTsit5.Tsit5   108.514    1.17127e-7   1.17127e-7     0
-.50
-   8 │ OrdinaryDiffEqVerner.Vern7   62.2898   2.29126e-6   2.29126e-6     0
-.00
+   1 │ OrdinaryDiffEqTsit5.Tsit5    721.73    1.17127e-7   1.17127e-7      
+2.5 ⋯
+   2 │ OrdinaryDiffEqVerner.Vern7   434.491   2.29126e-6   2.29126e-6      
+0.0
+   3 │ OrdinaryDiffEqVerner.Vern9   534.377   2.66515e-5   2.66515e-5      
+0.0
+   4 │ OrdinaryDiffEqRKN.DPRKN6    1355.9     1.17942e-7   1.17942e-7      
+0.0
+   5 │ OrdinaryDiffEqRKN.DPRKN8    1441.01    3.42968e-7   3.42968e-7      
+0.0 ⋯
+   6 │ OrdinaryDiffEqRKN.DPRKN12   1597.96    4.6144e-6    4.6144e-6       
+0.0
+   7 │ OrdinaryDiffEqTsit5.Tsit5    232.519   1.17127e-6   1.17127e-6      
+0.0
+   8 │ OrdinaryDiffEqVerner.Vern7   101.05    2.29126e-5   2.29126e-5      
+0.2
   ⋮  │             ⋮                   ⋮           ⋮            ⋮          
-  ⋮ ⋱
-  24 │ OrdinaryDiffEqRKN.DPRKN12    12.0668   0.00046144   0.00046144     0
-.10 ⋯
-  25 │ OrdinaryDiffEqTsit5.Tsit5     7.38286  0.000117127  0.000117127   38
-.27
-  26 │ OrdinaryDiffEqVerner.Vern7    7.70396  0.00229126   0.00229126    61
-.42
-  27 │ OrdinaryDiffEqVerner.Vern9    9.25877  0.0266515    0.0266515    960
-.91
-  28 │ OrdinaryDiffEqRKN.DPRKN6      8.35566  0.000117942  0.000117942    0
-.85 ⋯
-  29 │ OrdinaryDiffEqRKN.DPRKN8      7.57943  0.000342968  0.000342968    0
-.12
-  30 │ OrdinaryDiffEqRKN.DPRKN12     5.72634  0.0046144    0.0046144    194
-.54
-                                                   4 columns and 15 rows om
+    ⋱
+  18 │ OrdinaryDiffEqRKN.DPRKN12     80.5576  0.00046144   0.00046144      
+0.2 ⋯
+  19 │ OrdinaryDiffEqTsit5.Tsit5     49.7843  0.000117127  0.000117127   19
+9.2
+  20 │ OrdinaryDiffEqVerner.Vern7    48.7005  0.00229126   0.00229126    29
+6.2
+  21 │ OrdinaryDiffEqVerner.Vern9    84.6981  0.0266515    0.0266515    540
+8.1
+  22 │ OrdinaryDiffEqRKN.DPRKN6      54.9263  0.000117942  0.000117942     
+3.7 ⋯
+  23 │ OrdinaryDiffEqRKN.DPRKN8      50.0642  0.000342968  0.000342968     
+0.2
+  24 │ OrdinaryDiffEqRKN.DPRKN12     38.7109  0.0046144    0.0046144     36
+7.3
+                                                    4 columns and 9 rows om
 itted
 ```
 
@@ -469,25 +374,14 @@ The energy error as a function of runtime is given by
     xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)")
 ```
 
-![](figures/liquid_argon_12_1.png)
-
-
-
-If we consider the number of function evaluations instead, we obtain
-
-```julia
-@df results plot(:EnergyError, :f_evals, group = :integrator,
-    xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Number of f evals")
-```
-
-![](figures/liquid_argon_13_1.png)
+![](figures/liquid_argon_long_10_1.png)
 
 
 
 We will now compare the best performing solvers
 
 ```julia
-t = 10.0
+t = 50.0
 
 symplectic_integrators = [
     VelocityVerlet,
@@ -530,46 +424,48 @@ results1
 ```
 
 ```
-65×9 DataFrame
- Row │ integrator                         runtime    τ                  Ene
-rgy ⋯
-     │ String                             Float64    Float64?           Flo
-at6 ⋯
+17×9 DataFrame
+ Row │ integrator                         runtime    τ              EnergyE
+rro ⋯
+     │ String                             Float64    Float64?       Float64
+    ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ OrdinaryDiffEqSymplecticRK.Veloc…   81.3186         0.0001         0
-.00 ⋯
-   2 │ OrdinaryDiffEqSymplecticRK.Verle…   77.7053         0.000105       0
-.00
-   3 │ OrdinaryDiffEqSymplecticRK.Pseud…  163.829          9.8e-5         0
-.00
-   4 │ OrdinaryDiffEqSymplecticRK.McAte2  241.134          0.000102       0
-.00
-   5 │ OrdinaryDiffEqSymplecticRK.Calvo…  170.681          0.000238       0
-.00 ⋯
-   6 │ OrdinaryDiffEqSymplecticRK.Veloc…   63.3395         0.000129155    0
-.00
-   7 │ OrdinaryDiffEqSymplecticRK.Verle…   59.404          0.000135613    0
-.00
-   8 │ OrdinaryDiffEqSymplecticRK.Pseud…  126.395          0.000126572    0
-.00
-  ⋮  │                 ⋮                      ⋮              ⋮             
-  ⋮ ⋱
-  59 │ OrdinaryDiffEqRKN.DPRKN12           57.3324   missing              0
-.00 ⋯
-  60 │ OrdinaryDiffEqRKN.DPRKN6            16.4184   missing              0
-.00
-  61 │ OrdinaryDiffEqRKN.DPRKN8            19.0265   missing              0
-.02
-  62 │ OrdinaryDiffEqRKN.DPRKN12           12.1122   missing              0
-.10
-  63 │ OrdinaryDiffEqRKN.DPRKN6             8.34159  missing              0
-.85 ⋯
-  64 │ OrdinaryDiffEqRKN.DPRKN8             7.56388  missing              0
-.12
-  65 │ OrdinaryDiffEqRKN.DPRKN12            5.73518  missing            194
-.54
-                                                   6 columns and 50 rows om
+   1 │ OrdinaryDiffEqSymplecticRK.Veloc…    53.6056        0.001      0.168
+296 ⋯
+   2 │ OrdinaryDiffEqSymplecticRK.Verle…    50.2723        0.00105    0.153
+213
+   3 │ OrdinaryDiffEqSymplecticRK.Pseud…   112.079         0.00098    0.020
+544
+   4 │ OrdinaryDiffEqSymplecticRK.McAte2   158.264         0.00102    0.084
+934
+   5 │ OrdinaryDiffEqSymplecticRK.Calvo…   112.869         0.00238    0.021
+166 ⋯
+   6 │ OrdinaryDiffEqRKN.DPRKN6           1349.02    missing          0.030
+693
+   7 │ OrdinaryDiffEqRKN.DPRKN8           1434.62    missing          0.003
+665
+   8 │ OrdinaryDiffEqRKN.DPRKN12          1589.05    missing          0.011
+096
+   9 │ OrdinaryDiffEqRKN.DPRKN6            436.565   missing          0.010
+749 ⋯
+  10 │ OrdinaryDiffEqRKN.DPRKN8            583.28    missing          0.001
+448
+  11 │ OrdinaryDiffEqRKN.DPRKN12           380.1     missing          0.070
+990
+  12 │ OrdinaryDiffEqRKN.DPRKN6            108.072   missing          0.069
+964
+  13 │ OrdinaryDiffEqRKN.DPRKN8            126.433   missing          0.032
+417 ⋯
+  14 │ OrdinaryDiffEqRKN.DPRKN12            80.5453  missing          0.280
+632
+  15 │ OrdinaryDiffEqRKN.DPRKN6             54.7975  missing          3.769
+84
+  16 │ OrdinaryDiffEqRKN.DPRKN8             50.1205  missing          0.251
+141
+  17 │ OrdinaryDiffEqRKN.DPRKN12            38.6     missing        367.325
+    ⋯
+                                                               6 columns om
 itted
 ```
 
@@ -584,7 +480,7 @@ The energy error as a function of runtime is given by
     xscale = :log10, yscale = :log10, xlabel = "Energy error", ylabel = "Runtime (s)")
 ```
 
-![](figures/liquid_argon_15_1.png)
+![](figures/liquid_argon_long_12_1.png)
 
 
 ## Appendix
@@ -595,7 +491,7 @@ To locally run this benchmark, do the following commands:
 
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/NBodySimulator","liquid_argon.jmd")
+SciMLBenchmarks.weave_file("benchmarks/NBodySimulator","liquid_argon_long.jmd")
 ```
 
 Computer Information:
