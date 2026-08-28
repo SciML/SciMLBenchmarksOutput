@@ -1,5 +1,8 @@
-
 using OrdinaryDiffEq, ODEInterfaceDiffEq, Sundials, DiffEqDevTools, LSODA, LinearSolve
+using OrdinaryDiffEqBDF, OrdinaryDiffEqExponentialRK, OrdinaryDiffEqExtrapolation,
+    OrdinaryDiffEqFIRK, OrdinaryDiffEqLowOrderRK, OrdinaryDiffEqRosenbrock,
+    OrdinaryDiffEqSDIRK, OrdinaryDiffEqStabilizedRK
+using SciMLLogging, ADTypes
 using LinearAlgebra, RecursiveFactorization
 using Plots
 gr()
@@ -19,10 +22,10 @@ struct FerromagneticContinuous <: AbstractMagneticForce
 end
 
 mutable struct FilamentCache{
-    MagneticForce <: AbstractMagneticForce,
-    InextensibilityCache <: AbstractInextensibilityCache,
-    SolverCache <: AbstractSolverCache
-} <: AbstractFilamentCache
+        MagneticForce <: AbstractMagneticForce,
+        InextensibilityCache <: AbstractInextensibilityCache,
+        SolverCache <: AbstractSolverCache,
+    } <: AbstractFilamentCache
     N::Int
     μ::T
     Cm::T
@@ -44,12 +47,12 @@ struct NoHydroProjectionCache <: AbstractInextensibilityCache
     P0::Matrix{T}
 
     function NoHydroProjectionCache(N::Int)
-        new(
-            zeros(N, 3*(N+1)),          # J
-            zeros(3*(N+1), 3*(N+1)),    # P
+        return new(
+            zeros(N, 3 * (N + 1)),          # J
+            zeros(3 * (N + 1), 3 * (N + 1)),    # P
             zeros(N, N),                 # J_JT
-            LinearAlgebra.LDLt{T, SymTridiagonal{T}}(SymTridiagonal(zeros(N), zeros(N-1))),
-            zeros(N, 3*(N+1))
+            LinearAlgebra.LDLt{T, SymTridiagonal{T}}(SymTridiagonal(zeros(N), zeros(N - 1))),
+            zeros(N, 3 * (N + 1))
         )
     end
 end
@@ -59,20 +62,20 @@ struct DiffEqSolverCache <: AbstractSolverCache
     S1::Vector{T}
     S2::Vector{T}
 
-    DiffEqSolverCache(N::Integer) = new(zeros(T, 3*(N+1)), zeros(T, 3*(N+1)))
+    DiffEqSolverCache(N::Integer) = new(zeros(T, 3 * (N + 1)), zeros(T, 3 * (N + 1)))
 end
 
 
 function FilamentCache(N = 20; Cm = 32, ω = 200, Solver = SolverDiffEq)
     InextensibilityCache = NoHydroProjectionCache
     SolverCache = DiffEqSolverCache
-    tmp = zeros(3*(N+1))
-    FilamentCache{FerromagneticContinuous, InextensibilityCache, SolverCache}(
-        N, N+1, Cm, view(tmp, 1:3:(3 * (N + 1))),
+    tmp = zeros(3 * (N + 1))
+    return FilamentCache{FerromagneticContinuous, InextensibilityCache, SolverCache}(
+        N, N + 1, Cm, view(tmp, 1:3:(3 * (N + 1))),
         view(tmp, 2:3:(3 * (N + 1))), view(tmp, 3:3:(3 * (N + 1))),
-        zeros(3*(N+1), 3*(N+1)), # A
+        zeros(3 * (N + 1), 3 * (N + 1)), # A
         InextensibilityCache(N), # P
-        FerromagneticContinuous(ω, zeros(3*(N+1))),
+        FerromagneticContinuous(ω, zeros(3 * (N + 1))),
         SolverCache(N)
     )
 end
@@ -112,7 +115,7 @@ function stiffness_matrix!(f::AbstractFilamentCache)
         end
     end
     rmul!(A, -μ^4)
-    nothing
+    return nothing
 end
 
 
@@ -123,7 +126,7 @@ function update_separate_coordinates!(f::AbstractFilamentCache, r)
         y[i] = r[3 * i - 1]
         z[i] = r[3 * i]
     end
-    nothing
+    return nothing
 end
 
 function update_united_coordinates!(f::AbstractFilamentCache, r)
@@ -133,37 +136,37 @@ function update_united_coordinates!(f::AbstractFilamentCache, r)
         r[3 * i - 1] = y[i]
         r[3 * i] = z[i]
     end
-    nothing
+    return nothing
 end
 
 function update_united_coordinates(f::AbstractFilamentCache)
-    r = zeros(T, 3*length(f.x))
+    r = zeros(T, 3 * length(f.x))
     update_united_coordinates!(f, r)
-    r
+    return r
 end
 
 
 function initialize!(initial_conf_type::Symbol, f::AbstractFilamentCache)
     N, x, y, z = f.N, f.x, f.y, f.z
     if initial_conf_type == :StraightX
-        x .= range(0, stop = 1, length = N+1)
+        x .= range(0, stop = 1, length = N + 1)
         y .= 0
         z .= 0
     else
         error("Unknown initial configuration requested.")
     end
-    update_united_coordinates(f)
+    return update_united_coordinates(f)
 end
 
 
 function magnetic_force!(::FerromagneticContinuous, f::AbstractFilamentCache, t)
     # TODO: generalize this for different magnetic fields as well
     N, μ, Cm, ω, F = f.N, f.μ, f.Cm, f.F.ω, f.F.F
-    F[1] = -μ * Cm * cos(ω*t)
-    F[2] = -μ * Cm * sin(ω*t)
-    F[3 * (N + 1) - 2] = μ * Cm * cos(ω*t)
-    F[3 * (N + 1) - 1] = μ * Cm * sin(ω*t)
-    nothing
+    F[1] = -μ * Cm * cos(ω * t)
+    F[2] = -μ * Cm * sin(ω * t)
+    F[3 * (N + 1) - 2] = μ * Cm * cos(ω * t)
+    F[3 * (N + 1) - 1] = μ * Cm * sin(ω * t)
+    return nothing
 end
 
 
@@ -188,14 +191,14 @@ end
 function jacobian!(f::FilamentCache)
     N, x, y, z, J = f.N, f.x, f.y, f.z, f.P.J
     @inbounds for i in 1:N
-        J[i, 3 * i - 2] = -2 * (x[i + 1]-x[i])
-        J[i, 3 * i - 1] = -2 * (y[i + 1]-y[i])
-        J[i, 3 * i] = -2 * (z[i + 1]-z[i])
-        J[i, 3 * (i + 1) - 2] = 2 * (x[i + 1]-x[i])
-        J[i, 3 * (i + 1) - 1] = 2 * (y[i + 1]-y[i])
-        J[i, 3 * (i + 1)] = 2 * (z[i + 1]-z[i])
+        J[i, 3 * i - 2] = -2 * (x[i + 1] - x[i])
+        J[i, 3 * i - 1] = -2 * (y[i + 1] - y[i])
+        J[i, 3 * i] = -2 * (z[i + 1] - z[i])
+        J[i, 3 * (i + 1) - 2] = 2 * (x[i + 1] - x[i])
+        J[i, 3 * (i + 1) - 1] = 2 * (y[i + 1] - y[i])
+        J[i, 3 * (i + 1)] = 2 * (z[i + 1] - z[i])
     end
-    nothing
+    return nothing
 end
 
 
@@ -207,7 +210,7 @@ function projection!(f::FilamentCache)
     ldiv!(P0, J_JT_LDLT, J)
     mul!(P, P0', J)
     subtract_from_identity!(P)
-    nothing
+    return nothing
 end
 
 
@@ -216,12 +219,14 @@ function subtract_from_identity!(A)
     @inbounds for i in 1:size(A, 1)
         A[i, i] += 1
     end
-    nothing
+    return nothing
 end
 
 
-function LDLt_inplace!(L::LinearAlgebra.LDLt{T, SymTridiagonal{T}}, A::Matrix{T}) where {T <:
-                                                                                         Real}
+function LDLt_inplace!(L::LinearAlgebra.LDLt{T, SymTridiagonal{T}}, A::Matrix{T}) where {
+        T <:
+        Real,
+    }
     n = size(A, 1)
     dv, ev = L.data.dv, L.data.ev
     @inbounds for (i, d) in enumerate(diagind(A))
@@ -234,18 +239,23 @@ function LDLt_inplace!(L::LinearAlgebra.LDLt{T, SymTridiagonal{T}}, A::Matrix{T}
         ev[i] /= dv[i]
         dv[i + 1] -= abs2(ev[i]) * dv[i]
     end
-    L
+    return L
 end
 
 
-function run(::SolverDiffEq; N = 20, Cm = 32, ω = 200, time_end = 1.0,
-        solver = TRBDF2(autodiff = false), reltol = 1e-6, abstol = 1e-6)
+function run(
+        ::SolverDiffEq; N = 20, Cm = 32, ω = 200, time_end = 1.0,
+        solver = TRBDF2(autodiff = AutoFiniteDiff()), reltol = 1.0e-6, abstol = 1.0e-6
+    )
     f = FilamentCache(N, Solver = SolverDiffEq, Cm = Cm, ω = ω)
     r0 = initialize!(:StraightX, f)
     stiffness_matrix!(f)
-    prob = ODEProblem(ODEFunction(f, jac = (J, u, p, t)->(mul!(J, f.P.P, f.A); nothing)), r0, (
-        0.0, time_end))
-    sol = solve(prob, solver, dense = false, reltol = reltol, abstol = abstol)
+    prob = ODEProblem(
+        ODEFunction(f, jac = (J, u, p, t) -> (mul!(J, f.P.P, f.A); nothing)), r0, (
+            0.0, time_end,
+        )
+    )
+    return sol = solve(prob, solver, dense = false, reltol = reltol, abstol = abstol)
 end
 
 
@@ -253,107 +263,118 @@ sol = run(SolverDiffEq())
 plot(sol, vars = (0, 25))
 
 
-N=20
+N = 20
 f = FilamentCache(N, Solver = SolverDiffEq)
 r0 = initialize!(:StraightX, f)
 stiffness_matrix!(f)
 prob = ODEProblem(f, r0, (0.0, 0.01))
 
-sol = solve(prob, Vern9(), reltol = 1e-14, abstol = 1e-14)
+sol = solve(prob, Vern9(), reltol = 1.0e-14, abstol = 1.0e-14)
 test_sol = TestSolution(sol);
 
 
-abstols=1 ./ 10 .^ (3:8)
-reltols=1 ./ 10 .^ (3:8)
+abstols = 1 ./ 10 .^ (3:8)
+reltols = 1 ./ 10 .^ (3:8)
 setups = [
     Dict(:alg => CVODE_BDF()),
-    Dict(:alg => Rosenbrock23(autodiff = false)),
-    Dict(:alg => Rodas4(autodiff = false)),
+    Dict(:alg => Rosenbrock23(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Rodas4(autodiff = AutoFiniteDiff())),
     Dict(:alg => radau()),
-    Dict(:alg=>Exprb43(autodiff = false)),
-    Dict(:alg=>Exprb32(autodiff = false)),
-    Dict(:alg=>ImplicitEulerExtrapolation(autodiff = false)),
-    Dict(:alg=>ImplicitDeuflhardExtrapolation(autodiff = false)),
-    Dict(:alg=>ImplicitHairerWannerExtrapolation(autodiff = false))
+    Dict(:alg => Exprb43(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Exprb32(autodiff = AutoFiniteDiff())),
+    Dict(:alg => ImplicitEulerExtrapolation(autodiff = AutoFiniteDiff())),
+    Dict(:alg => ImplicitDeuflhardExtrapolation(autodiff = AutoFiniteDiff())),
+    Dict(:alg => ImplicitHairerWannerExtrapolation(autodiff = AutoFiniteDiff())),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
 try
-    sol = solve(prob, EPIRK4s3B(autodiff = false), dt = 2^-3)
+    sol = solve(prob, EPIRK4s3B(autodiff = AutoFiniteDiff()), dt = 2^-3)
 catch e
     println("EPIRK4s3B failed: $e")
 end
 
 
-abstols=1 ./ 10 .^ (3:5)
-reltols=1 ./ 10 .^ (3:5)
+abstols = 1 ./ 10 .^ (3:5)
+reltols = 1 ./ 10 .^ (3:5)
 setups = [
     Dict(:alg => CVODE_BDF()),
-    Dict(:alg => HochOst4(), :dts=>2.0 .^ (-3:-1:-5)),
-    Dict(:alg => EPIRK4s3B(), :dts=>2.0 .^ (-3:-1:-5)),
-    Dict(:alg => EXPRB53s3(), :dts=>2.0 .^ (-3:-1:-5))
+    Dict(:alg => HochOst4(), :dts => 2.0 .^ (-3:-1:-5)),
+    Dict(:alg => EPIRK4s3B(), :dts => 2.0 .^ (-3:-1:-5)),
+    Dict(:alg => EXPRB53s3(), :dts => 2.0 .^ (-3:-1:-5)),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (3:8)
-reltols=1 ./ 10 .^ (3:8)
+abstols = 1 ./ 10 .^ (3:8)
+reltols = 1 ./ 10 .^ (3:8)
 setups = [
     Dict(:alg => CVODE_BDF()),
     Dict(:alg => BS3()),
     Dict(:alg => Tsit5()),
-    Dict(:alg => ImplicitEuler(autodiff = false)),
-    Dict(:alg => Trapezoid(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false)),
+    Dict(:alg => ImplicitEuler(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Trapezoid(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
     Dict(:alg => rodas()),
     Dict(:alg => dop853()),
     Dict(:alg => lsoda()),
     Dict(:alg => ROCK2()),
     Dict(:alg => ROCK4()),
-    Dict(:alg => ESERK5())
+    Dict(:alg => ESERK5()),
+    Dict(:alg => RKC()),
+    Dict(:alg => TSRKC3()),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (3:8)
-reltols=1 ./ 10 .^ (3:8)
+abstols = 1 ./ 10 .^ (3:8)
+reltols = 1 ./ 10 .^ (3:8)
 setups = [
     Dict(:alg => CVODE_BDF()),
-    Dict(:alg => ImplicitEuler(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false)),
-    Dict(:alg => KenCarp3(autodiff = false)),
-    Dict(:alg => KenCarp4(autodiff = false)),
-    Dict(:alg => Kvaerno3(autodiff = false)),
-    Dict(:alg => Kvaerno4(autodiff = false)),
-    Dict(:alg => ABDF2(autodiff = false)),
-    Dict(:alg => QNDF(autodiff = false)),
-    Dict(:alg => RadauIIA5(autodiff = false))
+    Dict(:alg => ImplicitEuler(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => ABDF2(autodiff = AutoFiniteDiff())),
+    Dict(:alg => QNDF(autodiff = AutoFiniteDiff())),
+    Dict(:alg => NordsieckBDF(autodiff = AutoFiniteDiff())),
+    Dict(:alg => RadauIIA5(autodiff = AutoFiniteDiff())),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (3:8)
-reltols=1 ./ 10 .^ (3:8)
+abstols = 1 ./ 10 .^ (3:8)
+reltols = 1 ./ 10 .^ (3:8)
 setups = [
     Dict(:alg => CVODE_BDF()),
     Dict(:alg => CVODE_BDF(linear_solver = :GMRES)),
-    Dict(:alg => TRBDF2(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false, linsolve = KrylovJL_GMRES())),
-    Dict(:alg => KenCarp4(autodiff = false)),
-    Dict(:alg => KenCarp4(autodiff = false, linsolve = KrylovJL_GMRES()))
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff(), linsolve = KrylovJL_GMRES())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff(), linsolve = KrylovJL_GMRES())),
 ];
 
 names = [
@@ -362,194 +383,218 @@ names = [
     "TRBDF2",
     "TRBDF2 (GMRES)",
     "KenCarp4",
-    "KenCarp4 (GMRES)"
+    "KenCarp4 (GMRES)",
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; names = names, appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; names = names, appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (3:8)
-reltols=1 ./ 10 .^ (3:8)
+abstols = 1 ./ 10 .^ (3:8)
+reltols = 1 ./ 10 .^ (3:8)
 setups = [
     Dict(:alg => CVODE_BDF()),
-    Dict(:alg => Trapezoid(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false)),
+    Dict(:alg => Trapezoid(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
     Dict(:alg => rodas()),
     Dict(:alg => lsoda()),
-    Dict(:alg => KenCarp3(autodiff = false)),
-    Dict(:alg => KenCarp4(autodiff = false)),
-    Dict(:alg => Kvaerno3(autodiff = false)),
-    Dict(:alg => Kvaerno4(autodiff = false)),
+    Dict(:alg => KenCarp3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno4(autodiff = AutoFiniteDiff())),
     Dict(:alg => ROCK2()),
     Dict(:alg => ROCK4()),
-    Dict(:alg => ESERK5())
+    Dict(:alg => ESERK5()),
+    Dict(:alg => RKC()),
+    Dict(:alg => TSRKC3()),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (3:8)
-reltols=1 ./ 10 .^ (3:8)
+abstols = 1 ./ 10 .^ (3:8)
+reltols = 1 ./ 10 .^ (3:8)
 setups = [
     Dict(:alg => CVODE_BDF()),
-    Dict(:alg => TRBDF2(autodiff = false)),
-    Dict(:alg => KenCarp3(autodiff = false)),
-    Dict(:alg => KenCarp4(autodiff = false)),
-    Dict(:alg => Kvaerno3(autodiff = false)),
-    Dict(:alg => Kvaerno4(autodiff = false)),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno4(autodiff = AutoFiniteDiff())),
     Dict(:alg => ROCK2()),
     Dict(:alg => ROCK4()),
-    Dict(:alg => ESERK5())
+    Dict(:alg => ESERK5()),
+    Dict(:alg => RKC()),
+    Dict(:alg => TSRKC3()),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false, dense_errors = true, error_estimate = :L2)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None(), dense_errors = true, error_estimate = :L2
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (6:12)
-reltols=1 ./ 10 .^ (6:12)
+abstols = 1 ./ 10 .^ (6:12)
+reltols = 1 ./ 10 .^ (6:12)
 setups = [
     Dict(:alg => CVODE_BDF()),
     Dict(:alg => Vern7()),
     Dict(:alg => Vern9()),
-    Dict(:alg => TRBDF2(autodiff = false)),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
     Dict(:alg => dop853()),
-    Dict(:alg => ROCK4())
+    Dict(:alg => ROCK4()),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (6:12)
-reltols=1 ./ 10 .^ (6:12)
+abstols = 1 ./ 10 .^ (6:12)
+reltols = 1 ./ 10 .^ (6:12)
 setups = [
     Dict(:alg => CVODE_BDF()),
     Dict(:alg => radau()),
-    Dict(:alg => RadauIIA5(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false)),
-    Dict(:alg => Kvaerno3(autodiff = false)),
-    Dict(:alg => KenCarp3(autodiff = false)),
-    Dict(:alg => Kvaerno4(autodiff = false)),
-    Dict(:alg => KenCarp4(autodiff = false)),
-    Dict(:alg => Kvaerno5(autodiff = false)),
-    Dict(:alg => KenCarp5(autodiff = false)),
-    Dict(:alg => lsoda())
+    Dict(:alg => RadauIIA5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => lsoda()),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (6:12)
-reltols=1 ./ 10 .^ (6:12)
+abstols = 1 ./ 10 .^ (6:12)
+reltols = 1 ./ 10 .^ (6:12)
 setups = [
     Dict(:alg => CVODE_BDF()),
     Dict(:alg => radau()),
-    Dict(:alg => RadauIIA5(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false)),
-    Dict(:alg => Kvaerno3(autodiff = false)),
-    Dict(:alg => KenCarp3(autodiff = false)),
-    Dict(:alg => Kvaerno4(autodiff = false)),
-    Dict(:alg => KenCarp4(autodiff = false)),
-    Dict(:alg => Kvaerno5(autodiff = false)),
-    Dict(:alg => KenCarp5(autodiff = false)),
-    Dict(:alg => lsoda())
+    Dict(:alg => RadauIIA5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => lsoda()),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false, error_estimate = :l2)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None(), error_estimate = :l2
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (6:12)
-reltols=1 ./ 10 .^ (6:12)
+abstols = 1 ./ 10 .^ (6:12)
+reltols = 1 ./ 10 .^ (6:12)
 setups = [
     Dict(:alg => CVODE_BDF()),
     Dict(:alg => radau()),
-    Dict(:alg => RadauIIA5(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false)),
-    Dict(:alg => Kvaerno3(autodiff = false)),
-    Dict(:alg => KenCarp3(autodiff = false)),
-    Dict(:alg => Kvaerno4(autodiff = false)),
-    Dict(:alg => KenCarp4(autodiff = false)),
-    Dict(:alg => Kvaerno5(autodiff = false)),
-    Dict(:alg => KenCarp5(autodiff = false)),
-    Dict(:alg => lsoda())
+    Dict(:alg => RadauIIA5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => lsoda()),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false, dense_errors = true, error_estimate = :L2)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None(), dense_errors = true, error_estimate = :L2
+)
 plot(wp)
 
 
-N=20
+N = 20
 f = FilamentCache(N, Solver = SolverDiffEq)
 r0 = initialize!(:StraightX, f)
 stiffness_matrix!(f)
 prob = ODEProblem(ODEFunction(f, jac = nothing), r0, (0.0, 0.01))
 
-sol = solve(prob, Vern9(), reltol = 1e-14, abstol = 1e-14)
+sol = solve(prob, Vern9(), reltol = 1.0e-14, abstol = 1.0e-14)
 test_sol = TestSolution(sol.t, sol.u);
 
 
-abstols=1 ./ 10 .^ (3:8)
-reltols=1 ./ 10 .^ (3:8)
+abstols = 1 ./ 10 .^ (3:8)
+reltols = 1 ./ 10 .^ (3:8)
 setups = [
     Dict(:alg => CVODE_BDF()),
     Dict(:alg => BS3()),
     Dict(:alg => Tsit5()),
-    Dict(:alg => ImplicitEuler(autodiff = false)),
-    Dict(:alg => Trapezoid(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false)),
+    Dict(:alg => ImplicitEuler(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Trapezoid(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
     Dict(:alg => rodas()),
     Dict(:alg => dop853()),
-    Dict(:alg => lsoda())
+    Dict(:alg => lsoda()),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (3:8)
-reltols=1 ./ 10 .^ (3:8)
+abstols = 1 ./ 10 .^ (3:8)
+reltols = 1 ./ 10 .^ (3:8)
 setups = [
     Dict(:alg => CVODE_BDF()),
     Dict(:alg => BS3()),
     Dict(:alg => Tsit5()),
-    Dict(:alg => ImplicitEuler(autodiff = false)),
-    Dict(:alg => Trapezoid(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false)),
+    Dict(:alg => ImplicitEuler(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Trapezoid(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
     Dict(:alg => rodas()),
     Dict(:alg => dop853()),
     Dict(:alg => lsoda()),
     Dict(:alg => ROCK2()),
     Dict(:alg => ROCK4()),
-    Dict(:alg => ESERK5())
+    Dict(:alg => ESERK5()),
+    Dict(:alg => RKC()),
+    Dict(:alg => TSRKC3()),
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (3:8)
-reltols=1 ./ 10 .^ (3:8)
+abstols = 1 ./ 10 .^ (3:8)
+reltols = 1 ./ 10 .^ (3:8)
 setups = [
     Dict(:alg => CVODE_BDF()),
     Dict(:alg => CVODE_BDF(linear_solver = :GMRES)),
-    Dict(:alg => TRBDF2(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false, linsolve = KrylovJL_GMRES())),
-    Dict(:alg => KenCarp4(autodiff = false)),
-    Dict(:alg => KenCarp4(autodiff = false, linsolve = KrylovJL_GMRES()))
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff(), linsolve = KrylovJL_GMRES())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff(), linsolve = KrylovJL_GMRES())),
 ];
 
 names = [
@@ -558,34 +603,37 @@ names = [
     "TRBDF2",
     "TRBDF2 (GMRES)",
     "KenCarp4",
-    "KenCarp4 (GMRES)"
+    "KenCarp4 (GMRES)",
 ];
 
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; names = names, appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; names = names, appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
-abstols=1 ./ 10 .^ (6:12)
-reltols=1 ./ 10 .^ (6:12)
+abstols = 1 ./ 10 .^ (6:12)
+reltols = 1 ./ 10 .^ (6:12)
 setups = [
     Dict(:alg => CVODE_BDF()),
     Dict(:alg => radau()),
-    Dict(:alg => RadauIIA5(autodiff = false)),
-    Dict(:alg => TRBDF2(autodiff = false)),
-    Dict(:alg => Kvaerno3(autodiff = false)),
-    Dict(:alg => KenCarp3(autodiff = false)),
-    Dict(:alg => Kvaerno4(autodiff = false)),
-    Dict(:alg => KenCarp4(autodiff = false)),
-    Dict(:alg => Kvaerno5(autodiff = false)),
-    Dict(:alg => KenCarp5(autodiff = false)),
-    Dict(:alg => lsoda())
+    Dict(:alg => RadauIIA5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => TRBDF2(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp3(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp4(autodiff = AutoFiniteDiff())),
+    Dict(:alg => Kvaerno5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => KenCarp5(autodiff = AutoFiniteDiff())),
+    Dict(:alg => lsoda()),
 ];
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol = test_sol,
-    maxiters = Int(1e6), verbose = false)
+wp = WorkPrecisionSet(
+    prob, abstols, reltols, setups; appxsol = test_sol,
+    maxiters = Int(1.0e6), verbose = SciMLLogging.None()
+)
 plot(wp)
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
-
