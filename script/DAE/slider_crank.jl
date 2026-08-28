@@ -1,24 +1,25 @@
-
 using OrdinaryDiffEq, Sundials, DiffEqDevTools, ModelingToolkit, Plots
+using OrdinaryDiffEqBDF
+using OrdinaryDiffEqRosenbrock
 using LinearAlgebra
 using ModelingToolkit: t_nounits as t, D_nounits as D
 
 # ── Physical Parameters (from crank.f) ──────────────────────────────
 
-const M1    = 0.36
-const M2    = 0.151104
-const M3    = 0.075552
-const L1    = 0.15
-const L2    = 0.30
-const J1    = 0.002727
-const J2    = 0.0045339259
-const PI_   = 3.1415927
-const EE    = 0.20e12
-const NUE   = 0.30
-const BB    = 0.0080
-const HH    = 0.0080
-const RHO   = 7870.0
-const GRAV  = 0.0
+const M1 = 0.36
+const M2 = 0.151104
+const M3 = 0.075552
+const L1 = 0.15
+const L2 = 0.3
+const J1 = 0.002727
+const J2 = 0.0045339259
+const PI_ = 3.1415927
+const EE = 0.2e12
+const NUE = 0.3
+const BB = 0.008
+const HH = 0.008
+const RHO = 7870.0
+const GRAV = 0.0
 const OMEGA = 150.0
 
 const NQ = 4
@@ -35,37 +36,37 @@ function initialize_fe_matrices()
     FACB = BB * HH * L2
 
     MQ_ = zeros(NQ, NQ)
-    MQ_[1,1] = FACM * 0.5
-    MQ_[2,2] = FACM * 0.5
-    MQ_[3,3] = FACM * 8.0
-    MQ_[3,4] = FACM * 1.0
-    MQ_[4,3] = FACM * 1.0
-    MQ_[4,4] = FACM * 2.0
+    MQ_[1, 1] = FACM * 0.5
+    MQ_[2, 2] = FACM * 0.5
+    MQ_[3, 3] = FACM * 8.0
+    MQ_[3, 4] = FACM * 1.0
+    MQ_[4, 3] = FACM * 1.0
+    MQ_[4, 4] = FACM * 2.0
 
     KQ_ = zeros(NQ, NQ)
-    KQ_[1,1] = FACK * PI_^4 / 24.0 * (HH/L2)^2
-    KQ_[2,2] = FACK * PI_^4 * 2.0 / 3.0 * (HH/L2)^2
-    KQ_[3,3] = FACK * 16.0 / 3.0
-    KQ_[3,4] = -FACK * 8.0 / 3.0
-    KQ_[4,3] = -FACK * 8.0 / 3.0
-    KQ_[4,4] = FACK * 7.0 / 3.0
+    KQ_[1, 1] = FACK * PI_^4 / 24.0 * (HH / L2)^2
+    KQ_[2, 2] = FACK * PI_^4 * 2.0 / 3.0 * (HH / L2)^2
+    KQ_[3, 3] = FACK * 16.0 / 3.0
+    KQ_[3, 4] = -FACK * 8.0 / 3.0
+    KQ_[4, 3] = -FACK * 8.0 / 3.0
+    KQ_[4, 4] = FACK * 7.0 / 3.0
 
     BQ_ = zeros(NQ, NQ)
-    BQ_[1,3] = -FACB * 16.0 / PI_^3
-    BQ_[1,4] =  FACB * (8.0 / PI_^3 - 1.0 / PI_)
-    BQ_[2,4] =  FACB * 0.5 / PI_
-    BQ_[3,1] =  FACB * 16.0 / PI_^3
-    BQ_[4,1] = -FACB * (8.0 / PI_^3 - 1.0 / PI_)
-    BQ_[4,2] = -FACB * 0.5 / PI_
+    BQ_[1, 3] = -FACB * 16.0 / PI_^3
+    BQ_[1, 4] = FACB * (8.0 / PI_^3 - 1.0 / PI_)
+    BQ_[2, 4] = FACB * 0.5 / PI_
+    BQ_[3, 1] = FACB * 16.0 / PI_^3
+    BQ_[4, 1] = -FACB * (8.0 / PI_^3 - 1.0 / PI_)
+    BQ_[4, 2] = -FACB * 0.5 / PI_
 
     DQ_ = zeros(NQ, NQ)
 
-    c1_  = zeros(NQ);  c2_  = zeros(NQ)
+    c1_ = zeros(NQ);  c2_ = zeros(NQ)
     c12_ = zeros(NQ);  c21_ = zeros(NQ)
 
-    c1_[3]  = FACB * 2.0 / 3.0
-    c1_[4]  = FACB * 1.0 / 6.0
-    c2_[1]  = FACB * 2.0 / PI_
+    c1_[3] = FACB * 2.0 / 3.0
+    c1_[4] = FACB * 1.0 / 6.0
+    c2_[1] = FACB * 2.0 / PI_
     c12_[3] = L2 * FACB * 1.0 / 3.0
     c12_[4] = L2 * FACB * 1.0 / 6.0
     c21_[1] = L2 * FACB * 1.0 / PI_
@@ -83,15 +84,15 @@ function build_GP(p1, p2, q)
     qku = (KU == 0) ? 0.0 : q[KU]
     qkv = (KV == 0) ? 0.0 : q[KV]
     GP = zeros(3, NP)
-    GP[1,1] = L1 * cosp1
-    GP[1,2] = L2 * cosp2 + qku * cosp2 - qkv * sinp2
-    GP[2,1] = L1 * sinp1
-    GP[2,2] = L2 * sinp2 + qku * sinp2 + qkv * cosp2
-    GP[2,3] = 1.0
-    GP[3,1] = 1.0
+    GP[1, 1] = L1 * cosp1
+    GP[1, 2] = L2 * cosp2 + qku * cosp2 - qkv * sinp2
+    GP[2, 1] = L1 * sinp1
+    GP[2, 2] = L2 * sinp2 + qku * sinp2 + qkv * cosp2
+    GP[2, 3] = 1.0
+    GP[3, 1] = 1.0
     if KU != 0
-        GP[1, 3+KU] = sinp2
-        GP[2, 3+KU] = -cosp2
+        GP[1, 3 + KU] = sinp2
+        GP[2, 3 + KU] = -cosp2
     end
     return GP
 end
@@ -106,19 +107,19 @@ function build_AM(p1, p2, q)
     end
 
     AM = zeros(NP, NP)
-    AM[1,1] = J1 + M2 * L1^2
-    AM[1,2] = 0.5 * L1 * L2 * M2 * cosp12 +
-              RHO * L1 * (sinp12 * c2Tq + cosp12 * c1Tq)
-    AM[2,2] = J2 + qtmqq + 2.0 * RHO * c12Tq
-    AM[3,3] = M3
+    AM[1, 1] = J1 + M2 * L1^2
+    AM[1, 2] = 0.5 * L1 * L2 * M2 * cosp12 +
+        RHO * L1 * (sinp12 * c2Tq + cosp12 * c1Tq)
+    AM[2, 2] = J2 + qtmqq + 2.0 * RHO * c12Tq
+    AM[3, 3] = M3
     for i in 1:NQ
-        AM[1, 3+i] = RHO * L1 * (-sinp12 * c1[i] + cosp12 * c2[i])
-        AM[2, 3+i] = RHO * c21[i] + RHO * QtBQ[i]
+        AM[1, 3 + i] = RHO * L1 * (-sinp12 * c1[i] + cosp12 * c2[i])
+        AM[2, 3 + i] = RHO * c21[i] + RHO * QtBQ[i]
     end
     for i in 1:NQ, j in 1:i
-        AM[3+j, 3+i] = MQ[j, i]
+        AM[3 + j, 3 + i] = MQ[j, i]
     end
-    for i in 1:NP, j in i+1:NP
+    for i in 1:NP, j in (i + 1):NP
         AM[j, i] = AM[i, j]
     end
     return AM
@@ -136,21 +137,23 @@ function compute_force_vector(p1, p2, q, v1, v2, vq)
 
     F = zeros(NP)
     F[1] = -0.5 * L1 * GRAV * (M1 + 2.0 * M2) * cosp1 -
-            0.5 * L1 * L2 * M2 * v2^2 * sinp12
+        0.5 * L1 * L2 * M2 * v2^2 * sinp12
     F[2] = -0.5 * L2 * GRAV * M2 * cosp2 +
-            0.5 * L1 * L2 * M2 * v1^2 * sinp12
+        0.5 * L1 * L2 * M2 * v1^2 * sinp12
     F[3] = 0.0
     F[1] += RHO * L1 * v2^2 * (-sinp12 * c1Tq + cosp12 * c2Tq) -
-            2.0 * RHO * L1 * v2 * (cosp12 * c1Tqd + sinp12 * c2Tqd)
+        2.0 * RHO * L1 * v2 * (cosp12 * c1Tqd + sinp12 * c2Tqd)
     F[2] += RHO * L1 * v1^2 * (sinp12 * c1Tq - cosp12 * c2Tq) -
-            2.0 * RHO * v2 * c12Tqd - 2.0 * v2 * qdtmqq -
-            RHO * qdtbqqd - RHO * GRAV * (cosp2 * c1Tq - sinp2 * c2Tq)
+        2.0 * RHO * v2 * c12Tqd - 2.0 * v2 * qdtmqq -
+        RHO * qdtbqqd - RHO * GRAV * (cosp2 * c1Tq - sinp2 * c2Tq)
     for i in 1:NQ
-        F[3+i] = v2^2 * MQq[i] +
-            RHO * (v2^2 * c12[i] + L1 * v1^2 * (cosp12 * c1[i] + sinp12 * c2[i]) +
-                   2.0 * v2 * BQqd[i]) -
+        F[3 + i] = v2^2 * MQq[i] +
+            RHO * (
+            v2^2 * c12[i] + L1 * v1^2 * (cosp12 * c1[i] + sinp12 * c2[i]) +
+                2.0 * v2 * BQqd[i]
+        ) -
             RHO * GRAV * (sinp2 * c1[i] + cosp2 * c2[i])
-        F[3+i] -= KQq[i] + DQqd[i]
+        F[3 + i] -= KQq[i] + DQqd[i]
     end
     return F
 end
@@ -158,13 +161,15 @@ end
 function get_consistent_ic()
     # Step 1: Positions from init1 (satisfy position constraints)
     p1 = 0.0;  p2 = 0.0;  x3 = 0.450016933
-    q = [0.0, 0.0, 0.103339863e-04, 0.169327969e-04]
+    q = [0.0, 0.0, 0.103339863e-4, 0.169327969e-4]
     pos = [p1, p2, x3, q...]
 
     # Step 2: Project init1 velocities onto constraint manifold
-    v_init1 = [150.0, -74.9957670, -0.268938672e-05,
-               0.444896105, 0.463434311e-02,
-               -0.178591076e-05, -0.268938672e-05]
+    v_init1 = [
+        150.0, -74.995767, -0.268938672e-5,
+        0.444896105, 0.463434311e-2,
+        -0.178591076e-5, -0.268938672e-5,
+    ]
     GP0 = build_GP(p1, p2, q)
     target = [0.0, 0.0, OMEGA]
     residual_v = GP0 * v_init1 - target
@@ -175,7 +180,7 @@ function get_consistent_ic()
     F0 = compute_force_vector(p1, p2, q, v_fixed[1], v_fixed[2], v_fixed[4:7])
 
     # dGP/dt * v via finite differences
-    eps_fd = 1e-8
+    eps_fd = 1.0e-8
     pos_p = pos .+ eps_fd .* v_fixed
     GP_p = build_GP(pos_p[1], pos_p[2], pos_p[4:7])
     dGPdt_v = (GP_p - GP0) / eps_fd * v_fixed
@@ -184,14 +189,14 @@ function get_consistent_ic()
     n = NP + NL
     Aug = zeros(n, n)
     Aug[1:NP, 1:NP] = AM0
-    Aug[1:NP, NP+1:n] = GP0'
-    Aug[NP+1:n, 1:NP] = GP0
+    Aug[1:NP, (NP + 1):n] = GP0'
+    Aug[(NP + 1):n, 1:NP] = GP0
     rhs = zeros(n)
     rhs[1:NP] = F0
-    rhs[NP+1:n] = -dGPdt_v
+    rhs[(NP + 1):n] = -dGPdt_v
     sol = Aug \ rhs
     w_0 = sol[1:NP]
-    lam_0 = sol[NP+1:n]
+    lam_0 = sol[(NP + 1):n]
 
     return pos, v_fixed, w_0, lam_0, AM0, GP0
 end
@@ -209,26 +214,26 @@ println("Velocity constraint norm: ", norm(GP0 * vel0 - [0, 0, OMEGA]))
 function slider_crank_mm!(du, u, p, t)
     T = eltype(u)
     p1, p2, x3 = u[1], u[2], u[3]
-    q  = @view u[4:7]
+    q = @view u[4:7]
     v1, v2 = u[8], u[9]
     vq = @view u[11:14]
     lam1, lam2, lam3 = u[15], u[16], u[17]
 
-    cosp1  = cos(p1);  sinp1  = sin(p1)
-    cosp2  = cos(p2);  sinp2  = sin(p2)
+    cosp1 = cos(p1);  sinp1 = sin(p1)
+    cosp2 = cos(p2);  sinp2 = sin(p2)
     cosp12 = cos(p1 - p2);  sinp12 = sin(p1 - p2)
 
     qku = (KU == 0) ? zero(T) : q[KU]
     qkv = (KV == 0) ? zero(T) : q[KV]
 
-    c1Tq   = dot(c1, q);    c1Tqd  = dot(c1, vq)
-    c2Tq   = dot(c2, q);    c2Tqd  = dot(c2, vq)
+    c1Tq = dot(c1, q);    c1Tqd = dot(c1, vq)
+    c2Tq = dot(c2, q);    c2Tqd = dot(c2, vq)
     c12Tqd = dot(c12, vq)
-    MQq  = MQ * q;   KQq  = KQ * q
+    MQq = MQ * q;   KQq = KQ * q
     DQqd = DQ * vq;  BQqd = BQ * vq
 
-    qtmqq   = dot(q, MQq)
-    qdtmqq  = dot(vq, MQq)
+    qtmqq = dot(q, MQq)
+    qdtmqq = dot(vq, MQq)
     qdtbqqd = dot(vq, BQqd)
 
     QtBQ = zeros(T, NQ)
@@ -238,61 +243,63 @@ function slider_crank_mm!(du, u, p, t)
 
     # Constraint Jacobian GP (3×7) — evaluated at current state
     GP = zeros(T, 3, NP)
-    GP[1,1] = L1 * cosp1
-    GP[1,2] = L2 * cosp2 + qku * cosp2 - qkv * sinp2
-    GP[2,1] = L1 * sinp1
-    GP[2,2] = L2 * sinp2 + qku * sinp2 + qkv * cosp2
-    GP[2,3] = one(T)
-    GP[3,1] = one(T)
+    GP[1, 1] = L1 * cosp1
+    GP[1, 2] = L2 * cosp2 + qku * cosp2 - qkv * sinp2
+    GP[2, 1] = L1 * sinp1
+    GP[2, 2] = L2 * sinp2 + qku * sinp2 + qkv * cosp2
+    GP[2, 3] = one(T)
+    GP[3, 1] = one(T)
     if KU != 0
-        GP[1, 3+KU] =  sinp2
-        GP[2, 3+KU] = -cosp2
+        GP[1, 3 + KU] = sinp2
+        GP[2, 3 + KU] = -cosp2
     end
 
     # Force vector F (7)
     F = zeros(T, NP)
     F[1] = -0.5 * L1 * GRAV * (M1 + 2.0 * M2) * cosp1 -
-            0.5 * L1 * L2 * M2 * v2^2 * sinp12
+        0.5 * L1 * L2 * M2 * v2^2 * sinp12
     F[2] = -0.5 * L2 * GRAV * M2 * cosp2 +
-            0.5 * L1 * L2 * M2 * v1^2 * sinp12
+        0.5 * L1 * L2 * M2 * v1^2 * sinp12
     F[3] = zero(T)
 
     F[1] += RHO * L1 * v2^2 * (-sinp12 * c1Tq + cosp12 * c2Tq) -
-            2.0 * RHO * L1 * v2 * (cosp12 * c1Tqd + sinp12 * c2Tqd)
+        2.0 * RHO * L1 * v2 * (cosp12 * c1Tqd + sinp12 * c2Tqd)
     F[2] += RHO * L1 * v1^2 * (sinp12 * c1Tq - cosp12 * c2Tq) -
-            2.0 * RHO * v2 * c12Tqd - 2.0 * v2 * qdtmqq -
-            RHO * qdtbqqd - RHO * GRAV * (cosp2 * c1Tq - sinp2 * c2Tq)
+        2.0 * RHO * v2 * c12Tqd - 2.0 * v2 * qdtmqq -
+        RHO * qdtbqqd - RHO * GRAV * (cosp2 * c1Tq - sinp2 * c2Tq)
 
     for i in 1:NQ
-        F[3+i] = v2^2 * MQq[i] +
-            RHO * (v2^2 * c12[i] + L1 * v1^2 * (cosp12 * c1[i] + sinp12 * c2[i]) +
-                   2.0 * v2 * BQqd[i]) -
+        F[3 + i] = v2^2 * MQq[i] +
+            RHO * (
+            v2^2 * c12[i] + L1 * v1^2 * (cosp12 * c1[i] + sinp12 * c2[i]) +
+                2.0 * v2 * BQqd[i]
+        ) -
             RHO * GRAV * (sinp2 * c1[i] + cosp2 * c2[i])
-        F[3+i] -= KQq[i] + DQqd[i]
+        F[3 + i] -= KQq[i] + DQqd[i]
     end
 
     # Block 1 (rows 1:7): I * dp/dt = v
     for i in 1:7
-        du[i] = u[7+i]
+        du[i] = u[7 + i]
     end
 
     # Block 2 (rows 8:14): AM * dv/dt = F - Gᵀλ
     for i in 1:NP
-        du[7+i] = F[i] - GP[1,i] * lam1 - GP[2,i] * lam2 - GP[3,i] * lam3
+        du[7 + i] = F[i] - GP[1, i] * lam1 - GP[2, i] * lam2 - GP[3, i] * lam3
     end
 
     # Block 3 (rows 15:17): 0 * dλ/dt = G*v - r'(t)
     for k in 1:3
         vlc = zero(T)
         for i in 1:NP
-            vlc += GP[k, i] * u[NP+i]
+            vlc += GP[k, i] * u[NP + i]
         end
         if k == 3
             vlc -= OMEGA
         end
-        du[14+k] = vlc
+        du[14 + k] = vlc
     end
-    nothing
+    return nothing
 end
 
 function build_mass_matrix(AM)
@@ -316,13 +323,15 @@ function slider_crank_dae!(res, du, u, p, t)
     f = similar(u)
     slider_crank_mm!(f, u, p, t)
     res .= M_mm * du - f
-    nothing
+    return nothing
 end
 
 du0_dae = vcat(vel0, w0, zeros(3))
 differential_vars = [trues(14); falses(3)]
-prob_dae = DAEProblem(slider_crank_dae!, du0_dae, u0_mm, tspan,
-                      differential_vars = differential_vars)
+prob_dae = DAEProblem(
+    slider_crank_dae!, du0_dae, u0_mm, tspan,
+    differential_vars = differential_vars
+)
 
 # Verify DAE consistency at initial conditions
 f_check = similar(u0_mm)
@@ -373,93 +382,119 @@ DQvq_s = DQ * vqvec; BQvq_s = BQ * vqvec
 qMQq_s = sum(qvec .* MQq_s)
 vqMQq_s = sum(vqvec .* MQq_s)
 vqBQvq_s = sum(vqvec .* BQvq_s)
-QBQ_s = [sum(qvec .* BQ[:,i]) for i in 1:NQ]
+QBQ_s = [sum(qvec .* BQ[:, i]) for i in 1:NQ]
 
 # AM(φ,q) × D(v) — configuration-dependent mass matrix × acceleration
 am_dv = [
-    (J1 + M2*L1^2)*D(vφ1) +
-        (0.5*L1*L2*M2*cφ12 + RHO*L1*(sφ12*c2q + cφ12*c1q))*D(vφ2) +
-        sum(RHO*L1*(-sφ12*c1[i] + cφ12*c2[i])*D(vqvec[i]) for i in 1:NQ),
-    (0.5*L1*L2*M2*cφ12 + RHO*L1*(sφ12*c2q + cφ12*c1q))*D(vφ1) +
-        (J2 + qMQq_s + 2*RHO*c12q)*D(vφ2) +
-        sum((RHO*c21[i] + RHO*QBQ_s[i])*D(vqvec[i]) for i in 1:NQ),
-    M3*D(vx₃),
-    [RHO*L1*(-sφ12*c1[k] + cφ12*c2[k])*D(vφ1) +
-        (RHO*c21[k] + RHO*QBQ_s[k])*D(vφ2) +
-        sum(MQ[k,j]*D(vqvec[j]) for j in 1:NQ)
-        for k in 1:NQ]...
+    (J1 + M2 * L1^2) * D(vφ1) +
+        (0.5 * L1 * L2 * M2 * cφ12 + RHO * L1 * (sφ12 * c2q + cφ12 * c1q)) * D(vφ2) +
+        sum(RHO * L1 * (-sφ12 * c1[i] + cφ12 * c2[i]) * D(vqvec[i]) for i in 1:NQ),
+    (0.5 * L1 * L2 * M2 * cφ12 + RHO * L1 * (sφ12 * c2q + cφ12 * c1q)) * D(vφ1) +
+        (J2 + qMQq_s + 2 * RHO * c12q) * D(vφ2) +
+        sum((RHO * c21[i] + RHO * QBQ_s[i]) * D(vqvec[i]) for i in 1:NQ),
+    M3 * D(vx₃),
+    [
+        RHO * L1 * (-sφ12 * c1[k] + cφ12 * c2[k]) * D(vφ1) +
+            (RHO * c21[k] + RHO * QBQ_s[k]) * D(vφ2) +
+            sum(MQ[k, j] * D(vqvec[j]) for j in 1:NQ)
+            for k in 1:NQ
+    ]...,
 ]
 
 # Force vector F(φ,v,q,vq)
 F_s = [
-    -0.5*L1*GRAV*(M1+2*M2)*cφ1 - 0.5*L1*L2*M2*vφ2^2*sφ12 +
-        RHO*L1*vφ2^2*(-sφ12*c1q + cφ12*c2q) -
-        2*RHO*L1*vφ2*(cφ12*c1vq + sφ12*c2vq),
-    -0.5*L2*GRAV*M2*cφ2 + 0.5*L1*L2*M2*vφ1^2*sφ12 +
-        RHO*L1*vφ1^2*(sφ12*c1q - cφ12*c2q) -
-        2*RHO*vφ2*c12vq - 2*vφ2*vqMQq_s - RHO*vqBQvq_s -
-        RHO*GRAV*(cφ2*c1q - sφ2*c2q),
+    -0.5 * L1 * GRAV * (M1 + 2 * M2) * cφ1 - 0.5 * L1 * L2 * M2 * vφ2^2 * sφ12 +
+        RHO * L1 * vφ2^2 * (-sφ12 * c1q + cφ12 * c2q) -
+        2 * RHO * L1 * vφ2 * (cφ12 * c1vq + sφ12 * c2vq),
+    -0.5 * L2 * GRAV * M2 * cφ2 + 0.5 * L1 * L2 * M2 * vφ1^2 * sφ12 +
+        RHO * L1 * vφ1^2 * (sφ12 * c1q - cφ12 * c2q) -
+        2 * RHO * vφ2 * c12vq - 2 * vφ2 * vqMQq_s - RHO * vqBQvq_s -
+        RHO * GRAV * (cφ2 * c1q - sφ2 * c2q),
     0,
-    [vφ2^2*MQq_s[i] + RHO*(vφ2^2*c12[i] +
-        L1*vφ1^2*(cφ12*c1[i] + sφ12*c2[i]) + 2*vφ2*BQvq_s[i]) -
-        RHO*GRAV*(sφ2*c1[i] + cφ2*c2[i]) - KQq_s[i] - DQvq_s[i]
-        for i in 1:NQ]...
+    [
+        vφ2^2 * MQq_s[i] + RHO * (
+            vφ2^2 * c12[i] +
+                L1 * vφ1^2 * (cφ12 * c1[i] + sφ12 * c2[i]) + 2 * vφ2 * BQvq_s[i]
+        ) -
+            RHO * GRAV * (sφ2 * c1[i] + cφ2 * c2[i]) - KQq_s[i] - DQvq_s[i]
+            for i in 1:NQ
+    ]...,
 ]
 
 # Constraint Jacobian GP(φ,q) and GP' × λ
 GP_rows = [
-    [L1*cφ1, (L2+q₄)*cφ2, 0, 0, 0, 0, sφ2],
-    [L1*sφ1, (L2+q₄)*sφ2, 1, 0, 0, 0, -cφ2],
-    [1,      0,            0, 0, 0, 0, 0     ]
+    [L1 * cφ1, (L2 + q₄) * cφ2, 0, 0, 0, 0, sφ2],
+    [L1 * sφ1, (L2 + q₄) * sφ2, 1, 0, 0, 0, -cφ2],
+    [1, 0, 0, 0, 0, 0, 0],
 ]
-GPt_λ = [sum(GP_rows[k][i]*λvec[k] for k in 1:3) for i in 1:NP]
+GPt_λ = [sum(GP_rows[k][i] * λvec[k] for k in 1:3) for i in 1:NP]
 
 # 17 equations: 7 kinematic + 7 dynamics + 3 holonomic constraints
 eqs = vcat(
     [D(pvec[i]) ~ vvec[i] for i in 1:NP],
     [am_dv[i] ~ F_s[i] - GPt_λ[i] for i in 1:NP],
-    [0 ~ L1*sφ1 + (L2 + q₄)*sφ2,
-     0 ~ x₃ - L1*cφ1 - (L2 + q₄)*cφ2,
-     0 ~ φ1 - OMEGA*t]
+    [
+        0 ~ L1 * sφ1 + (L2 + q₄) * sφ2,
+        0 ~ x₃ - L1 * cφ1 - (L2 + q₄) * cφ2,
+        0 ~ φ1 - OMEGA * t,
+    ]
 )
 
-@mtkbuild sys = ODESystem(eqs, t)
+@mtkcompile sys = System(eqs, t)
 prob_mtk = ODEProblem(sys, [], tspan; warn_initialize_determined = false)
-println("MTK index-reduced: $(length(ModelingToolkit.unknowns(sys))) states ",
-        "(from 17 original)")
+println(
+    "MTK index-reduced: $(length(ModelingToolkit.unknowns(sys))) states ",
+    "(from 17 original)"
+)
 
 
-ref_sol = solve(prob_mm, Rodas5P(), reltol = 1e-6, abstol = 1e-6,
-                maxiters = 10_000_000);
-println("Reference solution: retcode = $(ref_sol.retcode), ",
-        "npoints = $(length(ref_sol.t)), t_final = $(ref_sol.t[end])")
+ref_sol = solve(
+    prob_mm, Rodas5P(), reltol = 1.0e-6, abstol = 1.0e-6,
+    maxiters = 10_000_000
+);
+println(
+    "Reference solution: retcode = $(ref_sol.retcode), ",
+    "npoints = $(length(ref_sol.t)), t_final = $(ref_sol.t[end])"
+)
 
-mtk_ref = solve(prob_mtk, Rodas5P(), reltol = 1e-5, abstol = 1e-5,
-                maxiters = 10_000_000);
-println("MTK reference: retcode = $(mtk_ref.retcode), ",
-        "npoints = $(length(mtk_ref.t)), t_final = $(mtk_ref.t[end])")
-
-
-plot(ref_sol, idxs = [2, 3], title = "φ₂ and x₃",
-     xlabel = "t", ylabel = "value", lw = 2)
-
-
-plot(ref_sol, idxs = [4, 5], title = "Lateral Elastic Modes q₁, q₂",
-     xlabel = "t", ylabel = "amplitude", lw = 2)
-
-
-plot(ref_sol, idxs = [6, 7], title = "Axial Elastic Modes q₃, q₄",
-     xlabel = "t", ylabel = "amplitude", lw = 2)
+mtk_ref = solve(
+    prob_mtk, Rodas5P(), reltol = 1.0e-5, abstol = 1.0e-5,
+    maxiters = 10_000_000
+);
+println(
+    "MTK reference: retcode = $(mtk_ref.retcode), ",
+    "npoints = $(length(mtk_ref.t)), t_final = $(mtk_ref.t[end])"
+)
 
 
-plot(ref_sol, idxs = [15, 16, 17], title = "Lagrange Multipliers λ₁, λ₂, λ₃",
-     xlabel = "t", ylabel = "force", lw = 2)
+plot(
+    ref_sol, idxs = [2, 3], title = "φ₂ and x₃",
+    xlabel = "t", ylabel = "value", lw = 2
+)
+
+
+plot(
+    ref_sol, idxs = [4, 5], title = "Lateral Elastic Modes q₁, q₂",
+    xlabel = "t", ylabel = "amplitude", lw = 2
+)
+
+
+plot(
+    ref_sol, idxs = [6, 7], title = "Axial Elastic Modes q₃, q₄",
+    xlabel = "t", ylabel = "amplitude", lw = 2
+)
+
+
+plot(
+    ref_sol, idxs = [15, 16, 17], title = "Lagrange Multipliers λ₁, λ₂, λ₃",
+    xlabel = "t", ylabel = "force", lw = 2
+)
 
 
 println("=== DAE Solver Results ===")
 println("Testing IDA (Sundials) on DAE residual form:")
 try
-    dae_sol = solve(prob_dae, IDA(), reltol = 1e-4, abstol = 1e-4)
+    dae_sol = solve(prob_dae, IDA(), reltol = 1.0e-4, abstol = 1.0e-4)
     println("  IDA result: retcode = $(dae_sol.retcode), t_final = $(dae_sol.t[end])")
 catch e
     println("  IDA failed: $(typeof(e))")
@@ -467,7 +502,7 @@ end
 
 println("\nTesting IDA with modified initialization:")
 try
-    dae_sol2 = solve(prob_dae, IDA(init_all = false), reltol = 1e-4, abstol = 1e-4)
+    dae_sol2 = solve(prob_dae, IDA(init_all = false), reltol = 1.0e-4, abstol = 1.0e-4)
     println("  IDA (init_all=false): retcode = $(dae_sol2.retcode), t_final = $(dae_sol2.t[end])")
 catch e
     println("  IDA (init_all=false) failed: $(typeof(e))")
@@ -475,7 +510,7 @@ end
 
 
 probs = [prob_dae, prob_mtk, prob_mm]
-refs  = [ref_sol, mtk_ref, ref_sol]
+refs = [ref_sol, mtk_ref, ref_sol]
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
@@ -487,12 +522,15 @@ setups = [
     Dict(:prob_choice => 3, :alg => Rodas5P()),
     Dict(:prob_choice => 3, :alg => Rodas4P()),
     Dict(:prob_choice => 3, :alg => FBDF()),
+    Dict(:prob_choice => 3, :alg => NordsieckBDF()),
 ]
-labels = ["IDA (DAE)" "Rodas5P (MTK)" "Rodas4P (MTK)" "Rodas5P (MM)" "Rodas4P (MM)" "FBDF (MM)"]
+labels = ["IDA (DAE)" "Rodas5P (MTK)" "Rodas4P (MTK)" "Rodas5P (MM)" "Rodas4P (MM)" "FBDF (MM)" "NordsieckBDF (MM)"]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
     names = labels, appxsol = refs, save_everystep = false,
-    maxiters = Int(1e6), numruns = 5)
+    maxiters = Int(1.0e6), numruns = 5
+)
 plot(wp, title = "Slider-Crank: All Formulations (High Tol)")
 
 
@@ -507,9 +545,11 @@ setups = [
 ]
 labels = ["IDA (DAE)" "Rodas5P (MTK)" "Rodas4P (MTK)" "Rodas5P (MM)" "Rodas4P (MM)"]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
     names = labels, appxsol = refs, save_everystep = false,
-    maxiters = Int(1e6), numruns = 5)
+    maxiters = Int(1.0e6), numruns = 5
+)
 plot(wp, title = "Slider-Crank: All Formulations (Medium Tol)")
 
 
@@ -523,27 +563,31 @@ setups = [
 ]
 labels = ["Rodas5P (MTK)" "Rodas4P (MTK)" "Rodas5P (MM)" "Rodas4P (MM)"]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
     names = labels, appxsol = refs, save_everystep = false,
-    maxiters = Int(1e6), numruns = 5, error_estimate = :l2)
+    maxiters = Int(1.0e6), numruns = 5, error_estimate = :l2
+)
 plot(wp, title = "Slider-Crank: Timeseries Error (L2)")
 
 
 archimede_refs = Dict(
-    "φ₂"  => -0.331173498825626,
-    "x₃"  =>  0.169737332842786,
-    "q₁"  =>  0.1893192899613509e-3,
-    "q₂"  =>  0.2375751249879174e-4,
-    "q₃"  => -0.5323896770569702e-5,
-    "q₄"  => -0.8363313279112129e-5,
-    "λ₁"  => -62.32935833287916,
-    "λ₂"  => -163.7920993367306,
-    "λ₃"  =>  25.29857947066878,
+    "φ₂" => -0.331173498825626,
+    "x₃" => 0.169737332842786,
+    "q₁" => 0.1893192899613509e-3,
+    "q₂" => 0.2375751249879174e-4,
+    "q₃" => -0.5323896770569702e-5,
+    "q₄" => -0.8363313279112129e-5,
+    "λ₁" => -62.32935833287916,
+    "λ₂" => -163.7920993367306,
+    "λ₃" => 25.29857947066878,
 )
 
 # Mass-matrix form indices: [p(1:7), v(8:14), λ(15:17)]
-idxmap = [("φ₂", 2), ("x₃", 3), ("q₁", 4), ("q₂", 5), ("q₃", 6), ("q₄", 7),
-          ("λ₁", 15), ("λ₂", 16), ("λ₃", 17)]
+idxmap = [
+    ("φ₂", 2), ("x₃", 3), ("q₁", 4), ("q₂", 5), ("q₃", 6), ("q₄", 7),
+    ("λ₁", 15), ("λ₂", 16), ("λ₃", 17),
+]
 
 sol_final = ref_sol.u[end]
 println("=== Verification at t = 0.1 ===")
@@ -553,18 +597,21 @@ for (name, idx) in idxmap
     ref_val = archimede_refs[name]
     our_val = sol_final[idx]
     relerr = abs(ref_val) > 0 ? abs((our_val - ref_val) / ref_val) : abs(our_val)
-    status = relerr < 1e-3 ? "✓" : (relerr < 1e-1 ? "~" : "✗")
-    println("$(rpad(name, 12))| $(lpad(string(ref_val), 21)) | $(lpad(string(round(our_val, sigdigits=10)), 21)) | $(relerr) $status")
+    status = relerr < 1.0e-3 ? "✓" : (relerr < 1.0e-1 ? "~" : "✗")
+    println("$(rpad(name, 12))| $(lpad(string(ref_val), 21)) | $(lpad(string(round(our_val, sigdigits = 10)), 21)) | $(relerr) $status")
 end
 
 # Overlay ARCHIMEDE reference point on q₁ timeseries
-p_verify = plot(ref_sol, idxs = [4], title = "Verification: Elastic Mode q₁",
-    xlabel = "Time (s)", ylabel = "Amplitude", lw = 2, label = "SciML Rodas5P")
-scatter!(p_verify, [0.1], [0.1893192899613509e-3],
-    label = "ARCHIMEDE Reference", color = :red, markersize = 8)
+p_verify = plot(
+    ref_sol, idxs = [4], title = "Verification: Elastic Mode q₁",
+    xlabel = "Time (s)", ylabel = "Amplitude", lw = 2, label = "SciML Rodas5P"
+)
+scatter!(
+    p_verify, [0.1], [0.1893192899613509e-3],
+    label = "ARCHIMEDE Reference", color = :red, markersize = 8
+)
 plot(p_verify)
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
-

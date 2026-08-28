@@ -1,25 +1,24 @@
-
 using OrdinaryDiffEq, DiffEqDevTools, Sundials,
-      Plots, DASSL, DASKR
+    Plots, DASSL, DASKR
 using ModelingToolkit
 using ModelingToolkit: t_nounits as t, D_nounits as D
 using LinearAlgebra
 import ModelingToolkit: Symbolics, ForwardDiff
 
 
-const VT0 = 0.20
+const VT0 = 0.2
 const GAMMA_MOS = 0.035
 const PHI = 1.01
 const COX = 4.0e-12
-const CAPD = 0.40e-12
-const CAPS = 1.60e-12
+const CAPD = 0.4e-12
+const CAPS = 1.6e-12
 const VHIGH = 20.0
 const DELTAT_PULSE = 120.0e-9
 const T1_PULSE = 50.0e-9
 const T2_PULSE = 60.0e-9
 const T3_PULSE = 110.0e-9
 
-function qgate(vgb::T, vgs::T, vgd::T) where T <: Real
+function qgate(vgb::T, vgs::T, vgd::T) where {T <: Real}
     if (vgs - vgd) <= 0
         ugs = vgd; ugd = vgs
     else
@@ -42,14 +41,16 @@ function qgate(vgb::T, vgs::T, vgd::T) where T <: Real
         ugst = ugs - vte
         ugdt = ugd > vte ? ugd - vte : zero(T)
         denom = ugdt + ugst
-        denom = abs(denom) < 1e-30 ? T(1e-30) : denom
-        return COX * ((2 / 3) * (ugdt + ugst - (ugdt * ugst) / denom) +
-                       GAMMA_MOS * sqrt(phi_ubs))
+        denom = abs(denom) < 1.0e-30 ? T(1.0e-30) : denom
+        return COX * (
+            (2 / 3) * (ugdt + ugst - (ugdt * ugst) / denom) +
+                GAMMA_MOS * sqrt(phi_ubs)
+        )
     end
 end
 qgate(a, b, c) = qgate(promote(float(a), float(b), float(c))...)
 
-function qsrc(vgb::T, vgs::T, vgd::T) where T <: Real
+function qsrc(vgb::T, vgs::T, vgd::T) where {T <: Real}
     if (vgs - vgd) <= 0
         ugs = vgd; ugd = vgs
     else
@@ -67,13 +68,13 @@ function qsrc(vgb::T, vgs::T, vgd::T) where T <: Real
         ugst = ugs - vte
         ugdt = ugd >= vte ? ugd - vte : zero(T)
         denom = ugdt + ugst
-        denom = abs(denom) < 1e-30 ? T(1e-30) : denom
+        denom = abs(denom) < 1.0e-30 ? T(1.0e-30) : denom
         return -COX * (1 / 3) * (ugdt + ugst - (ugdt * ugst) / denom)
     end
 end
 qsrc(a, b, c) = qsrc(promote(float(a), float(b), float(c))...)
 
-function qdrain(vgb::T, vgs::T, vgd::T) where T <: Real
+function qdrain(vgb::T, vgs::T, vgd::T) where {T <: Real}
     if (vgs - vgd) <= 0
         ugs = vgd; ugd = vgs
     else
@@ -91,7 +92,7 @@ function qdrain(vgb::T, vgs::T, vgd::T) where T <: Real
         ugst = ugs - vte
         ugdt = ugd >= vte ? ugd - vte : zero(T)
         denom = ugdt + ugst
-        denom = abs(denom) < 1e-30 ? T(1e-30) : denom
+        denom = abs(denom) < 1.0e-30 ? T(1.0e-30) : denom
         return -COX * (1 / 3) * (ugdt + ugst - (ugdt * ugst) / denom)
     end
 end
@@ -103,11 +104,11 @@ function vin(t)
     if dummy < T1_PULSE
         return 0.0
     elseif dummy < T2_PULSE
-        return (dummy - T1_PULSE) * 0.10e9 * VHIGH
+        return (dummy - T1_PULSE) * 0.1e9 * VHIGH
     elseif dummy < T3_PULSE
         return VHIGH
     else
-        return (DELTAT_PULSE - dummy) * 0.10e9 * VHIGH
+        return (DELTAT_PULSE - dummy) * 0.1e9 * VHIGH
     end
 end
 
@@ -126,8 +127,8 @@ disc_times = sort(unique(filter(t -> 0.0 < t < tspan[2], disc_times)))
 
 function dvin(t_val)
     dummy = mod(t_val, DELTAT_PULSE)
-    dummy < T1_PULSE ? 0.0 : dummy < T2_PULSE ? 0.10e9 * VHIGH :
-    dummy < T3_PULSE ? 0.0 : -0.10e9 * VHIGH
+    return dummy < T1_PULSE ? 0.0 : dummy < T2_PULSE ? 0.1e9 * VHIGH :
+        dummy < T3_PULSE ? 0.0 : -0.1e9 * VHIGH
 end
 
 @register_symbolic qgate(vgb, vgs, vgd)
@@ -143,26 +144,26 @@ for (fn, dfn_prefix) in [(qgate, :dqgate), (qsrc, :dqsrc), (qdrain, :dqdrain)]
         @eval begin
             $dfn_name(vgb, vgs, vgd) = ForwardDiff.derivative(
                 x -> $fn(ntuple(j -> j == $i ? x : [vgb, vgs, vgd][j], 3)...),
-                Float64([vgb, vgs, vgd][$i]))
+                Float64([vgb, vgs, vgd][$i])
+            )
             @register_symbolic $dfn_name(vgb, vgs, vgd)
-            Symbolics.derivative(::typeof($fn), args::NTuple{3, Any}, ::Val{$i}) =
-                $dfn_name(args...)
+            @register_derivative $fn(vgb, vgs, vgd) $i $(Expr(:call, dfn_name, :vgb, :vgs, :vgd))
         end
     end
 end
-Symbolics.derivative(::typeof(vin), args::NTuple{1, Any}, ::Val{1}) = dvin(args...)
+@register_derivative vin(t_val) 1 dvin(t_val)
 
 
 @variables begin
     YT1(t) = qgate(0.0, 0.0, 0.0)
-    YS(t)  = 0.0
+    YS(t) = 0.0
     YT2(t) = qsrc(0.0, 0.0, 0.0)
-    YD(t)  = 0.0
+    YD(t) = 0.0
     YT3(t) = qdrain(0.0, 0.0, 0.0)
-    U1(t)  = 0.0
-    U2(t)  = 0.0
-    U3(t)  = 0.0
-    II(t)  = 0.0
+    U1(t) = 0.0
+    U2(t) = 0.0
+    U3(t) = 0.0
+    II(t) = 0.0
 end
 
 eqs = [
@@ -171,9 +172,9 @@ eqs = [
     D(YD) + D(YT3) ~ 0,                                       # row 3 (differential)
     0 ~ -U1 + vin(t),                                          # row 4 (algebraic)
     0 ~ YT1 - qgate(U1, U1 - U2, U1 - U3),                   # row 5 (algebraic)
-    0 ~ YS  - CAPS * U2,                                       # row 6 (algebraic)
+    0 ~ YS - CAPS * U2,                                       # row 6 (algebraic)
     0 ~ YT2 - qsrc(U1, U1 - U2, U1 - U3),                    # row 7 (algebraic)
-    0 ~ YD  - CAPD * U3,                                       # row 8 (algebraic)
+    0 ~ YD - CAPD * U3,                                       # row 8 (algebraic)
     0 ~ YT3 - qdrain(U1, U1 - U2, U1 - U3),                  # row 9 (algebraic)
 ]
 
@@ -185,10 +186,14 @@ println("States: ", unknowns(sys))
 
 
 mtkprob = ODEProblem(sys, [], tspan)
-mtk_test = solve(mtkprob, Rodas5P(autodiff = false), abstol = 1e-4, reltol = 1e-4,
-                 tstops = disc_times, maxiters = Int(1e6), dt = 1e-15)
-println("Rodas5P on MTK-reduced system: retcode = $(mtk_test.retcode), ",
-        "steps = $(length(mtk_test.t)), final t = $(mtk_test.t[end])")
+mtk_test = solve(
+    mtkprob, Rodas5P(autodiff = AutoFiniteDiff()), abstol = 1.0e-4, reltol = 1.0e-4,
+    tstops = disc_times, maxiters = Int(1.0e6), dt = 1.0e-15
+)
+println(
+    "Rodas5P on MTK-reduced system: retcode = $(mtk_test.retcode), ",
+    "steps = $(length(mtk_test.t)), final t = $(mtk_test.t[end])"
+)
 
 
 function charge_pump_rhs!(du, u, p, t)
@@ -204,7 +209,7 @@ function charge_pump_rhs!(du, u, p, t)
     du[7] = y3 - qsrc(y6, y6 - y7, y6 - y8)
     du[8] = y4 - CAPD * y8
     du[9] = y5 - qdrain(y6, y6 - y7, y6 - y8)
-    nothing
+    return nothing
 end
 
 M = zeros(9, 9)
@@ -241,21 +246,25 @@ function charge_pump_dae!(out, du, u, p, t)
     out[7] = -(y3 - qsrc(y6, y6 - y7, y6 - y8))              # Y_T2 = Q_S(U_1, U_1-U_2, U_1-U_3)
     out[8] = -(y4 - CAPD * y8)                                 # Y_D = C_D · U_3
     out[9] = -(y5 - qdrain(y6, y6 - y7, y6 - y8))            # Y_T3 = Q_D(U_1, U_1-U_2, U_1-U_3)
-    nothing
+    return nothing
 end
 
 du0 = zeros(9)
 differential_vars = [true, true, true, true, true, false, false, false, false]
-daeprob = DAEProblem(charge_pump_dae!, du0, y0, tspan,
-                     differential_vars = differential_vars)
+daeprob = DAEProblem(
+    charge_pump_dae!, du0, y0, tspan,
+    differential_vars = differential_vars
+)
 
 
-ref_sol = solve(daeprob, IDA(), abstol = 5e-4, reltol = 5e-4,
-                dt = 1e-15, tstops = disc_times, maxiters = Int(1e7), dense = true)
+ref_sol = solve(
+    daeprob, IDA(), abstol = 5.0e-4, reltol = 5.0e-4,
+    dt = 1.0e-15, tstops = disc_times, maxiters = Int(1.0e7), dense = true
+)
 @assert ref_sol.retcode == ReturnCode.Success "Reference solve failed: $(ref_sol.retcode)"
 
 probs = [daeprob]
-refs  = [ref_sol]
+refs = [ref_sol]
 
 
 y_ref = zeros(9)
@@ -265,27 +274,39 @@ y_ref[9] = 0.152255686815577679043511e-3
 println("=== Reference Solution Verification (IDA, tol = 5e-4) ===")
 for i in [1, 9]
     computed = ref_sol.u[end][i]
-    ref_val  = y_ref[i]
-    rel_err  = abs(ref_val) > 0 ? abs(computed - ref_val) / abs(ref_val) : abs(computed)
+    ref_val = y_ref[i]
+    rel_err = abs(ref_val) > 0 ? abs(computed - ref_val) / abs(ref_val) : abs(computed)
     println("  y[$i]: computed = $computed,  GAMD ref = $ref_val,  rel_error = $rel_err")
 end
 
 
-p1 = plot(ref_sol, idxs = [6], title = "U₁ (node 1 potential)",
-          xlabel = "t [s]", ylabel = "V", legend = false)
-p2 = plot(ref_sol, idxs = [7], title = "U₂ (node 2 potential)",
-          xlabel = "t [s]", ylabel = "V", legend = false)
-p3 = plot(ref_sol, idxs = [8], title = "U₃ (node 3 potential)",
-          xlabel = "t [s]", ylabel = "V", legend = false)
-p4 = plot(ref_sol, idxs = [9], title = "I (current)",
-          xlabel = "t [s]", ylabel = "A", legend = false)
-plot(p1, p2, p3, p4, layout = (2, 2), size = (800, 600),
-     plot_title = "Charge Pump — DAE Reference Solution")
+p1 = plot(
+    ref_sol, idxs = [6], title = "U₁ (node 1 potential)",
+    xlabel = "t [s]", ylabel = "V", legend = false
+)
+p2 = plot(
+    ref_sol, idxs = [7], title = "U₂ (node 2 potential)",
+    xlabel = "t [s]", ylabel = "V", legend = false
+)
+p3 = plot(
+    ref_sol, idxs = [8], title = "U₃ (node 3 potential)",
+    xlabel = "t [s]", ylabel = "V", legend = false
+)
+p4 = plot(
+    ref_sol, idxs = [9], title = "I (current)",
+    xlabel = "t [s]", ylabel = "A", legend = false
+)
+plot(
+    p1, p2, p3, p4, layout = (2, 2), size = (800, 600),
+    plot_title = "Charge Pump — DAE Reference Solution"
+)
 
 
-plot(ref_sol, idxs = [1],
-     title = "Y_T1 (gate charge)",
-     xlabel = "t [s]", ylabel = "C", legend = false)
+plot(
+    ref_sol, idxs = [1],
+    title = "Y_T1 (gate charge)",
+    xlabel = "t [s]", ylabel = "C", legend = false
+)
 
 
 abstols = 1.0 ./ 10.0 .^ (1:3)
@@ -296,9 +317,11 @@ setups = [
     Dict(:prob_choice => 1, :alg => DASKR.daskr()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 1,
-    names = ["IDA", "DASKR"], dt = 1e-15, tstops = disc_times)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups;
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 1,
+    names = ["IDA", "DASKR"], dt = 1.0e-15, tstops = disc_times
+)
 plot(wp, title = "Charge Pump DAE — Loose Tolerances (Final Value)")
 
 
@@ -310,12 +333,13 @@ setups = [
     Dict(:prob_choice => 1, :alg => DASKR.daskr()),
 ]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 1,
-    names = ["IDA", "DASKR"], dt = 1e-15, tstops = disc_times)
+wp = WorkPrecisionSet(
+    probs, abstols, reltols, setups; error_estimate = :l2,
+    save_everystep = false, appxsol = refs, maxiters = Int(1.0e5), numruns = 1,
+    names = ["IDA", "DASKR"], dt = 1.0e-15, tstops = disc_times
+)
 plot(wp, title = "Charge Pump DAE — Loose Tolerances (L₂ Timeseries)")
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
-
