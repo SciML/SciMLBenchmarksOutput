@@ -11,13 +11,13 @@ using Symbolics: SymbolicsSparsityDetector
 using Test</code></pre><h2 id="Definitions"><a class="docs-heading-anchor" href="#Definitions">Definitions</a><a id="Definitions-1"></a><a class="docs-heading-anchor-permalink" href="#Definitions" title="Permalink"></a></h2><pre><code class="language-julia hljs">brusselator_f(x, y, t) = (((x - 0.3)^2 + (y - 0.6)^2) &lt;= 0.1^2) * (t &gt;= 1.1) * 5.0
 
 limit(a, N) =
-if a == N + 1
-    1
-elseif a == 0
-    N
-else
-    a
-end;
+    if a == N + 1
+        1
+    elseif a == 0
+        N
+    else
+        a
+    end;
 
 function brusselator_2d!(du, u)
     t = 0.0
@@ -27,27 +27,23 @@ function brusselator_2d!(du, u)
     A, B, alpha, dx = p
     alpha = alpha / dx^2
 
-    return @inbounds for I in CartesianIndices((N, N))
+    @inbounds for I in CartesianIndices((N, N))
         i, j = Tuple(I)
         x, y = xyd[I[1]], xyd[I[2]]
         ip1, im1, jp1,
-            jm1 = limit(i + 1, N),
-            limit(i - 1, N), limit(j + 1, N),
-            limit(j - 1, N)
+        jm1 = limit(i + 1, N),
+        limit(i - 1, N), limit(j + 1, N),
+        limit(j - 1, N)
         du[i, j, 1] = alpha *
-            (
-            u[im1, j, 1] + u[ip1, j, 1] + u[i, jp1, 1] + u[i, jm1, 1] -
-                4u[i, j, 1]
-        ) +
-            B +
-            u[i, j, 1]^2 * u[i, j, 2] - (A + 1) * u[i, j, 1] +
-            brusselator_f(x, y, t)
+                      (u[im1, j, 1] + u[ip1, j, 1] + u[i, jp1, 1] + u[i, jm1, 1] -
+                       4u[i, j, 1]) +
+                      B +
+                      u[i, j, 1]^2 * u[i, j, 2] - (A + 1) * u[i, j, 1] +
+                      brusselator_f(x, y, t)
         du[i, j, 2] = alpha *
-            (
-            u[im1, j, 2] + u[ip1, j, 2] + u[i, jp1, 2] + u[i, jm1, 2] -
-                4u[i, j, 2]
-        ) +
-            A * u[i, j, 1] - u[i, j, 1]^2 * u[i, j, 2]
+                      (u[im1, j, 2] + u[ip1, j, 2] + u[i, jp1, 2] + u[i, jm1, 2] -
+                       4u[i, j, 2]) +
+                      A * u[i, j, 1] - u[i, j, 1]^2 * u[i, j, 2]
     end
 end;
 
@@ -114,10 +110,8 @@ let
         markershape = :auto,
         label = &quot;SparseConnectivityTracer&quot;
     )
-    plot!(
-        pld, N_values, td2; lw = 2, linestyle = :auto,
-        markershape = :auto, label = &quot;Symbolics&quot;
-    )
+    plot!(pld, N_values, td2; lw = 2, linestyle = :auto,
+        markershape = :auto, label = &quot;Symbolics&quot;)
     plot!(pld; xscale = :log10, yscale = :log10, legend = :topleft, minorgrid = true)
     pld
 end</code></pre><p><img src="../figures/BrusselatorSparseAD_8_1.png" alt/></p><h3 id="Coloring-2"><a class="docs-heading-anchor" href="#Coloring-2">Coloring</a><a class="docs-heading-anchor-permalink" href="#Coloring-2" title="Permalink"></a></h3><pre><code class="language-julia hljs">tc1 = zeros(length(N_values))
@@ -154,11 +148,11 @@ for (i, N) in enumerate(N_values)
     )
     J = similar(S, eltype(x0))
 
-    tj1[i] = @belapsed DI.jacobian!($brusselator_2d!, _y, _J, _prep, $backend, $x0) setup = (
+    tj1[i] = @belapsed DI.jacobian!($brusselator_2d!, _y, _J, _prep, $backend, $x0) setup=(
         _y = similar($x0);
         _J = similar($J);
         _prep = DI.prepare_jacobian($brusselator_2d!, similar($x0), $backend, $x0)
-    ) evals = 1
+    ) evals=1
 end
 
 let
@@ -220,4 +214,4 @@ end</code></pre><p><img src="../figures/BrusselatorSparseAD_10_1.png" alt/></p><
     )
     plot!(pl; xscale = :log10, yscale = :log10, minorgrid = true, legend = :topleft)
     pl
-end</code></pre><p><img src="../figures/BrusselatorSparseAD_11_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../AutomaticDifferentiation/SimpleODEAD/">« Differentiation of Simple ODE Benchmarks</a><a class="docs-footer-nextpage" href="../ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Friday 28 August 2026 23:58">Friday 28 August 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+end</code></pre><p><img src="../figures/BrusselatorSparseAD_11_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../AutomaticDifferentiation/SimpleODEAD/">« Differentiation of Simple ODE Benchmarks</a><a class="docs-footer-nextpage" href="../ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.17.0 on <span class="colophon-date" title="Saturday 29 August 2026 13:09">Saturday 29 August 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
