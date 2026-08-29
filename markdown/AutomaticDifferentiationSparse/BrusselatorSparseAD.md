@@ -24,13 +24,13 @@ using Test
 brusselator_f(x, y, t) = (((x - 0.3)^2 + (y - 0.6)^2) <= 0.1^2) * (t >= 1.1) * 5.0
 
 limit(a, N) =
-if a == N + 1
-    1
-elseif a == 0
-    N
-else
-    a
-end;
+    if a == N + 1
+        1
+    elseif a == 0
+        N
+    else
+        a
+    end;
 
 function brusselator_2d!(du, u)
     t = 0.0
@@ -40,27 +40,23 @@ function brusselator_2d!(du, u)
     A, B, alpha, dx = p
     alpha = alpha / dx^2
 
-    return @inbounds for I in CartesianIndices((N, N))
+    @inbounds for I in CartesianIndices((N, N))
         i, j = Tuple(I)
         x, y = xyd[I[1]], xyd[I[2]]
         ip1, im1, jp1,
-            jm1 = limit(i + 1, N),
-            limit(i - 1, N), limit(j + 1, N),
-            limit(j - 1, N)
+        jm1 = limit(i + 1, N),
+        limit(i - 1, N), limit(j + 1, N),
+        limit(j - 1, N)
         du[i, j, 1] = alpha *
-            (
-            u[im1, j, 1] + u[ip1, j, 1] + u[i, jp1, 1] + u[i, jm1, 1] -
-                4u[i, j, 1]
-        ) +
-            B +
-            u[i, j, 1]^2 * u[i, j, 2] - (A + 1) * u[i, j, 1] +
-            brusselator_f(x, y, t)
+                      (u[im1, j, 1] + u[ip1, j, 1] + u[i, jp1, 1] + u[i, jm1, 1] -
+                       4u[i, j, 1]) +
+                      B +
+                      u[i, j, 1]^2 * u[i, j, 2] - (A + 1) * u[i, j, 1] +
+                      brusselator_f(x, y, t)
         du[i, j, 2] = alpha *
-            (
-            u[im1, j, 2] + u[ip1, j, 2] + u[i, jp1, 2] + u[i, jm1, 2] -
-                4u[i, j, 2]
-        ) +
-            A * u[i, j, 1] - u[i, j, 1]^2 * u[i, j, 2]
+                      (u[im1, j, 2] + u[ip1, j, 2] + u[i, jp1, 2] + u[i, jm1, 2] -
+                       4u[i, j, 2]) +
+                      A * u[i, j, 1] - u[i, j, 1]^2 * u[i, j, 2]
     end
 end;
 
@@ -201,10 +197,8 @@ let
         markershape = :auto,
         label = "SparseConnectivityTracer"
     )
-    plot!(
-        pld, N_values, td2; lw = 2, linestyle = :auto,
-        markershape = :auto, label = "Symbolics"
-    )
+    plot!(pld, N_values, td2; lw = 2, linestyle = :auto,
+        markershape = :auto, label = "Symbolics")
     plot!(pld; xscale = :log10, yscale = :log10, legend = :topleft, minorgrid = true)
     pld
 end
@@ -261,11 +255,11 @@ for (i, N) in enumerate(N_values)
     )
     J = similar(S, eltype(x0))
 
-    tj1[i] = @belapsed DI.jacobian!($brusselator_2d!, _y, _J, _prep, $backend, $x0) setup = (
+    tj1[i] = @belapsed DI.jacobian!($brusselator_2d!, _y, _J, _prep, $backend, $x0) setup=(
         _y = similar($x0);
         _J = similar($J);
         _prep = DI.prepare_jacobian($brusselator_2d!, similar($x0), $backend, $x0)
-    ) evals = 1
+    ) evals=1
 end
 
 let
