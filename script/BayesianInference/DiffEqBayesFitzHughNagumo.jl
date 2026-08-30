@@ -7,6 +7,36 @@ using OrdinaryDiffEq, RecursiveArrayTools, Distributions, ParameterizedFunctions
 using Plots, StaticArrays, Turing, LinearAlgebra
 
 
+"""Display ESS/s (effective samples per second) from a Turing chain."""
+function display_ess_per_sec(chain, elapsed)
+    stats = summarystats(chain)
+    ess_bulk = stats[:, :ess_bulk]
+    println("Elapsed time: $(round(elapsed; digits=2)) seconds\n")
+    println("ESS/s (effective samples per second, bulk):")
+    for (i, param) in enumerate(stats[:, :parameters])
+        println("  $param: $(round(ess_bulk[i] / elapsed; digits=1))")
+    end
+    println("\nMinimum ESS/s (bulk): $(round(minimum(ess_bulk) / elapsed; digits=1))")
+end
+
+"""Extract and display Stan's internal timing from its CSV output files."""
+function display_stan_timing(stan_result)
+    sample_files = stan_result.model.sample_file
+    for (chain_idx, f) in enumerate(sample_files)
+        isfile(f) || continue
+        lines = readlines(f)
+        println("Chain $chain_idx timing (from Stan CSV):")
+        for line in lines
+            if startswith(line, "#") && occursin("Elapsed Time", line)
+                println("  ", strip(line[2:end]))
+            elseif startswith(line, "#") && occursin("seconds", line)
+                println("  ", strip(line[2:end]))
+            end
+        end
+    end
+end
+
+
 gr(fmt = :png)
 
 
@@ -39,40 +69,54 @@ priors = [truncated(Normal(1.0, 0.5), 0, 1.5), truncated(Normal(1.0, 0.5), 0, 1.
     truncated(Normal(0.0, 0.5), 0.0, 0.5), truncated(Normal(0.5, 0.5), 0, 1)]
 
 
-@time bayesian_result_stan = stan_inference(
-    prob_ode_fitzhughnagumo, t, data, priors; delta = 0.65, num_samples = 10_000,
-    print_summary = false, vars = (DiffEqBayes.StanODEData(), InverseGamma(2, 3)))
+bayesian_result_stan = @time stan_inference(
+    prob_ode_fitzhughnagumo, :rk45, t, data, priors;
+    print_summary = false,
+    sample_kwargs = Dict(:delta => 0.85, :num_samples => 10_000),
+    vars = (DiffEqBayes.StanODEData(), InverseGamma(2, 3)))
 
 
-@model function fitlv(data, prob)
+display_stan_timing(bayesian_result_stan)
 
+
+@model function fitfhn(data, prob)
     # Prior distributions.
-    σ ~ InverseGamma(2, 3)
+    σ ~ filldist(InverseGamma(2, 3), 2)
     a ~ truncated(Normal(1.0, 0.5), 0, 1.5)
     b ~ truncated(Normal(1.0, 0.5), 0, 1.5)
     τinv ~ truncated(Normal(0.0, 0.5), 0.0, 0.5)
     l ~ truncated(Normal(0.5, 0.5), 0, 1)
 
-    # Simulate Lotka-Volterra model. 
+    # Simulate FitzHugh-Nagumo model.
     p = SA[a, b, τinv, l]
     _prob = remake(prob, p = p)
     predicted = solve(_prob, Tsit5(); saveat = t)
 
     # Observations.
     for i in 1:length(predicted)
-        data[:, i] ~ MvNormal(predicted[i], σ^2 * I)
+        data[:, i] ~ MvNormal(predicted[i], Diagonal(σ .^ 2))
     end
 
     return nothing
 end
 
-model = fitlv(data, sprob_ode_fitzhughnagumo)
+model = fitfhn(data, sprob_ode_fitzhughnagumo)
 
-@time chain = sample(model, Turing.NUTS(0.65), 10000; progress = false)
+# Warmup run to compile all code paths before timing
+sample(model, Turing.NUTS(0.85), 10; progress = false)
+
+elapsed_turing_direct = @elapsed chain = sample(model, Turing.NUTS(0.85), 10_000; progress = false)
+chain
 
 
-@time bayesian_result_turing = turing_inference(
-    prob_ode_fitzhughnagumo, Tsit5(), t, data, priors; num_samples = 10_000)
+display_ess_per_sec(chain, elapsed_turing_direct)
+
+
+@btime bayesian_result_turing = turing_inference(
+    prob_ode_fitzhughnagumo, Tsit5(), t, data, priors;
+    sample_args = (sampler = Turing.NUTS(0.85), num_samples = 10_000),
+    likelihood = (u, p, t, σ) -> MvNormal(u, Diagonal(σ .^ 2)),
+    likelihood_dist_priors = [InverseGamma(2, 3), InverseGamma(2, 3)])
 
 
 using SciMLBenchmarks
