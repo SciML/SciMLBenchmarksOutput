@@ -5,7 +5,8 @@ Pkg.add(Pkg.PackageSpec(;name="XSteam", rev="f2a1c589054cfd6bba307985a3a534b6f5a
 
 using ModelingToolkit, Symbolics, SymbolicUtils, XSteam, Polynomials, CairoMakie, PrettyTables
 using SparseArrays, Chairmarks, Statistics
-using ModelingToolkit: t_nounits as t, D_nounits as D, default_values
+using ModelingToolkit: t_nounits as t, D_nounits as D
+using SymbolicIndexingInterface: default_values
 
 
 #          o  o  o  o  o  o  o < heat capacitors
@@ -40,7 +41,7 @@ T_vec = collect(1:1:150);
 end
 
 @connector function VectorHeatPort(; name, N=100, T0=0.0, Q0=0.0)
-  sts = @variables (T(t))[1:N] = T0 (Q(t))[1:N] = Q0 [connect = Flow]
+  sts = @variables (T(t))[1:N] = fill(T0, N) (Q(t))[1:N] = fill(Q0, N) [connect = Flow]
   ODESystem(Equation[], t, [T; Q], []; name=name)
 end
 
