@@ -1,5 +1,6 @@
 
 using JumpProcesses, Graphs, Statistics, BenchmarkTools, Plots
+using SciMLLogging
 using OrdinaryDiffEq: Tsit5
 fmt = :png
 width_px, height_px = default(:size);
@@ -278,27 +279,10 @@ push!(algorithms, (PDMPCHVFull(), CHV(Tsit5()), true, "PDMPCHVFull"));
 
 
 const BENCHMARK_PYTHON::Bool = tryparse(Bool, get(ENV, "SCIMLBENCHMARK_PYTHON", "true"))
-const REBUILD_PYCALL::Bool = tryparse(Bool, get(ENV, "SCIMLBENCHMARK_REBUILD_PYCALL", "true"))
 
 struct PyTick end
 
 if BENCHMARK_PYTHON
-    if REBUILD_PYCALL
-        using Pkg, Conda
-
-        # PyCall only works with Conda.ROOTENV
-        # tick requires python=3.8
-        Conda.add("python=3.8", Conda.ROOTENV)
-        Conda.add("numpy", Conda.ROOTENV)
-        Conda.pip_interop(true, Conda.ROOTENV)
-        Conda.pip("install", "tick", Conda.ROOTENV)
-
-        # rebuild PyCall to ensure it links to the python provided by Conda.jl
-        ENV["PYTHON"] = ""
-        Pkg.build("PyCall")
-    end
-
-    ENV["PYTHON"] = ""
     using PyCall
     @info "PyCall" PyCall.libpython PyCall.pyversion PyCall.conda
 
@@ -318,7 +302,7 @@ if BENCHMARK_PYTHON
             adjacency = [i in j ? α / β : 0.0 for j in g, i in 1:length(u), u in 1:1],
             decays = [β],
             end_time = tspan[2],
-            verbose = false,
+            verbose = SciMLLogging.None(),
             force_simulation = true
         )
         return jprob

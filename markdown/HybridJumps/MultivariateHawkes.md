@@ -4,6 +4,7 @@ title: "Multivariate Hawkes Model"
 ---
 ```julia
 using JumpProcesses, Graphs, Statistics, BenchmarkTools, Plots
+using SciMLLogging
 using OrdinaryDiffEq: Tsit5
 fmt = :png
 width_px, height_px = default(:size);
@@ -464,31 +465,14 @@ push!(algorithms, (PDMPCHVFull(), CHV(Tsit5()), true, "PDMPCHVFull"));
 
 
 
-The Python `Tick` library can be accessed with the `PyCall.jl`. We install the required Python dependencies with `Conda.jl` and define a factory for the Multivariate Hawkes `PyTick` problem.
+The Python `Tick` library is installed by the folder setup hook and accessed with `PyCall.jl`. We define a factory for the Multivariate Hawkes `PyTick` problem.
 
 ```julia
 const BENCHMARK_PYTHON::Bool = tryparse(Bool, get(ENV, "SCIMLBENCHMARK_PYTHON", "true"))
-const REBUILD_PYCALL::Bool = tryparse(Bool, get(ENV, "SCIMLBENCHMARK_REBUILD_PYCALL", "true"))
 
 struct PyTick end
 
 if BENCHMARK_PYTHON
-    if REBUILD_PYCALL
-        using Pkg, Conda
-
-        # PyCall only works with Conda.ROOTENV
-        # tick requires python=3.8
-        Conda.add("python=3.8", Conda.ROOTENV)
-        Conda.add("numpy", Conda.ROOTENV)
-        Conda.pip_interop(true, Conda.ROOTENV)
-        Conda.pip("install", "tick", Conda.ROOTENV)
-
-        # rebuild PyCall to ensure it links to the python provided by Conda.jl
-        ENV["PYTHON"] = ""
-        Pkg.build("PyCall")
-    end
-
-    ENV["PYTHON"] = ""
     using PyCall
     @info "PyCall" PyCall.libpython PyCall.pyversion PyCall.conda
 
@@ -508,7 +492,7 @@ if BENCHMARK_PYTHON
             adjacency = [i in j ? α / β : 0.0 for j in g, i in 1:length(u), u in 1:1],
             decays = [β],
             end_time = tspan[2],
-            verbose = false,
+            verbose = SciMLLogging.None(),
             force_simulation = true
         )
         return jprob
@@ -519,8 +503,41 @@ end
 ```
 
 ```
-Error: ArgumentError: Package Conda not found in current path.
-- Run `import Pkg; Pkg.add("Conda")` to install the Conda package.
+8-element Vector{Tuple{Any, Any, Bool, String}}:
+ (JumpProcesses.Direct(), OrdinaryDiffEqTsit5.Tsit5{typeof(OrdinaryDiffEqCo
+re.trivial_limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.F
+alse}(OrdinaryDiffEqCore.trivial_limiter!, OrdinaryDiffEqCore.trivial_limit
+er!, static(false)), 0, "Direct (brute-force)")
+ (JumpProcesses.Coevolve(), JumpProcesses.SSAStepper(), 0, "Coevolve (brute
+-force)")
+ (JumpProcesses.Direct(), OrdinaryDiffEqTsit5.Tsit5{typeof(OrdinaryDiffEqCo
+re.trivial_limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.F
+alse}(OrdinaryDiffEqCore.trivial_limiter!, OrdinaryDiffEqCore.trivial_limit
+er!, static(false)), 1, "Direct (recursive)")
+ (JumpProcesses.Coevolve(), JumpProcesses.SSAStepper(), 1, "Coevolve (recur
+sive)")
+ (Main.var"##WeaveSandBox#225".PDMPCHVSimple(), PiecewiseDeterministicMarko
+vProcesses.CHV{OrdinaryDiffEqTsit5.Tsit5{typeof(OrdinaryDiffEqCore.trivial_
+limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}}(Ordi
+naryDiffEqTsit5.Tsit5{typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(O
+rdinaryDiffEqCore.trivial_limiter!), Static.False}(OrdinaryDiffEqCore.trivi
+al_limiter!, OrdinaryDiffEqCore.trivial_limiter!, static(false))), 0, "PDMP
+CHVSimple (brute-force)")
+ (Main.var"##WeaveSandBox#225".PDMPCHVSimple(), PiecewiseDeterministicMarko
+vProcesses.CHV{OrdinaryDiffEqTsit5.Tsit5{typeof(OrdinaryDiffEqCore.trivial_
+limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}}(Ordi
+naryDiffEqTsit5.Tsit5{typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(O
+rdinaryDiffEqCore.trivial_limiter!), Static.False}(OrdinaryDiffEqCore.trivi
+al_limiter!, OrdinaryDiffEqCore.trivial_limiter!, static(false))), 1, "PDMP
+CHVSimple (recursive)")
+ (Main.var"##WeaveSandBox#225".PDMPCHVFull(), PiecewiseDeterministicMarkovP
+rocesses.CHV{OrdinaryDiffEqTsit5.Tsit5{typeof(OrdinaryDiffEqCore.trivial_li
+miter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}}(Ordina
+ryDiffEqTsit5.Tsit5{typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(Ord
+inaryDiffEqCore.trivial_limiter!), Static.False}(OrdinaryDiffEqCore.trivial
+_limiter!, OrdinaryDiffEqCore.trivial_limiter!, static(false))), 1, "PDMPCH
+VFull")
+ (Main.var"##WeaveSandBox#225".PyTick(), nothing, 1, "PyTick")
 ```
 
 
@@ -875,6 +892,710 @@ let fig = []
 end
 ```
 
+```
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.04e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.33e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.14e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.74e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.03e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.89e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.70e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.79e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.37e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.72e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.63e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.78e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.69e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.28e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.85e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.45e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.74e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.62e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.48e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.81e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.98e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.92e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.48e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.50e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.75e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.78e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.02e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.70e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.69e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.90e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.61e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.68e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.64e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.78e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.44e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.42e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.43e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.00e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.76e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.32e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.77e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.90e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.57e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.04e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.77e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.44e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.76e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.79e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.03e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.59e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.06e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.47e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.61e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.03e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.39e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.46e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.56e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.17e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.63e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.08e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.40e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.66e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.91e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.62e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.61e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.91e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.41e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.88e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.94e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.47e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.79e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.76e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.46e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.52e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.64e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.50e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.44e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.81e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.91e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.78e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.75e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.76e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.93e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.40e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.68e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.92e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.07e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.45e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.79e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.00e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.44e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.48e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.64e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.12e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.86e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.82e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.34e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.79e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.76e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.42e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.80e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.50e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.27e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.80e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.60e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.78e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.72e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.19e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.82e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.83e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.44e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.13e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.87e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.68e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.69e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.74e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.61e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.80e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.66e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.91e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.57e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.33e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.66e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.63e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.88e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.75e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.92e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.72e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.26e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.58e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.88e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.63e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.62e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.47e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.52e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.57e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.76e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.99e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.71e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.43e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.59e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.63e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.54e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.60e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.96e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.74e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.83e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.64e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.88e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.11e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.91e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.75e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.09e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.77e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.15e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.58e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.15e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.89e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.52e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.62e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.72e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.44e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.90e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.81e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.64e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.57e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.58e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.01e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.89e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.83e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.14e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.49e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.72e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.66e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.50e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.95e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.72e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.51e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.04e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.86e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.42e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.45e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.39e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.84e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.28e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.54e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.96e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.65e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.43e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.86e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.30e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.05e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.53e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.65e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.95e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.77e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.77e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.13e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.99e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.72e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.72e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.65e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.89e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.90e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.82e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.06e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.96e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.90e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.86e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.15e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.03e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.00e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.54e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.95e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.38e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.51e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.55e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.02e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.21e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.75e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.32e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.79e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.89e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.99e-04 seconds.
+-----------------------------------------------------
+```
+
+
 ![](figures/MultivariateHawkes_21_1.png)
 
 
@@ -990,86 +1711,2897 @@ end
 ```
 
 ```
-algo=Direct (brute-force), V = 1, length = 50, median time = 94.424 μs
-algo=Direct (brute-force), V = 10, length = 50, median time = 10.867 ms
-algo=Direct (brute-force), V = 20, length = 50, median time = 88.938 ms
-algo=Direct (brute-force), V = 30, length = 37, median time = 269.886 ms
-algo=Direct (brute-force), V = 40, length = 7, median time = 1.639 s
-algo=Direct (brute-force), V = 50, length = 4, median time = 2.960 s
-algo=Direct (brute-force), V = 60, length = 2, median time = 5.393 s
-algo=Direct (brute-force), V = 70, length = 2, median time = 8.176 s
-algo=Direct (brute-force), V = 80, length = 1, median time = 13.647 s
-algo=Direct (brute-force), V = 90, length = 1, median time = 21.228 s
-algo=Coevolve (brute-force), V = 1, length = 50, median time = 3.665 μs
-algo=Coevolve (brute-force), V = 10, length = 50, median time = 207.569 μs
-algo=Coevolve (brute-force), V = 20, length = 50, median time = 1.364 ms
-algo=Coevolve (brute-force), V = 30, length = 50, median time = 3.308 ms
-algo=Coevolve (brute-force), V = 40, length = 50, median time = 8.066 ms
-algo=Coevolve (brute-force), V = 50, length = 50, median time = 16.693 ms
-algo=Coevolve (brute-force), V = 60, length = 50, median time = 29.836 ms
-algo=Coevolve (brute-force), V = 70, length = 50, median time = 51.041 ms
-algo=Coevolve (brute-force), V = 80, length = 50, median time = 75.882 ms
-algo=Coevolve (brute-force), V = 90, length = 50, median time = 123.100 ms
-algo=Direct (recursive), V = 1, length = 50, median time = 84.284 μs
-algo=Direct (recursive), V = 10, length = 50, median time = 4.771 ms
-algo=Direct (recursive), V = 20, length = 50, median time = 24.122 ms
-algo=Direct (recursive), V = 30, length = 50, median time = 67.159 ms
-algo=Direct (recursive), V = 40, length = 11, median time = 978.714 ms
-algo=Direct (recursive), V = 50, length = 6, median time = 1.834 s
-algo=Direct (recursive), V = 60, length = 4, median time = 3.132 s
-algo=Direct (recursive), V = 70, length = 2, median time = 5.075 s
-algo=Direct (recursive), V = 80, length = 2, median time = 7.879 s
-algo=Direct (recursive), V = 90, length = 1, median time = 12.161 s
-algo=Coevolve (recursive), V = 1, length = 50, median time = 3.840 μs
-algo=Coevolve (recursive), V = 10, length = 50, median time = 72.399 μs
-algo=Coevolve (recursive), V = 20, length = 50, median time = 258.553 μs
-algo=Coevolve (recursive), V = 30, length = 50, median time = 481.132 μs
-algo=Coevolve (recursive), V = 40, length = 50, median time = 897.533 μs
-algo=Coevolve (recursive), V = 50, length = 50, median time = 1.483 ms
-algo=Coevolve (recursive), V = 60, length = 50, median time = 2.161 ms
-algo=Coevolve (recursive), V = 70, length = 50, median time = 3.101 ms
-algo=Coevolve (recursive), V = 80, length = 50, median time = 4.031 ms
-algo=Coevolve (recursive), V = 90, length = 50, median time = 5.424 ms
-algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 71.764 
-μs
-algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 4.740 
+algo=Direct (brute-force), V = 1, length = 50, median time = 104.429 μs
+algo=Direct (brute-force), V = 10, length = 50, median time = 14.644 ms
+algo=Direct (brute-force), V = 20, length = 50, median time = 131.370 ms
+algo=Direct (brute-force), V = 30, length = 25, median time = 416.051 ms
+algo=Direct (brute-force), V = 40, length = 4, median time = 2.622 s
+algo=Direct (brute-force), V = 50, length = 3, median time = 4.935 s
+algo=Direct (brute-force), V = 60, length = 2, median time = 9.271 s
+algo=Direct (brute-force), V = 70, length = 1, median time = 14.027 s
+algo=Direct (brute-force), V = 80, length = 1, median time = 24.182 s
+algo=Direct (brute-force), V = 90, length = 1, median time = 37.972 s
+algo=Coevolve (brute-force), V = 1, length = 50, median time = 5.770 μs
+algo=Coevolve (brute-force), V = 10, length = 50, median time = 347.903 μs
+algo=Coevolve (brute-force), V = 20, length = 50, median time = 2.077 ms
+algo=Coevolve (brute-force), V = 30, length = 50, median time = 5.591 ms
+algo=Coevolve (brute-force), V = 40, length = 50, median time = 13.106 ms
+algo=Coevolve (brute-force), V = 50, length = 50, median time = 23.567 ms
+algo=Coevolve (brute-force), V = 60, length = 50, median time = 45.684 ms
+algo=Coevolve (brute-force), V = 70, length = 50, median time = 72.839 ms
+algo=Coevolve (brute-force), V = 80, length = 50, median time = 116.692 ms
+algo=Coevolve (brute-force), V = 90, length = 50, median time = 198.916 ms
+algo=Direct (recursive), V = 1, length = 50, median time = 109.475 μs
+algo=Direct (recursive), V = 10, length = 50, median time = 6.260 ms
+algo=Direct (recursive), V = 20, length = 50, median time = 31.824 ms
+algo=Direct (recursive), V = 30, length = 50, median time = 93.103 ms
+algo=Direct (recursive), V = 40, length = 6, median time = 1.919 s
+algo=Direct (recursive), V = 50, length = 3, median time = 3.688 s
+algo=Direct (recursive), V = 60, length = 2, median time = 6.059 s
+algo=Direct (recursive), V = 70, length = 2, median time = 10.158 s
+algo=Direct (recursive), V = 80, length = 1, median time = 16.984 s
+algo=Direct (recursive), V = 90, length = 1, median time = 24.832 s
+algo=Coevolve (recursive), V = 1, length = 50, median time = 5.540 μs
+algo=Coevolve (recursive), V = 10, length = 50, median time = 104.239 μs
+algo=Coevolve (recursive), V = 20, length = 50, median time = 371.978 μs
+algo=Coevolve (recursive), V = 30, length = 50, median time = 707.451 μs
+algo=Coevolve (recursive), V = 40, length = 50, median time = 1.318 ms
+algo=Coevolve (recursive), V = 50, length = 50, median time = 2.205 ms
+algo=Coevolve (recursive), V = 60, length = 50, median time = 3.342 ms
+algo=Coevolve (recursive), V = 70, length = 50, median time = 4.735 ms
+algo=Coevolve (recursive), V = 80, length = 50, median time = 6.142 ms
+algo=Coevolve (recursive), V = 90, length = 50, median time = 8.350 ms
+algo=PDMPCHVSimple (brute-force), V = 1, length = 50, median time = 111.504
+ μs
+algo=PDMPCHVSimple (brute-force), V = 10, length = 50, median time = 7.747 
 ms
-algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 40.425
+algo=PDMPCHVSimple (brute-force), V = 20, length = 50, median time = 59.641
  ms
-algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 112.87
-1 ms
-algo=PDMPCHVSimple (brute-force), V = 40, length = 35, median time = 286.67
-5 ms
-algo=PDMPCHVSimple (brute-force), V = 50, length = 18, median time = 583.59
-4 ms
-algo=PDMPCHVSimple (brute-force), V = 60, length = 10, median time = 1.061 
+algo=PDMPCHVSimple (brute-force), V = 30, length = 50, median time = 189.40
+9 ms
+algo=PDMPCHVSimple (brute-force), V = 40, length = 22, median time = 469.10
+8 ms
+algo=PDMPCHVSimple (brute-force), V = 50, length = 10, median time = 1.019 
 s
-algo=PDMPCHVSimple (brute-force), V = 70, length = 6, median time = 1.911 s
-algo=PDMPCHVSimple (brute-force), V = 80, length = 4, median time = 2.903 s
-algo=PDMPCHVSimple (brute-force), V = 90, length = 3, median time = 5.018 s
-algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 73.075 μs
-algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 338.957 
-μs
-algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 805.093 
-μs
-algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 1.531 ms
-algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 2.509 ms
-algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 3.647 ms
-algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 5.191 ms
-algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 7.178 ms
-algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 9.484 ms
-algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 12.234 m
+algo=PDMPCHVSimple (brute-force), V = 60, length = 6, median time = 1.866 s
+algo=PDMPCHVSimple (brute-force), V = 70, length = 4, median time = 3.098 s
+algo=PDMPCHVSimple (brute-force), V = 80, length = 2, median time = 5.294 s
+algo=PDMPCHVSimple (brute-force), V = 90, length = 2, median time = 8.197 s
+algo=PDMPCHVSimple (recursive), V = 1, length = 50, median time = 114.034 μ
 s
-algo=PDMPCHVFull, V = 1, length = 50, median time = 71.589 μs
-algo=PDMPCHVFull, V = 10, length = 50, median time = 490.986 μs
-algo=PDMPCHVFull, V = 20, length = 50, median time = 749.969 μs
-algo=PDMPCHVFull, V = 30, length = 50, median time = 1.219 ms
-algo=PDMPCHVFull, V = 40, length = 50, median time = 1.534 ms
-algo=PDMPCHVFull, V = 50, length = 50, median time = 1.902 ms
-algo=PDMPCHVFull, V = 60, length = 50, median time = 2.516 ms
-algo=PDMPCHVFull, V = 70, length = 50, median time = 3.055 ms
-algo=PDMPCHVFull, V = 80, length = 50, median time = 3.673 ms
-algo=PDMPCHVFull, V = 90, length = 50, median time = 4.356 ms
+algo=PDMPCHVSimple (recursive), V = 10, length = 50, median time = 466.027 
+μs
+algo=PDMPCHVSimple (recursive), V = 20, length = 50, median time = 1.153 ms
+algo=PDMPCHVSimple (recursive), V = 30, length = 50, median time = 2.212 ms
+algo=PDMPCHVSimple (recursive), V = 40, length = 50, median time = 3.518 ms
+algo=PDMPCHVSimple (recursive), V = 50, length = 50, median time = 5.189 ms
+algo=PDMPCHVSimple (recursive), V = 60, length = 50, median time = 7.330 ms
+algo=PDMPCHVSimple (recursive), V = 70, length = 50, median time = 10.000 m
+s
+algo=PDMPCHVSimple (recursive), V = 80, length = 50, median time = 13.479 m
+s
+algo=PDMPCHVSimple (recursive), V = 90, length = 50, median time = 17.953 m
+s
+algo=PDMPCHVFull, V = 1, length = 50, median time = 124.189 μs
+algo=PDMPCHVFull, V = 10, length = 50, median time = 761.380 μs
+algo=PDMPCHVFull, V = 20, length = 50, median time = 1.149 ms
+algo=PDMPCHVFull, V = 30, length = 50, median time = 1.887 ms
+algo=PDMPCHVFull, V = 40, length = 50, median time = 2.369 ms
+algo=PDMPCHVFull, V = 50, length = 50, median time = 2.986 ms
+algo=PDMPCHVFull, V = 60, length = 50, median time = 3.884 ms
+algo=PDMPCHVFull, V = 70, length = 50, median time = 4.761 ms
+algo=PDMPCHVFull, V = 80, length = 50, median time = 5.759 ms
+algo=PDMPCHVFull, V = 90, length = 50, median time = 7.410 ms
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.71e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.26e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.12e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.46e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.65e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.88e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.84e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.80e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.94e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.36e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.41e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.57e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.40e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.55e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.74e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.49e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.40e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.52e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.17e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.60e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.89e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.12e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.19e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.27e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.98e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.72e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.81e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.88e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.93e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.08e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.36e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.84e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.72e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.86e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.69e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.00e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.77e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.72e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.81e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.67e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.43e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.93e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.93e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.96e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.77e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.69e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.24e-05 seconds.
+algo=PyTick, V = 1, length = 50, median time = 48.594 μs
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.31e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.96e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.93e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.03e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.88e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.84e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.96e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.79e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.53e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.77e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.93e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.84e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.91e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.69e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.69e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.17e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.81e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.77e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.08e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.77e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.00e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.86e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.27e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.74e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.29e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.79e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.39e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.86e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.63e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.10e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.82e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.82e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.13e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.03e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.10e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.67e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.25e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.67e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.94e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.79e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.98e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.10e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.60e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.82e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.13e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.63e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.77e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.87e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.63e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.60e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.43e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.08e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.13e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.13e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.96e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.44e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.25e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.34e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.20e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.36e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.65e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.29e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.44e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.89e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.46e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.96e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.08e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.72e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.27e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.98e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.86e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.15e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.86e-05 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.94e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.21e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.79e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.58e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.81e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.51e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.53e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.81e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.66e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.55e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.32e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.34e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.57e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.85e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.33e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.50e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.43e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.62e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.95e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.88e-04 seconds.
+-----------------------------------------------------
+algo=PyTick, V = 10, length = 50, median time = 274.654 μs
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.10e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.44e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.46e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.59e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.50e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.40e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.53e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.45e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.91e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.19e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.59e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.50e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.61e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.20e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.76e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.28e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.53e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.32e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.49e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.57e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.48e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.51e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.64e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.32e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.68e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.51e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.63e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.39e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.26e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.06e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.86e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.09e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.29e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.39e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.67e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.08e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.70e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.91e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.77e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.21e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.73e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.57e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.71e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.12e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.02e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.74e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.96e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.42e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.13e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.71e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.70e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.70e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.20e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.42e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.39e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.68e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.79e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.87e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.26e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.24e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.92e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.76e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.79e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.60e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.13e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.77e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.89e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.15e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.59e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.21e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.02e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.09e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.68e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.67e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.36e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.04e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.03e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.83e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.53e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.19e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.75e-04 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.83e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.01e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.63e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.51e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.68e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.61e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.54e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.44e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.57e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.73e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.67e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+algo=PyTick, V = 20, length = 50, median time = 1.637 ms
+Done simulating using SimuHawkesSumExpKernels in 1.61e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.63e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.80e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.58e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.65e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.60e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.58e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.62e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.47e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.61e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.39e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.67e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.76e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.59e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.78e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.87e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.67e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.58e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.45e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.68e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.67e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.71e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.58e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.67e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.56e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.62e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.56e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.62e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.87e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.56e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.65e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.37e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.54e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.59e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.79e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.42e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.86e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.49e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.61e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.57e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.80e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.09e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.65e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.86e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.50e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.77e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.01e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.76e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.89e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.86e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.99e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.71e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.76e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.94e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.79e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.75e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.85e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.90e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.68e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.62e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.76e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.77e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.88e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.40e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.64e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.60e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.76e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.13e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.72e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.85e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.61e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.74e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.08e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.07e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.63e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.52e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.00e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.91e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.79e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.82e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.72e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.81e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.80e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.05e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.15e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.83e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.77e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.04e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.80e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.01e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.72e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.96e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.40e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.53e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.61e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.07e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.25e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.07e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.13e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.02e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.33e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.27e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.14e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.02e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.00e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.17e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.50e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.59e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.31e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.39e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.86e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.94e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.15e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.48e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.80e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.31e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.16e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.58e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.97e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.12e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.06e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.10e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.72e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.62e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.19e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.85e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.39e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.25e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.98e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.77e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.52e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.04e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.91e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.17e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.48e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.80e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.43e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.47e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.61e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.26e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+algo=PyTick, V = 30, length = 50, median time = 5.055 ms
+Done simulating using SimuHawkesSumExpKernels in 5.06e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.04e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.37e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.88e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.57e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.09e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.71e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.96e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.23e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.83e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.01e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 9.46e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.32e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.23e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.84e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.88e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.58e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.81e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.49e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.09e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.52e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.88e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.87e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.79e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.51e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.78e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.18e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.51e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.62e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.34e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.38e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.15e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.10e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.80e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.33e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.93e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.16e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.11e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.62e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.36e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.02e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.31e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.93e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.86e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.20e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.19e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.13e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.87e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.81e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.77e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.85e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.97e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 9.91e-03 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.32e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.37e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.34e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.26e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.28e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.33e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.37e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.30e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.33e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.38e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.41e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.37e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.34e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.29e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.24e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.34e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.33e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.19e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.37e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.39e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.32e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.25e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.19e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.29e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.13e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.24e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.35e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.27e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.33e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.21e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.29e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.32e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.32e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.40e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.31e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.24e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.25e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.28e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.36e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.37e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.45e-02 seconds.
+algo=PyTick, V = 40, length = 50, median time = 13.167 ms
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.35e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.22e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.28e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.40e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.23e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.31e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.32e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.19e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.31e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.29e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.12e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.03e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.09e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.24e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.19e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.13e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.02e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.04e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.07e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.10e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.14e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.96e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.16e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.02e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.87e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.09e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.03e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.86e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.06e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.98e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.90e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.05e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.03e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.08e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.99e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.82e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.10e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.03e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.04e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.13e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.18e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.21e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.06e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.98e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.96e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.97e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.08e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.11e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.07e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.28e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.04e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.03e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.12e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.04e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.00e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.06e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.99e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.11e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.93e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.86e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.18e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.96e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.34e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.49e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.06e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.34e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.10e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.45e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.84e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.28e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.39e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.51e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.01e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.10e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.17e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.42e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.27e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.27e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.31e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.50e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.80e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.76e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.42e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.60e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.60e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.31e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.65e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.37e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.46e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.49e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.78e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.19e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.41e-02 seconds.
+-----------------------------------------------------
+algo=PyTick, V = 50, length = 50, median time = 35.047 ms
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.51e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.78e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.90e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.83e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.61e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.50e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.78e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.75e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.64e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.58e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.70e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.61e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.57e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.42e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.36e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.58e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.81e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.09e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.74e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.29e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.96e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.21e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.20e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.92e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.06e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.08e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.16e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.94e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.97e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.12e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.17e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.86e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.84e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.65e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.87e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.99e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.16e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.97e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.71e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.05e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.25e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.98e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.84e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.55e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.17e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.06e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.60e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.89e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.37e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.17e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.95e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.94e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.71e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.01e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.84e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.77e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.78e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.63e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.72e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.58e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.62e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 5.13e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.90e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.74e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.87e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.84e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.55e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.78e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.28e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 4.63e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.16e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.37e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.28e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.14e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.43e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.81e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.66e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.61e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.40e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.32e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.39e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.08e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.78e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.46e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.26e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.98e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.59e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.67e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.87e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.75e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.55e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.05e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.87e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+algo=PyTick, V = 60, length = 50, median time = 74.491 ms
+Done simulating using SimuHawkesSumExpKernels in 7.52e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.10e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.38e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.71e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.95e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.34e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.57e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.74e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.23e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.16e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.70e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.42e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.22e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.63e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.33e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 8.07e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.87e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.84e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.26e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.73e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.46e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.42e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.56e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 6.38e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.62e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.35e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.35e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 7.80e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.11e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.08e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.05e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.21e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.09e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.09e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.06e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.13e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.08e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.05e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.09e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.06e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.16e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.06e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.04e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.11e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.02e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.02e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.08e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.05e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.10e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.12e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.09e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.01e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.09e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.15e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.16e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.09e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.03e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.04e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 9.90e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.02e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.10e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.15e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.06e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 9.13e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 9.63e-02 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.00e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.03e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.02e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.09e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.10e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.11e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.04e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.06e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.02e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.12e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.14e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.11e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.08e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.08e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.48e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.38e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.42e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.46e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.52e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.47e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.54e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.46e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.47e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.44e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.53e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.33e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.35e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.43e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.53e-01 seconds.
+algo=PyTick, V = 70, length = 50, median time = 147.516 ms
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.52e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.40e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.36e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.37e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.24e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.48e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.49e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.47e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.45e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.56e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.44e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.52e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.53e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.52e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.53e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.45e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.53e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.46e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.49e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.51e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.48e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.48e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.48e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.43e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.54e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.49e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.43e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.44e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.50e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.38e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.48e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.34e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.48e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.45e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.50e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.47e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.91e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.81e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.88e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.95e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.74e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.76e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.81e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.80e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.93e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.89e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.93e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.84e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.84e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.79e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.96e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.90e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.86e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.77e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.86e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.81e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.93e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.71e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.74e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.71e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.00e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.80e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.79e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.88e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.84e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.82e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.81e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.72e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.79e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.74e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.88e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.88e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.85e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.89e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.79e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.76e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.80e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.86e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.83e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.87e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.83e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.97e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.77e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.83e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.74e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.74e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 1.96e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.48e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.49e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.23e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.31e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.44e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.46e-01 seconds.
+-----------------------------------------------------
+algo=PyTick, V = 80, length = 44, median time = 232.151 ms
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.42e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.28e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.33e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.24e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.33e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.34e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.34e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.18e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.32e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.33e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.34e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.38e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.13e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.48e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.34e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.18e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.35e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.32e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.31e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.49e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.18e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.35e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.26e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.28e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.13e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.43e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.27e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.25e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.44e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.43e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.39e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.30e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.37e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.04e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.10e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.10e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.24e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.35e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.21e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.93e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.90e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.82e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.85e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.11e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.85e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.96e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.97e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.94e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.04e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.83e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.99e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.73e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.97e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.94e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.13e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.99e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.93e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.92e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.91e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.97e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.66e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.89e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.06e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.78e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.82e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.86e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.01e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.99e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.70e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.79e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.70e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.78e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.93e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 2.78e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.16e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.61e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.60e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.57e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.57e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.65e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.55e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.56e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.49e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.77e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.60e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.55e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.59e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.48e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.61e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.59e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.66e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.57e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+Done simulating using SimuHawkesSumExpKernels in 3.68e-01 seconds.
+-----------------------------------------------------
+Launching simulation using SimuHawkesSumExpKernels...
+algo=PyTick, V = 90, length = 28, median time = 359.599 ms
 ```
 
 
@@ -1173,66 +4705,66 @@ end
 ```
 
 ```
-algo=VR_Direct (brute-force), V=1, length=50, median time=449.841 μs
-algo=VR_Direct (brute-force), V=10, length=50, median time=21.695 ms
-algo=VR_Direct (brute-force), V=20, length=50, median time=191.295 ms
-algo=VR_Direct (brute-force), V=30, length=16, median time=632.394 ms
-algo=VR_Direct (brute-force), V=40, length=2, median time=5.376 s
-algo=VR_Direct (brute-force), V=50, length=1, median time=10.608 s
-algo=VR_Direct (brute-force), V=60, length=1, median time=17.122 s
-algo=VR_Direct (brute-force), V=70, length=1, median time=28.665 s
-algo=VR_Direct (brute-force), V=80, length=1, median time=46.071 s
-algo=VR_Direct (brute-force), V=90, length=1, median time=65.666 s
-algo=VR_DirectFW (brute-force), V=1, length=50, median time=721.864 μs
-algo=VR_DirectFW (brute-force), V=10, length=50, median time=50.393 ms
-algo=VR_DirectFW (brute-force), V=20, length=28, median time=364.858 ms
-algo=VR_DirectFW (brute-force), V=30, length=10, median time=1.115 s
-algo=VR_DirectFW (brute-force), V=40, length=4, median time=2.619 s
-algo=VR_DirectFW (brute-force), V=50, length=2, median time=5.234 s
-algo=VR_DirectFW (brute-force), V=60, length=2, median time=8.774 s
-algo=VR_DirectFW (brute-force), V=70, length=1, median time=17.229 s
-algo=VR_DirectFW (brute-force), V=80, length=1, median time=24.781 s
-algo=VR_DirectFW (brute-force), V=90, length=1, median time=41.577 s
-algo=VR_FRM (brute-force), V=1, length=50, median time=90.730 μs
-algo=VR_FRM (brute-force), V=10, length=50, median time=10.672 ms
-algo=VR_FRM (brute-force), V=20, length=50, median time=91.432 ms
-algo=VR_FRM (brute-force), V=30, length=37, median time=277.224 ms
-algo=VR_FRM (brute-force), V=40, length=7, median time=1.553 s
-algo=VR_FRM (brute-force), V=50, length=4, median time=3.091 s
-algo=VR_FRM (brute-force), V=60, length=2, median time=5.529 s
-algo=VR_FRM (brute-force), V=70, length=2, median time=9.129 s
-algo=VR_FRM (brute-force), V=80, length=1, median time=13.720 s
-algo=VR_FRM (brute-force), V=90, length=1, median time=21.684 s
-algo=VR_Direct (recursive), V=1, length=50, median time=442.066 μs
-algo=VR_Direct (recursive), V=10, length=50, median time=4.171 ms
-algo=VR_Direct (recursive), V=20, length=50, median time=9.837 ms
-algo=VR_Direct (recursive), V=30, length=50, median time=17.478 ms
-algo=VR_Direct (recursive), V=40, length=4, median time=3.306 s
-algo=VR_Direct (recursive), V=50, length=2, median time=6.133 s
-algo=VR_Direct (recursive), V=60, length=1, median time=10.602 s
-algo=VR_Direct (recursive), V=70, length=1, median time=17.601 s
-algo=VR_Direct (recursive), V=80, length=1, median time=28.534 s
-algo=VR_Direct (recursive), V=90, length=1, median time=39.955 s
-algo=VR_DirectFW (recursive), V=1, length=50, median time=697.695 μs
-algo=VR_DirectFW (recursive), V=10, length=50, median time=30.726 ms
-algo=VR_DirectFW (recursive), V=20, length=50, median time=163.387 ms
-algo=VR_DirectFW (recursive), V=30, length=22, median time=454.891 ms
-algo=VR_DirectFW (recursive), V=40, length=10, median time=1.017 s
-algo=VR_DirectFW (recursive), V=50, length=6, median time=1.855 s
-algo=VR_DirectFW (recursive), V=60, length=4, median time=3.263 s
-algo=VR_DirectFW (recursive), V=70, length=2, median time=5.126 s
-algo=VR_DirectFW (recursive), V=80, length=2, median time=7.834 s
-algo=VR_DirectFW (recursive), V=90, length=1, median time=11.180 s
-algo=VR_FRM (recursive), V=1, length=50, median time=90.644 μs
-algo=VR_FRM (recursive), V=10, length=50, median time=4.706 ms
-algo=VR_FRM (recursive), V=20, length=50, median time=24.648 ms
-algo=VR_FRM (recursive), V=30, length=50, median time=69.202 ms
-algo=VR_FRM (recursive), V=40, length=10, median time=1.037 s
-algo=VR_FRM (recursive), V=50, length=6, median time=1.890 s
-algo=VR_FRM (recursive), V=60, length=3, median time=3.467 s
-algo=VR_FRM (recursive), V=70, length=2, median time=5.471 s
-algo=VR_FRM (recursive), V=80, length=2, median time=8.095 s
-algo=VR_FRM (recursive), V=90, length=1, median time=12.071 s
+algo=VR_Direct (brute-force), V=1, length=50, median time=80.805 μs
+algo=VR_Direct (brute-force), V=10, length=50, median time=22.642 ms
+algo=VR_Direct (brute-force), V=20, length=40, median time=247.290 ms
+algo=VR_Direct (brute-force), V=30, length=12, median time=867.941 ms
+algo=VR_Direct (brute-force), V=40, length=2, median time=5.993 s
+algo=VR_Direct (brute-force), V=50, length=1, median time=11.087 s
+algo=VR_Direct (brute-force), V=60, length=1, median time=23.368 s
+algo=VR_Direct (brute-force), V=70, length=1, median time=36.794 s
+algo=VR_Direct (brute-force), V=80, length=1, median time=54.252 s
+algo=VR_Direct (brute-force), V=90, length=1, median time=87.214 s
+algo=VR_DirectFW (brute-force), V=1, length=50, median time=104.465 μs
+algo=VR_DirectFW (brute-force), V=10, length=50, median time=22.796 ms
+algo=VR_DirectFW (brute-force), V=20, length=39, median time=266.247 ms
+algo=VR_DirectFW (brute-force), V=30, length=12, median time=844.624 ms
+algo=VR_DirectFW (brute-force), V=40, length=5, median time=2.348 s
+algo=VR_DirectFW (brute-force), V=50, length=2, median time=5.201 s
+algo=VR_DirectFW (brute-force), V=60, length=2, median time=9.756 s
+algo=VR_DirectFW (brute-force), V=70, length=1, median time=14.261 s
+algo=VR_DirectFW (brute-force), V=80, length=1, median time=24.097 s
+algo=VR_DirectFW (brute-force), V=90, length=1, median time=40.739 s
+algo=VR_FRM (brute-force), V=1, length=50, median time=106.779 μs
+algo=VR_FRM (brute-force), V=10, length=50, median time=15.167 ms
+algo=VR_FRM (brute-force), V=20, length=50, median time=122.435 ms
+algo=VR_FRM (brute-force), V=30, length=25, median time=400.859 ms
+algo=VR_FRM (brute-force), V=40, length=4, median time=2.656 s
+algo=VR_FRM (brute-force), V=50, length=2, median time=5.759 s
+algo=VR_FRM (brute-force), V=60, length=2, median time=9.892 s
+algo=VR_FRM (brute-force), V=70, length=1, median time=14.805 s
+algo=VR_FRM (brute-force), V=80, length=1, median time=26.047 s
+algo=VR_FRM (brute-force), V=90, length=1, median time=41.584 s
+algo=VR_Direct (recursive), V=1, length=50, median time=100.460 μs
+algo=VR_Direct (recursive), V=10, length=50, median time=1.382 ms
+algo=VR_Direct (recursive), V=20, length=50, median time=4.653 ms
+algo=VR_Direct (recursive), V=30, length=50, median time=9.878 ms
+algo=VR_Direct (recursive), V=40, length=3, median time=3.889 s
+algo=VR_Direct (recursive), V=50, length=2, median time=7.218 s
+algo=VR_Direct (recursive), V=60, length=1, median time=13.243 s
+algo=VR_Direct (recursive), V=70, length=1, median time=21.676 s
+algo=VR_Direct (recursive), V=80, length=1, median time=33.319 s
+algo=VR_Direct (recursive), V=90, length=1, median time=47.526 s
+algo=VR_DirectFW (recursive), V=1, length=50, median time=113.779 μs
+algo=VR_DirectFW (recursive), V=10, length=50, median time=3.472 ms
+algo=VR_DirectFW (recursive), V=20, length=50, median time=12.401 ms
+algo=VR_DirectFW (recursive), V=30, length=50, median time=28.854 ms
+algo=VR_DirectFW (recursive), V=40, length=50, median time=51.215 ms
+algo=VR_DirectFW (recursive), V=50, length=50, median time=84.514 ms
+algo=VR_DirectFW (recursive), V=60, length=50, median time=122.584 ms
+algo=VR_DirectFW (recursive), V=70, length=50, median time=178.338 ms
+algo=VR_DirectFW (recursive), V=80, length=41, median time=240.513 ms
+algo=VR_DirectFW (recursive), V=90, length=31, median time=319.882 ms
+algo=VR_FRM (recursive), V=1, length=50, median time=136.279 μs
+algo=VR_FRM (recursive), V=10, length=50, median time=5.970 ms
+algo=VR_FRM (recursive), V=20, length=50, median time=32.819 ms
+algo=VR_FRM (recursive), V=30, length=50, median time=93.123 ms
+algo=VR_FRM (recursive), V=40, length=5, median time=2.026 s
+algo=VR_FRM (recursive), V=50, length=3, median time=3.916 s
+algo=VR_FRM (recursive), V=60, length=2, median time=6.555 s
+algo=VR_FRM (recursive), V=70, length=1, median time=10.272 s
+algo=VR_FRM (recursive), V=80, length=1, median time=17.701 s
+algo=VR_FRM (recursive), V=90, length=1, median time=25.843 s
 ```
 
 
