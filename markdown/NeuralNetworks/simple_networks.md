@@ -78,6 +78,7 @@ BenchmarkTools.DEFAULT_PARAMETERS.seconds = 30
 const rng = Random.default_rng()
 Random.seed!(rng, 12345)
 ```
+
 ```
 GPU: Tesla V100-PCIE-32GB
 Lux/Flux device: MLDataDevices.CUDADevice{Nothing, Missing}(nothing)
@@ -85,6 +86,7 @@ Reactant device: MLDataDevices.ReactantDevice{Missing, Missing, Missing, Mi
 ssing, Union{}}(missing, missing, missing)
 Random.TaskLocalRNG()
 ```
+
 
 
 
@@ -913,3 +915,5 @@ Python versions:
   PyTorch device: Tesla V100-PCIE-32GB
   JAX device: cuda:0
 ```
+
+
