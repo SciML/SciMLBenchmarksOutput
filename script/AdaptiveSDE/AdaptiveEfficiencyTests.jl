@@ -15,8 +15,17 @@ p3 = Vector{Any}(undef, 3)
 end
 
 using StochasticDiffEq, SDEProblemLibrary, DiffEqNoiseProcess, Plots, ParallelDataTransfer
+import Statistics
 import SDEProblemLibrary: prob_sde_additive,
                           prob_sde_linear, prob_sde_wave
+
+function final_error_stats(sim)
+    errors = [sol.errors[:final] for sol in sim.u]
+    return (;
+        elapsed_time = sim.elapsedTime, mean = Statistics.mean(errors),
+        median = Statistics.median(errors),
+    )
+end
 
 probs = Matrix{SDEProblem}(undef, 3, 3)
 ## Problem 1
@@ -76,12 +85,12 @@ for k in 1:size(probs, 1)
     println("RSwM1")
     for i in (1 + offset):(N + offset)
         tols[i - offset, 1] = 2.0^(-i-1)
-        msims[i - offset] = DiffEqBase.calculate_monte_errors(solve(monte_prob, SRIW1(),
+        msims[i - offset] = final_error_stats(solve(monte_prob, SRIW1(),
             trajectories = 1000, abstol = 2.0^(-i-1),
             reltol = 0, force_dtmin = true))
-        elapsed[i - offset, 1] = msims[i - offset].elapsedTime
-        medians[i - offset, 1] = msims[i - offset].error_medians[:final]
-        means[i - offset, 1] = msims[i - offset].error_means[:final]
+        elapsed[i - offset, 1] = msims[i - offset].elapsed_time
+        medians[i - offset, 1] = msims[i - offset].median
+        means[i - offset, 1] = msims[i - offset].mean
     end
 
     println("RSwM2")
@@ -94,12 +103,12 @@ for k in 1:size(probs, 1)
 
     for i in (1 + offset):(N + offset)
         tols[i - offset, 2] = 2.0^(-i-1)
-        msims[i - offset] = DiffEqBase.calculate_monte_errors(solve(monte_prob, SRIW1(),
+        msims[i - offset] = final_error_stats(solve(monte_prob, SRIW1(),
             trajectories = 1000, abstol = 2.0^(-i-1),
             reltol = 0, force_dtmin = true))
-        elapsed[i - offset, 2] = msims[i - offset].elapsedTime
-        medians[i - offset, 2] = msims[i - offset].error_medians[:final]
-        means[i - offset, 2] = msims[i - offset].error_means[:final]
+        elapsed[i - offset, 2] = msims[i - offset].elapsed_time
+        medians[i - offset, 2] = msims[i - offset].median
+        means[i - offset, 2] = msims[i - offset].mean
     end
 
     println("RSwM3")
@@ -111,12 +120,12 @@ for k in 1:size(probs, 1)
 
     for i in (1 + offset):(N + offset)
         tols[i - offset, 3] = 2.0^(-i-1)
-        msims[i - offset] = DiffEqBase.calculate_monte_errors(solve(monte_prob, SRIW1(),
+        msims[i - offset] = final_error_stats(solve(monte_prob, SRIW1(),
             adaptive = true, trajectories = 1000, abstol = 2.0^(-i-1),
             reltol = 0, force_dtmin = true))
-        elapsed[i - offset, 3] = msims[i - offset].elapsedTime
-        medians[i - offset, 3] = msims[i - offset].error_medians[:final]
-        means[i - offset, 3] = msims[i - offset].error_means[:final]
+        elapsed[i - offset, 3] = msims[i - offset].elapsed_time
+        medians[i - offset, 3] = msims[i - offset].median
+        means[i - offset, 3] = msims[i - offset].mean
     end
 
     fullMeans[k] = means
@@ -128,7 +137,7 @@ end
 
 gr(fmt = :svg)
 lw=3
-leg=String["RSwM1", "RSwM2", "RSwM3"]
+leg = permutedims(String["RSwM1", "RSwM2", "RSwM3"])
 
 titleFontSize = 16
 guideFontSize = 14
