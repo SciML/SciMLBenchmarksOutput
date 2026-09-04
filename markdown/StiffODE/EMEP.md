@@ -1,0 +1,3731 @@
+---
+author: "Chris Rackauckas"
+title: "EMEP Work-Precision Diagrams"
+---
+```julia
+using OrdinaryDiffEq, DiffEqDevTools, Sundials, Plots, ODEInterfaceDiffEq, LSODA
+using OrdinaryDiffEqBDF, OrdinaryDiffEqExtrapolation, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK, OrdinaryDiffEqStabilizedRK
+using SciMLLogging
+using LinearAlgebra, RecursiveFactorization, Polyester, PreallocationTools, OrdinaryDiffEqCore
+gr()
+
+# EMEP MSC-W Ozone Model Chemistry problem from the IVP Test Set
+# 66-species atmospheric chemistry model with time-dependent rate coefficients
+# Exact translation from Fortran feval and EMEPCF subroutines at:
+# http://archimede.dm.uniba.it/~testset/src/problems/emep.f
+
+const NSPEC_emep = 66
+const NRC_emep = 266
+const NDJ_emep = 16
+const HMIX_emep = 1.2e5
+
+# Distribution of VOC emissions among species
+const FRAC6 = 0.07689
+const FRAC7 = 0.41444
+const FRAC8 = 0.03642
+const FRAC9 = 0.03827
+const FRAC10 = 0.24537
+const FRAC13 = 0.13957
+const VEKT6 = 30.0
+const VEKT7 = 58.0
+const VEKT8 = 28.0
+const VEKT9 = 42.0
+const VEKT10 = 106.0
+const VEKT13 = 46.0
+const VMHC = 1.0 / (FRAC6/VEKT6 + FRAC7/VEKT7 + FRAC8/VEKT8 +
+              FRAC9/VEKT9 + FRAC10/VEKT10 + FRAC13/VEKT13)
+
+# NOx and HC emissions in molecules/cm^2/s
+const EMNOX = 2.5e11
+const EMHC = 2.5e11
+const FACISO = 1.0
+const FACHC = 1.0
+const FACNOX = 1.0
+
+const EMIS1 = EMNOX * FACNOX
+const EMIS3 = EMNOX * FACNOX
+const EMIS4 = EMHC * 10.0 * FACHC
+const EMIS5 = 0.0
+const EMIS6 = EMHC * FRAC6/VEKT6 * VMHC * FACHC
+const EMIS7 = EMHC * FRAC7/VEKT7 * VMHC * FACHC
+const EMIS8 = EMHC * FRAC8/VEKT8 * VMHC * FACHC
+const EMIS9 = EMHC * FRAC9/VEKT9 * VMHC * FACHC
+const EMIS10 = EMHC * FRAC10/VEKT10 * VMHC * FACHC
+const EMIS11 = 0.5 * FACISO * EMHC
+const EMIS13 = EMHC * FRAC13/VEKT13 * VMHC * FACHC
+
+# Photolysis A and B coefficients
+const A_emep = [1.23e-3, 2.00e-4, 1.45e-2, 2.20e-5, 3.00e-6,
+                5.40e-5, 6.65e-5, 1.35e-5, 2.43e-5, 5.40e-4,
+                2.16e-4, 5.40e-5, 3.53e-2, 8.94e-2, 3.32e-5,
+                2.27e-5]
+const B_emep = [0.60, 1.40, 0.40, 0.75, 1.25,
+                0.79, 0.60, 0.94, 0.88, 0.79,
+                0.79, 0.79, 0.081, 0.059, 0.57,
+                0.62]
+
+function emepcf!(time, rc, dj)
+    timeh = time / 3600.0
+    timeod = mod(timeh, 24.0)
+
+    pi_val = 4.0 * atan(1.0)
+    xlha = (1.0 + timeod * 3600.0 / 4.32e4) * pi_val
+    fi = 50.0 * pi_val / 180.0
+    dekl = 23.5 * pi_val / 180.0
+    sec_val = 1.0 / (cos(xlha)*cos(fi)*cos(dekl) + sin(fi)*sin(dekl))
+    t_temp = 298.0
+
+    xq = -7.93e-5 * timeod * 3600.0 + 2.43
+    rh = 23.0 * sin(xq) + 66.5
+
+    xz = (597.3 - 0.57*(t_temp - 273.16)) * 18.0 / 1.986 *
+         (1.0/t_temp - 1.0/273.16)
+    h2o = 6.1078 * exp(-xz) * 10.0 / (1.38e-16 * t_temp) * rh
+
+    # Photolysis rates
+    if timeod < 4.0 || timeod >= 20.0
+        for i in 1:NDJ_emep
+            dj[i] = 1.0e-40
+        end
+    else
+        for i in 1:NDJ_emep
+            dj[i] = A_emep[i] * exp(-B_emep[i] * sec_val)
+        end
+    end
+
+    # Rate coefficients
+    fill!(rc, zero(eltype(rc)))
+    m = 2.55e19
+    o2 = 5.2e18
+    xn2 = 1.99e19
+
+    rc[1]  = 5.7e-34 * (t_temp/300.0)^(-2.8) * m * o2
+    rc[5]  = 9.6e-32 * (t_temp/300.0)^(-1.6) * m
+    rc[7]  = 2.0e-11 * exp(100.0/t_temp) * m
+    rc[8]  = 2.2e-10
+    rc[11] = 1.8e-12 * exp(-1370.0/t_temp)
+    rc[12] = 1.2e-13 * exp(-2450.0/t_temp)
+    rc[13] = 1.9e-12 * exp(-1000.0/t_temp)
+    rc[14] = 1.4e-14 * exp(-600.0/t_temp)
+    rc[15] = 1.8e-11 * exp(110.0/t_temp)
+    rc[17] = 3.7e-12 * exp(240.0/t_temp)
+    rc[19] = 7.2e-14 * exp(-1414.0/t_temp)
+    rc[20] = 1.4e-12
+    rc[21] = 1.4e-11
+    rc[26] = 4.1e-16
+    rc[29] = 7.1e14 * exp(-11080.0/t_temp)
+    rc[30] = 4.8e-11 * exp(250.0/t_temp)
+    rc[31] = 2.9e-12 * exp(-160.0/t_temp)
+    rc[33] = 7.7e-12 * exp(-2100.0/t_temp)
+    rc[35] = 1.0e-14 * exp(785.0/t_temp)
+    rc[36] = 2.3e-13 * exp(600.0/t_temp)
+    rc[36] = rc[36] + m * 1.7e-33 * exp(1000.0/t_temp)
+    rc[36] = rc[36] * (1.0 + 1.4e-21 * h2o * exp(2200.0/t_temp))
+    rc[39] = 1.35e-12
+    rc[40] = 4.0e-17
+    rc[59] = 3.9e-12 * exp(-1885.0/t_temp)
+    rc[60] = 4.2e-12 * exp(180.0/t_temp)
+    rc[61] = 5.5e-14 * exp(365.0/t_temp)
+    rc[62] = 5.5e-14 * exp(365.0/t_temp)
+    rc[63] = 3.3e-12 * exp(-380.0/t_temp)
+    rc[64] = 3.2e-12
+    rc[65] = 3.8e-13 * exp(780.0/t_temp)
+    rc[66] = 9.6e-12
+    rc[67] = 1.0e-12 * exp(190.0/t_temp)
+    rc[68] = 1.9e-12 * exp(190.0/t_temp)
+    rc[69] = 5.8e-16
+    rc[70] = 2.4e-13
+    rc[71] = 7.8e-12 * exp(-1020.0/t_temp)
+    rc[72] = 8.9e-12
+    rc[74] = 6.5e-13 * exp(650.0/t_temp)
+    rc[75] = 5.6e-12 * exp(310.0/t_temp)
+    rc[76] = 5.8e-12 * exp(190.0/t_temp)
+    rc[77] = 1.0e-11
+    rc[78] = 1.34e16 * exp(-13330.0/t_temp)
+    rc[79] = 2.0e-11
+    rc[80] = 1.1e-11
+    rc[81] = 1.64e-11 * exp(-559.0/t_temp)
+    rc[83] = rc[60]
+    rc[85] = 1.0e-11
+    rc[86] = 1.15e-12
+    rc[87] = 4.8e-12
+    rc[88] = 1.3e-13 * exp(1040.0/t_temp)
+    rc[89] = 3.0e-13 * exp(1040.0/t_temp)
+    rc[90] = 8.0e-13
+    rc[94] = 2.8e-12 * exp(530.0/t_temp)
+    rc[105] = rc[60]
+    rc[109] = 1.66e-12 * exp(474.0/t_temp)
+    rc[110] = rc[60]
+    rc[112] = 1.2e-14 * exp(-2630.0/t_temp)
+    rc[123] = 6.5e-15 * exp(-1880.0/t_temp)
+    rc[125] = 2.86e-11
+    rc[126] = rc[60]
+    rc[146] = 3.2e-11
+    rc[147] = 2.0e-11
+    rc[148] = 2.2e-11
+    rc[149] = 3.7e-11
+    rc[150] = 12.3e-15 * exp(-2013.0/t_temp)
+    rc[151] = 2.54e-11 * exp(410.0/t_temp)
+    rc[152] = rc[60]
+    rc[153] = 4.13e-12 * exp(452.0/t_temp)
+    rc[154] = rc[60]
+    rc[155] = rc[85]
+    rc[156] = 2.0e-11
+    rc[157] = 8.0e-18
+    rc[158] = 1.86e-11 * exp(175.0/t_temp)
+    rc[159] = rc[60]
+    rc[160] = 4.32e-15 * exp(-2016.0/t_temp)
+    rc[161] = 3.35e-11
+    rc[162] = rc[60]
+    rc[163] = 7.8e-13
+    rc[164] = rc[60]
+    rc[219] = 2.0e-11
+    rc[220] = rc[60]
+    rc[221] = 1.1e-11
+    rc[222] = 1.7e-11
+    rc[223] = 2.4e-11
+    rc[234] = 1.37e-11
+    rc[235] = 1.7e-11
+    rc[236] = rc[60]
+
+    # Aerosol formation and deposition
+    rc[43] = 5.0e-6
+    if rh > 0.90
+        rc[43] = 1.0e-4
+    end
+    rc[44] = rc[43]
+    rc[45] = rc[43]
+
+    # Deposition loss rate coefficients vd/hmix
+    delta = 1.0
+    if timeod >= 20.0 || timeod < 4.0
+        delta = 0.25
+    end
+    rc[46] = 2.0 * delta / HMIX_emep
+    rc[47] = 0.5 * delta / HMIX_emep
+    rc[48] = 0.2 * delta / HMIX_emep
+    rc[49] = 0.5 * delta / HMIX_emep
+    rc[50] = 0.2 * delta / HMIX_emep
+    rc[51] = 0.1 * delta / HMIX_emep
+    rc[52] = 0.5 * delta / HMIX_emep
+    rc[53] = 0.3 * delta / HMIX_emep
+    return h2o
+end
+
+# Pre-allocate work buffers using DiffCache for ForwardDiff compatibility
+const _emep_rc = DiffCache(zeros(NRC_emep))
+const _emep_dj = DiffCache(zeros(NDJ_emep))
+
+function emep!(dy, y, p, t)
+    rc = get_tmp(_emep_rc, dy)
+    dj = get_tmp(_emep_dj, dy)
+    h2o = emepcf!(t, rc, dj)
+
+    m = 2.55e19
+    o2 = 5.2e18
+    xn2 = 1.99e19
+    rpath3 = 0.65
+    rpath4 = 0.35
+
+    dy[1] = dj[3]*y[2]+dj[13]*y[39]+rc[19]*y[2]*y[39]+EMIS1/HMIX_emep-(rc[5]*y[36]+rc[11]*y[14]+rc[17]*y[15]+rc[72]*y[23]+rc[79]*(y[24]+y[57])+rc[15]*y[39]+rc[60]*(y[19]+y[26]+y[27]+y[29]+y[31]+y[33]+y[35]+y[43]+y[45]+y[59]+y[61]+y[60]))*y[1]
+
+    dy[2] = y[1]*(rc[5]*y[36]+rc[11]*y[14]+rc[17]*y[15]+rc[72]*y[23]+rc[79]*(y[24]+y[57])+2.0*rc[15]*y[39])+rc[60]*y[1]*(y[19]+y[26]+y[27]+y[29]+y[31]+y[33]+y[35]+y[59])+rc[60]*y[1]*(0.86*y[43]+1.9*y[61]+1.1*y[60]+0.95*y[45])+dj[14]*y[39]+dj[5]*y[16]+dj[15]*y[40]+rc[29]*y[40]+rc[78]*(y[25]+y[58])-(dj[3]+rc[12]*y[14]+rc[20]*y[39]+rc[21]*y[37]+rc[48]+rc[77]*(y[24]+y[57]))*y[2]
+
+    dy[3] = EMIS3/HMIX_emep-(rc[39]*y[37]+rc[40]*y[19]+rc[47])*y[3]
+
+    dy[4] = EMIS4/HMIX_emep+y[37]*(rc[66]*y[11]+2.0*rc[221]*y[32]+rc[222]*y[30])+y[14]*(0.44*rc[112]*y[8]+0.4*rc[123]*y[9]+0.05*rc[160]*y[44]+0.05*rc[150]*y[41])+y[11]*(dj[6]+dj[7]+rc[69]*y[39])+dj[8]*y[12]+dj[11]*y[30]+2.0*dj[7]*y[32]-rc[70]*y[37]*y[4]
+
+    dy[5] = EMIS5/HMIX_emep+0.07*rc[123]*y[14]*y[9]-rc[59]*y[37]*y[5]
+
+    dy[6] = EMIS6/HMIX_emep-rc[71]*y[37]*y[6]
+    dy[7] = EMIS7/HMIX_emep-rc[81]*y[37]*y[7]
+    dy[8] = EMIS8/HMIX_emep-(rc[109]*y[37]+rc[112]*y[14])*y[8]
+    dy[9] = EMIS9/HMIX_emep+0.07*rc[150]*y[14]*y[41]-(rc[123]*y[14]+rc[125]*y[37])*y[9]
+    dy[10] = EMIS10/HMIX_emep-rc[234]*y[37]*y[10]
+
+    dy[11] = y[19]*(rc[60]*y[1]+(2.0*rc[61]+rc[62])*y[19]+rc[80]*y[24]+rc[40]*y[3])+y[37]*(rc[63]*y[46]+rc[67]*y[22])+y[1]*rc[60]*(2.0*y[29]+y[31]+0.74*y[43]+0.266*y[45]+0.15*y[60])+y[14]*(0.5*rc[123]*y[9]+rc[112]*y[8]+0.7*rc[157]*y[56]+0.8*rc[160]*y[44]+0.8*rc[150]*y[41])+2.0*dj[7]*y[32]+dj[16]*(y[22]+1.56*y[50]+y[51])-(rc[66]*y[37]+dj[6]+dj[7]+rc[69]*y[39]+rc[53])*y[11]
+
+    dy[12] = y[1]*(rc[72]*y[23]+rc[83]*y[26]*rpath4+rc[105]*y[27]+rc[126]*y[31]+0.95*rc[162]*y[61]+0.684*rc[154]*y[45])+y[37]*(rc[64]*y[20]+rc[76]*y[28]+rc[76]*y[50])+0.5*rc[123]*y[14]*y[9]+0.04*rc[160]*y[14]*y[44]+dj[16]*(y[28]+0.22*y[50]+0.35*y[49]+y[51]+y[52])-(dj[8]+rc[75]*y[37]+rc[53])*y[12]
+
+    dy[13] = rc[83]*y[1]*y[26]*rpath3+(0.65*dj[16]+rc[76]*y[37])*y[49]+rc[76]*y[37]*y[51]+(rc[159]*y[1]+dj[16])*y[59]+0.95*rc[162]*y[1]*y[61]-(dj[9]+rc[86]*y[37]+rc[53])*y[13]
+
+    dy[14] = rc[1]*y[36]+rc[89]*y[15]*y[24]-(rc[11]*y[1]+rc[12]*y[2]+rc[13]*y[37]+rc[14]*y[15]+rc[49]+rc[112]*y[8]+rc[123]*y[9]+rc[157]*y[56]+rc[160]*y[44]+rc[150]*y[41]+dj[1]+dj[2])*y[14]
+
+    s1 = y[37]*(rc[13]*y[14]+rc[31]*y[17]+rc[33]*y[18]+rc[39]*y[3]+rc[63]*y[46]+rc[64]*y[20]+rc[66]*y[11]+rc[70]*y[4]+rc[221]*y[32])+y[19]*(rc[40]*y[3]+2.0*rc[61]*y[19]+0.5*rc[80]*y[24])+dj[11]*y[30]+y[1]*rc[60]*(y[19]+y[29]+y[31]+y[33]+y[35]+0.95*y[45]+y[26]*rpath3+0.78*y[43]+y[59]+0.05*y[61]+0.8*y[60])+rc[72]*y[1]*y[23]+dj[8]*y[12]
+
+    dy[15] = s1+2.0*dj[6]*y[11]+dj[16]*(y[22]+y[28]+0.65*y[49]+y[50]+y[51]+y[48]+y[53])+y[39]*(rc[26]*y[17]+rc[69]*y[11])+y[14]*(0.12*rc[112]*y[8]+0.28*rc[123]*y[9]+0.06*rc[160]*y[44])+0.06*rc[150]*y[14]*y[41]-(rc[14]*y[14]+rc[17]*y[1]+rc[30]*y[37]+2.0*rc[36]*y[15]+rc[65]*y[19]+rc[74]*y[23]+(rc[88]+rc[89])*y[24]+rc[85]*(y[26]+y[29]+y[31]+y[27]+y[57]+y[45]+y[61]+y[59]+y[33]+y[35]+y[43]+y[60]))*y[15]
+
+    dy[16] = rc[21]*y[2]*y[37]+y[39]*(rc[26]*y[17]+rc[69]*y[11])-(rc[35]*y[37]+dj[5]+rc[45])*y[16]
+
+    dy[17] = rc[36]*y[15]^2-(rc[31]*y[37]+dj[4]+rc[43]+rc[26]*y[39]+rc[47])*y[17]
+
+    dy[18] = dj[7]*y[11]+y[14]*(0.13*rc[112]*y[8]+0.07*rc[123]*y[9])-rc[33]*y[37]*y[18]
+
+    dy[19] = y[37]*(rc[59]*y[5]+rc[68]*y[22])+y[24]*(rc[79]*y[1]+2.0*rc[94]*y[24])+dj[8]*y[12]+dj[16]*y[47]+0.31*rc[123]*y[14]*y[9]-(rc[40]*y[3]+rc[60]*y[1]+2.0*rc[61]*y[19]+2.0*rc[62]*y[19]+rc[65]*y[15]+0.5*rc[80]*y[24])*y[19]
+
+    dy[20] = EMIS13/HMIX_emep-rc[64]*y[37]*y[20]
+    dy[21] = (rc[40]*y[19]+rc[39]*y[37])*y[3]+0.05*EMIS3/HMIX_emep-rc[51]*y[21]
+    dy[22] = rc[65]*y[15]*y[19]-(rc[43]+dj[16]+(rc[67]+rc[68])*y[37])*y[22]
+    dy[23] = y[37]*(rc[71]*y[6]+rc[68]*y[28])+0.35*dj[16]*y[49]+rc[83]*y[1]*y[26]*rpath4+dj[9]*y[13]-(rc[72]*y[1]+rc[74]*y[15])*y[23]
+    dy[24] = y[37]*(rc[75]*y[12]+rc[222]*y[30]+rc[68]*y[47])+rc[105]*y[1]*y[27]+rc[78]*y[25]+dj[11]*y[30]+dj[9]*y[13]+dj[16]*y[52]+0.684*rc[154]*y[1]*y[45]-(rc[77]*y[2]+rc[79]*y[1]+rc[80]*y[19]+2.0*rc[94]*y[24]+(rc[88]+rc[89])*y[15])*y[24]
+    dy[25] = rc[77]*y[24]*y[2]-(rc[50]+rc[78])*y[25]
+    dy[26] = y[37]*(rc[81]*y[7]+rc[68]*y[49])-(rc[83]*y[1]+rc[85]*y[15])*y[26]
+    dy[27] = y[37]*(rc[86]*y[13]+rc[87]*y[52])-(rc[105]*y[1]+rc[85]*y[15])*y[27]
+    dy[28] = rc[74]*y[15]*y[23]-((rc[76]+rc[68])*y[37]+dj[16]+rc[52])*y[28]
+    dy[29] = y[37]*(rc[109]*y[8]+rc[68]*y[50])-(rc[110]*y[1]+rc[85]*y[15])*y[29]
+    dy[30] = rc[236]*y[1]*y[33]+rc[220]*y[1]*y[35]+0.266*rc[154]*y[1]*y[45]+0.82*rc[160]*y[14]*y[44]+dj[16]*(y[48]+y[53])-(dj[11]+rc[222]*y[37])*y[30]
+    dy[31] = y[37]*(rc[125]*y[9]+rc[68]*y[51])-(rc[126]*y[1]+rc[85]*y[15])*y[31]
+    dy[32] = rc[220]*y[1]*y[35]+dj[16]*y[53]-(2.0*dj[7]+rc[221]*y[37])*y[32]
+    dy[33] = y[37]*(rc[234]*y[10]+rc[235]*y[48])-(rc[236]*y[1]+rc[85]*y[15])*y[33]
+    dy[34] = rc[236]*y[1]*y[33]+dj[16]*y[48]-rc[219]*y[37]*y[34]
+    dy[35] = y[37]*(rc[219]*y[34]+rc[223]*y[53])-(rc[220]*y[1]+rc[85]*y[15])*y[35]
+    dy[36] = dj[1]*y[14]+dj[3]*y[2]+dj[14]*y[39]+rc[7]*y[38]+0.2*rc[160]*y[14]*y[44]+0.3*rc[150]*y[14]*y[41]-(rc[1]+rc[5]*y[1])*y[36]
+
+    s1 = 2.0*rc[8]*h2o*y[38]+y[15]*(rc[14]*y[14]+rc[17]*y[1])+2.0*dj[4]*y[17]+dj[5]*y[16]
+    s2 = s1+dj[16]*(y[22]+y[28]+y[47]+y[49]+y[50]+y[52]+y[48]+y[53])
+    s3 = s2+y[14]*(0.15*rc[123]*y[9]+0.08*rc[160]*y[44])
+    s4 = s3+0.55*rc[150]*y[14]*y[41]
+    s5 = -(rc[222]*y[30]+rc[75]*y[12]+rc[81]*y[7]+rc[87]*y[52]+rc[86]*y[13]+rc[235]*y[48]+rc[109]*y[8]+rc[125]*y[9]+rc[234]*y[10]+rc[223]*y[53]+rc[219]*y[34]+rc[31]*y[17]+rc[21]*y[2]+rc[148]*y[62]+rc[64]*y[20]+rc[39]*y[3]+rc[71]*y[6]+rc[30]*y[15]+rc[59]*y[5]+rc[70]*y[4]+rc[35]*y[16]+rc[13]*y[14]+rc[221]*y[32]+rc[68]*(y[22]+y[28]+y[47]+y[50]+y[51]+y[49])+rc[66]*y[11]+rc[151]*y[41]+rc[153]*y[44]+rc[63]*y[46]+rc[33]*y[18]+rc[158]*y[54]+rc[146]*y[63]+rc[149]*(y[65]+y[66])+rc[147]*y[64]+rc[161]*y[55])*y[37]
+    dy[37] = s4 + s5
+
+    dy[38] = dj[2]*y[14]-(rc[7]+rc[8]*h2o)*y[38]
+    dy[39] = (rc[29]+dj[15])*y[40]+rc[12]*y[14]*y[2]+rc[35]*y[37]*y[16]-(rc[15]*y[1]+rc[26]*y[17]+rc[163]*y[41]+rc[19]*y[2]+rc[20]*y[2]+dj[13]+dj[14]+rc[69]*y[11])*y[39]
+    dy[40] = rc[20]*y[39]*y[2]-(rc[29]+dj[15]+rc[45])*y[40]
+    dy[41] = EMIS11/HMIX_emep-(rc[151]*y[37]+rc[163]*y[39]+rc[150]*y[14])*y[41]
+    dy[42] = rc[45]*y[16]+2.0*rc[44]*y[40]-rc[51]*y[42]
+    dy[43] = y[37]*(rc[151]*y[41]+rc[156]*y[56])+0.12*rc[152]*y[1]*y[43]-(rc[152]*y[1]+rc[155]*y[15])*y[43]
+    dy[44] = rc[60]*y[1]*(0.42*y[43]+0.05*y[60])+0.26*rc[150]*y[14]*y[41]-(rc[153]*y[37]+rc[160]*y[14])*y[44]
+    dy[45] = rc[153]*y[44]*y[37]+rc[148]*y[37]*y[62]-(rc[154]*y[1]+rc[85]*y[15])*y[45]
+    dy[46] = rc[62]*y[19]^2-rc[63]*y[37]*y[46]
+    dy[47] = rc[88]*y[15]*y[24]-(rc[68]*y[37]+dj[16]+rc[52])*y[47]
+    dy[48] = rc[85]*y[15]*y[33]-(rc[235]*y[37]+dj[16]+rc[52])*y[48]
+    dy[49] = rc[85]*y[15]*y[26]-((rc[76]+rc[68])*y[37]+dj[16]+rc[52])*y[49]
+    dy[50] = rc[85]*y[15]*y[29]-((rc[76]+rc[68])*y[37]+dj[16]+rc[52])*y[50]
+    dy[51] = rc[85]*y[15]*y[31]-((rc[76]+rc[68])*y[37]+dj[16]+rc[52])*y[51]
+    dy[52] = rc[85]*y[15]*y[27]-(rc[87]*y[37]+dj[16]+rc[52])*y[52]
+    dy[53] = rc[85]*y[15]*y[35]-(rc[223]*y[37]+dj[16]+rc[52])*y[53]
+    dy[54] = rc[60]*y[1]*(0.32*y[43]+0.1*y[60])+0.67*rc[150]*y[14]*y[41]-rc[158]*y[37]*y[54]
+    dy[55] = rc[60]*y[1]*(0.14*y[43]+0.05*y[45]+0.85*y[60])-rc[161]*y[37]*y[55]
+    dy[56] = rc[155]*y[15]*y[43]-(rc[156]*y[37]+rc[157]*y[14]+rc[52])*y[56]
+    dy[57] = 0.5*rc[158]*y[37]*y[54]+rc[78]*y[58]+rc[149]*y[37]*y[66]-(rc[77]*y[2]+rc[79]*y[1]+rc[85]*y[15])*y[57]
+    dy[58] = rc[77]*y[57]*y[2]-(rc[50]+rc[78])*y[58]
+    dy[59] = rc[79]*y[1]*y[57]+rc[146]*y[37]*y[63]-(rc[159]*y[1]+rc[85]*y[15])*y[59]
+    dy[60] = rc[163]*y[39]*y[41]+rc[147]*y[37]*y[64]-(rc[164]*y[1]+rc[85]*y[15])*y[60]
+    dy[61] = rc[161]*y[37]*y[55]+rc[149]*y[37]*y[65]-(rc[162]*y[1]+rc[85]*y[15])*y[61]
+    dy[62] = rc[85]*y[15]*y[45]-(rc[148]*y[37]+rc[52])*y[62]
+    dy[63] = rc[85]*y[15]*y[59]-(rc[146]*y[37]+rc[52])*y[63]
+    dy[64] = rc[85]*y[15]*y[60]-(rc[147]*y[37]+rc[52])*y[64]
+    dy[65] = rc[85]*y[15]*y[61]-(rc[149]*y[37]+rc[52])*y[65]
+    dy[66] = rc[85]*y[15]*y[57]-(rc[149]*y[37]+rc[52])*y[66]
+end
+
+# Initial conditions from Fortran init subroutine
+u0 = zeros(NSPEC_emep)
+for i in 1:13
+    u0[i] = 1.0e7
+end
+for i in 14:NSPEC_emep
+    u0[i] = 100.0
+end
+u0[1] = 1.0e9
+u0[2] = 5.0e9
+u0[3] = 5.0e9
+u0[4] = 3.8e12
+u0[5] = 3.5e13
+u0[14] = 5.0e11
+u0[38] = 1.0e-3
+
+# Time span: 4 hours to hour 116 (417600 seconds)
+# With 8 discontinuities at day/night transitions (dawn at 4:00, dusk at 20:00)
+# T(0) = 4*3600 = 14400, T(end) = 20*3600 + 4*24*3600 = 417600
+tspan = (4.0*3600.0, 20.0*3600.0 + 4.0*24.0*3600.0)
+
+prob = ODEProblem{true, SciMLBase.FullSpecialize}(emep!, u0, tspan)
+
+# Discontinuity times at dawn (4:00) and dusk (20:00) transitions
+# The photolysis rates and deposition coefficients change discontinuously at these times
+# T(1)=72000 (dusk day 0), then for days 1-4: T(2i)=dawn, T(2i+1)=dusk
+disc_times = [72000.0, 100800.0, 158400.0, 187200.0, 244800.0, 273600.0, 331200.0, 360000.0]
+
+# Generate reference solution - requires tstops at discontinuities for solver stability.
+# CVODE_BDF cannot integrate this problem to the end: at abstol=reltol=1e-8 it returns
+# ReturnCode.Unstable at t = 360000 (1e-10: t = 273600), leaving a reference that stops
+# short of tspan[2] = 417600. Every WorkPrecisionSet below then failed with
+# "Solution interpolation cannot extrapolate past the final timepoint", so this file has
+# been publishing no work-precision diagrams at all. Rodas5P at 1e-10 reaches 417600 with
+# ReturnCode.Success in ~18 s (RadauIIA5 and FBDF also go Unstable), so use that.
+sol = solve(prob, Rodas5P(), abstol=1/10^10, reltol=1/10^10, maxiters=Int(1e7), tstops=disc_times)
+test_sol = TestSolution(sol)
+
+abstols = 1.0 ./ 10.0 .^ (4:11)
+reltols = 1.0 ./ 10.0 .^ (1:8);
+```
+
+
+
+
+The EMEP MSC-W Ozone Model Chemistry describes atmospheric chemistry with 66 species,
+266 reaction rate coefficients, and 16 photolysis reactions. The rate coefficients
+depend on time through the solar zenith angle and day/night cycling, creating
+discontinuities at dawn (4:00) and dusk (20:00) transitions. All solvers require
+`tstops` at the 8 discontinuity times for reliable integration.
+
+```julia
+# Plot key species matching reference: NO, NO2, SO2, CH4, O3, N2O5
+p1 = plot(sol, idxs=[1], title="NO", legend=false)
+p2 = plot(sol, idxs=[2], title="NO2", legend=false)
+p3 = plot(sol, idxs=[3], title="SO2", legend=false)
+p4 = plot(sol, idxs=[5], title="CH4", legend=false)
+p5 = plot(sol, idxs=[14], title="O3", legend=false)
+p6 = plot(sol, idxs=[40], title="N2O5", legend=false)
+plot(p1, p2, p3, p4, p5, p6, layout=(2,3), size=(1200,600))
+```
+
+![](figures/EMEP_2_1.png)
+
+
+
+## Omissions
+
+The following were omitted from the tests due to convergence failures.
+
+```julia
+#sol = solve(prob,ROCK2()); # Unstable
+#sol = solve(prob,ROCK4()); # Unstable
+```
+
+
+
+
+## High Tolerances
+
+```julia
+abstols = 1.0 ./ 10.0 .^ (5:8)
+reltols = 1.0 ./ 10.0 .^ (1:4);
+setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>FBDF()),
+          Dict(:alg=>QNDF()),
+          Dict(:alg=>NordsieckBDF()),
+          Dict(:alg=>TRBDF2()),
+          Dict(:alg=>CVODE_BDF()),
+          Dict(:alg=>rodas()),
+          Dict(:alg=>radau()),
+          Dict(:alg=>lsoda()),
+          Dict(:alg=>RadauIIA5()),
+          ]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10,
+                      tstops=disc_times)
+plot(wp)
+```
+
+```
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/
+```
+
+
+![](figures/EMEP_4_1.png)
+
+```julia
+setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>Kvaerno3()),
+          Dict(:alg=>CVODE_BDF()),
+          Dict(:alg=>KenCarp4()),
+          Dict(:alg=>TRBDF2()),
+          Dict(:alg=>KenCarp3()),
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>lsoda()),
+          Dict(:alg=>radau())]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10,
+                      tstops=disc_times)
+plot(wp)
+```
+
+```
+cvodes.c:3533][CVode] Internal t = 360000 and h = 2.72312876966706e-11 are
+such that t + h = t on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.7231
+```
+
+
+![](figures/EMEP_5_1.png)
+
+```julia
+setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>TRBDF2()),
+          Dict(:alg=>ImplicitEulerExtrapolation()),
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
+          Dict(:alg=>ABDF2()),
+          Dict(:alg=>FBDF()),
+          Dict(:alg=>NordsieckBDF()),
+]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10,
+                      tstops=disc_times)
+plot(wp)
+```
+
+![](figures/EMEP_6_1.png)
+
+
+
+### Low Tolerances
+
+This is the speed at lower tolerances, measuring what's good when accuracy is needed.
+
+```julia
+abstols = 1.0 ./ 10.0 .^ (7:12)
+reltols = 1.0 ./ 10.0 .^ (4:9)
+
+setups = [Dict(:alg=>FBDF()),
+          Dict(:alg=>QNDF()),
+          Dict(:alg=>NordsieckBDF()),
+          Dict(:alg=>CVODE_BDF()),
+          # ddebdf() removed: SLATEC's DDEBDF cannot get past this problem's dusk/dawn
+          # discontinuities and raises its LEVEL=2 fatal error there ("AN APPARENT INFINITE
+          # LOOP HAS BEEN DETECTED. YOU HAVE MADE REPEATED CALLS AT T = 1.872000E+05 AND THE
+          # INTEGRATION HAS NOT ADVANCED", ERROR NUMBER = 13). SLATEC handles a LEVEL=2 error
+          # by calling XERHLT, which *aborts the process* - it is not a catchable Julia
+          # exception, so it takes the whole weave down and no EMEP.md is produced at all.
+          # Measured: a single solve(prob, ddebdf(), abstol=1e-12, reltol=1e-9) aborts the
+          # Julia process; so does weaving the file.
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
+          Dict(:alg=>rodas()),
+          Dict(:alg=>radau()),
+          Dict(:alg=>lsoda()),
+]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10,
+                      tstops=disc_times)
+plot(wp)
+```
+
+```
+2876966706e-11 are such that t + h = t on the next step. The solver will co
+ntinue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 360000 and h = 2.72312876966706e-11 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516564476032e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516564476032e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+```
+
+
+![](figures/EMEP_7_1.png)
+
+```julia
+setups = [Dict(:alg=>Kvaerno4()),
+          Dict(:alg=>Kvaerno5()),
+          Dict(:alg=>CVODE_BDF()),
+          Dict(:alg=>KenCarp4()),
+          Dict(:alg=>KenCarp5()),
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
+          Dict(:alg=>radau()),
+          Dict(:alg=>ImplicitEulerExtrapolation()),
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
+          ]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10,
+                      tstops=disc_times)
+plot(wp)
+```
+
+```
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516564476032e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516564476032e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+```
+
+
+![](figures/EMEP_8_1.png)
+
+
+
+Multithreading benchmarks with Parallel Extrapolation Methods
+
+```julia
+#Setting BLAS to one thread to measure gains
+LinearAlgebra.BLAS.set_num_threads(1)
+
+abstols = 1.0 ./ 10.0 .^ (10:12)
+reltols = 1.0 ./ 10.0 .^ (7:9)
+
+setups = [
+            Dict(:alg=>CVODE_BDF()),
+            Dict(:alg=>KenCarp4()),
+            Dict(:alg=>Rodas4()),
+            Dict(:alg=>Rodas5P()),
+            Dict(:alg=>QNDF()),
+            Dict(:alg=>NordsieckBDF()),
+            Dict(:alg=>lsoda()),
+            Dict(:alg=>radau()),
+            Dict(:alg=>seulex()),
+            Dict(:alg=>ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = OrdinaryDiffEqCore.PolyesterThreads())),
+            Dict(:alg=>ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = false)),
+            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = OrdinaryDiffEqCore.PolyesterThreads())),
+            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = false)),
+            Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEqCore.PolyesterThreads())),
+            Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = false)),
+            ]
+
+solnames = ["CVODE_BDF","KenCarp4","Rodas4","Rodas5P","QNDF","NordsieckBDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
+            "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
+
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=SciMLLogging.None(),
+                    names = solnames,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10,
+                    tstops=disc_times)
+
+plot(wp, title = "Implicit Methods: EMEP",legend=:outertopleft,size = (1000,500),
+     xticks = 10.0 .^ (-15:1:1),
+     yticks = 10.0 .^ (-6:0.3:5),
+     bottom_margin= 5Plots.mm)
+```
+
+```
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.58747530091052e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 1.92526954134308e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 3.10166629237954e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 6.4288880347798e-12 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 3.20629987665512e-12 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516603312521e-13 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 100800 and h = 7.51678803015763e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-15 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-14 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 187200 and h = 8.38869640143186e-13 are such that t + h = t
+ on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516564476032e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 4.31516564476032e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3533][CVod
+e] Internal t = 14400 and h = 8.57183438276656e-14 are such that t + h = t
+on the next step. The solver will continue anyway.
+[WARNING][rank 0][/workspace/srcdir/sundials/src/cvodes/cvodes.c:3538][CVod
+e] The above warning has been issued mxhnil times and will not be issued ag
+ain for this problem.
+```
+
+
+![](figures/EMEP_9_1.png)
+
+
+
+### Conclusion
+
+The EMEP problem is a 66-dimensional atmospheric chemistry model with time-varying photolysis and reaction rate coefficients. The day/night discontinuities make it challenging for adaptive methods. `CVODE_BDF` performs best here due to the moderate dimension and complex time dependence. `Rodas4` and `radau` are good alternatives from the Julia ecosystem.
+
+
+## Appendix
+
+These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
+
+To locally run this benchmark, do the following commands:
+
+```
+using SciMLBenchmarks
+SciMLBenchmarks.weave_file("benchmarks/StiffODE","EMEP.jmd")
+```
+
+Computer Information:
+
+```
+Julia Version 1.11.9
+Commit 53a02c0720c (2026-02-06 00:27 UTC)
+Build Info:
+  Official https://julialang.org/ release
+Platform Info:
+  OS: Linux (x86_64-linux-gnu)
+  CPU: 128 × AMD EPYC 7502 32-Core Processor
+  WORD_SIZE: 64
+  LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Environment:
+  JULIA_PKG_PRECOMPILE_AUTO = 0
+
+```
+
+Package Information:
+
+```
+Status `~/sandbox/tmp_20260825_180339_53321/stiffode-master-audit/benchmarks/StiffODE/Project.toml`
+⌃ [2169fc97] AlgebraicMultigrid v2.0.1
+  [6e4b80f9] BenchmarkTools v1.8.0
+⌃ [f3b72e0c] DiffEqDevTools v3.4.0
+⌅ [5b8099bc] DomainSets v0.7.18
+⌅ [5a33fad7] GeometricIntegratorsDiffEq v1.3.3
+  [40713840] IncompleteLU v0.2.1
+  [7f56f5a3] LSODA v1.2.0
+⌃ [7ed4a6bd] LinearSolve v5.13.0
+⌅ [94925ecb] MethodOfLines v0.11.19
+⌃ [961ee093] ModelingToolkit v11.39.1
+⌅ [09606e27] ODEInterfaceDiffEq v4.1.0
+⌃ [1dea7af3] OrdinaryDiffEq v7.7.0
+⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.4
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.15.0
+⌃ [e0540318] OrdinaryDiffEqExponentialRK v2.3.0
+⌃ [becaefa8] OrdinaryDiffEqExtrapolation v2.5.0
+⌃ [5960d6e9] OrdinaryDiffEqFIRK v2.8.0
+⌃ [5dd0a6cf] OrdinaryDiffEqPDIRK v2.4.0
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.0
+⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.0
+  [358294b1] OrdinaryDiffEqStabilizedRK v2.6.0
+⌃ [65888b18] ParameterizedFunctions v5.26.0
+  [91a5bcdd] Plots v1.41.7
+  [f517fe37] Polyester v0.7.19
+⌃ [d236fae5] PreallocationTools v1.6.0
+  [132c30aa] ProfileSVG v0.2.2
+  [f2c3362d] RecursiveFactorization v0.2.30
+⌃ [31c91b34] SciMLBenchmarks v0.1.3
+  [a6db7da4] SciMLLogging v2.1.0
+⌃ [90137ffa] StaticArrays v1.9.19
+  [c3572dad] Sundials v6.6.0
+⌃ [0c5d862f] Symbolics v7.36.0
+⌅ [a759f4b9] TimerOutputs v0.5.29
+  [37e2e46d] LinearAlgebra v1.11.0
+  [2f01184e] SparseArrays v1.11.0
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+```
+
+And the full manifest:
+
+```
+Status `~/sandbox/tmp_20260825_180339_53321/stiffode-master-audit/benchmarks/StiffODE/Manifest.toml`
+  [47edcb42] ADTypes v1.24.0
+⌃ [14f7f29c] AMD v0.5.3
+  [a4c015fc] ANSIColoredPrinters v0.0.1
+  [621f4979] AbstractFFTs v1.5.0
+⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
+  [1520ce14] AbstractTrees v0.4.5
+  [7d9f7c33] Accessors v0.1.45
+  [79e6a3ab] Adapt v4.7.0
+⌃ [2169fc97] AlgebraicMultigrid v2.0.1
+  [66dad0bd] AliasTables v1.1.3
+  [ec485272] ArnoldiMethod v0.4.0
+⌃ [4fba245c] ArrayInterface v7.30.0
+  [4c555306] ArrayLayouts v1.12.2
+  [13072b0f] AxisAlgorithms v1.1.0
+⌃ [aae01518] BandedMatrices v1.11.0
+  [6e4b80f9] BenchmarkTools v1.8.0
+  [0e736298] Bessels v0.2.8
+  [e2ed5e7c] Bijections v0.2.2
+  [b2a6c25c] BinaryHeaps v1.1.0
+⌃ [caf10ac8] BipartiteGraphs v0.1.11
+  [d1d4a3ce] BitFlags v0.1.10
+  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
+  [8e7c35d0] BlockArrays v1.10.0
+⌃ [70df07ce] BracketingNonlinearSolve v1.12.5
+  [fa961155] CEnum v0.5.0
+  [2a0fbf3d] CPUSummary v0.2.7
+  [d360d2e6] ChainRulesCore v1.26.1
+  [fb6a15b2] CloseOpenIntervals v0.1.13
+  [944b1d66] CodecZlib v0.7.9
+  [35d6a980] ColorSchemes v3.31.0
+⌅ [3da002f7] ColorTypes v0.11.5
+⌃ [c3611d14] ColorVectorSpace v0.10.0
+⌅ [5ae59095] Colors v0.12.11
+⌅ [861a8166] Combinatorics v1.0.2
+  [38540f10] CommonSolve v0.2.14
+  [bbf7d656] CommonSubexpressions v0.3.1
+⌃ [f70d9fcc] CommonWorldInvalidations v1.2.0
+⌅ [a09551c4] CompactBasisFunctions v0.2.15
+  [34da2185] Compat v4.18.1
+  [b152e2b5] CompositeTypes v0.1.4
+  [a33af91c] CompositionsBase v0.1.2
+  [2569d6c7] ConcreteStructs v0.2.8
+  [f0e56b4a] ConcurrentUtilities v2.6.0
+  [8f4d0f93] Conda v1.10.3
+  [187b0558] ConstructionBase v1.6.0
+⌃ [7ae1f121] ContinuumArrays v0.20.9
+  [d38c429a] Contour v0.6.3
+  [adafc99b] CpuId v0.3.1
+  [a8cc5b0e] Crayons v4.2.0
+  [717857b8] DSP v0.8.6
+  [9a962f9c] DataAPI v1.16.0
+  [864edb3b] DataStructures v0.19.6
+  [e2d170a0] DataValueInterfaces v1.0.0
+  [8bb1440f] DelimitedFiles v1.9.1
+⌃ [2b5f629d] DiffEqBase v7.18.2
+⌃ [459566f4] DiffEqCallbacks v4.19.2
+⌃ [f3b72e0c] DiffEqDevTools v3.4.0
+⌃ [77a26b50] DiffEqNoiseProcess v5.36.0
+  [163ba53b] DiffResults v1.1.0
+  [b552c78f] DiffRules v1.16.0
+  [a0c0ee7d] DifferentiationInterface v0.7.21
+  [b4f34e82] Distances v0.10.12
+  [31c24e10] Distributions v0.25.131
+  [ffbed154] DocStringExtensions v0.9.5
+⌃ [e30172f5] Documenter v1.17.0
+⌅ [5b8099bc] DomainSets v0.7.18
+⌃ [7c1d4256] DynamicPolynomials v0.6.6
+  [4e289a0a] EnumX v1.0.7
+  [f151be2c] EnzymeCore v0.8.21
+  [460bff9d] ExceptionUnwrapping v0.1.11
+⌃ [d4d017d3] ExponentialUtilities v1.35.0
+  [e2ba6199] ExprTools v0.1.11
+  [55351af7] ExproniconLite v0.10.14
+  [c87230d0] FFMPEG v0.4.5
+  [7a1cc6ca] FFTW v1.10.0
+  [7034ab61] FastBroadcast v1.4.0
+  [9aa1b823] FastClosures v0.3.2
+  [442a2c76] FastGaussQuadrature v1.3.0
+  [a4df4552] FastPower v1.5.0
+  [057dd010] FastTransforms v0.17.2
+  [5789e2e9] FileIO v1.20.0
+  [1a297f60] FillArrays v1.17.0
+  [64ca27bc] FindFirstFunctions v3.2.1
+  [6a86dc24] FiniteDiff v2.33.0
+⌅ [53c48c17] FixedPointNumbers v0.8.6
+⌃ [08572546] FlameGraphs v1.1.0
+  [1fa38f19] Format v1.3.7
+  [f6369f11] ForwardDiff v1.4.5
+  [a85aefff] FunctionMaps v0.1.2
+  [069b7b12] FunctionWrappers v1.1.3
+  [77dc65aa] FunctionWrappersWrappers v1.13.0
+  [46192b85] GPUArraysCore v0.2.0
+⌃ [28b8d3ca] GR v0.73.26
+  [a0844989] Gamma v1.2.0
+  [a8297547] GenericFFT v0.1.7
+⌃ [14197337] GenericLinearAlgebra v0.4.0
+  [c145ed77] GenericSchur v0.5.8
+⌃ [9a0b12b7] GeometricBase v0.14.8
+⌃ [c85262ba] GeometricEquations v0.21.2
+⌅ [dcce2d33] GeometricIntegrators v0.16.10
+⌅ [71212ab4] GeometricIntegratorsBase v0.4.2
+⌅ [5a33fad7] GeometricIntegratorsDiffEq v1.3.3
+  [7843afe4] GeometricSolutions v0.6.5
+  [d7ba0133] Git v1.5.0
+  [86223c79] Graphs v1.14.0
+  [42e2da0e] Grisu v1.0.2
+⌅ [cd3eb016] HTTP v1.11.0
+⌅ [eafb193a] Highlights v0.5.3
+  [3e5b6fbb] HostCPUFeatures v0.1.18
+  [34004b35] HypergeometricFunctions v0.3.30
+  [7073ff75] IJulia v1.34.4
+  [b5f81e59] IOCapture v1.0.0
+  [615f187c] IfElse v0.1.1
+⌃ [3263718b] ImplicitDiscreteSolve v2.2.0
+  [40713840] IncompleteLU v0.2.1
+  [9b13fd28] IndirectArrays v1.0.0
+⌃ [4858937d] InfiniteArrays v0.15.15
+⌃ [e1ba4f0e] Infinities v0.1.12
+  [d25df0c9] Inflate v0.1.5
+  [18e54dd8] IntegerMathUtils v0.1.4
+  [a98d9a8b] Interpolations v0.16.3
+  [8197267c] IntervalSets v0.7.14
+  [3587e190] InverseFunctions v0.1.17
+  [92d709cd] IrrationalConstants v0.2.6
+  [c8e1da08] IterTools v1.10.0
+  [82899510] IteratorInterfaceExtensions v1.0.0
+  [1019f520] JLFzf v0.1.11
+  [692b3bcd] JLLWrappers v1.8.0
+⌅ [682c06a0] JSON v0.21.4
+  [ae98c720] Jieko v0.2.1
+⌃ [ccbc3e58] JumpProcesses v9.29.3
+  [ba0b0d4f] Krylov v0.10.9
+⌃ [2faa5264] LHLFactorization v2.2.0
+  [7f56f5a3] LSODA v1.2.0
+  [b964fa9f] LaTeXStrings v1.4.1
+  [23fbe1c1] Latexify v0.16.12
+  [10f19ff3] LayoutPointers v0.1.17
+  [0e77f7df] LazilyInitializedFields v1.3.0
+  [5078a376] LazyArrays v2.12.0
+⌅ [1d6d02ad] LeftChildRightSiblingTrees v0.2.1
+  [87fe0de2] LineSearch v0.1.16
+⌃ [7ed4a6bd] LinearSolve v5.13.0
+  [2ab3a3ac] LogExpFunctions v1.0.1
+  [e6f89c97] LoggingExtras v1.2.0
+  [bdcacae8] LoopVectorization v0.12.174
+  [1914dd2f] MacroTools v0.5.16
+  [d125e4d3] ManualMemory v0.1.8
+  [d0879d2d] MarkdownAST v0.1.3
+  [a3b82374] MatrixFactorizations v3.1.3
+  [bb5d69b7] MaybeInplace v0.1.8
+  [739be429] MbedTLS v1.1.10
+  [442fdcdd] Measures v0.3.3
+⌅ [94925ecb] MethodOfLines v0.11.19
+  [e1d29d7a] Missings v1.2.0
+⌃ [961ee093] ModelingToolkit v11.39.1
+⌃ [7771a370] ModelingToolkitBase v1.68.0
+⌃ [6bb917b9] ModelingToolkitTearing v1.20.5
+  [2e0e35c7] Moshi v0.3.12
+  [46d2c3a1] MuladdMacro v0.2.7
+  [102ac46a] MultivariatePolynomials v0.5.19
+  [ffc61752] Mustache v1.0.21
+  [d8a4904e] MutableArithmetics v1.8.0
+  [77ba4419] NaNMath v1.1.4
+⌃ [8913a72c] NonlinearSolve v4.28.0
+⌃ [be0214bd] NonlinearSolveBase v2.47.0
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.4.0
+⌃ [9a2c21bd] NonlinearSolveQuasiNewton v1.15.1
+⌃ [26075421] NonlinearSolveSpectralMethods v1.8.0
+  [54ca160b] ODEInterface v0.5.2
+⌅ [09606e27] ODEInterfaceDiffEq v4.1.0
+  [6fe1bfb0] OffsetArrays v1.17.0
+  [4d8831e6] OpenSSL v1.6.1
+⌅ [bac558e1] OrderedCollections v1.8.2
+⌃ [1dea7af3] OrdinaryDiffEq v7.7.0
+⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.4
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.15.0
+⌃ [50262376] OrdinaryDiffEqDefault v2.5.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.10.0
+⌃ [e0540318] OrdinaryDiffEqExponentialRK v2.3.0
+⌃ [becaefa8] OrdinaryDiffEqExtrapolation v2.5.0
+⌃ [5960d6e9] OrdinaryDiffEqFIRK v2.8.0
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.0
+⌃ [5dd0a6cf] OrdinaryDiffEqPDIRK v2.4.0
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.0
+⌃ [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.1
+⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.0
+  [358294b1] OrdinaryDiffEqStabilizedRK v2.6.0
+⌃ [b1df2697] OrdinaryDiffEqTsit5 v2.1.3
+⌃ [79d7bb75] OrdinaryDiffEqVerner v2.4.0
+⌃ [a7812802] PDEBase v0.1.33
+  [90014a1f] PDMats v0.11.41
+⌃ [65888b18] ParameterizedFunctions v5.26.0
+⌅ [d96e819e] Parameters v0.12.3
+⌅ [69de0a69] Parsers v2.8.7
+  [ccf2f8ad] PlotThemes v3.3.0
+  [995b91a9] PlotUtils v1.4.4
+  [91a5bcdd] Plots v1.41.7
+  [e409e4f3] PoissonRandom v0.4.13
+  [f517fe37] Polyester v0.7.19
+  [1d0040c9] PolyesterWeave v0.2.2
+⌃ [f27b6e38] Polynomials v4.1.1
+⌃ [d236fae5] PreallocationTools v1.6.0
+⌅ [aea7be01] PrecompileTools v1.2.1
+  [21216c6a] Preferences v1.5.2
+  [08abe8d2] PrettyTables v3.4.8
+  [27ebfcd6] Primes v0.5.7
+  [132c30aa] ProfileSVG v0.2.2
+  [92933f4c] ProgressMeter v1.11.0
+  [43287f4e] PtrArrays v1.4.0
+  [78ab2635] PureGebal v1.1.0
+  [0c0d3e7f] PureKLU v1.4.1
+  [1fd47b50] QuadGK v2.11.3
+⌅ [a08977f5] QuadratureRules v0.1.10
+⌃ [c4ea9172] QuasiArrays v0.13.8
+  [c84ed2f1] Ratios v0.4.5
+  [988b38a3] ReadOnlyArrays v0.2.0
+  [795d4caa] ReadOnlyDicts v1.0.1
+  [3cdcf5f2] RecipesBase v1.3.4
+  [01d81517] RecipesPipeline v0.6.12
+  [807425ed] RecurrenceRelationships v0.2.0
+⌃ [731186ca] RecursiveArrayTools v4.5.0
+  [f2c3362d] RecursiveFactorization v0.2.30
+  [189a3867] Reexport v1.2.2
+  [2792f1a3] RegistryInstances v0.1.0
+  [05181044] RelocatableFolders v1.0.1
+  [ae029012] Requires v1.3.1
+  [ae5879a3] ResettableStacks v1.4.0
+  [9fe22ead] RespecializeParams v1.3.0
+  [79098fc4] Rmath v0.9.0
+  [47965b36] RootedTrees v2.27.0
+⌃ [f2b01f46] Roots v3.0.7
+⌅ [fb486d5c] RungeKutta v0.5.23
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.25
+⌃ [9dfe8606] SCCNonlinearSolve v1.15.0
+  [94e857df] SIMDTypes v0.1.0
+  [476501e8] SLEEFPirates v0.6.46
+  [1bc83da4] SafeTestsets v0.1.0
+⌃ [0bca4576] SciMLBase v3.49.2
+⌃ [31c91b34] SciMLBenchmarks v0.1.3
+⌃ [19f34311] SciMLJacobianOperators v0.1.17
+  [a6db7da4] SciMLLogging v2.1.0
+⌃ [c0aeaf25] SciMLOperators v1.29.0
+  [431bcebd] SciMLPublic v1.3.0
+⌃ [53ae85a6] SciMLStructures v1.10.4
+  [6c6a2e73] Scratch v1.3.0
+  [efcf1570] Setfield v1.1.2
+⌃ [992d4aef] Showoff v1.0.3
+  [777ac1f9] SimpleBufferStream v1.2.0
+⌃ [727e6d20] SimpleNonlinearSolve v2.14.0
+⌅ [36b790f5] SimpleSolvers v0.9.2
+  [699a6c99] SimpleTraits v0.9.6
+  [a2af1166] SortingAlgorithms v1.2.3
+  [bd59d7e1] SparseBandedMatrices v1.4.0
+⌃ [a57abbd0] SparseColumnPivotedQR v2.1.7
+⌃ [0a514795] SparseMatrixColorings v0.4.27
+  [276daf66] SpecialFunctions v2.9.0
+  [860ef19b] StableRNGs v1.0.4
+  [0c0c59c1] StarAlgebras v0.3.0
+⌃ [64909d44] StateSelection v1.11.0
+  [aedffcd0] Static v1.4.6
+  [0d7ed370] StaticArrayInterface v1.10.0
+⌃ [90137ffa] StaticArrays v1.9.19
+  [1e83bf80] StaticArraysCore v1.4.4
+⌃ [10745b16] Statistics v1.11.1
+  [82ae8749] StatsAPI v1.8.0
+  [2913bbd2] StatsBase v0.34.13
+  [4c63d2b9] StatsFuns v2.2.1
+  [7792a7ef] StrideArraysCore v0.5.9
+  [69024149] StringEncodings v0.3.7
+⌅ [892a3eda] StringManipulation v0.5.0
+  [09ab397b] StructArrays v0.7.3
+  [c3572dad] Sundials v6.6.0
+  [2efcf032] SymbolicIndexingInterface v0.3.55
+⌃ [19f23fe9] SymbolicLimits v1.2.0
+⌅ [d1185830] SymbolicUtils v4.45.0
+⌃ [0c5d862f] Symbolics v7.36.0
+  [3783bdb8] TableTraits v1.0.1
+  [bd369af6] Tables v1.14.0
+  [ed4db957] TaskLocalValues v0.1.3
+  [62fd8b95] TensorCore v0.1.1
+  [8ea1fca8] TermInterface v2.0.0
+  [8290d209] ThreadingUtilities v0.5.6
+⌅ [a759f4b9] TimerOutputs v0.5.29
+  [c751599d] ToeplitzMatrices v0.8.5
+  [3bb67fe8] TranscodingStreams v0.11.3
+  [d5829a12] TriangularSolve v0.2.6
+  [781d530d] TruncatedStacktraces v1.4.0
+  [5c2747f8] URIs v1.7.0
+  [3a884ed6] UnPack v1.0.2
+  [1cfade01] UnicodeFun v0.4.1
+  [41fe7b60] Unzip v0.2.0
+  [3d5dd08c] VectorizationBase v0.21.74
+  [33b4df10] VectorizedRNG v0.2.26
+  [81def892] VersionParsing v1.3.0
+  [d30d5f5c] WeakCacheSets v0.1.0
+  [44d3d7a6] Weave v0.10.12
+  [efce3f68] WoodburyMatrices v1.1.0
+  [ddb6d928] YAML v0.4.16
+  [c2297ded] ZMQ v1.5.1
+  [6e34b625] Bzip2_jll v1.0.9+0
+  [83423d85] Cairo_jll v1.18.7+0
+  [ee1fde0b] Dbus_jll v1.16.2+0
+  [2702e6a9] EpollShim_jll v0.0.20230411+1
+  [2e619515] Expat_jll v2.8.3+0
+⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
+  [f5851436] FFTW_jll v3.3.12+0
+  [34b6f7d7] FastTransforms_jll v0.6.4+0
+  [a3f928ae] Fontconfig_jll v2.17.1+0
+  [d7e528f0] FreeType2_jll v2.14.3+1
+  [559328eb] FriBidi_jll v1.0.17+0
+⌃ [0656b61e] GLFW_jll v3.4.1+1
+⌅ [d2c73de3] GR_jll v0.73.26+0
+⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
+  [61579ee1] Ghostscript_jll v9.55.1+0
+  [020c3dae] Git_LFS_jll v3.7.1+0
+  [f8c6e375] Git_jll v2.55.0+0
+  [7746bdde] Glib_jll v2.88.3+0
+  [3b182d85] Graphite2_jll v1.3.16+0
+⌅ [2e76f6c2] HarfBuzz_jll v8.5.1+0
+  [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
+  [aacddb02] JpegTurbo_jll v3.2.0+1
+  [c1c5ebd0] LAME_jll v3.100.3+0
+  [88015f11] LERC_jll v4.1.0+0
+  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+  [aae0fff6] LSODA_jll v0.1.2+0
+⌅ [e9f186c6] Libffi_jll v3.4.7+0
+  [7e76a0d4] Libglvnd_jll v1.7.1+1
+  [94ce4f54] Libiconv_jll v1.18.0+0
+  [4b2f31a3] Libmount_jll v2.42.0+0
+  [89763e89] Libtiff_jll v4.7.3+0
+  [38a345b3] Libuuid_jll v2.42.0+0
+  [856f044c] MKL_jll v2025.2.0+0
+  [c771fb93] ODEInterface_jll v0.0.2+0
+  [e7412a2a] Ogg_jll v1.3.6+0
+  [656ef2d0] OpenBLAS32_jll v0.3.34+0
+  [9bd350c2] OpenSSH_jll v10.5.1+0
+⌃ [458c3c95] OpenSSL_jll v3.5.7+0
+  [efe28fd5] OpenSpecFun_jll v0.5.6+0
+  [91d4177d] Opus_jll v1.6.1+0
+⌃ [36c8627f] Pango_jll v1.58.0+0
+  [30392449] Pixman_jll v0.46.4+0
+  [c0090381] Qt6Base_jll v6.10.2+2
+  [629bc702] Qt6Declarative_jll v6.10.2+2
+  [ce943373] Qt6ShaderTools_jll v6.10.2+1
+  [6de9746b] Qt6Svg_jll v6.10.2+0
+  [e99dba38] Qt6Wayland_jll v6.10.2+1
+  [f50d1b31] Rmath_jll v0.5.2+0
+⌃ [ca45d3f4] SuiteSparse32_jll v7.12.1+0
+  [fb77eaff] Sundials_jll v7.5.0+0
+  [a44049a8] Vulkan_Loader_jll v1.3.243+0
+  [a2964d1f] Wayland_jll v1.24.0+0
+  [ffd25f8a] XZ_jll v5.8.3+0
+  [f67eecfb] Xorg_libICE_jll v1.1.2+0
+  [c834827a] Xorg_libSM_jll v1.2.6+0
+  [4f6342f7] Xorg_libX11_jll v1.8.13+0
+  [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
+  [935fb764] Xorg_libXcursor_jll v1.2.4+0
+  [a3789734] Xorg_libXdmcp_jll v1.1.6+0
+  [1082639a] Xorg_libXext_jll v1.3.8+0
+  [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
+  [a51aa0fd] Xorg_libXi_jll v1.8.4+0
+  [d1454406] Xorg_libXinerama_jll v1.1.7+0
+  [ec84b674] Xorg_libXrandr_jll v1.5.6+0
+  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+  [a65dc6b1] Xorg_libpciaccess_jll v0.19.0+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
+  [cc61e674] Xorg_libxkbfile_jll v1.2.0+0
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.6+0
+  [12413925] Xorg_xcb_util_image_jll v0.4.1+0
+  [2def613f] Xorg_xcb_util_jll v0.4.1+0
+  [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
+  [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
+  [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
+  [35661453] Xorg_xkbcomp_jll v1.4.7+0
+  [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
+  [c5fb5394] Xorg_xtrans_jll v1.6.0+0
+  [8f1865be] ZeroMQ_jll v4.3.6+0
+  [3161d3a3] Zstd_jll v1.5.7+1
+  [35ca27e7] eudev_jll v3.2.14+0
+⌅ [214eeab7] fzf_jll v0.61.1+0
+  [a4ae2306] libaom_jll v3.14.1+0
+⌃ [0ac62f75] libass_jll v0.17.4+0
+  [1183f4f0] libdecor_jll v0.2.2+0
+  [8e53e030] libdrm_jll v2.4.134+0
+  [2db6ffa8] libevdev_jll v1.13.4+0
+  [f638f0a6] libfdk_aac_jll v2.0.4+0
+  [36db933b] libinput_jll v1.28.1+0
+  [b53b4c65] libpng_jll v1.6.58+0
+  [a9144af2] libsodium_jll v1.0.21+0
+  [9a156e7d] libva_jll v2.23.0+0
+  [f27f6e37] libvorbis_jll v1.3.8+0
+  [009596ad] mtdev_jll v1.1.7+0
+  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌅ [1270edf5] x264_jll v10164.0.1+0
+  [dfaa095f] x265_jll v4.1.0+0
+  [d8fb68d0] xkbcommon_jll v1.13.0+0
+  [0dad84c5] ArgTools v1.1.2
+  [56f22d72] Artifacts v1.11.0
+  [2a0f44e3] Base64 v1.11.0
+  [ade2ca70] Dates v1.11.0
+  [8ba89e20] Distributed v1.11.0
+  [f43a241f] Downloads v1.6.0
+  [7b1f6079] FileWatching v1.11.0
+  [9fa8497b] Future v1.11.0
+  [b77e0a4c] InteractiveUtils v1.11.0
+  [4af54fe1] LazyArtifacts v1.11.0
+  [b27032c2] LibCURL v0.6.4
+  [76f85450] LibGit2 v1.11.0
+  [8f399da3] Libdl v1.11.0
+  [37e2e46d] LinearAlgebra v1.11.0
+  [56ddb016] Logging v1.11.0
+  [d6f4376e] Markdown v1.11.0
+  [a63ad114] Mmap v1.11.0
+  [ca575930] NetworkOptions v1.2.0
+  [44cfe95a] Pkg v1.11.0
+  [de0858da] Printf v1.11.0
+  [9abbd945] Profile v1.11.0
+  [3fa0cd96] REPL v1.11.0
+  [9a3f8284] Random v1.11.0
+  [ea8e919c] SHA v0.7.0
+  [9e88b42a] Serialization v1.11.0
+  [1a1011a3] SharedArrays v1.11.0
+  [6462fe0b] Sockets v1.11.0
+  [2f01184e] SparseArrays v1.11.0
+  [f489334b] StyledStrings v1.11.0
+  [4607b0f0] SuiteSparse
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
+  [8dfed614] Test v1.11.0
+  [cf7118a7] UUIDs v1.11.0
+  [4ec0a83e] Unicode v1.11.0
+  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
+  [781609d7] GMP_jll v6.3.0+0
+  [deac9b47] LibCURL_jll v8.6.0+0
+  [e37daf67] LibGit2_jll v1.7.2+0
+  [29816b5a] LibSSH2_jll v1.11.0+1
+  [3a97d323] MPFR_jll v4.2.1+0
+  [c8ffd9c3] MbedTLS_jll v2.28.6+0
+  [14a3606d] MozillaCACerts_jll v2023.12.12
+  [4536629a] OpenBLAS_jll v0.3.27+1
+  [05823500] OpenLibm_jll v0.8.5+0
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.7.0+0
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.11.0+0
+  [8e850ede] nghttp2_jll v1.59.0+0
+  [3f19e933] p7zip_jll v17.4.0+2
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+```
