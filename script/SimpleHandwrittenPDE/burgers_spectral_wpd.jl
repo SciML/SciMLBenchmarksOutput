@@ -1,5 +1,6 @@
 
 using OrdinaryDiffEq
+using OrdinaryDiffEqBDF, OrdinaryDiffEqExponentialRK, OrdinaryDiffEqIMEXMultistep, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 using DiffEqDevTools
 using SciMLOperators
 using LinearSolve
@@ -49,7 +50,7 @@ end;
 
 n = 128 # Number of Chebyshev points
 xs, prob = burgers(n)
-@time sol = solve(prob, Rodas5(autodiff=false), reltol = 1e-12, abstol = 1e-12)
+@time sol = solve(prob, Rodas5(autodiff=AutoFiniteDiff()), reltol = 1e-12, abstol = 1e-12)
 
 test_sol = TestSolution(sol) # Reference solution for error estimation
 

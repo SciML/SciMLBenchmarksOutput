@@ -1,5 +1,6 @@
 
 using OrdinaryDiffEq
+using OrdinaryDiffEqBDF, OrdinaryDiffEqExponentialRK, OrdinaryDiffEqIMEXMultistep, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 using DiffEqDevTools
 using SciMLOperators
 using LinearSolve
@@ -51,7 +52,7 @@ N = 128
 eps = 1e-3
 xs, prob = allen_cahn(N, eps);
 
-@time sol = solve(prob, Rodas5(autodiff=false); dt=1e-4, reltol=1e-12, abstol=1e-12);
+@time sol = solve(prob, Rodas5(autodiff=AutoFiniteDiff()); dt=1e-4, reltol=1e-12, abstol=1e-12);
 
 test_sol = TestSolution(sol); # Reference solution for error estimation
 
