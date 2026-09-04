@@ -12,18 +12,18 @@ prob = EnsembleProblem(remake(prob,tspan=(0.0,1.0)),prob_func=prob_func)
 js = 16:21
 dts = 1.0 ./ 2.0 .^ (js)
 trajectories = 1000
-fails = Array{Int}(undef,length(dts),3)
-times = Array{Float64}(undef,length(dts),3)
+fails = fill(-1, length(dts), 3)
+times = fill(NaN, length(dts), 3)
 ```
 
 ```
 6×3 Matrix{Float64}:
- 6.29737e-310  6.29737e-310  6.29737e-310
- 6.29739e-310  6.29737e-310  6.29737e-310
- 6.29739e-310  6.29737e-310  6.29737e-310
- 6.29739e-310  6.29737e-310  6.29737e-310
- 6.29737e-310  6.29737e-310  6.29737e-310
- 6.29737e-310  6.29737e-310  6.29737e-310
+ NaN  NaN  NaN
+ NaN  NaN  NaN
+ NaN  NaN  NaN
+ NaN  NaN  NaN
+ NaN  NaN  NaN
+ NaN  NaN  NaN
 ```
 
 
@@ -41,7 +41,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 1.547903538
+The number of Adaptive Fails is 0. Elapsed time was 1.486031403
 ```
 
 
@@ -55,7 +55,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 1.53743574
+The number of Adaptive Fails is 0. Elapsed time was 1.573882533
 ```
 
 
@@ -69,7 +69,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 11.301429813
+The number of Adaptive Fails is 0. Elapsed time was 11.614600223
 ```
 
 
@@ -83,7 +83,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.160112582
+The number of Adaptive Fails is 0. Elapsed time was 0.264344775
 ```
 
 
@@ -97,7 +97,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.163343108
+The number of Adaptive Fails is 0. Elapsed time was 0.177075182
 ```
 
 
@@ -111,7 +111,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.112029849
+The number of Adaptive Fails is 0. Elapsed time was 0.094086423
 ```
 
 
@@ -125,7 +125,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 1.199939502
+The number of Adaptive Fails is 0. Elapsed time was 1.028313144
 ```
 
 
@@ -139,7 +139,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.13375813
+The number of Adaptive Fails is 0. Elapsed time was 0.132237647
 ```
 
 
@@ -153,7 +153,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 1.110875052
+The number of Adaptive Fails is 0. Elapsed time was 1.196737577
 ```
 
 
@@ -167,7 +167,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 1.071179331
+The number of Adaptive Fails is 0. Elapsed time was 1.026308617
 ```
 
 
@@ -181,7 +181,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.547342322
+The number of Adaptive Fails is 0. Elapsed time was 0.43544818
 ```
 
 
@@ -195,7 +195,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.422518377
+The number of Adaptive Fails is 0. Elapsed time was 0.422915901
 ```
 
 
@@ -214,17 +214,17 @@ end
 
 ```
 j = 1
-The number of Euler-Maruyama Fails is 10. Elapsed time was 0.599159535
+The number of Euler-Maruyama Fails is 10. Elapsed time was 0.62629715
 j = 2
-The number of Euler-Maruyama Fails is 1. Elapsed time was 1.013131004
+The number of Euler-Maruyama Fails is 1. Elapsed time was 1.051373968
 j = 3
-The number of Euler-Maruyama Fails is 1. Elapsed time was 2.234027428
+The number of Euler-Maruyama Fails is 1. Elapsed time was 2.259527459
 j = 4
-The number of Euler-Maruyama Fails is 0. Elapsed time was 4.106519928
+The number of Euler-Maruyama Fails is 0. Elapsed time was 4.239722921
 j = 5
-The number of Euler-Maruyama Fails is 0. Elapsed time was 8.816848111
+The number of Euler-Maruyama Fails is 0. Elapsed time was 7.945312375
 j = 6
-The number of Euler-Maruyama Fails is 0. Elapsed time was 16.352065527
+The number of Euler-Maruyama Fails is 0. Elapsed time was 19.589181579
 ```
 
 
@@ -243,13 +243,13 @@ end
 
 ```
 j = 1
-The number of SRIW1 Fails is 984. Elapsed time was 0.249812758
+The number of SRIW1 Fails is 984. Elapsed time was 0.255241042
 j = 2
-The number of SRIW1 Fails is 975. Elapsed time was 0.612236311
+The number of SRIW1 Fails is 975. Elapsed time was 0.612691476
 j = 3
-The number of SRIW1 Fails is 978. Elapsed time was 0.404713658
+The number of SRIW1 Fails is 978. Elapsed time was 0.413564931
 j = 4
-The number of SRIW1 Fails is 975. Elapsed time was 0.283268256
+The number of SRIW1 Fails is 975. Elapsed time was 0.325687472
 ```
 
 
@@ -268,15 +268,15 @@ end
 
 ```
 j = 1
-The number of Implicit-EM Fails is 0. Elapsed time was 10.673553896
+The number of Implicit-EM Fails is 0. Elapsed time was 10.81655631
 j = 2
-The number of Implicit-EM Fails is 0. Elapsed time was 10.596939769
+The number of Implicit-EM Fails is 0. Elapsed time was 10.763347924
 j = 3
-The number of Implicit-EM Fails is 0. Elapsed time was 10.62302887
+The number of Implicit-EM Fails is 0. Elapsed time was 10.766492355
 j = 4
-The number of Implicit-EM Fails is 0. Elapsed time was 10.637953468
+The number of Implicit-EM Fails is 0. Elapsed time was 10.630868363
 j = 5
-The number of Implicit-EM Fails is 0. Elapsed time was 10.628033139
+The number of Implicit-EM Fails is 0. Elapsed time was 10.838425385
 ```
 
 
@@ -293,15 +293,15 @@ end
 
 ```
 j = 1
-The number of Implicit-RKMil Fails is 0. Elapsed time was 20.533855926
+The number of Implicit-RKMil Fails is 0. Elapsed time was 20.66148694
 j = 2
-The number of Implicit-RKMil Fails is 0. Elapsed time was 20.864520876
+The number of Implicit-RKMil Fails is 0. Elapsed time was 20.869794587
 j = 3
-The number of Implicit-RKMil Fails is 0. Elapsed time was 20.329599339
+The number of Implicit-RKMil Fails is 0. Elapsed time was 20.491557314
 j = 4
-The number of Implicit-RKMil Fails is 0. Elapsed time was 20.371806141
+The number of Implicit-RKMil Fails is 0. Elapsed time was 20.612024128
 j = 5
-The number of Implicit-RKMil Fails is 0. Elapsed time was 20.256299561
+The number of Implicit-RKMil Fails is 0. Elapsed time was 20.25000492
 ```
 
 
@@ -320,17 +320,17 @@ end
 
 ```
 j = 1
-The number of RKMil Fails is 5. Elapsed time was 0.182972587
+The number of RKMil Fails is 5. Elapsed time was 0.26118599
 j = 2
-The number of RKMil Fails is 3. Elapsed time was 0.281498991
+The number of RKMil Fails is 3. Elapsed time was 0.213085667
 j = 3
-The number of RKMil Fails is 6. Elapsed time was 0.221624291
+The number of RKMil Fails is 6. Elapsed time was 0.285138712
 j = 4
-The number of RKMil Fails is 7. Elapsed time was 0.280393723
+The number of RKMil Fails is 7. Elapsed time was 0.22348859
 j = 5
-The number of RKMil Fails is 7. Elapsed time was 0.22835529
+The number of RKMil Fails is 7. Elapsed time was 0.212907979
 j = 6
-The number of RKMil Fails is 6. Elapsed time was 0.258336115
+The number of RKMil Fails is 6. Elapsed time was 0.23213327
 ```
 
 
@@ -352,7 +352,6 @@ plot(p2,size=(800,800))
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
 
 To locally run this benchmark, do the following commands:
-
 ```
 using SciMLBenchmarks
 SciMLBenchmarks.weave_file("benchmarks/StiffSDE","Oval2Timings.jmd")
@@ -381,17 +380,17 @@ Package Information:
 
 ```
 Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/StiffSDE/Project.toml`
-  [f3b72e0c] DiffEqDevTools v3.2.0
+⌃ [f3b72e0c] DiffEqDevTools v3.2.0
 ⌃ [77a26b50] DiffEqNoiseProcess v5.34.0
-  [b964fa9f] LaTeXStrings v1.4.0
+⌃ [b964fa9f] LaTeXStrings v1.4.0
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.13.0
-  [91a5bcdd] Plots v1.41.6
-  [c72e72a9] SDEProblemLibrary v1.2.3
+⌃ [91a5bcdd] Plots v1.41.6
+⌃ [c72e72a9] SDEProblemLibrary v1.2.3
 ⌅ [0bca4576] SciMLBase v3.43.0
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
-  [a6db7da4] SciMLLogging v2.0.4
-  [10745b16] Statistics v1.11.1
-  [789caeaf] StochasticDiffEq v7.1.4
+⌃ [a6db7da4] SciMLLogging v2.0.4
+⌃ [10745b16] Statistics v1.11.1
+⌃ [789caeaf] StochasticDiffEq v7.1.4
   [37e2e46d] LinearAlgebra v1.11.0
   [9a3f8284] Random v1.11.0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
@@ -408,19 +407,19 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
 ⌃ [4fba245c] ArrayInterface v7.28.1
-  [b2a6c25c] BinaryHeaps v1.0.4
+⌃ [b2a6c25c] BinaryHeaps v1.0.4
   [d1d4a3ce] BitFlags v0.1.10
 ⌃ [70df07ce] BracketingNonlinearSolve v1.12.4
-  [944b1d66] CodecZlib v0.7.8
+⌃ [944b1d66] CodecZlib v0.7.8
   [35d6a980] ColorSchemes v3.31.0
   [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
-  [38540f10] CommonSolve v0.2.13
+⌃ [38540f10] CommonSolve v0.2.13
   [bbf7d656] CommonSubexpressions v0.3.1
   [34da2185] Compat v4.18.1
   [a33af91c] CompositionsBase v0.1.2
-  [2569d6c7] ConcreteStructs v0.2.7
+⌃ [2569d6c7] ConcreteStructs v0.2.7
   [f0e56b4a] ConcurrentUtilities v2.6.0
   [8f4d0f93] Conda v1.10.3
   [187b0558] ConstructionBase v1.6.0
@@ -432,21 +431,21 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8bb1440f] DelimitedFiles v1.9.1
 ⌃ [2b5f629d] DiffEqBase v7.12.0
 ⌃ [459566f4] DiffEqCallbacks v4.19.1
-  [f3b72e0c] DiffEqDevTools v3.2.0
+⌃ [f3b72e0c] DiffEqDevTools v3.2.0
 ⌃ [77a26b50] DiffEqNoiseProcess v5.34.0
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
-  [a0c0ee7d] DifferentiationInterface v0.7.20
-  [31c24e10] Distributions v0.25.130
+⌃ [a0c0ee7d] DifferentiationInterface v0.7.20
+⌃ [31c24e10] Distributions v0.25.130
   [ffbed154] DocStringExtensions v0.9.5
   [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.21
   [460bff9d] ExceptionUnwrapping v0.1.11
   [e2ba6199] ExprTools v0.1.11
   [c87230d0] FFMPEG v0.4.5
-  [7034ab61] FastBroadcast v1.3.6
+⌃ [7034ab61] FastBroadcast v1.3.6
   [9aa1b823] FastClosures v0.3.2
-  [a4df4552] FastPower v1.4.1
+⌃ [a4df4552] FastPower v1.4.1
   [1a297f60] FillArrays v1.17.0
   [64ca27bc] FindFirstFunctions v3.2.1
 ⌃ [6a86dc24] FiniteDiff v2.32.1
@@ -454,9 +453,9 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [1fa38f19] Format v1.3.7
   [f6369f11] ForwardDiff v1.4.5
   [069b7b12] FunctionWrappers v1.1.3
-  [77dc65aa] FunctionWrappersWrappers v1.12.1
+⌃ [77dc65aa] FunctionWrappersWrappers v1.12.1
   [46192b85] GPUArraysCore v0.2.0
-  [28b8d3ca] GR v0.73.26
+⌃ [28b8d3ca] GR v0.73.26
 ⌃ [a0844989] Gamma v1.1.0
   [d7ba0133] Git v1.5.0
   [86223c79] Graphs v1.14.0
@@ -472,16 +471,16 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [1019f520] JLFzf v0.1.11
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
-  [ccbc3e58] JumpProcesses v9.29.2
+⌃ [ccbc3e58] JumpProcesses v9.29.2
   [ba0b0d4f] Krylov v0.10.9
-  [b964fa9f] LaTeXStrings v1.4.0
-  [23fbe1c1] Latexify v0.16.11
+⌃ [b964fa9f] LaTeXStrings v1.4.0
+⌃ [23fbe1c1] Latexify v0.16.11
 ⌃ [87fe0de2] LineSearch v0.1.13
 ⌃ [7ed4a6bd] LinearSolve v5.5.0
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
-  [bb5d69b7] MaybeInplace v0.1.7
+⌃ [bb5d69b7] MaybeInplace v0.1.7
   [739be429] MbedTLS v1.1.10
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
@@ -492,17 +491,17 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [be0214bd] NonlinearSolveBase v2.41.0
 ⌃ [5959db7a] NonlinearSolveFirstOrder v2.3.0
 ⌃ [9a2c21bd] NonlinearSolveQuasiNewton v1.15.0
-  [26075421] NonlinearSolveSpectralMethods v1.8.0
+⌃ [26075421] NonlinearSolveSpectralMethods v1.8.0
   [4d8831e6] OpenSSL v1.6.1
 ⌅ [bac558e1] OrderedCollections v1.8.2
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.13.0
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.7.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.7.0
 ⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.6.1
   [90014a1f] PDMats v0.11.41
-  [69de0a69] Parsers v2.8.7
+⌅ [69de0a69] Parsers v2.8.7
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.4
-  [91a5bcdd] Plots v1.41.6
+⌃ [91a5bcdd] Plots v1.41.6
   [e409e4f3] PoissonRandom v0.4.13
 ⌃ [d236fae5] PreallocationTools v1.4.1
 ⌅ [aea7be01] PrecompileTools v1.2.1
@@ -517,55 +516,55 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
-  [ae5879a3] ResettableStacks v1.3.0
-  [9fe22ead] RespecializeParams v1.2.0
+⌃ [ae5879a3] ResettableStacks v1.3.0
+⌃ [9fe22ead] RespecializeParams v1.2.0
   [79098fc4] Rmath v0.9.0
-  [47965b36] RootedTrees v2.25.4
-  [f2b01f46] Roots v3.0.6
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.24
-  [c72e72a9] SDEProblemLibrary v1.2.3
+⌃ [47965b36] RootedTrees v2.25.4
+⌃ [f2b01f46] Roots v3.0.6
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.24
+⌃ [c72e72a9] SDEProblemLibrary v1.2.3
 ⌅ [0bca4576] SciMLBase v3.43.0
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
 ⌃ [19f34311] SciMLJacobianOperators v0.1.16
-  [a6db7da4] SciMLLogging v2.0.4
+⌃ [a6db7da4] SciMLLogging v2.0.4
 ⌃ [c0aeaf25] SciMLOperators v1.26.0
-  [431bcebd] SciMLPublic v1.2.4
-  [53ae85a6] SciMLStructures v1.10.4
+⌃ [431bcebd] SciMLPublic v1.2.4
+⌃ [53ae85a6] SciMLStructures v1.10.4
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
+⌃ [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
-  [727e6d20] SimpleNonlinearSolve v2.14.0
+⌃ [727e6d20] SimpleNonlinearSolve v2.14.0
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
-  [a57abbd0] SparseColumnPivotedQR v2.1.6
+⌃ [a57abbd0] SparseColumnPivotedQR v2.1.6
   [0a514795] SparseMatrixColorings v0.4.27
-  [276daf66] SpecialFunctions v2.8.3
+⌃ [276daf66] SpecialFunctions v2.8.3
   [860ef19b] StableRNGs v1.0.4
 ⌃ [90137ffa] StaticArrays v1.9.18
   [1e83bf80] StaticArraysCore v1.4.4
-  [10745b16] Statistics v1.11.1
+⌃ [10745b16] Statistics v1.11.1
   [82ae8749] StatsAPI v1.8.0
-  [2913bbd2] StatsBase v0.34.12
+⌃ [2913bbd2] StatsBase v0.34.12
   [4c63d2b9] StatsFuns v2.2.1
-  [789caeaf] StochasticDiffEq v7.1.4
+⌃ [789caeaf] StochasticDiffEq v7.1.4
 ⌃ [19c5a474] StochasticDiffEqCore v2.0.5
-  [0520c28c] StochasticDiffEqHighOrder v2.1.3
-  [ebf54054] StochasticDiffEqIIF v2.0.3
-  [5080b986] StochasticDiffEqImplicit v2.1.3
-  [aefaaa88] StochasticDiffEqLeaping v2.0.3
-  [90dbc90e] StochasticDiffEqLevyArea v2.0.3
+⌃ [0520c28c] StochasticDiffEqHighOrder v2.1.3
+⌃ [ebf54054] StochasticDiffEqIIF v2.0.3
+⌃ [5080b986] StochasticDiffEqImplicit v2.1.3
+⌃ [aefaaa88] StochasticDiffEqLeaping v2.0.3
+⌃ [90dbc90e] StochasticDiffEqLevyArea v2.0.3
 ⌃ [d15fe365] StochasticDiffEqLowOrder v2.0.3
-  [8c95a807] StochasticDiffEqMilstein v2.0.3
-  [db241ea8] StochasticDiffEqROCK v2.0.3
-  [49714585] StochasticDiffEqRODE v2.0.3
-  [af2a2fcd] StochasticDiffEqWeak v2.1.3
+⌃ [8c95a807] StochasticDiffEqMilstein v2.0.3
+⌃ [db241ea8] StochasticDiffEqROCK v2.0.3
+⌃ [49714585] StochasticDiffEqRODE v2.0.3
+⌃ [af2a2fcd] StochasticDiffEqWeak v2.1.3
   [69024149] StringEncodings v0.3.7
-  [892a3eda] StringManipulation v0.4.7
+⌅ [892a3eda] StringManipulation v0.4.7
   [09ab397b] StructArrays v0.7.3
 ⌃ [2efcf032] SymbolicIndexingInterface v0.3.53
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.13.0
+⌃ [bd369af6] Tables v1.13.0
   [62fd8b95] TensorCore v0.1.1
 ⌃ [a759f4b9] TimerOutputs v1.1.0
   [3bb67fe8] TranscodingStreams v0.11.3
@@ -581,13 +580,13 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-  [2e619515] Expat_jll v2.8.2+0
+⌃ [2e619515] Expat_jll v2.8.2+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
   [559328eb] FriBidi_jll v1.0.17+0
-  [0656b61e] GLFW_jll v3.4.1+1
-  [d2c73de3] GR_jll v0.73.26+0
+⌃ [0656b61e] GLFW_jll v3.4.1+1
+⌅ [d2c73de3] GR_jll v0.73.26+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
   [020c3dae] Git_LFS_jll v3.7.1+0
@@ -609,10 +608,10 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [856f044c] MKL_jll v2025.2.0+0
   [e7412a2a] Ogg_jll v1.3.6+0
 ⌃ [9bd350c2] OpenSSH_jll v10.4.1+0
-  [458c3c95] OpenSSL_jll v3.5.7+0
+⌃ [458c3c95] OpenSSL_jll v3.5.7+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
-  [36c8627f] Pango_jll v1.58.0+0
+⌃ [36c8627f] Pango_jll v1.58.0+0
   [30392449] Pixman_jll v0.46.4+0
   [c0090381] Qt6Base_jll v6.10.2+2
   [629bc702] Qt6Declarative_jll v6.10.2+2
@@ -652,7 +651,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
 ⌃ [a4ae2306] libaom_jll v3.13.3+0
-  [0ac62f75] libass_jll v0.17.4+0
+⌃ [0ac62f75] libass_jll v0.17.4+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
   [2db6ffa8] libevdev_jll v1.13.4+0
