@@ -221,13 +221,13 @@ optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub =
 ```
 
 ```
-2.532 s (2618609 allocations: 366.03 MiB)
+1.291 s (2613578 allocations: 365.31 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.4999840887952458
- 1.0000001762201947
- 2.999988156201695
- 1.5157203354650128
+ 1.4999203012809823
+ 1.0000015966764457
+ 2.999935231629794
+ 2.0739793450403217
 ```
 
 
@@ -241,13 +241,13 @@ optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub =
 ```
 
 ```
-2.302 s (2614948 allocations: 365.51 MiB)
+1.312 s (2611672 allocations: 365.07 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.5003341367495355
- 1.000007809372808
- 3.000291423172587
- 1.7116084454544567
+ 1.4999378544256672
+ 1.0000015066340842
+ 2.9999531608507137
+ 2.9292276530191876
 ```
 
 
@@ -261,13 +261,13 @@ optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub =
 ```
 
 ```
-3.342 s (2648398 allocations: 369.47 MiB)
+1.824 s (2651820 allocations: 369.94 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.49993719104065
- 1.0000039803619833
- 2.9999567328507095
- 4.439631042138454
+ 1.4998656162656354
+ 0.999999258884826
+ 2.9998873181126906
+ 1.1451402458008861
 ```
 
 
@@ -301,7 +301,7 @@ opt = Opt(:GN_ORIG_DIRECT_L, 4)
 ```
 
 ```
-717.247 ms (578200 allocations: 79.50 MiB)
+406.065 ms (578200 allocations: 79.50 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  2.9629629629570617
@@ -318,12 +318,12 @@ opt = Opt(:GN_CRS2_LM, 4)
 ```
 
 ```
-3.623 s (2577768 allocations: 354.51 MiB)
+1.927 s (2487904 allocations: 342.15 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
- 1.50000000070876
- 1.0000000000663105
- 3.000000000726821
+ 1.5000000007100855
+ 1.0000000000664193
+ 3.000000000727955
  0.0
 ```
 
@@ -335,13 +335,13 @@ opt = Opt(:GN_ISRES, 4)
 ```
 
 ```
-5.982 s (3760139 allocations: 517.16 MiB)
+2.580 s (3760136 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 6.840099335148002
- 1.4140643981548306
- 9.282859753511097
- 5.163634372346723
+ 1.4766372969796588
+ 1.5838453698763701
+ 5.124215924166389
+ 0.10132384418662138
 ```
 
 
@@ -352,13 +352,13 @@ opt = Opt(:GN_ESCH, 4)
 ```
 
 ```
-5.268 s (3760136 allocations: 517.13 MiB)
+2.927 s (3760136 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 5.0184965308772265
- 0.9836923464431341
- 5.829114845076642
- 1.1002739507629118
+ 4.520099869805916
+ 0.9969737191247452
+ 5.439877015030094
+ 0.7275803024365064
 ```
 
 
@@ -388,7 +388,7 @@ opt = Opt(:LN_BOBYQA, 4)
 ```
 
 ```
-171.247 ms (127984 allocations: 17.59 MiB)
+96.644 ms (127984 allocations: 17.59 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.5000000007152077
@@ -405,7 +405,7 @@ opt = Opt(:LN_NELDERMEAD, 4)
 ```
 
 ```
-683.819 ms (516536 allocations: 71.02 MiB)
+376.170 ms (516536 allocations: 71.02 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  1.50000000071043
@@ -422,7 +422,7 @@ opt = Opt(:LD_SLSQP, 4)
 ```
 
 ```
-145.050 ms (94405 allocations: 14.02 MiB)
+79.093 ms (94405 allocations: 14.02 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  4.021236165439795
@@ -439,7 +439,7 @@ opt = Opt(:LN_COBYLA, 4)
 ```
 
 ```
-4.376 s (3760144 allocations: 517.13 MiB)
+2.949 s (3760144 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.6469631689746635
@@ -456,7 +456,7 @@ opt = Opt(:LN_NEWUOA_BOUND, 4)
 ```
 
 ```
-391.184 ms (154304 allocations: 21.21 MiB)
+207.810 ms (154304 allocations: 21.21 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.5487464181140709
@@ -473,7 +473,7 @@ opt = Opt(:LN_PRAXIS, 4)
 ```
 
 ```
-40.239 ms (34504 allocations: 4.73 MiB)
+21.854 ms (33752 allocations: 4.63 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  1.0
@@ -490,7 +490,7 @@ opt = Opt(:LN_SBPLX, 4)
 ```
 
 ```
-4.476 s (3760136 allocations: 517.13 MiB)
+2.552 s (3760136 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.5000005835389816
@@ -507,7 +507,7 @@ opt = Opt(:LD_MMA, 4)
 ```
 
 ```
-13.299 s (7390357 allocations: 1.20 GiB)
+7.792 s (7390357 allocations: 1.20 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.0
@@ -524,7 +524,7 @@ opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 4)
 ```
 
 ```
-2.509 ms (1246 allocations: 182.73 KiB)
+916.691 μs (1246 allocations: 182.73 KiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.5000000007280032
@@ -564,13 +564,13 @@ u0: 4-element Vector{Float64}:
 ```
 
 ```
-19.095 s (12649180 allocations: 1.65 GiB)
+11.992 s (12630879 allocations: 1.65 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.5878726376582708
- 0.9962383130734872
- 3.0640185637601616
- 5.4277303079772
+ 1.4670486089868557
+ 0.9946741245952371
+ 2.9643382317259457
+ 3.6326073812679907
 ```
 
 
@@ -581,7 +581,7 @@ opt = Opt(:GN_ORIG_DIRECT_L, 4)
 ```
 
 ```
-9.951 s (5886162 allocations: 783.86 MiB)
+5.591 s (5886162 allocations: 783.86 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  2.5514403292122063
@@ -598,13 +598,13 @@ opt = Opt(:GN_CRS2_LM, 4)
 ```
 
 ```
-59.517 s (35563786 allocations: 4.63 GiB)
+23.447 s (24841830 allocations: 3.23 GiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
-  1.500000000581569
-  1.000000000068313
-  3.000000000619071
- 10.0
+ 1.500000000577635
+ 1.000000000068373
+ 3.0000000006161507
+ 9.999999999999998
 ```
 
 
@@ -615,13 +615,13 @@ opt = Opt(:GN_ISRES, 4)
 ```
 
 ```
-241.429 s (153978747 allocations: 20.03 GiB)
+131.689 s (153965650 allocations: 20.03 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 7.563832148325737
- 3.681277825596925
- 8.318110188078109
- 2.8896712675052685
+ 5.394937056333806
+ 2.226730131378341
+ 5.541745067524684
+ 5.43411711197065
 ```
 
 
@@ -632,13 +632,13 @@ opt = Opt(:GN_ESCH, 4)
 ```
 
 ```
-102.741 s (61600130 allocations: 8.01 GiB)
+58.170 s (61600130 allocations: 8.01 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 5.9831458643091295
- 1.3666291409518858
- 7.236458364089781
- 5.037785028652224
+ 2.45502887773631
+ 0.8933793030784662
+ 3.575118445304642
+ 0.04991240058815044
 ```
 
 
@@ -670,7 +670,7 @@ opt = Opt(:LN_BOBYQA, 4)
 ```
 
 ```
-127.692 ms (127984 allocations: 17.59 MiB)
+96.939 ms (127984 allocations: 17.59 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.5000000007152077
@@ -687,7 +687,7 @@ opt = Opt(:LN_NELDERMEAD, 4)
 ```
 
 ```
-280.016 ms (203704 allocations: 28.00 MiB)
+373.066 ms (516536 allocations: 71.02 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  1.50000000071043
@@ -704,7 +704,7 @@ opt = Opt(:LD_SLSQP, 4)
 ```
 
 ```
-146.886 ms (94405 allocations: 14.02 MiB)
+79.962 ms (94405 allocations: 14.02 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  4.021236165439795

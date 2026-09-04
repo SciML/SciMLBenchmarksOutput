@@ -220,12 +220,12 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-1.348 s (2617631 allocations: 365.88 MiB)
+1.751 s (2620645 allocations: 366.29 MiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  9.999999916622633
- 28.000000321515568
-  2.660000046587143
+ 10.00000000137288
+ 27.999999486082473
+  2.6599999704500146
 ```
 
 
@@ -239,12 +239,12 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-1.390 s (2619853 allocations: 366.19 MiB)
+1.785 s (2616656 allocations: 365.72 MiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  9.999999757442136
- 28.000000707570383
-  2.660000135478594
+ 10.000000094412592
+ 27.999999047543778
+  2.6599995926426376
 ```
 
 
@@ -260,12 +260,12 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-1.949 s (2653061 allocations: 370.10 MiB)
+2.498 s (2655745 allocations: 370.47 MiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  9.999999994332546
- 28.000000422884266
-  2.6600000429486803
+  9.999999687832348
+ 28.00000120535853
+  2.6600002096972126
 ```
 
 
@@ -291,10 +291,10 @@ gToolkit.MTKParameters{Vector{Float64}, Tuple{}, Tuple{}, Tuple{}, Tuple{}}
 , SciMLBase.ODEFunction{true, SciMLBase.AutoSpecialize, ModelingToolkit.var
 "#f#1091"{RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:ˍ₋arg1, :ˍ₋a
 rg2, :t), ModelingToolkit.var"#_RGF_ModTag", ModelingToolkit.var"#_RGF_ModT
-ag", (0x5b804e26, 0x8c734199, 0x1036893b, 0x3a06ceb9, 0x52dd7f46), Nothing}
+ag", (0x55fcd638, 0xa4b1dffa, 0x72e0d70e, 0xfb4b4558, 0x9a521e2e), Nothing}
 , RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:ˍ₋out, :ˍ₋arg1, :ˍ₋a
 rg2, :t), ModelingToolkit.var"#_RGF_ModTag", ModelingToolkit.var"#_RGF_ModT
-ag", (0x48410120, 0x935b0b77, 0xcd159ff7, 0xfa9c0ee0, 0xab1662c6), Nothing}
+ag", (0x3a06fcd3, 0x7dc4b06a, 0xe87c0211, 0x324e7a66, 0xc9a86417), Nothing}
 }, LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, 
 Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, ModelingTool
 kit.ObservedFunctionCache{ModelingToolkit.ODESystem}, Nothing, ModelingTool
@@ -318,7 +318,7 @@ optprob = OptimizationProblem(obj_short, GloIniPar, lb = first.(LooserBounds), u
 ```
 
 ```
-2.349 s (3242536 allocations: 445.94 MiB)
+3.046 s (3242533 allocations: 445.93 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
  10.000000000079076
@@ -334,12 +334,12 @@ opt = Opt(:GN_CRS2_LM, 3)
 ```
 
 ```
-927.190 ms (1268536 allocations: 174.45 MiB)
+1.186 s (1253869 allocations: 172.43 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
- 10.000000000005187
- 27.999999999923652
-  2.659999999990524
+ 10.000000000009118
+ 27.999999999998092
+  2.660000000000705
 ```
 
 
@@ -350,12 +350,12 @@ opt = Opt(:GN_ISRES, 3)
 ```
 
 ```
-2.724 s (3760136 allocations: 517.13 MiB)
+3.539 s (3760136 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 10.00077933203927
- 28.00115541621933
-  2.6604947904414735
+ 10.001021461779937
+ 27.997239301716498
+  2.6593184883114214
 ```
 
 
@@ -366,12 +366,12 @@ opt = Opt(:GN_ESCH, 3)
 ```
 
 ```
-2.738 s (3760136 allocations: 517.13 MiB)
+3.518 s (3760136 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  9.816240340072179
- 28.749184057533192
-  2.7994889954171063
+  9.859821500779319
+ 28.82628160938779
+  2.8268447142490007
 ```
 
 
@@ -387,7 +387,7 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-23.036 ms (33000 allocations: 4.52 MiB)
+29.838 ms (32997 allocations: 4.52 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
  10.000000000000089
@@ -403,7 +403,7 @@ opt = Opt(:LN_NELDERMEAD, 3)
 ```
 
 ```
-75.143 ms (107448 allocations: 14.76 MiB)
+96.765 ms (107445 allocations: 14.76 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
   9.999999999999293
@@ -419,7 +419,7 @@ opt = Opt(:LD_SLSQP, 3)
 ```
 
 ```
-11.440 ms (15095 allocations: 2.53 MiB)
+15.069 ms (15092 allocations: 2.53 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
  10.000000000000107
@@ -435,7 +435,7 @@ opt = Opt(:LN_COBYLA, 3)
 ```
 
 ```
-140.887 ms (201072 allocations: 27.64 MiB)
+182.355 ms (201069 allocations: 27.63 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
   9.999999999998614
@@ -451,7 +451,7 @@ opt = Opt(:LN_NEWUOA_BOUND, 3)
 ```
 
 ```
-58.726 ms (56168 allocations: 7.71 MiB)
+78.031 ms (56168 allocations: 7.71 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
  10.000004314773646
@@ -467,12 +467,12 @@ opt = Opt(:LN_PRAXIS, 3)
 ```
 
 ```
-19.656 ms (33406 allocations: 4.86 MiB)
+25.483 ms (33291 allocations: 4.73 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
- 10.000000000001114
- 27.999999999998842
-  2.659999999999909
+ 10.988633695924607
+ 22.384103753086976
+  2.08281826791404
 ```
 
 
@@ -483,7 +483,7 @@ opt = Opt(:LN_SBPLX, 3)
 ```
 
 ```
-265.798 ms (379664 allocations: 52.20 MiB)
+345.645 ms (379661 allocations: 52.20 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
  10.000000000017945
@@ -499,7 +499,7 @@ opt = Opt(:LD_MMA, 3)
 ```
 
 ```
-98.046 ms (126129 allocations: 21.78 MiB)
+129.070 ms (126124 allocations: 21.77 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
   9.999999999980686
@@ -515,7 +515,7 @@ opt = Opt(:LD_LBFGS, 3)
 ```
 
 ```
-13.801 ms (17881 allocations: 3.08 MiB)
+18.100 ms (17881 allocations: 3.08 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
  10.000000000000492
@@ -531,7 +531,7 @@ opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 3)
 ```
 
 ```
-15.593 ms (20316 allocations: 3.49 MiB)
+20.504 ms (20314 allocations: 3.48 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
  10.000000000000087
@@ -562,12 +562,12 @@ optprob = OptimizationProblem(obj, GloIniPar, lb = first.(LooserBounds), ub = la
 ```
 
 ```
-11.063 s (12618356 allocations: 1.64 GiB)
+14.412 s (12606084 allocations: 1.64 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 10.000052374694805
- 28.000359575038253
-  2.6599887386548935
+  9.999403275889751
+ 28.002885307422893
+  2.661156623361935
 ```
 
 
@@ -585,7 +585,7 @@ opt = Opt(:GN_ORIG_DIRECT_L, 3)
 ```
 
 ```
-17.382 s (19943282 allocations: 2.59 GiB)
+22.738 s (19943279 allocations: 2.59 GiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
  10.000000041311779
@@ -601,12 +601,12 @@ opt = Opt(:GN_CRS2_LM, 3)
 ```
 
 ```
-9.205 s (10509242 allocations: 1.37 GiB)
+11.391 s (9902479 allocations: 1.29 GiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
-  9.999999999986507
- 28.000000000038415
-  2.6599999999966535
+  9.999999999978652
+ 28.000000000033936
+  2.6599999999854327
 ```
 
 
@@ -617,12 +617,12 @@ opt = Opt(:GN_ISRES, 3)
 ```
 
 ```
-84.127 s (97121914 allocations: 12.63 GiB)
+114.469 s (101101271 allocations: 13.15 GiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
-  9.999999999985585
- 28.000000000016094
-  2.6600000000092883
+  9.999999999993447
+ 28.000000000021924
+  2.660000000001818
 ```
 
 
@@ -633,12 +633,12 @@ opt = Opt(:GN_ESCH, 3)
 ```
 
 ```
-53.258 s (61600130 allocations: 8.01 GiB)
+69.856 s (61600130 allocations: 8.01 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 10.073141664514013
- 27.891213914390793
-  2.588163596912657
+  9.858433151134728
+ 28.457975206531952
+  2.759585139757222
 ```
 
 
@@ -654,7 +654,7 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-23.390 ms (33000 allocations: 4.52 MiB)
+29.817 ms (32997 allocations: 4.52 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
  10.000000000000089
@@ -670,7 +670,7 @@ opt = Opt(:LN_NELDERMEAD, 3)
 ```
 
 ```
-75.202 ms (107448 allocations: 14.76 MiB)
+97.046 ms (107445 allocations: 14.76 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
   9.999999999999293
@@ -686,7 +686,7 @@ opt = Opt(:LD_SLSQP, 3)
 ```
 
 ```
-11.498 ms (15095 allocations: 2.53 MiB)
+15.081 ms (15092 allocations: 2.53 MiB)
 retcode: Failure
 u: 3-element Vector{Float64}:
  10.000000000000107
@@ -736,7 +736,6 @@ Platform Info:
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
-  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
 
 ```
@@ -744,7 +743,7 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Project.toml`
 ⌃ [6e4b80f9] BenchmarkTools v1.6.0
 ⌃ [a134a8b2] BlackBoxOptim v0.6.3
 ⌃ [1130ab10] DiffEqParamEstim v2.2.0
@@ -767,7 +766,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.12.1
   [1520ce14] AbstractTrees v0.4.5
 ⌃ [7d9f7c33] Accessors v0.1.41
