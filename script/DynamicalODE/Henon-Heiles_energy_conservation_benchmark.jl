@@ -1,3 +1,4 @@
+
 using OrdinaryDiffEq, Plots, DiffEqCallbacks
 using OrdinaryDiffEqRKN, OrdinaryDiffEqSymplecticRK
 using OrdinaryDiffEqTaylorSeries
@@ -6,31 +7,31 @@ using TaylorIntegration, LinearAlgebra, StaticArrays
 gr(fmt = :png)
 default(fmt = :png)
 
-T(p) = 1 // 2 * norm(p)^2
-V(q) = 1 // 2 * (q[1]^2 + q[2]^2 + 2q[1]^2 * q[2] - 2 // 3 * q[2]^3)
+T(p) = 1//2 * norm(p)^2
+V(q) = 1//2 * (q[1]^2 + q[2]^2 + 2q[1]^2 * q[2]-2//3 * q[2]^3)
 H(p, q, params) = T(p) + V(q)
 
 function iip_dq(dq, p, q, params, t)
     dq[1] = p[1]
-    return dq[2] = p[2]
+    dq[2] = p[2]
 end
 
 function iip_dp(dp, p, q, params, t)
     dp[1] = -q[1] * (1 + 2q[2])
-    return dp[2] = -q[2] - (q[1]^2 - q[2]^2)
+    dp[2] = -q[2] - (q[1]^2 - q[2]^2)
 end
 
 const iip_q0 = [0.1, 0.0]
 const iip_p0 = [0.0, 0.5]
 
 function oop_dq(p, q, params, t)
-    return p
+    p
 end
 
 function oop_dp(p, q, params, t)
     dp1 = -q[1] * (1 + 2q[2])
     dp2 = -q[2] - (q[1]^2 - q[2]^2)
-    return @SVector [dp1, dp2]
+    @SVector [dp1, dp2]
 end
 
 const oop_q0 = @SVector [0.1, 0.0]
@@ -64,7 +65,7 @@ end
 
 function g(resid, u, p)
     resid[1] = H([u[1], u[2]], [u[3], u[4]], nothing) - E
-    return resid[2:4] .= 0
+    resid[2:4] .= 0
 end
 
 function g_jacobian(J, u, p)
@@ -72,25 +73,23 @@ function g_jacobian(J, u, p)
     J[1, 2] = u[2]
     J[1, 3] = u[3]
     J[1, 4] = u[4]
-    return J[2:4, :] .= 0
+    J[2:4, :] .= 0
 end
 
-const cb = ManifoldProjection(g, manifold_jacobian = g_jacobian, nlopts = Dict(:ftol => 1.0e-13))
+const cb = ManifoldProjection(g, manifold_jacobian = g_jacobian, nlopts = Dict(:ftol => 1e-13))
 
 const E = H(iip_p0, iip_q0, nothing)
 
 
 function energy_err(sol)
-    return map(i -> H([sol[1, i], sol[2, i]], [sol[3, i], sol[4, i]], nothing) - E, 1:length(sol.u))
+    map(i -> H([sol[1, i], sol[2, i]], [sol[3, i], sol[4, i]], nothing) - E, 1:length(sol.u))
 end
 function abs_energy_err(sol)
-    return [
-        abs.(H([sol[1, j], sol[2, j]], [sol[3, j], sol[4, j]], nothing) - E)
-            for j in 1:length(sol.u)
-    ]
+    [abs.(H([sol[1, j], sol[2, j]], [sol[3, j], sol[4, j]], nothing) - E)
+     for j in 1:length(sol.u)]
 end
 
-function compare(mode = :inplace, all = true, plt = nothing; tmax = 1.0e2)
+function compare(mode = :inplace, all = true, plt = nothing; tmax = 1e2)
     if mode == :inplace
         prob = DynamicalODEProblem(iip_dp, iip_dq, iip_p0, iip_q0, (0.0, tmax))
     else
@@ -98,8 +97,7 @@ function compare(mode = :inplace, all = true, plt = nothing; tmax = 1.0e2)
     end
     prob_linear = ODEProblem(hamilton, vcat(iip_p0, iip_q0), (0.0, tmax))
     prob_taylor = ODEProblem{true, SciMLBase.FullSpecialize}(
-        hamilton_taylor!, vcat(iip_p0, iip_q0), (0.0, tmax)
-    )
+        hamilton_taylor!, vcat(iip_p0, iip_q0), (0.0, tmax))
 
     # Cap saved points so energy-error plots stay CI-friendly. Default
     # save_everystep+dense at tmax=5e4 stores ~5e6 states per symplectic
@@ -111,32 +109,26 @@ function compare(mode = :inplace, all = true, plt = nothing; tmax = 1.0e2)
 
     GC.gc()
     (mode == :inplace && all) &&
-        @time sol1 = solve(
-        prob, Vern9(), callback = cb, abstol = 1.0e-14, reltol = 1.0e-14;
-        common...
-    )
+        @time sol1 = solve(prob, Vern9(), callback = cb, abstol = 1e-14, reltol = 1e-14;
+            common...)
     GC.gc()
-    @time sol2 = solve(prob, KahanLi8(), dt = 1.0e-2, maxiters = 1.0e7; common...)
+    @time sol2 = solve(prob, KahanLi8(), dt = 1e-2, maxiters = 1e7; common...)
     GC.gc()
-    @time sol3 = solve(prob, SofSpa10(), dt = 1.0e-2, maxiters = 1.0e7; common...)
+    @time sol3 = solve(prob, SofSpa10(), dt = 1e-2, maxiters = 1e7; common...)
     GC.gc()
-    @time sol4 = solve(prob, Vern9(), abstol = 1.0e-14, reltol = 1.0e-14; common...)
+    @time sol4 = solve(prob, Vern9(), abstol = 1e-14, reltol = 1e-14; common...)
     GC.gc()
-    @time sol5 = solve(prob, DPRKN12(), abstol = 1.0e-14, reltol = 1.0e-14; common...)
+    @time sol5 = solve(prob, DPRKN12(), abstol = 1e-14, reltol = 1e-14; common...)
     GC.gc()
     (mode == :inplace && all) &&
-        @time sol6 = solve(prob_linear, TaylorMethod(50), abstol = 1.0e-20; common...)
+        @time sol6 = solve(prob_linear, TaylorMethod(50), abstol = 1e-20; common...)
     GC.gc()
     (mode == :inplace && all) &&
-        @time sol7 = solve(
-        prob_taylor, ExplicitTaylor(order = Val(8)),
-        abstol = 1.0e-14, reltol = 1.0e-14; common...
-    )
+        @time sol7 = solve(prob_taylor, ExplicitTaylor(order = Val(8)),
+            abstol = 1e-14, reltol = 1e-14; common...)
 
-    (mode == :inplace && all) && println(
-        "Vern9 + ManifoldProjection max energy error:\t" *
-            "$(maximum(abs_energy_err(sol1)))\tin\t$(length(sol1.u))\tsteps."
-    )
+    (mode == :inplace && all) && println("Vern9 + ManifoldProjection max energy error:\t" *
+            "$(maximum(abs_energy_err(sol1)))\tin\t$(length(sol1.u))\tsteps.")
     println("KahanLi8 max energy error:\t\t\t$(maximum(abs_energy_err(sol2)))\tin\t$(length(sol2.u))\tsteps.")
     println("SofSpa10 max energy error:\t\t\t$(maximum(abs_energy_err(sol3)))\tin\t$(length(sol3.u))\tsteps.")
     println("Vern9 max energy error:\t\t\t\t$(maximum(abs_energy_err(sol4)))\tin\t$(length(sol4.u))\tsteps.")
@@ -151,19 +143,13 @@ function compare(mode = :inplace, all = true, plt = nothing; tmax = 1.0e2)
     end
     (mode == :inplace && all) &&
         plot!(sol1.t, energy_err(sol1), label = "Vern9 + ManifoldProjection")
-    plot!(
-        sol2.t, energy_err(sol2), label = "KahanLi8", ls = mode == :inplace ? :solid :
-            :dash
-    )
-    plot!(
-        sol3.t, energy_err(sol3), label = "SofSpa10", ls = mode == :inplace ? :solid :
-            :dash
-    )
+    plot!(sol2.t, energy_err(sol2), label = "KahanLi8", ls = mode == :inplace ? :solid :
+                                                             :dash)
+    plot!(sol3.t, energy_err(sol3), label = "SofSpa10", ls = mode == :inplace ? :solid :
+                                                             :dash)
     plot!(sol4.t, energy_err(sol4), label = "Vern9", ls = mode == :inplace ? :solid : :dash)
-    plot!(
-        sol5.t, energy_err(sol5), label = "DPRKN12", ls = mode == :inplace ? :solid :
-            :dash
-    )
+    plot!(sol5.t, energy_err(sol5), label = "DPRKN12", ls = mode == :inplace ? :solid :
+                                                            :dash)
     (mode == :inplace && all) && plot!(sol6.t, energy_err(sol6), label = "TaylorMethod")
     (mode == :inplace && all) && plot!(sol7.t, energy_err(sol7), label = "ExplicitTaylor")
 
@@ -171,34 +157,35 @@ function compare(mode = :inplace, all = true, plt = nothing; tmax = 1.0e2)
 end
 
 
-compare(tmax = 1.0e2)
+compare(tmax = 1e2)
 
 
-compare(tmax = 1.0e3)
+compare(tmax = 1e3)
 
 
 # Long-horizon comparison without Taylor / ExplicitTaylor / ManifoldProjection
 # (those are the expensive paths; energy-trend story is carried by the symplectic
 # and high-order RK methods already).
-compare(:inplace, false; tmax = 1.0e4)
+compare(:inplace, false; tmax = 1e4)
 
 
-function in_vs_out(; all = false, tmax = 1.0e2)
+function in_vs_out(; all = false, tmax = 1e2)
     println("In place versions:")
     plt = compare(:inplace, all, tmax = tmax)
     println("\nOut of place versions:")
-    return plt = compare(:oop, false, plt; tmax = tmax)
+    plt = compare(:oop, false, plt; tmax = tmax)
 end
 
 
-in_vs_out(all = true, tmax = 1.0e2)
+in_vs_out(all = true, tmax = 1e2)
 
 
-in_vs_out(tmax = 1.0e2)
+in_vs_out(tmax = 1e2)
 
 
-in_vs_out(tmax = 1.0e3)
+in_vs_out(tmax = 1e3)
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
