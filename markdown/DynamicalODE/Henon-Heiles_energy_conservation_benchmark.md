@@ -25,45 +25,52 @@ using TaylorIntegration, LinearAlgebra, StaticArrays
 gr(fmt = :png)
 default(fmt = :png)
 
-T(p) = 1//2 * norm(p)^2
-V(q) = 1//2 * (q[1]^2 + q[2]^2 + 2q[1]^2 * q[2]-2//3 * q[2]^3)
+T(p) = 1 // 2 * norm(p)^2
+V(q) = 1 // 2 * (q[1]^2 + q[2]^2 + 2q[1]^2 * q[2] - 2 // 3 * q[2]^3)
 H(p, q, params) = T(p) + V(q)
 
 function iip_dq(dq, p, q, params, t)
     dq[1] = p[1]
-    dq[2] = p[2]
+    return dq[2] = p[2]
 end
 
 function iip_dp(dp, p, q, params, t)
     dp[1] = -q[1] * (1 + 2q[2])
-    dp[2] = -q[2] - (q[1]^2 - q[2]^2)
+    return dp[2] = -q[2] - (q[1]^2 - q[2]^2)
 end
 
 const iip_q0 = [0.1, 0.0]
 const iip_p0 = [0.0, 0.5]
 
 function oop_dq(p, q, params, t)
-    p
+    return p
 end
 
 function oop_dp(p, q, params, t)
     dp1 = -q[1] * (1 + 2q[2])
     dp2 = -q[2] - (q[1]^2 - q[2]^2)
-    @SVector [dp1, dp2]
+    return @SVector [dp1, dp2]
 end
 
 const oop_q0 = @SVector [0.1, 0.0]
 const oop_p0 = @SVector [0.0, 0.5]
 
 function hamilton(du, u, p, t)
-    dq, q = @views u[3:4], du[3:4]
-    dp, p = @views u[1:2], du[1:2]
+    dq, q = @views du[3:4], u[3:4]
+    dp, p = @views du[1:2], u[1:2]
 
     dp[1] = -q[1] * (1 + 2q[2])
     dp[2] = -q[2] - (q[1]^2 - q[2]^2)
     dq .= p
 
     return nothing
+end
+
+let u = vcat(iip_p0, iip_q0), du = fill(NaN, 4)
+    u_before = copy(u)
+    hamilton(du, u, nothing, 0.0)
+    @assert u == u_before "hamilton must not mutate its input state"
+    @assert du ≈ [-0.1, -0.01, 0.0, 0.5] "hamilton returned an incorrect derivative"
 end
 
 function hamilton_taylor!(du, u, p, t)
@@ -76,7 +83,7 @@ end
 
 function g(resid, u, p)
     resid[1] = H([u[1], u[2]], [u[3], u[4]], nothing) - E
-    resid[2:4] .= 0
+    return resid[2:4] .= 0
 end
 
 function g_jacobian(J, u, p)
@@ -84,10 +91,10 @@ function g_jacobian(J, u, p)
     J[1, 2] = u[2]
     J[1, 3] = u[3]
     J[1, 4] = u[4]
-    J[2:4, :] .= 0
+    return J[2:4, :] .= 0
 end
 
-const cb = ManifoldProjection(g, manifold_jacobian = g_jacobian, nlopts = Dict(:ftol => 1e-13))
+const cb = ManifoldProjection(g, manifold_jacobian = g_jacobian, nlopts = Dict(:ftol => 1.0e-13))
 
 const E = H(iip_p0, iip_q0, nothing)
 ```
@@ -104,14 +111,16 @@ For the comparison we will use the following function
 
 ```julia
 function energy_err(sol)
-    map(i -> H([sol[1, i], sol[2, i]], [sol[3, i], sol[4, i]], nothing) - E, 1:length(sol.u))
+    return map(i -> H([sol[1, i], sol[2, i]], [sol[3, i], sol[4, i]], nothing) - E, 1:length(sol.u))
 end
 function abs_energy_err(sol)
-    [abs.(H([sol[1, j], sol[2, j]], [sol[3, j], sol[4, j]], nothing) - E)
-     for j in 1:length(sol.u)]
+    return [
+        abs.(H([sol[1, j], sol[2, j]], [sol[3, j], sol[4, j]], nothing) - E)
+            for j in 1:length(sol.u)
+    ]
 end
 
-function compare(mode = :inplace, all = true, plt = nothing; tmax = 1e2)
+function compare(mode = :inplace, all = true, plt = nothing; tmax = 1.0e2)
     if mode == :inplace
         prob = DynamicalODEProblem(iip_dp, iip_dq, iip_p0, iip_q0, (0.0, tmax))
     else
@@ -119,7 +128,8 @@ function compare(mode = :inplace, all = true, plt = nothing; tmax = 1e2)
     end
     prob_linear = ODEProblem(hamilton, vcat(iip_p0, iip_q0), (0.0, tmax))
     prob_taylor = ODEProblem{true, SciMLBase.FullSpecialize}(
-        hamilton_taylor!, vcat(iip_p0, iip_q0), (0.0, tmax))
+        hamilton_taylor!, vcat(iip_p0, iip_q0), (0.0, tmax)
+    )
 
     # Cap saved points so energy-error plots stay CI-friendly. Default
     # save_everystep+dense at tmax=5e4 stores ~5e6 states per symplectic
@@ -131,26 +141,32 @@ function compare(mode = :inplace, all = true, plt = nothing; tmax = 1e2)
 
     GC.gc()
     (mode == :inplace && all) &&
-        @time sol1 = solve(prob, Vern9(), callback = cb, abstol = 1e-14, reltol = 1e-14;
-            common...)
+        @time sol1 = solve(
+        prob, Vern9(), callback = cb, abstol = 1.0e-14, reltol = 1.0e-14;
+        common...
+    )
     GC.gc()
-    @time sol2 = solve(prob, KahanLi8(), dt = 1e-2, maxiters = 1e7; common...)
+    @time sol2 = solve(prob, KahanLi8(), dt = 1.0e-2, maxiters = 1.0e7; common...)
     GC.gc()
-    @time sol3 = solve(prob, SofSpa10(), dt = 1e-2, maxiters = 1e7; common...)
+    @time sol3 = solve(prob, SofSpa10(), dt = 1.0e-2, maxiters = 1.0e7; common...)
     GC.gc()
-    @time sol4 = solve(prob, Vern9(), abstol = 1e-14, reltol = 1e-14; common...)
+    @time sol4 = solve(prob, Vern9(), abstol = 1.0e-14, reltol = 1.0e-14; common...)
     GC.gc()
-    @time sol5 = solve(prob, DPRKN12(), abstol = 1e-14, reltol = 1e-14; common...)
+    @time sol5 = solve(prob, DPRKN12(), abstol = 1.0e-14, reltol = 1.0e-14; common...)
     GC.gc()
     (mode == :inplace && all) &&
-        @time sol6 = solve(prob_linear, TaylorMethod(50), abstol = 1e-20; common...)
+        @time sol6 = solve(prob_linear, TaylorMethod(50), abstol = 1.0e-20; common...)
     GC.gc()
     (mode == :inplace && all) &&
-        @time sol7 = solve(prob_taylor, ExplicitTaylor(order = Val(8)),
-            abstol = 1e-14, reltol = 1e-14; common...)
+        @time sol7 = solve(
+        prob_taylor, ExplicitTaylor(order = Val(8)),
+        abstol = 1.0e-14, reltol = 1.0e-14; common...
+    )
 
-    (mode == :inplace && all) && println("Vern9 + ManifoldProjection max energy error:\t" *
-            "$(maximum(abs_energy_err(sol1)))\tin\t$(length(sol1.u))\tsteps.")
+    (mode == :inplace && all) && println(
+        "Vern9 + ManifoldProjection max energy error:\t" *
+            "$(maximum(abs_energy_err(sol1)))\tin\t$(length(sol1.u))\tsteps."
+    )
     println("KahanLi8 max energy error:\t\t\t$(maximum(abs_energy_err(sol2)))\tin\t$(length(sol2.u))\tsteps.")
     println("SofSpa10 max energy error:\t\t\t$(maximum(abs_energy_err(sol3)))\tin\t$(length(sol3.u))\tsteps.")
     println("Vern9 max energy error:\t\t\t\t$(maximum(abs_energy_err(sol4)))\tin\t$(length(sol4.u))\tsteps.")
@@ -165,13 +181,19 @@ function compare(mode = :inplace, all = true, plt = nothing; tmax = 1e2)
     end
     (mode == :inplace && all) &&
         plot!(sol1.t, energy_err(sol1), label = "Vern9 + ManifoldProjection")
-    plot!(sol2.t, energy_err(sol2), label = "KahanLi8", ls = mode == :inplace ? :solid :
-                                                             :dash)
-    plot!(sol3.t, energy_err(sol3), label = "SofSpa10", ls = mode == :inplace ? :solid :
-                                                             :dash)
+    plot!(
+        sol2.t, energy_err(sol2), label = "KahanLi8", ls = mode == :inplace ? :solid :
+            :dash
+    )
+    plot!(
+        sol3.t, energy_err(sol3), label = "SofSpa10", ls = mode == :inplace ? :solid :
+            :dash
+    )
     plot!(sol4.t, energy_err(sol4), label = "Vern9", ls = mode == :inplace ? :solid : :dash)
-    plot!(sol5.t, energy_err(sol5), label = "DPRKN12", ls = mode == :inplace ? :solid :
-                                                            :dash)
+    plot!(
+        sol5.t, energy_err(sol5), label = "DPRKN12", ls = mode == :inplace ? :solid :
+            :dash
+    )
     (mode == :inplace && all) && plot!(sol6.t, energy_err(sol6), label = "TaylorMethod")
     (mode == :inplace && all) && plot!(sol7.t, energy_err(sol7), label = "ExplicitTaylor")
 
@@ -201,23 +223,23 @@ Note:
 Here are the results of the comparisons between the in place methods:
 
 ```julia
-compare(tmax = 1e2)
+compare(tmax = 1.0e2)
 ```
 
 ```
-51.993130 seconds (181.73 M allocations: 9.034 GiB, 10.10% gc time, 99.98%
- compilation time: <1% of which was recompilation)
-  2.320229 seconds (5.22 M allocations: 281.234 MiB, 2.63% gc time, 99.79% 
+50.665845 seconds (181.74 M allocations: 9.034 GiB, 9.32% gc time, 99.98%
+compilation time: <1% of which was recompilation)
+  2.340924 seconds (5.22 M allocations: 281.323 MiB, 3.11% gc time, 99.79%
 compilation time)
-  1.567810 seconds (2.86 M allocations: 160.915 MiB, 99.49% compilation tim
+  1.529030 seconds (2.86 M allocations: 160.924 MiB, 99.48% compilation tim
 e)
- 17.032029 seconds (68.51 M allocations: 3.503 GiB, 7.35% gc time, 99.98% c
+ 16.641851 seconds (68.51 M allocations: 3.503 GiB, 7.12% gc time, 99.98% c
 ompilation time)
-  4.494867 seconds (5.99 M allocations: 322.542 MiB, 1.68% gc time, 99.97% 
+  4.388924 seconds (5.99 M allocations: 322.539 MiB, 1.44% gc time, 99.97%
 compilation time)
-  3.684877 seconds (7.53 M allocations: 538.769 MiB, 3.12% gc time, 98.39% 
+  3.562111 seconds (7.59 M allocations: 530.833 MiB, 3.31% gc time, 98.93%
 compilation time)
- 17.792946 seconds (18.94 M allocations: 1014.560 MiB, 1.52% gc time, 99.66
+ 17.342643 seconds (18.95 M allocations: 1014.561 MiB, 1.48% gc time, 99.68
 % compilation time: 13% of which was recompilation)
 Vern9 + ManifoldProjection max energy error:	1.582067810090848e-15	in	1040	
 steps.
@@ -225,7 +247,7 @@ KahanLi8 max energy error:			4.718447854656915e-15	in	101	steps.
 SofSpa10 max energy error:			5.2735593669694936e-15	in	101	steps.
 Vern9 max energy error:				1.582067810090848e-15	in	101	steps.
 DPRKN12 max energy error:			8.907745017716628e-6	in	101	steps.
-TaylorMethod max energy error:			0.13	in	101	steps.
+TaylorMethod max energy error:			1.942890293094024e-16	in	101	steps.
 ExplicitTaylor max energy error:			1.1574075031717257e-14	in	101	steps.
 ```
 
@@ -233,17 +255,17 @@ ExplicitTaylor max energy error:			1.1574075031717257e-14	in	101	steps.
 ![](figures/Henon-Heiles_energy_conservation_benchmark_3_1.png)
 
 ```julia
-compare(tmax = 1e3)
+compare(tmax = 1.0e3)
 ```
 
 ```
-0.065642 seconds (412.05 k allocations: 28.735 MiB)
-  0.040749 seconds (4.11 k allocations: 217.148 KiB)
-  0.073663 seconds (4.11 k allocations: 219.508 KiB)
-  0.029500 seconds (85.48 k allocations: 2.604 MiB)
-  0.004669 seconds (19.35 k allocations: 526.367 KiB)
-  0.939029 seconds (1.41 M allocations: 517.331 MiB, 37.80% gc time)
-  0.161279 seconds (1.15 M allocations: 40.656 MiB, 12.11% compilation time
+0.058011 seconds (412.05 k allocations: 28.735 MiB)
+  0.040454 seconds (4.11 k allocations: 217.148 KiB)
+  0.075260 seconds (4.11 k allocations: 219.508 KiB)
+  0.028766 seconds (85.48 k allocations: 2.604 MiB)
+  0.004731 seconds (19.35 k allocations: 526.367 KiB)
+  0.703193 seconds (1.96 M allocations: 437.872 MiB, 37.81% gc time)
+  0.158457 seconds (1.15 M allocations: 40.656 MiB, 12.68% compilation time
 )
 Vern9 + ManifoldProjection max energy error:	5.245803791353865e-15	in	10330
 	steps.
@@ -251,7 +273,7 @@ KahanLi8 max energy error:			1.8096635301390052e-14	in	1001	steps.
 SofSpa10 max energy error:			2.7533531010703882e-14	in	1001	steps.
 Vern9 max energy error:				5.245803791353865e-15	in	1001	steps.
 DPRKN12 max energy error:			1.1619405128227012e-5	in	1001	steps.
-TaylorMethod max energy error:			0.13	in	1001	steps.
+TaylorMethod max energy error:			3.885780586188048e-16	in	1001	steps.
 ExplicitTaylor max energy error:			7.846501226538294e-14	in	1001	steps.
 ```
 
@@ -262,14 +284,14 @@ ExplicitTaylor max energy error:			7.846501226538294e-14	in	1001	steps.
 # Long-horizon comparison without Taylor / ExplicitTaylor / ManifoldProjection
 # (those are the expensive paths; energy-trend story is carried by the symplectic
 # and high-order RK methods already).
-compare(:inplace, false; tmax = 1e4)
+compare(:inplace, false; tmax = 1.0e4)
 ```
 
 ```
-0.403435 seconds (4.11 k allocations: 217.148 KiB)
-  0.723685 seconds (4.11 k allocations: 219.508 KiB)
-  0.240960 seconds (421.02 k allocations: 9.004 MiB)
-  0.035866 seconds (155.45 k allocations: 3.110 MiB)
+0.397929 seconds (4.11 k allocations: 217.148 KiB)
+  0.730265 seconds (4.11 k allocations: 219.508 KiB)
+  0.236338 seconds (421.02 k allocations: 9.004 MiB)
+  0.035302 seconds (155.45 k allocations: 3.110 MiB)
 KahanLi8 max energy error:			3.1002977962657496e-14	in	1001	steps.
 SofSpa10 max energy error:			1.1304845948245656e-13	in	1001	steps.
 Vern9 max energy error:				4.421463195569686e-14	in	1001	steps.
@@ -292,11 +314,11 @@ We will now compare the in place with the out of place versions. In the plots be
 a dashed line for the out of place versions.
 
 ```julia
-function in_vs_out(; all = false, tmax = 1e2)
+function in_vs_out(; all = false, tmax = 1.0e2)
     println("In place versions:")
     plt = compare(:inplace, all, tmax = tmax)
     println("\nOut of place versions:")
-    plt = compare(:oop, false, plt; tmax = tmax)
+    return plt = compare(:oop, false, plt; tmax = tmax)
 end
 ```
 
@@ -312,35 +334,35 @@ First, here is a summary of all the available methods for `tmax = 1e2`
 (kept short so Taylor / ExplicitTaylor stay in the CI budget):
 
 ```julia
-in_vs_out(all = true, tmax = 1e2)
+in_vs_out(all = true, tmax = 1.0e2)
 ```
 
 ```
 In place versions:
-  0.006207 seconds (41.63 k allocations: 2.923 MiB)
-  0.004293 seconds (500 allocations: 28.594 KiB)
-  0.007543 seconds (500 allocations: 30.953 KiB)
-  0.003218 seconds (8.72 k allocations: 275.797 KiB)
-  0.000635 seconds (2.13 k allocations: 72.031 KiB)
-  0.058640 seconds (140.77 k allocations: 51.745 MiB)
-  0.014677 seconds (115.18 k allocations: 4.050 MiB)
+  0.006307 seconds (41.63 k allocations: 2.923 MiB)
+  0.004110 seconds (500 allocations: 28.594 KiB)
+  0.007607 seconds (500 allocations: 30.953 KiB)
+  0.003267 seconds (8.72 k allocations: 275.797 KiB)
+  0.000614 seconds (2.13 k allocations: 72.031 KiB)
+  0.038281 seconds (195.91 k allocations: 43.768 MiB)
+  0.014760 seconds (115.18 k allocations: 4.050 MiB)
 Vern9 + ManifoldProjection max energy error:	1.582067810090848e-15	in	1040	
 steps.
 KahanLi8 max energy error:			4.718447854656915e-15	in	101	steps.
 SofSpa10 max energy error:			5.2735593669694936e-15	in	101	steps.
 Vern9 max energy error:				1.582067810090848e-15	in	101	steps.
 DPRKN12 max energy error:			8.907745017716628e-6	in	101	steps.
-TaylorMethod max energy error:			0.13	in	101	steps.
+TaylorMethod max energy error:			1.942890293094024e-16	in	101	steps.
 ExplicitTaylor max energy error:			1.1574075031717257e-14	in	101	steps.
 
 Out of place versions:
-  1.605208 seconds (3.17 M allocations: 171.718 MiB, 99.87% compilation tim
+  1.587948 seconds (3.17 M allocations: 171.809 MiB, 99.88% compilation tim
 e)
-  0.770549 seconds (1.55 M allocations: 89.750 MiB, 99.57% compilation time
+  0.753322 seconds (1.55 M allocations: 89.792 MiB, 99.52% compilation time
 )
-  1.695900 seconds (4.27 M allocations: 209.709 MiB, 99.97% compilation tim
+  1.662981 seconds (4.28 M allocations: 209.675 MiB, 99.97% compilation tim
 e)
-  1.046398 seconds (1.94 M allocations: 107.050 MiB, 99.97% compilation tim
+  1.021152 seconds (1.94 M allocations: 107.050 MiB, 99.97% compilation tim
 e)
 KahanLi8 max energy error:			4.718447854656915e-15	in	101	steps.
 SofSpa10 max energy error:			5.2735593669694936e-15	in	101	steps.
@@ -357,25 +379,25 @@ Now we will compare the in place and the out of place versions, but only for the
 that are compatible with `StaticArrays`
 
 ```julia
-in_vs_out(tmax = 1e2)
+in_vs_out(tmax = 1.0e2)
 ```
 
 ```
 In place versions:
-  0.004253 seconds (500 allocations: 28.594 KiB)
-  0.007433 seconds (500 allocations: 30.953 KiB)
-  0.003125 seconds (8.72 k allocations: 275.797 KiB)
-  0.000650 seconds (2.13 k allocations: 72.031 KiB)
+  0.004188 seconds (500 allocations: 28.594 KiB)
+  0.007502 seconds (500 allocations: 30.953 KiB)
+  0.003240 seconds (8.72 k allocations: 275.797 KiB)
+  0.000619 seconds (2.13 k allocations: 72.031 KiB)
 KahanLi8 max energy error:			4.718447854656915e-15	in	101	steps.
 SofSpa10 max energy error:			5.2735593669694936e-15	in	101	steps.
 Vern9 max energy error:				1.582067810090848e-15	in	101	steps.
 DPRKN12 max energy error:			8.907745017716628e-6	in	101	steps.
 
 Out of place versions:
-  0.001847 seconds (31 allocations: 9.820 KiB)
-  0.003274 seconds (31 allocations: 10.633 KiB)
-  0.000311 seconds (32 allocations: 10.633 KiB)
-  0.000238 seconds (31 allocations: 13.289 KiB)
+  0.001811 seconds (31 allocations: 9.820 KiB)
+  0.003593 seconds (31 allocations: 10.633 KiB)
+  0.000312 seconds (32 allocations: 10.633 KiB)
+  0.000235 seconds (31 allocations: 13.289 KiB)
 KahanLi8 max energy error:			4.718447854656915e-15	in	101	steps.
 SofSpa10 max energy error:			5.2735593669694936e-15	in	101	steps.
 Vern9 max energy error:				1.7208456881689926e-15	in	101	steps.
@@ -386,25 +408,25 @@ DPRKN12 max energy error:			9.8759620552058e-6	in	101	steps.
 ![](figures/Henon-Heiles_energy_conservation_benchmark_8_1.png)
 
 ```julia
-in_vs_out(tmax = 1e3)
+in_vs_out(tmax = 1.0e3)
 ```
 
 ```
 In place versions:
-  0.041639 seconds (4.11 k allocations: 217.148 KiB)
-  0.074607 seconds (4.11 k allocations: 219.508 KiB)
-  0.029668 seconds (85.48 k allocations: 2.604 MiB)
-  0.004459 seconds (19.35 k allocations: 526.367 KiB)
+  0.040857 seconds (4.11 k allocations: 217.148 KiB)
+  0.073841 seconds (4.11 k allocations: 219.508 KiB)
+  0.028945 seconds (85.48 k allocations: 2.604 MiB)
+  0.004505 seconds (19.35 k allocations: 526.367 KiB)
 KahanLi8 max energy error:			1.8096635301390052e-14	in	1001	steps.
 SofSpa10 max energy error:			2.7533531010703882e-14	in	1001	steps.
 Vern9 max energy error:				5.245803791353865e-15	in	1001	steps.
 DPRKN12 max energy error:			1.1619405128227012e-5	in	1001	steps.
 
 Out of place versions:
-  0.018004 seconds (37 allocations: 71.914 KiB)
-  0.032384 seconds (37 allocations: 72.727 KiB)
-  0.002759 seconds (38 allocations: 72.727 KiB)
-  0.001834 seconds (37 allocations: 75.383 KiB)
+  0.019041 seconds (37 allocations: 71.914 KiB)
+  0.034527 seconds (37 allocations: 72.727 KiB)
+  0.002782 seconds (38 allocations: 72.727 KiB)
+  0.001836 seconds (37 allocations: 75.383 KiB)
 KahanLi8 max energy error:			1.8096635301390052e-14	in	1001	steps.
 SofSpa10 max energy error:			2.7533531010703882e-14	in	1001	steps.
 Vern9 max energy error:				5.800915303666443e-15	in	1001	steps.
@@ -429,7 +451,6 @@ The benchmarks were performed on a machine with
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
 
 To locally run this benchmark, do the following commands:
-
 ```
 using SciMLBenchmarks
 SciMLBenchmarks.weave_file("benchmarks/DynamicalODE","Henon-Heiles_energy_conservation_benchmark.jmd")
@@ -469,7 +490,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [91a5bcdd] Plots v1.41.6
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
 ⌃ [90137ffa] StaticArrays v1.9.18
-  [10745b16] Statistics v1.11.1
+⌃ [10745b16] Statistics v1.11.1
 ⌃ [92b13dbe] TaylorIntegration v0.18.4
   [37e2e46d] LinearAlgebra v1.11.0
   [de0858da] Printf v1.11.0
@@ -481,7 +502,7 @@ And the full manifest:
 ```
 Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DynamicalODE/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.22.0
-  [6e696c72] AbstractPlutoDingetjes v1.4.0
+⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
   [1520ce14] AbstractTrees v0.4.5
 ⌃ [7d9f7c33] Accessors v0.1.44
 ⌃ [79e6a3ab] Adapt v4.6.0
@@ -489,7 +510,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ec485272] ArnoldiMethod v0.4.0
 ⌃ [4fba245c] ArrayInterface v7.25.0
   [4c555306] ArrayLayouts v1.12.2
-  [aae01518] BandedMatrices v1.11.0
+⌃ [aae01518] BandedMatrices v1.11.0
   [e2ed5e7c] Bijections v0.2.2
 ⌃ [caf10ac8] BipartiteGraphs v0.1.7
 ⌃ [d1d4a3ce] BitFlags v0.1.9
@@ -528,7 +549,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [a0c0ee7d] DifferentiationInterface v0.7.18
   [ffbed154] DocStringExtensions v0.9.5
 ⌅ [5b8099bc] DomainSets v0.7.18
-  [7c1d4256] DynamicPolynomials v0.6.6
+⌃ [7c1d4256] DynamicPolynomials v0.6.6
   [b305315f] Elliptic v1.0.1
   [4e289a0a] EnumX v1.0.7
 ⌃ [f151be2c] EnzymeCore v0.8.20
@@ -616,7 +637,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [79d7bb75] OrdinaryDiffEqVerner v2.1.0
 ⌃ [65888b18] ParameterizedFunctions v5.24.0
 ⌅ [d96e819e] Parameters v0.12.3
-⌃ [69de0a69] Parsers v2.8.4
+⌅ [69de0a69] Parsers v2.8.4
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.4
 ⌃ [91a5bcdd] Plots v1.41.6
@@ -647,7 +668,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [53ae85a6] SciMLStructures v1.10.0
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
+⌃ [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
 ⌃ [727e6d20] SimpleNonlinearSolve v2.11.1
   [699a6c99] SimpleTraits v0.9.6
@@ -660,14 +681,14 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [64909d44] StateSelection v1.9.2
 ⌃ [90137ffa] StaticArrays v1.9.18
   [1e83bf80] StaticArraysCore v1.4.4
-  [10745b16] Statistics v1.11.1
+⌃ [10745b16] Statistics v1.11.1
   [82ae8749] StatsAPI v1.8.0
 ⌃ [2913bbd2] StatsBase v0.34.10
   [69024149] StringEncodings v0.3.7
   [09ab397b] StructArrays v0.7.3
 ⌃ [2efcf032] SymbolicIndexingInterface v0.3.48
 ⌃ [19f23fe9] SymbolicLimits v1.1.0
-⌃ [d1185830] SymbolicUtils v4.30.1
+⌅ [d1185830] SymbolicUtils v4.30.1
 ⌃ [0c5d862f] Symbolics v7.24.2
   [3783bdb8] TableTraits v1.0.1
 ⌃ [bd369af6] Tables v1.12.1
@@ -698,7 +719,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
   [559328eb] FriBidi_jll v1.0.17+0
-  [0656b61e] GLFW_jll v3.4.1+1
+⌃ [0656b61e] GLFW_jll v3.4.1+1
 ⌅ [d2c73de3] GR_jll v0.73.24+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
@@ -763,7 +784,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
 ⌃ [a4ae2306] libaom_jll v3.13.3+0
-  [0ac62f75] libass_jll v0.17.4+0
+⌃ [0ac62f75] libass_jll v0.17.4+0
   [1183f4f0] libdecor_jll v0.2.2+0
 ⌃ [8e53e030] libdrm_jll v2.4.125+1
   [2db6ffa8] libevdev_jll v1.13.4+0
@@ -827,4 +848,3 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 ```
-
