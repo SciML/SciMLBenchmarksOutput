@@ -1,5 +1,6 @@
 
 using OrdinaryDiffEq
+using OrdinaryDiffEqBDF, OrdinaryDiffEqExponentialRK, OrdinaryDiffEqIMEXMultistep, OrdinaryDiffEqMultirate, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 using DiffEqDevTools
 using SciMLOperators
 using LinearSolve
@@ -39,7 +40,7 @@ end;
 N = 128
 L = 1.0
 xs, prob = burgers(N, L)
-sol = solve(prob, AutoVern7(Rodas5(autodiff=false)); abstol=1e-14, reltol=1e-14, adaptive=true)
+sol = solve(prob, AutoVern7(Rodas5(autodiff=AutoFiniteDiff())); abstol=1e-14, reltol=1e-14, adaptive=true)
 
 test_sol = TestSolution(sol); # Reference solution for error estimation
 
@@ -94,6 +95,58 @@ labels = hcat(
     save_everystep=false, appxsol=test_sol, maxiters=Int(1e5));
 
 plot(wp, label=labels, markershape=:auto, title="ExpRK Methods, High Tolerance")
+
+
+abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
+reltols = 0.1 .^ (1:4)
+multipliers = 0.5 .^ (0:3)
+# The joined problem calls f1 and f2 through its own buffer: a direct call of the
+# SplitFunction uses an internal scratch cache that aliases prob.u0, so it would
+# silently overwrite the initial condition of every later solve in the sweep.
+joined_rhs! = let stiff_cache = zero(prob.u0)
+    (du, u, p, t) -> begin
+        prob.f.f1(stiff_cache, u, p, t)
+        prob.f.f2(du, u, p, t)
+        du .+= stiff_cache
+    end
+end
+prob_joined = ODEProblem(joined_rhs!, copy(prob.u0), prob.tspan, prob.p)
+setups = [
+    Dict(:alg => MREEF(m = 4, order = 4), :adaptive => false, :dts => 2e-2 * multipliers),
+    Dict(:alg => MRAB(k = 2, m = 4), :adaptive => false, :dts => 2e-2 * multipliers),
+    Dict(:alg => MIS(m = 4), :adaptive => false, :dts => 2e-2 * multipliers),
+    Dict(:alg => MRIGARKERK22a(m = 4), :adaptive => false, :dts => 2e-2 * multipliers),
+    Dict(:alg => MRIGARKERK33a(m = 4), :adaptive => false, :dts => 2e-2 * multipliers),
+    Dict(:alg => MRIGARKERK45a(m = 4), :adaptive => false, :dts => 2e-2 * multipliers),
+    Dict(:alg => CNAB2(), :dts => 1e-4 * multipliers),
+    Dict(:alg => ETDRK2(), :dts => 1e-3 * multipliers),
+    Dict(:alg => ETDRK4(), :dts => 1e-2 * multipliers),
+    Dict(:alg => KenCarp4()),
+    Dict(:alg => Tsit5(), :prob_choice => 2),
+    Dict(:alg => Rodas5P(autodiff = AutoFiniteDiff()), :prob_choice => 2),
+    Dict(:alg => FBDF(autodiff = AutoFiniteDiff()), :prob_choice => 2),
+    Dict(:alg => NordsieckBDF(autodiff = AutoFiniteDiff()), :prob_choice => 2),
+]
+labels = hcat(
+    "MREEF",
+    "MRAB",
+    "MIS",
+    "MRIGARKERK22a",
+    "MRIGARKERK33a",
+    "MRIGARKERK45a",
+    "CNAB2",
+    "ETDRK2",
+    "ETDRK4",
+    "KenCarp4",
+    "Tsit5",
+    "Rodas5P",
+    "FBDF","NordsieckBDF",
+)
+@time wp = WorkPrecisionSet([prob, prob_joined], abstols, reltols, setups;
+    print_names=true, names=labels, numruns=5, error_estimate=:l2,
+    save_everystep=false, appxsol=[test_sol, test_sol], maxiters=Int(1e5));
+
+plot(wp, label=labels, markershape=:auto, title="Multirate Methods, High Tolerance")
 
 
 abstols = 0.1 .^ (5:8) # all fixed dt methods so these don't matter much
@@ -172,60 +225,38 @@ Base.@kwdef struct WeightedDiagonalPreconBuilder
     w::Float64
 end
 
-(builder::WeightedDiagonalPreconBuilder)(A, du, u, p, t, newW, Plprev, Prprev, solverdata) = (builder.w * LA.Diagonal(convert(AbstractMatrix, A)), LA.I)
+(builder::WeightedDiagonalPreconBuilder)(A, p) = (builder.w * LA.Diagonal(convert(AbstractMatrix, A)), LA.I)
 
 # Incomplete LU factorization
 using IncompleteLU
 Base.@kwdef struct IncompleteLUPreconBuilder
     τ::Float64
 end
-function (builder::IncompleteLUPreconBuilder)(W, du, u, p, t, newW, Plprev, Prprev, solverdata)
-    if newW === nothing || newW
-        Pl = ilu(convert(AbstractMatrix, W), τ = builder.τ)
-    else
-        Pl = Plprev
-    end
-    Pl, nothing
+function (builder::IncompleteLUPreconBuilder)(A, p)
+    W = convert(AbstractMatrix, A)
+    W = W isa SparseMatrixCSC ? W : sparse(W)
+    Pl = ilu(W; τ = builder.τ)
+    return Pl, LA.I
 end
 
 # Algebraic multigrid
 using AlgebraicMultigrid
-function algebraicmultigrid(W, du, u, p, t, newW, Plprev, Prprev, solverdata)
-    if newW === nothing || newW
-        Pl = aspreconditioner(ruge_stuben(convert(AbstractMatrix, W)))
-    else
-        Pl = Plprev
-    end
-    Pl, nothing
+function algebraicmultigrid(A, p)
+    W = convert(AbstractMatrix, A)
+    W = W isa SparseMatrixCSC ? W : sparse(W)
+    Pl = aspreconditioner(ruge_stuben(W))
+    return Pl, LA.I
 end
-function algebraicmultigrid2(W, du, u, p, t, newW, Plprev, Prprev, solverdata)
-    if newW === nothing || newW
-        A = convert(AbstractMatrix, W)
-        Pl = AlgebraicMultigrid.aspreconditioner(AlgebraicMultigrid.ruge_stuben(A,
-            presmoother = AlgebraicMultigrid.Jacobi(rand(size(A,
-                1))),
-            postsmoother = AlgebraicMultigrid.Jacobi(rand(size(A,
-                1)))))
-    else
-        Pl = Plprev
-    end
-    Pl, nothing
-end
-
-# Cholesky
-using Preconditioners
-function cholesky(W, du, u, p, t, newW, Plprev, Prprev, solverdata)
-    W = convert(AbstractMatrix, W)
-    if newW === nothing || newW
-        Pl = CholeskyPreconditioner(W)
-    else
-        Pl = Plprev
-    end
-    Pl, nothing
+function algebraicmultigrid2(A, p)
+    W = convert(AbstractMatrix, A)
+    W = W isa SparseMatrixCSC ? W : sparse(W)
+    Pl = AlgebraicMultigrid.aspreconditioner(AlgebraicMultigrid.ruge_stuben(W,
+        presmoother = AlgebraicMultigrid.Jacobi(rand(size(W, 1))),
+        postsmoother = AlgebraicMultigrid.Jacobi(rand(size(W, 1)))))
+    return Pl, LA.I
 end
 
 # Aliases
-chol = cholesky
 inc_lu = IncompleteLUPreconBuilder(τ = 50.0)
 w_diag = WeightedDiagonalPreconBuilder(w = 0.9)
 amg = algebraicmultigrid
@@ -238,18 +269,18 @@ setups = [
     # Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES(), :dts => 1e-2 * ones(N), :adaptive => true),
     # Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES(), :dts => 1e-2 * ones(N), :adaptive => true),
     # Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES(), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES(), precs = inc_lu, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES(), precs = inc_lu, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES(), precs = inc_lu, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES(), precs = w_diag, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES(), precs = w_diag, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES(), precs = w_diag, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES(), precs = amg, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES(), precs = amg, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES(), precs = amg, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),    
-    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES(), precs = amg2, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES(), precs = amg2, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
-    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES(), precs = amg2, concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES(; precs = inc_lu), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES(; precs = inc_lu), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES(; precs = inc_lu), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES(; precs = w_diag), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES(; precs = w_diag), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES(; precs = w_diag), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES(; precs = amg), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES(; precs = amg), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES(; precs = amg), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),    
+    Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES(; precs = amg2), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES(; precs = amg2), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
+    Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES(; precs = amg2), concrete_jac = true), :dts => 1e-2 * ones(N), :adaptive => true),
     Dict(:alg => KenCarp3(linsolve=KrylovJL_GMRES()), :dts => 1e-2 * ones(N), :adaptive => true),
     Dict(:alg => KenCarp4(linsolve=KrylovJL_GMRES()), :dts => 1e-2 * ones(N), :adaptive => true),
     Dict(:alg => KenCarp5(linsolve=KrylovJL_GMRES()), :dts => 1e-2 * ones(N), :adaptive => true),

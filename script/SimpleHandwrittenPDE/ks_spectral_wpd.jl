@@ -1,5 +1,6 @@
 
 using OrdinaryDiffEq
+using OrdinaryDiffEqBDF, OrdinaryDiffEqExponentialRK, OrdinaryDiffEqIMEXMultistep, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 using DiffEqDevTools
 using SciMLOperators
 using LinearSolve
@@ -36,7 +37,7 @@ L = 16.0  # Domain length
 alpha = 10.0 # Time scaling factor
 xs, prob = kuramoto_sivashinsky(N, L, alpha)
 
-sol = solve(prob, Rodas5(autodiff=false); dt = 1e-4, reltol = 1e-12, abstol = 1e-12)
+sol = solve(prob, Rodas5(autodiff=AutoFiniteDiff()); dt = 1e-4, reltol = 1e-12, abstol = 1e-12)
 
 test_sol = TestSolution(sol) # Reference solution for error estimation
 

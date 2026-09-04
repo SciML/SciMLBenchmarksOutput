@@ -1,5 +1,6 @@
 
 using OrdinaryDiffEq
+using OrdinaryDiffEqBDF, OrdinaryDiffEqExponentialRK, OrdinaryDiffEqFIRK, OrdinaryDiffEqIMEXMultistep, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
 using DiffEqDevTools
 using SciMLOperators
 using LinearSolve
@@ -35,7 +36,7 @@ n = 128 # Number of Chebyshev points
 alpha = 5.0 # Time scaling factor
 xs, prob = korteweg_de_vries(n, L, alpha)
 
-@time sol = solve(prob, AutoVern7(RadauIIA5(autodiff=false)); 
+@time sol = solve(prob, AutoVern7(Rodas5P(autodiff=AutoFiniteDiff()));
                   dt = 1e-4, reltol = 1e-12, abstol = 1e-12);
 
 test_sol = TestSolution(sol) # Reference solution for error estimation
