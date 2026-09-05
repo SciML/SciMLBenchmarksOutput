@@ -26,18 +26,19 @@ rapid development has its advantages.
 ```julia
 using OrdinaryDiffEq, OrdinaryDiffEqCore, Sundials, DiffEqDevTools, Plots, ODEInterfaceDiffEq, LSODA
 using OrdinaryDiffEqAdamsBashforthMoulton, OrdinaryDiffEqExtrapolation, OrdinaryDiffEqHighOrderRK, OrdinaryDiffEqLowOrderRK, OrdinaryDiffEqVerner
+using Polyester
 using SciMLLogging
 using Random
 Random.seed!(123)
 gr()
 # 2D Linear ODE
 function f(du, u, p, t)
-    return @inbounds for i in eachindex(u)
-        du[i] = 1.01 * u[i]
+    @inbounds for i in eachindex(u)
+        du[i] = 1.01*u[i]
     end
 end
 function f_analytic(u₀, p, t)
-    return u₀ * exp(1.01 * t)
+    u₀*exp(1.01*t)
 end
 tspan = (0.0, 10.0)
 prob = ODEProblem(ODEFunction{true, SciMLBase.FullSpecialize}(f, analytic = f_analytic), rand(100, 100), tspan)
@@ -58,19 +59,14 @@ and tuning. First we will test with all extra saving features are turned off to
 put DifferentialEquations.jl in "speed mode".
 
 ```julia
-setups = [
-    Dict(:alg => DP5())
-    Dict(:alg => dopri5())
-    Dict(:alg => ARKODE(Sundials.Explicit(), etable = Sundials.DORMAND_PRINCE_7_4_5))
-    Dict(:alg => Tsit5())
-]
-solnames = [
-    "OrdinaryDiffEq"; "ODEInterface"; "Sundials ARKODE";
-    "OrdinaryDiffEq Tsit5"
-]
+setups = [Dict(:alg=>DP5())
+          Dict(:alg=>dopri5())
+          Dict(:alg=>ARKODE(Sundials.Explicit(), etable = Sundials.DORMAND_PRINCE_7_4_5))
+          Dict(:alg=>Tsit5())]
+solnames = ["OrdinaryDiffEq"; "ODEInterface"; "Sundials ARKODE";
+            "OrdinaryDiffEq Tsit5"]
 wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups; names = solnames, save_everystep = false, numruns = 100
-)
+    prob, abstols, reltols, setups; names = solnames, save_everystep = false, numruns = 100)
 plot(wp)
 ```
 
@@ -81,16 +77,12 @@ plot(wp)
 ### Full Saving
 
 ```julia
-setups = [
-    Dict(:alg => DP5(), :dense => false)
-    Dict(:alg => dopri5()) # dense=false by default: no nonlinear interpolation
-    Dict(:alg => ARKODE(Sundials.Explicit(), etable = Sundials.DORMAND_PRINCE_7_4_5), :dense => false)
-    Dict(:alg => Tsit5(), :dense => false)
-]
-solnames = [
-    "OrdinaryDiffEq"; "ODEInterface"; "Sundials ARKODE";
-    "OrdinaryDiffEq Tsit5"
-]
+setups = [Dict(:alg=>DP5(), :dense=>false)
+          Dict(:alg=>dopri5()) # dense=false by default: no nonlinear interpolation
+          Dict(:alg=>ARKODE(Sundials.Explicit(), etable = Sundials.DORMAND_PRINCE_7_4_5), :dense=>false)
+          Dict(:alg=>Tsit5(), :dense=>false)]
+solnames = ["OrdinaryDiffEq"; "ODEInterface"; "Sundials ARKODE";
+            "OrdinaryDiffEq Tsit5"]
 wp = WorkPrecisionSet(prob, abstols, reltols, setups; names = solnames, numruns = 100)
 plot(wp)
 ```
@@ -105,16 +97,12 @@ Now we include continuous output. This has a large overhead because at every
 timepoint the matrix of rates `k` has to be deep copied.
 
 ```julia
-setups = [
-    Dict(:alg => DP5())
-    Dict(:alg => dopri5())
-    Dict(:alg => ARKODE(Sundials.Explicit(), etable = Sundials.DORMAND_PRINCE_7_4_5))
-    Dict(:alg => Tsit5())
-]
-solnames = [
-    "OrdinaryDiffEq"; "ODEInterface"; "Sundials ARKODE";
-    "OrdinaryDiffEq Tsit5"
-]
+setups = [Dict(:alg=>DP5())
+          Dict(:alg=>dopri5())
+          Dict(:alg=>ARKODE(Sundials.Explicit(), etable = Sundials.DORMAND_PRINCE_7_4_5))
+          Dict(:alg=>Tsit5())]
+solnames = ["OrdinaryDiffEq"; "ODEInterface"; "Sundials ARKODE";
+            "OrdinaryDiffEq Tsit5"]
 wp = WorkPrecisionSet(prob, abstols, reltols, setups; names = solnames, numruns = 100)
 plot(wp)
 ```
@@ -130,12 +118,10 @@ we will test it with all overheads off. Let's do the Order 5 (and the 2/3 pair)
 algorithms:
 
 ```julia
-setups = [
-    Dict(:alg => DP5())
-    Dict(:alg => BS3())
-    Dict(:alg => BS5())
-    Dict(:alg => Tsit5())
-]
+setups = [Dict(:alg=>DP5())
+          Dict(:alg=>BS3())
+          Dict(:alg=>BS5())
+          Dict(:alg=>Tsit5())]
 wp = WorkPrecisionSet(prob, abstols, reltols, setups; save_everystep = false, numruns = 100)
 plot(wp)
 ```
@@ -149,15 +135,13 @@ plot(wp)
 Now let's see how OrdinaryDiffEq.jl fairs with some higher order algorithms:
 
 ```julia
-setups = [
-    Dict(:alg => DP5())
-    Dict(:alg => Vern6())
-    Dict(:alg => TanYam7())
-    Dict(:alg => Vern7())
-    Dict(:alg => Vern8())
-    Dict(:alg => DP8())
-    Dict(:alg => Vern9())
-]
+setups = [Dict(:alg=>DP5())
+          Dict(:alg=>Vern6())
+          Dict(:alg=>TanYam7())
+          Dict(:alg=>Vern7())
+          Dict(:alg=>Vern8())
+          Dict(:alg=>DP8())
+          Dict(:alg=>Vern9())]
 wp = WorkPrecisionSet(prob, abstols, reltols, setups; save_everystep = false, numruns = 100)
 plot(wp)
 ```
@@ -171,16 +155,14 @@ plot(wp)
 Now we test OrdinaryDiffEq against the high order methods of the other packages:
 
 ```julia
-setups = [
-    Dict(:alg => DP5())
-    Dict(:alg => Vern7())
-    Dict(:alg => dop853())
-    Dict(:alg => odex())
-    Dict(:alg => lsoda())
-    Dict(:alg => ddeabm())
-    Dict(:alg => ARKODE(Sundials.Explicit(), order = 8))
-    Dict(:alg => CVODE_Adams())
-]
+setups = [Dict(:alg=>DP5())
+          Dict(:alg=>Vern7())
+          Dict(:alg=>dop853())
+          Dict(:alg=>odex())
+          Dict(:alg=>lsoda())
+          Dict(:alg=>ddeabm())
+          Dict(:alg=>ARKODE(Sundials.Explicit(), order = 8))
+          Dict(:alg=>CVODE_Adams())]
 wp = WorkPrecisionSet(prob, abstols, reltols, setups; save_everystep = false, numruns = 100)
 plot(wp)
 ```
@@ -197,15 +179,11 @@ higher order interpolants than the ODE.jl algorithms, one would expect this
 would magnify the difference. First the order 4/5 comparison:
 
 ```julia
-setups = [
-    Dict(:alg => DP5())
-    #Dict(:alg=>ode45())
-    Dict(:alg => Tsit5())
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups; error_estimate = :L2,
-    dense_errors = true, numruns = 100
-)
+setups = [Dict(:alg=>DP5())
+          #Dict(:alg=>ode45())
+          Dict(:alg=>Tsit5())]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; error_estimate = :L2,
+    dense_errors = true, numruns = 100)
 plot(wp)
 ```
 
@@ -220,15 +198,12 @@ interpolations, which are both as fast as the Hermite interpolation while
 achieving far less error. At higher order:
 
 ```julia
-setups = [
-    Dict(:alg => DP5())
-    Dict(:alg => Vern7())
-    #Dict(:alg=>ode78())
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups; error_estimate = :L2,
-    dense_errors = true, numruns = 100
-)
+setups = [Dict(:alg=>DP5())
+          Dict(:alg=>Vern7())
+          #Dict(:alg=>ode78())
+          ]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; error_estimate = :L2,
+    dense_errors = true, numruns = 100)
 plot(wp)
 ```
 
@@ -244,21 +219,15 @@ the difference:
 ```julia
 abstols = 1.0 ./ 10.0 .^ (3:13)
 reltols = 1.0 ./ 10.0 .^ (0:10);
-dts = [1, 1 / 2, 1 / 4, 1 / 10, 1 / 20, 1 / 40, 1 / 60, 1 / 80, 1 / 100, 1 / 140, 1 / 240]
-setups = [
-    Dict(:alg => DP5())
-    Dict(:alg => dopri5())
-    Dict(:alg => RK4(), :dts => dts)
-    Dict(:alg => Tsit5())
-]
-solnames = [
-    "DifferentialEquations"; "ODEInterface"; "DifferentialEquations RK4";
-    "DifferentialEquations Tsit5"
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups; names = solnames,
-    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100
-)
+dts = [1, 1/2, 1/4, 1/10, 1/20, 1/40, 1/60, 1/80, 1/100, 1/140, 1/240]
+setups = [Dict(:alg=>DP5())
+          Dict(:alg=>dopri5())
+          Dict(:alg=>RK4(), :dts=>dts)
+          Dict(:alg=>Tsit5())]
+solnames = ["DifferentialEquations"; "ODEInterface"; "DifferentialEquations RK4";
+            "DifferentialEquations Tsit5"]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; names = solnames,
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 ```
 
@@ -272,108 +241,58 @@ Now let's test Tsit5 and Vern9 against parallel extrapolation methods and an
 Adams-Bashforth-Moulton:
 
 ```julia
-setups = [
-    Dict(:alg => Tsit5())
-    Dict(:alg => Vern9())
-    Dict(:alg => VCABM())
-    Dict(:alg => AitkenNeville(min_order = 1, max_order = 9, init_order = 4, threading = true))
-    Dict(
-        :alg => ExtrapolationMidpointDeuflhard(
-            min_order = 1, max_order = 9, init_order = 4, threading = true
-        )
-    )
-    Dict(
-        :alg => ExtrapolationMidpointHairerWanner(
-            min_order = 2, max_order = 11, init_order = 4, threading = true
-        )
-    )
-]
-solnames = [
-    "Tsit5", "Vern9", "VCABM", "AitkenNeville",
-    "Midpoint Deuflhard", "Midpoint Hairer Wanner",
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups; names = solnames,
-    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100
-)
+setups = [Dict(:alg=>Tsit5())
+          Dict(:alg=>Vern9())
+          Dict(:alg=>VCABM())
+          Dict(:alg=>AitkenNeville(min_order = 1, max_order = 9, init_order = 4, threading = true))
+          Dict(:alg=>ExtrapolationMidpointDeuflhard(
+              min_order = 1, max_order = 9, init_order = 4, threading = true))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(
+              min_order = 2, max_order = 11, init_order = 4, threading = true))]
+solnames = ["Tsit5", "Vern9", "VCABM", "AitkenNeville",
+    "Midpoint Deuflhard", "Midpoint Hairer Wanner"]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; names = solnames,
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 ```
 
 ![](figures/linear_wpd_11_1.png)
 
 ```julia
-setups = [
-    Dict(
-        :alg => ExtrapolationMidpointDeuflhard(
-            min_order = 1, max_order = 9, init_order = 9, threading = false
-        )
-    )
-    Dict(
-        :alg => ExtrapolationMidpointHairerWanner(
-            min_order = 2, max_order = 11, init_order = 4, threading = false
-        )
-    )
-    Dict(
-        :alg => ExtrapolationMidpointHairerWanner(
-            min_order = 2, max_order = 11, init_order = 4, threading = true
-        )
-    )
-    Dict(
-        :alg => ExtrapolationMidpointHairerWanner(
-            min_order = 2, max_order = 11, init_order = 4,
-            sequence = :romberg, threading = true
-        )
-    )
-    Dict(
-        :alg => ExtrapolationMidpointHairerWanner(
-            min_order = 2, max_order = 11, init_order = 4,
-            sequence = :bulirsch, threading = true
-        )
-    )
-]
+setups = [Dict(:alg=>ExtrapolationMidpointDeuflhard(
+              min_order = 1, max_order = 9, init_order = 9, threading = false))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(
+              min_order = 2, max_order = 11, init_order = 4, threading = false))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(
+              min_order = 2, max_order = 11, init_order = 4, threading = true))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(
+              min_order = 2, max_order = 11, init_order = 4,
+              sequence = :romberg, threading = true))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(
+              min_order = 2, max_order = 11, init_order = 4,
+              sequence = :bulirsch, threading = true))]
 solnames = ["Deuflhard", "No threads", "standard", "Romberg", "Bulirsch"]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups; names = solnames,
-    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100
-)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; names = solnames,
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 ```
 
 ![](figures/linear_wpd_12_1.png)
 
 ```julia
-setups = [
-    Dict(
-        :alg => ExtrapolationMidpointHairerWanner(
-            min_order = 2, max_order = 11, init_order = 10, threading = true
-        )
-    )
-    Dict(
-        :alg => ExtrapolationMidpointHairerWanner(
-            min_order = 2, max_order = 11, init_order = 4, threading = true
-        )
-    )
-    Dict(
-        :alg => ExtrapolationMidpointHairerWanner(
-            min_order = 5, max_order = 11, init_order = 10, threading = true
-        )
-    )
-    Dict(
-        :alg => ExtrapolationMidpointHairerWanner(
-            min_order = 2, max_order = 15, init_order = 10, threading = true
-        )
-    )
-    Dict(
-        :alg => ExtrapolationMidpointHairerWanner(
-            min_order = 5, max_order = 7, init_order = 6, threading = true
-        )
-    )
-]
+setups = [Dict(:alg=>ExtrapolationMidpointHairerWanner(
+              min_order = 2, max_order = 11, init_order = 10, threading = true))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(
+              min_order = 2, max_order = 11, init_order = 4, threading = true))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(
+              min_order = 5, max_order = 11, init_order = 10, threading = true))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(
+              min_order = 2, max_order = 15, init_order = 10, threading = true))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(
+              min_order = 5, max_order = 7, init_order = 6, threading = true))]
 solnames = ["1", "2", "3", "4", "5"]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups; names = solnames,
-    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100
-)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups; names = solnames,
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 ```
 
@@ -383,22 +302,18 @@ plot(wp)
 abstols = 1.0 ./ 10.0 .^ (12:15)
 reltols = 1.0 ./ 10.0 .^ (9:12)
 
-setups = [
-    Dict(:alg => Tsit5())
-    Dict(:alg => Vern9())
-    Dict(:alg => VCABM())
-    #Dict(:alg=>AitkenNeville(threading = OrdinaryDiffEqCore.PolyesterThreads()))
-    Dict(:alg => ExtrapolationMidpointDeuflhard(threading = true))
-    Dict(:alg => ExtrapolationMidpointHairerWanner(threading = true))
-    Dict(:alg => odex())
-    Dict(:alg => dop853())
-    Dict(:alg => CVODE_Adams())
-]
+setups = [Dict(:alg=>Tsit5())
+          Dict(:alg=>Vern9())
+          Dict(:alg=>VCABM())
+          #Dict(:alg=>AitkenNeville(threading = OrdinaryDiffEqCore.PolyesterThreads()))
+          Dict(:alg=>ExtrapolationMidpointDeuflhard(threading = OrdinaryDiffEqCore.PolyesterThreads()))
+          Dict(:alg=>ExtrapolationMidpointHairerWanner(threading = OrdinaryDiffEqCore.PolyesterThreads()))
+          Dict(:alg=>odex())
+          Dict(:alg=>dop853())
+          Dict(:alg=>CVODE_Adams())]
 
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100
-)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 ```
 
@@ -424,7 +339,6 @@ Benchmarks generated with GitHub Actions CI.
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
 
 To locally run this benchmark, do the following commands:
-
 ```
 using SciMLBenchmarks
 SciMLBenchmarks.weave_file("benchmarks/NonStiffODE","linear_wpd.jmd")
@@ -451,11 +365,11 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffODE/Project.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffODE/Project.toml`
 ⌃ [2b5f629d] DiffEqBase v7.5.0
 ⌃ [f3b72e0c] DiffEqDevTools v3.1.0
 ⌃ [58bc7355] IRKGaussLegendre v1.0.1
-  [7f56f5a3] LSODA v1.1.0
+⌃ [7f56f5a3] LSODA v1.1.0
 ⌃ [961ee093] ModelingToolkit v11.26.3
 ⌃ [54ca160b] ODEInterface v0.5.0
 ⌃ [09606e27] ODEInterfaceDiffEq v4.0.0
@@ -470,6 +384,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [79d7bb75] OrdinaryDiffEqVerner v2.1.0
 ⌃ [65888b18] ParameterizedFunctions v5.24.0
 ⌃ [91a5bcdd] Plots v1.41.6
+  [f517fe37] Polyester v0.7.19
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
 ⌅ [a6db7da4] SciMLLogging v1.10.1
 ⌃ [90137ffa] StaticArrays v1.9.18
@@ -483,9 +398,9 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffODE/Manifest.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffODE/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.22.0
-  [6e696c72] AbstractPlutoDingetjes v1.4.0
+⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
   [1520ce14] AbstractTrees v0.4.5
 ⌃ [7d9f7c33] Accessors v0.1.44
 ⌃ [79e6a3ab] Adapt v4.6.0
@@ -537,7 +452,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [31c24e10] Distributions v0.25.125
   [ffbed154] DocStringExtensions v0.9.5
 ⌅ [5b8099bc] DomainSets v0.7.18
-  [7c1d4256] DynamicPolynomials v0.6.6
+⌃ [7c1d4256] DynamicPolynomials v0.6.6
   [4e289a0a] EnumX v1.0.7
 ⌃ [f151be2c] EnzymeCore v0.8.20
   [460bff9d] ExceptionUnwrapping v0.1.11
@@ -583,7 +498,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ae98c720] Jieko v0.2.1
 ⌃ [ccbc3e58] JumpProcesses v9.28.0
 ⌃ [ba0b0d4f] Krylov v0.10.6
-  [7f56f5a3] LSODA v1.1.0
+⌃ [7f56f5a3] LSODA v1.1.0
 ⌃ [b964fa9f] LaTeXStrings v1.4.0
 ⌃ [23fbe1c1] Latexify v0.16.10
   [10f19ff3] LayoutPointers v0.1.17
@@ -678,12 +593,12 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [53ae85a6] SciMLStructures v1.10.0
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
+⌃ [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
 ⌃ [727e6d20] SimpleNonlinearSolve v2.11.1
   [699a6c99] SimpleTraits v0.9.6
 ⌃ [a2af1166] SortingAlgorithms v1.2.2
-  [0a514795] SparseMatrixColorings v0.4.27
+⌃ [0a514795] SparseMatrixColorings v0.4.27
 ⌃ [276daf66] SpecialFunctions v2.7.2
   [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
@@ -692,7 +607,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [0d7ed370] StaticArrayInterface v1.10.0
 ⌃ [90137ffa] StaticArrays v1.9.18
   [1e83bf80] StaticArraysCore v1.4.4
-  [10745b16] Statistics v1.11.1
+⌃ [10745b16] Statistics v1.11.1
   [82ae8749] StatsAPI v1.8.0
 ⌃ [2913bbd2] StatsBase v0.34.10
 ⌅ [4c63d2b9] StatsFuns v1.5.2
@@ -702,7 +617,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [c3572dad] Sundials v6.2.1
 ⌃ [2efcf032] SymbolicIndexingInterface v0.3.48
 ⌃ [19f23fe9] SymbolicLimits v1.1.0
-⌃ [d1185830] SymbolicUtils v4.30.1
+⌅ [d1185830] SymbolicUtils v4.30.1
 ⌃ [0c5d862f] Symbolics v7.24.2
   [3783bdb8] TableTraits v1.0.1
 ⌃ [bd369af6] Tables v1.12.1
@@ -769,7 +684,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6de9746b] Qt6Svg_jll v6.10.2+0
   [e99dba38] Qt6Wayland_jll v6.10.2+1
 ⌃ [f50d1b31] Rmath_jll v0.5.1+0
-  [ca45d3f4] SuiteSparse32_jll v7.12.1+0
+⌃ [ca45d3f4] SuiteSparse32_jll v7.12.1+0
   [fb77eaff] Sundials_jll v7.5.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
@@ -803,7 +718,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
 ⌃ [a4ae2306] libaom_jll v3.13.3+0
-  [0ac62f75] libass_jll v0.17.4+0
+⌃ [0ac62f75] libass_jll v0.17.4+0
   [1183f4f0] libdecor_jll v0.2.2+0
 ⌃ [8e53e030] libdrm_jll v2.4.125+1
   [2db6ffa8] libevdev_jll v1.13.4+0
