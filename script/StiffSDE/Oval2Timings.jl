@@ -8,8 +8,8 @@ prob = EnsembleProblem(remake(prob,tspan=(0.0,1.0)),prob_func=prob_func)
 js = 16:21
 dts = 1.0 ./ 2.0 .^ (js)
 trajectories = 1000
-fails = Array{Int}(undef,length(dts),3)
-times = Array{Float64}(undef,length(dts),3)
+fails = fill(-1, length(dts), 3)
+times = fill(NaN, length(dts), 3)
 
 
 sol = solve(prob,SRIW1(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-7),maxiters=Int(1e11), controller=PIController(SRIW1(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
