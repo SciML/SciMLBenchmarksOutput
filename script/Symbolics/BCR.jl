@@ -1,9 +1,9 @@
 
 using Catalyst, ReactionNetworkImporters,
     TimerOutputs, LinearAlgebra, ModelingToolkit, Chairmarks,
-    LinearSolve, Symbolics, SymbolicUtils, SymbolicUtils.Code, SparseArrays, CairoMakie,
+    LinearSolve, Symbolics, SymbolicUtils.Code, SparseArrays, CairoMakie,
     PrettyTables
-using ModelingToolkit: default_values
+using SymbolicIndexingInterface: default_values
 
 datadir  = joinpath(dirname(pathof(ReactionNetworkImporters)),"../data/bcr")
 const to = TimerOutput()
@@ -21,26 +21,8 @@ vars = unknowns(osys)
 pars = parameters(osys)
 
 
-include("old_sparse_jacobian.jl")
-
-
-SymbolicUtils.ENABLE_HASHCONSING[] = false
-@timeit to "Calculate jacobian - without hashconsing" jac_nohc = old_sparsejacobian(rhs, vars);
-SymbolicUtils.ENABLE_HASHCONSING[] = true
-Symbolics.toggle_derivative_caching!(false)
 Symbolics.clear_derivative_caches!()
-@timeit to "Calculate jacobian - hashconsing, without caching" jac_hc_nocache = old_sparsejacobian(rhs, vars);
-Symbolics.toggle_derivative_caching!(true)
-for fn in Symbolics.cached_derivative_functions()
-    stats = SymbolicUtils.get_stats(fn)
-    @assert stats.hits == stats.misses == 0
-end
-Symbolics.clear_derivative_caches!()
-@timeit to "Calculate jacobian - hashconsing and caching" jac_hc_cache = Symbolics.sparsejacobian(rhs, vars);
-
-@assert isequal(jac_nohc, jac_hc_nocache)
-
-jac = jac_hc_cache
+@timeit to "Calculate symbolic jacobian" jac = Symbolics.sparsejacobian(rhs, vars);
 args = (vars, pars, ModelingToolkit.get_iv(osys))
 # out of place versions run into an error saying the expression is too large
 # due to the `SymbolicUtils.Code.create_array` call. `iip_config` prevents it
@@ -72,16 +54,11 @@ show(to)
 
 function run_and_time_construct!(rhs, vars, pars, iv, N, i, jac_times, jac_allocs, build_times, functions)
     outputs = rhs[1:N]
-    SymbolicUtils.ENABLE_HASHCONSING[] = false
-    jac_result = @be old_sparsejacobian(outputs, vars)
-    jac_times[1][i] = minimum(x -> x.time, jac_result.samples)
-    jac_allocs[1][i] = minimum(x -> x.bytes, jac_result.samples)
-
-    SymbolicUtils.ENABLE_HASHCONSING[] = true
     jac_result = @be (Symbolics.clear_derivative_caches!(); Symbolics.sparsejacobian(outputs, vars))
-    jac_times[2][i] = minimum(x -> x.time, jac_result.samples)
-    jac_allocs[2][i] = minimum(x -> x.bytes, jac_result.samples)
+    jac_times[i] = minimum(x -> x.time, jac_result.samples)
+    jac_allocs[i] = minimum(x -> x.bytes, jac_result.samples)
 
+    Symbolics.clear_derivative_caches!()
     jac = Symbolics.sparsejacobian(outputs, vars)
     args = (vars, pars, iv)
     kwargs = (; iip_config = (false, true), expression = Val{true})
@@ -128,13 +105,13 @@ end
 
 Chairmarks.DEFAULTS.seconds = 15.0
 N = [10, 20, 40, 80, 160, 320]
-jacobian_times = [zeros(Float64, length(N)), zeros(Float64, length(N))]
-jacobian_allocs = copy.(jacobian_times)
+jacobian_times = zeros(Float64, length(N))
+jacobian_allocs = similar(jacobian_times)
 functions = [Vector{Any}(undef, length(N)), Vector{Any}(undef, length(N))]
 # [without_cse_times, with_cse_times]
-build_times = copy.(jacobian_times)
-first_call_times = copy.(jacobian_times)
-second_call_times = copy.(jacobian_times)
+build_times = [similar(jacobian_times), similar(jacobian_times)]
+first_call_times = copy.(build_times)
+second_call_times = copy.(build_times)
 
 iv = ModelingToolkit.get_iv(osys)
 run_and_time_construct!(rhs, vars, pars, iv, 10, 1, jacobian_times, jacobian_allocs, build_times, functions)
@@ -149,8 +126,8 @@ for (i, n) in enumerate(N)
 end
 
 
-tabledata = hcat(N, jacobian_times..., jacobian_allocs..., build_times..., first_call_times..., second_call_times...)
-header = ["N", "Jacobian time (no hashconsing)", "Jacobian time (hashconsing)", "Jacobian allocated memory (no hashconsing) (B)", "Jacobian allocated memory (hashconsing) (B)", "`build_function` time (no CSE)", "`build_function` time (CSE)", "First call time (no CSE)", "First call time (CSE)", "Second call time (no CSE)", "Second call time (CSE)"]
+tabledata = hcat(N, jacobian_times, jacobian_allocs, build_times..., first_call_times..., second_call_times...)
+header = ["N", "Jacobian time", "Jacobian allocated memory (B)", "`build_function` time (no CSE)", "`build_function` time (CSE)", "First call time (no CSE)", "First call time (CSE)", "Second call time (no CSE)", "Second call time (CSE)"]
 pretty_table(tabledata; column_labels = header, backend = :html)
 
 
@@ -169,10 +146,8 @@ for i in 1:2
         xlabelsize = 10, ylabel = label, ylabelsize = 10, xticks = N,
         title = titles[i], titlesize = 12, xticklabelsize = 10, yticklabelsize = 10)
     push!(axes, ax)
-    l1 = scatterlines!(ax, N, data[1], label = "without hashconsing")
-    l2 = scatterlines!(ax, N, data[2], label = "with hashconsing")
+    scatterlines!(ax, N, data)
 end
-Legend(f[1, 3], axes[1], "Methods", tellwidth = false, labelsize = 12, titlesize = 15)
 axes2 = Axis[]
 # make equal y-axis unit length
 mn3, mx3 = extrema(reduce(vcat, times[3]))
@@ -198,9 +173,10 @@ for i in 1:3
         title = titles[ir], titlesize = 12, xticklabelsize = 10, yticklabelsize = 10)
     ylims!(ax, ylims[i]...)
     push!(axes2, ax)
-    l1 = scatterlines!(ax, N, data[1], label = "without hashconsing")
-    l2 = scatterlines!(ax, N, data[2], label = "with hashconsing")
+    scatterlines!(ax, N, data[1], label = "without CSE")
+    scatterlines!(ax, N, data[2], label = "with CSE")
 end
+Legend(f[1, 3], axes2[1], "Code generation", tellwidth = false, labelsize = 12, titlesize = 15)
 save("bcr.pdf", f)
 f
 

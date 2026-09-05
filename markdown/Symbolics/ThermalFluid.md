@@ -6,12 +6,17 @@ title: "Thermal Fluid Symbolic Jacobian Scaling"
 
 This is a 1D advection-diffusion-source PDE that uses a second order upwind scheme.
 
+Jacobian construction uses the current `Symbolics.sparsejacobian` implementation, with
+derivative caches cleared before each sample. CSE is a `build_function` code-generation
+option, so only the code-generation and generated-function measurements compare CSE off
+and on.
+
 ```julia
 using Pkg
 # Rev fixes precompilation https://github.com/hzgzh/XSteam.jl/pull/2
 Pkg.add(Pkg.PackageSpec(;name="XSteam", rev="f2a1c589054cfd6bba307985a3a534b6f5a1863b"))
 
-using ModelingToolkit, Symbolics, SymbolicUtils, XSteam, Polynomials, CairoMakie, PrettyTables
+using ModelingToolkit, Symbolics, XSteam, Polynomials, CairoMakie, PrettyTables
 using SparseArrays, Chairmarks, Statistics
 using ModelingToolkit: t_nounits as t, D_nounits as D
 using SymbolicIndexingInterface: default_values
@@ -263,40 +268,20 @@ call (generic function with 1 method)
 
 
 
-
-
-The `sparsejacobian` function in Symbolics.jl is optimized for hashconsing and caching, and as such
-performs very poorly without either of those features. We use the old implementation, optimized without
-hashconsing, to benchmark performance without hashconsing and without caching to avoid biasing the results.
-
 ```julia
-include("old_sparse_jacobian.jl")
-
 function run_and_time_construction!(jacobian_times, jacobian_gctimes, jacobian_allocs, build_times, functions, i, N)
   @mtkbuild sys = TestBenchPreinsulated(L=470, N=N, dn=0.3127, t_layer=[0.0056, 0.058])
   rhs = [eq.rhs for eq in full_equations(sys)]
   dvs = unknowns(sys)
 
   @info "Built system"
-  SymbolicUtils.ENABLE_HASHCONSING[] = false
-  jac_result = @be old_sparsejacobian(rhs, dvs)
-  @info "No hashconsing benchmark"
-  jac_nocse = old_sparsejacobian(rhs, dvs)
-  @info "No hashconsing result"
-  jacobian_times[1][i] = mean(x -> x.time, jac_result.samples)
-  jacobian_gctimes[1][i] = mean(x -> x.time * x.gc_fraction, jac_result.samples)
-  jacobian_allocs[1][i] = mean(x -> x.bytes, jac_result.samples)
-  @info "times" jacobian_times[1][i] jacobian_gctimes[1][i] jacobian_allocs[1][i]
-  SymbolicUtils.ENABLE_HASHCONSING[] = true
   jac_result = @be (Symbolics.clear_derivative_caches!(); Symbolics.sparsejacobian(rhs, dvs))
-  @info "Hashconsing benchmark"
-  jac_cse = Symbolics.sparsejacobian(rhs, dvs)
-  @info "Hashconsing result"
-  jacobian_times[2][i] = mean(x -> x.time, jac_result.samples)
-  jacobian_gctimes[2][i] = mean(x -> x.time * x.gc_fraction, jac_result.samples)
-  jacobian_allocs[2][i] = mean(x -> x.bytes, jac_result.samples)
-  @info "times" jacobian_times[2][i] jacobian_gctimes[2][i] jacobian_allocs[2][i]
-  jac = jac_cse
+  jacobian_times[i] = mean(x -> x.time, jac_result.samples)
+  jacobian_gctimes[i] = mean(x -> x.time * x.gc_fraction, jac_result.samples)
+  jacobian_allocs[i] = mean(x -> x.bytes, jac_result.samples)
+  @info "Jacobian benchmark" jacobian_times[i] jacobian_gctimes[i] jacobian_allocs[i]
+  Symbolics.clear_derivative_caches!()
+  jac = Symbolics.sparsejacobian(rhs, dvs)
 
   ps = parameters(sys)
   defs = default_values(sys)
@@ -364,20 +349,24 @@ run_and_time_call! (generic function with 1 method)
 
 ```julia
 N = [5, 10, 20, 40, 80, 160, 320];
-jacobian_times = [zeros(Float64, length(N)), zeros(Float64, length(N))]
+jacobian_times = zeros(Float64, length(N))
 functions = [Vector{Any}(undef, length(N)), Vector{Any}(undef, length(N))]
-jacobian_gctimes = copy.(jacobian_times)
-jacobian_allocs = copy.(jacobian_times)
+jacobian_gctimes = similar(jacobian_times)
+jacobian_allocs = similar(jacobian_times)
 # [without_cse_times, with_cse_times]
-build_times = copy.(jacobian_times)
-first_call_times = copy.(jacobian_times)
-second_call_times = copy.(jacobian_times)
+build_times = [similar(jacobian_times), similar(jacobian_times)]
+first_call_times = copy.(build_times)
+second_call_times = copy.(build_times)
 ```
 
 ```
 2-element Vector{Vector{Float64}}:
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
- [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+ [6.92835182230646e-310, 6.92835182230804e-310, 6.92835182230963e-310, 6.92
+83518223112e-310, 6.9283518223128e-310, 6.92835182231437e-310, 6.9283518223
+1595e-310]
+ [6.92835182230646e-310, 6.92835182230804e-310, 6.92835182230963e-310, 6.92
+83518223112e-310, 6.9283518223128e-310, 6.92835182231437e-310, 6.9283518223
+1595e-310]
 ```
 
 
@@ -403,20 +392,20 @@ end
 ```
 
 ```
-60.272483 seconds (302.00 M allocations: 9.344 GiB, 2.55% gc time, 0.09% c
+45.231103 seconds (203.26 M allocations: 6.585 GiB, 2.58% gc time, 0.13% c
 ompilation time: 100% of which was recompilation)
- 60.494512 seconds (313.11 M allocations: 9.592 GiB, 2.43% gc time, 0.10% c
+ 45.453229 seconds (211.15 M allocations: 6.751 GiB, 3.14% gc time, 0.15% c
 ompilation time: 100% of which was recompilation)
- 61.018238 seconds (323.57 M allocations: 10.074 GiB, 3.43% gc time, 0.11% 
-compilation time: 99% of which was recompilation)
- 62.092409 seconds (326.34 M allocations: 9.971 GiB, 3.17% gc time, 0.19% c
-ompilation time: 57% of which was recompilation)
- 64.256937 seconds (333.29 M allocations: 10.102 GiB, 3.32% gc time, 0.11% 
-compilation time: 91% of which was recompilation)
- 69.303636 seconds (323.84 M allocations: 9.787 GiB, 3.37% gc time, 0.09% c
+ 45.839694 seconds (220.09 M allocations: 7.138 GiB, 3.96% gc time, 0.16% c
+ompilation time: 100% of which was recompilation)
+ 46.756698 seconds (217.77 M allocations: 6.924 GiB, 2.95% gc time, 0.16% c
 ompilation time: 98% of which was recompilation)
- 78.255485 seconds (343.36 M allocations: 10.349 GiB, 4.18% gc time, 0.11% 
-compilation time: 70% of which was recompilation)
+ 48.519410 seconds (222.90 M allocations: 7.040 GiB, 3.96% gc time, 0.18% c
+ompilation time: 81% of which was recompilation)
+ 52.272713 seconds (212.67 M allocations: 6.754 GiB, 4.83% gc time, 0.21% c
+ompilation time: 58% of which was recompilation)
+ 59.853380 seconds (218.37 M allocations: 6.958 GiB, 5.54% gc time, 0.14% c
+ompilation time: 77% of which was recompilation)
 ```
 
 
@@ -426,8 +415,8 @@ compilation time: 70% of which was recompilation)
 ## Results
 
 ```julia
-tabledata = hcat(N, jacobian_times..., jacobian_gctimes..., jacobian_allocs..., build_times..., first_call_times..., second_call_times...)
-header = ["N", "Jacobian time (no hashconsing)", "Jacobian time (hashconsing)", "Jacobian GC time (no hashconsing)", "Jacobian GC time (hashconsing)", "Jacobian allocated memory (no hashconsing) (B)", "Jacobian allocated memory (hashconsing) (B)", "`build_function` time (no CSE)", "`build_function` time (CSE)", "First call time (no CSE)", "First call time (CSE)", "Second call time (no CSE)", "Second call time (CSE)"]
+tabledata = hcat(N, jacobian_times, jacobian_gctimes, jacobian_allocs, build_times..., first_call_times..., second_call_times...)
+header = ["N", "Jacobian time", "Jacobian GC time", "Jacobian allocated memory (B)", "`build_function` time (no CSE)", "`build_function` time (CSE)", "First call time (no CSE)", "First call time (CSE)", "Second call time (no CSE)", "Second call time (CSE)"]
 pretty_table(tabledata; column_labels = header, backend = :html)
 ```
 
@@ -436,12 +425,9 @@ pretty_table(tabledata; column_labels = header, backend = :html)
   <thead>
     <tr class = "columnLabelRow">
       <th style = "font-weight: bold; text-align: right;">N</th>
-      <th style = "font-weight: bold; text-align: right;">Jacobian time (no hashconsing)</th>
-      <th style = "font-weight: bold; text-align: right;">Jacobian time (hashconsing)</th>
-      <th style = "font-weight: bold; text-align: right;">Jacobian GC time (no hashconsing)</th>
-      <th style = "font-weight: bold; text-align: right;">Jacobian GC time (hashconsing)</th>
-      <th style = "font-weight: bold; text-align: right;">Jacobian allocated memory (no hashconsing) (B)</th>
-      <th style = "font-weight: bold; text-align: right;">Jacobian allocated memory (hashconsing) (B)</th>
+      <th style = "font-weight: bold; text-align: right;">Jacobian time</th>
+      <th style = "font-weight: bold; text-align: right;">Jacobian GC time</th>
+      <th style = "font-weight: bold; text-align: right;">Jacobian allocated memory (B)</th>
       <th style = "font-weight: bold; text-align: right;">`build_function` time (no CSE)</th>
       <th style = "font-weight: bold; text-align: right;">`build_function` time (CSE)</th>
       <th style = "font-weight: bold; text-align: right;">First call time (no CSE)</th>
@@ -453,108 +439,87 @@ pretty_table(tabledata; column_labels = header, backend = :html)
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">5.0</td>
-      <td style = "text-align: right;">0.0343451</td>
-      <td style = "text-align: right;">0.0089879</td>
-      <td style = "text-align: right;">0.000789289</td>
-      <td style = "text-align: right;">0.000157535</td>
-      <td style = "text-align: right;">3.18245e6</td>
-      <td style = "text-align: right;">8.73179e5</td>
-      <td style = "text-align: right;">0.00323629</td>
-      <td style = "text-align: right;">0.00197637</td>
-      <td style = "text-align: right;">0.506884</td>
-      <td style = "text-align: right;">0.0722184</td>
-      <td style = "text-align: right;">6.99256e-6</td>
-      <td style = "text-align: right;">4.1235e-7</td>
+      <td style = "text-align: right;">0.0109349</td>
+      <td style = "text-align: right;">0.000262055</td>
+      <td style = "text-align: right;">8.73628e5</td>
+      <td style = "text-align: right;">0.00402182</td>
+      <td style = "text-align: right;">0.00237691</td>
+      <td style = "text-align: right;">0.571618</td>
+      <td style = "text-align: right;">0.0863633</td>
+      <td style = "text-align: right;">9.33388e-6</td>
+      <td style = "text-align: right;">5.28871e-7</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">10.0</td>
-      <td style = "text-align: right;">0.0769121</td>
-      <td style = "text-align: right;">0.0150582</td>
-      <td style = "text-align: right;">0.001376</td>
-      <td style = "text-align: right;">0.000346572</td>
-      <td style = "text-align: right;">6.80315e6</td>
-      <td style = "text-align: right;">1.8191e6</td>
-      <td style = "text-align: right;">0.00664262</td>
-      <td style = "text-align: right;">0.00348956</td>
-      <td style = "text-align: right;">0.774315</td>
-      <td style = "text-align: right;">0.121527</td>
-      <td style = "text-align: right;">1.40265e-5</td>
-      <td style = "text-align: right;">4.76982e-7</td>
+      <td style = "text-align: right;">0.0194138</td>
+      <td style = "text-align: right;">0.000856578</td>
+      <td style = "text-align: right;">1.82033e6</td>
+      <td style = "text-align: right;">0.0081464</td>
+      <td style = "text-align: right;">0.00425534</td>
+      <td style = "text-align: right;">1.02409</td>
+      <td style = "text-align: right;">0.15882</td>
+      <td style = "text-align: right;">1.87698e-5</td>
+      <td style = "text-align: right;">6.38838e-7</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">20.0</td>
-      <td style = "text-align: right;">0.160086</td>
-      <td style = "text-align: right;">0.0279397</td>
-      <td style = "text-align: right;">0.0028482</td>
-      <td style = "text-align: right;">0.00065181</td>
-      <td style = "text-align: right;">1.40064e7</td>
-      <td style = "text-align: right;">3.71453e6</td>
-      <td style = "text-align: right;">0.0137314</td>
-      <td style = "text-align: right;">0.00611633</td>
-      <td style = "text-align: right;">1.78696</td>
-      <td style = "text-align: right;">0.248181</td>
-      <td style = "text-align: right;">2.8086e-5</td>
-      <td style = "text-align: right;">6.4136e-7</td>
+      <td style = "text-align: right;">0.0358756</td>
+      <td style = "text-align: right;">0.00215719</td>
+      <td style = "text-align: right;">3.71175e6</td>
+      <td style = "text-align: right;">0.0163975</td>
+      <td style = "text-align: right;">0.00766582</td>
+      <td style = "text-align: right;">2.19914</td>
+      <td style = "text-align: right;">0.305905</td>
+      <td style = "text-align: right;">3.7454e-5</td>
+      <td style = "text-align: right;">8.46064e-7</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">40.0</td>
-      <td style = "text-align: right;">0.327929</td>
-      <td style = "text-align: right;">0.0550039</td>
-      <td style = "text-align: right;">0.0113573</td>
-      <td style = "text-align: right;">0.0017247</td>
-      <td style = "text-align: right;">2.8498e7</td>
-      <td style = "text-align: right;">7.53717e6</td>
-      <td style = "text-align: right;">0.0274562</td>
-      <td style = "text-align: right;">0.0122717</td>
-      <td style = "text-align: right;">3.87703</td>
-      <td style = "text-align: right;">0.585324</td>
-      <td style = "text-align: right;">5.61266e-5</td>
-      <td style = "text-align: right;">9.89831e-7</td>
+      <td style = "text-align: right;">0.0703216</td>
+      <td style = "text-align: right;">0.00212831</td>
+      <td style = "text-align: right;">7.53228e6</td>
+      <td style = "text-align: right;">0.0342729</td>
+      <td style = "text-align: right;">0.0154525</td>
+      <td style = "text-align: right;">4.81715</td>
+      <td style = "text-align: right;">0.726228</td>
+      <td style = "text-align: right;">7.49532e-5</td>
+      <td style = "text-align: right;">1.35691e-6</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">80.0</td>
-      <td style = "text-align: right;">0.666602</td>
-      <td style = "text-align: right;">0.106978</td>
-      <td style = "text-align: right;">0.0126851</td>
-      <td style = "text-align: right;">0.00253012</td>
-      <td style = "text-align: right;">5.73688e7</td>
-      <td style = "text-align: right;">1.51277e7</td>
-      <td style = "text-align: right;">0.0551345</td>
-      <td style = "text-align: right;">0.0249026</td>
-      <td style = "text-align: right;">8.87293</td>
-      <td style = "text-align: right;">1.45704</td>
-      <td style = "text-align: right;">0.000113499</td>
-      <td style = "text-align: right;">1.68885e-6</td>
+      <td style = "text-align: right;">0.140111</td>
+      <td style = "text-align: right;">0.00880595</td>
+      <td style = "text-align: right;">1.5118e7</td>
+      <td style = "text-align: right;">0.0677967</td>
+      <td style = "text-align: right;">0.031004</td>
+      <td style = "text-align: right;">10.297</td>
+      <td style = "text-align: right;">2.5602</td>
+      <td style = "text-align: right;">0.00015144</td>
+      <td style = "text-align: right;">2.20118e-6</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">160.0</td>
-      <td style = "text-align: right;">1.35333</td>
-      <td style = "text-align: right;">0.224725</td>
-      <td style = "text-align: right;">0.0288453</td>
-      <td style = "text-align: right;">0.00605619</td>
-      <td style = "text-align: right;">1.15243e8</td>
-      <td style = "text-align: right;">3.04632e7</td>
-      <td style = "text-align: right;">0.119402</td>
-      <td style = "text-align: right;">0.0570492</td>
-      <td style = "text-align: right;">19.2308</td>
-      <td style = "text-align: right;">3.07701</td>
-      <td style = "text-align: right;">0.000228441</td>
-      <td style = "text-align: right;">3.13061e-6</td>
+      <td style = "text-align: right;">0.295958</td>
+      <td style = "text-align: right;">0.020103</td>
+      <td style = "text-align: right;">3.04712e7</td>
+      <td style = "text-align: right;">0.146142</td>
+      <td style = "text-align: right;">0.0703415</td>
+      <td style = "text-align: right;">23.6005</td>
+      <td style = "text-align: right;">3.94802</td>
+      <td style = "text-align: right;">0.000304967</td>
+      <td style = "text-align: right;">4.26125e-6</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">320.0</td>
-      <td style = "text-align: right;">2.70821</td>
-      <td style = "text-align: right;">0.463351</td>
-      <td style = "text-align: right;">0.115331</td>
-      <td style = "text-align: right;">0.0143183</td>
-      <td style = "text-align: right;">2.31004e8</td>
-      <td style = "text-align: right;">6.10368e7</td>
-      <td style = "text-align: right;">0.236728</td>
-      <td style = "text-align: right;">0.122386</td>
-      <td style = "text-align: right;">47.9434</td>
-      <td style = "text-align: right;">7.4457</td>
-      <td style = "text-align: right;">0.000457314</td>
-      <td style = "text-align: right;">6.18508e-6</td>
+      <td style = "text-align: right;">0.588658</td>
+      <td style = "text-align: right;">0.0406329</td>
+      <td style = "text-align: right;">6.08459e7</td>
+      <td style = "text-align: right;">0.306286</td>
+      <td style = "text-align: right;">0.148011</td>
+      <td style = "text-align: right;">55.6124</td>
+      <td style = "text-align: right;">9.16718</td>
+      <td style = "text-align: right;">0.000611285</td>
+      <td style = "text-align: right;">8.21093e-6</td>
     </tr>
   </tbody>
 </table>
@@ -576,10 +541,8 @@ for i in 1:2
         xlabelsize = 10, ylabel = label, ylabelsize = 10, xticks = N,
         title = titles[i], titlesize = 12, xticklabelsize = 10, yticklabelsize = 10)
     push!(axes, ax)
-    l1 = scatterlines!(ax, N, data[1], label = "without hashconsing")
-    l2 = scatterlines!(ax, N, data[2], label = "with hashconsing")
+    scatterlines!(ax, N, data)
 end
-Legend(f[1, 3], axes[1], "Methods", tellwidth = false, labelsize = 12, titlesize = 15)
 axes2 = Axis[]
 # make equal y-axis unit length
 mn3, mx3 = extrema(reduce(vcat, times[3]))
@@ -605,9 +568,10 @@ for i in 1:3
         title = titles[ir], titlesize = 12, xticklabelsize = 10, yticklabelsize = 10)
     ylims!(ax, ylims[i]...)
     push!(axes2, ax)
-    l1 = scatterlines!(ax, N, data[1], label = "without hashconsing")
-    l2 = scatterlines!(ax, N, data[2], label = "with hashconsing")
+    scatterlines!(ax, N, data[1], label = "without CSE")
+    scatterlines!(ax, N, data[2], label = "with CSE")
 end
+Legend(f[1, 3], axes2[1], "Code generation", tellwidth = false, labelsize = 12, titlesize = 15)
 save("thermal_fluid.pdf", f)
 f
 ```
@@ -644,7 +608,6 @@ Platform Info:
   GC: Built with stock GC
 Threads: 128 default, 1 interactive, 128 GC (on 128 virtual cores)
 Environment:
-  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
 
 ```
@@ -652,18 +615,18 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
-  [13f3f980] CairoMakie v0.15.13
+⌃ [13f3f980] CairoMakie v0.15.13
   [479239e8] Catalyst v16.4.0
   [0ca39b1e] Chairmarks v1.3.1
   [864edb3b] DataStructures v0.19.6
 ⌃ [7ed4a6bd] LinearSolve v5.14.0
-  [961ee093] ModelingToolkit v11.40.0
+⌃ [961ee093] ModelingToolkit v11.40.0
 ⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.1]
   [1dea7af3] OrdinaryDiffEq v7.8.1
   [91a5bcdd] Plots v1.41.7
-  [f27b6e38] Polynomials v4.1.1
+⌃ [f27b6e38] Polynomials v4.1.1
   [08abe8d2] PrettyTables v3.4.8
   [b4db0fb7] ReactionNetworkImporters v1.5.0
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.0]
@@ -681,11 +644,11 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
-  [14f7f29c] AMD v0.5.3
+⌃ [14f7f29c] AMD v0.5.3
   [621f4979] AbstractFFTs v1.5.0
-  [6e696c72] AbstractPlutoDingetjes v1.4.0
+⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
@@ -709,7 +672,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [fa961155] CEnum v0.5.0
   [96374032] CRlibm v1.0.2
   [159f3aea] Cairo v1.1.1
-  [13f3f980] CairoMakie v0.15.13
+⌃ [13f3f980] CairoMakie v0.15.13
   [479239e8] Catalyst v16.4.0
   [d360d2e6] ChainRulesCore v1.26.1
   [0ca39b1e] Chairmarks v1.3.1
@@ -722,7 +685,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
-  [f70d9fcc] CommonWorldInvalidations v1.2.0
+⌃ [f70d9fcc] CommonWorldInvalidations v1.2.0
   [34da2185] Compat v4.18.1
   [b152e2b5] CompositeTypes v0.1.4
   [a33af91c] CompositionsBase v0.1.2
@@ -780,7 +743,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d7ba0133] Git v1.5.0
   [a2bd30eb] Graphics v1.1.3
   [86223c79] Graphs v1.14.0
-  [3955a311] GridLayoutBase v0.11.2
+⌃ [3955a311] GridLayoutBase v0.11.2
   [42e2da0e] Grisu v1.0.2
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.30
@@ -819,13 +782,13 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
-  [ee78f7c6] Makie v0.24.13
+⌅ [ee78f7c6] Makie v0.24.13
   [dbb5928d] MappedArrays v0.4.3
   [0a4f8689] MathTeXEngine v0.6.9
   [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
-  [961ee093] ModelingToolkit v11.40.0
+⌃ [961ee093] ModelingToolkit v11.40.0
 ⌃ [7771a370] ModelingToolkitBase v1.68.0
 ⌃ [6bb917b9] ModelingToolkitTearing v1.20.5
   [e94cdb99] MosaicViews v0.3.4
@@ -861,14 +824,14 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [19eb6ba3] Packing v0.5.1
   [5432bcbf] PaddedViews v0.5.12
   [d96e819e] Parameters v0.13.1
-⌅ [69de0a69] Parsers v2.8.7
+⌅ [69de0a69] Parsers v2.8.7 [loaded: v2.8.8]
   [eebad327] PkgVersion v0.3.3
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [e409e4f3] PoissonRandom v0.4.13
   [647866c9] PolygonOps v0.1.2
-  [f27b6e38] Polynomials v4.1.1
+⌃ [f27b6e38] Polynomials v4.1.1
   [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
   [21216c6a] Preferences v1.5.2
@@ -892,7 +855,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ae029012] Requires v1.3.1
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
-  [f2b01f46] Roots v3.0.7
+⌃ [f2b01f46] Roots v3.0.7
   [5eaf0fd0] RoundingEmulator v0.2.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.25
 ⌃ [9dfe8606] SCCNonlinearSolve v1.15.1
@@ -913,14 +876,14 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [699a6c99] SimpleTraits v0.9.6
   [45858cf5] Sixel v0.1.5
   [a2af1166] SortingAlgorithms v1.2.3
-  [a57abbd0] SparseColumnPivotedQR v2.1.7
-  [0a514795] SparseMatrixColorings v0.4.27
+⌃ [a57abbd0] SparseColumnPivotedQR v2.1.7
+⌃ [0a514795] SparseMatrixColorings v0.4.27
   [276daf66] SpecialFunctions v2.9.0
   [860ef19b] StableRNGs v1.0.4
   [cae243ae] StackViews v0.1.2
   [0c0c59c1] StarAlgebras v0.3.0
 ⌃ [64909d44] StateSelection v1.11.0
-  [90137ffa] StaticArrays v1.9.19
+⌃ [90137ffa] StaticArrays v1.9.19
   [1e83bf80] StaticArraysCore v1.4.4
 ⌃ [10745b16] Statistics v1.11.1
   [82ae8749] StatsAPI v1.8.0
@@ -947,7 +910,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.28.0
+⌃ [1986cc42] Unitful v1.28.0
   [41fe7b60] Unzip v0.2.0
   [81def892] VersionParsing v1.3.0
   [d30d5f5c] WeakCacheSets v0.1.0

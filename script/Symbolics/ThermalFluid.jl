@@ -3,7 +3,7 @@ using Pkg
 # Rev fixes precompilation https://github.com/hzgzh/XSteam.jl/pull/2
 Pkg.add(Pkg.PackageSpec(;name="XSteam", rev="f2a1c589054cfd6bba307985a3a534b6f5a1863b"))
 
-using ModelingToolkit, Symbolics, SymbolicUtils, XSteam, Polynomials, CairoMakie, PrettyTables
+using ModelingToolkit, Symbolics, XSteam, Polynomials, CairoMakie, PrettyTables
 using SparseArrays, Chairmarks, Statistics
 using ModelingToolkit: t_nounits as t, D_nounits as D
 using SymbolicIndexingInterface: default_values
@@ -243,33 +243,19 @@ function call(fn, args...)
 end
 
 
-include("old_sparse_jacobian.jl")
-
 function run_and_time_construction!(jacobian_times, jacobian_gctimes, jacobian_allocs, build_times, functions, i, N)
   @mtkbuild sys = TestBenchPreinsulated(L=470, N=N, dn=0.3127, t_layer=[0.0056, 0.058])
   rhs = [eq.rhs for eq in full_equations(sys)]
   dvs = unknowns(sys)
 
   @info "Built system"
-  SymbolicUtils.ENABLE_HASHCONSING[] = false
-  jac_result = @be old_sparsejacobian(rhs, dvs)
-  @info "No hashconsing benchmark"
-  jac_nocse = old_sparsejacobian(rhs, dvs)
-  @info "No hashconsing result"
-  jacobian_times[1][i] = mean(x -> x.time, jac_result.samples)
-  jacobian_gctimes[1][i] = mean(x -> x.time * x.gc_fraction, jac_result.samples)
-  jacobian_allocs[1][i] = mean(x -> x.bytes, jac_result.samples)
-  @info "times" jacobian_times[1][i] jacobian_gctimes[1][i] jacobian_allocs[1][i]
-  SymbolicUtils.ENABLE_HASHCONSING[] = true
   jac_result = @be (Symbolics.clear_derivative_caches!(); Symbolics.sparsejacobian(rhs, dvs))
-  @info "Hashconsing benchmark"
-  jac_cse = Symbolics.sparsejacobian(rhs, dvs)
-  @info "Hashconsing result"
-  jacobian_times[2][i] = mean(x -> x.time, jac_result.samples)
-  jacobian_gctimes[2][i] = mean(x -> x.time * x.gc_fraction, jac_result.samples)
-  jacobian_allocs[2][i] = mean(x -> x.bytes, jac_result.samples)
-  @info "times" jacobian_times[2][i] jacobian_gctimes[2][i] jacobian_allocs[2][i]
-  jac = jac_cse
+  jacobian_times[i] = mean(x -> x.time, jac_result.samples)
+  jacobian_gctimes[i] = mean(x -> x.time * x.gc_fraction, jac_result.samples)
+  jacobian_allocs[i] = mean(x -> x.bytes, jac_result.samples)
+  @info "Jacobian benchmark" jacobian_times[i] jacobian_gctimes[i] jacobian_allocs[i]
+  Symbolics.clear_derivative_caches!()
+  jac = Symbolics.sparsejacobian(rhs, dvs)
 
   ps = parameters(sys)
   defs = default_values(sys)
@@ -330,14 +316,14 @@ end
 
 
 N = [5, 10, 20, 40, 80, 160, 320];
-jacobian_times = [zeros(Float64, length(N)), zeros(Float64, length(N))]
+jacobian_times = zeros(Float64, length(N))
 functions = [Vector{Any}(undef, length(N)), Vector{Any}(undef, length(N))]
-jacobian_gctimes = copy.(jacobian_times)
-jacobian_allocs = copy.(jacobian_times)
+jacobian_gctimes = similar(jacobian_times)
+jacobian_allocs = similar(jacobian_times)
 # [without_cse_times, with_cse_times]
-build_times = copy.(jacobian_times)
-first_call_times = copy.(jacobian_times)
-second_call_times = copy.(jacobian_times)
+build_times = [similar(jacobian_times), similar(jacobian_times)]
+first_call_times = copy.(build_times)
+second_call_times = copy.(build_times)
 
 
 Chairmarks.DEFAULTS.seconds = 15.0
@@ -355,8 +341,8 @@ for (i, n) in enumerate(N)
 end
 
 
-tabledata = hcat(N, jacobian_times..., jacobian_gctimes..., jacobian_allocs..., build_times..., first_call_times..., second_call_times...)
-header = ["N", "Jacobian time (no hashconsing)", "Jacobian time (hashconsing)", "Jacobian GC time (no hashconsing)", "Jacobian GC time (hashconsing)", "Jacobian allocated memory (no hashconsing) (B)", "Jacobian allocated memory (hashconsing) (B)", "`build_function` time (no CSE)", "`build_function` time (CSE)", "First call time (no CSE)", "First call time (CSE)", "Second call time (no CSE)", "Second call time (CSE)"]
+tabledata = hcat(N, jacobian_times, jacobian_gctimes, jacobian_allocs, build_times..., first_call_times..., second_call_times...)
+header = ["N", "Jacobian time", "Jacobian GC time", "Jacobian allocated memory (B)", "`build_function` time (no CSE)", "`build_function` time (CSE)", "First call time (no CSE)", "First call time (CSE)", "Second call time (no CSE)", "Second call time (CSE)"]
 pretty_table(tabledata; column_labels = header, backend = :html)
 
 
@@ -375,10 +361,8 @@ for i in 1:2
         xlabelsize = 10, ylabel = label, ylabelsize = 10, xticks = N,
         title = titles[i], titlesize = 12, xticklabelsize = 10, yticklabelsize = 10)
     push!(axes, ax)
-    l1 = scatterlines!(ax, N, data[1], label = "without hashconsing")
-    l2 = scatterlines!(ax, N, data[2], label = "with hashconsing")
+    scatterlines!(ax, N, data)
 end
-Legend(f[1, 3], axes[1], "Methods", tellwidth = false, labelsize = 12, titlesize = 15)
 axes2 = Axis[]
 # make equal y-axis unit length
 mn3, mx3 = extrema(reduce(vcat, times[3]))
@@ -404,9 +388,10 @@ for i in 1:3
         title = titles[ir], titlesize = 12, xticklabelsize = 10, yticklabelsize = 10)
     ylims!(ax, ylims[i]...)
     push!(axes2, ax)
-    l1 = scatterlines!(ax, N, data[1], label = "without hashconsing")
-    l2 = scatterlines!(ax, N, data[2], label = "with hashconsing")
+    scatterlines!(ax, N, data[1], label = "without CSE")
+    scatterlines!(ax, N, data[2], label = "with CSE")
 end
+Legend(f[1, 3], axes2[1], "Code generation", tellwidth = false, labelsize = 12, titlesize = 15)
 save("thermal_fluid.pdf", f)
 f
 
