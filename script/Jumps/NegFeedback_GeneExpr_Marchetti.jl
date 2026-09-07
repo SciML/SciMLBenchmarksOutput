@@ -1,3 +1,4 @@
+
 using OrdinaryDiffEq, Catalyst, JumpProcesses, JumpProblemLibrary, Plots, Statistics
 fmt = :png
 
@@ -17,10 +18,8 @@ plot(solution, format = fmt)
 
 
 tf = 4000.0
-methods = (
-    Direct(), FRM(), SortingDirect(), NRM(), DirectCR(),
-    RSSA(), RSSACR(), Coevolve(), RDirect(),
-)
+methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(),
+    RSSA(), RSSACR(), Coevolve(), RDirect())
 shortlabels = [string(leg)[15:(end - 2)] for leg in methods]
 ploth = plot(reuse = false)
 p = []
@@ -29,7 +28,7 @@ for (i, method) in enumerate(methods)
         rn, u0, (0.0, tf), rnpar;
         aggregator = method, save_positions = (false, false)
     )
-    sol = solve(jump_prob, SSAStepper(), saveat = tf / 1000.0)
+    sol = solve(jump_prob, SSAStepper(), saveat = tf/1000.0)
     plot!(ploth, sol.t, sol[3, :], label = shortlabels[i], format = fmt)
     push!(p, plot(sol, title = shortlabels[i], format = fmt))
 end
@@ -41,7 +40,7 @@ plot(p[end])
 
 function run_benchmark!(t, jump_prob, stepper)
     sol = solve(jump_prob, stepper)
-    return @inbounds for i in 1:length(t)
+    @inbounds for i in 1:length(t)
         t[i] = @elapsed (sol = solve(jump_prob, stepper))
     end
 end
@@ -72,17 +71,16 @@ end
 
 using DataFrames
 df = DataFrame(
-    names = shortlabels, medtimes = medtimes, relmedtimes = (medtimes / medtimes[1]),
-    avgtimes = avgtimes, std = stdtimes, cv = stdtimes ./ avgtimes
-)
+    names = shortlabels, medtimes = medtimes, relmedtimes = (medtimes/medtimes[1]),
+    avgtimes = avgtimes, std = stdtimes, cv = stdtimes ./ avgtimes)
 sa = [text(string(round(mt, digits = 3), "s"), :center, 12) for mt in df.medtimes]
 bar(df.names, df.relmedtimes, legend = :false, fmt = fmt)
 scatter!(
-    df.names, 0.05 .+ df.relmedtimes, markeralpha = 0, series_annotations = sa, fmt = fmt
-)
+    df.names, 0.05 .+ df.relmedtimes, markeralpha = 0, series_annotations = sa, fmt = fmt)
 ylabel!("median relative to Direct")
 title!("Marchetti Gene Expression Model")
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+

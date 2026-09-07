@@ -1,3 +1,4 @@
+
 using Catalyst, JumpProcesses, JumpProblemLibrary, Plots, Statistics
 fmt = :png
 
@@ -7,10 +8,8 @@ rn = jprob.network
 reactions(rn)
 
 
-methods = (
-    Direct(), FRM(), SortingDirect(), NRM(), DirectCR(),
-    RSSA(), RSSACR(), Coevolve(), RDirect(),
-)
+methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(),
+    RSSA(), RSSACR(), Coevolve(), RDirect())
 shortlabels = [string(leg)[15:(end - 2)] for leg in methods]
 tf = 10.0 * jprob.tstop
 varlegs = ["A_P" "A_bound_P" "A_unbound_P" "RLA_P"]
@@ -19,7 +18,7 @@ varsyms = [
     [S7, S8, S9],
     [S9],
     [S7, S8],
-    [S7],
+    [S7]
 ]
 varidxs = []
 for vars in varsyms
@@ -33,7 +32,7 @@ for (i, method) in enumerate(methods)
         rn, jprob.u0, (0.0, tf), jprob.rates;
         aggregator = method, save_positions = (false, false)
     )
-    sol = solve(jump_prob, SSAStepper(), saveat = tf / 1000.0)
+    sol = solve(jump_prob, SSAStepper(), saveat = tf/1000.0)
     solv = zeros(1001, 4)
     for (i, varidx) in enumerate(varidxs)
         solv[:, i] = sum(sol[varidx, :], dims = 1)
@@ -50,7 +49,7 @@ plot(p..., layout = (6, 2), format = fmt)
 
 function run_benchmark!(t, jump_prob, stepper)
     sol = solve(jump_prob, stepper)
-    return @inbounds for i in 1:length(t)
+    @inbounds for i in 1:length(t)
         t[i] = @elapsed (sol = solve(jump_prob, stepper))
     end
 end
@@ -81,18 +80,17 @@ end
 using DataFrames
 
 df = DataFrame(
-    names = shortlabels, medtimes = medtimes, relmedtimes = (medtimes / medtimes[1]),
-    avgtimes = avgtimes, std = stdtimes, cv = stdtimes ./ avgtimes
-)
+    names = shortlabels, medtimes = medtimes, relmedtimes = (medtimes/medtimes[1]),
+    avgtimes = avgtimes, std = stdtimes, cv = stdtimes ./ avgtimes)
 
 sa = [text(string(round(mt, digits = 3), "s"), :center, 12) for mt in df.medtimes]
 bar(df.names, df.relmedtimes, legend = :false, fmt = fmt)
 scatter!(
-    df.names, 0.05 .+ df.relmedtimes, markeralpha = 0, series_annotations = sa, fmt = fmt
-)
+    df.names, 0.05 .+ df.relmedtimes, markeralpha = 0, series_annotations = sa, fmt = fmt)
 ylabel!("median relative to Direct")
 title!("Multistate Model")
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+

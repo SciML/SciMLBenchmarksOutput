@@ -1,69 +1,152 @@
 ---
-author: "Samuel Isaacson, Chris Rackauckas"
-title: "Diffusion Model"
+author: "Arnav Kapoor"
+title: "SIR Model: JumpProcesses.jl vs Gillespie.jl External Library Comparison"
 ---
+
+
+This benchmark compares JumpProcesses.jl's SSA aggregators against
+[Gillespie.jl](https://github.com/sdwfrost/Gillespie.jl), a standalone
+implementation of Gillespie's direct method, on the standard SIR epidemic
+model. This addresses
+[SciMLBenchmarks.jl#27](https://github.com/SciML/SciMLBenchmarks.jl/issues/27),
+which requested comparisons against other Gillespie SSA libraries in
+addition to the existing aggregator-vs-aggregator benchmarks in this folder.
+
 ```julia
-using Catalyst, JumpProcesses, JumpProblemLibrary, Plots, Statistics, DataFrames
+using JumpProcesses, Gillespie
+using Random, Statistics, DataFrames, StatsPlots
+fmt = :png
+```
+
+```
+:png
 ```
 
 
 
 
-# Model and example solutions
 
-Here we implement a 1D continuous time random walk approximation of diffusion
-for $N$ lattice sites on $\left[0,1\right]$, with reflecting boundary conditions
-at $x=0$ and $x=1$. Note that our goal is to benchmark the non-spatial
-well-mixed stochastic simulation algorithms (SSAs), so we do not benchmark the
-spatial SSAs too here.
+# Model and setup
+
+The susceptible-infected-recovered (SIR) model has state `(S, I, R)` and two
+reactions
+
+```math
+S + I \overset{\beta}{\rightarrow} 2I, \qquad I \overset{\gamma}{\rightarrow} R
+```
+
+The same initial condition, rates, and end time are used for both
+libraries, taken from the SIR example in the Gillespie.jl README.
 
 ```julia
-N = 256
-h = 1 / N
-tf = 0.01
-methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(),
-    RSSA(), RSSACR(), Coevolve(), RDirect())
-shortlabels = [string(leg)[15:(end - 2)] for leg in methods]
-jprob = JumpProblemLibrary.prob_jump_diffnetwork
-rn = jprob.network(N)
-u0 = jprob.u0(rn, N)
-rates = [:K => 1 / (h * h)]
-ploth = plot(reuse = false)
-for (i, method) in enumerate(methods)
-    println("Benchmarking method: ", method)
-    jump_prob = JumpProblem(
-        rn, u0, (0.0, tf), rates; aggregator = method, save_positions = (false, false)
-    )
-    sol = solve(jump_prob, SSAStepper(); saveat = tf/1000.0)
-    plot!(ploth, sol.t, sol[Int(N//2), :], label = shortlabels[i])
+u0 = [999, 1, 0]
+p = (β = 0.1 / 1000.0, γ = 0.01)
+tf = 250.0
+```
+
+```
+250.0
+```
+
+
+
+
+
+## Gillespie.jl
+
+```julia
+function F(x, params)
+    (S, I, R) = x
+    (β, γ) = params
+    infection = β * S * I
+    recovery = γ * I
+    [infection, recovery]
 end
-plot!(ploth, title = "Population at middle lattice site", xlabel = "time")
+
+nu = [[-1 1 0]; [0 -1 1]]
+gillespie_params = [p.β, p.γ]
+
+Random.seed!(1234)
+result = ssa(u0, F, nu, gillespie_params, tf)
+data = ssa_data(result)
+first(data, 5)
 ```
 
 ```
-Benchmarking method: JumpProcesses.Direct()
-Benchmarking method: JumpProcesses.FRM()
-Benchmarking method: JumpProcesses.SortingDirect()
-Benchmarking method: JumpProcesses.NRM()
-Benchmarking method: JumpProcesses.DirectCR()
-Benchmarking method: JumpProcesses.RSSA()
-Benchmarking method: JumpProcesses.RSSACR()
-Benchmarking method: JumpProcesses.Coevolve()
-Benchmarking method: JumpProcesses.RDirect()
+5×4 DataFrame
+ Row │ time      x1     x2     x3
+     │ Float64   Int64  Int64  Int64
+─────┼───────────────────────────────
+   1 │  0.0        999      1      0
+   2 │  5.06671    998      2      0
+   3 │  6.45689    997      3      0
+   4 │  8.62597    996      4      0
+   5 │ 13.0211     995      5      0
 ```
 
 
-![](figures/Diffusion_CTRW_2_1.png)
+
+
+
+## JumpProcesses.jl
+
+```julia
+rate1(u, p, t) = p.β * u[1] * u[2]
+function affect1!(integrator)
+    integrator.u[1] -= 1
+    integrator.u[2] += 1
+end
+jump1 = ConstantRateJump(rate1, affect1!)
+
+rate2(u, p, t) = p.γ * u[2]
+function affect2!(integrator)
+    integrator.u[2] -= 1
+    integrator.u[3] += 1
+end
+jump2 = ConstantRateJump(rate2, affect2!)
+
+dprob = DiscreteProblem(u0, (0.0, tf), p)
+```
+
+```
+DiscreteProblem with uType Vector{Int64} and tType Float64. In-place: true
+timespan: (0.0, 250.0)
+u0: 3-element Vector{Int64}:
+ 999
+   1
+   0
+```
+
+
 
 
 
 # Benchmarking performance of the methods
 
+We compare Gillespie.jl's `ssa` (Gillespie's direct method) against the
+JumpProcesses.jl aggregators that work directly on `ConstantRateJump`s
+without requiring a precomputed dependency graph.
+
 ```julia
-function run_benchmark!(t, jump_prob, stepper)
-    sol = solve(jump_prob, stepper)
+methods = (Direct(), FRM())
+shortlabels = [string(nameof(typeof(leg))) for leg in methods]
+labels = vcat(["Gillespie.jl"], shortlabels)
+```
+
+```
+3-element Vector{String}:
+ "Gillespie.jl"
+ "Direct"
+ "FRM"
+```
+
+
+
+```julia
+function run_benchmark!(t, f)
+    f()
     @inbounds for i in 1:length(t)
-        t[i] = @elapsed (sol = solve(jump_prob, stepper))
+        t[i] = @elapsed f()
     end
 end
 ```
@@ -75,77 +158,59 @@ run_benchmark! (generic function with 1 method)
 
 
 ```julia
-nsims = 50
+nsims = 2000
 benchmarks = Vector{Vector{Float64}}()
+
+t = Vector{Float64}(undef, nsims)
+run_benchmark!(t, () -> ssa(u0, F, nu, gillespie_params, tf))
+push!(benchmarks, t)
+
 for method in methods
+    local t
     jump_prob = JumpProblem(
-        rn, u0, (0.0, tf), rates; aggregator = method, save_positions = (false, false)
-    )
+        dprob, method, jump1, jump2; save_positions = (false, false))
     stepper = SSAStepper()
     t = Vector{Float64}(undef, nsims)
-    run_benchmark!(t, jump_prob, stepper)
+    run_benchmark!(t, () -> solve(jump_prob, stepper))
     push!(benchmarks, t)
 end
 ```
 
 
 ```julia
-medtimes = Vector{Float64}(undef, length(methods))
-stdtimes = Vector{Float64}(undef, length(methods))
-avgtimes = Vector{Float64}(undef, length(methods))
-for i in 1:length(methods)
+medtimes = Vector{Float64}(undef, length(labels))
+stdtimes = Vector{Float64}(undef, length(labels))
+avgtimes = Vector{Float64}(undef, length(labels))
+for i in 1:length(labels)
     medtimes[i] = median(benchmarks[i])
     avgtimes[i] = mean(benchmarks[i])
     stdtimes[i] = std(benchmarks[i])
 end
-
-df = DataFrame(
-    names = shortlabels, medtimes = medtimes, relmedtimes = (medtimes/medtimes[1]),
-    avgtimes = avgtimes, std = stdtimes, cv = stdtimes ./ avgtimes)
+medtimes / medtimes[1]
 ```
 
 ```
-9×6 DataFrame
- Row │ names          medtimes   relmedtimes  avgtimes   std         cv
-     │ String         Float64    Float64      Float64    Float64     Float6
-4
-─────┼─────────────────────────────────────────────────────────────────────
-─────
-   1 │ Direct          9.45052     1.0         9.45062   0.00999695  0.0010
-5781
-   2 │ FRM            22.2102      2.35015    22.181     0.098786    0.0044
-5362
-   3 │ SortingDirect   1.44131     0.152511    1.44137   0.00579806  0.0040
-2261
-   4 │ NRM             1.0201      0.107942    1.02088   0.00468689  0.0045
-9101
-   5 │ DirectCR        0.6728      0.0711918   0.673145  0.00161733  0.0024
-0264
-   6 │ RSSA            2.01377     0.213086    2.01438   0.00439949  0.0021
-8405
-   7 │ RSSACR          0.55718     0.0589575   0.557608  0.00196985  0.0035
-3268
-   8 │ Coevolve        1.29631     0.137168    1.29654   0.00269452  0.0020
-7824
-   9 │ RDirect         0.573117    0.060644    0.575056  0.00493103  0.0085
-7487
+3-element Vector{Float64}:
+ 1.0
+ 0.3770166630608188
+ 0.3832443329215253
 ```
 
 
-
-
-
-# Plotting
 
 ```julia
-sa = [string(round(mt, digits = 4), "s") for mt in df.medtimes]
-bar(df.names, df.relmedtimes, legend = :false)
-scatter!(df.names, 0.05 .+ df.relmedtimes, markeralpha = 0, series_annotations = sa)
-ylabel!("median relative to Direct")
-title!("256 Site 1D Diffusion CTRW")
+df = DataFrame(
+    names = labels, medtimes = medtimes, relmedtimes = (medtimes / medtimes[1]),
+    avgtimes = avgtimes, std = stdtimes, cv = stdtimes ./ avgtimes)
+sa = [text(string(round(mt * 1000, sigdigits = 3), "ms"), :center, 10) for mt in df.medtimes]
+bar(df.names, df.medtimes * 1000, legend = false, fmt = fmt)
+scatter!(df.names, 0.05 .+ df.medtimes * 1000, markeralpha = 0,
+    series_annotations = sa, fmt = fmt)
+ylabel!("median time (ms)")
+title!("SIR Model: JumpProcesses.jl vs Gillespie.jl")
 ```
 
-![](figures/Diffusion_CTRW_6_1.png)
+![](figures/SIR_GillespieComparison_9_1.png)
 
 
 ## Appendix
@@ -155,7 +220,7 @@ These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [htt
 To locally run this benchmark, do the following commands:
 ```
 using SciMLBenchmarks
-SciMLBenchmarks.weave_file("benchmarks/Jumps","Diffusion_CTRW.jmd")
+SciMLBenchmarks.weave_file("benchmarks/Jumps","SIR_GillespieComparison.jmd")
 ```
 
 Computer Information:

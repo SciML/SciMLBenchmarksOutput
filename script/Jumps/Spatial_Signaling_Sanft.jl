@@ -1,3 +1,4 @@
+
 using Catalyst, JumpProcesses, BenchmarkTools, Plots, Random
 using SymbolicIndexingInterface: parameter_values
 
@@ -44,7 +45,7 @@ function transport_model(rn, N; domain_len = 6.0, D = 1.0, rng = Random.default_
 
     # spatial initial condition
     # initial concentration of 12.3 nM = 12.3 * 1e-3 μM
-    num_molecules = trunc(Int, micromolar_to_invcubicmicrometer(12.3 * 1.0e-3) * (domain_len^3))
+    num_molecules = trunc(Int, micromolar_to_invcubicmicrometer(12.3*1e-3) * (domain_len^3))
     u0 = zeros(Int, 8, num_nodes)
     rand_EA = rand(rng, 1:num_nodes, num_molecules)
     rand_EB = rand(rng, 1:num_nodes, num_molecules)
@@ -53,7 +54,7 @@ function transport_model(rn, N; domain_len = 6.0, D = 1.0, rng = Random.default_
         u0[EBidx, rand_EB[i]] += 1
     end
 
-    return grid, hopping_constants, h, u0
+    grid, hopping_constants, h, u0
 end
 
 
@@ -75,26 +76,20 @@ end
 end_time = 3.0
 grid, hopping_constants, h, u0 = transport_model(rn, 60)
 majumps, parameters_wm, jprobwm, u0wm = wellmixed_model(rn, u0, end_time, 6.0)
-sol = solve(jprobwm, SSAStepper(); saveat = end_time / 200)
+sol = solve(jprobwm, SSAStepper(); saveat = end_time/200)
 Ntot = [sum(u) for u in sol.u]
-plt = plot(
-    sol.t, Ntot, label = "Well-mixed", ylabel = "Total Number of Molecules",
-    xlabel = "time"
-)
+plt = plot(sol.t, Ntot, label = "Well-mixed", ylabel = "Total Number of Molecules",
+    xlabel = "time")
 
 # spatial model
 majumps, parameters_wm, jprobwm, u0wm = wellmixed_model(rn, u0, end_time, h)
 dprob = DiscreteProblem(u0, (0.0, end_time), copy(parameters_wm))
-jprob = JumpProblem(
-    dprob, DirectCRDirect(), majumps; hopping_constants,
-    spatial_system = grid, save_positions = (false, false)
-)
-spatial_sol = solve(jprob, SSAStepper(); saveat = end_time / 200)
+jprob = JumpProblem(dprob, DirectCRDirect(), majumps; hopping_constants,
+    spatial_system = grid, save_positions = (false, false))
+spatial_sol = solve(jprob, SSAStepper(); saveat = end_time/200)
 Ntot = [sum(vec(u)) for u in spatial_sol.u]
-plot!(
-    plt, spatial_sol.t, Ntot, label = "Spatial",
-    title = "Steady-state number of molecules is $(Ntot[end])"
-)
+plot!(plt, spatial_sol.t, Ntot, label = "Spatial",
+    title = "Steady-state number of molecules is $(Ntot[end])")
 
 
 Base.@kwdef mutable struct EventCallback
@@ -103,13 +98,13 @@ end
 
 function (ecb::EventCallback)(u, t, integ)
     ecb.n += 1
-    return ecb.n == 10^8
+    ecb.n == 10^8
 end
 
 function (ecb::EventCallback)(integ)
     # save the final state
     terminate!(integ)
-    return nothing
+    nothing
 end
 
 
@@ -141,15 +136,12 @@ function benchmark_and_save!(bench_dict, end_times, Nv, algs, domain_len)
         for (i, alg) in enumerate(algs)
             name = names[i]
             println("benchmarking $name")
-            jp = JumpProblem(
-                dprob, alg, majumps, hopping_constants = hopping_constants,
-                spatial_system = grid, save_positions = (false, false)
-            )
-            b = @benchmarkable solve($jp, SSAStepper(); saveat = $(dprob.tspan[2]), callback) setup = (callback = deepcopy($cb)) samples = 3 seconds = 300
+            jp = JumpProblem(dprob, alg, majumps, hopping_constants = hopping_constants,
+                spatial_system = grid, save_positions = (false, false))
+            b = @benchmarkable solve($jp, SSAStepper(); saveat = $(dprob.tspan[2]), callback) setup=(callback=deepcopy($cb)) samples=3 seconds=300
             bench_dict[name, N] = run(b)
         end
     end
-    return
 end
 
 
@@ -164,7 +156,7 @@ function fetch_and_plot(bench_dict, domain_len)
     for (i, name) in enumerate(names)
         for N in Nv
             try
-                push!(medtimes[i], median(bench_dict[name, N]).time / 1.0e9)
+                push!(medtimes[i], median(bench_dict[name, N]).time/1e9)
             catch
                 break
             end
@@ -174,18 +166,12 @@ function fetch_and_plot(bench_dict, domain_len)
         plot!(plt2, (Nv .^ 3)[1:len], medtimes[i], marker = :hex, label = name, lw = 2)
     end
 
-    plot!(
-        plt1, xlabel = "number of sites per edge", ylabel = "median time in seconds",
-        xticks = Nv, legend = :bottomright
-    )
-    plot!(
-        plt2, xlabel = "total number of sites", ylabel = "median time in seconds",
-        xticks = (Nv .^ 3, string.(Nv .^ 3)), legend = :bottomright
-    )
-    return plot(
-        plt1, plt2; size = (1200, 800), legendtitle = "SSAs",
-        plot_title = "3D RDME, domain length = $domain_len", left_margin = 5Plots.mm
-    )
+    plot!(plt1, xlabel = "number of sites per edge", ylabel = "median time in seconds",
+        xticks = Nv, legend = :bottomright)
+    plot!(plt2, xlabel = "total number of sites", ylabel = "median time in seconds",
+        xticks = (Nv .^ 3, string.(Nv .^ 3)), legend = :bottomright)
+    plot(plt1, plt2; size = (1200, 800), legendtitle = "SSAs",
+        plot_title = "3D RDME, domain length = $domain_len", left_margin = 5Plots.mm)
 end
 
 
@@ -197,7 +183,7 @@ domain_len = 12.0
 benchmark_and_save!(bench_dict, end_times, Nv, algs, domain_len)
 
 
-plt = fetch_and_plot(bench_dict, domain_len)
+plt=fetch_and_plot(bench_dict, domain_len)
 
 
 bench_dict = Dict{Tuple{String, Int}, BenchmarkTools.Trial}()
@@ -205,8 +191,9 @@ domain_len = 6.0
 benchmark_and_save!(bench_dict, end_times, Nv, algs, domain_len)
 
 
-plt = fetch_and_plot(bench_dict, domain_len)
+plt=fetch_and_plot(bench_dict, domain_len)
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+

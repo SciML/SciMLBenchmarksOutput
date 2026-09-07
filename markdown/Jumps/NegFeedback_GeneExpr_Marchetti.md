@@ -172,17 +172,18 @@ Environment:
 Package Information:
 
 ```
-Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Jumps/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Jumps/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
   [479239e8] Catalyst v16.4.0
   [8f4d0f93] Conda v1.10.3
   [a93c6f00] DataFrames v1.8.2
   [0c46a032] DifferentialEquations v8.1.1
-  [31c24e10] Distributions v0.25.131
-  [86223c79] Graphs v1.14.0
+⌃ [31c24e10] Distributions v0.25.127
+  [523d8e89] Gillespie v0.2.0
+⌃ [86223c79] Graphs v1.14.0
   [faf0f6d7] JumpProblemLibrary v2.0.3
-  [ccbc3e58] JumpProcesses v9.30.1
-  [961ee093] ModelingToolkit v11.40.0
+⌃ [ccbc3e58] JumpProcesses v9.32.0
+⌃ [961ee093] ModelingToolkit v11.41.0
   [1dea7af3] OrdinaryDiffEq v7.8.1
   [86206cdf] PiecewiseDeterministicMarkovProcesses v0.0.12
   [91a5bcdd] Plots v1.41.7
@@ -191,7 +192,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
   [860ef19b] StableRNGs v1.0.4
   [f3b207a7] StatsPlots v0.15.8
-  [c3572dad] Sundials v6.6.0
+⌃ [c3572dad] Sundials v6.6.0
   [2efcf032] SymbolicIndexingInterface v0.3.55
   [37e2e46d] LinearAlgebra
   [9a3f8284] Random
@@ -202,25 +203,25 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 And the full manifest:
 
 ```
-Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Jumps/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Jumps/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
-  [14f7f29c] AMD v0.5.3
+  [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
-  [6e696c72] AbstractPlutoDingetjes v1.4.0
+  [6e696c72] AbstractPlutoDingetjes v1.4.1
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
   [7d9fca2a] Arpack v0.5.4
-  [4fba245c] ArrayInterface v7.30.0
+  [4fba245c] ArrayInterface v7.30.1
   [4c555306] ArrayLayouts v1.12.2
   [13072b0f] AxisAlgorithms v1.1.0
   [aae01518] BandedMatrices v1.12.0
   [6e4b80f9] BenchmarkTools v1.8.0
   [e2ed5e7c] Bijections v0.2.2
   [b2a6c25c] BinaryHeaps v1.1.0
-  [caf10ac8] BipartiteGraphs v0.1.12
+⌃ [caf10ac8] BipartiteGraphs v0.1.13
   [8e7c35d0] BlockArrays v1.10.0
   [70df07ce] BracketingNonlinearSolve v1.12.6
   [fa961155] CEnum v0.5.0
@@ -234,7 +235,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌅ [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
-  [f70d9fcc] CommonWorldInvalidations v1.2.0
+⌃ [f70d9fcc] CommonWorldInvalidations v1.2.1
   [34da2185] Compat v4.18.1
   [b152e2b5] CompositeTypes v0.1.4
   [a33af91c] CompositionsBase v0.1.2
@@ -248,7 +249,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.19.0
+⌃ [2b5f629d] DiffEqBase v7.20.0
   [459566f4] DiffEqCallbacks v4.19.3
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
@@ -256,10 +257,10 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [8d63f2c5] DispatchDoctor v0.4.28
   [b4f34e82] Distances v0.10.12
-  [31c24e10] Distributions v0.25.131
+⌃ [31c24e10] Distributions v0.25.127
   [ffbed154] DocStringExtensions v0.9.5
   [5b8099bc] DomainSets v0.8.1
-  [7c1d4256] DynamicPolynomials v0.6.7
+  [7c1d4256] DynamicPolynomials v0.6.8
   [06fc5a27] DynamicQuantities v1.13.0
   [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.21
@@ -282,15 +283,15 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [46192b85] GPUArraysCore v0.2.0
   [28b8d3ca] GR v0.73.27
   [a0844989] Gamma v1.2.0
+  [523d8e89] Gillespie v0.2.0
   [d7ba0133] Git v1.5.0
-  [86223c79] Graphs v1.14.0
-  [42e2da0e] Grisu v1.0.2
+⌃ [86223c79] Graphs v1.14.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.30
   [7073ff75] IJulia v1.34.4
-  [3263718b] ImplicitDiscreteSolve v2.2.0
+⌃ [3263718b] ImplicitDiscreteSolve v2.2.1
   [d25df0c9] Inflate v0.1.5
-  [842dd82b] InlineStrings v1.4.5
+⌅ [842dd82b] InlineStrings v1.4.6
   [18e54dd8] IntegerMathUtils v0.1.4
   [a98d9a8b] Interpolations v0.16.3
   [8197267c] IntervalSets v0.7.14
@@ -303,23 +304,23 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
   [faf0f6d7] JumpProblemLibrary v2.0.3
-  [ccbc3e58] JumpProcesses v9.30.1
+⌃ [ccbc3e58] JumpProcesses v9.32.0
   [5ab0869b] KernelDensity v0.6.12
   [ba0b0d4f] Krylov v0.10.9
-  [2faa5264] LHLFactorization v2.2.1
+  [2faa5264] LHLFactorization v2.2.2
   [7f56f5a3] LSODA v1.2.0
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [87fe0de2] LineSearch v0.1.16
-  [7ed4a6bd] LinearSolve v5.14.1
+⌃ [7ed4a6bd] LinearSolve v5.15.1
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
   [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
-  [961ee093] ModelingToolkit v11.40.0
-⌃ [7771a370] ModelingToolkitBase v1.68.0
+⌃ [961ee093] ModelingToolkit v11.41.0
+⌃ [7771a370] ModelingToolkitBase v1.68.2
   [6bb917b9] ModelingToolkitTearing v1.20.6
   [2e0e35c7] Moshi v0.3.12
   [46d2c3a1] MuladdMacro v0.2.7
@@ -329,28 +330,28 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [d8a4904e] MutableArithmetics v1.8.0
   [77ba4419] NaNMath v1.1.4
   [b8a86587] NearestNeighbors v0.4.29
-  [8913a72c] NonlinearSolve v4.28.1
-  [be0214bd] NonlinearSolveBase v2.48.2
-  [5959db7a] NonlinearSolveFirstOrder v2.4.1
-  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.2
-  [26075421] NonlinearSolveSpectralMethods v1.8.1
+⌃ [8913a72c] NonlinearSolve v4.29.1
+⌃ [be0214bd] NonlinearSolveBase v2.49.2
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.5.0
+  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3
+⌃ [26075421] NonlinearSolveSpectralMethods v1.8.1
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.17.0
 ⌅ [bac558e1] OrderedCollections v1.8.2
   [1dea7af3] OrdinaryDiffEq v7.8.1
-  [6ad6398a] OrdinaryDiffEqBDF v2.4.5
-  [bbf590c4] OrdinaryDiffEqCore v4.15.2
+  [6ad6398a] OrdinaryDiffEqBDF v2.4.6
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.16.0
   [50262376] OrdinaryDiffEqDefault v2.6.0
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.11.0
-  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.2
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.11.4
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.4
   [43230ef6] OrdinaryDiffEqRosenbrock v2.7.1
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
-  [2d112036] OrdinaryDiffEqSDIRK v2.9.1
+  [2d112036] OrdinaryDiffEqSDIRK v2.9.2
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
   [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
 ⌅ [d96e819e] Parameters v0.12.3
-⌅ [69de0a69] Parsers v2.8.7
+⌅ [69de0a69] Parsers v2.8.8
   [86206cdf] PiecewiseDeterministicMarkovProcesses v0.0.12
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.4
@@ -378,12 +379,12 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [ae029012] Requires v1.3.1
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
-  [f2b01f46] Roots v3.0.7
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.25
-  [9dfe8606] SCCNonlinearSolve v1.15.1
-  [0bca4576] SciMLBase v3.50.0
+⌅ [f2b01f46] Roots v2.3.0
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.25
+  [9dfe8606] SCCNonlinearSolve v1.15.2
+⌃ [0bca4576] SciMLBase v3.50.2
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
-  [19f34311] SciMLJacobianOperators v0.1.18
+⌃ [19f34311] SciMLJacobianOperators v0.1.18
   [a6db7da4] SciMLLogging v2.1.0
   [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
@@ -391,28 +392,28 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [6c6a2e73] Scratch v1.3.0
   [91c51154] SentinelArrays v1.4.10
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
-  [727e6d20] SimpleNonlinearSolve v2.14.1
+  [992d4aef] Showoff v1.1.1
+⌃ [727e6d20] SimpleNonlinearSolve v2.14.1
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
-  [a57abbd0] SparseColumnPivotedQR v2.1.7
-  [0a514795] SparseMatrixColorings v0.4.27
+  [a57abbd0] SparseColumnPivotedQR v2.1.8
+  [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
   [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
   [64909d44] StateSelection v1.11.1
-  [90137ffa] StaticArrays v1.9.19
+  [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.13
   [4c63d2b9] StatsFuns v2.2.1
   [f3b207a7] StatsPlots v0.15.8
   [69024149] StringEncodings v0.3.7
-  [892a3eda] StringManipulation v0.5.0
-  [c3572dad] Sundials v6.6.0
+⌅ [892a3eda] StringManipulation v0.5.0
+⌃ [c3572dad] Sundials v6.6.0
   [2efcf032] SymbolicIndexingInterface v0.3.55
-  [19f23fe9] SymbolicLimits v1.2.0
-⌅ [d1185830] SymbolicUtils v4.45.0
+  [19f23fe9] SymbolicLimits v1.2.1
+⌃ [d1185830] SymbolicUtils v4.46.1
   [0c5d862f] Symbolics v7.39.0
   [ab02a1b2] TableOperations v1.2.0
   [3783bdb8] TableTraits v1.0.1
@@ -421,7 +422,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
   [1c621080] TestItems v1.1.0
-  [a759f4b9] TimerOutputs v1.2.0
+  [a759f4b9] TimerOutputs v1.2.1
   [410a4b4d] Tricks v0.1.13
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
@@ -564,20 +565,20 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [8dfed614] Test
   [cf7118a7] UUIDs
   [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
+  [e66e0078] CompilerSupportLibraries_jll v1.1.2+1
   [deac9b47] LibCURL_jll v8.4.0+0
   [e37daf67] LibGit2_jll v1.6.4+0
   [29816b5a] LibSSH2_jll v1.11.0+1
-  [c8ffd9c3] MbedTLS_jll v2.28.2+1
-  [14a3606d] MozillaCACerts_jll v2023.1.10
-  [4536629a] OpenBLAS_jll v0.3.23+4
-  [05823500] OpenLibm_jll v0.8.1+4
+  [c8ffd9c3] MbedTLS_jll v2.28.1010+0
+  [14a3606d] MozillaCACerts_jll v2025.12.2
+  [4536629a] OpenBLAS_jll v0.3.23+5
+  [05823500] OpenLibm_jll v0.8.5+0
   [efcefdf7] PCRE2_jll v10.42.0+1
   [bea87d4a] SuiteSparse_jll v7.2.1+1
   [83775a58] Zlib_jll v1.2.13+1
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
-  [3f19e933] p7zip_jll v17.4.0+2
+  [3f19e933] p7zip_jll v17.6.1+0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 ```
 

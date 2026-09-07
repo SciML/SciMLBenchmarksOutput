@@ -1,13 +1,12 @@
+
 using Catalyst, JumpProcesses, JumpProblemLibrary, Plots, Statistics, DataFrames
 
 
 N = 256
 h = 1 / N
 tf = 0.01
-methods = (
-    Direct(), FRM(), SortingDirect(), NRM(), DirectCR(),
-    RSSA(), RSSACR(), Coevolve(), RDirect(),
-)
+methods = (Direct(), FRM(), SortingDirect(), NRM(), DirectCR(),
+    RSSA(), RSSACR(), Coevolve(), RDirect())
 shortlabels = [string(leg)[15:(end - 2)] for leg in methods]
 jprob = JumpProblemLibrary.prob_jump_diffnetwork
 rn = jprob.network(N)
@@ -19,15 +18,15 @@ for (i, method) in enumerate(methods)
     jump_prob = JumpProblem(
         rn, u0, (0.0, tf), rates; aggregator = method, save_positions = (false, false)
     )
-    sol = solve(jump_prob, SSAStepper(); saveat = tf / 1000.0)
-    plot!(ploth, sol.t, sol[Int(N // 2), :], label = shortlabels[i])
+    sol = solve(jump_prob, SSAStepper(); saveat = tf/1000.0)
+    plot!(ploth, sol.t, sol[Int(N//2), :], label = shortlabels[i])
 end
 plot!(ploth, title = "Population at middle lattice site", xlabel = "time")
 
 
 function run_benchmark!(t, jump_prob, stepper)
     sol = solve(jump_prob, stepper)
-    return @inbounds for i in 1:length(t)
+    @inbounds for i in 1:length(t)
         t[i] = @elapsed (sol = solve(jump_prob, stepper))
     end
 end
@@ -56,9 +55,8 @@ for i in 1:length(methods)
 end
 
 df = DataFrame(
-    names = shortlabels, medtimes = medtimes, relmedtimes = (medtimes / medtimes[1]),
-    avgtimes = avgtimes, std = stdtimes, cv = stdtimes ./ avgtimes
-)
+    names = shortlabels, medtimes = medtimes, relmedtimes = (medtimes/medtimes[1]),
+    avgtimes = avgtimes, std = stdtimes, cv = stdtimes ./ avgtimes)
 
 
 sa = [string(round(mt, digits = 4), "s") for mt in df.medtimes]
@@ -70,3 +68,4 @@ title!("256 Site 1D Diffusion CTRW")
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+

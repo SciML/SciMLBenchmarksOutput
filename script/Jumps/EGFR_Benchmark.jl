@@ -1,5 +1,6 @@
+
 using JumpProcesses, Plots, StableRNGs, BenchmarkTools, ReactionNetworkImporters,
-    StatsPlots, Catalyst
+      StatsPlots, Catalyst
 
 
 tf = 12.0
@@ -15,7 +16,7 @@ for alg in algs
         egfr_net, egfr_u0, (0.0, tf), egfr_parameters;
         aggregator = alg, u0_eltype = Int64
     )
-    sol = solve(jprob, SSAStepper(), saveat = tf / 200)
+    sol = solve(jprob, SSAStepper(), saveat = tf/200)
     plot!(plt, sol, idxs = :Dimers, label = "$alg")
 end
 plot!(plt)
@@ -36,15 +37,13 @@ function benchmark_and_bar_plot(model, end_time, algs)
             aggregator = alg, rng, save_positions = (false, false), u0_eltype = Int64
         )
 
-        b = @benchmarkable solve($jprob; saveat = $end_time) samples = 5 seconds = 7200
+        b = @benchmarkable solve($jprob; saveat = $end_time) samples=5 seconds=7200
         bm = run(b)
-        push!(times, median(bm).time / 1.0e9)
+        push!(times, median(bm).time/1e9)
     end
 
-    return bar(
-        alg_names, times, xlabel = "Algorithm", ylabel = "Average Time (s)",
-        title = "SSA Runtime for EGFR network", legend = false
-    )
+    bar(alg_names, times, xlabel = "Algorithm", ylabel = "Average Time (s)",
+        title = "SSA Runtime for EGFR network", legend = false)
 end
 
 
@@ -58,3 +57,4 @@ plt
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
