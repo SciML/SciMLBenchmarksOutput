@@ -77,7 +77,7 @@ end
 function hawkes_problem(
     p,
     agg;
-    vr_agg = VR_FRM(),
+    vr_agg = VR_DirectFW(),
     u = [0.0],
     tspan = (0.0, 50.0),
     save_positions = (false, true),
@@ -85,8 +85,8 @@ function hawkes_problem(
     use_recursion = false,
 )
     oprob = ODEProblem(f!, u, tspan, p)
-    jumps = hawkes_jump(u, g; use_recursion)
-    jprob = JumpProblem(oprob, agg, jumps...; vr_aggregator = vr_agg, save_positions = save_positions)
+    jumps = JumpSet(; variable_jumps = hawkes_jump(u, g; use_recursion))
+    jprob = JumpProblem(oprob, agg, jumps; vr_aggregator = vr_agg, save_positions = save_positions)
     return jprob
 end
 
@@ -101,9 +101,8 @@ function hawkes_problem(
         use_recursion = false
 )
     dprob = DiscreteProblem(u, tspan, p)
-    jumps = hawkes_jump(u, g; use_recursion)
-    jprob = JumpProblem(
-        dprob, agg, jumps...; dep_graph = g, save_positions = save_positions)
+    jumps = JumpSet(; variable_jumps = hawkes_jump(u, g; use_recursion))
+    jprob = JumpProblem(dprob, agg, jumps; dep_graph = g, save_positions = save_positions)
     return jprob
 end
 
@@ -625,27 +624,27 @@ for (algo, stepper, use_recursion, label) in algorithms
         global jump_prob = hawkes_problem(_p, algo; u, tspan, g, use_recursion)
         trial = try
             if algo isa PyTick
-                @benchmark(jump_prob.simulate(),
-                    setup=(jump_prob.reset()),
+                @benchmark($(jump_prob).simulate(),
+                    setup=($(jump_prob).reset()),
                     samples=50,
                     evals=1,
                     seconds=10,)
             else
                 if algo isa PDMPCHVFull
-                    @benchmark(solve(jump_prob, _stepper),
+                    @benchmark(solve($jump_prob, $_stepper),
                         setup=(),
                         samples=50,
                         evals=1,
                         seconds=10,)
                 elseif algo isa PDMPCHVSimple
                     if use_recursion
-                        @benchmark(solve(jump_prob, _stepper),
+                        @benchmark(solve($jump_prob, $_stepper),
                             setup=(h .= 0; ϕ .= 0),
                             samples=50,
                             evals=1,
                             seconds=10,)
                     else
-                        @benchmark(solve(jump_prob, _stepper),
+                        @benchmark(solve($jump_prob, $_stepper),
                             setup=([empty!(_h) for _h in h]),
                             samples=50,
                             evals=1,
@@ -653,13 +652,13 @@ for (algo, stepper, use_recursion, label) in algorithms
                     end
                 else
                     if use_recursion
-                        @benchmark(solve(jump_prob, _stepper),
+                        @benchmark(solve($jump_prob, $_stepper),
                             setup=(h .= 0; urate .= 0; ϕ .= 0),
                             samples=50,
                             evals=1,
                             seconds=10,)
                     else
-                        @benchmark(solve(jump_prob, _stepper),
+                        @benchmark(solve($jump_prob, $_stepper),
                             setup=([empty!(_h) for _h in h]; urate .= 0),
                             samples=50,
                             evals=1,
@@ -687,7 +686,8 @@ let fig = plot(
         yscale = :log10,
         xlabel = "V",
         ylabel = "Time (ns)",
-        legend_position = :outertopright
+        legend_position = :outertopright,
+        size = (800, 400),
     )
     for (i, (algo, stepper, use_recursion, label)) in enumerate(algorithms)
         _bs, _Vs = [], []
@@ -724,7 +724,8 @@ for (vr_agg, stepper, use_recursion, label) in vr_aggs
     global _stepper = stepper
     push!(vr_bs, Vector{BenchmarkTools.Trial}())
     _vr_bs = vr_bs[end]
-    for (i, G) in enumerate(Gs)
+    local benchmark_graphs = vr_agg isa VR_FRM ? Gs[Vs .<= 40] : Gs
+    for (i, G) in enumerate(benchmark_graphs)
         local g = [neighbors(G, i) for i in 1:nv(G)]
         local u = [0.0 for i in 1:nv(G)]
         if use_recursion
@@ -741,7 +742,7 @@ for (vr_agg, stepper, use_recursion, label) in vr_aggs
         trial = try
             if use_recursion
                 @benchmark(
-                    solve(jump_prob, _stepper),
+                    solve($jump_prob, $_stepper),
                     setup = (h .= 0; urate .= 0; ϕ .= 0),
                     samples = 50,
                     evals = 1,
@@ -749,7 +750,7 @@ for (vr_agg, stepper, use_recursion, label) in vr_aggs
                 )
             else
                 @benchmark(
-                    solve(jump_prob, _stepper),
+                    solve($jump_prob, $_stepper),
                     setup = ([empty!(_h) for _h in h]; urate .= 0),
                     samples = 50,
                     evals = 1,
@@ -776,6 +777,7 @@ let fig = plot(
     xlabel = "V",
     ylabel = "Time (ns)",
     legend_position = :outertopright,
+    size = (800, 400),
 )
     for (i, (vr_agg, _, use_recursion, label)) in enumerate(vr_aggs)
         _bs, _Vs = [], []
