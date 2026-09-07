@@ -53,14 +53,14 @@ Setup Complete</code></pre><h2 id="qmax-test-on-Oval2-Model"><a class="docs-head
     numFails = sum(Int(any(isnan, sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:num_runs)
     println(&quot;k was $k. The number of Adaptive Fails is $numFails. Elapsed time was $adaptiveTime&quot;)
     times[k, 4] = adaptiveTime
-end</code></pre><pre><code class="nohighlight hljs">k was 1. The number of Adaptive Fails is 0. Elapsed time was 10.744949454
-k was 2. The number of Adaptive Fails is 0. Elapsed time was 6.168484073
-k was 3. The number of Adaptive Fails is 0. Elapsed time was 7.426939785
-k was 4. The number of Adaptive Fails is 0. Elapsed time was 10.145419231
-k was 5. The number of Adaptive Fails is 0. Elapsed time was 9.84436968
-k was 6. The number of Adaptive Fails is 0. Elapsed time was 10.78005812
-k was 7. The number of Adaptive Fails is 0. Elapsed time was 14.533406016
-k was 8. The number of Adaptive Fails is 0. Elapsed time was 12.085573762</code></pre><h2 id="qmax-test-on-other-problems"><a class="docs-heading-anchor" href="#qmax-test-on-other-problems">qmax test on other problems</a><a id="qmax-test-on-other-problems-1"></a><a class="docs-heading-anchor-permalink" href="#qmax-test-on-other-problems" title="Permalink"></a></h2><pre><code class="language-julia hljs">for k in eachindex(probs)
+end</code></pre><pre><code class="nohighlight hljs">k was 1. The number of Adaptive Fails is 0. Elapsed time was 9.02547649
+k was 2. The number of Adaptive Fails is 0. Elapsed time was 4.991603697
+k was 3. The number of Adaptive Fails is 0. Elapsed time was 5.40904708
+k was 4. The number of Adaptive Fails is 0. Elapsed time was 7.298185389
+k was 5. The number of Adaptive Fails is 0. Elapsed time was 8.404966317
+k was 6. The number of Adaptive Fails is 0. Elapsed time was 8.120666214
+k was 7. The number of Adaptive Fails is 0. Elapsed time was 10.128598259
+k was 8. The number of Adaptive Fails is 0. Elapsed time was 8.748594622</code></pre><h2 id="qmax-test-on-other-problems"><a class="docs-heading-anchor" href="#qmax-test-on-other-problems">qmax test on other problems</a><a id="qmax-test-on-other-problems-1"></a><a class="docs-heading-anchor-permalink" href="#qmax-test-on-other-problems" title="Permalink"></a></h2><pre><code class="language-julia hljs">for k in eachindex(probs)
     global probs, times, means, qs
     println(&quot;Problem $k&quot;)
     ## Setup
@@ -77,55 +77,55 @@ k was 8. The number of Adaptive Fails is 0. Elapsed time was 12.085573762</code>
     end
 end</code></pre><pre><code class="nohighlight hljs">Problem 1
 for k=1 and i=1, we get that the error was 4.3345570672384755e-6 and it too
-k 14.841275135 seconds
+k 6.851991177 seconds
 for k=1 and i=2, we get that the error was 4.95244707577117e-6 and it took 
-8.99198717 seconds
+5.51315299 seconds
 for k=1 and i=3, we get that the error was 5.519841471992787e-6 and it took
- 8.783361398 seconds
+ 5.194552637 seconds
 for k=1 and i=4, we get that the error was 4.566284494219104e-6 and it took
- 8.482748491 seconds
+ 5.155888878 seconds
 for k=1 and i=5, we get that the error was 4.847058022484335e-6 and it took
- 8.23485097 seconds
+ 5.039040387 seconds
 for k=1 and i=6, we get that the error was 4.4638775332691365e-6 and it too
-k 8.016401363 seconds
+k 5.045732915 seconds
 for k=1 and i=7, we get that the error was 1.1271481709080833e-5 and it too
-k 9.025945582 seconds
+k 4.995139076 seconds
 for k=1 and i=8, we get that the error was 5.7054711567035056e-6 and it too
-k 8.339592844 seconds
+k 5.009835588 seconds
 Problem 2
 for k=2 and i=1, we get that the error was 6.072044751566086e-8 and it took
- 0.295994082 seconds
+ 0.269917553 seconds
 for k=2 and i=2, we get that the error was 9.864725446371292e-8 and it took
- 0.052437015 seconds
+ 0.05350725 seconds
 for k=2 and i=3, we get that the error was 1.817270462234677e-7 and it took
- 0.051662949 seconds
+ 0.053716998 seconds
 for k=2 and i=4, we get that the error was 2.4254606923169717e-7 and it too
-k 0.052888672 seconds
+k 0.054003944 seconds
 for k=2 and i=5, we get that the error was 2.526062185660205e-7 and it took
- 1.10836881 seconds
+ 0.410734237 seconds
 for k=2 and i=6, we get that the error was 2.5977466121286374e-7 and it too
-k 0.051680919 seconds
+k 0.049911159 seconds
 for k=2 and i=7, we get that the error was 2.568753861699191e-7 and it took
- 0.049451262 seconds
+ 0.051429843 seconds
 for k=2 and i=8, we get that the error was 2.6504550104691217e-7 and it too
-k 0.046968007 seconds
+k 0.050205445 seconds
 Problem 3
 for k=3 and i=1, we get that the error was 4.854088765704478e-9 and it took
- 3.694699552 seconds
+ 2.681321468 seconds
 for k=3 and i=2, we get that the error was 4.866878330889168e-9 and it took
- 2.555978974 seconds
+ 1.949817199 seconds
 for k=3 and i=3, we get that the error was 4.869679883134914e-9 and it took
- 2.61954934 seconds
+ 1.674347816 seconds
 for k=3 and i=4, we get that the error was 4.870960199099272e-9 and it took
- 2.584750558 seconds
+ 1.753587078 seconds
 for k=3 and i=5, we get that the error was 4.8724467608396434e-9 and it too
-k 2.984218774 seconds
+k 1.766211871 seconds
 for k=3 and i=6, we get that the error was 4.874379965524866e-9 and it took
- 2.463337365 seconds
+ 1.598948904 seconds
 for k=3 and i=7, we get that the error was 4.877679461912088e-9 and it took
- 2.909551419 seconds
+ 1.778402939 seconds
 for k=3 and i=8, we get that the error was 4.873669554206206e-9 and it took
- 2.318301984 seconds</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+ 1.996659173 seconds</code></pre><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/AdaptiveSDE&quot;,&quot;qmaxDetermination.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.12.7
 Commit 6d172b025e4 (2026-08-15 08:05 UTC)
 Build Info:
@@ -138,8 +138,9 @@ Platform Info:
   GC: Built with stock GC
 Threads: 128 default, 1 interactive, 128 GC (on 128 virtual cores)
 Environment:
+  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AdaptiveSDE/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AdaptiveSDE/Project.toml`
 ⌃ [2b5f629d] DiffEqBase v7.6.0
 ⌃ [77a26b50] DiffEqNoiseProcess v5.34.0
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.5.0
@@ -149,7 +150,7 @@ Environment:
 ⌃ [a6db7da4] SciMLLogging v2.0.1
 ⌃ [789caeaf] StochasticDiffEq v7.1.1
   [9a3f8284] Random v1.11.0
-Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AdaptiveSDE/Manifest.toml`
+Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AdaptiveSDE/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.22.1
 ⌃ [14f7f29c] AMD v0.5.3
   [7d9f7c33] Accessors v0.1.45
@@ -455,4 +456,4 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
   [8e850b90] libblastrampoline_jll v5.15.0+0
   [8e850ede] nghttp2_jll v1.64.0+1
   [3f19e933] p7zip_jll v17.7.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../AdaptiveEfficiencyTests/">« Adaptive Efficiency Tests</a><a class="docs-footer-nextpage" href="../../Surrogates/tensor_product/">Tensor Product Function »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Monday 7 September 2026 13:23">Monday 7 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../AdaptiveEfficiencyTests/">« Adaptive Efficiency Tests</a><a class="docs-footer-nextpage" href="../../Surrogates/tensor_product/">Tensor Product Function »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Monday 7 September 2026 13:40">Monday 7 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
