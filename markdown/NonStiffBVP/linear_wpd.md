@@ -499,27 +499,27 @@ Platform Info:
   CPU: 128 × AMD EPYC 7502 32-Core Processor
   WORD_SIZE: 64
   LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
-Threads: 1 default, 0 interactive, 1 GC (on 128 virtual cores)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
-  JULIA_PKG_PRECOMPILE_AUTO = 0
+  JULIA_NUM_THREADS = auto
 
 ```
 
 Package Information:
 
 ```
-Status `~/sandbox/tmp_20260825_180339_53321/nonstiffbvp-current/benchmarks/NonStiffBVP/Project.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffBVP/Project.toml`
   [ded0fc24] BVProblemLibrary v0.1.13
   [6e4b80f9] BenchmarkTools v1.8.0
   [764a87c0] BoundaryValueDiffEq v5.25.0
   [13f3f980] CairoMakie v0.15.14
 ⌃ [f3b72e0c] DiffEqDevTools v3.6.1
-  [5959db7a] NonlinearSolveFirstOrder v2.5.0
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.5.0
   [54ca160b] ODEInterface v0.5.2
   [1dea7af3] OrdinaryDiffEq v7.8.1
   [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
   [91a5bcdd] Plots v1.41.7
-  [0bca4576] SciMLBase v3.50.2
+⌃ [0bca4576] SciMLBase v3.50.2
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
   [be0294bd] SimpleBoundaryValueDiffEq v1.6.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
@@ -528,7 +528,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 And the full manifest:
 
 ```
-Status `~/sandbox/tmp_20260825_180339_53321/nonstiffbvp-current/benchmarks/NonStiffBVP/Manifest.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffBVP/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
 ⌃ [14f7f29c] AMD v0.5.3
   [621f4979] AbstractFFTs v1.5.0
@@ -552,7 +552,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/nonstiffbvp-current/benchmarks/NonSt
   [764a87c0] BoundaryValueDiffEq v5.25.0
   [7227322d] BoundaryValueDiffEqAscher v1.16.1
   [56b672f2] BoundaryValueDiffEqCore v2.8.3
-  [85d9eb09] BoundaryValueDiffEqFIRK v1.19.1
+⌃ [85d9eb09] BoundaryValueDiffEqFIRK v1.19.1
   [1a22d4ce] BoundaryValueDiffEqMIRK v1.18.1
   [9255f1d6] BoundaryValueDiffEqMIRKN v1.17.1
   [ed55bfe0] BoundaryValueDiffEqShooting v1.18.2
@@ -585,7 +585,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/nonstiffbvp-current/benchmarks/NonSt
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v1.6.6
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.20.0
+⌃ [2b5f629d] DiffEqBase v7.20.0
 ⌃ [f3b72e0c] DiffEqDevTools v3.6.1
   [77a26b50] DiffEqNoiseProcess v5.36.2
   [163ba53b] DiffResults v1.1.0
@@ -657,7 +657,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/nonstiffbvp-current/benchmarks/NonSt
   [5078a376] LazyArrays v2.12.0
   [8cdb02fc] LazyModules v0.3.1
   [87fe0de2] LineSearch v0.1.16
-  [7ed4a6bd] LinearSolve v5.15.1
+⌃ [7ed4a6bd] LinearSolve v5.15.1
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
@@ -675,8 +675,8 @@ Status `~/sandbox/tmp_20260825_180339_53321/nonstiffbvp-current/benchmarks/NonSt
   [77ba4419] NaNMath v1.1.4
   [f09324ee] Netpbm v1.1.1
   [8913a72c] NonlinearSolve v4.29.1
-  [be0214bd] NonlinearSolveBase v2.49.2
-  [5959db7a] NonlinearSolveFirstOrder v2.5.0
+⌃ [be0214bd] NonlinearSolveBase v2.49.2
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.5.0
   [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3
   [26075421] NonlinearSolveSpectralMethods v1.8.1
   [54ca160b] ODEInterface v0.5.2
@@ -687,11 +687,11 @@ Status `~/sandbox/tmp_20260825_180339_53321/nonstiffbvp-current/benchmarks/NonSt
   [bac558e1] OrderedCollections v2.0.1
   [1dea7af3] OrdinaryDiffEq v7.8.1
   [6ad6398a] OrdinaryDiffEqBDF v2.4.6
-  [bbf590c4] OrdinaryDiffEqCore v4.16.0
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.16.0
   [50262376] OrdinaryDiffEqDefault v2.6.0
   [4302a76b] OrdinaryDiffEqDifferentiation v3.11.4
   [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
-  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.4
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.4
   [43230ef6] OrdinaryDiffEqRosenbrock v2.7.1
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
   [2d112036] OrdinaryDiffEqSDIRK v2.9.2
@@ -733,9 +733,9 @@ Status `~/sandbox/tmp_20260825_180339_53321/nonstiffbvp-current/benchmarks/NonSt
   [47965b36] RootedTrees v2.27.0
   [f2b01f46] Roots v3.0.8
   [5eaf0fd0] RoundingEmulator v0.2.1
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.25
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.25
   [fdea26ae] SIMD v3.7.2
-  [0bca4576] SciMLBase v3.50.2
+⌃ [0bca4576] SciMLBase v3.50.2
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
   [19f34311] SciMLJacobianOperators v0.1.18
   [a6db7da4] SciMLLogging v2.1.0

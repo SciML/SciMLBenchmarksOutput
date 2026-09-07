@@ -1,27 +1,28 @@
+
 using BoundaryValueDiffEq, OrdinaryDiffEq, BenchmarkTools, SciMLBase
 using OrdinaryDiffEqLowOrderRK
 
 y0 = [
-    -4.7763169762853989e+6,
-    -3.838639870444152e+5,
-    -5.3500183933132319e+6,
+    -4.7763169762853989E+06,
+    -3.8386398704441520E+05,
+    -5.3500183933132319E+06,
     -5528.612564911408,
     1216.8442360202787,
-    4845.114446429901,
+    4845.114446429901
 ]
 init_val = [
-    -4.7763169762853989e+6,
-    -3.838639870444152e+5,
-    -5.3500183933132319e+6,
-    7.0526926403748598e+6,
-    -7.9650476230388973e+5,
-    -1.191112886366643e+6,
+    -4.7763169762853989E+06,
+    -3.8386398704441520E+05,
+    -5.3500183933132319E+06,
+    7.0526926403748598E+06,
+    -7.9650476230388973E+05,
+    -1.1911128863666430E+06
 ]
-J2 = 1.08262668e-3
+J2 = 1.08262668E-3
 req = 6378137
-mu = 398600.4418e+9
-t0 = 86400 * 2.3577475462484435e+4
-t1 = 86400 * 2.3577522023524125e+4
+myu = 398600.4418E+9
+t0 = 86400 * 2.3577475462484435E+04
+t1 = 86400 * 2.3577522023524125E+04
 tspan = (t0, t1)
 
 # ODE solver
@@ -33,9 +34,9 @@ function orbital(dy, y, p, t)
     dy[1] = y[4]
     dy[2] = y[5]
     dy[3] = y[6]
-    dy[4] = -mu * y[1] * w / r3
-    dy[5] = -mu * y[2] * w / r3
-    return dy[6] = -mu * y[3] * w2 / r3
+    dy[4] = -myu * y[1] * w / r3
+    dy[5] = -myu * y[2] * w / r3
+    dy[6] = -myu * y[3] * w2 / r3
 end
 
 function bc!_generator(resid, sol, init_val)
@@ -44,7 +45,7 @@ function bc!_generator(resid, sol, init_val)
     resid[3] = sol.u[1][3] - init_val[3]
     resid[4] = sol.u[end][1] - init_val[4]
     resid[5] = sol.u[end][2] - init_val[5]
-    return resid[6] = sol.u[end][3] - init_val[6]
+    resid[6] = sol.u[end][3] - init_val[6]
 end
 cur_bc! = (resid, sol, p, t) -> bc!_generator(resid, sol, init_val)
 resid_f = Array{Float64}(undef, 6)
@@ -110,3 +111,4 @@ validate_solution(sol, tolerance)
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
