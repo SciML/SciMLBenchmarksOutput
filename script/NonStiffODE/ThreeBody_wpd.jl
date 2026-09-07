@@ -1,6 +1,8 @@
 
 using OrdinaryDiffEq, ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools, StaticArrays,
       IRKGaussLegendre
+using OrdinaryDiffEqAdamsBashforthMoulton, OrdinaryDiffEqExtrapolation, OrdinaryDiffEqFIRK, OrdinaryDiffEqHighOrderRK, OrdinaryDiffEqLowOrderRK, OrdinaryDiffEqVerner
+using SciMLLogging
 using Plots;
 gr()
 
@@ -60,8 +62,8 @@ reltols = 1.0 ./ 10.0 .^ (0:10);
 
 
 sol = solve(prob, Vern9(), abstol = 1e-14, reltol = 1e-14)
-@show sol[1] - sol[end]
-@show sol[end] - prob.u0;
+@show sol.u[1] - sol.u[end]
+@show sol.u[end] - prob.u0;
 
 
 setups = [Dict(:alg=>DP5())
@@ -72,7 +74,7 @@ setups = [Dict(:alg=>DP5())
           Dict(:alg=>Tsit5(), :prob_choice => 2)
           Dict(:alg=>dopri5())];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol,
-    save_everystep = false, numruns = 100)
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 
@@ -95,7 +97,7 @@ setups = [Dict(:alg=>DP5())
           Dict(:alg=>IRKGL16(simd = true))
           Dict(:alg=>Tsit5(), :prob_choice => 2)
           Dict(:alg=>dopri5())];
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol, numruns = 100)
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 
@@ -114,16 +116,16 @@ setups = [Dict(:alg=>DP5())
           Dict(:alg=>Vern8(), :prob_choice => 2)
           Dict(:alg=>Vern9(), :prob_choice => 2)];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol,
-    save_everystep = false, numruns = 100)
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol,
-    dense = false, numruns = 100, verbose = false)
+    dense = false, numruns = 100, verbose = SciMLLogging.None())
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol, numruns = 100)
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 
@@ -143,7 +145,7 @@ setups = [Dict(:alg=>DP5())
           Dict(:alg=>odex())
           Dict(:alg=>ARKODE(Sundials.Explicit(), order = 6))];
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; appxsol = test_sol,
-    save_everystep = false, numruns = 100)
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 
@@ -164,7 +166,7 @@ solnames = ["Tsit5", "Vern9", "IRKGL16", "IRKGL16 SIMD",
     "AitkenNeville", "Midpoint Deuflhard", "Midpoint Hairer Wanner"]
 wp = WorkPrecisionSet(
     probs, abstols, reltols, setups; appxsol = test_sol, names = solnames,
-    save_everystep = false, verbose = false, numruns = 100)
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 
@@ -183,7 +185,7 @@ setups = [Dict(:alg=>ExtrapolationMidpointDeuflhard(
 solnames = ["Deuflhard", "No threads", "standard", "Romberg", "Bulirsch"]
 wp = WorkPrecisionSet(
     probs, abstols, reltols, setups; appxsol = test_sol, names = solnames,
-    save_everystep = false, verbose = false, numruns = 100)
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 
@@ -200,7 +202,7 @@ setups = [Dict(:alg=>ExtrapolationMidpointHairerWanner(
 solnames = ["1", "2", "3", "4", "5"]
 wp = WorkPrecisionSet(
     probs, abstols, reltols, setups; appxsol = test_sol, names = solnames,
-    save_everystep = false, verbose = false, numruns = 100)
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 

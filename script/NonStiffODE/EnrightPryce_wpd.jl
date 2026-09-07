@@ -100,39 +100,41 @@ wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_eve
 plot(wp; title="NC4")
 
 
-prob = NC_PROBLEMS[5]
-test_sol = solve(prob, Vern9(), abstol=1/10^14, reltol=1/10^14)
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_everystep=false, numruns=100)
-plot(wp; title="NC5")
+setups_nd = [
+    Dict(:alg=>Tsit5()),
+    Dict(:alg=>Vern6()),
+    Dict(:alg=>Vern7()),
+    Dict(:alg=>Vern9())
+]
 
 
 prob = ND_PROBLEMS[1]
 test_sol = solve(prob, Vern9(), abstol=1/10^14, reltol=1/10^14)
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_everystep=false, numruns=100)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups_nd; appxsol=test_sol, save_everystep=false, numruns=100)
 plot(wp; title="ND1")
 
 
 prob = ND_PROBLEMS[2]
 test_sol = solve(prob, Vern9(), abstol=1/10^14, reltol=1/10^14)
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_everystep=false, numruns=100)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups_nd; appxsol=test_sol, save_everystep=false, numruns=100)
 plot(wp; title="ND2")
 
 
 prob = ND_PROBLEMS[3]
 test_sol = solve(prob, Vern9(), abstol=1/10^14, reltol=1/10^14)
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_everystep=false, numruns=100)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups_nd; appxsol=test_sol, save_everystep=false, numruns=100)
 plot(wp; title="ND3")
 
 
 prob = ND_PROBLEMS[4]
 test_sol = solve(prob, Vern9(), abstol=1/10^14, reltol=1/10^14)
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_everystep=false, numruns=100)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups_nd; appxsol=test_sol, save_everystep=false, numruns=100)
 plot(wp; title="ND4")
 
 
 prob = ND_PROBLEMS[5]
 test_sol = solve(prob, Vern9(), abstol=1/10^14, reltol=1/10^14)
-wp = WorkPrecisionSet(prob, abstols, reltols, setups; appxsol=test_sol, save_everystep=false, numruns=100)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups_nd; appxsol=test_sol, save_everystep=false, numruns=100)
 plot(wp; title="ND5")
 
 

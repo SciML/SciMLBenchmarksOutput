@@ -246,6 +246,7 @@ Platform Info:
   LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
+  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
 
 ```
@@ -253,7 +254,7 @@ Environment:
 Package Information:
 
 ```
-Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffODE/Project.toml`
+Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffODE/Project.toml`
 ⌃ [2b5f629d] DiffEqBase v7.5.0
 ⌃ [f3b72e0c] DiffEqDevTools v3.1.0
 ⌃ [58bc7355] IRKGaussLegendre v1.0.1
@@ -286,7 +287,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffODE/Manifest.toml`
+Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffODE/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.22.0
 ⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
   [1520ce14] AbstractTrees v0.4.5
@@ -363,7 +364,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [46192b85] GPUArraysCore v0.2.0
 ⌃ [28b8d3ca] GR v0.73.24
   [d7ba0133] Git v1.5.0
-  [86223c79] Graphs v1.14.0
+⌃ [86223c79] Graphs v1.14.0
   [42e2da0e] Grisu v1.0.2
 ⌅ [cd3eb016] HTTP v1.11.0
 ⌅ [eafb193a] Highlights v0.5.3

@@ -2,6 +2,8 @@
 using OrdinaryDiffEq, ParameterizedFunctions, ODEInterface,
       ODEInterfaceDiffEq, LSODA, Sundials, DiffEqDevTools,
       StaticArrays, OrdinaryDiffEqSIMDRK
+using OrdinaryDiffEqAdamsBashforthMoulton, OrdinaryDiffEqExtrapolation, OrdinaryDiffEqHighOrderRK, OrdinaryDiffEqLowOrderRK, OrdinaryDiffEqVerner
+using SciMLLogging
 using Plots;
 gr()
 
@@ -112,7 +114,7 @@ solnames = ["Tsit5", "Vern9", "VCABM", "Vern9 Static", "VCABM Static",
     "AitkenNeville", "Midpoint Deuflhard", "Midpoint Hairer Wanner"]
 wp = WorkPrecisionSet(
     probs, abstols, reltols, setups; appxsol = test_sol, names = solnames,
-    save_everystep = false, verbose = false, numruns = 100)
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 
@@ -131,7 +133,7 @@ setups = [Dict(:alg=>ExtrapolationMidpointDeuflhard(
 solnames = ["Deuflhard", "No threads", "standard", "Romberg", "Bulirsch"]
 wp = WorkPrecisionSet(
     probs, abstols, reltols, setups; appxsol = test_sol, names = solnames,
-    save_everystep = false, verbose = false, numruns = 100)
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 
@@ -148,7 +150,7 @@ setups = [Dict(:alg=>ExtrapolationMidpointHairerWanner(
 solnames = ["1", "2", "3", "4", "5"]
 wp = WorkPrecisionSet(
     probs, abstols, reltols, setups; appxsol = test_sol, names = solnames,
-    save_everystep = false, verbose = false, numruns = 100)
+    save_everystep = false, verbose = SciMLLogging.None(), numruns = 100)
 plot(wp)
 
 
