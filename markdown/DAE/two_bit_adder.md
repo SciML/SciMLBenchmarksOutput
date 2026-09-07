@@ -42,7 +42,11 @@ at $t = 0, 5, 10, \ldots, 320$.
 Reference: Bär, M. and Söhnlein, K.: Test Set for IVP Solvers,
 http://www.dm.uniba.it/~testset/
 
+The repeated 350×350 factorizations use eight MKL threads, representative of a
+typical workstation without creating a 128-thread team. Julia threads remain available.
+
 ```julia
+ENV["MKL_NUM_THREADS"] = "8"
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ModelingToolkit, Plots
 using OrdinaryDiffEqBDF, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock
 using DASSL, DASKR
@@ -867,9 +871,9 @@ println("  C  (V₁₄₈) = $(mm_test[323, end])")
 ```
 === Step 1: Mass-Matrix ODE Verification ===
 Rodas5P: retcode = Success, steps = 2056, t_final = 320.0
-  S₀ (V₄₉)  = 0.20404191280755501
-  S₁ (V₁₃₀) = 4.997246133507289
-  C  (V₁₄₈) = 0.20389855467018875
+  S₀ (V₄₉)  = 0.204041912807699
+  S₁ (V₁₃₀) = 4.997246080860178
+  C  (V₁₄₈) = 0.20389855462830458
 ```
 
 
@@ -995,11 +999,11 @@ Attempting modelingtoolkitize on mass-matrix ODE form...
   MTK failed: TypeError: non-boolean (Symbolics.Num) used in boolean contex
 t
 A symbolic expression appeared in a Boolean context. This error arises in s
-ituations where Julia expects a Bool, like
+ituations where Julia expects a Bool, like 
 if boolean_condition		 use ifelse(boolean_condition, then branch, else bran
 ch)
 x && y				 use x & y
-boolean_condition
+boolean_condition 
 
   Expected: the Shichman–Hodges MOSFET model and pulse generator use
   piecewise if/else branching that cannot be symbolically traced.
@@ -1040,7 +1044,7 @@ end
 ```
 
 ```
-Reference solution: retcode = Success, npoints = 16499, t_final = 320.0
+Reference solution: retcode = Success, npoints = 16465, t_final = 320.0
 ```
 
 
@@ -1116,11 +1120,11 @@ r
 ---------------------------------------------------------------------------
 -----
 y(224) S₀   |         0.2040419147264534 |             0.204041912817 | 9.3
-5739694431443e-9 ✓
-y(305) S₁   |          4.997238455712048 |              4.99724244497 | 7.9
-82928766272776e-7 ✓
-y(323) C    |         0.2038985905095614 |              0.20389857591 | 7.1
-59991334559498e-8 ✓
+57805574812045e-9 ✓
+y(305) S₁   |          4.997238455712048 |              4.99724244416 | 7.9
+81311893020845e-7 ✓
+y(323) C    |         0.2038985905095614 |             0.203898575919 | 7.1
+55557381332291e-8 ✓
 ```
 
 
@@ -1207,6 +1211,24 @@ wp = WorkPrecisionSet(probs, abstols, reltols, setups;
 plot(wp, title = "Two-Bit Adder: Medium Tolerances")
 ```
 
+```
+DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.2580128600736D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.1421508647003D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.5007793036212D+01
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
+```
+
+
 ![](figures/two_bit_adder_21_1.png)
 
 
@@ -1250,7 +1272,6 @@ plot(wp, title = "Two-Bit Adder: Timeseries Error (L2)")
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
 
 To locally run this benchmark, do the following commands:
-
 ```
 using SciMLBenchmarks
 SciMLBenchmarks.weave_file("benchmarks/DAE","two_bit_adder.jmd")
@@ -1270,7 +1291,7 @@ Platform Info:
   LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
-  JULIA_PKG_PRECOMPILE_AUTO = 0
+  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
 
 ```
@@ -1278,7 +1299,7 @@ Environment:
 Package Information:
 
 ```
-Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/Project.toml`
+Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Project.toml`
 ⌃ [165a45c3] DASKR v3.1.5
 ⌃ [e993076c] DASSL v3.1.0
 ⌃ [f3b72e0c] DiffEqDevTools v3.2.0
@@ -1301,10 +1322,10 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/Manifest.toml`
+Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.23.0
-  [14f7f29c] AMD v0.5.3
-  [6e696c72] AbstractPlutoDingetjes v1.4.0
+⌃ [14f7f29c] AMD v0.5.3
+⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
@@ -1382,7 +1403,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌃ [28b8d3ca] GR v0.73.26
   [a0844989] Gamma v1.2.0
   [d7ba0133] Git v1.5.0
-  [86223c79] Graphs v1.14.0
+⌃ [86223c79] Graphs v1.14.0
   [42e2da0e] Grisu v1.0.2
 ⌅ [cd3eb016] HTTP v1.11.0
 ⌅ [eafb193a] Highlights v0.5.3
@@ -1438,7 +1459,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.2
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.14.3
 ⌃ [50262376] OrdinaryDiffEqDefault v2.4.4
-⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.9.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.7.0
 ⌃ [5960d6e9] OrdinaryDiffEqFIRK v2.6.0
 ⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.8.0
 ⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.6.5
@@ -1487,13 +1508,13 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌃ [53ae85a6] SciMLStructures v1.10.4
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
+⌃ [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
 ⌃ [727e6d20] SimpleNonlinearSolve v2.14.0
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
 ⌃ [a57abbd0] SparseColumnPivotedQR v2.1.6
-  [0a514795] SparseMatrixColorings v0.4.27
+⌃ [0a514795] SparseMatrixColorings v0.4.27
 ⌃ [276daf66] SpecialFunctions v2.8.3
   [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
@@ -1521,7 +1542,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
   [8290d209] ThreadingUtilities v0.5.6
-  [a759f4b9] TimerOutputs v1.2.0
+⌃ [a759f4b9] TimerOutputs v1.2.0
   [3bb67fe8] TranscodingStreams v0.11.3
   [781d530d] TruncatedStacktraces v1.4.0
 ⌃ [5c2747f8] URIs v1.6.3
@@ -1579,7 +1600,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [6de9746b] Qt6Svg_jll v6.10.2+0
   [e99dba38] Qt6Wayland_jll v6.10.2+1
   [f50d1b31] Rmath_jll v0.5.2+0
-  [ca45d3f4] SuiteSparse32_jll v7.12.1+0
+⌃ [ca45d3f4] SuiteSparse32_jll v7.12.1+0
   [fb77eaff] Sundials_jll v7.5.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
