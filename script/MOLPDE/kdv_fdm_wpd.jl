@@ -98,8 +98,10 @@ setups = [Dict(:alg => NorsettEuler(), :dts => 1e-6 * multipliers),
           Dict(:alg => ETDRK2(), :dts => 1e-3 * multipliers),
           Dict(:alg => ETDRK2(krylov=true, m=20), :dts => 1e-2 * multipliers),
           Dict(:alg => ETDRK2(krylov=true, m=20), :dts => 1e-2 * multipliers)]
-labels = hcat("NorsettEuler (caching)", "NorsettEuler (m=5)",# "NorsettEuler (m=20)",
-              "ETDRK2 (caching)", "ETDRK2 (m=5)"), "ETDRK2 (m=20)")
+labels = hcat(
+    "NorsettEuler (caching)", "NorsettEuler (m=5)", # "NorsettEuler (m=20)",
+    "ETDRK2 (caching)", "ETDRK2 (m=5)", "ETDRK2 (m=20)"
+)
 @time wp = WorkPrecisionSet(prob,abstols,reltols,setups;
                             print_names=true, names=labels,
                             numruns=5, error_estimate=:l2,
@@ -197,4 +199,3 @@ plot(wp, label=labels, markershape=:auto, title="Between family, medium order")
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
-
