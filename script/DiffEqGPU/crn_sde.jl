@@ -1,32 +1,4 @@
----
-author: "Utkarsh, Chris Rackauckas"
-title: "Bacterial Stress CRN SDE Ensemble"
----
 
-
-Chemical Langevin ensemble of the four-species generalised bacterial stress
-response network from Utkarsh et al.,
-[Comput. Methods Appl. Mech. Eng. 428 (2024) 117109](https://doi.org/10.1016/j.cma.2023.117109)
-([arXiv:2304.06835](https://arxiv.org/abs/2304.06835);
-[artifacts](https://github.com/utkarsh530/GPUODEBenchmarks),
-credit Torkel Loman for the Catalyst network). The paper converted a
-Catalyst `SDEProblem` through ModelingToolkit into an out-of-place
-`StaticArray` form. This notebook uses that CLE directly so the benchmark
-does not depend on Catalyst / MTK conversion.
-
-Species $(\sigma, A_1, A_2, A_3)$, parameters $(S, D, \tau, v_0, n, \eta)$.
-Production / degradation pairs:
-
-* $\emptyset \leftrightarrow \sigma$ at $v_0 + \frac{(S\sigma)^n}{(S\sigma)^n + (DA_3)^n + 1}$ and $\sigma$
-* $\emptyset \leftrightarrow A_1$ at $\sigma/\tau$ and $A_1/\tau$
-* $\emptyset \leftrightarrow A_2$ at $A_1/\tau$ and $A_2/\tau$
-* $\emptyset \leftrightarrow A_3$ at $A_2/\tau$ and $A_3/\tau$
-
-Diffusion columns are $\eta\,\nu_j\sqrt{r_j}$. $t \in [0, 1000]$,
-`EM` / `GPUEM` with $dt = 0.1$. Parameter grids are the paper's; $N$ is the
-number of $S$ and $D$ log-spaced samples (the runner used $N = 2, 4$).
-
-```julia
 using Printf
 using CUDA
 using DiffEqGPU, StochasticDiffEq, StaticArrays
@@ -39,16 +11,8 @@ const BACKEND = CUDA.CUDABackend()
 const KERNEL = EnsembleGPUKernel(BACKEND, 0.0)
 
 gr()
-```
-
-```
-GPU: Tesla V100-PCIE-32GB
-Plots.GRBackend()
-```
 
 
-
-```julia
 function crn_f(u, p, t)
     T = eltype(u)
     σ, A1, A2, A3 = u
@@ -125,15 +89,8 @@ function min_seconds(fn; warmup = 1, samples = 3)
     end
     return minimum(ts)
 end
-```
-
-```
-min_seconds (generic function with 1 method)
-```
 
 
-
-```julia
 let
     ps = crn_parameters(2)
     ens = make_crn_ensemble(ps)
@@ -142,16 +99,8 @@ let
     println("CRN smoke: 2 trajectories, u[1][end] = ", sol.u[1].u[end])
     @assert all(i -> length(sol.u[i].u[end]) == 4, 1:2)
 end
-```
-
-```
-CRN smoke: 2 trajectories, u[1][end] = Float32[0.009919406, 0.010128644, 0.
-010087123, 0.010349157]
-```
 
 
-
-```julia
 const NS = [2, 4]
 ntraj = Int[]
 t_gpu = Float64[]
@@ -173,33 +122,19 @@ for N in NS
             save_everystep = false, adaptive = false, dt = 0.1); nothing);
             samples = 2))
 end
-```
 
 
-```julia
 p = plot(ntraj, t_gpu .* 1e3; xscale = :log10, yscale = :log10,
     xlabel = "trajectories", ylabel = "time (ms)",
     label = "GPUEM + EnsembleGPUKernel", marker = :circle, legend = :topleft,
     title = "CRN SDE ensemble, EM dt = 0.1")
 plot!(p, ntraj, t_cpu .* 1e3; label = "EM + EnsembleThreads", marker = :utriangle)
 p
-```
 
-![](figures/crn_sde_5_1.png)
 
-```julia
 println("CRN SDE (ms)")
 @printf("%6s %10s %12s %12s\n", "N", "traj", "GPU", "CPU")
 for (i, N) in enumerate(NS)
     @printf("%6d %10d %12.3f %12.3f\n", N, ntraj[i], t_gpu[i] * 1e3, t_cpu[i] * 1e3)
 end
-```
-
-```
-CRN SDE (ms)
-     N       traj          GPU          CPU
-     2       6720      112.922      292.660
-     4      26880      362.481     1246.000
-```
-
 
