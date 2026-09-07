@@ -113,33 +113,33 @@ data = convert(Array, data_sol)</code></pre><pre><code class="nohighlight hljs">
  1.0  1.00997   1.01989   1.02976   1.03956      1.55363      1.55363</code></pre><h4 id="Plot-of-the-solution"><a class="docs-heading-anchor" href="#Plot-of-the-solution">Plot of the solution</a><a id="Plot-of-the-solution-1"></a><a class="docs-heading-anchor-permalink" href="#Plot-of-the-solution" title="Permalink"></a></h4><h5 id="Short-Solution"><a class="docs-heading-anchor" href="#Short-Solution">Short Solution</a><a id="Short-Solution-1"></a><a class="docs-heading-anchor-permalink" href="#Short-Solution" title="Permalink"></a></h5><pre><code class="language-julia hljs">p1 = plot(data_sol_short)</code></pre><p><img src="../figures/LotkaVolterraParameterEstimation_8_1.png" alt/></p><h5 id="Longer-Solution"><a class="docs-heading-anchor" href="#Longer-Solution">Longer Solution</a><a id="Longer-Solution-1"></a><a class="docs-heading-anchor-permalink" href="#Longer-Solution" title="Permalink"></a></h5><pre><code class="language-julia hljs">p2 = plot(data_sol)</code></pre><p><img src="../figures/LotkaVolterraParameterEstimation_9_1.png" alt/></p><h3 id="Local-Solution-from-the-short-data-set"><a class="docs-heading-anchor" href="#Local-Solution-from-the-short-data-set">Local Solution from the short data set</a><a id="Local-Solution-from-the-short-data-set-1"></a><a class="docs-heading-anchor-permalink" href="#Local-Solution-from-the-short-data-set" title="Permalink"></a></h3><pre><code class="language-julia hljs">obj_short = build_loss_objective(prob_short, Tsit5(), L2Loss(t_short, data_short), tstops = t_short)
 optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
 @btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
-# Lower tolerance could lead to smaller fitness (more accuracy)</code></pre><pre><code class="nohighlight hljs">1.291 s (2613578 allocations: 365.31 MiB)
+# Lower tolerance could lead to smaller fitness (more accuracy)</code></pre><pre><code class="nohighlight hljs">1.835 s (2612190 allocations: 365.11 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.4999203012809823
- 1.0000015966764457
- 2.999935231629794
- 2.0739793450403217</code></pre><pre><code class="language-julia hljs">obj_short = build_loss_objective(
+ 1.5002124080970174
+ 0.9999981377245565
+ 3.000164174489781
+ 2.6911259736012676</code></pre><pre><code class="language-julia hljs">obj_short = build_loss_objective(
     prob_short, Tsit5(), L2Loss(t_short, data_short), tstops = t_short, reltol = 1e-9)
 optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
 @btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
-# Change in tolerance makes it worse</code></pre><pre><code class="nohighlight hljs">1.312 s (2611672 allocations: 365.07 MiB)
+# Change in tolerance makes it worse</code></pre><pre><code class="nohighlight hljs">1.729 s (2613892 allocations: 365.36 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.4999378544256672
- 1.0000015066340842
- 2.9999531608507137
- 2.9292276530191876</code></pre><pre><code class="language-julia hljs">obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short),
+ 1.4998611563868334
+ 0.9999987466380406
+ 2.9998731116731725
+ 3.744940068142215</code></pre><pre><code class="language-julia hljs">obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short),
     tstops = t_short, reltol = 1e-9, abstol = 1e-9)
 optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
 @btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
-# using the more accurate Vern9() reduces the fitness marginally and leads to some increase in time taken</code></pre><pre><code class="nohighlight hljs">1.824 s (2651820 allocations: 369.94 MiB)
+# using the more accurate Vern9() reduces the fitness marginally and leads to some increase in time taken</code></pre><pre><code class="nohighlight hljs">2.455 s (2647877 allocations: 369.39 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.4998656162656354
- 0.999999258884826
- 2.9998873181126906
- 1.1451402458008861</code></pre><h1 id="Using-NLopt"><a class="docs-heading-anchor" href="#Using-NLopt">Using NLopt</a><a id="Using-NLopt-1"></a><a class="docs-heading-anchor-permalink" href="#Using-NLopt" title="Permalink"></a></h1><h4 id="Global-Optimisation-first"><a class="docs-heading-anchor" href="#Global-Optimisation-first">Global Optimisation first</a><a id="Global-Optimisation-first-1"></a><a class="docs-heading-anchor-permalink" href="#Global-Optimisation-first" title="Permalink"></a></h4><pre><code class="language-julia hljs">obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short),
+ 1.4998022890650022
+ 1.0000001985178044
+ 2.999842223987127
+ 3.7997294250999345</code></pre><h1 id="Using-NLopt"><a class="docs-heading-anchor" href="#Using-NLopt">Using NLopt</a><a id="Using-NLopt-1"></a><a class="docs-heading-anchor-permalink" href="#Using-NLopt" title="Permalink"></a></h1><h4 id="Global-Optimisation-first"><a class="docs-heading-anchor" href="#Global-Optimisation-first">Global Optimisation first</a><a id="Global-Optimisation-first-1"></a><a class="docs-heading-anchor-permalink" href="#Global-Optimisation-first" title="Permalink"></a></h4><pre><code class="language-julia hljs">obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short),
     Optimization.AutoForwardDiff(), tstops = t_short, reltol = 1e-9, abstol = 1e-9)
 optprob = OptimizationProblem(obj_short, glo_init, lb = first.(glo_bounds), ub = last.(glo_bounds))</code></pre><pre><code class="nohighlight hljs">OptimizationProblem. In-place: true
 u0: 4-element Vector{Float64}:
@@ -147,96 +147,96 @@ u0: 4-element Vector{Float64}:
  5.0
  5.0
  5.0</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ORIG_DIRECT_L, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">406.065 ms (578200 allocations: 79.50 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">519.509 ms (578197 allocations: 79.50 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  2.9629629629570617
  1.112635269019771
  4.444444444446411
  5.183661027276527</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_CRS2_LM, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">1.927 s (2487904 allocations: 342.15 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">2.691 s (2566485 allocations: 352.96 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
- 1.5000000007100855
- 1.0000000000664193
- 3.000000000727955
+ 1.500000000712268
+ 1.000000000066401
+ 3.0000000007296697
  0.0</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ISRES, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">2.580 s (3760136 allocations: 517.13 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">3.511 s (3760118 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.4766372969796588
- 1.5838453698763701
- 5.124215924166389
- 0.10132384418662138</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ESCH, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">2.927 s (3760136 allocations: 517.13 MiB)
+ 5.32267240710857
+ 3.6985803225207112
+ 9.504638984961336
+ 8.694305741642468</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ESCH, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">3.892 s (3760136 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 4.520099869805916
- 0.9969737191247452
- 5.439877015030094
- 0.7275803024365064</code></pre><p>Now local optimization algorithms are used to verify the global ones. These use the local constraints, different initial values and time step.</p><pre><code class="language-julia hljs">optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))</code></pre><pre><code class="nohighlight hljs">OptimizationProblem. In-place: true
+ 5.530183610190004
+ 0.9987882760770915
+ 6.268933354788242
+ 1.4394956069809965</code></pre><p>Now local optimization algorithms are used to verify the global ones. These use the local constraints, different initial values and time step.</p><pre><code class="language-julia hljs">optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))</code></pre><pre><code class="nohighlight hljs">OptimizationProblem. In-place: true
 u0: 4-element Vector{Float64}:
  1.0
  0.5
  3.5
  1.5</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_BOBYQA, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">96.644 ms (127984 allocations: 17.59 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">92.217 ms (83616 allocations: 11.49 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.5000000007152077
  1.0000000000665352
  3.0000000007324514
  1.3140958126026705</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_NELDERMEAD, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">376.170 ms (516536 allocations: 71.02 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">511.294 ms (516533 allocations: 71.02 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  1.50000000071043
  1.0000000000664235
  3.000000000728334
  1.3358196081664195</code></pre><pre><code class="language-julia hljs">opt = Opt(:LD_SLSQP, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">79.093 ms (94405 allocations: 14.02 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">1.347 ms (1023 allocations: 147.66 KiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  4.021236165439795
  3.8994623686919425
  3.4125812908853588
  1.5</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_COBYLA, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">2.949 s (3760144 allocations: 517.13 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">4.134 s (3760144 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.6469631689746635
  0.9994654455200698
  3.117789184493826
  1.5182360928459269</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_NEWUOA_BOUND, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">207.810 ms (154304 allocations: 21.21 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">267.636 ms (154304 allocations: 21.21 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.5487464181140709
  0.999840139235765
  3.0391418493128373
  1.3642113819198016</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_PRAXIS, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">21.854 ms (33752 allocations: 4.63 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">29.665 ms (33749 allocations: 4.62 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  1.0
  0.5
  3.5
  1.5</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_SBPLX, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">2.552 s (3760136 allocations: 517.13 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">3.390 s (3760136 allocations: 517.13 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.5000005835389816
  0.9999999986401436
  3.000000468839309
  1.8838550099135751</code></pre><pre><code class="language-julia hljs">opt = Opt(:LD_MMA, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">7.792 s (7390357 allocations: 1.20 GiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">9.957 s (7390355 allocations: 1.20 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.0
  0.5
  3.5
  1.5</code></pre><pre><code class="language-julia hljs">opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">916.691 μs (1246 allocations: 182.73 KiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">7.310 ms (2571 allocations: 478.62 KiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.5000000007280032
@@ -250,41 +250,41 @@ u0: 4-element Vector{Float64}:
  5.0
  5.0
  5.0
- 5.0</code></pre><pre><code class="language-julia hljs">@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 4e3)</code></pre><pre><code class="nohighlight hljs">11.992 s (12630879 allocations: 1.65 GiB)
+ 5.0</code></pre><pre><code class="language-julia hljs">@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 4e3)</code></pre><pre><code class="nohighlight hljs">14.036 s (12670764 allocations: 1.65 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.4670486089868557
- 0.9946741245952371
- 2.9643382317259457
- 3.6326073812679907</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ORIG_DIRECT_L, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">5.591 s (5886162 allocations: 783.86 MiB)
+ 1.418979660690695
+ 0.999042946474795
+ 2.9328153285508014
+ 2.7505593162879514</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ORIG_DIRECT_L, 4)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">7.461 s (5886159 allocations: 783.86 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  2.5514403292122063
  1.604938271606906
  4.938271604944172
  8.353909465014675</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_CRS2_LM, 4)
-@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">23.447 s (24841830 allocations: 3.23 GiB)
+@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">50.122 s (39909771 allocations: 5.19 GiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
- 1.500000000577635
- 1.000000000068373
- 3.0000000006161507
- 9.999999999999998</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ISRES, 4)
-@btime res1 = solve(optprob, opt, maxiters = 50000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">131.689 s (153965650 allocations: 20.03 GiB)
+  1.5000000005815526
+  1.0000000000683138
+  3.00000000061906
+ 10.0</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ISRES, 4)
+@btime res1 = solve(optprob, opt, maxiters = 50000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">174.567 s (153967042 allocations: 20.03 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 5.394937056333806
- 2.226730131378341
- 5.541745067524684
- 5.43411711197065</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ESCH, 4)
-@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">58.170 s (61600130 allocations: 8.01 GiB)
+ 4.587745863468353
+ 0.6056584392777475
+ 6.293995603978847
+ 9.655886754974352</code></pre><pre><code class="language-julia hljs">opt = Opt(:GN_ESCH, 4)
+@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">76.696 s (61600130 allocations: 8.01 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 2.45502887773631
- 0.8933793030784662
- 3.575118445304642
- 0.04991240058815044</code></pre><h2 id="Local-problem"><a class="docs-heading-anchor" href="#Local-problem">Local problem</a><a id="Local-problem-1"></a><a class="docs-heading-anchor-permalink" href="#Local-problem" title="Permalink"></a></h2><pre><code class="language-julia hljs">obj = build_loss_objective(prob, Vern9(), L2Loss(t, data), Optimization.AutoForwardDiff(),
+ 0.002542477308146701
+ 0.8873250207151805
+ 1.6043841338033236
+ 5.271855242732787</code></pre><h2 id="Local-problem"><a class="docs-heading-anchor" href="#Local-problem">Local problem</a><a id="Local-problem-1"></a><a class="docs-heading-anchor-permalink" href="#Local-problem" title="Permalink"></a></h2><pre><code class="language-julia hljs">obj = build_loss_objective(prob, Vern9(), L2Loss(t, data), Optimization.AutoForwardDiff(),
     tstops = t, reltol = 1e-9, abstol = 1e-9)
 optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))</code></pre><pre><code class="nohighlight hljs">OptimizationProblem. In-place: true
 u0: 4-element Vector{Float64}:
@@ -292,21 +292,21 @@ u0: 4-element Vector{Float64}:
  0.5
  3.5
  1.5</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_BOBYQA, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">96.939 ms (127984 allocations: 17.59 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">116.679 ms (127984 allocations: 17.59 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.5000000007152077
  1.0000000000665352
  3.0000000007324514
  1.3140958126026705</code></pre><pre><code class="language-julia hljs">opt = Opt(:LN_NELDERMEAD, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">373.066 ms (516536 allocations: 71.02 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">499.360 ms (516533 allocations: 71.02 MiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  1.50000000071043
  1.0000000000664235
  3.000000000728334
  1.3358196081664195</code></pre><pre><code class="language-julia hljs">opt = Opt(:LD_SLSQP, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">79.962 ms (94405 allocations: 14.02 MiB)
+@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)</code></pre><pre><code class="nohighlight hljs">1.320 ms (1023 allocations: 147.66 KiB)
 retcode: Failure
 u: 4-element Vector{Float64}:
  4.021236165439795
@@ -325,9 +325,8 @@ Platform Info:
   LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
-  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Project.toml`
 ⌃ [6e4b80f9] BenchmarkTools v1.6.0
 ⌃ [a134a8b2] BlackBoxOptim v0.6.3
 ⌃ [1130ab10] DiffEqParamEstim v2.2.0
@@ -344,7 +343,7 @@ Environment:
 ⌅ [731186ca] RecursiveArrayTools v3.27.4
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Manifest.toml`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.12.1
   [1520ce14] AbstractTrees v0.4.5
 ⌃ [7d9f7c33] Accessors v0.1.41
@@ -766,4 +765,4 @@ Warning The project dependencies or compat requirements have changed since the m
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../LorenzParameterEstimation/">« Lorenz Parameter Estimation Benchmarks</a><a class="docs-footer-nextpage" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Monday 7 September 2026 11:33">Monday 7 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../LorenzParameterEstimation/">« Lorenz Parameter Estimation Benchmarks</a><a class="docs-footer-nextpage" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Monday 7 September 2026 12:49">Monday 7 September 2026</span>. Using Julia version 1.12.7.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
