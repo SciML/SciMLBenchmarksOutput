@@ -116,11 +116,13 @@ function bench_reuse(family, alg)
 
     t_naive = @belapsed solve(LinearProblem($A, $b), $alg).u
 
-    t_newb = @belapsed solve!(c).u setup=(
-        c = init(LinearProblem($A, $b), $alg); solve!(c); c.b = $b2) evals=1
+    cache_newb = init(LinearProblem(A, b), alg)
+    solve!(cache_newb)
+    t_newb = @belapsed solve!(c).u setup=(c = $cache_newb; c.b = $b2) evals=1
 
-    t_newA = @belapsed solve!(c).u setup=(
-        c = init(LinearProblem($A, $b), $alg); solve!(c); c.A = copy($A2)) evals=1
+    cache_newA = init(LinearProblem(A, b), alg)
+    solve!(cache_newA)
+    t_newA = @belapsed solve!(c).u setup=(c = $cache_newA; c.A = copy($A2)) evals=1
 
     # Steady-state allocations: repeated solve! on a warm cache, same b.
     warm = init(LinearProblem(A, b), alg)
@@ -164,22 +166,22 @@ alg           | family |  naive (s) | new-b (s) | new-A (s) | b-speedup | A
 -speedup | allocs/solve
 --------------+--------+------------+-----------+-----------+-----------+--
 ---------+-------------
-LU            | dense  |    0.00476 |   5.7e-05 |   0.00449 |     83.6x |  
+LU            | dense  |    0.00551 |  5.69e-05 |   0.00483 |     96.8x |  
+   1.14x | 0
+RFLU          | dense  |    0.00311 |  5.68e-05 |   0.00249 |     54.8x |  
+   1.25x | 0
+MKL LU        | dense  |    0.00401 |  6.92e-05 |   0.00377 |     57.9x |  
    1.06x | 0
-RFLU          | dense  |    0.00223 |  5.72e-05 |    0.0019 |     39.0x |  
-   1.17x | 0
-MKL LU        | dense  |    0.00279 |    0.0001 |   0.00228 |     27.8x |  
-   1.22x | 0
-UMFPACK       | sparse |      0.194 |   0.00617 |     0.153 |     31.4x |  
-   1.27x | 0
-KLU           | sparse |      0.231 |   0.00952 |     0.156 |     24.3x |  
-   1.48x | 0
-SupernodalLU  | sparse |      0.248 |    0.0109 |    0.0559 |     22.7x |  
-   4.44x | 0
-Sparspak      | sparse |      0.125 |    0.0211 |     0.105 |      5.9x |  
-   1.19x | 965928
-ParU          | sparse |       0.61 |    0.0188 |     0.297 |     32.5x |  
-   2.05x | 968360
+UMFPACK       | sparse |      0.207 |   0.00593 |     0.152 |     34.8x |  
+   1.36x | 0
+KLU           | sparse |      0.241 |    0.0106 |     0.182 |     22.8x |  
+   1.33x | 0
+SupernodalLU  | sparse |      0.143 |    0.0112 |    0.0555 |     12.8x |  
+   2.57x | 0
+Sparspak      | sparse |      0.132 |    0.0206 |     0.108 |      6.4x |  
+   1.22x | 965928
+ParU          | sparse |      0.533 |    0.0164 |     0.281 |     32.5x |  
+   1.89x | 968360
 ```
 
 
@@ -197,7 +199,7 @@ for (k, (lab, col)) in enumerate(zip(("naive", "new A (refactor)", "new b (backs
     bar!(p, xs .+ (k - 2) * w, vals[:, k]; bar_width = w, label = lab, color = col)
 end
 plot!(p; xticks = (xs, [r.name for r in sparse_res]), yscale = :log10,
-    ylabel = "time / s (log)", title = "Sparse (N = $(SPARSE_N)): cost per solve by reuse mode",
+    ylabel = "time / s (log)", title = "Sparse matrix reuse cost (N = $(SPARSE_N))",
     legend = :topright)
 p
 ```
@@ -273,7 +275,6 @@ dependence of these ratios is covered by the SparseDirect document's sweep.
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
 
 To locally run this benchmark, do the following commands:
-
 ```
 using SciMLBenchmarks
 SciMLBenchmarks.weave_file("benchmarks/LinearSolve","CacheReuse.jmd")
@@ -301,7 +302,7 @@ Environment:
 Package Information:
 
 ```
-Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolve/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolve/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
   [29a986be] FastLapackInterface v2.1.1
 ⌃ [7ed4a6bd] LinearSolve v5.5.0
@@ -310,9 +311,9 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌃ [91a5bcdd] Plots v1.41.6
 ⌃ [b7e1f0a2] PureUMFPACK v0.1.4
 ⌃ [f2c3362d] RecursiveFactorization v0.2.26
-⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.1.5]
+⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.0]
   [e56a9233] Sparspak v0.3.15
-  [10745b16] Statistics v1.11.1
+⌃ [10745b16] Statistics v1.11.1
   [3d5dd08c] VectorizationBase v0.21.74
   [856f044c] MKL_jll v2025.2.0+0
 ⌃ [9e0b026c] ParU_jll v1.0.0+0
@@ -326,9 +327,9 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 And the full manifest:
 
 ```
-Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolve/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolve/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.22.3
-  [14f7f29c] AMD v0.5.3
+⌃ [14f7f29c] AMD v0.5.3
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
@@ -338,7 +339,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [2a0fbf3d] CPUSummary v0.2.7
   [79a69506] ChannelBuffers v0.4.2
-  [0b6fb165] ChunkCodecCore v1.0.1
+⌃ [0b6fb165] ChunkCodecCore v1.0.1
   [4c0bbee4] ChunkCodecLibZlib v1.1.0
   [55437552] ChunkCodecLibZstd v1.0.0
   [fb6a15b2] CloseOpenIntervals v0.1.13
@@ -376,7 +377,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [069b7b12] FunctionWrappers v1.1.3
 ⌃ [77dc65aa] FunctionWrappersWrappers v1.12.0
   [46192b85] GPUArraysCore v0.2.0
-  [28b8d3ca] GR v0.73.26
+⌃ [28b8d3ca] GR v0.73.26
   [d7ba0133] Git v1.5.0
   [42e2da0e] Grisu v1.0.2
   [f67ccb44] HDF5 v0.17.3
@@ -386,12 +387,12 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [3e5b6fbb] HostCPUFeatures v0.1.18
   [7073ff75] IJulia v1.34.4
   [615f187c] IfElse v0.1.1
-  [842dd82b] InlineStrings v1.4.5
+⌅ [842dd82b] InlineStrings v1.4.5
   [3587e190] InverseFunctions v0.1.17
   [41ab1584] InvertedIndices v1.3.1
   [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
-  [033835bb] JLD2 v0.6.5
+⌃ [033835bb] JLD2 v0.6.5
   [1019f520] JLFzf v0.1.11
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
@@ -416,9 +417,9 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [77ba4419] NaNMath v1.1.4
   [6fe1bfb0] OffsetArrays v1.17.0
   [4d8831e6] OpenSSL v1.6.1
-⌅ [bac558e1] OrderedCollections v1.8.2
+⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.1]
   [46dd5b70] Pardiso v1.1.2
-⌃ [69de0a69] Parsers v2.8.6 [loaded: v2.8.7]
+⌅ [69de0a69] Parsers v2.8.6 [loaded: v2.8.8]
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.4
 ⌃ [91a5bcdd] Plots v1.41.6
@@ -443,16 +444,16 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.46
 ⌃ [0bca4576] SciMLBase v3.39.1
-⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.1.5]
+⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.0]
 ⌃ [a6db7da4] SciMLLogging v2.0.3
 ⌃ [c0aeaf25] SciMLOperators v1.25.0
-  [431bcebd] SciMLPublic v1.2.4
-  [53ae85a6] SciMLStructures v1.10.4
+⌃ [431bcebd] SciMLPublic v1.2.4
+⌃ [53ae85a6] SciMLStructures v1.10.4
   [7e506255] ScopedValues v1.6.2
   [6c6a2e73] Scratch v1.3.0
   [91c51154] SentinelArrays v1.4.10
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
+⌃ [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
   [a2af1166] SortingAlgorithms v1.2.3
 ⌃ [bd59d7e1] SparseBandedMatrices v1.3.3
@@ -462,15 +463,15 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌃ [aedffcd0] Static v1.4.4
   [0d7ed370] StaticArrayInterface v1.10.0
   [1e83bf80] StaticArraysCore v1.4.4
-  [10745b16] Statistics v1.11.1
+⌃ [10745b16] Statistics v1.11.1
   [82ae8749] StatsAPI v1.8.0
-  [2913bbd2] StatsBase v0.34.12
+⌃ [2913bbd2] StatsBase v0.34.12
   [7792a7ef] StrideArraysCore v0.5.9
   [69024149] StringEncodings v0.3.7
 ⌅ [892a3eda] StringManipulation v0.4.6
 ⌃ [2efcf032] SymbolicIndexingInterface v0.3.51
   [3783bdb8] TableTraits v1.0.1
-  [bd369af6] Tables v1.13.0
+⌃ [bd369af6] Tables v1.13.0 [loaded: v1.14.0]
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.6
   [3bb67fe8] TranscodingStreams v0.11.3
@@ -494,8 +495,8 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
   [559328eb] FriBidi_jll v1.0.17+0
-  [0656b61e] GLFW_jll v3.4.1+1
-  [d2c73de3] GR_jll v0.73.26+0
+⌃ [0656b61e] GLFW_jll v3.4.1+1
+⌅ [d2c73de3] GR_jll v0.73.26+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
   [020c3dae] Git_LFS_jll v3.7.1+0
@@ -565,20 +566,20 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [8f1865be] ZeroMQ_jll v4.3.6+0
   [3161d3a3] Zstd_jll v1.5.7+1
 ⌅ [2b3700d1] aws_c_auth_jll v0.9.6+0
-  [70f11efc] aws_c_cal_jll v0.9.13+0
-  [73048d1d] aws_c_common_jll v0.12.6+0
-  [73a04cd5] aws_c_compression_jll v0.3.2+0
-  [3254fc65] aws_c_http_jll v0.10.13+0
-  [13c41daa] aws_c_io_jll v0.26.3+0
+⌅ [70f11efc] aws_c_cal_jll v0.9.13+0
+⌅ [73048d1d] aws_c_common_jll v0.12.6+0
+⌅ [73a04cd5] aws_c_compression_jll v0.3.2+0
+⌅ [3254fc65] aws_c_http_jll v0.10.13+0
+⌅ [13c41daa] aws_c_io_jll v0.26.3+0
 ⌅ [bd1f34fb] aws_c_s3_jll v0.11.5+0
-  [1282aa60] aws_c_sdkutils_jll v0.2.4+1
-  [b2a88e68] aws_checksums_jll v0.2.10+0
+⌅ [1282aa60] aws_c_sdkutils_jll v0.2.4+1
+⌅ [b2a88e68] aws_checksums_jll v0.2.10+0
   [c4b69c83] dlfcn_win32_jll v1.4.2+0
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
   [477f73a3] libaec_jll v1.1.7+0
 ⌃ [a4ae2306] libaom_jll v3.13.3+0
-  [0ac62f75] libass_jll v0.17.4+0
+⌃ [0ac62f75] libass_jll v0.17.4+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
   [2db6ffa8] libevdev_jll v1.13.4+0
@@ -591,7 +592,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌅ [9aeb927a] mpif_jll v0.1.7+0
   [009596ad] mtdev_jll v1.1.7+0
   [1317d2d5] oneTBB_jll v2022.3.0+0
-  [cddc5d3d] s2n_tls_jll v1.7.3+0
+⌃ [cddc5d3d] s2n_tls_jll v1.7.3+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
   [dfaa095f] x265_jll v4.1.0+0
   [d8fb68d0] xkbcommon_jll v1.13.0+0
