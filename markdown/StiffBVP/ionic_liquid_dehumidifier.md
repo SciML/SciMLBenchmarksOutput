@@ -353,12 +353,13 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6e4b80f9] BenchmarkTools v1.8.0
   [764a87c0] BoundaryValueDiffEq v5.25.0
   [70df07ce] BracketingNonlinearSolve v1.12.6
-  [13f3f980] CairoMakie v0.15.13
-  [f3b72e0c] DiffEqDevTools v3.6.1
+⌃ [13f3f980] CairoMakie v0.15.13
+⌃ [f3b72e0c] DiffEqDevTools v3.6.1
   [a98d9a8b] Interpolations v0.16.3
   [54ca160b] ODEInterface v0.5.2
   [31c91b34] SciMLBenchmarks v0.2.0
-  [90137ffa] StaticArrays v1.9.19
+⌃ [90137ffa] StaticArrays v1.9.19
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
@@ -366,7 +367,7 @@ And the full manifest:
 ```
 Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/StiffBVP/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
-  [14f7f29c] AMD v0.5.3
+⌃ [14f7f29c] AMD v0.5.3
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
@@ -387,7 +388,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [764a87c0] BoundaryValueDiffEq v5.25.0
   [7227322d] BoundaryValueDiffEqAscher v1.16.1
   [56b672f2] BoundaryValueDiffEqCore v2.8.3
-  [85d9eb09] BoundaryValueDiffEqFIRK v1.19.1
+⌃ [85d9eb09] BoundaryValueDiffEqFIRK v1.19.1
   [1a22d4ce] BoundaryValueDiffEqMIRK v1.18.1
   [9255f1d6] BoundaryValueDiffEqMIRKN v1.17.1
   [ed55bfe0] BoundaryValueDiffEqShooting v1.18.2
@@ -395,7 +396,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [fa961155] CEnum v0.5.0
   [96374032] CRlibm v1.0.2
   [159f3aea] Cairo v1.1.1
-  [13f3f980] CairoMakie v0.15.13
+⌃ [13f3f980] CairoMakie v0.15.13
   [d360d2e6] ChainRulesCore v1.26.1
   [6b39b394] CodecZstd v0.8.7
   [a2cac450] ColorBrewer v0.4.2
@@ -419,8 +420,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v1.6.6
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.20.0
-  [f3b72e0c] DiffEqDevTools v3.6.1
+⌃ [2b5f629d] DiffEqBase v7.20.0
+⌃ [f3b72e0c] DiffEqDevTools v3.6.1
   [77a26b50] DiffEqNoiseProcess v5.36.2
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
@@ -453,7 +454,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a0844989] Gamma v1.2.0
   [5c1252a2] GeometryBasics v0.5.12
   [a2bd30eb] Graphics v1.1.3
-  [3955a311] GridLayoutBase v0.11.2
+⌃ [3955a311] GridLayoutBase v0.11.2
   [19dc6840] HCubature v1.8.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.30
@@ -486,11 +487,11 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [5078a376] LazyArrays v2.12.0
   [8cdb02fc] LazyModules v0.3.1
   [87fe0de2] LineSearch v0.1.16
-  [7ed4a6bd] LinearSolve v5.15.1
+⌃ [7ed4a6bd] LinearSolve v5.15.1
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
-  [ee78f7c6] Makie v0.24.13
+⌅ [ee78f7c6] Makie v0.24.13
   [dbb5928d] MappedArrays v0.4.3
   [0a4f8689] MathTeXEngine v0.6.9
   [a3b82374] MatrixFactorizations v3.1.3
@@ -502,15 +503,15 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ffc61752] Mustache v1.0.21
   [77ba4419] NaNMath v1.1.4
   [f09324ee] Netpbm v1.1.1
-  [be0214bd] NonlinearSolveBase v2.49.2
-  [5959db7a] NonlinearSolveFirstOrder v2.5.0
+⌃ [be0214bd] NonlinearSolveBase v2.49.2
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.5.0
   [54ca160b] ODEInterface v0.5.2
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.17.0
   [52e1d378] OpenEXR v0.3.3
   [bca83a33] OptimizationBase v5.5.3
   [bac558e1] OrderedCollections v2.0.1
-  [bbf590c4] OrdinaryDiffEqCore v4.16.0
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.16.0
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
   [90014a1f] PDMats v0.11.41
   [f57f5aa1] PNGFiles v0.4.5
@@ -543,11 +544,11 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
   [47965b36] RootedTrees v2.27.0
-  [f2b01f46] Roots v3.0.7
+⌃ [f2b01f46] Roots v3.0.7
   [5eaf0fd0] RoundingEmulator v0.2.1
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.25
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.25
   [fdea26ae] SIMD v3.7.2
-  [0bca4576] SciMLBase v3.50.2
+⌃ [0bca4576] SciMLBase v3.50.2
   [31c91b34] SciMLBenchmarks v0.2.0
   [19f34311] SciMLJacobianOperators v0.1.18
   [a6db7da4] SciMLLogging v2.1.0
@@ -563,15 +564,15 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [45858cf5] Sixel v0.1.5
   [ed01d8cd] Sobol v1.5.0
   [a2af1166] SortingAlgorithms v1.2.3
-  [a57abbd0] SparseColumnPivotedQR v2.1.7
+⌃ [a57abbd0] SparseColumnPivotedQR v2.1.7
   [9f842d2f] SparseConnectivityTracer v1.2.3
-  [0a514795] SparseMatrixColorings v0.4.27
+⌃ [0a514795] SparseMatrixColorings v0.4.27
   [276daf66] SpecialFunctions v2.9.0
   [860ef19b] StableRNGs v1.0.4
   [cae243ae] StackViews v0.1.2
-  [90137ffa] StaticArrays v1.9.19
+⌃ [90137ffa] StaticArrays v1.9.19
   [1e83bf80] StaticArraysCore v1.4.4
-  [10745b16] Statistics v1.11.4
+⌃ [10745b16] Statistics v1.11.4
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.13
   [4c63d2b9] StatsFuns v2.2.1
@@ -583,12 +584,12 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [bd369af6] Tables v1.14.0
   [62fd8b95] TensorCore v0.1.1
   [731e570b] TiffImages v0.11.9
-  [a759f4b9] TimerOutputs v1.2.0
+⌃ [a759f4b9] TimerOutputs v1.2.0
   [3bb67fe8] TranscodingStreams v0.11.3
   [981d1d27] TriplotBase v0.1.0
   [781d530d] TruncatedStacktraces v1.4.0
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.28.0
+⌃ [1986cc42] Unitful v1.28.0
   [44d3d7a6] Weave v0.10.12
   [e3aaa7dc] WebP v0.1.3
   [efce3f68] WoodburyMatrices v1.1.0
@@ -705,6 +706,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.59.0+0
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
 ```
 
