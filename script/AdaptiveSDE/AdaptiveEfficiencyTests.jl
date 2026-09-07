@@ -1,29 +1,10 @@
-using Distributed
-addprocs(2)
+using StochasticDiffEq, SDEProblemLibrary, DiffEqNoiseProcess, DiffEqBase, Plots
+import SDEProblemLibrary: prob_sde_additive,
+    prob_sde_linear, prob_sde_wave
 
 p1 = Vector{Any}(undef, 3)
 p2 = Vector{Any}(undef, 3)
 p3 = Vector{Any}(undef, 3)
-
-@everywhere begin
-    using StochasticDiffEq, SDEProblemLibrary, DiffEqNoiseProcess, Plots,
-        ParallelDataTransfer
-    import SDEProblemLibrary: prob_sde_additive,
-        prob_sde_linear, prob_sde_wave
-end
-
-using StochasticDiffEq, SDEProblemLibrary, DiffEqNoiseProcess, Plots, ParallelDataTransfer
-import Statistics
-import SDEProblemLibrary: prob_sde_additive,
-    prob_sde_linear, prob_sde_wave
-
-function final_error_stats(sim)
-    errors = [sol.errors[:final] for sol in sim.u]
-    return (;
-        elapsed_time = sim.elapsedTime, mean = Statistics.mean(errors),
-        median = Statistics.median(errors),
-    )
-end
 
 probs = Matrix{SDEProblem}(undef, 3, 3)
 ## Problem 1
@@ -95,73 +76,70 @@ for k in 1:size(probs, 1)
 
     #Compile
     prob = probs[k, 1]
-    ParallelDataTransfer.sendto(workers(), prob = prob)
     monte_prob = EnsembleProblem(prob)
     solve(
-        monte_prob, SRIW1(), dt = 1 / 2^(4), adaptive = true,
+        monte_prob, SRIW1(), EnsembleThreads(), dt = 1 / 2^(4), adaptive = true,
         trajectories = 1000, abstol = 2.0^(-1), reltol = 0
     )
 
     println("RSwM1")
     for i in (1 + offset):(N + offset)
         tols[i - offset, 1] = 2.0^(-i - 1)
-        msims[i - offset] = final_error_stats(
+        msims[i - offset] = DiffEqBase.calculate_ensemble_errors(
             solve(
                 monte_prob, SRIW1(),
-                trajectories = 1000, abstol = 2.0^(-i - 1),
-                reltol = 0, force_dtmin = true
+                EnsembleThreads(), trajectories = 1000, abstol = 2.0^(-i - 1),
+                reltol = 0, force_dtmin = true, maxiters = Int(1.0e7)
             )
         )
-        elapsed[i - offset, 1] = msims[i - offset].elapsed_time
-        medians[i - offset, 1] = msims[i - offset].median
-        means[i - offset, 1] = msims[i - offset].mean
+        elapsed[i - offset, 1] = msims[i - offset].elapsedTime
+        medians[i - offset, 1] = msims[i - offset].error_medians[:final]
+        means[i - offset, 1] = msims[i - offset].error_means[:final]
     end
 
     println("RSwM2")
     prob = probs[k, 2]
 
-    ParallelDataTransfer.sendto(workers(), prob = prob)
     monte_prob = EnsembleProblem(prob)
     solve(
-        monte_prob, SRIW1(), dt = 1 / 2^(4), adaptive = true,
+        monte_prob, SRIW1(), EnsembleThreads(), dt = 1 / 2^(4), adaptive = true,
         trajectories = 1000, abstol = 2.0^(-1), reltol = 0
     )
 
     for i in (1 + offset):(N + offset)
         tols[i - offset, 2] = 2.0^(-i - 1)
-        msims[i - offset] = final_error_stats(
+        msims[i - offset] = DiffEqBase.calculate_ensemble_errors(
             solve(
                 monte_prob, SRIW1(),
-                trajectories = 1000, abstol = 2.0^(-i - 1),
-                reltol = 0, force_dtmin = true
+                EnsembleThreads(), trajectories = 1000, abstol = 2.0^(-i - 1),
+                reltol = 0, force_dtmin = true, maxiters = Int(1.0e7)
             )
         )
-        elapsed[i - offset, 2] = msims[i - offset].elapsed_time
-        medians[i - offset, 2] = msims[i - offset].median
-        means[i - offset, 2] = msims[i - offset].mean
+        elapsed[i - offset, 2] = msims[i - offset].elapsedTime
+        medians[i - offset, 2] = msims[i - offset].error_medians[:final]
+        means[i - offset, 2] = msims[i - offset].error_means[:final]
     end
 
     println("RSwM3")
     prob = probs[k, 3]
-    ParallelDataTransfer.sendto(workers(), prob = prob)
     monte_prob = EnsembleProblem(prob)
     solve(
-        monte_prob, SRIW1(), dt = 1 / 2^(4), adaptive = true,
+        monte_prob, SRIW1(), EnsembleThreads(), dt = 1 / 2^(4), adaptive = true,
         trajectories = 1000, abstol = 2.0^(-1), reltol = 0
     )
 
     for i in (1 + offset):(N + offset)
         tols[i - offset, 3] = 2.0^(-i - 1)
-        msims[i - offset] = final_error_stats(
+        msims[i - offset] = DiffEqBase.calculate_ensemble_errors(
             solve(
                 monte_prob, SRIW1(),
-                adaptive = true, trajectories = 1000, abstol = 2.0^(-i - 1),
-                reltol = 0, force_dtmin = true
+                EnsembleThreads(), adaptive = true, trajectories = 1000, abstol = 2.0^(-i - 1),
+                reltol = 0, force_dtmin = true, maxiters = Int(1.0e7)
             )
         )
-        elapsed[i - offset, 3] = msims[i - offset].elapsed_time
-        medians[i - offset, 3] = msims[i - offset].median
-        means[i - offset, 3] = msims[i - offset].mean
+        elapsed[i - offset, 3] = msims[i - offset].elapsedTime
+        medians[i - offset, 3] = msims[i - offset].error_medians[:final]
+        means[i - offset, 3] = msims[i - offset].error_means[:final]
     end
 
     fullMeans[k] = means
@@ -173,7 +151,7 @@ end
 
 gr(fmt = :svg)
 lw = 3
-leg = permutedims(String["RSwM1", "RSwM2", "RSwM3"])
+leg = ["RSwM1" "RSwM2" "RSwM3"]
 
 titleFontSize = 16
 guideFontSize = 14
