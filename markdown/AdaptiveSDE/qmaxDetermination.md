@@ -75,14 +75,14 @@ end
 ```
 
 ```
-k was 1. The number of Adaptive Fails is 0. Elapsed time was 10.744949454
-k was 2. The number of Adaptive Fails is 0. Elapsed time was 6.168484073
-k was 3. The number of Adaptive Fails is 0. Elapsed time was 7.426939785
-k was 4. The number of Adaptive Fails is 0. Elapsed time was 10.145419231
-k was 5. The number of Adaptive Fails is 0. Elapsed time was 9.84436968
-k was 6. The number of Adaptive Fails is 0. Elapsed time was 10.78005812
-k was 7. The number of Adaptive Fails is 0. Elapsed time was 14.533406016
-k was 8. The number of Adaptive Fails is 0. Elapsed time was 12.085573762
+k was 1. The number of Adaptive Fails is 0. Elapsed time was 9.02547649
+k was 2. The number of Adaptive Fails is 0. Elapsed time was 4.991603697
+k was 3. The number of Adaptive Fails is 0. Elapsed time was 5.40904708
+k was 4. The number of Adaptive Fails is 0. Elapsed time was 7.298185389
+k was 5. The number of Adaptive Fails is 0. Elapsed time was 8.404966317
+k was 6. The number of Adaptive Fails is 0. Elapsed time was 8.120666214
+k was 7. The number of Adaptive Fails is 0. Elapsed time was 10.128598259
+k was 8. The number of Adaptive Fails is 0. Elapsed time was 8.748594622
 ```
 
 
@@ -113,55 +113,55 @@ end
 ```
 Problem 1
 for k=1 and i=1, we get that the error was 4.3345570672384755e-6 and it too
-k 14.841275135 seconds
+k 6.851991177 seconds
 for k=1 and i=2, we get that the error was 4.95244707577117e-6 and it took 
-8.99198717 seconds
+5.51315299 seconds
 for k=1 and i=3, we get that the error was 5.519841471992787e-6 and it took
- 8.783361398 seconds
+ 5.194552637 seconds
 for k=1 and i=4, we get that the error was 4.566284494219104e-6 and it took
- 8.482748491 seconds
+ 5.155888878 seconds
 for k=1 and i=5, we get that the error was 4.847058022484335e-6 and it took
- 8.23485097 seconds
+ 5.039040387 seconds
 for k=1 and i=6, we get that the error was 4.4638775332691365e-6 and it too
-k 8.016401363 seconds
+k 5.045732915 seconds
 for k=1 and i=7, we get that the error was 1.1271481709080833e-5 and it too
-k 9.025945582 seconds
+k 4.995139076 seconds
 for k=1 and i=8, we get that the error was 5.7054711567035056e-6 and it too
-k 8.339592844 seconds
+k 5.009835588 seconds
 Problem 2
 for k=2 and i=1, we get that the error was 6.072044751566086e-8 and it took
- 0.295994082 seconds
+ 0.269917553 seconds
 for k=2 and i=2, we get that the error was 9.864725446371292e-8 and it took
- 0.052437015 seconds
+ 0.05350725 seconds
 for k=2 and i=3, we get that the error was 1.817270462234677e-7 and it took
- 0.051662949 seconds
+ 0.053716998 seconds
 for k=2 and i=4, we get that the error was 2.4254606923169717e-7 and it too
-k 0.052888672 seconds
+k 0.054003944 seconds
 for k=2 and i=5, we get that the error was 2.526062185660205e-7 and it took
- 1.10836881 seconds
+ 0.410734237 seconds
 for k=2 and i=6, we get that the error was 2.5977466121286374e-7 and it too
-k 0.051680919 seconds
+k 0.049911159 seconds
 for k=2 and i=7, we get that the error was 2.568753861699191e-7 and it took
- 0.049451262 seconds
+ 0.051429843 seconds
 for k=2 and i=8, we get that the error was 2.6504550104691217e-7 and it too
-k 0.046968007 seconds
+k 0.050205445 seconds
 Problem 3
 for k=3 and i=1, we get that the error was 4.854088765704478e-9 and it took
- 3.694699552 seconds
+ 2.681321468 seconds
 for k=3 and i=2, we get that the error was 4.866878330889168e-9 and it took
- 2.555978974 seconds
+ 1.949817199 seconds
 for k=3 and i=3, we get that the error was 4.869679883134914e-9 and it took
- 2.61954934 seconds
+ 1.674347816 seconds
 for k=3 and i=4, we get that the error was 4.870960199099272e-9 and it took
- 2.584750558 seconds
+ 1.753587078 seconds
 for k=3 and i=5, we get that the error was 4.8724467608396434e-9 and it too
-k 2.984218774 seconds
+k 1.766211871 seconds
 for k=3 and i=6, we get that the error was 4.874379965524866e-9 and it took
- 2.463337365 seconds
+ 1.598948904 seconds
 for k=3 and i=7, we get that the error was 4.877679461912088e-9 and it took
- 2.909551419 seconds
+ 1.778402939 seconds
 for k=3 and i=8, we get that the error was 4.873669554206206e-9 and it took
- 2.318301984 seconds
+ 1.996659173 seconds
 ```
 
 
@@ -192,6 +192,7 @@ Platform Info:
   GC: Built with stock GC
 Threads: 128 default, 1 interactive, 128 GC (on 128 virtual cores)
 Environment:
+  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
 
 ```
@@ -199,7 +200,7 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AdaptiveSDE/Project.toml`
+Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AdaptiveSDE/Project.toml`
 ⌃ [2b5f629d] DiffEqBase v7.6.0
 ⌃ [77a26b50] DiffEqNoiseProcess v5.34.0
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.5.0
@@ -215,7 +216,7 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AdaptiveSDE/Manifest.toml`
+Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AdaptiveSDE/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.22.1
 ⌃ [14f7f29c] AMD v0.5.3
   [7d9f7c33] Accessors v0.1.45

@@ -1,3 +1,4 @@
+
 qs = 1.0 .+ 2.0 .^ (-5:2)
 times = Array{Float64}(undef, length(qs), 4)
 means = Array{Float64}(undef, length(qs), 4)
@@ -8,13 +9,13 @@ Random.seed!(99)
 
 full_prob = SDEProblemLibrary.oval2ModelExample(largeFluctuations = true, useBigs = false)
 import SDEProblemLibrary: prob_sde_additivesystem,
-    prob_sde_additive, prob_sde_2Dlinear, prob_sde_linear,
-    prob_sde_wave
+                          prob_sde_additive, prob_sde_2Dlinear, prob_sde_linear,
+                          prob_sde_wave
 prob = remake(full_prob, tspan = (0.0, 1.0))
 
 println("Solve once to compile.")
-sol = solve(prob, EM(), dt = 1 / 2^(18))
-Int(sol.u[end][1] != NaN)
+sol = solve(prob, EM(), dt = 1/2^(18))
+Int(sol.u[end][1]!=NaN)
 println("Compilation complete.")
 num_runs = 10000
 
@@ -37,23 +38,19 @@ oval2_ensemble = EnsembleProblem(prob, prob_func = (p, ctx) -> remake(p, seed = 
 
 #Compile
 monte_prob = EnsembleProblem(probs[1])
-test_mc = solve(
-    monte_prob, SRIW1(), EnsembleThreads(), dt = 1 / 2^(4), adaptive = true,
-    trajectories = 1000, abstol = 2.0^(-1), reltol = 0
-)
+test_mc = solve(monte_prob, SRIW1(), EnsembleThreads(), dt = 1/2^(4), adaptive = true,
+    trajectories = 1000, abstol = 2.0^(-1), reltol = 0)
 DiffEqBase.calculate_ensemble_errors(test_mc);
 
 
 for k in eachindex(qs)
     global times
     Random.seed!(99)
-    adaptiveTime = @elapsed sol = solve(
-        oval2_ensemble, SRIW1(), EnsembleThreads();
-        dt = 1 / 2^(8), abstol = 2.0^(-15), reltol = 2.0^(-10), verbose = SciMLLogging.None(),
-        maxiters = Int(1.0e7), save_everystep = false,
+    adaptiveTime = @elapsed sol = solve(oval2_ensemble, SRIW1(), EnsembleThreads();
+        dt = 1/2^(8), abstol = 2.0^(-15), reltol = 2.0^(-10), verbose = SciMLLogging.None(),
+        maxiters = Int(1e7), save_everystep = false,
         controller = PIController(SRIW1(); qmax = qs[k]),
-        trajectories = num_runs
-    )
+        trajectories = num_runs)
     numFails = sum(Int(any(isnan, sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:num_runs)
     println("k was $k. The number of Adaptive Fails is $numFails. Elapsed time was $adaptiveTime")
     times[k, 4] = adaptiveTime
@@ -67,18 +64,17 @@ for k in eachindex(probs)
     ens_prob = EnsembleProblem(probs[k])
 
     for i in eachindex(qs)
-        msim = solve(
-            ens_prob, SRIW1(), EnsembleThreads(), dt = 1 / 2^(4), adaptive = true,
+        msim = solve(ens_prob, SRIW1(), EnsembleThreads(), dt = 1/2^(4), adaptive = true,
             trajectories = num_runs, abstol = 2.0^(-13), reltol = 0,
-            controller = PIController(SRIW1(); qmax = qs[i])
-        )
+            controller = PIController(SRIW1(); qmax = qs[i]))
         test_msim = DiffEqBase.calculate_ensemble_errors(msim)
         times[i, k] = test_msim.elapsedTime
         means[i, k] = test_msim.error_means[:final]
-        println("for k=$k and i=$i, we get that the error was $(means[i, k]) and it took $(times[i, k]) seconds")
+        println("for k=$k and i=$i, we get that the error was $(means[i,k]) and it took $(times[i,k]) seconds")
     end
 end
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
