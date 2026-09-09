@@ -95,7 +95,7 @@ Package Information:
 ```
 Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Testing/Project.toml`
   [91a5bcdd] Plots v1.41.7
-  [31c91b34] SciMLBenchmarks v0.2.0
+  [31c91b34] SciMLBenchmarks v0.2.1
 ```
 
 And the full manifest:
@@ -117,7 +117,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
   [28b8d3ca] GR v0.73.27
-  [42e2da0e] Grisu v1.0.2
 ⌅ [eafb193a] Highlights v0.5.3
   [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
@@ -133,7 +132,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ffc61752] Mustache v1.0.21
   [77ba4419] NaNMath v1.1.4
   [bac558e1] OrderedCollections v2.0.1
-⌅ [69de0a69] Parsers v2.8.7
+⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
@@ -145,9 +144,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
-  [31c91b34] SciMLBenchmarks v0.2.0
+  [31c91b34] SciMLBenchmarks v0.2.1
   [6c6a2e73] Scratch v1.3.0
-⌃ [992d4aef] Showoff v1.0.3
+  [992d4aef] Showoff v1.1.1
   [a2af1166] SortingAlgorithms v1.2.3
   [860ef19b] StableRNGs v1.0.4
   [82ae8749] StatsAPI v1.8.0
@@ -164,7 +163,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-  [2e619515] Expat_jll v2.8.3+0
+  [2e619515] Expat_jll v2.8.4+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
@@ -175,10 +174,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [61579ee1] Ghostscript_jll v9.55.1+0
   [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
-  [2e76f6c2] HarfBuzz_jll v100.14003.0+0
+  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-  [88015f11] LERC_jll v4.1.0+0
+  [88015f11] LERC_jll v4.2.0+0
   [1d63c593] LLVMOpenMP_jll v22.1.7+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
@@ -283,6 +282,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.6.1+0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use `status --outdated -m`
 ```
 
