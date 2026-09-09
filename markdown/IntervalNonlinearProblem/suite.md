@@ -47,7 +47,7 @@ function g!(out, ps, uspan)
     for i in 1:N
         out[i] = find_zero(f, uspan, ps[i])
     end
-    return out
+    out
 end;
 ```
 
@@ -64,7 +64,7 @@ uspan = (0.0, 2.0)
 ```
 
 ```
-344.476 ms (0 allocations: 0 bytes)
+343.135 ms (0 allocations: 0 bytes)
 ```
 
 
@@ -105,7 +105,7 @@ function h!(out, ps, uspan, alg)
         sol = solve(prob, alg)
         out[i] = sol.u
     end
-    return out
+    out
 end;
 ```
 
@@ -115,10 +115,8 @@ end;
 and loop through the methods,
 
 ```julia
-for alg in (
-        Alefeld, Bisection, Brent, Falsi,
-        ITP, Muller, Ridder, ModAB,
-    )
+for alg in (Alefeld, Bisection, Brent, Falsi,
+    ITP, Muller, Ridder, ModAB)
     println("Benchmark of $alg:")
     @btime h!($out, $ps, $uspan, $(alg()))
     println("Mean absolute error: $(mean(abs.(f.(out, ps))))\n")
@@ -127,35 +125,35 @@ end
 
 ```
 Benchmark of BracketingNonlinearSolve.Alefeld:
-  178.612 ms (0 allocations: 0 bytes)
+  185.317 ms (0 allocations: 0 bytes)
 Mean absolute error: 3.918693955483679e-17
 
 Benchmark of BracketingNonlinearSolve.Bisection:
-  128.644 ms (0 allocations: 0 bytes)
+  128.627 ms (0 allocations: 0 bytes)
 Mean absolute error: 1.3280442898291502e-13
 
 Benchmark of BracketingNonlinearSolve.Brent:
-  45.943 ms (0 allocations: 0 bytes)
+  45.789 ms (0 allocations: 0 bytes)
 Mean absolute error: 2.1665706599117464e-14
 
 Benchmark of BracketingNonlinearSolve.Falsi:
-  130.088 ms (0 allocations: 0 bytes)
+  130.426 ms (0 allocations: 0 bytes)
 Mean absolute error: 2.2704001668921334e-12
 
 Benchmark of BracketingNonlinearSolve.ITP:
-  46.231 ms (0 allocations: 0 bytes)
+  46.215 ms (0 allocations: 0 bytes)
 Mean absolute error: 1.6533434955381716e-16
 
 Benchmark of BracketingNonlinearSolve.Muller:
-  27.485 ms (0 allocations: 0 bytes)
+  27.464 ms (0 allocations: 0 bytes)
 Mean absolute error: 2.0138978308733098e-14
 
 Benchmark of BracketingNonlinearSolve.Ridder:
-  38.948 ms (0 allocations: 0 bytes)
+  38.872 ms (0 allocations: 0 bytes)
 Mean absolute error: 8.267108511975618e-15
 
 Benchmark of BracketingNonlinearSolve.ModAB:
-  28.375 ms (0 allocations: 0 bytes)
+  28.383 ms (0 allocations: 0 bytes)
 Mean absolute error: 4.442012919601487e-17
 ```
 
@@ -172,7 +170,7 @@ At this point, we will consider a separate function to solve. We will now
 search for the root of
 
 ```julia
-g(u) = exp(u) - 1.0e-15;
+g(u) = exp(u) - 1e-15;
 ```
 
 
@@ -190,7 +188,7 @@ function i!(out, uspan)
     for i in 1:N
         out[i] = find_zero(g, uspan)
     end
-    return out
+    out
 end
 
 uspan = (-100.0, 0.0)
@@ -200,7 +198,7 @@ println("Mean absolute error: $(mean(abs.(g.(out))))")
 ```
 
 ```
-346.155 ms (0 allocations: 0 bytes)
+347.343 ms (0 allocations: 0 bytes)
 Mean absolute error: 1.1832913578315177e-30
 ```
 
@@ -220,13 +218,11 @@ function j!(out, uspan, alg)
         sol = solve(prob, alg)
         out[i] = sol.u
     end
-    return out
+    out
 end
 
-for alg in (
-        Alefeld, Bisection, Brent, Falsi,
-        ITP, Muller, Ridder, ModAB,
-    )
+for alg in (Alefeld, Bisection, Brent, Falsi,
+    ITP, Muller, Ridder, ModAB)
     println("Benchmark of $alg:")
     @btime j!($out, $uspan, $(alg()))
     println("Mean absolute error: $(mean(abs.(g.(out))))\n")
@@ -235,35 +231,35 @@ end
 
 ```
 Benchmark of BracketingNonlinearSolve.Alefeld:
-  337.928 ms (0 allocations: 0 bytes)
+  339.321 ms (0 allocations: 0 bytes)
 Mean absolute error: 1.1832913578315177e-30
 
 Benchmark of BracketingNonlinearSolve.Bisection:
-  71.732 ms (0 allocations: 0 bytes)
+  71.804 ms (0 allocations: 0 bytes)
 Mean absolute error: 3.4512664603419266e-29
 
 Benchmark of BracketingNonlinearSolve.Brent:
-  72.052 ms (0 allocations: 0 bytes)
+  71.963 ms (0 allocations: 0 bytes)
 Mean absolute error: 1.1832913578315177e-30
 
 Benchmark of BracketingNonlinearSolve.Falsi:
-  77.864 ms (0 allocations: 0 bytes)
+  78.140 ms (0 allocations: 0 bytes)
 Mean absolute error: 3.4512664603419266e-29
 
 Benchmark of BracketingNonlinearSolve.ITP:
-  131.603 ms (0 allocations: 0 bytes)
+  131.562 ms (0 allocations: 0 bytes)
 Mean absolute error: 1.1832913578315177e-30
 
 Benchmark of BracketingNonlinearSolve.Muller:
-  7.286 ms (0 allocations: 0 bytes)
+  7.325 ms (0 allocations: 0 bytes)
 Mean absolute error: 9.999998071250149e-16
 
 Benchmark of BracketingNonlinearSolve.Ridder:
-  88.675 ms (0 allocations: 0 bytes)
+  89.247 ms (0 allocations: 0 bytes)
 Mean absolute error: 1.1832913578315177e-30
 
 Benchmark of BracketingNonlinearSolve.ModAB:
-  39.109 ms (0 allocations: 0 bytes)
+  39.372 ms (0 allocations: 0 bytes)
 Mean absolute error: 1.1832913578315177e-30
 ```
 
@@ -289,72 +285,56 @@ using Statistics
 
 # Define challenging test functions
 test_functions = [
-    # Function 1: Polynomial with multiple roots
-    (
-        name = "Wilkinson-like polynomial",
+    # Function 1: Polynomial with multiple roots  
+    (name = "Wilkinson-like polynomial",
         f = (u, p) -> (u - 1) * (u - 2) * (u - 3) * (u - 4) * (u - 5) - p,
         interval = (0.5, 5.5),
-        p = 0.05,
-    ),
+        p = 0.05),
 
     # Function 2: Trigonometric with multiple roots
-    (
-        name = "sin(x) - 0.5x",
-        f = (u, p) -> sin(u) - 0.5 * u - p,
+    (name = "sin(x) - 0.5x",
+        f = (u, p) -> sin(u) - 0.5*u - p,
         interval = (-10.0, 10.0),
-        p = 0.3,
-    ),
+        p = 0.3),
 
     # Function 3: Exponential function (sensitive near zero)
-    (
-        name = "exp(x) - 1 - x - x²/2",
-        f = (u, p) -> exp(u) - 1 - u - u^2 / 2 - p,
+    (name = "exp(x) - 1 - x - x²/2",
+        f = (u, p) -> exp(u) - 1 - u - u^2/2 - p,
         interval = (-2.0, 2.0),
-        p = 0.005,
-    ),
+        p = 0.005),
 
     # Function 4: Rational function with pole
-    (
-        name = "1/(x-0.5) - 2",
-        f = (u, p) -> 1 / (u - 0.5) - 2 - p,
+    (name = "1/(x-0.5) - 2",
+        f = (u, p) -> 1/(u - 0.5) - 2 - p,
         interval = (0.6, 2.0),
-        p = 0.05,
-    ),
+        p = 0.05),
 
     # Function 5: Logarithmic function
-    (
-        name = "log(x) - x + 2",
+    (name = "log(x) - x + 2",
         f = (u, p) -> log(u) - u + 2 - p,
         interval = (0.1, 3.0),
-        p = 0.05,
-    ),
+        p = 0.05),
 
     # Function 6: High oscillation function
-    (
-        name = "sin(20x) + sin(x) + x",
-        f = (u, p) -> sin(20 * u) + sin(u) + u - p,
+    (name = "sin(20x) + sin(x) + x",
+        f = (u, p) -> sin(20*u) + sin(u) + u - p,
         interval = (-5.0, 5.0),
-        p = 2.0,
-    ),
+        p = 2.0),
 
     # Function 7: Function with very flat region
-    (
-        name = "x³ - 2x² + x",
-        f = (u, p) -> u^3 - 2 * u^2 + u - p,
+    (name = "x³ - 2x² + x",
+        f = (u, p) -> u^3 - 2*u^2 + u - p,
         interval = (-1.0, 2.0),
-        p = 0.025,
-    ),
+        p = 0.025),
 
     # Function 8: Bessel-like function
-    (
-        name = "x·sin(1/x) - 0.1",
-        f = (u, p) -> u * sin(1 / u) - 0.1 - p,
+    (name = "x·sin(1/x) - 0.1",
+        f = (u, p) -> u * sin(1/u) - 0.1 - p,
         interval = (0.01, 1.0),
-        p = 0.01,
-    ),
+        p = 0.01)
 ]
 
-# Add SimpleNonlinearSolve algorithms
+# Add SimpleNonlinearSolve algorithms  
 using SimpleNonlinearSolve
 
 # Combined algorithm list from both packages
@@ -366,22 +346,14 @@ all_algorithms = [
     (name = "ITP (BNS)", alg = () -> ITP(), package = "BracketingNonlinearSolve"),
     (name = "Ridder (BNS)", alg = () -> Ridder(), package = "BracketingNonlinearSolve"),
     (name = "ModAB (BNS)", alg = () -> ModAB(), package = "BracketingNonlinearSolve"),
-    (
-        name = "Bisection (SNS)", alg = () -> SimpleNonlinearSolve.Bisection(),
-        package = "SimpleNonlinearSolve",
-    ),
-    (
-        name = "Brent (SNS)", alg = () -> SimpleNonlinearSolve.Brent(),
-        package = "SimpleNonlinearSolve",
-    ),
-    (
-        name = "Falsi (SNS)", alg = () -> SimpleNonlinearSolve.Falsi(),
-        package = "SimpleNonlinearSolve",
-    ),
-    (
-        name = "Ridders (SNS)", alg = () -> SimpleNonlinearSolve.Ridder(),
-        package = "SimpleNonlinearSolve",
-    ),
+    (name = "Bisection (SNS)", alg = () -> SimpleNonlinearSolve.Bisection(),
+        package = "SimpleNonlinearSolve"),
+    (name = "Brent (SNS)", alg = () -> SimpleNonlinearSolve.Brent(),
+        package = "SimpleNonlinearSolve"),
+    (name = "Falsi (SNS)", alg = () -> SimpleNonlinearSolve.Falsi(),
+        package = "SimpleNonlinearSolve"),
+    (name = "Ridders (SNS)", alg = () -> SimpleNonlinearSolve.Ridder(),
+        package = "SimpleNonlinearSolve")
 ]
 
 # Benchmark function for testing all algorithms on a given function
@@ -411,12 +383,9 @@ function benchmark_function(test_func, N_samples = 10000)
         final_root = find_zero(roots_func, test_func.interval)
         error_roots = abs(test_func.f(final_root, test_func.p))
 
-        println("Roots.jl: $(round(time_roots * 1000, digits = 2)) ms, Error: $(round(error_roots, sigdigits = 3))")
-        push!(
-            results, (
-                name = "Roots.jl", time = time_roots, error = error_roots, success = true,
-            )
-        )
+        println("Roots.jl: $(round(time_roots*1000, digits=2)) ms, Error: $(round(error_roots, sigdigits=3))")
+        push!(results, (
+            name = "Roots.jl", time = time_roots, error = error_roots, success = true))
     catch e
         println("Roots.jl: FAILED - $e")
         push!(results, (name = "Roots.jl", time = Inf, error = Inf, success = false))
@@ -428,8 +397,7 @@ function benchmark_function(test_func, N_samples = 10000)
             # Warmup run to exclude compilation time
             prob_warmup = IntervalNonlinearProblem{false}(
                 IntervalNonlinearFunction{false}(test_func.f),
-                test_func.interval, test_func.p
-            )
+                test_func.interval, test_func.p)
             solve(prob_warmup, alg_info.alg())
 
             # Actual timing
@@ -437,8 +405,7 @@ function benchmark_function(test_func, N_samples = 10000)
                 for i in 1:N_samples
                     prob = IntervalNonlinearProblem{false}(
                         IntervalNonlinearFunction{false}(test_func.f),
-                        test_func.interval, test_func.p
-                    )
+                        test_func.interval, test_func.p)
                     sol = solve(prob, alg_info.alg())
                 end
             end
@@ -446,17 +413,13 @@ function benchmark_function(test_func, N_samples = 10000)
             # Calculate error using one solve
             prob_final = IntervalNonlinearProblem{false}(
                 IntervalNonlinearFunction{false}(test_func.f),
-                test_func.interval, test_func.p
-            )
+                test_func.interval, test_func.p)
             sol_final = solve(prob_final, alg_info.alg())
             error_val = abs(test_func.f(sol_final.u, test_func.p))
 
-            println("$(alg_info.name): $(round(time_taken * 1000, digits = 2)) ms, Error: $(round(error_val, sigdigits = 3))")
-            push!(
-                results, (
-                    name = alg_info.name, time = time_taken, error = error_val, success = true,
-                )
-            )
+            println("$(alg_info.name): $(round(time_taken*1000, digits=2)) ms, Error: $(round(error_val, sigdigits=3))")
+            push!(results, (
+                name = alg_info.name, time = time_taken, error = error_val, success = true))
         catch e
             println("$(alg_info.name): FAILED - $e")
             push!(results, (name = alg_info.name, time = Inf, error = Inf, success = false))
@@ -478,124 +441,124 @@ end
 \n=== Testing: Wilkinson-like polynomial ===
 Interval: (0.5, 5.5)
 Parameter: 0.05
-Roots.jl: 20.92 ms, Error: 1.87e-15
-Alefeld (BNS): 12.49 ms, Error: 7.79e-15
-Bisection (BNS): 5.55 ms, Error: 4.53e-12
-Brent (BNS): 5.57 ms, Error: 5.55e-16
-Falsi (BNS): 51.41 ms, Error: 2.79e-13
-ITP (BNS): 5.93 ms, Error: 1.22e-15
-Ridder (BNS): 6.4 ms, Error: 6.59e-16
-ModAB (BNS): 4.6 ms, Error: 5.55e-16
-Bisection (SNS): 5.38 ms, Error: 4.53e-12
-Brent (SNS): 5.47 ms, Error: 5.55e-16
-Falsi (SNS): 51.28 ms, Error: 2.79e-13
-Ridders (SNS): 6.28 ms, Error: 6.59e-16
+Roots.jl: 21.22 ms, Error: 1.87e-15
+Alefeld (BNS): 12.04 ms, Error: 7.79e-15
+Bisection (BNS): 5.04 ms, Error: 4.53e-12
+Brent (BNS): 4.94 ms, Error: 5.55e-16
+Falsi (BNS): 50.39 ms, Error: 2.79e-13
+ITP (BNS): 5.6 ms, Error: 1.22e-15
+Ridder (BNS): 5.68 ms, Error: 6.59e-16
+ModAB (BNS): 3.65 ms, Error: 5.55e-16
+Bisection (SNS): 4.45 ms, Error: 4.53e-12
+Brent (SNS): 4.63 ms, Error: 5.55e-16
+Falsi (SNS): 50.21 ms, Error: 2.79e-13
+Ridders (SNS): 5.36 ms, Error: 6.59e-16
 \n=== Testing: sin(x) - 0.5x ===
 Interval: (-10.0, 10.0)
 Parameter: 0.3
-Roots.jl: 32.57 ms, Error: 5.55e-17
-Alefeld (BNS): 28.34 ms, Error: 5.55e-17
-Bisection (BNS): 10.05 ms, Error: 1.09e-13
-Brent (BNS): 11.44 ms, Error: 1.86e-13
-Falsi (BNS): 20.12 ms, Error: 9.63e-14
-ITP (BNS): 8.3 ms, Error: 5.55e-17
-Ridder (BNS): 7.67 ms, Error: 9.44e-16
-ModAB (BNS): 5.75 ms, Error: 3.89e-16
-Bisection (SNS): 10.15 ms, Error: 1.09e-13
-Brent (SNS): 11.57 ms, Error: 1.86e-13
-Falsi (SNS): 20.04 ms, Error: 9.63e-14
-Ridders (SNS): 7.54 ms, Error: 9.44e-16
+Roots.jl: 32.78 ms, Error: 5.55e-17
+Alefeld (BNS): 28.7 ms, Error: 5.55e-17
+Bisection (BNS): 10.14 ms, Error: 1.09e-13
+Brent (BNS): 10.76 ms, Error: 1.86e-13
+Falsi (BNS): 19.2 ms, Error: 9.63e-14
+ITP (BNS): 7.61 ms, Error: 5.55e-17
+Ridder (BNS): 6.8 ms, Error: 9.44e-16
+ModAB (BNS): 5.44 ms, Error: 3.89e-16
+Bisection (SNS): 10.03 ms, Error: 1.09e-13
+Brent (SNS): 11.65 ms, Error: 1.86e-13
+Falsi (SNS): 19.36 ms, Error: 9.63e-14
+Ridders (SNS): 6.89 ms, Error: 9.44e-16
 \n=== Testing: exp(x) - 1 - x - x²/2 ===
 Interval: (-2.0, 2.0)
 Parameter: 0.005
-Roots.jl: 36.63 ms, Error: 5.12e-17
-Alefeld (BNS): 60.84 ms, Error: 1.13e-17
-Bisection (BNS): 10.51 ms, Error: 9.59e-15
-Brent (BNS): 12.71 ms, Error: 7.64e-15
-Falsi (BNS): 708.84 ms, Error: 2.98e-13
-ITP (BNS): 8.87 ms, Error: 3.21e-17
-Ridder (BNS): 8.56 ms, Error: 6.68e-17
-ModAB (BNS): 6.6 ms, Error: 6.51e-17
-Bisection (SNS): 9.65 ms, Error: 9.59e-15
-Brent (SNS): 12.17 ms, Error: 7.64e-15
-Falsi (SNS): 690.36 ms, Error: 2.98e-13
-Ridders (SNS): 8.57 ms, Error: 6.68e-17
+Roots.jl: 36.72 ms, Error: 5.12e-17
+Alefeld (BNS): 59.29 ms, Error: 1.13e-17
+Bisection (BNS): 9.5 ms, Error: 9.59e-15
+Brent (BNS): 11.89 ms, Error: 7.64e-15
+Falsi (BNS): 695.25 ms, Error: 2.98e-13
+ITP (BNS): 8.7 ms, Error: 3.21e-17
+Ridder (BNS): 8.21 ms, Error: 6.68e-17
+ModAB (BNS): 6.27 ms, Error: 6.51e-17
+Bisection (SNS): 9.28 ms, Error: 9.59e-15
+Brent (SNS): 11.8 ms, Error: 7.64e-15
+Falsi (SNS): 690.19 ms, Error: 2.98e-13
+Ridders (SNS): 8.45 ms, Error: 6.68e-17
 \n=== Testing: 1/(x-0.5) - 2 ===
 Interval: (0.6, 2.0)
 Parameter: 0.05
-Roots.jl: 20.51 ms, Error: 2.64e-16
-Alefeld (BNS): 7.94 ms, Error: 2.64e-16
-Bisection (BNS): 4.69 ms, Error: 2.4e-13
-Brent (BNS): 5.15 ms, Error: 2.64e-16
-Falsi (BNS): 104.78 ms, Error: 4.65e-13
-ITP (BNS): 6.75 ms, Error: 2.64e-16
-Ridder (BNS): 4.38 ms, Error: 2.64e-16
-ModAB (BNS): 3.01 ms, Error: 6.25e-16
-Bisection (SNS): 4.15 ms, Error: 2.4e-13
-Brent (SNS): 4.84 ms, Error: 2.64e-16
-Falsi (SNS): 104.61 ms, Error: 4.65e-13
-Ridders (SNS): 4.12 ms, Error: 2.64e-16
+Roots.jl: 20.37 ms, Error: 2.64e-16
+Alefeld (BNS): 7.78 ms, Error: 2.64e-16
+Bisection (BNS): 4.57 ms, Error: 2.4e-13
+Brent (BNS): 5.12 ms, Error: 2.64e-16
+Falsi (BNS): 104.39 ms, Error: 4.65e-13
+ITP (BNS): 7.2 ms, Error: 2.64e-16
+Ridder (BNS): 4.17 ms, Error: 2.64e-16
+ModAB (BNS): 3.24 ms, Error: 6.25e-16
+Bisection (SNS): 4.23 ms, Error: 2.4e-13
+Brent (SNS): 4.83 ms, Error: 2.64e-16
+Falsi (SNS): 104.63 ms, Error: 4.65e-13
+Ridders (SNS): 4.16 ms, Error: 2.64e-16
 \n=== Testing: log(x) - x + 2 ===
 Interval: (0.1, 3.0)
 Parameter: 0.05
-Roots.jl: 33.25 ms, Error: 4.16e-17
-Alefeld (BNS): 35.91 ms, Error: 4.16e-17
-Bisection (BNS): 10.68 ms, Error: 6.88e-13
-Brent (BNS): 9.27 ms, Error: 4.16e-17
-Falsi (BNS): 32.32 ms, Error: 1.01e-12
-ITP (BNS): 9.15 ms, Error: 4.16e-17
-Ridder (BNS): 8.81 ms, Error: 2.7e-14
-ModAB (BNS): 6.49 ms, Error: 4.16e-17
-Bisection (SNS): 10.93 ms, Error: 6.88e-13
-Brent (SNS): 9.61 ms, Error: 4.16e-17
-Falsi (SNS): 32.84 ms, Error: 1.01e-12
-Ridders (SNS): 8.65 ms, Error: 2.7e-14
+Roots.jl: 33.45 ms, Error: 4.16e-17
+Alefeld (BNS): 61.78 ms, Error: 4.16e-17
+Bisection (BNS): 10.99 ms, Error: 6.88e-13
+Brent (BNS): 9.81 ms, Error: 4.16e-17
+Falsi (BNS): 32.9 ms, Error: 1.01e-12
+ITP (BNS): 9.71 ms, Error: 4.16e-17
+Ridder (BNS): 8.79 ms, Error: 2.7e-14
+ModAB (BNS): 6.11 ms, Error: 4.16e-17
+Bisection (SNS): 10.8 ms, Error: 6.88e-13
+Brent (SNS): 9.69 ms, Error: 4.16e-17
+Falsi (SNS): 32.93 ms, Error: 1.01e-12
+Ridders (SNS): 8.79 ms, Error: 2.7e-14
 \n=== Testing: sin(20x) + sin(x) + x ===
 Interval: (-5.0, 5.0)
 Parameter: 2.0
-Roots.jl: 42.62 ms, Error: 4.44e-16
-Alefeld (BNS): 101.05 ms, Error: 8.88e-16
-Bisection (BNS): 16.74 ms, Error: 1.73e-12
-Brent (BNS): 12.64 ms, Error: 4.44e-16
-Falsi (BNS): 24.89 ms, Error: 2.43e-13
-ITP (BNS): 10.25 ms, Error: 2.66e-15
-Ridder (BNS): 19.15 ms, Error: 3.11e-15
-ModAB (BNS): 8.39 ms, Error: 0.0
-Bisection (SNS): 16.93 ms, Error: 1.73e-12
-Brent (SNS): 12.54 ms, Error: 4.44e-16
-Falsi (SNS): 24.88 ms, Error: 2.43e-13
-Ridders (SNS): 18.92 ms, Error: 3.11e-15
+Roots.jl: 42.61 ms, Error: 4.44e-16
+Alefeld (BNS): 101.75 ms, Error: 8.88e-16
+Bisection (BNS): 17.18 ms, Error: 1.73e-12
+Brent (BNS): 45.12 ms, Error: 4.44e-16
+Falsi (BNS): 25.46 ms, Error: 2.43e-13
+ITP (BNS): 10.46 ms, Error: 2.66e-15
+Ridder (BNS): 20.06 ms, Error: 3.11e-15
+ModAB (BNS): 9.39 ms, Error: 0.0
+Bisection (SNS): 17.05 ms, Error: 1.73e-12
+Brent (SNS): 12.92 ms, Error: 4.44e-16
+Falsi (SNS): 25.22 ms, Error: 2.43e-13
+Ridders (SNS): 19.57 ms, Error: 3.11e-15
 \n=== Testing: x³ - 2x² + x ===
 Interval: (-1.0, 2.0)
 Parameter: 0.025
-Roots.jl: 23.26 ms, Error: 0.0
-Alefeld (BNS): 9.72 ms, Error: 9.02e-17
-Bisection (BNS): 4.1 ms, Error: 1.88e-14
-Brent (BNS): 4.67 ms, Error: 9.02e-17
-Falsi (BNS): 118.6 ms, Error: 2.98e-13
-ITP (BNS): 5.74 ms, Error: 3.47e-18
-Ridder (BNS): 4.29 ms, Error: 0.0
-ModAB (BNS): 3.72 ms, Error: 0.0
-Bisection (SNS): 4.53 ms, Error: 1.88e-14
-Brent (SNS): 5.12 ms, Error: 9.02e-17
-Falsi (SNS): 117.93 ms, Error: 2.98e-13
-Ridders (SNS): 4.72 ms, Error: 0.0
+Roots.jl: 23.18 ms, Error: 0.0
+Alefeld (BNS): 9.89 ms, Error: 9.02e-17
+Bisection (BNS): 4.05 ms, Error: 1.88e-14
+Brent (BNS): 4.64 ms, Error: 9.02e-17
+Falsi (BNS): 118.26 ms, Error: 2.98e-13
+ITP (BNS): 6.35 ms, Error: 3.47e-18
+Ridder (BNS): 4.43 ms, Error: 0.0
+ModAB (BNS): 3.75 ms, Error: 0.0
+Bisection (SNS): 4.74 ms, Error: 1.88e-14
+Brent (SNS): 5.26 ms, Error: 9.02e-17
+Falsi (SNS): 119.03 ms, Error: 2.98e-13
+Ridders (SNS): 4.74 ms, Error: 0.0
 \n=== Testing: x·sin(1/x) - 0.1 ===
 Interval: (0.01, 1.0)
 Parameter: 0.01
-Roots.jl: 34.22 ms, Error: 8.67e-18
+Roots.jl: 36.94 ms, Error: 8.67e-18
 Alefeld (BNS): FAILED - DomainError(Inf, "sin(x) is only defined for finite
  x.")
-Bisection (BNS): 10.54 ms, Error: 3.57e-13
-Brent (BNS): 16.55 ms, Error: 5.34e-13
-Falsi (BNS): 18.81 ms, Error: 5.3e-13
-ITP (BNS): 8.03 ms, Error: 8.67e-18
-Ridder (BNS): 7.12 ms, Error: 2.86e-16
-ModAB (BNS): 7.19 ms, Error: 6.42e-17
-Bisection (SNS): 10.96 ms, Error: 3.57e-13
-Brent (SNS): 16.48 ms, Error: 5.34e-13
-Falsi (SNS): 18.56 ms, Error: 5.3e-13
-Ridders (SNS): 6.79 ms, Error: 2.86e-16
+Bisection (BNS): 10.39 ms, Error: 3.57e-13
+Brent (BNS): 16.36 ms, Error: 5.34e-13
+Falsi (BNS): 18.37 ms, Error: 5.3e-13
+ITP (BNS): 7.92 ms, Error: 8.67e-18
+Ridder (BNS): 6.79 ms, Error: 2.86e-16
+ModAB (BNS): 7.0 ms, Error: 6.42e-17
+Bisection (SNS): 10.42 ms, Error: 3.57e-13
+Brent (SNS): 16.2 ms, Error: 5.34e-13
+Falsi (SNS): 18.34 ms, Error: 5.3e-13
+Ridders (SNS): 6.88 ms, Error: 2.86e-16
 ```
 
 
@@ -615,12 +578,8 @@ function print_summary_table(all_results)
     println("="^80)
 
     # Get all algorithm names
-    alg_names = unique(
-        [
-            r.name for func_results in all_results
-                for r in func_results.results
-        ]
-    )
+    alg_names = unique([r.name for func_results in all_results
+                        for r in func_results.results])
 
     # Print header
     @printf "%-25s" "Function"
@@ -628,7 +587,7 @@ function print_summary_table(all_results)
         @printf "%-15s" alg[1:min(14, length(alg))]
     end
     println()
-    println("-"^(25 + 15 * length(alg_names)))
+    println("-"^(25 + 15*length(alg_names)))
 
     # Print results for each function
     for func_result in all_results
@@ -640,7 +599,7 @@ function print_summary_table(all_results)
             if alg_result !== nothing
                 result = func_result.results[alg_result]
                 if result.success && result.time < 1.0  # Reasonable time limit
-                    @printf "%-15s" "$(round(result.time * 1000, digits = 1))ms"
+                    @printf "%-15s" "$(round(result.time*1000, digits=1))ms"
                 else
                     @printf "%-15s" "FAIL"
                 end
@@ -657,7 +616,7 @@ function print_summary_table(all_results)
     println("- BNS = BracketingNonlinearSolve.jl, SNS = SimpleNonlinearSolve.jl")
     println("- FAIL indicates algorithm failed or took excessive time")
     println("- Compilation time excluded via warmup runs")
-    return println("="^80)
+    println("="^80)
 end
 
 print_summary_table(all_results)
@@ -671,34 +630,34 @@ COMPREHENSIVE BENCHMARK SUMMARY
 =====
 Function                 Roots.jl       Alefeld (BNS)  Bisection (BNS Brent
  (BNS)    Falsi (BNS)    ITP (BNS)      Ridder (BNS)   ModAB (BNS)    Bisec
-tion (SNS Brent (SNS)    Falsi (SNS)    Ridders (SNS)
+tion (SNS Brent (SNS)    Falsi (SNS)    Ridders (SNS)  
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 -------------------------------------------------------
-Wilkinson-like polynomia 20.9ms         12.5ms         5.6ms          5.6ms
-          51.4ms         5.9ms          6.4ms          4.6ms          5.4ms
-          5.5ms          51.3ms         6.3ms
-sin(x) - 0.5x            32.6ms         28.3ms         10.1ms         11.4m
-s         20.1ms         8.3ms          7.7ms          5.8ms          10.1m
-s         11.6ms         20.0ms         7.5ms
-exp(x) - 1 - x - x²/     36.6ms         60.8ms         10.5ms         12.7m
-s         708.8ms        8.9ms          8.6ms          6.6ms          9.6ms
-          12.2ms         690.4ms        8.6ms
-1/(x-0.5) - 2            20.5ms         7.9ms          4.7ms          5.2ms
-          104.8ms        6.7ms          4.4ms          3.0ms          4.2ms
-          4.8ms          104.6ms        4.1ms
-log(x) - x + 2           33.3ms         35.9ms         10.7ms         9.3ms
-          32.3ms         9.1ms          8.8ms          6.5ms          10.9m
-s         9.6ms          32.8ms         8.6ms
-sin(20x) + sin(x) + x    42.6ms         101.0ms        16.7ms         12.6m
-s         24.9ms         10.3ms         19.2ms         8.4ms          16.9m
-s         12.5ms         24.9ms         18.9ms
-x³ - 2x² +               23.3ms         9.7ms          4.1ms          4.7ms
-          118.6ms        5.7ms          4.3ms          3.7ms          4.5ms
-          5.1ms          117.9ms        4.7ms
-x·sin(1/x) - 0.          34.2ms         FAIL           10.5ms         16.5m
-s         18.8ms         8.0ms          7.1ms          7.2ms          11.0m
-s         16.5ms         18.6ms         6.8ms
+Wilkinson-like polynomia 21.2ms         12.0ms         5.0ms          4.9ms
+          50.4ms         5.6ms          5.7ms          3.7ms          4.4ms
+          4.6ms          50.2ms         5.4ms          
+sin(x) - 0.5x            32.8ms         28.7ms         10.1ms         10.8m
+s         19.2ms         7.6ms          6.8ms          5.4ms          10.0m
+s         11.7ms         19.4ms         6.9ms          
+exp(x) - 1 - x - x²/     36.7ms         59.3ms         9.5ms          11.9m
+s         695.2ms        8.7ms          8.2ms          6.3ms          9.3ms
+          11.8ms         690.2ms        8.4ms          
+1/(x-0.5) - 2            20.4ms         7.8ms          4.6ms          5.1ms
+          104.4ms        7.2ms          4.2ms          3.2ms          4.2ms
+          4.8ms          104.6ms        4.2ms          
+log(x) - x + 2           33.4ms         61.8ms         11.0ms         9.8ms
+          32.9ms         9.7ms          8.8ms          6.1ms          10.8m
+s         9.7ms          32.9ms         8.8ms          
+sin(20x) + sin(x) + x    42.6ms         101.8ms        17.2ms         45.1m
+s         25.5ms         10.5ms         20.1ms         9.4ms          17.1m
+s         12.9ms         25.2ms         19.6ms         
+x³ - 2x² +               23.2ms         9.9ms          4.0ms          4.6ms
+          118.3ms        6.3ms          4.4ms          3.7ms          4.7ms
+          5.3ms          119.0ms        4.7ms          
+x·sin(1/x) - 0.          36.9ms         FAIL           10.4ms         16.4m
+s         18.4ms         7.9ms          6.8ms          7.0ms          10.4m
+s         16.2ms         18.3ms         6.9ms          
 \n=========================================================================
 =======
 Notes:
@@ -724,12 +683,8 @@ function print_accuracy_table(all_results)
     println("ACCURACY ANALYSIS (Absolute Error)")
     println("="^80)
 
-    alg_names = unique(
-        [
-            r.name for func_results in all_results
-                for r in func_results.results
-        ]
-    )
+    alg_names = unique([r.name for func_results in all_results
+                        for r in func_results.results])
 
     # Print header
     @printf "%-25s" "Function"
@@ -737,7 +692,7 @@ function print_accuracy_table(all_results)
         @printf "%-15s" alg[1:min(14, length(alg))]
     end
     println()
-    println("-"^(25 + 15 * length(alg_names)))
+    println("-"^(25 + 15*length(alg_names)))
 
     # Print results for each function
     for func_result in all_results
@@ -747,8 +702,8 @@ function print_accuracy_table(all_results)
             alg_result = findfirst(r -> r.name == alg, func_result.results)
             if alg_result !== nothing
                 result = func_result.results[alg_result]
-                if result.success && result.error < 1.0e10
-                    @printf "%-15s" "$(round(result.error, sigdigits = 2))"
+                if result.success && result.error < 1e10
+                    @printf "%-15s" "$(round(result.error, sigdigits=2))"
                 else
                     @printf "%-15s" "FAIL"
                 end
@@ -759,7 +714,7 @@ function print_accuracy_table(all_results)
         println()
     end
 
-    return println("="^80)
+    println("="^80)
 end
 
 print_accuracy_table(all_results)
@@ -773,34 +728,34 @@ ACCURACY ANALYSIS (Absolute Error)
 =====
 Function                 Roots.jl       Alefeld (BNS)  Bisection (BNS Brent
  (BNS)    Falsi (BNS)    ITP (BNS)      Ridder (BNS)   ModAB (BNS)    Bisec
-tion (SNS Brent (SNS)    Falsi (SNS)    Ridders (SNS)
+tion (SNS Brent (SNS)    Falsi (SNS)    Ridders (SNS)  
 ---------------------------------------------------------------------------
 ---------------------------------------------------------------------------
 -------------------------------------------------------
 Wilkinson-like polynomia 1.9e-15        7.8e-15        4.5e-12        5.6e-
 16        2.8e-13        1.2e-15        6.6e-16        5.6e-16        4.5e-
-12        5.6e-16        2.8e-13        6.6e-16
+12        5.6e-16        2.8e-13        6.6e-16        
 sin(x) - 0.5x            5.6e-17        5.6e-17        1.1e-13        1.9e-
 13        9.6e-14        5.6e-17        9.4e-16        3.9e-16        1.1e-
-13        1.9e-13        9.6e-14        9.4e-16
+13        1.9e-13        9.6e-14        9.4e-16        
 exp(x) - 1 - x - x²/     5.1e-17        1.1e-17        9.6e-15        7.6e-
 15        3.0e-13        3.2e-17        6.7e-17        6.5e-17        9.6e-
-15        7.6e-15        3.0e-13        6.7e-17
+15        7.6e-15        3.0e-13        6.7e-17        
 1/(x-0.5) - 2            2.6e-16        2.6e-16        2.4e-13        2.6e-
 16        4.6e-13        2.6e-16        2.6e-16        6.2e-16        2.4e-
-13        2.6e-16        4.6e-13        2.6e-16
+13        2.6e-16        4.6e-13        2.6e-16        
 log(x) - x + 2           4.2e-17        4.2e-17        6.9e-13        4.2e-
 17        1.0e-12        4.2e-17        2.7e-14        4.2e-17        6.9e-
-13        4.2e-17        1.0e-12        2.7e-14
+13        4.2e-17        1.0e-12        2.7e-14        
 sin(20x) + sin(x) + x    4.4e-16        8.9e-16        1.7e-12        4.4e-
 16        2.4e-13        2.7e-15        3.1e-15        0.0            1.7e-
-12        4.4e-16        2.4e-13        3.1e-15
+12        4.4e-16        2.4e-13        3.1e-15        
 x³ - 2x² +               0.0            9.0e-17        1.9e-14        9.0e-
 17        3.0e-13        3.5e-18        0.0            0.0            1.9e-
-14        9.0e-17        3.0e-13        0.0
+14        9.0e-17        3.0e-13        0.0            
 x·sin(1/x) - 0.          8.7e-18        FAIL           3.6e-13        5.3e-
 13        5.3e-13        8.7e-18        2.9e-16        6.4e-17        3.6e-
-13        5.3e-13        5.3e-13        2.9e-16
+13        5.3e-13        5.3e-13        2.9e-16        
 ===========================================================================
 =====
 ```
@@ -832,11 +787,11 @@ function rank_algorithms(all_results)
                 alg_scores[result.name][:success_count] += 1
                 # Lower time is better (inverse score)
                 alg_scores[result.name][:time_score] += result.time < 1.0 ?
-                    1.0 / result.time : 0.0
-                # Lower error is better (inverse score)
-                alg_scores[result.name][:accuracy_score] += result.error < 1.0e10 ?
-                    1.0 / (result.error + 1.0e-15) :
-                    0.0
+                                                        1.0 / result.time : 0.0
+                # Lower error is better (inverse score) 
+                alg_scores[result.name][:accuracy_score] += result.error < 1e10 ?
+                                                            1.0 / (result.error + 1e-15) :
+                                                            0.0
             end
         end
     end
@@ -852,18 +807,16 @@ function rank_algorithms(all_results)
 
         # Combined score (weighted: 40% success rate, 30% speed, 30% accuracy)
         combined_score = 0.4 * success_rate + 0.3 * (avg_speed_score / 1000) +
-            0.3 * (avg_accuracy_score / 1.0e12)
+                         0.3 * (avg_accuracy_score / 1e12)
 
-        push!(
-            algorithm_rankings,
+        push!(algorithm_rankings,
             (
                 name = alg,
                 success_rate = success_rate,
                 speed_score = avg_speed_score,
                 accuracy_score = avg_accuracy_score,
-                combined_score = combined_score,
-            )
-        )
+                combined_score = combined_score
+            ))
     end
 
     # Sort by combined score
@@ -872,11 +825,11 @@ function rank_algorithms(all_results)
     println("Rank | Algorithm          | Success Rate | Combined Score")
     println("-"^60)
     for (i, alg) in enumerate(algorithm_rankings)
-        @printf "%-4d | %-18s | %-11.1f%% | %-12.3f\\n" i alg.name[1:min(18, length(alg.name))] (alg.success_rate * 100) alg.combined_score
+        @printf "%-4d | %-18s | %-11.1f%% | %-12.3f\\n" i alg.name[1:min(18, length(alg.name))] (alg.success_rate*100) alg.combined_score
     end
 
     println("="^60)
-    return println("Note: Combined score weights success rate (40%), speed (30%), and accuracy (30%)")
+    println("Note: Combined score weights success rate (40%), speed (30%), and accuracy (30%)")
 end
 
 rank_algorithms(all_results)
@@ -888,17 +841,17 @@ ALGORITHM RANKINGS
 ============================================================
 Rank | Algorithm          | Success Rate | Combined Score
 ------------------------------------------------------------
-1    | ModAB (BNS)        | 100.0      % | 256.111     \n2    | Roots.jl
-        | 100.0      % | 250.985     \n3    | ITP (BNS)          | 100.0
-   % | 239.641     \n4    | Alefeld (BNS)      | 87.5       % | 197.174
- \n5    | Ridders (SNS)      | 100.0      % | 184.285     \n6    | Ridder (
-BNS)       | 100.0      % | 184.285     \n7    | Brent (BNS)        | 100.0
-      % | 155.207     \n8    | Brent (SNS)        | 100.0      % | 155.207
-    \n9    | Bisection (SNS)    | 100.0      % | 6.556       \n10   | Bisec
-tion (BNS)    | 100.0      % | 6.556       \n11   | Falsi (SNS)        | 10
+1    | ModAB (BNS)        | 100.0      % | 256.113     \n2    | Roots.jl   
+        | 100.0      % | 250.985     \n3    | ITP (BNS)          | 100.0   
+   % | 239.641     \n4    | Alefeld (BNS)      | 87.5       % | 197.173    
+ \n5    | Ridder (BNS)       | 100.0      % | 184.287     \n6    | Ridders 
+(SNS)      | 100.0      % | 184.287     \n7    | Brent (SNS)        | 100.0
+      % | 155.208     \n8    | Brent (BNS)        | 100.0      % | 155.206 
+    \n9    | Bisection (SNS)    | 100.0      % | 6.557       \n10   | Bisec
+tion (BNS)    | 100.0      % | 6.557       \n11   | Falsi (SNS)        | 10
 0.0      % | 1.520       \n12   | Falsi (BNS)        | 100.0      % | 1.520
        \n============================================================
-Note: Combined score weights success rate (40%), speed (30%), and accuracy
+Note: Combined score weights success rate (40%), speed (30%), and accuracy 
 (30%)
 ```
 
@@ -963,10 +916,10 @@ Package Information:
 Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/IntervalNonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
   [70df07ce] BracketingNonlinearSolve v1.12.6
-  [f2b01f46] Roots v3.0.7
+  [f2b01f46] Roots v3.0.8
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
-  [727e6d20] SimpleNonlinearSolve v2.14.1
-  [10745b16] Statistics v1.11.1
+  [727e6d20] SimpleNonlinearSolve v2.14.2
+  [10745b16] Statistics v1.11.5
   [de0858da] Printf v1.11.0
   [9a3f8284] Random v1.11.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
@@ -979,7 +932,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [47edcb42] ADTypes v1.24.0
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
-  [4fba245c] ArrayInterface v7.30.0
+  [4fba245c] ArrayInterface v7.30.1
   [6e4b80f9] BenchmarkTools v1.8.0
   [70df07ce] BracketingNonlinearSolve v1.12.6
   [38540f10] CommonSolve v0.2.14
@@ -1022,10 +975,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [bb5d69b7] MaybeInplace v0.1.8
   [ffc61752] Mustache v1.0.21
   [77ba4419] NaNMath v1.1.4
-⌃ [be0214bd] NonlinearSolveBase v2.48.0
+  [be0214bd] NonlinearSolveBase v2.49.4
   [bac558e1] OrderedCollections v2.0.1
-⌅ [69de0a69] Parsers v2.8.7
-⌃ [d236fae5] PreallocationTools v1.7.0
+⌅ [69de0a69] Parsers v2.8.8
+  [d236fae5] PreallocationTools v1.7.1
 ⌅ [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.5.2
   [08abe8d2] PrettyTables v3.4.8
@@ -1035,32 +988,32 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
   [9fe22ead] RespecializeParams v1.3.0
-  [f2b01f46] Roots v3.0.7
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.25
-⌃ [0bca4576] SciMLBase v3.49.2
+  [f2b01f46] Roots v3.0.8
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+  [0bca4576] SciMLBase v3.53.1
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
-  [19f34311] SciMLJacobianOperators v0.1.18
+  [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
   [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
   [53ae85a6] SciMLStructures v1.10.5
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [727e6d20] SimpleNonlinearSolve v2.14.1
+  [727e6d20] SimpleNonlinearSolve v2.14.2
   [276daf66] SpecialFunctions v2.9.0
   [1e83bf80] StaticArraysCore v1.4.4
-  [10745b16] Statistics v1.11.1
+  [10745b16] Statistics v1.11.5
   [69024149] StringEncodings v0.3.7
-  [892a3eda] StringManipulation v0.5.0
+⌅ [892a3eda] StringManipulation v0.5.0
   [2efcf032] SymbolicIndexingInterface v0.3.55
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
-  [a759f4b9] TimerOutputs v1.2.0
+  [a759f4b9] TimerOutputs v1.2.1
   [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.16
   [c2297ded] ZMQ v1.5.1
-  [2e619515] Expat_jll v2.8.3+0
+  [2e619515] Expat_jll v2.8.4+0
   [020c3dae] Git_LFS_jll v3.7.1+0
   [f8c6e375] Git_jll v2.55.0+0
   [94ce4f54] Libiconv_jll v1.18.0+0

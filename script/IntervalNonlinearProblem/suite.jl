@@ -1,3 +1,4 @@
+
 using BenchmarkTools
 using Roots
 
@@ -16,7 +17,7 @@ function g!(out, ps, uspan)
     for i in 1:N
         out[i] = find_zero(f, uspan, ps[i])
     end
-    return out
+    out
 end;
 
 
@@ -38,28 +39,26 @@ function h!(out, ps, uspan, alg)
         sol = solve(prob, alg)
         out[i] = sol.u
     end
-    return out
+    out
 end;
 
 
-for alg in (
-        Alefeld, Bisection, Brent, Falsi,
-        ITP, Muller, Ridder, ModAB,
-    )
+for alg in (Alefeld, Bisection, Brent, Falsi,
+    ITP, Muller, Ridder, ModAB)
     println("Benchmark of $alg:")
     @btime h!($out, $ps, $uspan, $(alg()))
     println("Mean absolute error: $(mean(abs.(f.(out, ps))))\n")
 end
 
 
-g(u) = exp(u) - 1.0e-15;
+g(u) = exp(u) - 1e-15;
 
 
 function i!(out, uspan)
     for i in 1:N
         out[i] = find_zero(g, uspan)
     end
-    return out
+    out
 end
 
 uspan = (-100.0, 0.0)
@@ -77,13 +76,11 @@ function j!(out, uspan, alg)
         sol = solve(prob, alg)
         out[i] = sol.u
     end
-    return out
+    out
 end
 
-for alg in (
-        Alefeld, Bisection, Brent, Falsi,
-        ITP, Muller, Ridder, ModAB,
-    )
+for alg in (Alefeld, Bisection, Brent, Falsi,
+    ITP, Muller, Ridder, ModAB)
     println("Benchmark of $alg:")
     @btime j!($out, $uspan, $(alg()))
     println("Mean absolute error: $(mean(abs.(g.(out))))\n")
@@ -94,72 +91,56 @@ using Statistics
 
 # Define challenging test functions
 test_functions = [
-    # Function 1: Polynomial with multiple roots
-    (
-        name = "Wilkinson-like polynomial",
+    # Function 1: Polynomial with multiple roots  
+    (name = "Wilkinson-like polynomial",
         f = (u, p) -> (u - 1) * (u - 2) * (u - 3) * (u - 4) * (u - 5) - p,
         interval = (0.5, 5.5),
-        p = 0.05,
-    ),
+        p = 0.05),
 
     # Function 2: Trigonometric with multiple roots
-    (
-        name = "sin(x) - 0.5x",
-        f = (u, p) -> sin(u) - 0.5 * u - p,
+    (name = "sin(x) - 0.5x",
+        f = (u, p) -> sin(u) - 0.5*u - p,
         interval = (-10.0, 10.0),
-        p = 0.3,
-    ),
+        p = 0.3),
 
     # Function 3: Exponential function (sensitive near zero)
-    (
-        name = "exp(x) - 1 - x - x²/2",
-        f = (u, p) -> exp(u) - 1 - u - u^2 / 2 - p,
+    (name = "exp(x) - 1 - x - x²/2",
+        f = (u, p) -> exp(u) - 1 - u - u^2/2 - p,
         interval = (-2.0, 2.0),
-        p = 0.005,
-    ),
+        p = 0.005),
 
     # Function 4: Rational function with pole
-    (
-        name = "1/(x-0.5) - 2",
-        f = (u, p) -> 1 / (u - 0.5) - 2 - p,
+    (name = "1/(x-0.5) - 2",
+        f = (u, p) -> 1/(u - 0.5) - 2 - p,
         interval = (0.6, 2.0),
-        p = 0.05,
-    ),
+        p = 0.05),
 
     # Function 5: Logarithmic function
-    (
-        name = "log(x) - x + 2",
+    (name = "log(x) - x + 2",
         f = (u, p) -> log(u) - u + 2 - p,
         interval = (0.1, 3.0),
-        p = 0.05,
-    ),
+        p = 0.05),
 
     # Function 6: High oscillation function
-    (
-        name = "sin(20x) + sin(x) + x",
-        f = (u, p) -> sin(20 * u) + sin(u) + u - p,
+    (name = "sin(20x) + sin(x) + x",
+        f = (u, p) -> sin(20*u) + sin(u) + u - p,
         interval = (-5.0, 5.0),
-        p = 2.0,
-    ),
+        p = 2.0),
 
     # Function 7: Function with very flat region
-    (
-        name = "x³ - 2x² + x",
-        f = (u, p) -> u^3 - 2 * u^2 + u - p,
+    (name = "x³ - 2x² + x",
+        f = (u, p) -> u^3 - 2*u^2 + u - p,
         interval = (-1.0, 2.0),
-        p = 0.025,
-    ),
+        p = 0.025),
 
     # Function 8: Bessel-like function
-    (
-        name = "x·sin(1/x) - 0.1",
-        f = (u, p) -> u * sin(1 / u) - 0.1 - p,
+    (name = "x·sin(1/x) - 0.1",
+        f = (u, p) -> u * sin(1/u) - 0.1 - p,
         interval = (0.01, 1.0),
-        p = 0.01,
-    ),
+        p = 0.01)
 ]
 
-# Add SimpleNonlinearSolve algorithms
+# Add SimpleNonlinearSolve algorithms  
 using SimpleNonlinearSolve
 
 # Combined algorithm list from both packages
@@ -171,22 +152,14 @@ all_algorithms = [
     (name = "ITP (BNS)", alg = () -> ITP(), package = "BracketingNonlinearSolve"),
     (name = "Ridder (BNS)", alg = () -> Ridder(), package = "BracketingNonlinearSolve"),
     (name = "ModAB (BNS)", alg = () -> ModAB(), package = "BracketingNonlinearSolve"),
-    (
-        name = "Bisection (SNS)", alg = () -> SimpleNonlinearSolve.Bisection(),
-        package = "SimpleNonlinearSolve",
-    ),
-    (
-        name = "Brent (SNS)", alg = () -> SimpleNonlinearSolve.Brent(),
-        package = "SimpleNonlinearSolve",
-    ),
-    (
-        name = "Falsi (SNS)", alg = () -> SimpleNonlinearSolve.Falsi(),
-        package = "SimpleNonlinearSolve",
-    ),
-    (
-        name = "Ridders (SNS)", alg = () -> SimpleNonlinearSolve.Ridder(),
-        package = "SimpleNonlinearSolve",
-    ),
+    (name = "Bisection (SNS)", alg = () -> SimpleNonlinearSolve.Bisection(),
+        package = "SimpleNonlinearSolve"),
+    (name = "Brent (SNS)", alg = () -> SimpleNonlinearSolve.Brent(),
+        package = "SimpleNonlinearSolve"),
+    (name = "Falsi (SNS)", alg = () -> SimpleNonlinearSolve.Falsi(),
+        package = "SimpleNonlinearSolve"),
+    (name = "Ridders (SNS)", alg = () -> SimpleNonlinearSolve.Ridder(),
+        package = "SimpleNonlinearSolve")
 ]
 
 # Benchmark function for testing all algorithms on a given function
@@ -216,12 +189,9 @@ function benchmark_function(test_func, N_samples = 10000)
         final_root = find_zero(roots_func, test_func.interval)
         error_roots = abs(test_func.f(final_root, test_func.p))
 
-        println("Roots.jl: $(round(time_roots * 1000, digits = 2)) ms, Error: $(round(error_roots, sigdigits = 3))")
-        push!(
-            results, (
-                name = "Roots.jl", time = time_roots, error = error_roots, success = true,
-            )
-        )
+        println("Roots.jl: $(round(time_roots*1000, digits=2)) ms, Error: $(round(error_roots, sigdigits=3))")
+        push!(results, (
+            name = "Roots.jl", time = time_roots, error = error_roots, success = true))
     catch e
         println("Roots.jl: FAILED - $e")
         push!(results, (name = "Roots.jl", time = Inf, error = Inf, success = false))
@@ -233,8 +203,7 @@ function benchmark_function(test_func, N_samples = 10000)
             # Warmup run to exclude compilation time
             prob_warmup = IntervalNonlinearProblem{false}(
                 IntervalNonlinearFunction{false}(test_func.f),
-                test_func.interval, test_func.p
-            )
+                test_func.interval, test_func.p)
             solve(prob_warmup, alg_info.alg())
 
             # Actual timing
@@ -242,8 +211,7 @@ function benchmark_function(test_func, N_samples = 10000)
                 for i in 1:N_samples
                     prob = IntervalNonlinearProblem{false}(
                         IntervalNonlinearFunction{false}(test_func.f),
-                        test_func.interval, test_func.p
-                    )
+                        test_func.interval, test_func.p)
                     sol = solve(prob, alg_info.alg())
                 end
             end
@@ -251,17 +219,13 @@ function benchmark_function(test_func, N_samples = 10000)
             # Calculate error using one solve
             prob_final = IntervalNonlinearProblem{false}(
                 IntervalNonlinearFunction{false}(test_func.f),
-                test_func.interval, test_func.p
-            )
+                test_func.interval, test_func.p)
             sol_final = solve(prob_final, alg_info.alg())
             error_val = abs(test_func.f(sol_final.u, test_func.p))
 
-            println("$(alg_info.name): $(round(time_taken * 1000, digits = 2)) ms, Error: $(round(error_val, sigdigits = 3))")
-            push!(
-                results, (
-                    name = alg_info.name, time = time_taken, error = error_val, success = true,
-                )
-            )
+            println("$(alg_info.name): $(round(time_taken*1000, digits=2)) ms, Error: $(round(error_val, sigdigits=3))")
+            push!(results, (
+                name = alg_info.name, time = time_taken, error = error_val, success = true))
         catch e
             println("$(alg_info.name): FAILED - $e")
             push!(results, (name = alg_info.name, time = Inf, error = Inf, success = false))
@@ -287,12 +251,8 @@ function print_summary_table(all_results)
     println("="^80)
 
     # Get all algorithm names
-    alg_names = unique(
-        [
-            r.name for func_results in all_results
-                for r in func_results.results
-        ]
-    )
+    alg_names = unique([r.name for func_results in all_results
+                        for r in func_results.results])
 
     # Print header
     @printf "%-25s" "Function"
@@ -300,7 +260,7 @@ function print_summary_table(all_results)
         @printf "%-15s" alg[1:min(14, length(alg))]
     end
     println()
-    println("-"^(25 + 15 * length(alg_names)))
+    println("-"^(25 + 15*length(alg_names)))
 
     # Print results for each function
     for func_result in all_results
@@ -312,7 +272,7 @@ function print_summary_table(all_results)
             if alg_result !== nothing
                 result = func_result.results[alg_result]
                 if result.success && result.time < 1.0  # Reasonable time limit
-                    @printf "%-15s" "$(round(result.time * 1000, digits = 1))ms"
+                    @printf "%-15s" "$(round(result.time*1000, digits=1))ms"
                 else
                     @printf "%-15s" "FAIL"
                 end
@@ -329,7 +289,7 @@ function print_summary_table(all_results)
     println("- BNS = BracketingNonlinearSolve.jl, SNS = SimpleNonlinearSolve.jl")
     println("- FAIL indicates algorithm failed or took excessive time")
     println("- Compilation time excluded via warmup runs")
-    return println("="^80)
+    println("="^80)
 end
 
 print_summary_table(all_results)
@@ -340,12 +300,8 @@ function print_accuracy_table(all_results)
     println("ACCURACY ANALYSIS (Absolute Error)")
     println("="^80)
 
-    alg_names = unique(
-        [
-            r.name for func_results in all_results
-                for r in func_results.results
-        ]
-    )
+    alg_names = unique([r.name for func_results in all_results
+                        for r in func_results.results])
 
     # Print header
     @printf "%-25s" "Function"
@@ -353,7 +309,7 @@ function print_accuracy_table(all_results)
         @printf "%-15s" alg[1:min(14, length(alg))]
     end
     println()
-    println("-"^(25 + 15 * length(alg_names)))
+    println("-"^(25 + 15*length(alg_names)))
 
     # Print results for each function
     for func_result in all_results
@@ -363,8 +319,8 @@ function print_accuracy_table(all_results)
             alg_result = findfirst(r -> r.name == alg, func_result.results)
             if alg_result !== nothing
                 result = func_result.results[alg_result]
-                if result.success && result.error < 1.0e10
-                    @printf "%-15s" "$(round(result.error, sigdigits = 2))"
+                if result.success && result.error < 1e10
+                    @printf "%-15s" "$(round(result.error, sigdigits=2))"
                 else
                     @printf "%-15s" "FAIL"
                 end
@@ -375,7 +331,7 @@ function print_accuracy_table(all_results)
         println()
     end
 
-    return println("="^80)
+    println("="^80)
 end
 
 print_accuracy_table(all_results)
@@ -399,11 +355,11 @@ function rank_algorithms(all_results)
                 alg_scores[result.name][:success_count] += 1
                 # Lower time is better (inverse score)
                 alg_scores[result.name][:time_score] += result.time < 1.0 ?
-                    1.0 / result.time : 0.0
-                # Lower error is better (inverse score)
-                alg_scores[result.name][:accuracy_score] += result.error < 1.0e10 ?
-                    1.0 / (result.error + 1.0e-15) :
-                    0.0
+                                                        1.0 / result.time : 0.0
+                # Lower error is better (inverse score) 
+                alg_scores[result.name][:accuracy_score] += result.error < 1e10 ?
+                                                            1.0 / (result.error + 1e-15) :
+                                                            0.0
             end
         end
     end
@@ -419,18 +375,16 @@ function rank_algorithms(all_results)
 
         # Combined score (weighted: 40% success rate, 30% speed, 30% accuracy)
         combined_score = 0.4 * success_rate + 0.3 * (avg_speed_score / 1000) +
-            0.3 * (avg_accuracy_score / 1.0e12)
+                         0.3 * (avg_accuracy_score / 1e12)
 
-        push!(
-            algorithm_rankings,
+        push!(algorithm_rankings,
             (
                 name = alg,
                 success_rate = success_rate,
                 speed_score = avg_speed_score,
                 accuracy_score = avg_accuracy_score,
-                combined_score = combined_score,
-            )
-        )
+                combined_score = combined_score
+            ))
     end
 
     # Sort by combined score
@@ -439,11 +393,11 @@ function rank_algorithms(all_results)
     println("Rank | Algorithm          | Success Rate | Combined Score")
     println("-"^60)
     for (i, alg) in enumerate(algorithm_rankings)
-        @printf "%-4d | %-18s | %-11.1f%% | %-12.3f\\n" i alg.name[1:min(18, length(alg.name))] (alg.success_rate * 100) alg.combined_score
+        @printf "%-4d | %-18s | %-11.1f%% | %-12.3f\\n" i alg.name[1:min(18, length(alg.name))] (alg.success_rate*100) alg.combined_score
     end
 
     println("="^60)
-    return println("Note: Combined score weights success rate (40%), speed (30%), and accuracy (30%)")
+    println("Note: Combined score weights success rate (40%), speed (30%), and accuracy (30%)")
 end
 
 rank_algorithms(all_results)
@@ -451,3 +405,4 @@ rank_algorithms(all_results)
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+

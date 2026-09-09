@@ -25,14 +25,13 @@ function froots(out, levels, u0)
     for i in 1:N
         out[i] = solve(ZeroProblem(myfun, u0), levels[i])
     end
-    return
 end
 
 @btime froots(out, levels, (0, 2))
 ```
 
 ```
-107.438 ms (0 allocations: 0 bytes)
+108.116 ms (0 allocations: 0 bytes)
 ```
 
 
@@ -44,40 +43,28 @@ using BracketingNonlinearSolve: Bisection # Roots also exports Bisection leading
 function f(out, levels, u0)
     for i in 1:N
         out[i] = solve(
-            IntervalNonlinearProblem{false}(
-                IntervalNonlinearFunction{false}(myfun),
-                u0, levels[i]
-            ),
-            ITP()
-        ).u
+            IntervalNonlinearProblem{false}(IntervalNonlinearFunction{false}(myfun),
+                u0, levels[i]),
+            ITP()).u
     end
-    return
 end
 
 function f2(out, levels, u0)
     for i in 1:N
         out[i] = solve(
-            IntervalNonlinearProblem{false}(
-                IntervalNonlinearFunction{false}(myfun),
-                u0, levels[i]
-            ),
-            Bisection()
-        ).u
+            IntervalNonlinearProblem{false}(IntervalNonlinearFunction{false}(myfun),
+                u0, levels[i]),
+            Bisection()).u
     end
-    return
 end
 
 function f3(out, levels, u0)
     for i in 1:N
         out[i] = solve(
-            NonlinearProblem{false}(
-                NonlinearFunction{false}(myfun),
-                u0, levels[i]
-            ),
-            SimpleNewtonRaphson()
-        ).u
+            NonlinearProblem{false}(NonlinearFunction{false}(myfun),
+                u0, levels[i]),
+            SimpleNewtonRaphson()).u
     end
-    return
 end
 
 @btime f(out, levels, (0.0, 2.0))
@@ -86,9 +73,9 @@ end
 ```
 
 ```
-46.298 ms (0 allocations: 0 bytes)
-  128.755 ms (0 allocations: 0 bytes)
-  17.460 ms (0 allocations: 0 bytes)
+46.241 ms (0 allocations: 0 bytes)
+  128.291 ms (0 allocations: 0 bytes)
+  17.386 ms (0 allocations: 0 bytes)
 ```
 
 
@@ -132,10 +119,10 @@ Package Information:
 Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/IntervalNonlinearProblem/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
   [70df07ce] BracketingNonlinearSolve v1.12.6
-  [f2b01f46] Roots v3.0.7
+  [f2b01f46] Roots v3.0.8
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
-  [727e6d20] SimpleNonlinearSolve v2.14.1
-  [10745b16] Statistics v1.11.1
+  [727e6d20] SimpleNonlinearSolve v2.14.2
+  [10745b16] Statistics v1.11.5
   [de0858da] Printf v1.11.0
   [9a3f8284] Random v1.11.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
@@ -148,7 +135,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [47edcb42] ADTypes v1.24.0
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
-  [4fba245c] ArrayInterface v7.30.0
+  [4fba245c] ArrayInterface v7.30.1
   [6e4b80f9] BenchmarkTools v1.8.0
   [70df07ce] BracketingNonlinearSolve v1.12.6
   [38540f10] CommonSolve v0.2.14
@@ -191,10 +178,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [bb5d69b7] MaybeInplace v0.1.8
   [ffc61752] Mustache v1.0.21
   [77ba4419] NaNMath v1.1.4
-⌃ [be0214bd] NonlinearSolveBase v2.48.0
+  [be0214bd] NonlinearSolveBase v2.49.4
   [bac558e1] OrderedCollections v2.0.1
-⌅ [69de0a69] Parsers v2.8.7
-⌃ [d236fae5] PreallocationTools v1.7.0
+⌅ [69de0a69] Parsers v2.8.8
+  [d236fae5] PreallocationTools v1.7.1
 ⌅ [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.5.2
   [08abe8d2] PrettyTables v3.4.8
@@ -204,32 +191,32 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
   [9fe22ead] RespecializeParams v1.3.0
-  [f2b01f46] Roots v3.0.7
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.25
-⌃ [0bca4576] SciMLBase v3.49.2
+  [f2b01f46] Roots v3.0.8
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+  [0bca4576] SciMLBase v3.53.1
 ⌃ [31c91b34] SciMLBenchmarks v0.1.3
-  [19f34311] SciMLJacobianOperators v0.1.18
+  [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
   [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
   [53ae85a6] SciMLStructures v1.10.5
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [727e6d20] SimpleNonlinearSolve v2.14.1
+  [727e6d20] SimpleNonlinearSolve v2.14.2
   [276daf66] SpecialFunctions v2.9.0
   [1e83bf80] StaticArraysCore v1.4.4
-  [10745b16] Statistics v1.11.1
+  [10745b16] Statistics v1.11.5
   [69024149] StringEncodings v0.3.7
-  [892a3eda] StringManipulation v0.5.0
+⌅ [892a3eda] StringManipulation v0.5.0
   [2efcf032] SymbolicIndexingInterface v0.3.55
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
-  [a759f4b9] TimerOutputs v1.2.0
+  [a759f4b9] TimerOutputs v1.2.1
   [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.16
   [c2297ded] ZMQ v1.5.1
-  [2e619515] Expat_jll v2.8.3+0
+  [2e619515] Expat_jll v2.8.4+0
   [020c3dae] Git_LFS_jll v3.7.1+0
   [f8c6e375] Git_jll v2.55.0+0
   [94ce4f54] Libiconv_jll v1.18.0+0
