@@ -29,65 +29,66 @@ function run_ranks(P; N, solver = "cg", pc = "none")
 end
 
 
-const N = 40_000           # ~200×200 grid; deliberately modest for the first runs
-const RANKS = [1, 2, 4]    # capped: the replicated-matrix path holds a full copy
-                           # per rank, so memory grows with the rank count.
-                           # Raise both once the pipeline is proven on the runner.
+const RANKS = [1, 2, 4, 8]
+const N_SMALL = 40_000       # cache-artifact regime, kept deliberately (see text)
+const N_LARGE = 1_000_000    # honest regime: working set exceeds cache everywhere
 
-results = [run_ranks(P; N = N, solver = "cg", pc = "gamg") for P in RANKS]
+res_small = [run_ranks(P; N = N_SMALL, solver = "cg", pc = "gamg") for P in RANKS]
+res_large = [run_ranks(P; N = N_LARGE, solver = "cg", pc = "gamg") for P in RANKS]
 
-
-t1 = results[1].time
-speedup    = [t1 / r.time for r in results]
-efficiency = [t1 / (r.ranks * r.time) for r in results]
 
 using Printf
-println("ranks |  time (s)  | iters | speedup | efficiency | residual  | retcode")
-println("------+------------+-------+---------+------------+-----------+--------")
-for (r, s, e) in zip(results, speedup, efficiency)
-    @printf("%5d | %10.4g | %5d | %7.2f | %9.1f%% | %9.2e | %s\n",
+
+function report(results, N)
+    t1 = results[1].time
+    speedup = [t1 / r.time for r in results]
+    efficiency = [t1 / (r.ranks * r.time) for r in results]
+    println("N = $N")
+    println("ranks |  time (s)  | iters | speedup | efficiency | residual  | retcode")
+    println("------+------------+-------+---------+------------+-----------+--------")
+    for (r, s, e) in zip(results, speedup, efficiency)
+        @printf("%5d | %10.4g | %5d | %7.2f | %9.1f%% | %9.2e | %s\n",
             r.ranks, r.time, r.iters, s, 100 * e, r.residual, r.retcode)
+    end
+    # Auditability annotations (informational, not failures):
+    #  * iters spread: GAMG's aggregation is partition-dependent, so iteration
+    #    counts can drift a little with rank count; a large spread means the
+    #    preconditioner strength is changing with P and the ratios are
+    #    contaminated by algorithm change, not just parallel work.
+    #  * superlinear efficiency: expected for the small-N series (cache and
+    #    working-set effects on a generic JLL PETSc build); if the LARGE series
+    #    trips it too, the honest regime has not been reached yet.
+    itset = [r.iters for r in results]
+    if maximum(itset) - minimum(itset) > 0.25 * minimum(itset)
+        @warn "GAMG iteration count varies >25% across ranks at N=$N" iters = itset
+    end
+    if maximum(efficiency) > 1.10
+        @warn "Superlinear efficiency at N=$N — cache/working-set regime, not a marketing number." efficiency
+    end
+    return speedup, efficiency
 end
 
-# Sanity annotations (informational, not failures). Two things worth surfacing on
-# every run so a reader can judge the numbers rather than trust them blindly:
-#
-#  * iters spread: GAMG's aggregation is partition-dependent, so the iteration
-#    count can drift a little with rank count. A *small* spread is expected; a
-#    large one means the preconditioner strength is changing with P and the
-#    timing ratios are contaminated by algorithm change, not just parallel work.
-#  * superlinear efficiency: with the generic (JLL) PETSc build, small
-#    problems can show >100% efficiency from cache/working-set effects (each
-#    rank's slice fits in a faster level of cache). It is a real effect but NOT a
-#    marketing number — the honest scaling curve needs large N on optimized PETSc
-#    (dedicated benchmark hardware), where compute dominates these constant factors.
-itset = [r.iters for r in results]
-iters_spread = maximum(itset) - minimum(itset)
-super = maximum(efficiency) > 1.10
-@info "iteration counts across ranks" iters = itset spread = iters_spread
-if iters_spread > 0.25 * minimum(itset)
-    @warn "GAMG iteration count varies >25% across ranks — preconditioner strength is " *
-          "partition-dependent here; treat speedup as approximate." iters = itset
-end
-if super
-    @warn "Superlinear efficiency (>110%) — expected for small N on non-optimized PETSc " *
-          "(cache effects). Reproduce at large N on optimized PETSc before quoting." efficiency
-end
+sp_small, eff_small = report(res_small, N_SMALL)
+println()
+sp_large, eff_large = report(res_large, N_LARGE)
 
 
-p1 = plot(RANKS, speedup;
-    marker = :circle, label = "PETSc CG + GAMG",
+p1 = plot(RANKS, sp_small;
+    marker = :circle, label = "N = $(N_SMALL) (cache-artifact regime)",
     xlabel = "MPI ranks", ylabel = "speedup (T₁ / T_P)",
-    title = "Strong scaling: speedup (N = $N)", legend = :topleft)
+    title = "Strong scaling: speedup", legend = :topleft)
+plot!(p1, RANKS, sp_large; marker = :diamond, linewidth = 2,
+    label = "N = $(N_LARGE)")
 plot!(p1, RANKS, RANKS; linestyle = :dash, color = :gray, label = "ideal (linear)")
 p1
 
 
-p2 = plot(RANKS, 100 .* efficiency;
-    marker = :square, label = "PETSc CG + GAMG",
+p2 = plot(RANKS, 100 .* eff_small;
+    marker = :circle, label = "N = $(N_SMALL) (cache-artifact regime)",
     xlabel = "MPI ranks", ylabel = "parallel efficiency (%)",
-    title = "Strong scaling: efficiency (N = $N)",
-    ylims = (0, 130), legend = :bottomleft)
+    title = "Strong scaling: efficiency", legend = :topleft)
+plot!(p2, RANKS, 100 .* eff_large; marker = :diamond, linewidth = 2,
+    label = "N = $(N_LARGE)")
 hline!(p2, [100]; linestyle = :dash, color = :gray, label = "ideal (100%)")
 p2
 

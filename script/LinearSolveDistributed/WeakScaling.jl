@@ -24,8 +24,8 @@ function run_ranks(P; N, solver = "cg", pc = "gamg")
 end
 
 
-const N_PER_RANK = 10_000
-const RANKS = [1, 2, 4]
+const N_PER_RANK = 100_000
+const RANKS = [1, 2, 4, 8]
 
 results = [run_ranks(P; N = N_PER_RANK * P) for P in RANKS]
 
