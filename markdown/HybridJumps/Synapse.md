@@ -20,7 +20,7 @@ const fmt = :png
 
 
 
-This benchmark implements the stochastic model of hippocampal synaptic plasticity with geometrical readount of enzyme dinamics from Rodrigues et al. [1]. The source code for the model was obtained from the Github repository [SynapseElife](https://github.com/rveltz/SynapseElife/) that accompanies the paper. The original source code is licensed with the MIT license. We have added comments on the parts of the code that were directly borrowed from the repository.
+This benchmark implements the stochastic model of hippocampal synaptic plasticity with geometrical readount of enzyme dynamics from Rodrigues et al. [1]. The source code for the model was obtained from the Github repository [SynapseElife](https://github.com/rveltz/SynapseElife/) that accompanies the paper. The original source code is licensed with the MIT license. We have added comments on the parts of the code that were directly borrowed from the repository.
 
 Initial idea for benchmarking this model comes from a [Discourse discussion](https://discourse.julialang.org/t/help-me-beat-lsoda/88236).
 
@@ -2057,12 +2057,12 @@ function (affect!::SavingAffect)(integrator, force_save = false)
         if curt != integrator.t # If <t, interpolate
             if integrator isa SciMLBase.AbstractODEIntegrator
                 # Expand lazy dense for interpolation
-                DiffEqBase.addsteps!(integrator)
+                SciMLBase.addsteps!(integrator)
             end
-            if !DiffEqBase.isinplace(integrator.sol.prob)
+            if !SciMLBase.isinplace(integrator.sol.prob)
                 curu = integrator(curt)
             else
-                curu = first(get_tmp_cache(integrator))
+                curu = first(SciMLBase.get_tmp_cache(integrator))
                 integrator(curu, curt) # inplace since save_func allocates
             end
             copyat_or_push!(affect!.saved_values.t, affect!.saveiter, curt)
@@ -2093,23 +2093,34 @@ function (affect!::SavingAffect)(integrator, force_save = false)
             Val{false}
         )
     end
-    u_modified!(integrator, false)
+    if isdefined(SciMLBase, :derivative_discontinuity!)
+        return SciMLBase.derivative_discontinuity!(integrator, false)
+    end
+    return SciMLBase.u_modified!(integrator, false)
 end
 
 # adapted from DiffEqCallbacks.jl/src/saving.jl
-function saving_initialize!(cb, u, t, integrator)
+function saving_initialize!(cb, u, t, integrator, last_modified_value)
     integrator.p.xd .= integrator.p.xd0
-    cb.affect!.saveat = deepcopy(integrator.opts.saveat)
+    last_modified_value[] = copy(integrator.p.xd)
+    saveat = deepcopy(integrator.opts.saveat)
+    while !isempty(cb.affect!.saveat)
+        pop!(cb.affect!.saveat)
+    end
+    while !isempty(saveat)
+        push!(cb.affect!.saveat, pop!(saveat))
+    end
     cb.affect!.save_everystep = integrator.opts.save_everystep
     cb.affect!.save_start = integrator.opts.save_start
     cb.affect!.save_end = integrator.opts.save_end
     cb.affect!.saveiter = 0
-    cb.affect!.save_start && cb.affect!(integrator, true)
+    return cb.affect!.save_start && cb.affect!(integrator, true)
 end
 
 # adapted from DiffEqCallbacks.jl/src/saving.jl
 function SavingCallback(save_func, saved_values::SavedValues; save_modified = true)
     saveat_internal = DataStructures.BinaryHeap{eltype(saved_values.t)}(DataStructures.FasterForward())
+    last_modified_value = Ref{eltype(saved_values.saveval)}()
     affect! = SavingAffect(
         save_func,
         saved_values,
@@ -2124,7 +2135,8 @@ function SavingCallback(save_func, saved_values::SavedValues; save_modified = tr
     # saves every step regardless of save_modified
     condition = if save_modified
         function (u, t, integrator)
-            if integrator.u_modified
+            if integrator.p.xd != last_modified_value[]
+                copyto!(last_modified_value[], integrator.p.xd)
                 push!(affect!.saveat, t)
             end
 
@@ -2135,10 +2147,11 @@ function SavingCallback(save_func, saved_values::SavedValues; save_modified = tr
             return true
         end
     end
-    DiscreteCallback(
+    return DiscreteCallback(
         condition,
         affect!;
-        initialize = saving_initialize!,
+        initialize = (cb, u, t, integrator) ->
+        saving_initialize!(cb, u, t, integrator, last_modified_value),
         save_positions = (false, false)
     )
 end
