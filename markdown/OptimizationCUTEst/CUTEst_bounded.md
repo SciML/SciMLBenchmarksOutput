@@ -6,8 +6,29 @@ title: "CUTEst Bounded Constrained Optimization.jl Benchmarks"
 
 # CUTEst Bounded Constrained Optimization.jl Benchmarks
 
-This benchmark runs bounded constrained CUTEst problems through the Optimization.jl
-interface using `OptimizationNLPModels`.
+This benchmark runs constrained problems from the
+[CUTEst](https://github.com/JuliaSmoothOptimizers/CUTEst.jl) test set through the
+Optimization.jl interface using `OptimizationNLPModels`. Two candidate pools are used:
+
+  - equality constrained: `CUTEst.select_sif_problems(min_con = 1, only_equ_con = true, only_free_var = false)`
+  - inequality constrained: `CUTEst.select_sif_problems(min_con = 1, only_ineq_con = true, only_free_var = false)`
+
+`min_con = 1` requires at least one general (linear or nonlinear) constraint,
+`only_equ_con` keeps problems whose constraints are all equalities, and `only_ineq_con`
+keeps problems with no equality constraints. `only_free_var = false` is CUTEst's default
+and does not restrict variable bounds, so these pools contain problems with and without
+bounds on the variables; the companion `CUTEst_unbounded` page is the subset with
+`only_free_var = true`. Tightening this page to bounded variables only
+(`only_bnd_var = true`) is a selection change tracked in
+[SciMLBenchmarks#1857](https://github.com/SciML/SciMLBenchmarks.jl/issues/1857).
+
+All four CUTEst pages in this folder share the harness in `cutest_benchmark_utils.jl`,
+which defines the selection constants, the solver constructors, the run loop, and the
+summary and plotting helpers. The prose below describes the harness as it stands;
+refinements to the solver sets, solution-quality metrics, performance profiles, problem
+selection, and timing methodology are tracked in #1857.
+
+## Setup
 
 ```julia
 ENV["GKSwstype"] = "100"
@@ -22,6 +43,32 @@ using Printf
 
 include(joinpath(isdefined(Main, :WEAVE_ARGS) ? WEAVE_ARGS[:folder] : @__DIR__,
     "cutest_benchmark_utils.jl"))
+```
+
+```
+plot_success_rates (generic function with 1 method)
+```
+
+
+
+
+
+## Problem selection
+
+`select_safe_problems` walks each candidate pool in the order returned by
+`CUTEst.select_sif_problems`, skips any name in the hand-maintained `KNOWN_BAD_PROBLEMS`
+list, loads each remaining problem once to read its metadata, keeps it only if
+`nvar <= MAX_NVAR` and `ncon <= MAX_NCON`, and stops after `MAX_PROBLEMS_PER_CATEGORY`
+problems. Problems whose metadata cannot be loaded are skipped. The values in effect for
+this run are printed below.
+
+```julia
+println("MAX_PROBLEMS_PER_CATEGORY = ", MAX_PROBLEMS_PER_CATEGORY)
+println("MAX_NVAR = ", MAX_NVAR)
+println("MAX_NCON = ", MAX_NCON)
+println("SOLVE_MAXITERS = ", SOLVE_MAXITERS)
+println("SOLVE_TIMEOUT_SECONDS = ", SOLVE_TIMEOUT_SECONDS)
+println("KNOWN_BAD_PROBLEMS = ", join(sort(collect(KNOWN_BAD_PROBLEMS)), ", "))
 
 bounded_equality_problems = select_safe_problems(
     collect(CUTEst.select_sif_problems(min_con = 1, only_equ_con = true,
@@ -34,8 +81,65 @@ bounded_inequality_problems = select_safe_problems(
 )
 
 println("Selected bounded equality-constrained problems: ", length(bounded_equality_problems))
+println(join(bounded_equality_problems, ", "))
 println("Selected bounded inequality-constrained problems: ", length(bounded_inequality_problems))
+println(join(bounded_inequality_problems, ", "))
+```
 
+```
+MAX_PROBLEMS_PER_CATEGORY = 50
+MAX_NVAR = 1000
+MAX_NCON = 1000
+SOLVE_MAXITERS = 1000
+SOLVE_TIMEOUT_SECONDS = 90.0
+KNOWN_BAD_PROBLEMS = bloweya, chardis1, cleuven4, cmpc10, cmpc3, cvxqp2, di
+ttert, hier13, lukvle8, lukvli7, mpc2, mss1, ninenew, patternne, reading2, 
+reading6
+Selected bounded equality-constrained problems: 50
+GAUSS2, DUAL2, WAYSEA1NE, BROWNDENE, HS79, GULFNE, JUDGENE, STRTCHDVNE, TRI
+GON1NE, PENLT1NE, PALMER2NE, STEENBRA, BA-L1SP, EXPFITNE, SSINE, EIGMAXC, L
+UKSAN17, DALLASM, HS7, GENROSEBNE, BOX3NE, HS54, CHANDHEQ, HS60, LEVYMONE, 
+KSS, HS48, BT9, S308NE, PALMER6ANE, MGH17S, DENSCHNDNE, HS119, CERI651B, PO
+RTSNQP, EIGMINA, THURBER, CERI651E, ENSO, ALLINITC, LEAKNET, BARDNE, GOTTFR
+, DUAL3, TRY-B, HATFLDBNE, STREGNE, SANTA, ZAMB2-11, PENLT2NE
+Selected bounded inequality-constrained problems: 50
+PRIMALC1, POLAK4, EXPFITA, HS35, HS106, HS34, HS95, ZECEVIC3, HYDROELM, AVG
+ASB, HS17, S268, HS24, LEUVEN7, HS85, HS101, SYNTHES1, HS67, HS13, HIMMELP2
+, MIFFLIN1, DEMBO7, LOOTSMA, HAIFAS, GIGOMEZ1, CRESC100, EXPFITC, HS108, HS
+93, GMNCASE4, S277-280, GIGOMEZ2, HS36, DEMYMALO, HS105, SIMPLLPA, HS86, HS
+117, CHACONN1, LHAIFAM, TFI1, ZECEVIC4, HS57, KIWCRESC, OPTPRLOC, HS100, WO
+MFLET, PRIMALC2, POLAK3, HS33
+```
+
+
+
+
+
+## Solvers
+
+`CONSTRAINED_SOLVERS` currently contains only `Ipopt`, run through `OptimizationMOI`.
+It is the only optimizer wired into the harness that accepts general equality and
+inequality constraints via Optimization.jl; the Optim.jl algorithms on the unconstrained
+page do not. Ipopt is configured with `max_iter = SOLVE_MAXITERS`,
+`max_wall_time = SOLVE_TIMEOUT_SECONDS`, `tol = 1.0e-6`, `print_level = 0`, and
+`hessian_approximation = "limited-memory"`. The limited-memory setting is used because
+`OptimizationNLPModels` supplies the objective gradient and Hessian and the constraint
+values and Jacobian from the CUTEst model, but not the constraint Hessians needed for an
+exact Hessian of the Lagrangian. The same
+iteration and time limits are also passed to `solve` as `maxiters` and `maxtime`. Adding
+further constrained backends and an exact-Hessian Ipopt variant is item 1 of #1857.
+
+## Run
+
+Each (problem, solver) pair is solved once by `run_single_solve`. A row records the return
+code as reported by Optimization.jl and a `status` of `OK` when `solve` returned,
+`FAILED` when it threw, or `LOAD_FAILED` when the CUTEst problem could not be
+constructed. The reported time is `sol.stats.time` when the solver provides a finite,
+non-negative value, and otherwise the wall-clock time measured around problem construction
+and `solve` together. `run_benchmarks` errors if a category yields no `OK` rows, so a
+broken environment fails the build instead of producing an empty page.
+
+```julia
 bounded_results = vcat(
     run_benchmarks("bounded equality constrained", bounded_equality_problems,
         CONSTRAINED_SOLVERS),
@@ -44,16 +148,9 @@ bounded_results = vcat(
 )
 
 display(bounded_results)
-bounded_summary = summarize_results(bounded_results)
-
-plot_solve_times(bounded_results, "CUTEst bounded constrained Optimization.jl solve time")
-plot_success_rates(bounded_summary, "CUTEst bounded constrained Optimization.jl success rate")
 ```
 
 ```
-Selected bounded equality-constrained problems: 50
-Selected bounded inequality-constrained problems: 50
-
 Running bounded equality constrained benchmarks
 Problems: 50
 Solvers: Ipopt
@@ -68,8 +165,8 @@ L).
 ***************************************************************************
 ***
 
- OK Failure 0.525s
-  Ipopt              DUAL2                    OK Success 0.309s
+ OK Failure 0.508s
+  Ipopt              DUAL2                    OK Success 0.281s
   Ipopt              WAYSEA1NE                OK Success 0.052s
   Ipopt              BROWNDENE                OK Failure 0.002s
   Ipopt              HS79                     OK Success 0.011s
@@ -79,99 +176,99 @@ L).
   Ipopt              TRIGON1NE                OK Success 0.004s
   Ipopt              PENLT1NE                 OK Failure 0.002s
   Ipopt              PALMER2NE                OK Failure 0.002s
-  Ipopt              STEENBRA                 OK Success 0.355s
+  Ipopt              STEENBRA                 OK Success 0.353s
   Ipopt              BA-L1SP                  OK Success 0.009s
   Ipopt              EXPFITNE                 OK Failure 0.002s
   Ipopt              SSINE                    OK Success 0.418s
-  Ipopt              EIGMAXC                  OK Success 0.061s
-  Ipopt              LUKSAN17                 OK Failure 0.008s
-  Ipopt              DALLASM                  OK Success 1.683s
+  Ipopt              EIGMAXC                  OK Success 0.062s
+  Ipopt              LUKSAN17                 OK Failure 0.007s
+  Ipopt              DALLASM                  OK Success 1.624s
   Ipopt              HS7                      OK Success 0.008s
-  Ipopt              GENROSEBNE               OK Failure 0.108s
-  Ipopt              BOX3NE                   OK Failure 0.002s
+  Ipopt              GENROSEBNE               OK Failure 0.104s
+  Ipopt              BOX3NE                   OK Failure 0.001s
   Ipopt              HS54                     OK Success 0.050s
-  Ipopt              CHANDHEQ                 OK Success 0.031s
-  Ipopt              HS60                     OK Success 0.006s
-  Ipopt              LEVYMONE                 OK Failure 0.005s
-  Ipopt              KSS                      OK Success 5.267s
+  Ipopt              CHANDHEQ                 OK Success 0.041s
+  Ipopt              HS60                     OK Success 0.013s
+  Ipopt              LEVYMONE                 OK Failure 0.010s
+  Ipopt              KSS                      OK Success 5.238s
   Ipopt              HS48                     OK Success 0.010s
   Ipopt              BT9                      OK Success 0.013s
   Ipopt              S308NE                   OK Failure 0.002s
   Ipopt              PALMER6ANE               OK Failure 0.002s
   Ipopt              MGH17S                   OK Failure 0.002s
-  Ipopt              DENSCHNDNE               OK Success 0.020s
+  Ipopt              DENSCHNDNE               OK Success 0.019s
   Ipopt              HS119                    OK Success 0.024s
   Ipopt              CERI651B                 OK Failure 0.002s
-  Ipopt              PORTSNQP                 OK Success 0.013s
-  Ipopt              EIGMINA                  OK Success 0.050s
+  Ipopt              PORTSNQP                 OK Success 0.012s
+  Ipopt              EIGMINA                  OK Success 0.036s
   Ipopt              THURBER                  OK Failure 0.002s
   Ipopt              CERI651E                 OK Failure 0.002s
   Ipopt              ENSO                     OK Failure 0.003s
   Ipopt              ALLINITC                 OK Success 0.028s
-  Ipopt              LEAKNET                  OK Success 0.142s
-  Ipopt              BARDNE                   OK Failure 0.001s
+  Ipopt              LEAKNET                  OK Success 0.141s
+  Ipopt              BARDNE                   OK Failure 0.002s
   Ipopt              GOTTFR                   OK Success 0.005s
-  Ipopt              DUAL3                    OK Success 0.103s
+  Ipopt              DUAL3                    OK Success 0.102s
   Ipopt              TRY-B                    OK Success 0.015s
   Ipopt              HATFLDBNE                OK Infeasible 0.021s
   Ipopt              STREGNE                  OK Success 0.005s
   Ipopt              SANTA                    OK Failure 0.002s
-  Ipopt              ZAMB2-11                 OK Success 0.216s
+  Ipopt              ZAMB2-11                 OK Success 0.222s
   Ipopt              PENLT2NE                 OK Failure 0.002s
 
 Running bounded inequality constrained benchmarks
 Problems: 50
 Solvers: Ipopt
-  Ipopt              PRIMALC1                 OK Success 0.242s
+  Ipopt              PRIMALC1                 OK Success 0.236s
   Ipopt              POLAK4                   OK Success 0.007s
   Ipopt              EXPFITA                  OK Success 0.043s
-  Ipopt              HS35                     OK Success 0.012s
+  Ipopt              HS35                     OK Success 0.013s
   Ipopt              HS106                    OK Success 0.038s
   Ipopt              HS34                     OK Success 0.010s
-  Ipopt              HS95                     OK Success 0.009s
+  Ipopt              HS95                     OK Success 0.010s
   Ipopt              ZECEVIC3                 OK Success 0.016s
-  Ipopt              HYDROELM                 OK Success 2.069s
-  Ipopt              AVGASB                   OK Success 0.017s
+  Ipopt              HYDROELM                 OK Success 2.064s
+  Ipopt              AVGASB                   OK Success 0.016s
   Ipopt              HS17                     OK Success 0.017s
-  Ipopt              S268                     OK Success 0.098s
+  Ipopt              S268                     OK Success 0.099s
   Ipopt              HS24                     OK Success 0.013s
-  Ipopt              LEUVEN7                  OK Success 89.044s
-  Ipopt              HS85                     OK MaxIters 0.503s
-  Ipopt              HS101                    OK MaxIters 0.632s
+  Ipopt              LEUVEN7                  OK Success 88.271s
+  Ipopt              HS85                     OK MaxIters 0.499s
+  Ipopt              HS101                    OK MaxIters 0.634s
   Ipopt              SYNTHES1                 OK Success 0.014s
   Ipopt              HS67                     OK Success 0.015s
   Ipopt              HS13                     OK Success 0.021s
   Ipopt              HIMMELP2                 OK Success 0.018s
   Ipopt              MIFFLIN1                 OK Success 0.009s
   Ipopt              DEMBO7                   OK Success 0.059s
-  Ipopt              LOOTSMA                  OK Success 0.009s
+  Ipopt              LOOTSMA                  OK Success 0.008s
   Ipopt              HAIFAS                   OK Success 0.013s
   Ipopt              GIGOMEZ1                 OK Success 0.012s
-  Ipopt              CRESC100                 OK Infeasible 1.916s
-  Ipopt              EXPFITC                  OK Success 0.251s
-  Ipopt              HS108                    OK Success 0.042s
-  Ipopt              HS93                     OK Success 0.047s
-  Ipopt              GMNCASE4                 OK Success 0.161s
+  Ipopt              CRESC100                 OK Infeasible 1.904s
+  Ipopt              EXPFITC                  OK Success 0.253s
+  Ipopt              HS108                    OK Success 0.041s
+  Ipopt              HS93                     OK Success 0.043s
+  Ipopt              GMNCASE4                 OK Success 0.147s
   Ipopt              S277-280                 OK Success 0.008s
   Ipopt              GIGOMEZ2                 OK Success 0.011s
   Ipopt              HS36                     OK Success 0.009s
-  Ipopt              DEMYMALO                 OK Success 0.011s
-  Ipopt              HS105                    OK MaxIters 0.899s
+  Ipopt              DEMYMALO                 OK Success 0.008s
+  Ipopt              HS105                    OK MaxIters 0.892s
   Ipopt              SIMPLLPA                 OK Success 0.007s
   Ipopt              HS86                     OK Success 0.015s
   Ipopt              HS117                    OK Success 0.041s
   Ipopt              CHACONN1                 OK Success 0.007s
-  Ipopt              LHAIFAM                  OK Failure 0.006s
-  Ipopt              TFI1                     OK Success 0.067s
+  Ipopt              LHAIFAM                  OK Failure 0.007s
+  Ipopt              TFI1                     OK Success 0.069s
   Ipopt              ZECEVIC4                 OK Success 0.012s
   Ipopt              HS57                     OK Success 0.022s
-  Ipopt              KIWCRESC                 OK Success 0.010s
+  Ipopt              KIWCRESC                 OK Success 0.011s
   Ipopt              OPTPRLOC                 OK Success 0.024s
-  Ipopt              HS100                    OK Success 0.022s
-  Ipopt              WOMFLET                  OK Success 0.021s
-  Ipopt              PRIMALC2                 OK Success 0.100s
-  Ipopt              POLAK3                   OK MaxIters 0.692s
-  Ipopt              HS33                     OK Success 0.009s
+  Ipopt              HS100                    OK Success 0.023s
+  Ipopt              WOMFLET                  OK Success 0.022s
+  Ipopt              PRIMALC2                 OK Success 0.101s
+  Ipopt              POLAK3                   OK MaxIters 0.696s
+  Ipopt              HS33                     OK Success 0.010s
 100×7 DataFrame
  Row │ category                        problem     solver  n_vars  secs    
     ⋯
@@ -179,35 +276,61 @@ Solvers: Ipopt
     ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ bounded equality constrained    GAUSS2      Ipopt        8  0.525447
+   1 │ bounded equality constrained    GAUSS2      Ipopt        8  0.508391
     ⋯
-   2 │ bounded equality constrained    DUAL2       Ipopt       96  0.308856
-   3 │ bounded equality constrained    WAYSEA1NE   Ipopt        2  0.051780
-9
-   4 │ bounded equality constrained    BROWNDENE   Ipopt        4  0.002063
-99
+   2 │ bounded equality constrained    DUAL2       Ipopt       96  0.280648
+   3 │ bounded equality constrained    WAYSEA1NE   Ipopt        2  0.052308
+1
+   4 │ bounded equality constrained    BROWNDENE   Ipopt        4  0.002032
+04
    5 │ bounded equality constrained    HS79        Ipopt        5  0.010977
     ⋯
    6 │ bounded equality constrained    GULFNE      Ipopt        3  0.001919
 03
-   7 │ bounded equality constrained    JUDGENE     Ipopt        2  0.001729
-01
-   8 │ bounded equality constrained    STRTCHDVNE  Ipopt       10  0.010922
-2
+   7 │ bounded equality constrained    JUDGENE     Ipopt        2  0.001660
+82
+   8 │ bounded equality constrained    STRTCHDVNE  Ipopt       10  0.010744
+8
   ⋮  │               ⋮                     ⋮         ⋮       ⋮         ⋮   
     ⋱
-  94 │ bounded inequality constrained  KIWCRESC    Ipopt        3  0.010201
+  94 │ bounded inequality constrained  KIWCRESC    Ipopt        3  0.010783
+9   ⋯
+  95 │ bounded inequality constrained  OPTPRLOC    Ipopt       30  0.023802
+  96 │ bounded inequality constrained  HS100       Ipopt        7  0.022841
+9
+  97 │ bounded inequality constrained  WOMFLET     Ipopt        3  0.021660
+1
+  98 │ bounded inequality constrained  PRIMALC2    Ipopt      231  0.100701
     ⋯
-  95 │ bounded inequality constrained  OPTPRLOC    Ipopt       30  0.023839
-  96 │ bounded inequality constrained  HS100       Ipopt        7  0.022352
-  97 │ bounded inequality constrained  WOMFLET     Ipopt        3  0.021452
-  98 │ bounded inequality constrained  PRIMALC2    Ipopt      231  0.099964
-1   ⋯
-  99 │ bounded inequality constrained  POLAK3      Ipopt       12  0.691547
- 100 │ bounded inequality constrained  HS33        Ipopt        3  0.009413
+  99 │ bounded inequality constrained  POLAK3      Ipopt       12  0.696041
+ 100 │ bounded inequality constrained  HS33        Ipopt        3  0.009507
+89
                                                    2 columns and 85 rows om
 itted
+```
 
+
+
+
+
+## Summary
+
+`summarize_results` groups rows by category and solver. `completion_rate` is the share of
+runs with `status == "OK"`, i.e. the solver returned at all. `success_rate` is the share
+of runs whose return code is in `SUCCESS_RETCODES` (`Success`, `Terminated`,
+`FirstOrderOptimal`). Runs that stopped at `MaxIters` or `MaxTime` count as completed but
+not successful. `median_secs` is the median of the per-run time described above over all
+rows for that category and solver, including unsuccessful ones. No solution-quality
+metric (objective value, KKT residual, constraint violation) is recorded yet; see #1857.
+
+```julia
+bounded_summary = summarize_results(bounded_results)
+
+plot_solve_times(bounded_results, "CUTEst bounded constrained Optimization.jl solve time")
+plot_success_rates(bounded_summary, "CUTEst bounded constrained Optimization.jl success rate")
+```
+
+```
 Return code distribution:
   Success: 72
   Failure: 22
@@ -231,8 +354,8 @@ itted
 ```
 
 
-![](figures/CUTEst_bounded_1_1.png)
-![](figures/CUTEst_bounded_1_2.png)
+![](figures/CUTEst_bounded_4_1.png)
+![](figures/CUTEst_bounded_4_2.png)
 
 
 ## Appendix
