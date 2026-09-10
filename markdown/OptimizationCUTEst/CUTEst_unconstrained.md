@@ -6,8 +6,28 @@ title: "CUTEst Unconstrained Optimization.jl Benchmarks"
 
 # CUTEst Unconstrained Optimization.jl Benchmarks
 
-This benchmark runs unconstrained CUTEst problems through the Optimization.jl interface
-using `OptimizationNLPModels`.
+This benchmark runs unconstrained problems from the
+[CUTEst](https://github.com/JuliaSmoothOptimizers/CUTEst.jl) test set through the
+Optimization.jl interface using `OptimizationNLPModels`. The problem class is selected with
+`CUTEst.select_sif_problems(contype = "unc")`, i.e. problems with no constraints and no
+variable bounds.
+
+All four CUTEst pages in this folder (`CUTEst_unconstrained`, `CUTEst_bounded`,
+`CUTEst_unbounded`, `CUTEst_quadratic`) share the harness in `cutest_benchmark_utils.jl`,
+which defines the selection constants, the solver constructors, the run loop, and the
+summary and plotting helpers. The prose below describes the harness as it stands on this
+page; refinements to the solver sets, solution-quality metrics, performance profiles,
+problem selection, and timing methodology are tracked in
+[SciMLBenchmarks#1857](https://github.com/SciML/SciMLBenchmarks.jl/issues/1857).
+
+This page supersedes the former `CUTEst_safe_solvers.jmd`, which was removed in
+[#1594](https://github.com/SciML/SciMLBenchmarks.jl/pull/1594). That page ran the same
+`contype = "unc"` problem set with a three-solver subset (`LBFGS`, `ConjugateGradient`,
+`NelderMead`) of the solvers used here and a copy of the run loop, so it duplicated this
+page with less coverage and was dropped when the pages were consolidated onto the shared
+harness.
+
+## Setup
 
 ```julia
 ENV["GKSwstype"] = "100"
@@ -22,6 +42,32 @@ using Printf
 
 include(joinpath(isdefined(Main, :WEAVE_ARGS) ? WEAVE_ARGS[:folder] : @__DIR__,
     "cutest_benchmark_utils.jl"))
+```
+
+```
+plot_success_rates (generic function with 1 method)
+```
+
+
+
+
+
+## Problem selection
+
+`select_safe_problems` walks the candidates in the order returned by
+`CUTEst.select_sif_problems`, skips any name in the hand-maintained `KNOWN_BAD_PROBLEMS`
+list, loads each remaining problem once to read its metadata, keeps it only if
+`nvar <= max_var` and `ncon <= max_con`, and stops after `max_problems` problems. The
+defaults are `MAX_PROBLEMS_PER_CATEGORY`, `MAX_NVAR`, and `MAX_NCON`; this page keeps the
+variable cap and sets `max_con = 0` because the problems are unconstrained. Problems whose
+metadata cannot be loaded are skipped. The values in effect for this run are printed below.
+
+```julia
+println("MAX_PROBLEMS_PER_CATEGORY = ", MAX_PROBLEMS_PER_CATEGORY)
+println("MAX_NVAR = ", MAX_NVAR)
+println("SOLVE_MAXITERS = ", SOLVE_MAXITERS)
+println("SOLVE_TIMEOUT_SECONDS = ", SOLVE_TIMEOUT_SECONDS)
+println("KNOWN_BAD_PROBLEMS = ", join(sort(collect(KNOWN_BAD_PROBLEMS)), ", "))
 
 unconstrained_problems = select_safe_problems(
     collect(CUTEst.select_sif_problems(contype = "unc"));
@@ -30,7 +76,53 @@ unconstrained_problems = select_safe_problems(
 )
 
 println("Selected unconstrained problems: ", length(unconstrained_problems))
+println(join(unconstrained_problems, ", "))
+```
 
+```
+MAX_PROBLEMS_PER_CATEGORY = 50
+MAX_NVAR = 1000
+SOLVE_MAXITERS = 1000
+SOLVE_TIMEOUT_SECONDS = 90.0
+KNOWN_BAD_PROBLEMS = bloweya, chardis1, cleuven4, cmpc10, cmpc3, cvxqp2, di
+ttert, hier13, lukvle8, lukvli7, mpc2, mss1, ninenew, patternne, reading2, 
+reading6
+Selected unconstrained problems: 50
+LUKSAN13LS, JUDGE, FBRAIN3LS, SPIN2LS, ARGLINC, TOINTGOR, WAYSEA2, BROWNDEN
+, HILBERTA, DMN37142LS, PALMER5D, BOXBODLS, HIMMELBB, ENGVAL2, MUONSINELS, 
+ENSOLS, PRICE4, CERI651ELS, OSCIPATH, SISSER, TRIGON1, PENALTY1, LRW8A, GRO
+WTHLS, SINEVAL, GAUSS2LS, STRATEC, NELSONLS, HYDCAR6LS, MISRA1ALS, WAYSEA1,
+ DMN37143LS, GAUSS3LS, VESUVIALS, INTEQNELS, HAIRY, YFITU, CHNRSNBM, HIMMEL
+BCLS, MARATOSB, LSC2LS, PALMER1C, POWELLBSLS, HIMMELBG, DENSCHNF, COOLHANSL
+S, PRICE3, VESUVIOULS, KOWOSB, LUKSAN12LS
+```
+
+
+
+
+
+## Solvers
+
+`UNCONSTRAINED_SOLVERS` lists the Optim.jl algorithms run through `OptimizationOptimJL`:
+`LBFGS`, `ConjugateGradient`, `NelderMead`, `SimulatedAnnealing`, and `ParticleSwarm`.
+Each is constructed with its default options. Gradients come from the NLPModels interface,
+so the two gradient-based methods use CUTEst's analytic derivatives rather than finite
+differences. Every solve is called with `maxiters = SOLVE_MAXITERS` and
+`maxtime = SOLVE_TIMEOUT_SECONDS`. The global heuristics (`SimulatedAnnealing`,
+`ParticleSwarm`) are run with the same budget and reported alongside the local methods;
+separating them is part of #1857.
+
+## Run
+
+Each (problem, solver) pair is solved once by `run_single_solve`. A row records the return
+code as reported by Optimization.jl and a `status` of `OK` when `solve` returned,
+`FAILED` when it threw, or `LOAD_FAILED` when the CUTEst problem could not be
+constructed. The reported time is `sol.stats.time` when the solver provides a finite,
+non-negative value, and otherwise the wall-clock time measured around problem construction
+and `solve` together. `run_benchmarks` errors if a category yields no `OK` rows, so a
+broken environment fails the build instead of producing an empty page.
+
+```julia
 unc_results = run_benchmarks(
     "unconstrained",
     unconstrained_problems,
@@ -38,69 +130,63 @@ unc_results = run_benchmarks(
 )
 
 display(unc_results)
-unc_summary = summarize_results(unc_results)
-
-plot_solve_times(unc_results, "CUTEst unconstrained Optimization.jl solve time")
-plot_success_rates(unc_summary, "CUTEst unconstrained Optimization.jl success rate")
 ```
 
 ```
-Selected unconstrained problems: 50
-
 Running unconstrained benchmarks
 Problems: 50
 Solvers: LBFGS, ConjugateGradient, NelderMead, SimulatedAnnealing, Particle
 Swarm
-  LBFGS              LUKSAN13LS               OK Success 2.180s
-  ConjugateGradient  LUKSAN13LS               OK Success 0.983s
-  NelderMead         LUKSAN13LS               OK Failure 0.929s
-  SimulatedAnnealing LUKSAN13LS               OK Failure 0.297s
-  ParticleSwarm      LUKSAN13LS               OK Failure 1.417s
+  LBFGS              LUKSAN13LS               OK Success 2.133s
+  ConjugateGradient  LUKSAN13LS               OK Success 0.935s
+  NelderMead         LUKSAN13LS               OK Failure 0.908s
+  SimulatedAnnealing LUKSAN13LS               OK Failure 0.317s
+  ParticleSwarm      LUKSAN13LS               OK Failure 1.370s
   LBFGS              JUDGE                    OK Success 0.000s
   ConjugateGradient  JUDGE                    OK Success 0.000s
   NelderMead         JUDGE                    OK Success 0.000s
-  SimulatedAnnealing JUDGE                    OK Failure 0.006s
+  SimulatedAnnealing JUDGE                    OK Failure 0.005s
   ParticleSwarm      JUDGE                    OK Failure 0.014s
-  LBFGS              FBRAIN3LS                OK Failure 1.505s
-  ConjugateGradient  FBRAIN3LS                OK Failure 1.492s
-  NelderMead         FBRAIN3LS                OK Failure 0.399s
-  SimulatedAnnealing FBRAIN3LS                OK Failure 0.514s
-  ParticleSwarm      FBRAIN3LS                OK Failure 2.053s
-  LBFGS              SPIN2LS                  OK Success 0.028s
+  LBFGS              FBRAIN3LS                OK Failure 1.508s
+  ConjugateGradient  FBRAIN3LS                OK Failure 1.496s
+  NelderMead         FBRAIN3LS                OK Failure 0.400s
+  SimulatedAnnealing FBRAIN3LS                OK Failure 0.518s
+  ParticleSwarm      FBRAIN3LS                OK Failure 2.055s
+  LBFGS              SPIN2LS                  OK Success 0.029s
   ConjugateGradient  SPIN2LS                  OK Success 0.011s
-  NelderMead         SPIN2LS                  OK Failure 0.215s
-  SimulatedAnnealing SPIN2LS                  OK Failure 0.037s
-  ParticleSwarm      SPIN2LS                  OK Failure 1.522s
+  NelderMead         SPIN2LS                  OK Failure 0.217s
+  SimulatedAnnealing SPIN2LS                  OK Failure 0.038s
+  ParticleSwarm      SPIN2LS                  OK Failure 1.521s
   LBFGS              ARGLINC                  OK Failure 0.055s
-  ConjugateGradient  ARGLINC                  OK Failure 0.037s
-  NelderMead         ARGLINC                  OK Failure 0.158s
-  SimulatedAnnealing ARGLINC                  OK Failure 0.161s
-  ParticleSwarm      ARGLINC                  OK Failure 14.654s
+  ConjugateGradient  ARGLINC                  OK Failure 0.035s
+  NelderMead         ARGLINC                  OK Failure 0.156s
+  SimulatedAnnealing ARGLINC                  OK Failure 0.139s
+  ParticleSwarm      ARGLINC                  OK Failure 14.688s
   LBFGS              TOINTGOR                 OK Success 0.003s
   ConjugateGradient  TOINTGOR                 OK Success 0.003s
-  NelderMead         TOINTGOR                 OK Failure 0.011s
+  NelderMead         TOINTGOR                 OK Failure 0.012s
   SimulatedAnnealing TOINTGOR                 OK Failure 0.010s
-  ParticleSwarm      TOINTGOR                 OK Failure 0.157s
+  ParticleSwarm      TOINTGOR                 OK Failure 0.183s
   LBFGS              WAYSEA2                  OK Success 0.000s
   ConjugateGradient  WAYSEA2                  OK Success 0.000s
   NelderMead         WAYSEA2                  OK Success 0.000s
   SimulatedAnnealing WAYSEA2                  OK Failure 0.005s
-  ParticleSwarm      WAYSEA2                  OK Failure 0.010s
+  ParticleSwarm      WAYSEA2                  OK Failure 0.012s
   LBFGS              BROWNDEN                 OK Success 0.000s
   ConjugateGradient  BROWNDEN                 OK Success 0.001s
   NelderMead         BROWNDEN                 OK Success 0.001s
   SimulatedAnnealing BROWNDEN                 OK Failure 0.006s
-  ParticleSwarm      BROWNDEN                 OK Failure 0.014s
+  ParticleSwarm      BROWNDEN                 OK Failure 0.015s
   LBFGS              HILBERTA                 OK Success 0.000s
   ConjugateGradient  HILBERTA                 OK Success 0.000s
   NelderMead         HILBERTA                 OK Success 0.000s
   SimulatedAnnealing HILBERTA                 OK Failure 0.005s
-  ParticleSwarm      HILBERTA                 OK Failure 0.011s
-  LBFGS              DMN37142LS               OK Failure 5.231s
-  ConjugateGradient  DMN37142LS               OK Failure 5.110s
-  NelderMead         DMN37142LS               OK Failure 0.680s
-  SimulatedAnnealing DMN37142LS               OK Failure 0.865s
-  ParticleSwarm      DMN37142LS               OK Failure 29.562s
+  ParticleSwarm      HILBERTA                 OK Failure 0.012s
+  LBFGS              DMN37142LS               OK Failure 5.166s
+  ConjugateGradient  DMN37142LS               OK Failure 4.999s
+  NelderMead         DMN37142LS               OK Failure 0.682s
+  SimulatedAnnealing DMN37142LS               OK Failure 0.847s
+  ParticleSwarm      DMN37142LS               OK Failure 28.963s
   LBFGS              PALMER5D                 OK Success 0.001s
   ConjugateGradient  PALMER5D                 OK Success 0.001s
   NelderMead         PALMER5D                 OK Success 0.001s
@@ -110,92 +196,92 @@ Swarm
   ConjugateGradient  BOXBODLS                 OK Success 0.001s
   NelderMead         BOXBODLS                 OK Success 0.000s
   SimulatedAnnealing BOXBODLS                 OK Failure 0.005s
-  ParticleSwarm      BOXBODLS                 OK Failure 0.012s
+  ParticleSwarm      BOXBODLS                 OK Failure 0.013s
   LBFGS              HIMMELBB                 OK Success 0.001s
   ConjugateGradient  HIMMELBB                 OK Success 0.000s
   NelderMead         HIMMELBB                 OK Success 0.000s
   SimulatedAnnealing HIMMELBB                 OK Failure 0.005s
-  ParticleSwarm      HIMMELBB                 OK Failure 0.011s
+  ParticleSwarm      HIMMELBB                 OK Failure 0.012s
   LBFGS              ENGVAL2                  OK Success 0.000s
   ConjugateGradient  ENGVAL2                  OK Failure 0.010s
   NelderMead         ENGVAL2                  OK Success 0.001s
-  SimulatedAnnealing ENGVAL2                  OK Failure 0.006s
+  SimulatedAnnealing ENGVAL2                  OK Failure 0.005s
   ParticleSwarm      ENGVAL2                  OK Failure 0.012s
-  LBFGS              MUONSINELS               OK Failure 0.325s
+  LBFGS              MUONSINELS               OK Failure 0.323s
   ConjugateGradient  MUONSINELS               OK Success 0.002s
   NelderMead         MUONSINELS               OK Success 0.000s
-  SimulatedAnnealing MUONSINELS               OK Failure 0.048s
-  ParticleSwarm      MUONSINELS               OK Failure 0.076s
+  SimulatedAnnealing MUONSINELS               OK Failure 0.047s
+  ParticleSwarm      MUONSINELS               OK Failure 0.090s
   LBFGS              ENSOLS                   OK Success 0.005s
   ConjugateGradient  ENSOLS                   OK Success 0.021s
   NelderMead         ENSOLS                   OK Success 0.055s
-  SimulatedAnnealing ENSOLS                   OK Failure 0.070s
-  ParticleSwarm      ENSOLS                   OK Failure 0.245s
+  SimulatedAnnealing ENSOLS                   OK Failure 0.071s
+  ParticleSwarm      ENSOLS                   OK Failure 0.226s
   LBFGS              PRICE4                   OK Success 0.000s
   ConjugateGradient  PRICE4                   OK Success 0.000s
   NelderMead         PRICE4                   OK Success 0.000s
   SimulatedAnnealing PRICE4                   OK Failure 0.005s
   ParticleSwarm      PRICE4                   OK Failure 0.012s
-  LBFGS              CERI651ELS               OK Failure 0.041s
-  ConjugateGradient  CERI651ELS               OK Failure 0.072s
+  LBFGS              CERI651ELS               OK Failure 0.069s
+  ConjugateGradient  CERI651ELS               OK Failure 0.071s
   NelderMead         CERI651ELS               OK Failure 0.000s
-  SimulatedAnnealing CERI651ELS               OK Failure 0.019s
-  ParticleSwarm      CERI651ELS               OK Failure 0.046s
+  SimulatedAnnealing CERI651ELS               OK Failure 0.020s
+  ParticleSwarm      CERI651ELS               OK Failure 0.062s
   LBFGS              OSCIPATH                 OK Success 0.001s
   ConjugateGradient  OSCIPATH                 OK Success 0.001s
-  NelderMead         OSCIPATH                 OK Failure 0.110s
-  SimulatedAnnealing OSCIPATH                 OK Failure 0.031s
-  ParticleSwarm      OSCIPATH                 OK Failure 8.636s
+  NelderMead         OSCIPATH                 OK Failure 0.088s
+  SimulatedAnnealing OSCIPATH                 OK Failure 0.028s
+  ParticleSwarm      OSCIPATH                 OK Failure 8.542s
   LBFGS              SISSER                   OK Success 0.000s
   ConjugateGradient  SISSER                   OK Success 0.000s
   NelderMead         SISSER                   OK Success 0.000s
   SimulatedAnnealing SISSER                   OK Failure 0.005s
-  ParticleSwarm      SISSER                   OK Failure 0.011s
+  ParticleSwarm      SISSER                   OK Failure 0.013s
   LBFGS              TRIGON1                  OK Success 0.001s
   ConjugateGradient  TRIGON1                  OK Success 0.001s
   NelderMead         TRIGON1                  OK Success 0.004s
-  SimulatedAnnealing TRIGON1                  OK Failure 0.005s
+  SimulatedAnnealing TRIGON1                  OK Failure 0.007s
   ParticleSwarm      TRIGON1                  OK Failure 0.027s
   LBFGS              PENALTY1                 OK Success 0.010s
   ConjugateGradient  PENALTY1                 OK Success 0.009s
-  NelderMead         PENALTY1                 OK Failure 0.207s
-  SimulatedAnnealing PENALTY1                 OK Failure 0.033s
-  ParticleSwarm      PENALTY1                 OK Failure 26.318s
-  LBFGS              LRW8A                    OK Failure 6.507s
-  ConjugateGradient  LRW8A                    OK Failure 7.653s
-  NelderMead         LRW8A                    OK Failure 2.949s
-  SimulatedAnnealing LRW8A                    OK Failure 4.034s
-  ParticleSwarm      LRW8A                    OK Failure 91.098s
+  NelderMead         PENALTY1                 OK Failure 0.210s
+  SimulatedAnnealing PENALTY1                 OK Failure 0.031s
+  ParticleSwarm      PENALTY1                 OK Failure 25.865s
+  LBFGS              LRW8A                    OK Failure 6.441s
+  ConjugateGradient  LRW8A                    OK Failure 7.652s
+  NelderMead         LRW8A                    OK Failure 2.922s
+  SimulatedAnnealing LRW8A                    OK Failure 4.050s
+  ParticleSwarm      LRW8A                    OK Failure 90.695s
   LBFGS              GROWTHLS                 OK Success 0.000s
   ConjugateGradient  GROWTHLS                 OK Success 0.000s
   NelderMead         GROWTHLS                 OK Success 0.002s
-  SimulatedAnnealing GROWTHLS                 OK Failure 0.007s
-  ParticleSwarm      GROWTHLS                 OK Failure 0.018s
+  SimulatedAnnealing GROWTHLS                 OK Failure 0.006s
+  ParticleSwarm      GROWTHLS                 OK Failure 0.017s
   LBFGS              SINEVAL                  OK Success 0.001s
   ConjugateGradient  SINEVAL                  OK Success 0.001s
   NelderMead         SINEVAL                  OK Success 0.001s
   SimulatedAnnealing SINEVAL                  OK Failure 0.005s
   ParticleSwarm      SINEVAL                  OK Failure 0.012s
-  LBFGS              GAUSS2LS                 OK Success 0.081s
-  ConjugateGradient  GAUSS2LS                 OK Failure 0.090s
+  LBFGS              GAUSS2LS                 OK Success 0.083s
+  ConjugateGradient  GAUSS2LS                 OK Failure 0.087s
   NelderMead         GAUSS2LS                 OK Success 0.019s
   SimulatedAnnealing GAUSS2LS                 OK Failure 0.044s
-  ParticleSwarm      GAUSS2LS                 OK Failure 0.133s
-  LBFGS              STRATEC                  OK Failure 90.024s
-  ConjugateGradient  STRATEC                  OK Failure 6.038s
-  NelderMead         STRATEC                  OK Failure 0.375s
-  SimulatedAnnealing STRATEC                  OK Failure 0.495s
-  ParticleSwarm      STRATEC                  OK Failure 2.795s
+  ParticleSwarm      GAUSS2LS                 OK Failure 0.135s
+  LBFGS              STRATEC                  OK Failure 90.164s
+  ConjugateGradient  STRATEC                  OK Failure 6.055s
+  NelderMead         STRATEC                  OK Failure 0.376s
+  SimulatedAnnealing STRATEC                  OK Failure 0.493s
+  ParticleSwarm      STRATEC                  OK Failure 2.803s
   LBFGS              NELSONLS                 OK Failure 0.048s
   ConjugateGradient  NELSONLS                 OK Failure 0.003s
   NelderMead         NELSONLS                 OK Success 0.007s
-  SimulatedAnnealing NELSONLS                 OK Failure 0.015s
-  ParticleSwarm      NELSONLS                 OK Failure 0.032s
+  SimulatedAnnealing NELSONLS                 OK Failure 0.017s
+  ParticleSwarm      NELSONLS                 OK Failure 0.035s
   LBFGS              HYDCAR6LS                OK Failure 0.027s
-  ConjugateGradient  HYDCAR6LS                OK Failure 0.031s
-  NelderMead         HYDCAR6LS                OK Failure 0.013s
+  ConjugateGradient  HYDCAR6LS                OK Failure 0.030s
+  NelderMead         HYDCAR6LS                OK Failure 0.047s
   SimulatedAnnealing HYDCAR6LS                OK Failure 0.013s
-  ParticleSwarm      HYDCAR6LS                OK Failure 0.132s
+  ParticleSwarm      HYDCAR6LS                OK Failure 0.113s
   LBFGS              MISRA1ALS                OK Success 0.001s
   ConjugateGradient  MISRA1ALS                OK Success 0.002s
   NelderMead         MISRA1ALS                OK Success 0.001s
@@ -206,101 +292,101 @@ Swarm
   NelderMead         WAYSEA1                  OK Success 0.000s
   SimulatedAnnealing WAYSEA1                  OK Failure 0.005s
   ParticleSwarm      WAYSEA1                  OK Failure 0.011s
-  LBFGS              DMN37143LS               OK Failure 6.253s
-  ConjugateGradient  DMN37143LS               OK Failure 5.824s
-  NelderMead         DMN37143LS               OK Failure 0.807s
-  SimulatedAnnealing DMN37143LS               OK Failure 1.077s
-  ParticleSwarm      DMN37143LS               OK Failure 55.194s
+  LBFGS              DMN37143LS               OK Failure 6.219s
+  ConjugateGradient  DMN37143LS               OK Failure 5.599s
+  NelderMead         DMN37143LS               OK Failure 0.776s
+  SimulatedAnnealing DMN37143LS               OK Failure 1.075s
+  ParticleSwarm      DMN37143LS               OK Failure 54.542s
   LBFGS              GAUSS3LS                 OK Success 0.080s
-  ConjugateGradient  GAUSS3LS                 OK Failure 0.095s
+  ConjugateGradient  GAUSS3LS                 OK Failure 0.093s
   NelderMead         GAUSS3LS                 OK Success 0.020s
   SimulatedAnnealing GAUSS3LS                 OK Failure 0.043s
-  ParticleSwarm      GAUSS3LS                 OK Failure 0.132s
+  ParticleSwarm      GAUSS3LS                 OK Failure 0.133s
   LBFGS              VESUVIALS                OK Success 0.110s
-  ConjugateGradient  VESUVIALS                OK Failure 0.182s
-  NelderMead         VESUVIALS                OK Failure 0.071s
-  SimulatedAnnealing VESUVIALS                OK Failure 0.081s
-  ParticleSwarm      VESUVIALS                OK Failure 0.354s
-  LBFGS              INTEQNELS                OK Success 0.021s
-  ConjugateGradient  INTEQNELS                OK Success 0.020s
-  NelderMead         INTEQNELS                OK Failure 0.479s
-  SimulatedAnnealing INTEQNELS                OK Failure 0.458s
-  ParticleSwarm      INTEQNELS                OK Failure 90.141s
+  ConjugateGradient  VESUVIALS                OK Failure 0.181s
+  NelderMead         VESUVIALS                OK Failure 0.072s
+  SimulatedAnnealing VESUVIALS                OK Failure 0.082s
+  ParticleSwarm      VESUVIALS                OK Failure 0.355s
+  LBFGS              INTEQNELS                OK Success 0.020s
+  ConjugateGradient  INTEQNELS                OK Success 0.021s
+  NelderMead         INTEQNELS                OK Failure 0.467s
+  SimulatedAnnealing INTEQNELS                OK Failure 0.472s
+  ParticleSwarm      INTEQNELS                OK Failure 90.185s
   LBFGS              HAIRY                    OK Success 0.001s
   ConjugateGradient  HAIRY                    OK Success 0.001s
-  NelderMead         HAIRY                    OK Success 0.000s
-  SimulatedAnnealing HAIRY                    OK Failure 0.005s
-  ParticleSwarm      HAIRY                    OK Failure 0.010s
+  NelderMead         HAIRY                    OK Success 0.001s
+  SimulatedAnnealing HAIRY                    OK Failure 0.006s
+  ParticleSwarm      HAIRY                    OK Failure 0.013s
   LBFGS              YFITU                    OK Success 0.001s
-  ConjugateGradient  YFITU                    OK Failure 0.012s
+  ConjugateGradient  YFITU                    OK Failure 0.013s
   NelderMead         YFITU                    OK Success 0.002s
-  SimulatedAnnealing YFITU                    OK Failure 0.006s
-  ParticleSwarm      YFITU                    OK Failure 0.013s
-  LBFGS              CHNRSNBM                 OK Success 0.006s
-  ConjugateGradient  CHNRSNBM                 OK Success 0.005s
-  NelderMead         CHNRSNBM                 OK Failure 0.010s
-  SimulatedAnnealing CHNRSNBM                 OK Failure 0.008s
-  ParticleSwarm      CHNRSNBM                 OK Failure 0.146s
+  SimulatedAnnealing YFITU                    OK Failure 0.007s
+  ParticleSwarm      YFITU                    OK Failure 0.015s
+  LBFGS              CHNRSNBM                 OK Success 0.007s
+  ConjugateGradient  CHNRSNBM                 OK Success 0.006s
+  NelderMead         CHNRSNBM                 OK Failure 0.005s
+  SimulatedAnnealing CHNRSNBM                 OK Failure 0.009s
+  ParticleSwarm      CHNRSNBM                 OK Failure 0.157s
   LBFGS              HIMMELBCLS               OK Success 0.000s
   ConjugateGradient  HIMMELBCLS               OK Success 0.000s
   NelderMead         HIMMELBCLS               OK Success 0.000s
   SimulatedAnnealing HIMMELBCLS               OK Failure 0.005s
   ParticleSwarm      HIMMELBCLS               OK Failure 0.012s
   LBFGS              MARATOSB                 OK Failure 0.010s
-  ConjugateGradient  MARATOSB                 OK Success 0.009s
+  ConjugateGradient  MARATOSB                 OK Success 0.010s
   NelderMead         MARATOSB                 OK Failure 0.005s
   SimulatedAnnealing MARATOSB                 OK Failure 0.005s
-  ParticleSwarm      MARATOSB                 OK Failure 0.013s
-  LBFGS              LSC2LS                   OK Success 0.007s
+  ParticleSwarm      MARATOSB                 OK Failure 0.011s
+  LBFGS              LSC2LS                   OK Success 0.008s
   ConjugateGradient  LSC2LS                   OK Success 0.002s
   NelderMead         LSC2LS                   OK Success 0.002s
-  SimulatedAnnealing LSC2LS                   OK Failure 0.004s
-  ParticleSwarm      LSC2LS                   OK Failure 0.011s
-  LBFGS              PALMER1C                 OK Failure 0.012s
-  ConjugateGradient  PALMER1C                 OK Failure 0.013s
-  NelderMead         PALMER1C                 OK Failure 0.006s
-  SimulatedAnnealing PALMER1C                 OK Failure 0.006s
-  ParticleSwarm      PALMER1C                 OK Failure 0.023s
+  SimulatedAnnealing LSC2LS                   OK Failure 0.005s
+  ParticleSwarm      LSC2LS                   OK Failure 0.013s
+  LBFGS              PALMER1C                 OK Failure 0.015s
+  ConjugateGradient  PALMER1C                 OK Failure 0.016s
+  NelderMead         PALMER1C                 OK Failure 0.007s
+  SimulatedAnnealing PALMER1C                 OK Failure 0.007s
+  ParticleSwarm      PALMER1C                 OK Failure 0.028s
   LBFGS              POWELLBSLS               OK Success 0.002s
   ConjugateGradient  POWELLBSLS               OK Success 0.002s
   NelderMead         POWELLBSLS               OK Success 0.001s
-  SimulatedAnnealing POWELLBSLS               OK Failure 0.005s
-  ParticleSwarm      POWELLBSLS               OK Failure 0.011s
+  SimulatedAnnealing POWELLBSLS               OK Failure 0.006s
+  ParticleSwarm      POWELLBSLS               OK Failure 0.014s
   LBFGS              HIMMELBG                 OK Success 0.000s
   ConjugateGradient  HIMMELBG                 OK Success 0.000s
   NelderMead         HIMMELBG                 OK Success 0.000s
   SimulatedAnnealing HIMMELBG                 OK Failure 0.005s
-  ParticleSwarm      HIMMELBG                 OK Failure 0.012s
+  ParticleSwarm      HIMMELBG                 OK Failure 0.013s
   LBFGS              DENSCHNF                 OK Success 0.000s
   ConjugateGradient  DENSCHNF                 OK Success 0.000s
   NelderMead         DENSCHNF                 OK Success 0.000s
   SimulatedAnnealing DENSCHNF                 OK Failure 0.005s
-  ParticleSwarm      DENSCHNF                 OK Failure 0.011s
-  LBFGS              COOLHANSLS               OK Success 0.006s
-  ConjugateGradient  COOLHANSLS               OK Failure 0.012s
+  ParticleSwarm      DENSCHNF                 OK Failure 0.012s
+  LBFGS              COOLHANSLS               OK Success 0.007s
+  ConjugateGradient  COOLHANSLS               OK Failure 0.013s
   NelderMead         COOLHANSLS               OK Success 0.003s
   SimulatedAnnealing COOLHANSLS               OK Failure 0.006s
-  ParticleSwarm      COOLHANSLS               OK Failure 0.022s
+  ParticleSwarm      COOLHANSLS               OK Failure 0.024s
   LBFGS              PRICE3                   OK Success 0.000s
   ConjugateGradient  PRICE3                   OK Success 0.000s
   NelderMead         PRICE3                   OK Success 0.000s
   SimulatedAnnealing PRICE3                   OK Failure 0.005s
-  ParticleSwarm      PRICE3                   OK Failure 0.011s
+  ParticleSwarm      PRICE3                   OK Failure 0.012s
   LBFGS              VESUVIOULS               OK Success 0.070s
-  ConjugateGradient  VESUVIOULS               OK Failure 0.184s
+  ConjugateGradient  VESUVIOULS               OK Failure 0.183s
   NelderMead         VESUVIOULS               OK Success 0.071s
-  SimulatedAnnealing VESUVIOULS               OK Failure 0.096s
-  ParticleSwarm      VESUVIOULS               OK Failure 0.375s
+  SimulatedAnnealing VESUVIOULS               OK Failure 0.076s
+  ParticleSwarm      VESUVIOULS               OK Failure 0.379s
   LBFGS              KOWOSB                   OK Success 0.000s
   ConjugateGradient  KOWOSB                   OK Success 0.003s
   NelderMead         KOWOSB                   OK Success 0.001s
-  SimulatedAnnealing KOWOSB                   OK Failure 0.005s
-  ParticleSwarm      KOWOSB                   OK Failure 0.015s
-  LBFGS              LUKSAN12LS               OK Success 0.012s
-  ConjugateGradient  LUKSAN12LS               OK Success 0.023s
+  SimulatedAnnealing KOWOSB                   OK Failure 0.006s
+  ParticleSwarm      KOWOSB                   OK Failure 0.021s
+  LBFGS              LUKSAN12LS               OK Success 0.014s
+  ConjugateGradient  LUKSAN12LS               OK Success 0.046s
   NelderMead         LUKSAN12LS               OK Failure 0.019s
-  SimulatedAnnealing LUKSAN12LS               OK Failure 0.014s
-  ParticleSwarm      LUKSAN12LS               OK Failure 0.444s
+  SimulatedAnnealing LUKSAN12LS               OK Failure 0.015s
+  ParticleSwarm      LUKSAN12LS               OK Failure 0.431s
 250×7 DataFrame
  Row │ category       problem     solver              n_vars  secs         
 ret ⋯
@@ -308,41 +394,64 @@ ret ⋯
 Str ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ unconstrained  LUKSAN13LS  LBFGS                   98  2.18035      
+   1 │ unconstrained  LUKSAN13LS  LBFGS                   98  2.13335      
 Suc ⋯
-   2 │ unconstrained  LUKSAN13LS  ConjugateGradient       98  0.983371     
+   2 │ unconstrained  LUKSAN13LS  ConjugateGradient       98  0.934788     
 Suc
-   3 │ unconstrained  LUKSAN13LS  NelderMead              98  0.928608     
+   3 │ unconstrained  LUKSAN13LS  NelderMead              98  0.908375     
 Fai
-   4 │ unconstrained  LUKSAN13LS  SimulatedAnnealing      98  0.297269     
+   4 │ unconstrained  LUKSAN13LS  SimulatedAnnealing      98  0.316596     
 Fai
-   5 │ unconstrained  LUKSAN13LS  ParticleSwarm           98  1.41731      
+   5 │ unconstrained  LUKSAN13LS  ParticleSwarm           98  1.36983      
 Fai ⋯
-   6 │ unconstrained  JUDGE       LBFGS                    2  0.000397921  
+   6 │ unconstrained  JUDGE       LBFGS                    2  0.000378132  
 Suc
-   7 │ unconstrained  JUDGE       ConjugateGradient        2  0.000452995  
+   7 │ unconstrained  JUDGE       ConjugateGradient        2  0.000455856  
 Suc
-   8 │ unconstrained  JUDGE       NelderMead               2  0.00037384   
+   8 │ unconstrained  JUDGE       NelderMead               2  0.000365019  
 Suc
   ⋮  │       ⋮            ⋮               ⋮             ⋮          ⋮       
     ⋱
- 244 │ unconstrained  KOWOSB      SimulatedAnnealing       4  0.00501704   
+ 244 │ unconstrained  KOWOSB      SimulatedAnnealing       4  0.00564194   
 Fai ⋯
- 245 │ unconstrained  KOWOSB      ParticleSwarm            4  0.0146902    
+ 245 │ unconstrained  KOWOSB      ParticleSwarm            4  0.0214109    
 Fai
- 246 │ unconstrained  LUKSAN12LS  LBFGS                   98  0.012095     
+ 246 │ unconstrained  LUKSAN12LS  LBFGS                   98  0.013824     
 Suc
- 247 │ unconstrained  LUKSAN12LS  ConjugateGradient       98  0.022841     
+ 247 │ unconstrained  LUKSAN12LS  ConjugateGradient       98  0.0459261    
 Suc
- 248 │ unconstrained  LUKSAN12LS  NelderMead              98  0.0192921    
+ 248 │ unconstrained  LUKSAN12LS  NelderMead              98  0.0191522    
 Fai ⋯
- 249 │ unconstrained  LUKSAN12LS  SimulatedAnnealing      98  0.0140989    
+ 249 │ unconstrained  LUKSAN12LS  SimulatedAnnealing      98  0.014538     
 Fai
- 250 │ unconstrained  LUKSAN12LS  ParticleSwarm           98  0.443703     
+ 250 │ unconstrained  LUKSAN12LS  ParticleSwarm           98  0.430648     
 Fai
                                                   2 columns and 235 rows om
 itted
+```
 
+
+
+
+
+## Summary
+
+`summarize_results` groups rows by solver. `completion_rate` is the share of runs with
+`status == "OK"`, i.e. the solver returned at all. `success_rate` is the share of runs
+whose return code is in `SUCCESS_RETCODES` (`Success`, `Terminated`,
+`FirstOrderOptimal`). Runs that stopped at `MaxIters` or `MaxTime` count as completed but
+not successful. `median_secs` is the median of the per-run time described above over all
+rows for that solver, including unsuccessful ones. No solution-quality metric (objective
+value, gradient norm) is recorded yet; see #1857.
+
+```julia
+unc_summary = summarize_results(unc_results)
+
+plot_solve_times(unc_results, "CUTEst unconstrained Optimization.jl solve time")
+plot_success_rates(unc_summary, "CUTEst unconstrained Optimization.jl success rate")
+```
+
+```
 Return code distribution:
   Failure: 148
   Success: 102
@@ -367,8 +476,8 @@ itted
 ```
 
 
-![](figures/CUTEst_unconstrained_1_1.png)
-![](figures/CUTEst_unconstrained_1_2.png)
+![](figures/CUTEst_unconstrained_4_1.png)
+![](figures/CUTEst_unconstrained_4_2.png)
 
 
 ## Appendix
