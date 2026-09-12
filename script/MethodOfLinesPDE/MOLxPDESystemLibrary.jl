@@ -1,36 +1,37 @@
+
 using MethodOfLines, DomainSets, OrdinaryDiffEq, ModelingToolkit, DiffEqDevTools,
-    LinearAlgebra,
-    LinearSolve, Plots, RecursiveFactorization
+      LinearAlgebra,
+      LinearSolve, Plots, RecursiveFactorization
 using PDESystemLibrary
 
 solver = FBDF()
 
 
 function center_uniform_grid(ex, ivs, N)
-    return map(ivs) do x
+    map(ivs) do x
         xdomain = ex.domain[findfirst(d -> isequal(x, d.variables), ex.domain)]
         x => (DomainSets.supremum(xdomain.domain) - DomainSets.infimum(xdomain.domain)) /
-            (floor(N^(1 / length(ivs))) - 1)
+             (floor(N^(1 / length(ivs))) - 1)
     end
 end
 
 function edge_uniform_grid(ex, ivs, N)
-    return map(ivs) do x
+    map(ivs) do x
         xdomain = ex.domain[findfirst(d -> isequal(x, d.variables), ex.domain)]
         x => (DomainSets.supremum(xdomain.domain) - DomainSets.infimum(xdomain.domain)) /
-            (floor(N^(1 / length(ivs))))
+             (floor(N^(1 / length(ivs))))
     end
 end
 
 function center_chebygrid(ex, ivs, N)
-    return map(ivs) do x
+    map(ivs) do x
         xdomain = ex.domain[findfirst(d -> isequal(x, d.variables), ex.domain)]
         chebyspace(trunc(Int, N^(1 / length(ivs))), xdomain)
     end
 end
 
 function edge_chebygrid(ex, ivs, N)
-    return map(ivs) do x
+    map(ivs) do x
         xdomain = ex.domain[findfirst(d -> isequal(x, d.variables), ex.domain)]
         chebyspace(trunc(Int, N^(1 / length(ivs))) - 1, xdomain)
     end
@@ -39,37 +40,37 @@ end
 function uniformupwind1(ex, ivs, t, N)
     dxs = center_uniform_grid(ex, ivs, N)
 
-    return MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme())
+    MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme())
 end
 
 function uniformupwind2(ex, ivs, t, N)
     dxs = edge_uniform_grid(ex, ivs, N)
 
-    return MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme(), grid_align = edge_align)
+    MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme(), grid_align = edge_align)
 end
 
 function chebyupwind1(ex, ivs, t, N)
     dxs = center_chebygrid(ex, ivs, N)
 
-    return MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme())
+    MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme())
 end
 
 function chebyupwind2(ex, ivs, t, N)
     dxs = edge_chebygrid(ex, ivs, N)
 
-    return MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme(), grid_align = edge_align)
+    MOLFiniteDifference(dxs, t, advection_scheme = UpwindScheme(), grid_align = edge_align)
 end
 
 function discweno1(ex, ivs, t, N)
     dxs = center_uniform_grid(ex, ivs, N)
 
-    return MOLFiniteDifference(dxs, t, advection_scheme = WENOScheme())
+    MOLFiniteDifference(dxs, t, advection_scheme = WENOScheme())
 end
 
 function discweno2(ex, ivs, t, N)
     dxs = edge_uniform_grid(ex, ivs, N)
 
-    return MOLFiniteDifference(dxs, t, advection_scheme = WENOScheme(), grid_align = edge_align)
+    MOLFiniteDifference(dxs, t, advection_scheme = WENOScheme(), grid_align = edge_align)
 end
 
 
@@ -109,14 +110,13 @@ for ex in get_pdesys_with_tags(["Burgers"])
         println("Running $title")
         dummy_appxsol = [nothing for i in 1:length(probs)]
         abstols = 1.0 ./ 10.0 .^ (5:8)
-        reltols = 1.0 ./ 10.0 .^ (1:4)
+        reltols = 1.0 ./ 10.0 .^ (1:4);
         setups = [Dict(:alg => solver, :prob_choice => i) for i in 1:length(probs)]
 
-        wp = WorkPrecisionSet(
-            probs, abstols, reltols, setups; names = disc_names,
-            save_everystep = false, appxsol = dummy_appxsol, maxiters = Int(1.0e5),
-            numruns = 10, wrap = Val(false)
-        )
+        wp = WorkPrecisionSet(probs, abstols, reltols, setups; names = disc_names,
+            save_everystep = false, appxsol = dummy_appxsol, maxiters = Int(1e5),
+            numruns = 10, wrap = Val(false))
         display(plot(wp, title = title))
     end
 end
+
