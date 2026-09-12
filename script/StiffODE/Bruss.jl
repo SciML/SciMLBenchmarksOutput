@@ -408,7 +408,8 @@ setups = [
     Dict(:alg=>KenCarp4()),
     Dict(:alg=>KenCarp47()),
     # Dict(:alg=>QNDF()), # bad
-    Dict(:alg=>FBDF())
+    Dict(:alg=>FBDF()),
+    Dict(:alg=>NordsieckBDF())
 ]
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
     save_everystep = false, appxsol = test_sol, maxiters = Int(1e5), numruns = 10)
@@ -419,7 +420,9 @@ setups = [
     Dict(:alg=>KenCarp47(linsolve = KLUFactorization()), :prob_choice => 2),
     Dict(:alg=>KenCarp47(linsolve = KrylovJL_GMRES()), :prob_choice => 2),
     Dict(:alg=>FBDF(linsolve = KLUFactorization()), :prob_choice => 2),
+    Dict(:alg=>NordsieckBDF(linsolve = KLUFactorization()), :prob_choice => 2),
     Dict(:alg=>FBDF(linsolve = KrylovJL_GMRES()), :prob_choice => 2),
+    Dict(:alg=>NordsieckBDF(linsolve = KrylovJL_GMRES()), :prob_choice => 2),
     Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 2),
     Dict(
         :alg=>CVODE_BDF(linear_solver = :GMRES, prec = precilu, psetup = psetupilu, prec_side = 1),
@@ -428,7 +431,8 @@ setups = [
     Dict(:alg=>TSRKC3(), :prob_choice => 2),
 ]
 names = ["KenCarp47 KLU MTK", "KenCarp47 GMRES MTK",
-    "FBDF KLU MTK", "FBDF GMRES MTK",
+    "FBDF KLU MTK", "NordsieckBDF KLU MTK",
+    "FBDF GMRES MTK", "NordsieckBDF GMRES MTK",
     "CVODE MTK KLU", "CVODE iLU MTK GMRES",
     "ROCK4 MTK", "TSRKC3 MTK"
 ];
@@ -464,7 +468,9 @@ setups = [
     Dict(:alg=>KenCarp47(linsolve = KLUFactorization()), :prob_choice => 2),
     Dict(:alg=>KenCarp47(linsolve = KrylovJL_GMRES()), :prob_choice => 2),
     Dict(:alg=>FBDF(linsolve = KLUFactorization()), :prob_choice => 2),
+    Dict(:alg=>NordsieckBDF(linsolve = KLUFactorization()), :prob_choice => 2),
     Dict(:alg=>FBDF(linsolve = KrylovJL_GMRES()), :prob_choice => 2),
+    Dict(:alg=>NordsieckBDF(linsolve = KrylovJL_GMRES()), :prob_choice => 2),
     Dict(:alg=>Rodas5P(linsolve = KrylovJL_GMRES()), :prob_choice => 2),
     Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 2),
     Dict(
@@ -474,7 +480,8 @@ setups = [
     Dict(:alg=>TSRKC3(), :prob_choice => 2),
 ]
 names = ["KenCarp47 KLU MTK", "KenCarp47 GMRES MTK",
-    "FBDF KLU MTK", "FBDF GMRES MTK",
+    "FBDF KLU MTK", "NordsieckBDF KLU MTK",
+    "FBDF GMRES MTK", "NordsieckBDF GMRES MTK",
     "Rodas5P GMRES MTK",
     "CVODE MTK KLU", "CVODE iLU MTK GMRES",
     "ROCK4 MTK", "TSRKC3 MTK"

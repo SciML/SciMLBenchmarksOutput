@@ -1,7 +1,9 @@
 
 using OrdinaryDiffEq, ParameterizedFunctions, Plots, ODEInterfaceDiffEq, LSODA,
       DiffEqDevTools, Sundials
-using LinearAlgebra, StaticArrays, RecursiveFactorization, Polyester
+using OrdinaryDiffEqBDF, OrdinaryDiffEqExponentialRK, OrdinaryDiffEqExtrapolation, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK, OrdinaryDiffEqStabilizedRK
+using SciMLLogging
+using LinearAlgebra, StaticArrays, RecursiveFactorization, Polyester, OrdinaryDiffEqCore
 
 gr() #gr(fmt=:png)
 
@@ -61,6 +63,7 @@ setups = [Dict(:alg=>Rosenbrock23()),
     Dict(:alg=>Rosenbrock23(), :prob_choice => 2),
     Dict(:alg=>FBDF()),
     Dict(:alg=>QNDF()),
+    Dict(:alg=>NordsieckBDF()),
     Dict(:alg=>TRBDF2()),
     Dict(:alg=>CVODE_BDF()),
     Dict(:alg=>rodas()),
@@ -69,17 +72,17 @@ setups = [Dict(:alg=>Rosenbrock23()),
     Dict(:alg=>ROS34PW1a()),
     Dict(:alg=>lsoda())
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     save_everystep = false, appxsol = test_sol, maxiters = Int(1e5), numruns = 10)
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; dense = false, verbose = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; dense = false, verbose = SciMLLogging.None(),
     appxsol = test_sol, maxiters = Int(1e5), error_estimate = :l2)
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
 plot(wp)
 
@@ -93,17 +96,17 @@ setups = [Dict(:alg=>Rosenbrock23()),
     Dict(:alg=>KenCarp3()),
     # Dict(:alg=>SDIRK2()), # Removed because it's bad
     Dict(:alg=>radau())]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     save_everystep = false, appxsol = test_sol, maxiters = Int(1e5))
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; dense = false, verbose = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; dense = false, verbose = SciMLLogging.None(),
     appxsol = test_sol, maxiters = Int(1e5), error_estimate = :l2)
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
 plot(wp)
 
@@ -118,12 +121,12 @@ setups = [Dict(:alg=>Rosenbrock23()),
     Dict(:alg=>ARKODE()),
     Dict(:alg=>ARKODE(order = 3))]
 names = ["Rosenbrock23" "Rosenbrock23 Static" "KenCarp5" "KenCarp4" "KenCarp4 Static" "KenCarp3" "ARKODE5" "ARKODE4" "ARKODE3"]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     names = names, save_everystep = false, appxsol = test_sol, maxiters = Int(1e5))
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; dense = false, verbose = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; dense = false, verbose = SciMLLogging.None(),
     appxsol = test_sol, maxiters = Int(1e5), error_estimate = :l2)
 plot(wp)
 
@@ -137,10 +140,11 @@ setups = [Dict(:alg=>Rosenbrock23()),
     Dict(:alg=>ABDF2()),
     Dict(:alg=>FBDF()),
     Dict(:alg=>QNDF()),
+    Dict(:alg=>NordsieckBDF()),
     Dict(:alg=>Exprb43()),
     Dict(:alg=>Exprb32())
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     save_everystep = false, appxsol = test_sol, maxiters = Int(1e5))
 plot(wp)
 
@@ -151,6 +155,7 @@ reltols = 1.0 ./ 10.0 .^ (4:10)
 setups = [
     Dict(:alg=>FBDF()),
     Dict(:alg=>QNDF()),
+    Dict(:alg=>NordsieckBDF()),
     Dict(:alg=>Rodas4()),
     Dict(:alg=>Rodas4(), :prob_choice => 2),
     Dict(:alg=>CVODE_BDF()),
@@ -163,17 +168,17 @@ setups = [
     Dict(:alg=>lsoda()),
     Dict(:alg=>RadauIIA5())
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     save_everystep = false, appxsol = test_sol, maxiters = Int(1e5))
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(),
     dense = false, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :l2)
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
 plot(wp)
 
@@ -192,17 +197,17 @@ setups = [Dict(:alg=>GRK4A()),
     Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
     Dict(:alg=>ImplicitHairerWannerExtrapolation())
 ]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     save_everystep = false, appxsol = test_sol, maxiters = Int(1e5))
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(),
     dense = false, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :l2)
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
 plot(wp)
 
@@ -217,12 +222,12 @@ setups = [Dict(:alg=>Rodas5()),
     Dict(:alg=>ARKODE()),
     Dict(:alg=>ARKODE(order = 3))]
 names = ["Rodas5" "Rodas5 Static" "KenCarp5" "KenCarp4" "KenCarp4 Static" "KenCarp3" "ARKODE5" "ARKODE4" "ARKODE3"]
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     names = names, save_everystep = false, appxsol = test_sol, maxiters = Int(1e5))
 plot(wp)
 
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(),
     dense = false, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :l2)
 plot(wp)
 
@@ -253,6 +258,7 @@ setups = [
     Dict(:alg=>Rodas5P()),
     Dict(:alg=>Rodas5P(), :prob_choice => 2),
     Dict(:alg=>QNDF()),
+    Dict(:alg=>NordsieckBDF()),
     Dict(:alg=>lsoda()),
     Dict(:alg=>radau()),
     Dict(:alg=>seulex()),
@@ -268,12 +274,12 @@ setups = [
 ]
 
 solnames = ["CVODE_BDF", "KenCarp4", "Rodas4", "Rodas4 Static", "Rodas5P",
-    "Rodas5P Static", "QNDF", "lsoda", "radau", "seulex",
+    "Rodas5P Static", "QNDF", "NordsieckBDF", "lsoda", "radau", "seulex",
     "ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
     "ImplEulerBaryExtpl (threaded)", "ImplEulerBaryExtpl (non-threaded)",
     "ImplHWExtpl (threaded)", "ImplHWExtpl (non-threaded)"]
 
-wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = false, dense = false,
+wp = WorkPrecisionSet(probs, abstols, reltols, setups; verbose = SciMLLogging.None(), dense = false,
     names = solnames, save_everystep = false, appxsol = test_sol, maxiters = Int(1e5), numruns = 10)
 
 plot(wp, title = "Implicit Methods: HIRES", legend = :outertopleft, size = (1000, 500),

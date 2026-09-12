@@ -1,0 +1,296 @@
+
+using OrdinaryDiffEq, DiffEqDevTools, Sundials, Plots, ODEInterfaceDiffEq, LSODA, LinearSolve
+using OrdinaryDiffEqBDF, OrdinaryDiffEqExtrapolation, OrdinaryDiffEqFIRK, OrdinaryDiffEqRosenbrock, OrdinaryDiffEqSDIRK
+using OrdinaryDiffEqCore, Polyester
+using SciMLLogging
+using PreallocationTools
+gr()
+using LinearAlgebra, RecursiveFactorization
+
+# System parameters
+const N = 40  # Number of heated units
+
+# Physical parameters
+const Cu = N == 1 ? [2e7] : (ones(N) .+ range(0,1.348,length=N))*1e7  # Heat capacity of heated units
+const Cd = 2e6*N  # Heat capacity of distribution circuit
+const Gh = 200    # Thermal conductance of heating elements
+const Gu = 150    # Thermal conductance of heated units to the atmosphere
+const Qmax = N*3000  # Maximum power output of heat generation unit
+const Teps = 0.5     # Threshold of heated unit temperature controllers
+const Td0 = 343.15   # Set point of distribution circuit temperature
+const Tu0 = 293.15   # Heated unit temperature set point
+const Kp = Qmax/4    # Proportional gain of heat generation unit temperature controller
+const a = 50         # Gain of the hysteresis function
+const b = 15         # Slope of the saturation function at the origin
+
+# Helper functions for parameter and variable organization
+function set_up_params(p)
+    Cu   = @view p[1:N]
+    Cd   = p[N+1]
+    Gh   = p[N+2]
+    Gu   = p[N+3]
+    Qmax = p[N+4]
+    Teps = p[N+5]
+    Td0  = p[N+6]
+    Tu0  = p[N+7]
+    Kp   = p[N+8]
+    a    = p[N+9]
+    b    = p[N+10]
+
+    Cu, Cd, Gh, Gu, Qmax, Teps, Td0, Tu0, Kp, a, b
+end
+
+function set_up_vars(u)
+    Td = u[1]
+    Tu = @view u[2:N+1]
+    x  = @view u[N+2:2N+1]
+
+    Td, Tu, x
+end
+
+function combine_vars!(du, dTd, dTu, dx)
+    du[1] = dTd
+    du[2:N+1] .= dTu[1:N]
+    du[N+2:2N+1] .= dx[1:N]
+
+    nothing
+end
+
+# Hysteresis function for temperature controllers
+hist(x, p, e = 1) = -(x + 0.5)*(x - 0.5) * x * 1/(0.0474)*e + p
+
+# Saturation function for control outputs
+sat(x, xmin, xmax) = tanh(2*(x-xmin)/(xmax-xmin)-1) * (xmax-xmin)/2 + (xmax+xmin)/2
+
+# Main ODE function for the heating system
+function heating(du, u, (p, _Qh, _Que), t)
+    (Td, Tu, x) = set_up_vars(u)
+    (dTd, dTu, dx) = set_up_vars(du)
+    (Cu, Cd, Gh, Gu, Qmax, Teps, Td0, Tu0, Kp, a, b) = set_up_params(p)
+    Qh = PreallocationTools.get_tmp(_Qh, du)
+    Que = PreallocationTools.get_tmp(_Que, du)
+
+    # External temperature with daily variation
+    Text = 278.15 + 8*sin(2π*t/86400)
+
+    # Heat transfer from distribution to units (with control)
+    @inbounds for i in 1:length(Qh)
+        Qh[i] = Gh * (Td - Tu[i]) * (sat(b * x[i], -0.5, 0.5) + 0.5)
+    end
+
+    # Heat loss from units to environment
+    @inbounds for i in 1:length(Que)
+        Que[i] = Gu * (Tu[i] - Text)
+    end
+
+    # Heat input to distribution circuit (with saturation)
+    Qd = sat(Kp*(Td0 - Td), 0, Qmax)
+
+    # Temperature dynamics
+    dTd = (Qd - sum(Qh))/Cd
+    @inbounds for i in 1:length(dTu)
+        dTu[i] = (Qh[i] - Que[i]) / Cu[i]
+    end
+
+    # Controller states (hysteretic behavior)
+    @inbounds for i in 1:length(dx)
+        dx[i] = a * hist(x[i], Tu0 - Tu[i], Teps)
+    end
+
+    combine_vars!(du, dTd, dTu, dx)
+end
+
+# Initial conditions and parameters
+u0 = [Td0, fill(Tu0, N)..., fill(-0.5, N)...]
+Qh0 = DiffCache(zeros(N))
+Que0 = DiffCache(zeros(N))
+p = [Cu..., Cd, Gh, Gu, Qmax, Teps, Td0, Tu0, Kp, a, b]
+tspan = (0., 50_000.)
+
+# Pin BLAS to one thread for the whole file.
+#
+# This system is 81 dense states, so every solver step is an 81x81 factorization - far too
+# small for multithreaded BLAS to pay for itself, and large enough to trigger it. The CI
+# runners set JULIA_NUM_THREADS=auto, which is 128 on the amdci* EPYC boxes, and nothing in
+# this file pinned BLAS until the multithreading section near the end. The whole-folder job
+# on amdci3-1 (run 31719785340) entered this file's first WorkPrecisionSet at 10:10:49 on
+# 2026-08-14 and had still not left it 119.35 h later when GitHub cancelled the job at its
+# 5-day limit - while every individual solver call in that chunk returns in seconds when
+# measured on a quiet machine (rodas 8.3 s, radau 10.9-21.5 s, lsoda 4.2 s; the chunk as a
+# whole probes at 702 s). Thread oversubscription is the one environment difference we can
+# name and control, so pin it up front.
+LinearAlgebra.BLAS.set_num_threads(1)
+
+# Problem setup
+prob = ODEProblem(heating, u0, tspan, (p, Qh0, Que0))
+
+# Reference solution using a robust stiff solver
+sol = solve(prob, Rodas5P(), abstol=1e-12, reltol=1e-12)
+test_sol = TestSolution(sol)
+abstols = 1.0 ./ 10.0 .^ (4:11)
+reltols = 1.0 ./ 10.0 .^ (1:8);
+
+
+plot(sol, vars=1, title="Distribution Circuit Temperature")
+
+
+plot(sol, tspan=(0.0, 5000.0))
+
+
+abstols = 1.0 ./ 10.0 .^ (5:8)
+reltols = 1.0 ./ 10.0 .^ (1:4);
+setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>FBDF()),
+          Dict(:alg=>QNDF()),
+          Dict(:alg=>NordsieckBDF()),
+          Dict(:alg=>TRBDF2()),
+          Dict(:alg=>CVODE_BDF()),
+          Dict(:alg=>radau()),
+          Dict(:alg=>lsoda()),
+          Dict(:alg=>RadauIIA5()),
+          ]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
+
+
+setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>Kvaerno3()),
+          Dict(:alg=>CVODE_BDF()),
+          Dict(:alg=>KenCarp4()),
+          Dict(:alg=>TRBDF2()),
+          Dict(:alg=>KenCarp3()),
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>lsoda()),
+          Dict(:alg=>radau())]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
+
+
+setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>KenCarp5()),
+          Dict(:alg=>KenCarp4()),
+          Dict(:alg=>KenCarp3()),
+          Dict(:alg=>ARKODE(order=5)),
+          Dict(:alg=>ARKODE()),
+          Dict(:alg=>ARKODE(order=3))]
+names = ["Rosenbrock23" "KenCarp5" "KenCarp4" "KenCarp3" "ARKODE5" "ARKODE4" "ARKODE3"]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=SciMLLogging.None(),
+                      names=names,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
+
+
+setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>TRBDF2()),
+          Dict(:alg=>ImplicitEulerExtrapolation()),
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
+          Dict(:alg=>ABDF2()),
+          Dict(:alg=>FBDF()),
+          Dict(:alg=>QNDF()),
+          Dict(:alg=>NordsieckBDF()),
+]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
+plot(wp)
+
+
+setups = [Dict(:alg=>Rosenbrock23()),
+          Dict(:alg=>TRBDF2()),
+          Dict(:alg=>ImplicitEulerExtrapolation(linsolve = RFLUFactorization())),
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation(linsolve = RFLUFactorization())),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation(linsolve = RFLUFactorization())),
+          Dict(:alg=>ABDF2()),
+          Dict(:alg=>FBDF()),
+          Dict(:alg=>QNDF()),
+          Dict(:alg=>NordsieckBDF()),
+]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5))
+plot(wp)
+
+
+# The reference solution above is Rodas5P at abstol = reltol = 1e-12, so the sweep
+# stops at abstol 1e-11 / reltol 1e-8; tighter points measured the reference's own
+# error rather than the solver's, and were by far the most expensive in the file.
+abstols = 1.0 ./ 10.0 .^ (7:11)
+reltols = 1.0 ./ 10.0 .^ (4:8)
+
+setups = [
+          Dict(:alg=>FBDF()),
+          Dict(:alg=>QNDF()),
+          Dict(:alg=>NordsieckBDF()),
+          Dict(:alg=>Rodas4P()),
+          Dict(:alg=>CVODE_BDF()),
+          Dict(:alg=>ddebdf()),
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
+          Dict(:alg=>radau()),
+          Dict(:alg=>lsoda())
+          ]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups;verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
+
+
+setups = [Dict(:alg=>GRK4A()),
+          Dict(:alg=>Rodas5()),
+          Dict(:alg=>Kvaerno4()),
+          Dict(:alg=>Kvaerno5()),
+          Dict(:alg=>CVODE_BDF()),
+          Dict(:alg=>KenCarp4()),
+          Dict(:alg=>KenCarp5()),
+          Dict(:alg=>Rodas4()),
+          Dict(:alg=>Rodas5P()),
+          Dict(:alg=>radau()),
+          Dict(:alg=>ImplicitEulerExtrapolation(min_order = 3)),
+          Dict(:alg=>ImplicitEulerBarycentricExtrapolation()),
+          Dict(:alg=>ImplicitHairerWannerExtrapolation()),
+          ]
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=SciMLLogging.None(),
+                      save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+plot(wp)
+
+
+#Setting BLAS to one thread to measure gains (already pinned at the top of the file)
+LinearAlgebra.BLAS.set_num_threads(1)
+
+# Kept inside the accuracy of the 1e-12 reference solution (see note above).
+abstols = 1.0 ./ 10.0 .^ (9:11)
+reltols = 1.0 ./ 10.0 .^ (6:8)
+
+setups = [
+            Dict(:alg=>CVODE_BDF()),
+            Dict(:alg=>KenCarp4()),
+            Dict(:alg=>Rodas4()),
+            Dict(:alg=>Rodas5()),
+            Dict(:alg=>Rodas5P()),
+            Dict(:alg=>QNDF()),
+            Dict(:alg=>NordsieckBDF()),
+            Dict(:alg=>lsoda()),
+            Dict(:alg=>radau()),
+            Dict(:alg=>seulex()),
+            Dict(:alg=>ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = OrdinaryDiffEqCore.PolyesterThreads())),
+            Dict(:alg=>ImplicitEulerExtrapolation(min_order = 5, init_order = 3,threading = false)),
+            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = OrdinaryDiffEqCore.PolyesterThreads())),
+            Dict(:alg=>ImplicitEulerBarycentricExtrapolation(min_order = 5, threading = false)),
+            Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = OrdinaryDiffEqCore.PolyesterThreads())),
+            Dict(:alg=>ImplicitHairerWannerExtrapolation(threading = false)),
+            ]
+
+solnames = ["CVODE_BDF","KenCarp4","Rodas4","Rodas5","Rodas5P","QNDF","NordsieckBDF","lsoda","radau","seulex","ImplEulerExtpl (threaded)", "ImplEulerExtpl (non-threaded)",
+            "ImplEulerBaryExtpl (threaded)","ImplEulerBaryExtpl (non-threaded)","ImplHWExtpl (threaded)","ImplHWExtpl (non-threaded)"]
+
+wp = WorkPrecisionSet(prob,abstols,reltols,setups; verbose=SciMLLogging.None(),
+                    names = solnames,save_everystep=false,appxsol=test_sol,maxiters=Int(1e5),numruns=10)
+
+plot(wp, title = "Implicit Methods: Heating System",legend=:outertopleft,size = (1000,500),
+     xticks = 10.0 .^ (-15:1:1),
+     yticks = 10.0 .^ (-6:0.3:5),
+     bottom_margin= 5Plots.mm)
+
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder],WEAVE_ARGS[:file])
+
