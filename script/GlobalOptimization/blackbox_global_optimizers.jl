@@ -30,7 +30,7 @@ function solve_problem_timed(optimizer::BenchmarkSetup, tracked_f, D::Int, run_l
     else
         prob = OptimizationProblem(optf, u0)
     end
-    sol = solve(prob, method; maxiters = run_length)
+    sol = Optimization.solve(prob, method; maxiters = run_length)
     sol
 end
 
@@ -164,22 +164,42 @@ p
 
 
 results = Array{BBOB.BenchmarkResults}(undef, length(setup))
+algorithms = collect(keys(setup))
 
-Threads.@threads for (i, algo) in collect(enumerate(keys(setup)))
-    results[i] = run_bench(algo)
+Threads.@threads for i in eachindex(algorithms)
+    algo = algorithms[i]
+    if !startswith(algo, "Scipy")
+        results[i] = run_bench(algo)
+    end
+end
+
+# PythonCall can segfault when these SciPy solves run on different Julia threads.
+for (i, algo) in enumerate(algorithms)
+    if startswith(algo, "Scipy")
+        results[i] = run_bench(algo)
+    end
 end
 
 results
 
+
+# Define marker shapes and line styles for accessibility (colorblind-friendly)
+const MARKERS = [:circle, :diamond, :utriangle, :square, :star5, :dtriangle, :pentagon,
+    :hexagon, :cross, :xcross, :rtriangle, :ltriangle, :star4, :star8, :heptagon, :octagon,
+    :vline, :hline, :+, :x]
+const LINESTYLES = [:solid, :dash, :dot, :dashdot, :dashdotdot]
 
 labels = collect(keys(setup))
 idx = sortperm([b.success_rate[end] for b in results], rev = true)
 
 p = plot(xscale = :log10, legend = :outerright,
     size = (700, 350), margin = 10Plots.px, dpi = 200)
-for i in idx
+for (j, i) in enumerate(idx)
     plot!(results[i], label = labels[i], showribbon = false,
-        lw = 2.5, xlim = (1, 1e5), x = :run_length)
+        lw = 2.5, xlim = (1, 1e5), x = :run_length,
+        markershape = MARKERS[mod1(j, length(MARKERS))],
+        linestyle = LINESTYLES[mod1(j, length(LINESTYLES))],
+        markersize = 4, markerstrokewidth = 0)
 end
 p
 
@@ -205,8 +225,11 @@ idx = sortperm([cdfs[l][end] for l in labels], rev = true)
 p = plot(xscale = :log10, legend = :outerright,
     size = (700, 350), margin = 10Plots.px, dpi = 200,
     xlabel = "Wall time (s)", ylabel = "Success rate", ylim = (0, 1))
-for i in idx
-    plot!(time_thresholds, cdfs[labels[i]], label = labels[i], lw = 2.5)
+for (j, i) in enumerate(idx)
+    plot!(time_thresholds, cdfs[labels[i]], label = labels[i], lw = 2.5,
+        markershape = MARKERS[mod1(j, length(MARKERS))],
+        linestyle = LINESTYLES[mod1(j, length(LINESTYLES))],
+        markersize = 4, markerstrokewidth = 0)
 end
 p
 
@@ -232,11 +255,14 @@ idx = sortperm([b.distance_to_minimizer[end] for b in results], rev = false)
 
 p = plot(xscale = :log10, legend = :outerright,
     size = (900, 500), margin = 10Plots.px, ylim = (0, 5))
-for i in idx
+for (j, i) in enumerate(idx)
     plot!(
         results[i].run_length, results[i].distance_to_minimizer, label = labels[i],
         showribbon = false, lw = 2, xlim = (1, 1e5),
-        xlabel = "Iterations", ylabel = "Mean distance to minimum"
+        xlabel = "Iterations", ylabel = "Mean distance to minimum",
+        markershape = MARKERS[mod1(j, length(MARKERS))],
+        linestyle = LINESTYLES[mod1(j, length(LINESTYLES))],
+        markersize = 4, markerstrokewidth = 0
     )
 end
 p
