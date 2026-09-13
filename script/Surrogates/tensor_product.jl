@@ -131,3 +131,7 @@ times = ["XGBoost" => time_xgb, "Radial Basis" => time_radial, "Kriging" => time
 sorted_times = sort(times, by=x->x[2])
 pretty_table(hcat(first.(sorted_times), last.(sorted_times)), column_labels=["Model", "Time(s)"])
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
