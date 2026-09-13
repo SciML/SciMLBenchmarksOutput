@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Neural ODE Parameter Estimation with GPU-PSO · The SciML Benchmarks</title><meta name="title" content="Neural ODE Parameter Estimation with GPU-PSO · The SciML Benchmarks"/><meta property="og:title" content="Neural ODE Parameter Estimation with GPU-PSO · The SciML Benchmarks"/><meta property="twitter:title" content="Neural ODE Parameter Estimation with GPU-PSO · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/PSONeuralODE/neural_ode_gpu_pso/"/><meta property="twitter:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/PSONeuralODE/neural_ode_gpu_pso/"/><link rel="canonical" href="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/PSONeuralODE/neural_ode_gpu_pso/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/CacheReuse/">Cache Reuse — What the init/solve! API Buys You</a></li><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparseDirect/">Sparse Direct Solver Comparison — Factorization and Cached Re-solve</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers (GPU)</span><ul><li><a class="tocitem" href="../../LinearSolveGPU/DenseGPUOffload/">Dense GPU Offload — Where Does the GPU Start to Win?</a></li><li><a class="tocitem" href="../../LinearSolveGPU/SparseGPU/">Sparse Direct on GPU — CUDSS vs CPU Factorizations</a></li></ul></li><li><span class="tocitem">Distributed Linear Solvers (MPI)</span><ul><li><a class="tocitem" href="../../LinearSolveDistributed/SerialCrossover/">&quot;Jash</a></li><li><a class="tocitem" href="../../LinearSolveDistributed/SmokeTest/">&quot;Jash</a></li><li><a class="tocitem" href="../../LinearSolveDistributed/StrongScaling/">&quot;Jash</a></li><li><a class="tocitem" href="../../LinearSolveDistributed/WeakScaling/">&quot;Jash</a></li></ul></li><li><span class="tocitem">GPU Ensemble Differential Equations (DiffEqGPU.jl)</span><ul><li><a class="tocitem" href="../../DiffEqGPU/crn_sde/">Bacterial Stress CRN SDE Ensemble</a></li><li><a class="tocitem" href="../../DiffEqGPU/linear_sde/">Linear SDE Ensemble — GPUEM vs EnsembleThreads</a></li><li><a class="tocitem" href="../../DiffEqGPU/lorenz_ensemble/">Lorenz Ensemble — EnsembleGPUKernel, EnsembleGPUArray, CPU, JAX, PyTorch</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/homotopy_continuation/">Homotopy Continuation vs Direct Nonlinear Solvers</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Bruss Scaling PDE Differentaition Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator sparse AD benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion operator loop sparse AD benchmarks</a></li></ul></li><li><span class="tocitem">Turing.jl Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationTuring/TuringADTests/">Turing.jl Model AD Backend Comparison</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Beam/">Beam Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/EMEP/">EMEP Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/HeatingSystem_wpd/">Heating System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MedAkzoNobel/">Medical Akzo Nobel Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/RingModulator/">Ring Modulator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier, DAE format</a></li><li><a class="tocitem" href="../../DAE/andrews_mechanism/">Andrews&#39; Squeezing Mechanism DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/caraxis/">Car Axis DAE Benchmark</a></li><li><a class="tocitem" href="../../DAE/charge_pump/">Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/fekete/">Fekete Problem DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/two_bit_adder/">Two-Bit Adding Unit DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/water_tube/">Water Tube System DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/wheelset/">Wheelset DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/nonlinear_wpd/">Nonlinear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Perf</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/nls_fdm_wpd/">Nonlinear Schrödinger Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/nls_spectral_wpd/">Nonlinear Schrödinger Equation Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration function benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid argon benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon_long/">Liquid argon benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/HighOrderWeakSDEWorkPrecision/">High-Order Weak SDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/Enzyme_wpd/">RADAR5 Enzyme Kinetics Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/Hepatitis_wpd/">RADAR5 Hepatitis B Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/Oregonator_wpd/">RADAR5 Oregonator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/Robertson_wpd/">RADAR5 Robertson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/SIR_GillespieComparison/">SIR Model: JumpProcesses.jl vs Gillespie.jl External Library Comparison</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse model</a></li><li><a class="tocitem" href="../../HybridJumps/VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimization/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_bounded/">CUTEst Bounded Constrained Optimization.jl Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_quadratic/">CUTEst Quadratic Optimization.jl Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unbounded/">CUTEst Unbounded Constrained Optimization.jl Benchmarks</a></li><li><a class="tocitem" href="../../OptimizationCUTEst/CUTEst_unconstrained/">CUTEst Unconstrained Optimization.jl Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Neural ODE Parameter Estimation with GPU-PSO</span><ul><li class="is-active"><a class="tocitem" href>Neural ODE Parameter Estimation with GPU-PSO</a><ul class="internal"><li><a class="tocitem" href="#Protocol"><span>Protocol</span></a></li><li><a class="tocitem" href="#Setup"><span>Setup</span></a></li><li><a class="tocitem" href="#Problem"><span>Problem</span></a></li><li><a class="tocitem" href="#Optimizers"><span>Optimizers</span></a></li><li><a class="tocitem" href="#Runs"><span>Runs</span></a></li><li><a class="tocitem" href="#Results"><span>Results</span></a></li></ul></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li><li><a class="tocitem" href="../../MethodOfLinesPDE/MOLxPDESystemLibrary/">PDESystemLibrary.jl Work-Precision Diagrams with Various MethodOfLines.jl Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Neural Network Framework Benchmarks</span><ul><li><a class="tocitem" href="../../NeuralNetworks/simple_networks/">Simple Neural Networks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li><li><span class="tocitem">PSOGlobalOptimization</span><ul><li><a class="tocitem" href="../../PSOGlobalOptimization/pso_global_optimizers/">PSO Global Optimizer Benchmarks</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">Neural ODE Parameter Estimation with GPU-PSO</a></li><li class="is-active"><a href>Neural ODE Parameter Estimation with GPU-PSO</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>Neural ODE Parameter Estimation with GPU-PSO</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/PSONeuralODE/neural_ode_gpu_pso.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="Neural-ODE-Parameter-Estimation-with-GPU-PSO"><a class="docs-heading-anchor" href="#Neural-ODE-Parameter-Estimation-with-GPU-PSO">Neural ODE Parameter Estimation with GPU-PSO</a><a id="Neural-ODE-Parameter-Estimation-with-GPU-PSO-1"></a><a class="docs-heading-anchor-permalink" href="#Neural-ODE-Parameter-Estimation-with-GPU-PSO" title="Permalink"></a></h1><p>A 12-parameter SimpleChains network is fit to spiral ODE data (30 points on (0, 1.5)) so that the neural ODE <code>du/dt = NN(u, θ)</code> reproduces the data. The problem is the neural ODE experiment (Section 3.2) of the ParallelParticleSwarms.jl workshop paper (<a href="https://github.com/SciML/ParallelParticleSwarms.jl/pull/76">ParallelParticleSwarms.jl#76</a>), extended with the library&#39;s other PSO variants and compared at equal wall-clock time.</p><p>Six optimizers:</p><ul><li><strong>Gradient-based</strong>: <code>Adam</code> and <code>LBFGS</code>, trained through the ODE solve with <code>QuadratureAdjoint</code>.</li><li><strong>PSO</strong>: <code>SerialPSO</code> on the CPU; GPU-PSO through <code>parameter_estim_ode!</code> (all particles&#39; ODEs solved as one GPU ensemble); <code>SyncPSOKernel</code> and <code>HybridPSO-LBFGS</code> on a fixed-step RK4 loss that runs inside the GPU kernels. The last two share loss and swarm, so their difference isolates the L-BFGS polish.</li></ul><h2 id="Protocol"><a class="docs-heading-anchor" href="#Protocol">Protocol</a><a id="Protocol-1"></a><a class="docs-heading-anchor-permalink" href="#Protocol" title="Permalink"></a></h2><p>Every optimizer gets the same wall-clock budget, <code>BUDGET</code> seconds, enforced against the clock: Adam and L-BFGS stop through a callback, the GPU swarms are advanced in chunks with the best cost read back between chunks, and <code>HybridPSO</code> reserves its measured polish time out of the budget. <code>SerialPSO</code> has no resumable cache, so its iteration count is calibrated from a timed run instead. An optimizer that converges early keeps its early result.</p><p>Each optimizer runs from <code>length(SEEDS)</code> fresh starts. The table reports, per optimizer:</p><ul><li><strong>Common loss</strong> (median, best, worst over seeds): the returned parameters re-evaluated under one reference loss, <code>Tsit5</code> in <code>Float64</code> at <code>abstol = reltol = 1e-10</code>. This is the only column that ranks optimizers.</li><li><strong>Own objective</strong> of the median run: the optimizer&#39;s own solver at the parameters it returned. Every optimizer scores candidates with some ODE solver, and a swarm will exploit that solver&#39;s error if it can. The gap to the common loss is checked after the runs.</li><li><strong>Iterations</strong> completed and <strong>evaluations</strong> (ODE solves) performed, and the <strong>median time</strong>.</li></ul><p>All GPU swarms use 10,000 particles; <code>SerialPSO</code> uses 512. <code>HybridPSO</code> is built on the same <code>SyncPSOKernel</code> swarm, so its row is that swarm plus an L-BFGS polish of every particle, and the difference between the two rows is what the polish adds.</p><h2 id="Setup"><a class="docs-heading-anchor" href="#Setup">Setup</a><a id="Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Setup" title="Permalink"></a></h2><pre><code class="language-julia hljs">using Random; Random.seed!(0)
+using SimpleChains, StaticArrays, OrdinaryDiffEq, SciMLSensitivity
+using Optimization, OptimizationOptimisers, OptimizationOptimJL, Optimisers
+using ParallelParticleSwarms, DiffEqGPU, CUDA, KernelAbstractions, Adapt
+using Statistics, Printf, CairoMakie
+CairoMakie.activate!()
+
+const SciMLBase = Optimization.SciMLBase
+const BACKEND   = CUDABackend()
+CUDA.allowscalar(false)
+println(&quot;GPU: &quot;, CUDA.name(CUDA.device()))
+
+const NPARAMS  = 12
+const DATASIZE = 30
+const BOX      = 10.0f0
+const BUDGET   = 60.0           # seconds per optimizer per run
+const SEEDS    = 1:5
+
+const NPART_GPU    = 10_000     # GPU-PSO, SyncPSOKernel, HybridPSO-LBFGS
+const NPART_CPU    = 512        # SerialPSO
+const CHUNK_KERNEL = 50         # kernel-PSO iterations between clock checks
+const CHUNK_GPUPSO = 1          # GPU-PSO iterations between clock checks
+const CAL_ITERS    = 10         # SerialPSO calibration run
+const LOCAL_MAXITERS = 10       # Hybrid L-BFGS iterations per particle</code></pre><pre><code class="nohighlight hljs">GPU: Tesla V100-PCIE-32GB
+10</code></pre><h2 id="Problem"><a class="docs-heading-anchor" href="#Problem">Problem</a><a id="Problem-1"></a><a class="docs-heading-anchor-permalink" href="#Problem" title="Permalink"></a></h2><pre><code class="language-julia hljs">const U0    = @SVector Float32[2.0, 0.0]
+const TSPAN = (0.0f0, 1.5f0)
+tsteps = range(TSPAN[1], TSPAN[2], length = DATASIZE)
+
+trueODE(u, p, t) = (((u .^ 3)&#39; * @SMatrix Float32[-0.1 2.0; -2.0 -0.1])&#39;)
+data = Array(solve(ODEProblem(trueODE, U0, TSPAN), Tsit5(), saveat = tsteps))
+
+sc = SimpleChain(static(2), Activation(x -&gt; x .^ 3),
+    TurboDense{true}(tanh, static(2)), TurboDense{true}(identity, static(2)))
+p_nn     = Vector{Float32}(SimpleChains.init_params(sc; rng = Random.default_rng()))
+p_static = SVector{NPARAMS, Float32}(p_nn...)
+
+# Hand-written forward for the GPU paths and the reference: SimpleChains emits CPU
+# intrinsics that do not lower to PTX.
+function mlp(u, θ)
+    v  = u .^ 3
+    h1 = tanh(θ[1] * v[1] + θ[3] * v[2] + θ[5])
+    h2 = tanh(θ[2] * v[1] + θ[4] * v[2] + θ[6])
+    typeof(v)(θ[7] * h1 + θ[9] * h2 + θ[11], θ[8] * h1 + θ[10] * h2 + θ[12])
+end
+for _ in 1:8
+    u = @SVector rand(Float32, 2)
+    @assert sc(u, p_static) ≈ mlp(u, p_static)
+end
+
+# Training loss (Adam, L-BFGS, SerialPSO): adaptive Tsit5 in Float32, same tolerances as GPU-PSO.
+nn_ode(u, p, t) = convert(typeof(u), sc(u, p))
+sprob_nn = ODEProblem(nn_ode, U0, TSPAN)
+predict(p) = Array(solve(sprob_nn, Tsit5(); p, saveat = tsteps, abstol = 1.0f-6, reltol = 1.0f-5,
+    sensealg = QuadratureAdjoint(autojacvec = ZygoteVJP())))
+loss_tsit5(p) = sum(abs2, data .- predict(p))
+
+asvec(u) = u isa AbstractVector ? u : u[]
+
+# Reference loss: Float64, tight tolerances. Scores only; nothing trains on it.
+const DATA64   = Float64.(data)
+const TSTEPS64 = Float64.(tsteps)
+ref_ode(u, p, t) = mlp(u, p)
+ref_prob = ODEProblem{false}(ref_ode, Float64.(U0), Float64.(TSPAN), SVector{NPARAMS, Float64}(p_nn...))
+function ref_solve(u)
+    p = SVector{NPARAMS, Float64}(Float64.(asvec(u))...)
+    Array(solve(ref_prob, Tsit5(); p, saveat = TSTEPS64, abstol = 1e-10, reltol = 1e-10))
+end
+common(u) = sum(abs2, DATA64 .- ref_solve(u))
+
+lb_s = @SVector fill(-BOX, NPARAMS)
+ub_s = @SVector fill(BOX, NPARAMS)
+
+@printf &quot;Training loss at start: %.4f   Reference loss at start: %.4f\n&quot; loss_tsit5(p_static) common(p_static)</code></pre><pre><code class="nohighlight hljs">Training loss at start: 164.2561   Reference loss at start: 164.2560</code></pre><h2 id="Optimizers"><a class="docs-heading-anchor" href="#Optimizers">Optimizers</a><a id="Optimizers-1"></a><a class="docs-heading-anchor-permalink" href="#Optimizers" title="Permalink"></a></h2><p>Every runner takes a deadline and returns <code>(; u, own, iters, evals)</code>.</p><h3 id="Gradient-based"><a class="docs-heading-anchor" href="#Gradient-based">Gradient-based</a><a id="Gradient-based-1"></a><a class="docs-heading-anchor-permalink" href="#Gradient-based" title="Permalink"></a></h3><pre><code class="language-julia hljs">optf     = OptimizationFunction((x, p) -&gt; loss_tsit5(x), Optimization.AutoZygote())
+optprob  = OptimizationProblem(optf, p_nn)
+moptprob = OptimizationProblem(optf, MArray{Tuple{NPARAMS}}(p_nn...))
+
+function run_gradient(prob, opt, deadline; evals)
+    n  = Ref(0)
+    cb = (state, l) -&gt; (n[] += 1; time() &gt;= deadline)
+    sol = solve(prob, opt; maxiters = 10^7, callback = cb)
+    u = asvec(sol.u)
+    (; u, own = Float64(loss_tsit5(u)), iters = n[], evals = evals(sol, n[]))
+end
+run_adam(deadline)  = run_gradient(optprob, Adam(0.05), deadline; evals = (sol, n) -&gt; n)
+run_lbfgs(deadline) = run_gradient(moptprob, LBFGS(), deadline; evals = (sol, n) -&gt; sol.original.f_calls)</code></pre><pre><code class="nohighlight hljs">run_lbfgs (generic function with 1 method)</code></pre><h3 id="SerialPSO"><a class="docs-heading-anchor" href="#SerialPSO">SerialPSO</a><a id="SerialPSO-1"></a><a class="docs-heading-anchor-permalink" href="#SerialPSO" title="Permalink"></a></h3><pre><code class="language-julia hljs">const NEVALS = Ref(0)
+counted_loss(x, p) = (NEVALS[] += 1; loss_tsit5(x))
+s_prob = OptimizationProblem{false}(OptimizationFunction{false}(counted_loss, SciMLBase.NoAD()),
+    p_static, nothing; lb = lb_s, ub = ub_s)
+
+serial_solve(m) = solve(s_prob, ParallelParticleSwarms.SerialPSO(NPART_CPU); maxiters = m)
+
+const SERIAL_ITERS = Ref(1)                     # set in warm-up
+function run_serial(deadline)
+    NEVALS[] = 0
+    sol = serial_solve(SERIAL_ITERS[])
+    (; u = asvec(sol.u), own = Float64(first(sol.objective)), iters = SERIAL_ITERS[], evals = NEVALS[])
+end</code></pre><pre><code class="nohighlight hljs">run_serial (generic function with 1 method)</code></pre><h3 id="GPU-PSO-through-parameter_estim_ode!-(the-paper&#39;s-method)"><a class="docs-heading-anchor" href="#GPU-PSO-through-parameter_estim_ode!-(the-paper&#39;s-method)">GPU-PSO through <code>parameter_estim_ode!</code> (the paper&#39;s method)</a><a id="GPU-PSO-through-parameter_estim_ode!-(the-paper&#39;s-method)-1"></a><a class="docs-heading-anchor-permalink" href="#GPU-PSO-through-parameter_estim_ode!-(the-paper&#39;s-method)" title="Permalink"></a></h3><p>Each iteration solves all particles&#39; ODEs as one GPU ensemble (adaptive <code>GPUTsit5</code>) and reduces the loss on device.</p><pre><code class="language-julia hljs">nn_fn(u, p, t) = mlp(u, p)
+prob_nn  = ODEProblem{false}(nn_fn, U0, TSPAN, p_static)
+soptprob = OptimizationProblem((u, p) -&gt; eltype(u)(Inf), p_static, nothing; lb = lb_s, ub = ub_s)  # box only
+gpu_data = adapt(BACKEND, [SVector{2, Float32}(@view data[:, i]) for i in 1:DATASIZE])
+improb   = DiffEqGPU.make_prob_compatible(prob_nn)
+prob_func(prob, particle) = remake(prob, p = particle.position)
+
+function make_cache()
+    gbest, particles = ParallelParticleSwarms.init_particles(
+        soptprob, ParallelParticleSwarms.ParallelPSOKernel(NPART_GPU), typeof(p_static))
+    (; losses = adapt(BACKEND, ones(Float32, NPART_GPU)), gpu_particles = adapt(BACKEND, particles),
+       gpu_data, gbest, probs = adapt(BACKEND, fill(improb, NPART_GPU)))
+end
+
+function run_gpupso(deadline)
+    cache, iters = make_cache(), 0
+    gbest = cache.gbest
+    while time() &lt; deadline
+        gbest = ParallelParticleSwarms.parameter_estim_ode!(prob_nn, cache, lb_s, ub_s, Val(true);
+            saveat = tsteps, dt = 0.01f0, abstol = 1.0f-6, reltol = 1.0f-5, maxiters = CHUNK_GPUPSO, prob_func)
+        cache = (; cache..., gbest)
+        iters += CHUNK_GPUPSO
+    end
+    (; u = gbest.position, own = Float64(gbest.cost), iters, evals = iters * NPART_GPU)
+end</code></pre><pre><code class="nohighlight hljs">run_gpupso (generic function with 1 method)</code></pre><h3 id="SyncPSOKernel-and-HybridPSO-LBFGS-on-a-kernel-compatible-loss"><a class="docs-heading-anchor" href="#SyncPSOKernel-and-HybridPSO-LBFGS-on-a-kernel-compatible-loss"><code>SyncPSOKernel</code> and <code>HybridPSO-LBFGS</code> on a kernel-compatible loss</a><a id="SyncPSOKernel-and-HybridPSO-LBFGS-on-a-kernel-compatible-loss-1"></a><a class="docs-heading-anchor-permalink" href="#SyncPSOKernel-and-HybridPSO-LBFGS-on-a-kernel-compatible-loss" title="Permalink"></a></h3><p>These evaluate the objective inside GPU kernels, so the ODE solve is a fixed-step RK4 with <code>NSUB</code> substeps per data interval. Fixed-step error grows with |θ| and a swarm will exploit it, so <code>NSUB</code> is set high and the agreement check after the runs validates it. <code>HybridPSO</code> polishes every particle with L-BFGS after the swarm.</p><pre><code class="language-julia hljs">@inline function rk4(u, θ, h)
+    k1 = mlp(u, θ);                k2 = mlp(u .+ h / 2 .* k1, θ)
+    k3 = mlp(u .+ h / 2 .* k2, θ); k4 = mlp(u .+ h .* k3, θ)
+    u .+ h / 6 .* (k1 .+ 2 .* k2 .+ 2 .* k3 .+ k4)
+end
+
+const NSUB = 32
+
+struct RK4Loss{U, D, T}   # constants live here; `p = nothing` is required by the in-kernel L-BFGS
+    u0::U; data::D; h::T
+end
+function (l::RK4Loss)(θ, p)
+    u = SVector{2, eltype(θ)}(l.u0)
+    loss = sum(abs2, u .- l.data[1])
+    for i in 2:DATASIZE
+        for _ in 1:NSUB; u = rk4(u, θ, l.h); end
+        loss += sum(abs2, u .- l.data[i])
+    end
+    loss
+end
+
+loss_rk4 = RK4Loss(U0, ntuple(i -&gt; SVector{2, Float32}(data[:, i]), DATASIZE), Float32(step(tsteps)) / NSUB)
+k_prob   = OptimizationProblem{false}(OptimizationFunction{false}(loss_rk4, SciMLBase.NoAD()),
+    p_static, nothing; lb = lb_s, ub = ub_s)
+
+sync_opt   = ParallelParticleSwarms.ParallelSyncPSOKernel(NPART_GPU; backend = BACKEND)
+hybrid_opt = ParallelParticleSwarms.HybridPSO(; backend = BACKEND, pso = sync_opt)
+
+function chunked!(cache, deadline)            # advance a kernel-PSO cache until the deadline
+    iters, sol = 0, nothing
+    while time() &lt; deadline
+        sol = SciMLBase.solve!(cache; maxiters = CHUNK_KERNEL)
+        cache.gbest = ParallelParticleSwarms.SPSOGBest(sol.u, first(sol.objective))
+        iters += CHUNK_KERNEL
+    end
+    sol, iters
+end
+result(sol, iters, evals) = (; u = asvec(sol.u), own = Float64(first(sol.objective)), iters, evals)
+
+function run_sync(deadline)
+    sol, iters = chunked!(SciMLBase.init(k_prob, sync_opt), deadline)
+    result(sol, iters, iters * NPART_GPU)
+end
+
+polish(cache) = SciMLBase.solve!(cache; maxiters = 0, local_maxiters = LOCAL_MAXITERS, abstol = 1.0f-8, reltol = 1.0f-8)
+const POLISH_TIME = Ref(0.0)                  # set in warm-up
+function run_hybrid(deadline)
+    cache = SciMLBase.init(k_prob, hybrid_opt)
+    _, iters = chunked!(cache.pso_cache, deadline - POLISH_TIME[])
+    result(polish(cache), iters, missing)
+end</code></pre><pre><code class="nohighlight hljs">run_hybrid (generic function with 1 method)</code></pre><h2 id="Runs"><a class="docs-heading-anchor" href="#Runs">Runs</a><a id="Runs-1"></a><a class="docs-heading-anchor-permalink" href="#Runs" title="Permalink"></a></h2><p>One warm-up per optimizer absorbs compilation; for <code>HybridPSO</code> it runs a full-budget swarm and times the polish on it, for <code>SerialPSO</code> it calibrates the iteration count. Each seed then gets one run against the budget; the recorded solution is the median-loss run.</p><pre><code class="language-julia hljs">results = Dict{String, Any}()
+
+function warmup!(name, run)
+    Random.seed!(0)
+    if name == &quot;HybridPSO-LBFGS&quot;
+        cache = SciMLBase.init(k_prob, hybrid_opt)
+        chunked!(cache.pso_cache, time() + BUDGET)    # full-length swarm, as in the real runs
+        polish(cache)
+        POLISH_TIME[] = @elapsed polish(cache)
+    elseif name == &quot;SerialPSO&quot;
+        serial_solve(CAL_ITERS)
+        t = @elapsed serial_solve(CAL_ITERS)
+        m = max(1, round(Int, BUDGET / (t / CAL_ITERS)))
+        t = @elapsed serial_solve(m)
+        SERIAL_ITERS[] = max(1, round(Int, m * BUDGET / t))
+    else
+        run(time() + 2.0)
+    end
+end
+
+function record!(name, run)
+    warmup!(name, run)
+    rs, losses, times = [], Float64[], Float64[]
+    for s in SEEDS
+        Random.seed!(s)
+        t = @elapsed r = run(time() + BUDGET)
+        push!(rs, r); push!(losses, common(r.u)); push!(times, t)
+    end
+    i = sortperm(losses)[(length(losses) + 1) ÷ 2]
+    results[name] = (; rs[i]..., losses, time = median(times))
+end
+
+record!(&quot;Adam&quot;,            run_adam)
+record!(&quot;L-BFGS&quot;,          run_lbfgs)
+record!(&quot;SerialPSO&quot;,       run_serial)
+record!(&quot;GPU-PSO&quot;,         run_gpupso)
+record!(&quot;SyncPSOKernel&quot;,   run_sync)
+record!(&quot;HybridPSO-LBFGS&quot;, run_hybrid)
+nothing</code></pre><h2 id="Results"><a class="docs-heading-anchor" href="#Results">Results</a><a id="Results-1"></a><a class="docs-heading-anchor-permalink" href="#Results" title="Permalink"></a></h2><pre><code class="language-julia hljs">const ORDER = [&quot;Adam&quot;, &quot;L-BFGS&quot;, &quot;SerialPSO&quot;, &quot;GPU-PSO&quot;, &quot;SyncPSOKernel&quot;, &quot;HybridPSO-LBFGS&quot;]
+
+@printf &quot;budget per run: %.0f s, %d seeds; particles: GPU %d, Serial %d\n\n&quot; BUDGET length(SEEDS) NPART_GPU NPART_CPU
+println(rpad(&quot;optimizer&quot;, 16), lpad(&quot;median&quot;, 9), lpad(&quot;best&quot;, 9), lpad(&quot;worst&quot;, 9),
+        lpad(&quot;own&quot;, 9), lpad(&quot;iters&quot;, 7), lpad(&quot;evals&quot;, 10), lpad(&quot;time(s)&quot;, 8))
+for name in ORDER
+    r  = results[name]
+    ev = ismissing(r.evals) ? &quot;n/a&quot; : string(r.evals)
+    @printf &quot;%-16s%9.4f%9.4f%9.4f%9.4f%7d%10s%8.1f\n&quot; name median(r.losses) minimum(r.losses) maximum(r.losses) r.own r.iters ev r.time
+end</code></pre><pre><code class="nohighlight hljs">budget per run: 60 s, 5 seeds; particles: GPU 10000, Serial 512
+
+optimizer          median     best    worst      own  iters     evals time(
+s)
+Adam               4.6750   4.6712   4.7060   4.6731   1442      1442    60
+.0
+L-BFGS            15.4291  15.4291  15.4291  15.4291    159       444    42
+.4
+SerialPSO          2.6325   1.8125   5.2911   2.6323    119     61443    57
+.8
+GPU-PSO            1.5930   1.0584   3.9316   1.4096    118   1180000    60
+.6
+SyncPSOKernel      1.4267   0.5482   1.4444   1.4266  59700 597000000    60
+.0
+HybridPSO-LBFGS    1.4267   1.4041   1.4267   1.4266  56400       n/a    60
+.0</code></pre><h3 id="Integrator-agreement"><a class="docs-heading-anchor" href="#Integrator-agreement">Integrator agreement</a><a id="Integrator-agreement-1"></a><a class="docs-heading-anchor-permalink" href="#Integrator-agreement" title="Permalink"></a></h3><p>Own objective vs. reference loss at the median run&#39;s returned parameters. A gap above 10% means the optimizer was minimizing solver error rather than the ODE fit.</p><pre><code class="language-julia hljs">const GAP_TOL = 0.10
+println(rpad(&quot;optimizer&quot;, 18), lpad(&quot;own&quot;, 12), lpad(&quot;reference&quot;, 12), lpad(&quot;rel. gap&quot;, 10))
+for name in ORDER
+    r   = results[name]
+    ref = common(r.u)
+    gap = abs(r.own - ref) / ref
+    @printf &quot;%-18s%12.4f%12.4f%9.1f%%%s\n&quot; name r.own ref 100gap (gap &gt; GAP_TOL ? &quot;   &lt;-- exceeds tolerance&quot; : &quot;&quot;)
+end</code></pre><pre><code class="nohighlight hljs">optimizer                  own   reference  rel. gap
+Adam                    4.6731      4.6750      0.0%
+L-BFGS                 15.4291     15.4291      0.0%
+SerialPSO               2.6323      2.6325      0.0%
+GPU-PSO                 1.4096      1.5930     11.5%   &lt;-- exceeds toleranc
+e
+SyncPSOKernel           1.4266      1.4267      0.0%
+HybridPSO-LBFGS         1.4266      1.4267      0.0%</code></pre><h3 id="Fitted-trajectories"><a class="docs-heading-anchor" href="#Fitted-trajectories">Fitted trajectories</a><a id="Fitted-trajectories-1"></a><a class="docs-heading-anchor-permalink" href="#Fitted-trajectories" title="Permalink"></a></h3><pre><code class="language-julia hljs">fig = Figure(size = (1000, 480))
+ax  = Axis(fig[1, 1]; xlabel = &quot;t&quot;, ylabel = &quot;u₁(t)&quot;, title = @sprintf(&quot;Fit after %.0f s of wall clock&quot;, BUDGET))
+scatter!(ax, tsteps, data[1, :]; label = &quot;data&quot;, color = :black, markersize = 12)
+markers = [:circle, :rect, :utriangle, :diamond, :star5, :xcross]
+for (i, name) in enumerate(ORDER)
+    scatterlines!(ax, tsteps, ref_solve(results[name].u)[1, :]; label = name,
+        marker = markers[i], markersize = 8, linewidth = 1.5)
+end
+Legend(fig[1, 2], ax; framevisible = false)
+fig</code></pre><p><img src="../figures/neural_ode_gpu_pso_10_1.png" alt/></p><h3 id="Common-loss-across-seeds"><a class="docs-heading-anchor" href="#Common-loss-across-seeds">Common loss across seeds</a><a id="Common-loss-across-seeds-1"></a><a class="docs-heading-anchor-permalink" href="#Common-loss-across-seeds" title="Permalink"></a></h3><pre><code class="language-julia hljs">fig = Figure(size = (800, 480))
+ax  = Axis(fig[1, 1]; yscale = log10, ylabel = &quot;Common loss (reference Tsit5, Float64)&quot;,
+    xticks = (1:length(ORDER), ORDER), xticklabelrotation = pi / 6)
+for (i, name) in enumerate(ORDER)
+    l = results[name].losses
+    scatter!(ax, fill(i, length(l)), max.(l, 1e-8); marker = markers[i], markersize = 14)
+end
+fig</code></pre><p><img src="../figures/neural_ode_gpu_pso_11_1.png" alt/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">« Lotka-Volterra Parameter Estimation Benchmarks</a><a class="docs-footer-nextpage" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">Fitzhugh-Nagumo Bayesian Parameter Estimation Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Sunday 13 September 2026 03:22">Sunday 13 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
