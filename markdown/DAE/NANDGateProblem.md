@@ -53,7 +53,7 @@ const BETA_ENH = 1.748e-3
 ```julia
 function pulse(t, t_start, v_low, t_rise, v_high, t_high, t_fall, t_period)
     t_mod = mod(t, t_period)
-
+    
     if t_mod < t_start
         return v_low
     elseif t_mod < t_start + t_rise
@@ -186,26 +186,26 @@ function nand_rhs!(f, y, p, t)
     v2 = V2(t)
     v1d = V1_derivative(t)
     v2d = V2_derivative(t)
-
+    
     y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14 = y
-
+    
     f[1] = -(y1 - y5) / RGS - ids(1, y2 - y1, y5 - y1, y3 - y5, y5 - y2, y4 - VDD)
     f[2] = -(y2 - VDD) / RGD + ids(1, y2 - y1, y5 - y1, y3 - y5, y5 - y2, y4 - VDD)
     f[3] = -(y3 - VBB) / RBS + ibs(y3 - y5)
     f[4] = -(y4 - VBB) / RBD + ibd(y4 - VDD)
     f[5] = -(y5 - y1) / RGS - ibs(y3 - y5) - (y5 - y7) / RGD - ibd(y9 - y5)
-
+    
     f[6] = CGS * v1d - (y6 - y10) / RGS - ids(2, y7 - y6, v1 - y6, y8 - y10, v1 - y7, y9 - y5)
     f[7] = CGD * v1d - (y7 - y5) / RGD + ids(2, y7 - y6, v1 - y6, y8 - y10, v1 - y7, y9 - y5)
     f[8] = -(y8 - VBB) / RBS + ibs(y8 - y10)
     f[9] = -(y9 - VBB) / RBD + ibd(y9 - y5)
     f[10] = -(y10 - y6) / RGS - ibs(y8 - y10) - (y10 - y12) / RGD - ibd(y14 - y10)
-
+    
     f[11] = CGS * v2d - y11 / RGS - ids(2, y12 - y11, v2 - y11, y13, v2 - y12, y14 - y10)
     f[12] = CGD * v2d - (y12 - y10) / RGD + ids(2, y12 - y11, v2 - y11, y13, v2 - y12, y14 - y10)
     f[13] = -(y13 - VBB) / RBS + ibs(y13)
     f[14] = -(y14 - VBB) / RBD + ibd(y14 - y10)
-
+    
     return nothing
 end
 
@@ -241,33 +241,33 @@ function nand_dae!(out, du, u, p, t)
     v2 = V2(t)
     v1d = V1_derivative(t)
     v2d = V2_derivative(t)
-
+    
     y1, y2, y3, y4, y5, y6, y7, y8, y9, y10, y11, y12, y13, y14 = u
     dy1, dy2, dy3, dy4, dy5, dy6, dy7, dy8, dy9, dy10, dy11, dy12, dy13, dy14 = du
-
+    
     # Differential equations: M*dy/dt - f = 0
     # Convert from mass matrix form: M*dy/dt = f  =>  M*dy/dt - f = 0
     out[1] = CGS * dy1 - (-(y1 - y5) / RGS - ids(1, y2 - y1, y5 - y1, y3 - y5, y5 - y2, y4 - VDD))
     out[2] = CGD * dy2 - (-(y2 - VDD) / RGD + ids(1, y2 - y1, y5 - y1, y3 - y5, y5 - y2, y4 - VDD))
     out[3] = CBS * dy3 - (-(y3 - VBB) / RBS + ibs(y3 - y5))
     out[4] = CBD * dy4 - (-(y4 - VBB) / RBD + ibd(y4 - VDD))
-
+    
     # Algebraic equations: g(y) = 0
     out[5] = -(y5 - y1) / RGS - ibs(y3 - y5) - (y5 - y7) / RGD - ibd(y9 - y5)
-
+    
     out[6] = CGS * dy6 - (CGS * v1d - (y6 - y10) / RGS - ids(2, y7 - y6, v1 - y6, y8 - y10, v1 - y7, y9 - y5))
     out[7] = CGD * dy7 - (CGD * v1d - (y7 - y5) / RGD + ids(2, y7 - y6, v1 - y6, y8 - y10, v1 - y7, y9 - y5))
     out[8] = CBS * dy8 - (-(y8 - VBB) / RBS + ibs(y8 - y10))
     out[9] = CBD * dy9 - (-(y9 - VBB) / RBD + ibd(y9 - y5))
-
+    
     # Algebraic equation: g(y) = 0
     out[10] = -(y10 - y6) / RGS - ibs(y8 - y10) - (y10 - y12) / RGD - ibd(y14 - y10)
-
+    
     out[11] = CGS * dy11 - (CGS * v2d - y11 / RGS - ids(2, y12 - y11, v2 - y11, y13, v2 - y12, y14 - y10))
     out[12] = CGD * dy12 - (CGD * v2d - (y12 - y10) / RGD + ids(2, y12 - y11, v2 - y11, y13, v2 - y12, y14 - y10))
     out[13] = CBS * dy13 - (-(y13 - VBB) / RBS + ibs(y13))
     out[14] = CBD * dy14 - (-(y14 - VBB) / RBD + ibd(y14 - y10))
-
+    
     return nothing
 end
 
@@ -302,14 +302,14 @@ oat64}}}}:
 ## Generate Reference Solution and Plot
 
 ```julia
-plot(ref_sol, title="NAND Gate Circuit - Node Potentials (Mass Matrix)",
+plot(ref_sol, title="NAND Gate Circuit - Node Potentials (Mass Matrix)", 
      xlabel="Time", ylabel="Voltage (V)", legend=:outertopright)
 ```
 
 ![](figures/NANDGateProblem_6_1.png)
 
 ```julia
-plot(dae_ref_sol, title="NAND Gate Circuit - Node Potentials (DAE)",
+plot(dae_ref_sol, title="NAND Gate Circuit - Node Potentials (DAE)", 
      xlabel="Time", ylabel="Voltage (V)", legend=:outertopright)
 ```
 
@@ -341,11 +341,29 @@ setups = [
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-                      save_everystep=false, appxsol=refs,
+                      save_everystep=false, appxsol=refs, 
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Work-Precision (High Tolerances)")
 ```
+
+```
+DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.6002616966073D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.3372659064979D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.2002280781277D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
+```
+
 
 ![](figures/NANDGateProblem_8_1.png)
 
@@ -364,11 +382,29 @@ setups = [
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-                      save_everystep=false, appxsol=refs,
+                      save_everystep=false, appxsol=refs, 
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Work-Precision (Medium Tolerances)")
 ```
+
+```
+DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.6002616966073D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.3372659064979D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.2002280781277D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
+```
+
 
 ![](figures/NANDGateProblem_9_1.png)
 
@@ -392,7 +428,7 @@ setups = [
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate=:l2,
-                      save_everystep=false, appxsol=refs,
+                      save_everystep=false, appxsol=refs, 
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Timeseries Errors (High Tolerances)")
@@ -415,11 +451,29 @@ setups = [
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate=:l2,
-                      save_everystep=false, appxsol=refs,
+                      save_everystep=false, appxsol=refs, 
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Timeseries Errors (Medium Tolerances)")
 ```
+
+```
+DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.6002616966073D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.3372659064979D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.2002280781277D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
+```
+
 
 ![](figures/NANDGateProblem_11_1.png)
 
@@ -446,119 +500,85 @@ setups = [
 ]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-                      save_everystep=false, appxsol=refs,
+                      save_everystep=false, appxsol=refs, 
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Work-Precision (Low Tolerances)")
 ```
 
+```
+DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.2001247231433D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.1467053150785D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.9999970978524D+01
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.5000417061503D+01
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.4184044592402D+01
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.2682405091706D+01
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
+```
+
+
 ![](figures/NANDGateProblem_12_1.png)
 
 ```julia
 wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate=:l2,
-                      save_everystep=false, appxsol=refs,
+                      save_everystep=false, appxsol=refs, 
                       maxiters=Int(1e5), numruns=10,
                       tstops=0.0:5.0:80.0)
 plot(wp, title="NAND Gate DAE - Timeseries Errors (Low Tolerances)")
 ```
 
 ```
-DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.6002616966073D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.3372659064979D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.2002280781277D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.6002616966073D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.3372659064979D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.2002280781277D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.6002616966073D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.3372659064979D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.2002280781277D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
+DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
       In above message,  R1 =  0.2001247231433D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
       In above message,  R1 =  0.1467053150785D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
       In above message,  R1 =  0.9999970978524D+01
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
       In above message,  R1 =  0.5000417061503D+01
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
       In above message,  R1 =  0.4184044592402D+01
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
       In above message,  R1 =  0.2682405091706D+01
  DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.2001247231433D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.1467053150785D+02
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.9999970978524D+01
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
-
-      In above message,  R1 =  0.5000417061503D+01
- DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
-
- DASKR--  AT CURRENT T (=R1)  500 STEPS
 ```
 
 
@@ -575,10 +595,10 @@ node_names = ["Node 1", "Node 5", "Node 6", "Node 10", "Node 11", "Node 12"]
 
 p_nodes = plot()
 for (i, node) in enumerate(key_nodes)
-    plot!(ref_sol.t, [u[node] for u in ref_sol.u],
+    plot!(ref_sol.t, [u[node] for u in ref_sol.u], 
           label=node_names[i], linewidth=2)
 end
-plot!(p_nodes, title="NAND Gate - Key Node Potentials",
+plot!(p_nodes, title="NAND Gate - Key Node Potentials", 
       xlabel="Time (s)", ylabel="Voltage (V)", legend=:outertopright)
 ```
 
@@ -594,7 +614,6 @@ plot!(p_nodes, title="NAND Gate - Key Node Potentials",
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
 
 To locally run this benchmark, do the following commands:
-
 ```
 using SciMLBenchmarks
 SciMLBenchmarks.weave_file("benchmarks/DAE","NANDGateProblem.jmd")
@@ -614,7 +633,6 @@ Platform Info:
   LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
-  JULIA_PKG_PRECOMPILE_AUTO = 0
   JULIA_NUM_THREADS = auto
 
 ```
@@ -622,7 +640,7 @@ Environment:
 Package Information:
 
 ```
-Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Project.toml`
 ⌃ [165a45c3] DASKR v3.1.5
 ⌃ [e993076c] DASSL v3.1.0
 ⌃ [f3b72e0c] DiffEqDevTools v3.2.0
@@ -645,10 +663,10 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.23.0
-  [14f7f29c] AMD v0.5.3
-  [6e696c72] AbstractPlutoDingetjes v1.4.0
+⌃ [14f7f29c] AMD v0.5.3
+⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
@@ -718,7 +736,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+⌃ [f6369f11] ForwardDiff v1.4.5
   [a85aefff] FunctionMaps v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
 ⌃ [77dc65aa] FunctionWrappersWrappers v1.12.1
@@ -726,7 +744,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌃ [28b8d3ca] GR v0.73.26
   [a0844989] Gamma v1.2.0
   [d7ba0133] Git v1.5.0
-  [86223c79] Graphs v1.14.0
+⌃ [86223c79] Graphs v1.14.0
   [42e2da0e] Grisu v1.0.2
 ⌅ [cd3eb016] HTTP v1.11.0
 ⌅ [eafb193a] Highlights v0.5.3
@@ -745,7 +763,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
 ⌃ [ccbc3e58] JumpProcesses v9.29.2
-  [ba0b0d4f] Krylov v0.10.9
+⌃ [ba0b0d4f] Krylov v0.10.9
 ⌃ [b964fa9f] LaTeXStrings v1.4.0
 ⌃ [23fbe1c1] Latexify v0.16.11
   [10f19ff3] LayoutPointers v0.1.17
@@ -800,11 +818,11 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [1d0040c9] PolyesterWeave v0.2.2
 ⌃ [d236fae5] PreallocationTools v1.5.0
 ⌅ [aea7be01] PrecompileTools v1.2.1
-  [21216c6a] Preferences v1.5.2
+⌃ [21216c6a] Preferences v1.5.2
 ⌃ [08abe8d2] PrettyTables v3.4.6
   [27ebfcd6] Primes v0.5.7
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.4.1
+⌃ [0c0d3e7f] PureKLU v1.4.1
   [1fd47b50] QuadGK v2.11.3
   [988b38a3] ReadOnlyArrays v0.2.0
   [795d4caa] ReadOnlyDicts v1.0.1
@@ -831,13 +849,13 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌃ [53ae85a6] SciMLStructures v1.10.4
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
+⌃ [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
 ⌃ [727e6d20] SimpleNonlinearSolve v2.14.0
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
 ⌃ [a57abbd0] SparseColumnPivotedQR v2.1.6
-  [0a514795] SparseMatrixColorings v0.4.27
+⌃ [0a514795] SparseMatrixColorings v0.4.27
 ⌃ [276daf66] SpecialFunctions v2.8.3
   [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
@@ -865,7 +883,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
   [8290d209] ThreadingUtilities v0.5.6
-  [a759f4b9] TimerOutputs v1.2.0
+⌃ [a759f4b9] TimerOutputs v1.2.0
   [3bb67fe8] TranscodingStreams v0.11.3
   [781d530d] TruncatedStacktraces v1.4.0
 ⌃ [5c2747f8] URIs v1.6.3
@@ -899,8 +917,8 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-  [88015f11] LERC_jll v4.1.0+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+⌃ [88015f11] LERC_jll v4.1.0+0
+⌃ [1d63c593] LLVMOpenMP_jll v22.1.7+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
@@ -923,11 +941,11 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [6de9746b] Qt6Svg_jll v6.10.2+0
   [e99dba38] Qt6Wayland_jll v6.10.2+1
   [f50d1b31] Rmath_jll v0.5.2+0
-  [ca45d3f4] SuiteSparse32_jll v7.12.1+0
+⌃ [ca45d3f4] SuiteSparse32_jll v7.12.1+0
   [fb77eaff] Sundials_jll v7.5.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+⌃ [ffd25f8a] XZ_jll v5.8.3+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0

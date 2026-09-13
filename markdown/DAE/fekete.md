@@ -37,11 +37,9 @@ We benchmark three formulations:
    directly to ModelingToolkit, which uses `structural_simplify` to
    automatically perform index reduction and generate an index-1 DAE.
    This benchmarks MTK's symbolic transformation pipeline on a large-scale
-   constrained mechanical system. **This formulation is built below but is
-   currently excluded from the work-precision diagrams** — as of 2026-08-23 it
-   fails to initialize and, when initialization is forced, goes unstable after
-   0.4% of the time span. See "MTK Index-Reduced Formulation: Currently
-   Dropped", which reproduces the failure.
+   constrained mechanical system. It is currently excluded from the
+   work-precision diagrams because it does not solve — see "Why the MTK
+   index-reduced formulation is excluded" below.
 
 Reference: Bendtsen, C., Thomsen, P.G.: Numerical solution of differential
 algebraic equations. IMM-DTU, Tech. Report (1999). Available at the
@@ -332,30 +330,10 @@ function fekete_jac!(J, y, p, t)
 
     nothing
 end
-
-# Out-of-place method for the same function object. It is never used by the
-# solvers themselves (they call the in-place method above through `calc_J!`),
-# but OrdinaryDiffEq's numerical-instability diagnostic calls the Jacobian
-# out-of-place: when a solve aborts, `SciMLBase.check_error` ->
-# `OrdinaryDiffEqCore.log_numerical_instability` ->
-# `OrdinaryDiffEqDifferentiation.get_fresh_jacobian` -> `calc_J` evaluates
-# `f.jac(u, p, t)` regardless of whether the problem is in-place. Without this
-# method that diagnostic throws instead of printing, which turns an ordinary
-# failed work-precision point into a hard error that kills the whole weave.
-# (This is an upstream bug, fixed in OrdinaryDiffEqDifferentiation v3.9.0 --
-# `get_fresh_jacobian` there branches on `isinplace` and calls `calc_J!`. This
-# folder's Manifest pins v3.7.0, which does not. The workaround here is
-# version-independent, so it stays correct either way; verified in isolation on
-# 2026-08-24 against both v3.7.0 (throws without it) and v3.10.0.)
-function fekete_jac!(y, p, t)
-    J = zeros(eltype(y), length(y), length(y))
-    fekete_jac!(J, y, p, t)
-    return J
-end
 ```
 
 ```
-fekete_jac! (generic function with 2 methods)
+fekete_jac! (generic function with 1 method)
 ```
 
 
@@ -373,20 +351,7 @@ for i in 1:6*N_ART
     M[i,i] = 1.0
 end
 
-# `FullSpecialize` rather than the default `AutoSpecialize`: under
-# `AutoSpecialize`, `DiffEqBase.promote_f` replaces `f.jac` at solve time with a
-# `FunctionWrappersWrapper` built from the in-place signature
-# `(Matrix, u, p, t)` only. The out-of-place `f.jac(u, p, t)` call made by the
-# instability diagnostic (see the Jacobian section above) then finds no matching
-# wrapper and throws `No matching function wrapper was found!`. With
-# `FullSpecialize` nothing is wrapped, so `f.jac` is `fekete_jac!` itself and
-# that call dispatches to the out-of-place method defined above.
-# SciMLBase's own docstring for `AutoSpecialize` also recommends against it for
-# benchmarking ("callable wrapping can affect runtime"), so this is the right
-# specialization level for this file regardless. `SciMLBase` is not a direct
-# dependency of this environment, so it is reached through `OrdinaryDiffEq`.
-mmf = ODEFunction{true, OrdinaryDiffEq.SciMLBase.FullSpecialize}(
-    fekete_rhs!, mass_matrix = M, jac = fekete_jac!)
+mmf = ODEFunction(fekete_rhs!, mass_matrix = M, jac = fekete_jac!)
 tspan = (0.0, 1000.0)
 mmprob = ODEProblem(mmf, y0, tspan)
 ```
@@ -518,7 +483,8 @@ for i in 1:N_ART
         ps_mtk[idx] = only(@variables $(Symbol("p$(i)_$(k)"))(t) = y0[idx])
         qs_mtk[idx] = only(@variables $(Symbol("q$(i)_$(k)"))(t) = 0.0)
     end
-    λs_mtk[i] = only(@variables $(Symbol("lam$(i)"))(t) = 0.0)
+    # λ is algebraic — determined by the constraint derivative, not prescribed
+    λs_mtk[i] = only(@variables $(Symbol("lam$(i)"))(t))
 end
 
 eqs_mtk = Equation[]
@@ -752,10 +718,8 @@ println("  retcode = $(ref_sol.retcode), npoints = $(length(ref_sol.t)), ",
         "t_final = $(ref_sol.t[end])")
 
 # The mass-matrix reference above is the reference for both the mass-matrix
-# and the DAE residual forms. There is no MTK reference: as of 2026-08-23 the
-# index-reduced MTK problem does not solve at all — see
-# "MTK Index-Reduced Formulation: Currently Dropped" below, which reproduces
-# and documents the failure.
+# and the DAE residual forms. There is no MTK reference because the
+# index-reduced MTK problem does not solve (see below).
 ```
 
 ```
@@ -864,7 +828,7 @@ plot(ref_sol, idxs = [121, 122, 123, 124, 125],
 
 We set up the problem array and reference array for `WorkPrecisionSet`.
 Two formulations are benchmarked: (1) mass-matrix ODE and (2) DAE residual.
-The third, MTK index-reduced, is dropped for now — the section below shows why.
+The MTK index-reduced form is excluded — the next section shows why.
 
 ```julia
 probs = [mmprob, daeprob]
@@ -875,83 +839,188 @@ refs  = [ref_sol, ref_sol]
 2-element Vector{SciMLBase.ODESolution{Float64, 2, Vector{Vector{Float64}},
  Nothing, Nothing, Vector{Float64}, Vector{Vector{Vector{Float64}}}, Nothin
 g, SciMLBase.ODEProblem{Vector{Float64}, Tuple{Float64, Float64}, true, Sci
-MLBase.NullParameters, SciMLBase.ODEFunction{true, SciMLBase.FullSpecialize
-, typeof(Main.var"##WeaveSandBox#232".fekete_rhs!), Matrix{Float64}, Nothin
-g, Nothing, typeof(Main.var"##WeaveSandBox#232".fekete_jac!), Nothing, Noth
-ing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(
-SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing, Nothing}, Base.Pair
-s{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.StandardODEProblem},
-OrdinaryDiffEqRosenbrock.Rodas5P{ADTypes.AutoForwardDiff{nothing, ForwardDi
-ff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}}, Nothing, typeof(OrdinaryDif
-fEqCore.trivial_limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Not
-hing}, OrdinaryDiffEqCore.InterpolationData{SciMLBase.ODEFunction{true, Sci
-MLBase.FullSpecialize, typeof(Main.var"##WeaveSandBox#232".fekete_rhs!), Ma
-trix{Float64}, Nothing, Nothing, typeof(Main.var"##WeaveSandBox#232".fekete
-_jac!), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
-ing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing
-, Nothing}, Vector{Vector{Float64}}, Vector{Float64}, Vector{Vector{Vector{
-Float64}}}, Nothing, OrdinaryDiffEqRosenbrock.RosenbrockCache{Vector{Float6
-4}, Vector{Float64}, Float64, Vector{Float64}, Matrix{Float64}, Matrix{Floa
-t64}, OrdinaryDiffEqRosenbrockTableaus.RodasTableau{Float64, Float64, Vecto
-r{Float64}}, SciMLBase.TimeGradientWrapper{true, SciMLBase.ODEFunction{true
-, SciMLBase.FullSpecialize, typeof(Main.var"##WeaveSandBox#232".fekete_rhs!
-), Matrix{Float64}, Nothing, Nothing, typeof(Main.var"##WeaveSandBox#232".f
-ekete_jac!), Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing,
- Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, No
-thing, Nothing}, Vector{Float64}, SciMLBase.NullParameters}, SciMLBase.UJac
-obianWrapper{true, SciMLBase.ODEFunction{true, SciMLBase.FullSpecialize, ty
-peof(Main.var"##WeaveSandBox#232".fekete_rhs!), Matrix{Float64}, Nothing, N
-othing, typeof(Main.var"##WeaveSandBox#232".fekete_jac!), Nothing, Nothing,
- Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciM
-LBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing, Nothing}, Float64, SciM
-LBase.NullParameters}, LinearSolve.LinearCache{Matrix{Float64}, Vector{Floa
-t64}, Vector{Float64}, Tuple{Nothing, Vector{Float64}, SciMLBase.NullParame
-ters, Float64}, LinearSolve.DefaultLinearSolver, LinearSolve.DefaultLinearS
-olverInit{LinearAlgebra.LU{Float64, Matrix{Float64}, Vector{Int64}}, Linear
-Algebra.QRCompactWY{Float64, Matrix{Float64}, Matrix{Float64}}, Nothing, No
-thing, Nothing, Nothing, Nothing, Nothing, LinearSolve._GenericLUFactorizat
-ionCache{LinearAlgebra.LU{Float64, Matrix{Float64}, Vector{Int64}}, Vector{
-Int64}, Vector{Float64}}, Tuple{LinearAlgebra.LU{Float64, Matrix{Float64},
-Vector{Int64}}, Vector{Int64}}, Nothing, Nothing, Nothing, LinearAlgebra.SV
-D{Float64, Float64, Matrix{Float64}, Vector{Float64}}, LinearAlgebra.Choles
-ky{Float64, Matrix{Float64}}, LinearAlgebra.Cholesky{Float64, Matrix{Float6
-4}}, LinearSolve.AppleAccelerateLUCache{Matrix{Float64}, Vector{Int32}, Bas
-e.RefValue{Int32}}, Tuple{LinearAlgebra.LU{Float64, Matrix{Float64}, Vector
-{Int64}}, Base.RefValue{Int64}}, LinearAlgebra.QRPivoted{Float64, Matrix{Fl
-oat64}, Vector{Float64}, Vector{Int64}}, Nothing, Nothing, Nothing, Nothing
-, Nothing, Nothing, Matrix{Float64}, Vector{Float64}, Nothing}, SciMLOperat
-ors.IdentityOperator, SciMLOperators.IdentityOperator, Float64, LinearSolve
-.LinearVerbosity{true}, Bool, LinearSolve.LinearSolveAdjoint{Missing}, Noth
-ing}, Tuple{Nothing, Nothing}, Tuple{DifferentiationInterfaceForwardDiffExt
-.ForwardDiffTwoArgDerivativePrep{Tuple{SciMLBase.TimeGradientWrapper{true,
-SciMLBase.ODEFunction{true, SciMLBase.FullSpecialize, typeof(Main.var"##Wea
-veSandBox#232".fekete_rhs!), Matrix{Float64}, Nothing, Nothing, typeof(Main
-.var"##WeaveSandBox#232".fekete_jac!), Nothing, Nothing, Nothing, Nothing,
-Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSER
-VED), Nothing, Nothing, Nothing, Nothing}, Vector{Float64}, SciMLBase.NullP
-arameters}, Vector{Float64}, ADTypes.AutoForwardDiff{nothing, ForwardDiff.T
-ag{DiffEqBase.OrdinaryDiffEqTag, Float64}}, Float64, Tuple{}}, Float64, For
-wardDiff.DerivativeConfig{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Flo
-at64}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag
-, Float64}, Float64, 1}}}, Tuple{}}, DifferentiationInterfaceForwardDiffExt
-.ForwardDiffTwoArgDerivativePrep{Tuple{SciMLBase.TimeGradientWrapper{true,
-SciMLBase.ODEFunction{true, SciMLBase.FullSpecialize, typeof(Main.var"##Wea
-veSandBox#232".fekete_rhs!), Matrix{Float64}, Nothing, Nothing, typeof(Main
-.var"##WeaveSandBox#232".fekete_jac!), Nothing, Nothing, Nothing, Nothing,
-Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSER
-VED), Nothing, Nothing, Nothing, Nothing}, Vector{Float64}, SciMLBase.NullP
-arameters}, Vector{Float64}, ADTypes.AutoForwardDiff{nothing, ForwardDiff.T
-ag{DiffEqBase.OrdinaryDiffEqTag, Float64}}, Float64, Tuple{}}, Float64, For
-wardDiff.DerivativeConfig{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Flo
-at64}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag
-, Float64}, Float64, 1}}}, Tuple{}}}, Float64, OrdinaryDiffEqRosenbrock.Rod
-as5P{ADTypes.AutoForwardDiff{nothing, ForwardDiff.Tag{DiffEqBase.OrdinaryDi
-ffEqTag, Float64}}, Nothing, typeof(OrdinaryDiffEqCore.trivial_limiter!), t
-ypeof(OrdinaryDiffEqCore.trivial_limiter!), Nothing}, typeof(OrdinaryDiffEq
-Core.trivial_limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Ordina
-ryDiffEqRosenbrock.JacReuseState{Float64, Matrix{Float64}, Vector{Float64},
- Matrix{Float64}}}, BitVector}, SciMLBase.DEStats, Nothing, Nothing, Nothin
-g, Nothing}}:
+MLBase.NullParameters, SciMLBase.ODEFunction{true, SciMLBase.AutoSpecialize
+, FunctionWrappersWrappers.FunctionWrappersWrapper{Tuple{FunctionWrappers.F
+unctionWrapper{Nothing, Tuple{Vector{Float64}, Vector{Float64}, SciMLBase.N
+ullParameters, Float64}}, FunctionWrappers.FunctionWrapper{Nothing, Tuple{V
+ector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float6
+4}, Float64, 1}}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.Ordina
+ryDiffEqTag, Float64}, Float64, 1}}, SciMLBase.NullParameters, Float64}}, F
+unctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{ForwardDiff.Dual{Forw
+ardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, Vector{Fl
+oat64}, SciMLBase.NullParameters, ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBa
+se.OrdinaryDiffEqTag, Float64}, Float64, 1}}}, FunctionWrappers.FunctionWra
+pper{Nothing, Tuple{Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.Ordi
+naryDiffEqTag, Float64}, Float64, 1}}, Vector{ForwardDiff.Dual{ForwardDiff.
+Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, SciMLBase.NullPar
+ameters, ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Flo
+at64}, Float64, 1}}}}, FunctionWrappersWrappers.AllowNonIsBits, FunctionWra
+ppersWrappers.SingleCacheStorage}, Matrix{Float64}, Nothing, Nothing, Funct
+ionWrappersWrappers.FunctionWrappersWrapper{Tuple{FunctionWrappers.Function
+Wrapper{Nothing, Tuple{Matrix{Float64}, Vector{Float64}, SciMLBase.NullPara
+meters, Float64}}}, FunctionWrappersWrappers.AllowNonIsBits, FunctionWrappe
+rsWrappers.SingleCacheStorage}, Nothing, Nothing, Nothing, Nothing, Nothing
+, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), N
+othing, Nothing, Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Tuple{}, @N
+amedTuple{}}, SciMLBase.StandardODEProblem}, OrdinaryDiffEqRosenbrock.Rodas
+5P{ADTypes.AutoForwardDiff{1, ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag,
+ Float64}}, Nothing, typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(Or
+dinaryDiffEqCore.trivial_limiter!), Nothing}, OrdinaryDiffEqCore.Interpolat
+ionData{SciMLBase.ODEFunction{true, SciMLBase.AutoSpecialize, FunctionWrapp
+ersWrappers.FunctionWrappersWrapper{Tuple{FunctionWrappers.FunctionWrapper{
+Nothing, Tuple{Vector{Float64}, Vector{Float64}, SciMLBase.NullParameters, 
+Float64}}, FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{ForwardDi
+ff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}
+}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Fl
+oat64}, Float64, 1}}, SciMLBase.NullParameters, Float64}}, FunctionWrappers
+.FunctionWrapper{Nothing, Tuple{Vector{ForwardDiff.Dual{ForwardDiff.Tag{Dif
+fEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, Vector{Float64}, SciMLBa
+se.NullParameters, ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiff
+EqTag, Float64}, Float64, 1}}}, FunctionWrappers.FunctionWrapper{Nothing, T
+uple{Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, 
+Float64}, Float64, 1}}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.
+OrdinaryDiffEqTag, Float64}, Float64, 1}}, SciMLBase.NullParameters, Forwar
+dDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64,
+ 1}}}}, FunctionWrappersWrappers.AllowNonIsBits, FunctionWrappersWrappers.S
+ingleCacheStorage}, Matrix{Float64}, Nothing, Nothing, FunctionWrappersWrap
+pers.FunctionWrappersWrapper{Tuple{FunctionWrappers.FunctionWrapper{Nothing
+, Tuple{Matrix{Float64}, Vector{Float64}, SciMLBase.NullParameters, Float64
+}}}, FunctionWrappersWrappers.AllowNonIsBits, FunctionWrappersWrappers.Sing
+leCacheStorage}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
+ing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing
+, Nothing, Nothing}, Vector{Vector{Float64}}, Vector{Float64}, Vector{Vecto
+r{Vector{Float64}}}, Nothing, OrdinaryDiffEqRosenbrock.RosenbrockCache{Vect
+or{Float64}, Vector{Float64}, Float64, Vector{Float64}, Matrix{Float64}, Ma
+trix{Float64}, OrdinaryDiffEqRosenbrockTableaus.RodasTableau{Float64, Float
+64, Vector{Float64}}, SciMLBase.TimeGradientWrapper{true, SciMLBase.ODEFunc
+tion{true, SciMLBase.AutoSpecialize, FunctionWrappersWrappers.FunctionWrapp
+ersWrapper{Tuple{FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{Flo
+at64}, Vector{Float64}, SciMLBase.NullParameters, Float64}}, FunctionWrappe
+rs.FunctionWrapper{Nothing, Tuple{Vector{ForwardDiff.Dual{ForwardDiff.Tag{D
+iffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, Vector{ForwardDiff.Dua
+l{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, Sci
+MLBase.NullParameters, Float64}}, FunctionWrappers.FunctionWrapper{Nothing,
+ Tuple{Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag
+, Float64}, Float64, 1}}, Vector{Float64}, SciMLBase.NullParameters, Forwar
+dDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64,
+ 1}}}, FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{ForwardDiff.D
+ual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, V
+ector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float6
+4}, Float64, 1}}, SciMLBase.NullParameters, ForwardDiff.Dual{ForwardDiff.Ta
+g{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}}}, FunctionWrappersW
+rappers.AllowNonIsBits, FunctionWrappersWrappers.SingleCacheStorage}, Matri
+x{Float64}, Nothing, Nothing, FunctionWrappersWrappers.FunctionWrappersWrap
+per{Tuple{FunctionWrappers.FunctionWrapper{Nothing, Tuple{Matrix{Float64}, 
+Vector{Float64}, SciMLBase.NullParameters, Float64}}}, FunctionWrappersWrap
+pers.AllowNonIsBits, FunctionWrappersWrappers.SingleCacheStorage}, Nothing,
+ Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, ty
+peof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing, Nothing}, Vect
+or{Float64}, SciMLBase.NullParameters}, SciMLBase.UJacobianWrapper{true, Sc
+iMLBase.ODEFunction{true, SciMLBase.AutoSpecialize, FunctionWrappersWrapper
+s.FunctionWrappersWrapper{Tuple{FunctionWrappers.FunctionWrapper{Nothing, T
+uple{Vector{Float64}, Vector{Float64}, SciMLBase.NullParameters, Float64}},
+ FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{ForwardDiff.Dual{Fo
+rwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, Vector{
+ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Fl
+oat64, 1}}, SciMLBase.NullParameters, Float64}}, FunctionWrappers.FunctionW
+rapper{Nothing, Tuple{Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.Or
+dinaryDiffEqTag, Float64}, Float64, 1}}, Vector{Float64}, SciMLBase.NullPar
+ameters, ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Flo
+at64}, Float64, 1}}}, FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vecto
+r{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, 
+Float64, 1}}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDi
+ffEqTag, Float64}, Float64, 1}}, SciMLBase.NullParameters, ForwardDiff.Dual
+{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}}}, Fu
+nctionWrappersWrappers.AllowNonIsBits, FunctionWrappersWrappers.SingleCache
+Storage}, Matrix{Float64}, Nothing, Nothing, FunctionWrappersWrappers.Funct
+ionWrappersWrapper{Tuple{FunctionWrappers.FunctionWrapper{Nothing, Tuple{Ma
+trix{Float64}, Vector{Float64}, SciMLBase.NullParameters, Float64}}}, Funct
+ionWrappersWrappers.AllowNonIsBits, FunctionWrappersWrappers.SingleCacheSto
+rage}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothi
+ng, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing,
+ Nothing}, Float64, SciMLBase.NullParameters}, LinearSolve.LinearCache{Matr
+ix{Float64}, Vector{Float64}, Vector{Float64}, Tuple{Nothing, Vector{Float6
+4}, SciMLBase.NullParameters, Float64}, LinearSolve.DefaultLinearSolver, Li
+nearSolve.DefaultLinearSolverInit{LinearAlgebra.LU{Float64, Matrix{Float64}
+, Vector{Int64}}, LinearAlgebra.QRCompactWY{Float64, Matrix{Float64}, Matri
+x{Float64}}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, LinearSo
+lve._GenericLUFactorizationCache{LinearAlgebra.LU{Float64, Matrix{Float64},
+ Vector{Int64}}, Vector{Int64}, Vector{Float64}}, Tuple{LinearAlgebra.LU{Fl
+oat64, Matrix{Float64}, Vector{Int64}}, Vector{Int64}}, Nothing, Nothing, N
+othing, LinearAlgebra.SVD{Float64, Float64, Matrix{Float64}, Vector{Float64
+}}, LinearAlgebra.Cholesky{Float64, Matrix{Float64}}, LinearAlgebra.Cholesk
+y{Float64, Matrix{Float64}}, LinearSolve.AppleAccelerateLUCache{Matrix{Floa
+t64}, Vector{Int32}, Base.RefValue{Int32}}, Tuple{LinearAlgebra.LU{Float64,
+ Matrix{Float64}, Vector{Int64}}, Base.RefValue{Int64}}, LinearAlgebra.QRPi
+voted{Float64, Matrix{Float64}, Vector{Float64}, Vector{Int64}}, Nothing, N
+othing, Nothing, Nothing, Nothing, Nothing, Matrix{Float64}, Vector{Float64
+}, Nothing}, SciMLOperators.IdentityOperator, SciMLOperators.IdentityOperat
+or, Float64, LinearSolve.LinearVerbosity{true}, Bool, LinearSolve.LinearSol
+veAdjoint{Missing}, Nothing}, Tuple{Nothing, Nothing}, Tuple{Differentiatio
+nInterfaceForwardDiffExt.ForwardDiffTwoArgDerivativePrep{Tuple{SciMLBase.Ti
+meGradientWrapper{true, SciMLBase.ODEFunction{true, SciMLBase.AutoSpecializ
+e, FunctionWrappersWrappers.FunctionWrappersWrapper{Tuple{FunctionWrappers.
+FunctionWrapper{Nothing, Tuple{Vector{Float64}, Vector{Float64}, SciMLBase.
+NullParameters, Float64}}, FunctionWrappers.FunctionWrapper{Nothing, Tuple{
+Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float
+64}, Float64, 1}}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.Ordin
+aryDiffEqTag, Float64}, Float64, 1}}, SciMLBase.NullParameters, Float64}}, 
+FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{ForwardDiff.Dual{For
+wardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, Vector{F
+loat64}, SciMLBase.NullParameters, ForwardDiff.Dual{ForwardDiff.Tag{DiffEqB
+ase.OrdinaryDiffEqTag, Float64}, Float64, 1}}}, FunctionWrappers.FunctionWr
+apper{Nothing, Tuple{Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.Ord
+inaryDiffEqTag, Float64}, Float64, 1}}, Vector{ForwardDiff.Dual{ForwardDiff
+.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, SciMLBase.NullPa
+rameters, ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Fl
+oat64}, Float64, 1}}}}, FunctionWrappersWrappers.AllowNonIsBits, FunctionWr
+appersWrappers.SingleCacheStorage}, Matrix{Float64}, Nothing, Nothing, Func
+tionWrappersWrappers.FunctionWrappersWrapper{Tuple{FunctionWrappers.Functio
+nWrapper{Nothing, Tuple{Matrix{Float64}, Vector{Float64}, SciMLBase.NullPar
+ameters, Float64}}}, FunctionWrappersWrappers.AllowNonIsBits, FunctionWrapp
+ersWrappers.SingleCacheStorage}, Nothing, Nothing, Nothing, Nothing, Nothin
+g, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_OBSERVED), 
+Nothing, Nothing, Nothing, Nothing}, Vector{Float64}, SciMLBase.NullParamet
+ers}, Vector{Float64}, ADTypes.AutoForwardDiff{1, ForwardDiff.Tag{DiffEqBas
+e.OrdinaryDiffEqTag, Float64}}, Float64, Tuple{}}, Float64, ForwardDiff.Der
+ivativeConfig{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Vecto
+r{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, 
+Float64, 1}}}, Tuple{}}, DifferentiationInterfaceForwardDiffExt.ForwardDiff
+TwoArgDerivativePrep{Tuple{SciMLBase.TimeGradientWrapper{true, SciMLBase.OD
+EFunction{true, SciMLBase.AutoSpecialize, FunctionWrappersWrappers.Function
+WrappersWrapper{Tuple{FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vecto
+r{Float64}, Vector{Float64}, SciMLBase.NullParameters, Float64}}, FunctionW
+rappers.FunctionWrapper{Nothing, Tuple{Vector{ForwardDiff.Dual{ForwardDiff.
+Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, Vector{ForwardDif
+f.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}
+, SciMLBase.NullParameters, Float64}}, FunctionWrappers.FunctionWrapper{Not
+hing, Tuple{Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiff
+EqTag, Float64}, Float64, 1}}, Vector{Float64}, SciMLBase.NullParameters, F
+orwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Flo
+at64, 1}}}, FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{ForwardD
+iff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1
+}}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, F
+loat64}, Float64, 1}}, SciMLBase.NullParameters, ForwardDiff.Dual{ForwardDi
+ff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}}}, FunctionWrap
+persWrappers.AllowNonIsBits, FunctionWrappersWrappers.SingleCacheStorage}, 
+Matrix{Float64}, Nothing, Nothing, FunctionWrappersWrappers.FunctionWrapper
+sWrapper{Tuple{FunctionWrappers.FunctionWrapper{Nothing, Tuple{Matrix{Float
+64}, Vector{Float64}, SciMLBase.NullParameters, Float64}}}, FunctionWrapper
+sWrappers.AllowNonIsBits, FunctionWrappersWrappers.SingleCacheStorage}, Not
+hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
+g, typeof(SciMLBase.DEFAULT_OBSERVED), Nothing, Nothing, Nothing, Nothing},
+ Vector{Float64}, SciMLBase.NullParameters}, Vector{Float64}, ADTypes.AutoF
+orwardDiff{1, ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}}, Floa
+t64, Tuple{}}, Float64, ForwardDiff.DerivativeConfig{ForwardDiff.Tag{DiffEq
+Base.OrdinaryDiffEqTag, Float64}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{D
+iffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}}, Tuple{}}}, Float64, O
+rdinaryDiffEqRosenbrock.Rodas5P{ADTypes.AutoForwardDiff{1, ForwardDiff.Tag{
+DiffEqBase.OrdinaryDiffEqTag, Float64}}, Nothing, typeof(OrdinaryDiffEqCore
+.trivial_limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Nothing}, 
+typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(OrdinaryDiffEqCore.triv
+ial_limiter!), OrdinaryDiffEqRosenbrock.JacReuseState{Float64, Matrix{Float
+64}, Vector{Float64}, Matrix{Float64}}}, BitVector}, SciMLBase.DEStats, Not
+hing, Nothing, Nothing, Nothing}}:
  [-0.2650941332839412 -0.2650941332841742 … -0.4070263380343167 -0.40702633
 803437654; 0.2759922279796341 0.2759922279798762 … 0.3463758772821705 0.346
 3758772824883; … ; 0.0 -3.1091445411163785e-9 … -4.824243257070493e-19 1.17
@@ -968,94 +1037,35 @@ g, Nothing}}:
 
 
 
-## MTK Index-Reduced Formulation: Currently Dropped
+## Why the MTK index-reduced formulation is excluded
 
-This document used to carry a third formulation in every work-precision
-diagram: the **MTK index-reduced** form built above, where the original
-index-3 system (60 kinematic + 60 dynamic equations + 20 position-level
-constraints $|p_i|^2 = 1$) is handed to `structural_simplify` and
-ModelingToolkit performs the index reduction itself. It was benchmarked with
-`Rodas5P`, `Rodas4`, `FBDF` and `NordsieckBDF` over the same tolerance grids as
-the other two forms, with its own `Rodas5P` reference solution at
-`abstol = reltol = 1e-8`.
-
-**As of 2026-08-23 that formulation does not solve, so the sweep is dropped
-rather than published as flat, meaningless curves.** The symbolic side works —
-`structural_simplify` returns a square 140-equation system — but the problem is
-over-prescribed at $t_0$, which makes initialization fail, and even when
-initialization is repaired the integration goes unstable after 0.4% of the time
-span. The two chunks below establish those as *separate* failures.
-
-### Diagnosis: what is prescribed, and what initialization is asked to do
+The MTK problem built above is not benchmarked because it does not solve.
+With λ left unprescribed the initialization is consistent and converges,
+but the index-reduced system then goes `Unstable` near t ≈ 4 of the
+[0, 1000] span for every solver tried. This needs an upstream fix in
+ModelingToolkit; the chunk below shows it.
 
 ```julia
-# Diagnostics for the index-reduced MTK problem as this document builds it.
-const MTK = ModelingToolkit
 println("ModelingToolkit version : ", pkgversion(ModelingToolkit))
 println("unknowns(sys_mtk)       : ", length(unknowns(sys_mtk)))
 println("equations(sys_mtk)      : ", length(equations(sys_mtk)))
 
-# Which unknowns survive index reduction, and which carry a hard initial condition?
-uns = unknowns(sys_mtk)
-ics = MTK.initial_conditions(sys_mtk)
-isdd(u) = occursin("ˍt", string(u))
-groups = (("positions p",        u -> startswith(string(u), "p") && !isdd(u)),
-          ("dummy derivatives",  u -> startswith(string(u), "p") &&  isdd(u)),
-          ("velocities q",       u -> startswith(string(u), "q")),
-          ("multipliers λ",      u -> startswith(string(u), "lam")))
-for (name, pred) in groups
-    sel = filter(pred, uns)
-    println(rpad(name, 20), " count = ", rpad(length(sel), 4),
-            " prescribed as initial conditions = ", count(u -> haskey(ics, u), sel))
-end
-
-# The initialization system MTK builds from those prescriptions.
 iprob = mtkprob.f.initialization_data.initializeprob
-isys  = iprob.f.sys
-println("initialization system   : ", length(equations(isys)), " equations, ",
-        length(unknowns(isys)), " unknowns")
-res = zeros(length(equations(isys)))
-iprob.f(res, iprob.u0, iprob.p)
-println("‖init residual at guess‖∞           : ", maximum(abs, res))
+println("initialization system   : ", length(equations(iprob.f.sys)),
+        " equations, ", length(unknowns(iprob.f.sys)), " unknowns")
 isol = solve(iprob)
+res = zeros(length(equations(iprob.f.sys)))
 iprob.f(res, isol.u, iprob.p)
-println("init solve retcode                  : ", isol.retcode)
-println("‖init residual at least-squares pt‖∞: ", maximum(abs, res))
+println("init solve retcode      : ", isol.retcode,
+        ", ‖residual‖∞ = ", maximum(abs, res))
 
-# Residual of the simplified RHS at the prescribed u0, split by equation type.
-# Only the algebraic rows are evidence of inconsistency: the differential rows
-# are derivatives and are legitimately nonzero.
-mm  = mtkprob.f.mass_matrix
-alg = [i for i in 1:size(mm, 1) if all(iszero, @view mm[i, :])]
-dif = setdiff(1:size(mm, 1), alg)
-du0 = similar(mtkprob.u0)
-mtkprob.f(du0, mtkprob.u0, mtkprob.p, mtkprob.tspan[1])
-println("algebraic equations                 : ", length(alg))
-println("‖f(u0)‖∞ over ALGEBRAIC rows        : ", maximum(abs, du0[alg]))
-println("‖f(u0)‖∞ over DIFFERENTIAL rows     : ", maximum(abs, du0[dif]))
-
-# Is the prescribed data even self-consistent? The positions are on the sphere;
-# the multipliers are not (the reference solution above has λ → −4.75).
-println("max |‖p_i(0)‖² − 1| over particles  : ",
-        maximum(abs(sum(y0[3*(i-1)+k]^2 for k in 1:3) - 1) for i in 1:N_ART))
-
-for (solver_name, alg_) in (("Rodas5P", Rodas5P()), ("FBDF", FBDF()))
-    for (init_name, initalg) in (("default", nothing),
-                                 ("BrownFullBasicInit", BrownFullBasicInit()))
-        solver_name == "Rodas5P" && init_name != "default" && continue
-        elapsed = @elapsed sol = if initalg === nothing
-            solve(mtkprob, alg_; abstol = 1e-8, reltol = 1e-8,
-                  save_everystep = false, maxiters = Int(1e6))
-        else
-            solve(mtkprob, alg_; abstol = 1e-8, reltol = 1e-8,
-                  save_everystep = false, maxiters = Int(1e6),
-                  initializealg = initalg)
-        end
-        println(rpad(solver_name, 8), " / ", rpad(init_name, 19),
-                " retcode = ", rpad(string(sol.retcode), 15),
-                " reached t = ", round(sol.t[end], sigdigits = 5),
-                " of ", tspan[2], "  (", round(elapsed, digits = 1), " s)")
-    end
+for (solver_name, alg_) in (("Rodas5P", Rodas5P()), ("FBDF", FBDF()),
+                            ("QNDF", QNDF()), ("NordsieckBDF", NordsieckBDF()))
+    sol = solve(mtkprob, alg_; abstol = 1e-8, reltol = 1e-8,
+                save_everystep = false, maxiters = Int(1e6))
+    println(rpad(solver_name, 14), " retcode = ", rpad(string(sol.retcode), 15),
+            " reached t = ", round(sol.t[end], sigdigits = 5),
+            " of ", tspan[2])
 end
 ```
 
@@ -1063,239 +1073,35 @@ end
 ModelingToolkit version : 11.39.0
 unknowns(sys_mtk)       : 140
 equations(sys_mtk)      : 140
-positions p          count = 60   prescribed as initial conditions = 60
-dummy derivatives    count = 20   prescribed as initial conditions = 0
-velocities q         count = 40   prescribed as initial conditions = 40
-multipliers λ        count = 20   prescribed as initial conditions = 20
-initialization system   : 120 equations, 60 unknowns
-‖init residual at guess‖∞           : 19.000000000000004
-init solve retcode                  : MaxIters
-‖init residual at least-squares pt‖∞: 18.73243043255598
-algebraic equations                 : 60
-‖f(u0)‖∞ over ALGEBRAIC rows        : 19.000000000000004
-‖f(u0)‖∞ over DIFFERENTIAL rows     : 9.082050630437326
-max |‖p_i(0)‖² − 1| over particles  : 2.220446049250313e-16
-Rodas5P  / default             retcode = InitialFailure  reached t = 0.0 of
- 1000.0  (49.4 s)
-FBDF     / default             retcode = InitialFailure  reached t = 0.0 of
- 1000.0  (10.8 s)
-FBDF     / BrownFullBasicInit  retcode = Unstable        reached t = 4.0416
- of 1000.0  (8.9 s)
+initialization system   : 100 equations, 60 unknowns
+init solve retcode      : Success, ‖residual‖∞ = 5.773159728050814e-15
+Rodas5P        retcode = Unstable        reached t = 4.0423 of 1000.0
+FBDF           retcode = Unstable        reached t = 4.0417 of 1000.0
+QNDF           retcode = Unstable        reached t = 4.0415 of 1000.0
+NordsieckBDF   retcode = Unstable        reached t = 4.0415 of 1000.0
 ```
 
 
 
 
 
-Reproduced 2026-08-23 with this folder's `Manifest.toml` (ModelingToolkit
-v11.39.0, OrdinaryDiffEq v7.6.0, SciMLBase v3.46.1, Julia 1.11):
-
-```
-ModelingToolkit version : 11.39.0
-unknowns(sys_mtk)       : 140
-equations(sys_mtk)      : 140
-positions p          count = 60   prescribed as initial conditions = 60
-dummy derivatives    count = 20   prescribed as initial conditions = 0
-velocities q         count = 40   prescribed as initial conditions = 40
-multipliers λ        count = 20   prescribed as initial conditions = 20
-initialization system   : 120 equations, 60 unknowns
-‖init residual at guess‖∞           : 19.000000000000007
-init solve retcode                  : StalledSuccess
-‖init residual at least-squares pt‖∞: 18.73243046792402
-algebraic equations                 : 60
-‖f(u0)‖∞ over ALGEBRAIC rows        : 19.000000000000004
-‖f(u0)‖∞ over DIFFERENTIAL rows     : 9.082050630437326
-max |‖p_i(0)‖² − 1| over particles  : 2.220446049250313e-16
-Rodas5P  / default             retcode = InitialFailure  reached t = 0.0 of 1000.0  (37.5 s)
-FBDF     / default             retcode = InitialFailure  reached t = 0.0 of 1000.0  (6.4 s)
-FBDF     / BrownFullBasicInit  retcode = Unstable        reached t = 4.5768 of 1000.0  (8.9 s)
-```
-
-with, on stderr:
-
-> Initialization system is overdetermined. 120 equations for 60 unknowns.
-> Initialization will default to using least squares. `SCCNonlinearProblem` can
-> only be used for initialization of fully determined systems and hence will
-> not be used here.
-
-**The problem is over-prescribed.** Every variable in the model above is
-declared with a default — `@variables p1_1(t) = y0[1]`, `q1_1(t) = 0.0`,
-`lam1(t) = 0.0` — and ModelingToolkit treats a default on an unknown as a hard
-initial condition. That is 60 positions **+ 40 velocities + 20 multipliers =
-120 prescriptions** (index reduction eliminates 20 of the 60 velocities in
-favour of 20 dummy derivatives, which carry no initial condition), against the
-**60** unknowns initialization is actually free to choose. Hence 120 equations
-for 60 unknowns.
-
-**And the prescriptions are not merely redundant — they are inconsistent.** If
-120 consistent-but-redundant conditions were imposed on 60 unknowns, least
-squares would still drive the residual to zero. It does not: it stalls
-(`StalledSuccess`) at $\|r\|_\infty = 18.7$, barely below the 19.0 it started
-at. The culprit is $\lambda \equiv 0$. The positions satisfy $|p_i|^2 = 1$ to
-$2 \times 10^{-16}$ and zero velocities satisfy the velocity-level constraint,
-but the *acceleration*-level constraint that index reduction introduces
-determines $\lambda$, and the reference solution above has
-$\lambda \to -4.75$. Prescribing $\lambda(0) = 0$ contradicts it.
-
-Note the residual split, which is why the algebraic-only number is the one
-quoted: $\|f(u_0)\|_\infty$ over the 60 **algebraic** rows is 19.0 — genuine
-evidence — while over the differential rows it is 9.08, which is just a
-derivative and means nothing. (The stronger statement is the stalled
-least-squares residual of 18.7 above.)
-
-### Test: prescribe only the positions
-
-If over-prescription is the cause, then declaring the velocities and
-multipliers *without* defaults and supplying them as `guesses` should make
-initialization solvable. It does.
-
-```julia
-# Same model, one change: velocities and multipliers are declared WITHOUT
-# default values and supplied as `guesses` instead, so only the 60 positions
-# are prescribed as initial conditions.
-ps_g = Vector{Num}(undef, 3*N_ART)
-qs_g = Vector{Num}(undef, 3*N_ART)
-λs_g = Vector{Num}(undef, N_ART)
-for i in 1:N_ART
-    for k in 1:3
-        idx = 3*(i-1) + k
-        ps_g[idx] = only(@variables $(Symbol("P$(i)_$(k)"))(t) = y0[idx])
-        qs_g[idx] = only(@variables $(Symbol("Q$(i)_$(k)"))(t))   # no default
-    end
-    λs_g[i] = only(@variables $(Symbol("LAM$(i)"))(t))            # no default
-end
-
-eqs_g = Equation[]
-for idx in 1:3*N_ART
-    push!(eqs_g, D(ps_g[idx]) ~ qs_g[idx])
-end
-for i in 1:N_ART, k in 1:3
-    idx = 3*(i-1) + k
-    coulomb = sum((ps_g[idx] - ps_g[3*(j-1)+k]) /
-                  sum((ps_g[3*(i-1)+m] - ps_g[3*(j-1)+m])^2 for m in 1:3)
-                  for j in 1:N_ART if j != i)
-    push!(eqs_g, D(qs_g[idx]) ~ -ALPHA_DAMP*qs_g[idx] + 2*λs_g[i]*ps_g[idx] + coulomb)
-end
-for i in 1:N_ART
-    push!(eqs_g, sum(ps_g[3*(i-1)+k]^2 for k in 1:3) ~ 1)
-end
-
-guess_map = Dict{Any, Float64}()
-for v in qs_g; guess_map[v] = 0.0; end
-for v in λs_g; guess_map[v] = 0.0; end
-
-@named sys_raw_g = ODESystem(eqs_g, t)
-sys_g  = structural_simplify(sys_raw_g)
-prob_g = ODEProblem(sys_g, [], tspan; guesses = guess_map)
-
-println("unknowns prescribed as initial conditions : ",
-        count(u -> haskey(MTK.initial_conditions(sys_g), u), unknowns(sys_g)),
-        " / ", length(unknowns(sys_g)))
-ig    = prob_g.f.initialization_data.initializeprob
-resg  = zeros(length(equations(ig.f.sys)))
-println("initialization system                     : ",
-        length(equations(ig.f.sys)), " equations, ",
-        length(unknowns(ig.f.sys)), " unknowns")
-isolg = solve(ig)
-ig.f(resg, isolg.u, ig.p)
-println("init solve retcode                        : ", isolg.retcode)
-println("‖init residual at solution‖∞              : ", maximum(abs, resg))
-
-elapsed_g = @elapsed sol_g = solve(prob_g, FBDF(); abstol = 1e-8, reltol = 1e-8,
-                                   save_everystep = false, maxiters = Int(1e6))
-println("FBDF, positions-only ICs: retcode = ", sol_g.retcode,
-        "  reached t = ", round(sol_g.t[end], sigdigits = 5), " of ", tspan[2],
-        "  (", round(elapsed_g, digits = 1), " s)")
-```
-
-```
-unknowns prescribed as initial conditions : 60 / 140
-initialization system                     : 80 equations, 100 unknowns
-init solve retcode                        : Success
-‖init residual at solution‖∞              : 4.480790738448093e-15
-FBDF, positions-only ICs: retcode = Unstable  reached t = 4.0415 of 1000.0
- (30.1 s)
-```
-
-
-
-
-
-Same run, same day:
-
-```
-unknowns prescribed as initial conditions : 60 / 140
-initialization system                     : 80 equations, 100 unknowns
-init solve retcode                        : Success
-‖init residual at solution‖∞              : 3.885780586188049e-15
-FBDF, positions-only ICs: retcode = Unstable  reached t = 4.0416 of 1000.0  (26.4 s)
-```
-
-Two conclusions, and they point in opposite directions.
-
-**Initialization is fixed.** Dropping the redundant prescriptions turns a
-system that stalls at residual 18.7 into one that solves to
-$4 \times 10^{-15}$, and the default `InitialFailure` is gone — the solve now
-gets past $t = 0$ without any `initializealg` override. That confirms
-over-prescription as the cause of the first failure.
-
-It is not a clean fix, though, and the section does not claim otherwise: the
-initialization system swings from over- to *under*-determined (80 equations,
-100 unknowns) and MTK reports it structurally singular, warning that the guess
-values materially affect the initial state. A correct formulation would
-prescribe the positions and let the velocity- and acceleration-level
-constraints determine the rest, landing on a square system; that is the
-upstream question.
-
-**Integration is not fixed.** With initialization solved exactly, `FBDF` still
-goes `Unstable` at $t = 4.04$. Every route that gets past $t = 0$ — forcing
-`BrownFullBasicInit()` or `ShampineCollocationInit()` on the original problem,
-or prescribing only positions here — fails somewhere in
-$t \in [4.0, 4.6]$ of a $[0, 1000]$ span, regardless of solver. So the drift
-that index reduction is supposed to control is not being controlled, and that
-failure is **independent of initialization**. It is not a tolerance-tuning
-problem and not something a different solver fixes.
-
-**If you are picking this up:** it belongs upstream in
-[ModelingToolkit.jl](https://github.com/SciML/ModelingToolkit.jl/issues) as two
-reports sharing this reproducer — a Fekete-point index-3 constrained mechanical
-system, 140 equations after `structural_simplify`. (1) Defaults on constrained
-unknowns become hard initial conditions, giving an over-determined
-initialization system that least squares cannot satisfy, with no diagnostic
-beyond "overdetermined"; (2) after index reduction with consistent initial
-data, the integration loses stability after 0.4% of the time span. Re-enable
-the sweep here by restoring `mtkprob` to `probs`, an `mtk_ref` reference solve
-to `refs`, and the `:prob_choice => 3` setups with `Rodas5P`, `Rodas4`, `FBDF`
-and `NordsieckBDF` to the three blocks below.
-
-(Seconds above are from an M-series Mac; the retcodes, system sizes, residuals
-and $t$ values are what matter and are reproducible. Both chunks together cost
-~80 s there.)
+To re-enable the sweep, restore `mtkprob` to `probs` and the
+`:prob_choice => 3` setups.
 
 ## High Tolerances
 
-The work-precision grids below were re-tuned on 2026-08-23 after the DAE folder
-started overrunning CI (measured: the whole folder took 7h56m on amdci3-1 on
-2026-06-18, of which this single file was 4h52m). See the notes on each block
-for what was measured and why it was changed.
-
 ```julia
-# Tightened reltols (was 10.0.^-(1:4)) so that IDA/DASKR are not asked for the
-# loose (abstol=1e-5, reltol=1e-1) pairing — Sundials grinds with repeated
-# error-test failures for hours on that pairing. Pairing abstol with reltol
-# 4 orders of magnitude tighter keeps the per-step error control sane.
-# `verbose=false` silences Sundials' repeated-error-test warnings on the still
-# moderately-loose end of the grid.
+# Tightened reltols so that IDA/DASKR are not asked for the loose
+# (abstol=1e-5, reltol=1e-1) pairing — Sundials grinds with repeated
+# error-test failures for hours on that pairing. `verbose=false` silences the
+# repeated-error-test warnings on the still moderately-loose end of the grid.
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (4:7)
 # RadauIIA5 is not in this list: on this mass-matrix form it aborts
-# (`DtLessThanMin`) at every tolerance tried on these grids, so it contributes
-# no usable point while costing minutes per attempt. (Its aborts used to be a
-# hard error as well; that part is fixed at the problem level — see the
-# out-of-place `fekete_jac!` method and the `FullSpecialize` note above.)
-# numruns was 5; each point here is a multi-second-to-minute solve of a 160-equation
+# (`DtLessThanMin`) at every tolerance on these grids.
+# numruns = 1: each point is a multi-second-to-minute solve of a 160-equation
 # index-2 DAE over t in [0, 1000], so run-to-run timing noise is far below the
-# cost of repeating it. numruns=1 cuts this block ~3x (6 solves/point -> 2).
+# cost of repeating it.
 setups = [
     Dict(:prob_choice => 1, :alg => Rodas4()),
     Dict(:prob_choice => 1, :alg => Rodas5P()),
@@ -1314,32 +1120,41 @@ wp = WorkPrecisionSet(probs, abstols, reltols, setups;
 plot(wp, title = "Fekete Problem: All Formulations (High Tol)")
 ```
 
-![](figures/fekete_17_1.png)
+```
+DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.1635197666282D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.4167388044467D+00   R2 =  0.4975190871857D-12
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN                 
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.5601422399620D+00
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.1839743054908D+01
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
+```
+
+
+![](figures/fekete_16_1.png)
 
 
 
 Solver performance differs significantly between the residual DAE and
 mass-matrix ODE formulations.
 
-A second high-tolerance diagram over `abstols = 10.0 .^ -(6:8)` used to follow
-here. It was a strict sub-grid of the diagram above with a strict subset of the
-solvers, so it produced no information that the plot above does not already
-contain, and it cost 9.5 min of the 4h52m weave on 2026-06-18. Removed.
-
 ### Timeseries Errors
 
 ```julia
-# Same tightening as above (was reltols = 10.0.^-(1:4)) and verbose=false on
-# IDA/DASKR so the loose abstol/reltol pairings don't fail Sundials' error test
-# repeatedly.
-#
-# RadauIIA5 is *not* in this list: on 2026-08-23, with the current Manifest,
-# `solve(mmprob, RadauIIA5(); abstol <= 1e-7)` aborted at every tolerance tried.
-# The abort additionally threw `No matching function wrapper was found!` out of
-# the instability diagnostic, which failed the whole chunk and therefore the
-# whole folder build. That throw is fixed at the problem level (see the
-# out-of-place `fekete_jac!` method), but the solver still has nothing to
-# contribute on this grid, so it stays out.
+# Same reltol tightening and verbose=false on IDA/DASKR as above.
+# RadauIIA5 stays out: it aborts at every tolerance on this grid.
 abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (4:7)
 setups = [
@@ -1361,32 +1176,46 @@ wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
 plot(wp, title = "Fekete Problem: Timeseries (L2)")
 ```
 
-![](figures/fekete_18_1.png)
+```
+DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.1635197666282D+02
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.4167388044467D+00   R2 =  0.4975190871857D-12
+ DASKR--  ERROR TEST FAILED REPEATEDLY OR WITH ABS(H)=HMIN                 
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.5601422399620D+00
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.1839743054908D+01
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT
+```
 
 
+![](figures/fekete_17_1.png)
 
-The `abstols = 10.0 .^ -(6:8)` L2 sub-grid that used to follow was, like the
-final-error sub-grid above, a strict subset of the diagram above (10.3 min on
-2026-06-18). Removed.
+
 
 ### Low Tolerances
 
 This measures solver performance when high accuracy is needed.
 
 ```julia
-# Grid was `abstols = 10.0 .^ -(7:12)`, `reltols = 10.0 .^ -(4:9)`. Measured on
-# 2026-08-23, one solve per (solver, tolerance) point on the mass-matrix form:
-# past abstol = 1e-10 every mass-matrix solver either bails out
-# (FBDF/QNDF/NordsieckBDF return `Unstable`, radau returns `DtLessThanMin`) or
-# costs minutes per solve while doing so, so the last two columns of the grid
-# were buying failed points at the highest price on the whole grid. This block
-# was 1h48m of the 4h52m weave on 2026-06-18. Trimmed to 4 points.
+# Past abstol = 1e-10 every mass-matrix solver either bails out
+# (FBDF/QNDF/NordsieckBDF return `Unstable`, radau returns `DtLessThanMin`)
+# or costs minutes per solve, so the grid stops at 1e-10.
 abstols = 1.0 ./ 10.0 .^ (7:10)
 reltols = 1.0 ./ 10.0 .^ (4:7)
 
-# RadauIIA5 dropped: aborts on every point of this grid (see the timeseries
-# block above). `radau()` (ODEInterface) is kept — it is a different
-# implementation and does produce points here.
+# RadauIIA5 dropped: aborts at every tolerance on these grids. `radau()`
+# (ODEInterface) is a different implementation and does produce points here.
 setups = [
     Dict(:prob_choice => 1, :alg => Rodas5()),
     Dict(:prob_choice => 1, :alg => Rodas5P()),
@@ -1409,15 +1238,38 @@ wp = WorkPrecisionSet(probs, abstols, reltols, setups;
 plot(wp, title = "Fekete Problem: Low Tolerances")
 ```
 
-![](figures/fekete_19_1.png)
+```
+EXIT OF RADAU AT X=        0.1180E+01
+  STEP SIZE T0O SMALL, H=   6.5713944532016449E-016
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.1873886096282D+00
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT CURRENT T (=R1)  500 STEPS                                    
+      
+      In above message,  R1 =  0.1241937757417D+00
+ DASKR--  TAKEN ON THIS CALL BEFORE REACHING TOUT                          
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.5198073331053D-12
+ DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE                              
+      
+ DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN                                   
+      
+ DASKR--  AT T (=R1) AND STEPSIZE H (=R2) THE                              
+      
+      In above,  R1 =  0.0000000000000D+00   R2 =  0.8316917329686D-12
+ DASKR--  NONLINEAR SOLVER FAILED TO CONVERGE                              
+      
+ DASKR--  REPEATEDLY OR WITH ABS(H)=HMIN
+```
 
 
+![](figures/fekete_18_1.png)
 
-An L2 re-run of exactly the block above used to follow. Because it passed
-`save_everystep = false`, the "timeseries" L2 error was computed over the two
-saved points (start and end), i.e. it was the final error again under a
-different name — a duplicate plot for 1h46m of the 4h52m weave on 2026-06-18.
-Removed; the L2 comparison lives in the timeseries block above.
+
 
 ### Conclusion
 
@@ -1427,7 +1279,6 @@ Removed; the L2 comparison lives in the timeseries block above.
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
 
 To locally run this benchmark, do the following commands:
-
 ```
 using SciMLBenchmarks
 SciMLBenchmarks.weave_file("benchmarks/DAE","fekete.jmd")
@@ -1447,7 +1298,6 @@ Platform Info:
   LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
-  JULIA_PKG_PRECOMPILE_AUTO = 0
   JULIA_NUM_THREADS = auto
 
 ```
@@ -1455,7 +1305,7 @@ Environment:
 Package Information:
 
 ```
-Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Project.toml`
 ⌃ [165a45c3] DASKR v3.1.5
 ⌃ [e993076c] DASSL v3.1.0
 ⌃ [f3b72e0c] DiffEqDevTools v3.2.0
@@ -1478,10 +1328,10 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.23.0
-  [14f7f29c] AMD v0.5.3
-  [6e696c72] AbstractPlutoDingetjes v1.4.0
+⌃ [14f7f29c] AMD v0.5.3
+⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
@@ -1551,7 +1401,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+⌃ [f6369f11] ForwardDiff v1.4.5
   [a85aefff] FunctionMaps v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
 ⌃ [77dc65aa] FunctionWrappersWrappers v1.12.1
@@ -1559,7 +1409,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌃ [28b8d3ca] GR v0.73.26
   [a0844989] Gamma v1.2.0
   [d7ba0133] Git v1.5.0
-  [86223c79] Graphs v1.14.0
+⌃ [86223c79] Graphs v1.14.0
   [42e2da0e] Grisu v1.0.2
 ⌅ [cd3eb016] HTTP v1.11.0
 ⌅ [eafb193a] Highlights v0.5.3
@@ -1578,7 +1428,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
 ⌃ [ccbc3e58] JumpProcesses v9.29.2
-  [ba0b0d4f] Krylov v0.10.9
+⌃ [ba0b0d4f] Krylov v0.10.9
 ⌃ [b964fa9f] LaTeXStrings v1.4.0
 ⌃ [23fbe1c1] Latexify v0.16.11
   [10f19ff3] LayoutPointers v0.1.17
@@ -1633,11 +1483,11 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [1d0040c9] PolyesterWeave v0.2.2
 ⌃ [d236fae5] PreallocationTools v1.5.0
 ⌅ [aea7be01] PrecompileTools v1.2.1
-  [21216c6a] Preferences v1.5.2
+⌃ [21216c6a] Preferences v1.5.2
 ⌃ [08abe8d2] PrettyTables v3.4.6
   [27ebfcd6] Primes v0.5.7
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.4.1
+⌃ [0c0d3e7f] PureKLU v1.4.1
   [1fd47b50] QuadGK v2.11.3
   [988b38a3] ReadOnlyArrays v0.2.0
   [795d4caa] ReadOnlyDicts v1.0.1
@@ -1664,13 +1514,13 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌃ [53ae85a6] SciMLStructures v1.10.4
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
+⌃ [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
 ⌃ [727e6d20] SimpleNonlinearSolve v2.14.0
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
 ⌃ [a57abbd0] SparseColumnPivotedQR v2.1.6
-  [0a514795] SparseMatrixColorings v0.4.27
+⌃ [0a514795] SparseMatrixColorings v0.4.27
 ⌃ [276daf66] SpecialFunctions v2.8.3
   [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
@@ -1698,7 +1548,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
   [8290d209] ThreadingUtilities v0.5.6
-  [a759f4b9] TimerOutputs v1.2.0
+⌃ [a759f4b9] TimerOutputs v1.2.0
   [3bb67fe8] TranscodingStreams v0.11.3
   [781d530d] TruncatedStacktraces v1.4.0
 ⌃ [5c2747f8] URIs v1.6.3
@@ -1732,8 +1582,8 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-  [88015f11] LERC_jll v4.1.0+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+⌃ [88015f11] LERC_jll v4.1.0+0
+⌃ [1d63c593] LLVMOpenMP_jll v22.1.7+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
@@ -1756,11 +1606,11 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [6de9746b] Qt6Svg_jll v6.10.2+0
   [e99dba38] Qt6Wayland_jll v6.10.2+1
   [f50d1b31] Rmath_jll v0.5.2+0
-  [ca45d3f4] SuiteSparse32_jll v7.12.1+0
+⌃ [ca45d3f4] SuiteSparse32_jll v7.12.1+0
   [fb77eaff] Sundials_jll v7.5.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+⌃ [ffd25f8a] XZ_jll v5.8.3+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0

@@ -1291,7 +1291,6 @@ Platform Info:
   LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
-  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
 
 ```
@@ -1299,7 +1298,7 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Project.toml`
 ⌃ [165a45c3] DASKR v3.1.5
 ⌃ [e993076c] DASSL v3.1.0
 ⌃ [f3b72e0c] DiffEqDevTools v3.2.0
@@ -1322,7 +1321,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.23.0
 ⌃ [14f7f29c] AMD v0.5.3
 ⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
@@ -1395,7 +1394,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+⌃ [f6369f11] ForwardDiff v1.4.5
   [a85aefff] FunctionMaps v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
 ⌃ [77dc65aa] FunctionWrappersWrappers v1.12.1
@@ -1422,7 +1421,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
 ⌃ [ccbc3e58] JumpProcesses v9.29.2
-  [ba0b0d4f] Krylov v0.10.9
+⌃ [ba0b0d4f] Krylov v0.10.9
 ⌃ [b964fa9f] LaTeXStrings v1.4.0
 ⌃ [23fbe1c1] Latexify v0.16.11
   [10f19ff3] LayoutPointers v0.1.17
@@ -1459,7 +1458,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.2
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.14.3
 ⌃ [50262376] OrdinaryDiffEqDefault v2.4.4
-⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.7.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.9.0
 ⌃ [5960d6e9] OrdinaryDiffEqFIRK v2.6.0
 ⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.8.0
 ⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.6.5
@@ -1477,11 +1476,11 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [1d0040c9] PolyesterWeave v0.2.2
 ⌃ [d236fae5] PreallocationTools v1.5.0
 ⌅ [aea7be01] PrecompileTools v1.2.1
-  [21216c6a] Preferences v1.5.2
+⌃ [21216c6a] Preferences v1.5.2
 ⌃ [08abe8d2] PrettyTables v3.4.6
   [27ebfcd6] Primes v0.5.7
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.4.1
+⌃ [0c0d3e7f] PureKLU v1.4.1
   [1fd47b50] QuadGK v2.11.3
   [988b38a3] ReadOnlyArrays v0.2.0
   [795d4caa] ReadOnlyDicts v1.0.1
@@ -1576,8 +1575,8 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-  [88015f11] LERC_jll v4.1.0+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+⌃ [88015f11] LERC_jll v4.1.0+0
+⌃ [1d63c593] LLVMOpenMP_jll v22.1.7+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
@@ -1604,7 +1603,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [fb77eaff] Sundials_jll v7.5.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+⌃ [ffd25f8a] XZ_jll v5.8.3+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0

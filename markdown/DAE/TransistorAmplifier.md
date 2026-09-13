@@ -106,7 +106,7 @@ oat64}, Float64, 1}}, Vector{Float64}, SciMLBase.NullParameters, ForwardDif
 f.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}
 }, FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{ForwardDiff.Dual{
 ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, Vecto
-r{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64},
+r{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, 
 Float64, 1}}, SciMLBase.NullParameters, ForwardDiff.Dual{ForwardDiff.Tag{Di
 ffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}}}, FunctionWrappersWrapp
 ers.AllowNonIsBits, FunctionWrappersWrappers.SingleCacheStorage}, Matrix{Fl
@@ -126,14 +126,14 @@ or{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64},
  Float64, 1}}, SciMLBase.NullParameters, Float64}}, FunctionWrappers.Functi
 onWrapper{Nothing, Tuple{Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase
 .OrdinaryDiffEqTag, Float64}, Float64, 1}}, Vector{Float64}, SciMLBase.Null
-Parameters, ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag,
+Parameters, ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, 
 Float64}, Float64, 1}}}, FunctionWrappers.FunctionWrapper{Nothing, Tuple{Ve
 ctor{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64
 }, Float64, 1}}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.Ordinar
 yDiffEqTag, Float64}, Float64, 1}}, SciMLBase.NullParameters, ForwardDiff.D
 ual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}}},
  FunctionWrappersWrappers.AllowNonIsBits, FunctionWrappersWrappers.SingleCa
-cheStorage}, Matrix{Float64}, Nothing, Nothing, Nothing, Nothing, Nothing,
+cheStorage}, Matrix{Float64}, Nothing, Nothing, Nothing, Nothing, Nothing, 
 Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciML
 Base.DEFAULT_OBSERVED), Nothing, Nothing, Nothing, Nothing}, Vector{Float64
 }, SciMLBase.NullParameters}, SciMLBase.UJacobianWrapper{true, SciMLBase.OD
@@ -152,7 +152,7 @@ iff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1
 }}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, F
 loat64}, Float64, 1}}, SciMLBase.NullParameters, ForwardDiff.Dual{ForwardDi
 ff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}}}, FunctionWrap
-persWrappers.AllowNonIsBits, FunctionWrappersWrappers.SingleCacheStorage},
+persWrappers.AllowNonIsBits, FunctionWrappersWrappers.SingleCacheStorage}, 
 Matrix{Float64}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Noth
 ing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLBase.DEFAULT_
 OBSERVED), Nothing, Nothing, Nothing, Nothing}, Float64, SciMLBase.NullPara
@@ -187,7 +187,7 @@ orwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}}}, Tupl
 e{}}}, Tuple{DifferentiationInterfaceForwardDiffExt.ForwardDiffTwoArgDeriva
 tivePrep{Tuple{SciMLBase.TimeGradientWrapper{true, SciMLBase.ODEFunction{tr
 ue, SciMLBase.AutoSpecialize, FunctionWrappersWrappers.FunctionWrappersWrap
-per{Tuple{FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{Float64},
+per{Tuple{FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{Float64}, 
 Vector{Float64}, SciMLBase.NullParameters, Float64}}, FunctionWrappers.Func
 tionWrapper{Nothing, Tuple{Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBa
 se.OrdinaryDiffEqTag, Float64}, Float64, 1}}, Vector{ForwardDiff.Dual{Forwa
@@ -195,7 +195,7 @@ rdDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, SciMLBase.
 NullParameters, Float64}}, FunctionWrappers.FunctionWrapper{Nothing, Tuple{
 Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float
 64}, Float64, 1}}, Vector{Float64}, SciMLBase.NullParameters, ForwardDiff.D
-ual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}},
+ual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}}, 
 FunctionWrappers.FunctionWrapper{Nothing, Tuple{Vector{ForwardDiff.Dual{For
 wardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Float64, 1}}, Vector{F
 orwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float64}, Flo
@@ -233,16 +233,16 @@ BSERVED), Nothing, Nothing, Nothing, Nothing}, Vector{Float64}, SciMLBase.N
 ullParameters}, Vector{Float64}, ADTypes.AutoForwardDiff{1, ForwardDiff.Tag
 {DiffEqBase.OrdinaryDiffEqTag, Float64}}, Float64, Tuple{}}, Float64, Forwa
 rdDiff.DerivativeConfig{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, Float
-64}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag,
+64}, Vector{ForwardDiff.Dual{ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, 
 Float64}, Float64, 1}}}, Tuple{}}}, Float64, OrdinaryDiffEqRosenbrock.Rodas
-5{ADTypes.AutoForwardDiff{1, ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag,
+5{ADTypes.AutoForwardDiff{1, ForwardDiff.Tag{DiffEqBase.OrdinaryDiffEqTag, 
 Float64}}, Nothing, typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(Ord
 inaryDiffEqCore.trivial_limiter!), Nothing}, typeof(OrdinaryDiffEqCore.triv
 ial_limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), OrdinaryDiffEqR
 osenbrock.JacReuseState{Float64, Matrix{Float64}, Vector{Float64}, Matrix{F
 loat64}}}, OrdinaryDiffEqCore.DifferentialVarsUndefined}, SciMLBase.DEStats
 , Nothing, Nothing, Nothing, Nothing}}:
- [0.0 5.1340033168300436e-5 … -0.005580387182419081 -0.005562145012265309;
+ [0.0 5.1340033168300436e-5 … -0.005580387182419081 -0.005562145012265309; 
 3.0 3.0000513342871336 … 3.006506162883856 3.0065224719030654; … ; 6.0 5.99
 9990006369713 … 4.770923531000766 4.770927631616881; 0.0 -9.993519222579537
 e-6 … 1.237001324458261 1.2369958680914062]
@@ -285,6 +285,12 @@ wp = WorkPrecisionSet(probs, abstols, reltols, setups;
 plot(wp)
 ```
 
+```
+EXIT OF RADAU AT X=        0.1260E-01
+  MATRIX IS REPEATEDLY SINGULAR, IER=                    8
+```
+
+
 ![](figures/TransistorAmplifier_3_1.png)
 
 ```julia
@@ -321,6 +327,12 @@ wp = WorkPrecisionSet(probs, abstols, reltols, setups; error_estimate = :l2,
     save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 10)
 plot(wp)
 ```
+
+```
+EXIT OF RADAU AT X=        0.1260E-01
+  MATRIX IS REPEATEDLY SINGULAR, IER=                    8
+```
+
 
 ![](figures/TransistorAmplifier_5_1.png)
 
@@ -383,7 +395,6 @@ plot(wp)
 These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
 
 To locally run this benchmark, do the following commands:
-
 ```
 using SciMLBenchmarks
 SciMLBenchmarks.weave_file("benchmarks/DAE","TransistorAmplifier.jmd")
@@ -403,7 +414,6 @@ Platform Info:
   LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
-  JULIA_PKG_PRECOMPILE_AUTO = 0
   JULIA_NUM_THREADS = auto
 
 ```
@@ -411,7 +421,7 @@ Environment:
 Package Information:
 
 ```
-Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Project.toml`
 ⌃ [165a45c3] DASKR v3.1.5
 ⌃ [e993076c] DASSL v3.1.0
 ⌃ [f3b72e0c] DiffEqDevTools v3.2.0
@@ -434,10 +444,10 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Manifest.toml`
 ⌃ [47edcb42] ADTypes v1.23.0
-  [14f7f29c] AMD v0.5.3
-  [6e696c72] AbstractPlutoDingetjes v1.4.0
+⌃ [14f7f29c] AMD v0.5.3
+⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
@@ -507,7 +517,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+⌃ [f6369f11] ForwardDiff v1.4.5
   [a85aefff] FunctionMaps v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
 ⌃ [77dc65aa] FunctionWrappersWrappers v1.12.1
@@ -515,7 +525,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌃ [28b8d3ca] GR v0.73.26
   [a0844989] Gamma v1.2.0
   [d7ba0133] Git v1.5.0
-  [86223c79] Graphs v1.14.0
+⌃ [86223c79] Graphs v1.14.0
   [42e2da0e] Grisu v1.0.2
 ⌅ [cd3eb016] HTTP v1.11.0
 ⌅ [eafb193a] Highlights v0.5.3
@@ -534,7 +544,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
 ⌃ [ccbc3e58] JumpProcesses v9.29.2
-  [ba0b0d4f] Krylov v0.10.9
+⌃ [ba0b0d4f] Krylov v0.10.9
 ⌃ [b964fa9f] LaTeXStrings v1.4.0
 ⌃ [23fbe1c1] Latexify v0.16.11
   [10f19ff3] LayoutPointers v0.1.17
@@ -589,11 +599,11 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [1d0040c9] PolyesterWeave v0.2.2
 ⌃ [d236fae5] PreallocationTools v1.5.0
 ⌅ [aea7be01] PrecompileTools v1.2.1
-  [21216c6a] Preferences v1.5.2
+⌃ [21216c6a] Preferences v1.5.2
 ⌃ [08abe8d2] PrettyTables v3.4.6
   [27ebfcd6] Primes v0.5.7
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.4.1
+⌃ [0c0d3e7f] PureKLU v1.4.1
   [1fd47b50] QuadGK v2.11.3
   [988b38a3] ReadOnlyArrays v0.2.0
   [795d4caa] ReadOnlyDicts v1.0.1
@@ -620,13 +630,13 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
 ⌃ [53ae85a6] SciMLStructures v1.10.4
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
+⌃ [992d4aef] Showoff v1.0.3
   [777ac1f9] SimpleBufferStream v1.2.0
 ⌃ [727e6d20] SimpleNonlinearSolve v2.14.0
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
 ⌃ [a57abbd0] SparseColumnPivotedQR v2.1.6
-  [0a514795] SparseMatrixColorings v0.4.27
+⌃ [0a514795] SparseMatrixColorings v0.4.27
 ⌃ [276daf66] SpecialFunctions v2.8.3
   [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
@@ -654,7 +664,7 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
   [8290d209] ThreadingUtilities v0.5.6
-  [a759f4b9] TimerOutputs v1.2.0
+⌃ [a759f4b9] TimerOutputs v1.2.0
   [3bb67fe8] TranscodingStreams v0.11.3
   [781d530d] TruncatedStacktraces v1.4.0
 ⌃ [5c2747f8] URIs v1.6.3
@@ -688,8 +698,8 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-  [88015f11] LERC_jll v4.1.0+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+⌃ [88015f11] LERC_jll v4.1.0+0
+⌃ [1d63c593] LLVMOpenMP_jll v22.1.7+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
@@ -712,11 +722,11 @@ Status `~/sandbox/tmp_20260825_180339_53321/dae-pr1670-validate/benchmarks/DAE/M
   [6de9746b] Qt6Svg_jll v6.10.2+0
   [e99dba38] Qt6Wayland_jll v6.10.2+1
   [f50d1b31] Rmath_jll v0.5.2+0
-  [ca45d3f4] SuiteSparse32_jll v7.12.1+0
+⌃ [ca45d3f4] SuiteSparse32_jll v7.12.1+0
   [fb77eaff] Sundials_jll v7.5.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+⌃ [ffd25f8a] XZ_jll v5.8.3+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0
