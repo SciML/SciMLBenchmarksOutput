@@ -138,3 +138,7 @@ for (i, N) in enumerate(NS)
     @printf("%6d %10d %12.3f %12.3f\n", N, ntraj[i], t_gpu[i] * 1e3, t_cpu[i] * 1e3)
 end
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+

@@ -206,3 +206,7 @@ for n in TRAJ_KERNEL
     @printf("%10d %12.3f %12.3f %12.3f %12.3f\n", n, tk, ta, tc, tj)
 end
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+

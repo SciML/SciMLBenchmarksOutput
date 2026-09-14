@@ -88,3 +88,7 @@ for n in TRAJ_GPU
     @printf("%10d %12.3f %12.3f\n", n, tg, tc)
 end
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
