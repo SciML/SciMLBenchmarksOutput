@@ -572,12 +572,12 @@ end
 
 ```
 6-element Vector{Float64}:
- 7.1329e-5
- 3.686e-5
- 0.000249157
- 0.000302037
- 0.000194648
- 0.000173358
+ 9.247e-5
+ 4.9449e-5
+ 0.000337278
+ 0.000406888
+ 0.000263599
+ 0.000222589
 ```
 
 
@@ -631,24 +631,24 @@ end
 ```
 
 ```
-6.185136 seconds (11.95 M allocations: 589.283 MiB, 1.66% gc time, 91.58%
+8.174516 seconds (12.21 M allocations: 599.617 MiB, 1.08% gc time, 91.43%
  compilation time)
- 12.175880 seconds (23.76 M allocations: 1.088 GiB, 1.91% gc time, 97.08% c
+ 15.712320 seconds (23.75 M allocations: 1.087 GiB, 1.30% gc time, 96.95% c
 ompilation time)
-130.806484 seconds (13.10 M allocations: 1.182 GiB, 0.26% gc time, 5.14% co
+166.478800 seconds (13.05 M allocations: 1.179 GiB, 0.31% gc time, 5.36% co
 mpilation time)
-139.181700 seconds (19.02 M allocations: 1.633 GiB, 0.76% gc time, 5.60% co
+183.428857 seconds (18.97 M allocations: 1.630 GiB, 0.72% gc time, 5.39% co
 mpilation time)
- 90.175737 seconds (7.85 M allocations: 1.087 GiB, 1.21% gc time, 5.26% com
+130.961613 seconds (7.58 M allocations: 1.073 GiB, 0.89% gc time, 4.58% com
 pilation time)
 
 6-element Vector{Float64}:
- 106.308739981
-   0.355186951
- 141.222430263
- 124.461914531
- 121.055864473
-   0.373140153
+ 116.473833763
+   0.471914018
+ 157.612951462
+ 131.167688189
+ 138.182257312
+   0.501498223
 ```
 
 
@@ -688,11 +688,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.009334642
- 0.349390763
- 0.399817024
- 0.410473982
- 0.006437182
+ 0.012573807
+ 0.396159159
+ 0.448902043
+ 0.377348251
+ 0.008658227
 ```
 
 
@@ -736,11 +736,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.001704252
- 0.006008756
- 0.004646772
- 0.00570911
- 0.00665719
+ 0.002270939
+ 0.007938731
+ 0.006887536
+ 0.008387058
+ 0.008631497
 ```
 
 
@@ -762,18 +762,18 @@ display(forward_timings)
 t64 ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ Compile-time CSA           7.1329e-5    106.309     0.0         0.0 
+   1 │ Compile-time CSA           9.247e-5     116.474     0.0         0.0 
     ⋯
-   2 │ DSA                        3.686e-5       0.355187  0.00933464  0.00
-170
-   3 │ CSA user-Jacobian          0.000249157  141.222     0.349391    0.00
-600
-   4 │ AD-Jacobian                0.000302037  124.462     0.399817    0.00
-464
-   5 │ AD-Jv seeding              0.000194648  121.056     0.410474    0.00
-570 ⋯
-   6 │ Numerical Differentiation  0.000173358    0.37314   0.00643718  0.00
-665
+   2 │ DSA                        4.9449e-5      0.471914  0.0125738   0.00
+227
+   3 │ CSA user-Jacobian          0.000337278  157.613     0.396159    0.00
+793
+   4 │ AD-Jacobian                0.000406888  131.168     0.448902    0.00
+688
+   5 │ AD-Jv seeding              0.000263599  138.182     0.377348    0.00
+838 ⋯
+   6 │ Numerical Differentiation  0.000222589    0.501498  0.00865823  0.00
+863
                                                                 1 column om
 itted
 ```
@@ -822,27 +822,27 @@ end
 ```
 
 ```
-4.594284 seconds (11.81 M allocations: 598.924 MiB, 1.32% gc time, 99.98%
+5.622900 seconds (11.69 M allocations: 592.542 MiB, 1.56% gc time, 99.99%
  compilation time)
-  7.282119 seconds (14.90 M allocations: 738.138 MiB, 1.62% gc time, 99.78%
+  9.039256 seconds (14.84 M allocations: 734.702 MiB, 1.05% gc time, 99.80%
  compilation time)
-119.408145 seconds (236.04 M allocations: 11.819 GiB, 1.98% gc time, 99.96%
- compilation time)
-  0.789846 seconds (2.01 M allocations: 103.823 MiB, 7.12% gc time, 99.75% 
+140.649327 seconds (185.08 M allocations: 9.492 GiB, 1.59% gc time, 99.96% 
 compilation time)
+  1.079961 seconds (2.01 M allocations: 103.985 MiB, 16.44% gc time, 99.81%
+ compilation time)
 12-element Vector{Float64}:
- 8.2219e-5
- 0.010057415
- 0.000434305
- 0.000541435
- 0.000369166
- 0.000673583
- 0.001309106
- 0.002425585
- 0.000683702
- 0.00098385
- 0.000600673
- 0.000496205
+ 0.00010804
+ 0.01261464
+ 0.000589298
+ 0.000716627
+ 0.000491567
+ 0.000890125
+ 0.001851421
+ 0.001323094
+ 0.000908456
+ 0.001396213
+ 0.000790316
+ 0.000667157
 ```
 
 
@@ -892,25 +892,25 @@ end
 ```
 
 ```
-11.350090 seconds (20.46 M allocations: 968.789 MiB, 1.10% gc time, 96.80%
+14.365784 seconds (20.44 M allocations: 967.274 MiB, 1.32% gc time, 96.06%
  compilation time)
-100.195275 seconds (110.06 M allocations: 5.430 GiB, 1.19% gc time, 91.10% 
+125.753147 seconds (104.86 M allocations: 5.197 GiB, 0.96% gc time, 90.28% 
 compilation time: 1% of which was recompilation)
-  5.860041 seconds (6.16 M allocations: 343.872 MiB, 2.15% gc time, 80.52% 
+  7.660379 seconds (6.14 M allocations: 342.099 MiB, 1.61% gc time, 80.71% 
 compilation time: <1% of which was recompilation)
 12-element Vector{Float64}:
-   0.358773007
+   0.483263727
  NaN
-   2.840470629
-   1.210936904
-   0.378493741
-   0.162833517
-   0.2371262
-   0.200567742
+   3.770427609
+   1.815491956
+   0.529447104
+   0.278322866
+   0.2753519
+   0.172531957
  NaN
  NaN
  NaN
-   1.065763773
+   1.410942885
 ```
 
 
@@ -963,25 +963,25 @@ end
 ```
 
 ```
-10.051955 seconds (18.04 M allocations: 833.678 MiB, 1.03% gc time, 99.92%
+12.693289 seconds (18.00 M allocations: 831.195 MiB, 0.54% gc time, 99.92%
  compilation time)
- 80.252121 seconds (85.93 M allocations: 4.057 GiB, 1.06% gc time, 94.27% c
-ompilation time)
-  9.672638 seconds (37.53 M allocations: 1.764 GiB, 5.18% gc time, 99.86% c
+114.711573 seconds (135.99 M allocations: 6.533 GiB, 1.29% gc time, 94.92% 
+compilation time)
+ 12.142490 seconds (37.49 M allocations: 1.761 GiB, 4.36% gc time, 99.86% c
 ompilation time)
 12-element Vector{Float64}:
-   0.007404692
+   0.009835903
  NaN
-   0.618838138
-   1.186713499
-   0.240339296
-   0.149494257
-   0.49532423
-   0.428487439
+   0.82247867
+   1.493470544
+   0.314696223
+   0.19569788
+   0.656869443
+   0.208692418
  NaN
  NaN
  NaN
-   0.012336601
+   0.016344651
 ```
 
 
@@ -1034,27 +1034,27 @@ end
 ```
 
 ```
-4.460480 seconds (11.64 M allocations: 582.540 MiB, 1.39% gc time, 99.91%
+5.601187 seconds (11.58 M allocations: 578.902 MiB, 0.87% gc time, 99.92%
  compilation time)
-  4.754505 seconds (10.18 M allocations: 494.269 MiB, 1.35% gc time, 92.93%
- compilation time)
- 35.851012 seconds (69.62 M allocations: 3.479 GiB, 1.40% gc time, 99.82% c
+  5.879785 seconds (9.90 M allocations: 480.264 MiB, 1.83% gc time, 93.78% 
+compilation time)
+ 43.368086 seconds (64.88 M allocations: 3.257 GiB, 1.13% gc time, 99.83% c
 ompilation time)
-  1.201130 seconds (7.45 M allocations: 386.080 MiB, 5.49% gc time, 97.27% 
+  1.497219 seconds (7.41 M allocations: 382.902 MiB, 3.30% gc time, 97.58% 
 compilation time)
 12-element Vector{Float64}:
-   0.002215357
-   0.241353314
-   0.006080418
-   0.004376025
-   0.002023179
-   0.004203717
-   0.005294625
-   0.007964608
+   0.002969746
+   0.308807099
+   0.007800772
+   0.005548123
+   0.002689937
+   0.005610343
+   0.007385174
+   0.005189574
  NaN
  NaN
  NaN
-   0.014842027
+   0.018134632
 ```
 
 
@@ -1075,18 +1075,18 @@ Markdown.parse(PrettyTables.pretty_table(
 
 |                   **methods** |      **LV** | **Bruss** | **Pollution** |   **PKPD** |
 | -----------------------------:| -----------:| ---------:| -------------:| ----------:|
-|                   ForwardDiff |   8.2219e-5 |  0.358773 |    0.00740469 | 0.00221536 |
-|                   ReverseDiff |   0.0100574 |       NaN |           NaN |   0.241353 |
-| InterpolatingAdjoint User Jac | 0.000434305 |   2.84047 |      0.618838 | 0.00608042 |
-|   InterpolatingAdjoint AD Jac | 0.000541435 |   1.21094 |       1.18671 | 0.00437603 |
-|      InterpolatingAdjoint v'J | 0.000369166 |  0.378494 |      0.240339 | 0.00202318 |
-|    QuadratureAdjoint User Jac | 0.000673583 |  0.162834 |      0.149494 | 0.00420372 |
-|      QuadratureAdjoint AD Jac |  0.00130911 |  0.237126 |      0.495324 | 0.00529462 |
-|         QuadratureAdjoint v'J |  0.00242559 |  0.200568 |      0.428487 | 0.00796461 |
-|     BacksolveAdjoint User Jac | 0.000683702 |       NaN |           NaN |        NaN |
-|       BacksolveAdjoint AD Jac |  0.00098385 |       NaN |           NaN |        NaN |
-|          BacksolveAdjoint v'J | 0.000600673 |       NaN |           NaN |        NaN |
-|     Numerical Differentiation | 0.000496205 |   1.06576 |     0.0123366 |   0.014842 |
+|                   ForwardDiff |  0.00010804 |  0.483264 |     0.0098359 | 0.00296975 |
+|                   ReverseDiff |   0.0126146 |       NaN |           NaN |   0.308807 |
+| InterpolatingAdjoint User Jac | 0.000589298 |   3.77043 |      0.822479 | 0.00780077 |
+|   InterpolatingAdjoint AD Jac | 0.000716627 |   1.81549 |       1.49347 | 0.00554812 |
+|      InterpolatingAdjoint v'J | 0.000491567 |  0.529447 |      0.314696 | 0.00268994 |
+|    QuadratureAdjoint User Jac | 0.000890125 |  0.278323 |      0.195698 | 0.00561034 |
+|      QuadratureAdjoint AD Jac |  0.00185142 |  0.275352 |      0.656869 | 0.00738517 |
+|         QuadratureAdjoint v'J |  0.00132309 |  0.172532 |      0.208692 | 0.00518957 |
+|     BacksolveAdjoint User Jac | 0.000908456 |       NaN |           NaN |        NaN |
+|       BacksolveAdjoint AD Jac |  0.00139621 |       NaN |           NaN |        NaN |
+|          BacksolveAdjoint v'J | 0.000790316 |       NaN |           NaN |        NaN |
+|     Numerical Differentiation | 0.000667157 |   1.41094 |     0.0163447 |  0.0181346 |
 
 
 
@@ -1119,7 +1119,6 @@ Platform Info:
   GC: Built with stock GC
 Threads: 128 default, 1 interactive, 128 GC (on 128 virtual cores)
 Environment:
-  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
 
 ```
@@ -1127,30 +1126,30 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AutomaticDifferentiation/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AutomaticDifferentiation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
   [0ca39b1e] Chairmarks v1.3.1
   [a93c6f00] DataFrames v1.8.2
   [1313f7d8] DataFramesMeta v0.15.6
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [a82114a7] DifferentiationInterfaceTest v0.11.0
-  [7da242da] Enzyme v0.13.199
+⌃ [7da242da] Enzyme v0.13.203
   [6a86dc24] FiniteDiff v2.33.0
-  [f6369f11] ForwardDiff v1.4.5
-  [7ed4a6bd] LinearSolve v5.14.1
-  [da2b9cff] Mooncake v0.5.48
+  [f6369f11] ForwardDiff v1.4.6
+⌃ [7ed4a6bd] LinearSolve v5.17.3
+⌃ [da2b9cff] Mooncake v0.5.56
   [1dea7af3] OrdinaryDiffEq v7.8.1
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.1
+  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [65888b18] ParameterizedFunctions v5.27.0
   [91a5bcdd] Plots v1.41.7
   [08abe8d2] PrettyTables v3.4.8
   [37e2e3b7] ReverseDiff v1.17.0
-⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.0]
-  [1ed8b502] SciMLSensitivity v7.119.1
-  [90137ffa] StaticArrays v1.9.19
-  [c3572dad] Sundials v6.6.0
-  [9f7883ad] Tracker v0.2.38
-  [e88e6eb3] Zygote v0.7.12
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+⌃ [1ed8b502] SciMLSensitivity v7.119.7
+  [90137ffa] StaticArrays v1.9.20
+  [c3572dad] Sundials v6.7.1
+  [9f7883ad] Tracker v0.2.39
+  [e88e6eb3] Zygote v0.7.13
   [37e2e46d] LinearAlgebra v1.12.0
   [d6f4376e] Markdown v1.11.0
   [de0858da] Printf v1.11.0
@@ -1161,28 +1160,28 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
-  [14f7f29c] AMD v0.5.3
+  [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
-  [6e696c72] AbstractPlutoDingetjes v1.4.0
+  [6e696c72] AbstractPlutoDingetjes v1.4.1
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [9b6a8646] AllocCheck v0.2.6
   [ec485272] ArnoldiMethod v0.4.0
-  [4fba245c] ArrayInterface v7.30.0
+⌃ [4fba245c] ArrayInterface v7.30.1
   [4c555306] ArrayLayouts v1.12.2
-  [a9b6321e] Atomix v1.1.3
+  [a9b6321e] Atomix v1.2.1
   [ab4f0b2a] BFloat16s v0.6.1
   [aae01518] BandedMatrices v1.12.0
   [6e4b80f9] BenchmarkTools v1.8.0
   [e2ed5e7c] Bijections v0.2.2
   [b2a6c25c] BinaryHeaps v1.1.0
-  [caf10ac8] BipartiteGraphs v0.1.12
+  [caf10ac8] BipartiteGraphs v0.1.14
   [8e7c35d0] BlockArrays v1.10.0
-  [70df07ce] BracketingNonlinearSolve v1.12.6
+  [70df07ce] BracketingNonlinearSolve v1.12.7
   [fa961155] CEnum v0.5.0
   [8be319e6] Chain v1.0.0
   [082447d4] ChainRules v1.73.0
@@ -1195,12 +1194,11 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
-  [f70d9fcc] CommonWorldInvalidations v1.2.0
+  [f70d9fcc] CommonWorldInvalidations v1.2.2
   [34da2185] Compat v4.18.1
   [b152e2b5] CompositeTypes v0.1.4
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.8
-  [8f4d0f93] Conda v1.10.3
   [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
   [a8cc5b0e] Crayons v4.2.0
@@ -1210,9 +1208,9 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.19.0
-  [459566f4] DiffEqCallbacks v4.19.3
-  [77a26b50] DiffEqNoiseProcess v5.36.1
+  [2b5f629d] DiffEqBase v7.21.1
+  [459566f4] DiffEqCallbacks v4.19.4
+  [77a26b50] DiffEqNoiseProcess v5.36.3
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
@@ -1221,9 +1219,9 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [31c24e10] Distributions v0.25.131
   [ffbed154] DocStringExtensions v0.9.5
   [5b8099bc] DomainSets v0.8.1
-  [7c1d4256] DynamicPolynomials v0.6.7
+  [7c1d4256] DynamicPolynomials v0.6.8
   [4e289a0a] EnumX v1.0.7
-  [7da242da] Enzyme v0.13.199
+⌃ [7da242da] Enzyme v0.13.203
   [f151be2c] EnzymeCore v0.8.21
   [e2ba6199] ExprTools v0.1.11
   [55351af7] ExproniconLite v0.10.14
@@ -1236,7 +1234,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+  [f6369f11] ForwardDiff v1.4.6
   [a85aefff] FunctionMaps v0.1.2
   [f62d2435] FunctionProperties v1.2.0
   [069b7b12] FunctionWrappers v1.1.3
@@ -1245,18 +1243,15 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [46192b85] GPUArraysCore v0.2.0
 ⌅ [61eb1bfa] GPUCompiler v1.23.0
   [28b8d3ca] GR v0.73.27
-⌃ [a0844989] Gamma v1.1.0
-  [d7ba0133] Git v1.5.0
-  [86223c79] Graphs v1.14.0
-  [42e2da0e] Grisu v1.0.2
+  [a0844989] Gamma v1.2.0
+  [86223c79] Graphs v1.15.0
   [076d061b] HashArrayMappedTries v0.2.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.30
-  [7073ff75] IJulia v1.34.4
   [7869d1d1] IRTools v0.4.20
-  [3263718b] ImplicitDiscreteSolve v2.2.0
+  [3263718b] ImplicitDiscreteSolve v2.3.0
   [d25df0c9] Inflate v0.1.5
-  [842dd82b] InlineStrings v1.4.5
+⌅ [842dd82b] InlineStrings v1.4.6
   [18e54dd8] IntegerMathUtils v0.1.4
   [8197267c] IntervalSets v0.7.14
   [3587e190] InverseFunctions v0.1.17
@@ -1267,56 +1262,56 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-  [ccbc3e58] JumpProcesses v9.30.1
+⌃ [ccbc3e58] JumpProcesses v9.32.3
   [63c18a36] KernelAbstractions v0.9.42
-  [ba0b0d4f] Krylov v0.10.9
-  [2faa5264] LHLFactorization v2.2.1
+  [ba0b0d4f] Krylov v0.10.10
+  [2faa5264] LHLFactorization v2.2.2
   [929cbde3] LLVM v9.13.1
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
-  [87fe0de2] LineSearch v0.1.16
-  [7ed4a6bd] LinearSolve v5.14.1
-⌅ [2ab3a3ac] LogExpFunctions v0.3.29
+  [87fe0de2] LineSearch v0.1.18
+⌃ [7ed4a6bd] LinearSolve v5.17.3
+  [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
   [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
   [dbe65cb8] MistyClosures v2.1.0
-  [961ee093] ModelingToolkit v11.40.0
-⌃ [7771a370] ModelingToolkitBase v1.68.0
+  [961ee093] ModelingToolkit v11.43.1
+⌃ [7771a370] ModelingToolkitBase v1.71.1
   [6bb917b9] ModelingToolkitTearing v1.20.6
-  [da2b9cff] Mooncake v0.5.48
-  [2e0e35c7] Moshi v0.3.12
+⌃ [da2b9cff] Mooncake v0.5.56
+⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
   [102ac46a] MultivariatePolynomials v0.5.19
   [ffc61752] Mustache v1.0.21
   [d8a4904e] MutableArithmetics v1.8.0
   [872c559c] NNlib v0.9.45
   [77ba4419] NaNMath v1.1.4
-  [8913a72c] NonlinearSolve v4.28.1
-  [be0214bd] NonlinearSolveBase v2.48.2
-  [5959db7a] NonlinearSolveFirstOrder v2.4.1
-  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.2
-  [26075421] NonlinearSolveSpectralMethods v1.8.1
+⌃ [8913a72c] NonlinearSolve v4.30.0
+⌃ [be0214bd] NonlinearSolveBase v2.49.5
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
+  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3
+  [26075421] NonlinearSolveSpectralMethods v1.8.3
   [d8793406] ObjectFile v0.5.1
   [6fe1bfb0] OffsetArrays v1.17.0
   [3bd65402] Optimisers v0.4.9
 ⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.1]
   [1dea7af3] OrdinaryDiffEq v7.8.1
-⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.5
-  [bbf590c4] OrdinaryDiffEqCore v4.15.2
-  [50262376] OrdinaryDiffEqDefault v2.6.0
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.11.0
-⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.2
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.1
+⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
+  [50262376] OrdinaryDiffEqDefault v2.6.2
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
+  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
+  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
-  [2d112036] OrdinaryDiffEqSDIRK v2.9.1
+⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.3
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
   [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
   [65888b18] ParameterizedFunctions v5.27.0
-⌅ [69de0a69] Parsers v2.8.7
+⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
@@ -1324,12 +1319,12 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
-  [21216c6a] Preferences v1.5.2
+  [21216c6a] Preferences v1.6.0
   [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.4.1
+  [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
   [e6cf234a] RandomNumbers v1.6.0
   [988b38a3] ReadOnlyArrays v0.2.0
@@ -1345,75 +1340,73 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9fe22ead] RespecializeParams v1.3.0
   [37e2e3b7] ReverseDiff v1.17.0
   [79098fc4] Rmath v0.9.0
-  [f2b01f46] Roots v3.0.7
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.25
-  [9dfe8606] SCCNonlinearSolve v1.15.1
-  [0bca4576] SciMLBase v3.50.0
-⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.0]
-  [19f34311] SciMLJacobianOperators v0.1.18
+  [f2b01f46] Roots v3.0.8
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+  [9dfe8606] SCCNonlinearSolve v1.15.3
+  [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
-  [c0aeaf25] SciMLOperators v1.30.0
+⌃ [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
-  [1ed8b502] SciMLSensitivity v7.119.1
+⌃ [1ed8b502] SciMLSensitivity v7.119.7
   [53ae85a6] SciMLStructures v1.10.5
   [7e506255] ScopedValues v1.6.2
   [6c6a2e73] Scratch v1.3.0
   [91c51154] SentinelArrays v1.4.10
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
-  [727e6d20] SimpleNonlinearSolve v2.14.1
+  [992d4aef] Showoff v1.1.1
+  [727e6d20] SimpleNonlinearSolve v2.14.5
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
-  [a57abbd0] SparseColumnPivotedQR v2.1.7
+  [a57abbd0] SparseColumnPivotedQR v2.1.8
   [dc90abb0] SparseInverseSubset v0.1.3
-  [0a514795] SparseMatrixColorings v0.4.27
+  [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
   [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
   [64909d44] StateSelection v1.11.1
-  [90137ffa] StaticArrays v1.9.19
+  [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
-  [10745b16] Statistics v1.11.4
+  [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.13
   [4c63d2b9] StatsFuns v2.2.1
   [69024149] StringEncodings v0.3.7
-  [892a3eda] StringManipulation v0.5.0
+⌅ [892a3eda] StringManipulation v0.5.0
   [09ab397b] StructArrays v0.7.3
   [53d494c1] StructIO v0.3.1
-  [c3572dad] Sundials v6.6.0
+  [c3572dad] Sundials v6.7.1
   [2efcf032] SymbolicIndexingInterface v0.3.55
-  [19f23fe9] SymbolicLimits v1.2.0
-⌅ [d1185830] SymbolicUtils v4.45.0
-  [0c5d862f] Symbolics v7.39.0
+  [19f23fe9] SymbolicLimits v1.2.1
+  [d1185830] SymbolicUtils v4.46.6
+  [0c5d862f] Symbolics v7.39.2
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [ed4db957] TaskLocalValues v0.1.3
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
-  [a759f4b9] TimerOutputs v1.2.0
-  [9f7883ad] Tracker v0.2.38
+  [a759f4b9] TimerOutputs v1.2.1
+  [9f7883ad] Tracker v0.2.39
   [e689c965] Tracy v0.1.6
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.28.0
+  [1986cc42] Unitful v1.29.0
   [013be700] UnsafeAtomics v0.3.2
   [41fe7b60] Unzip v0.2.0
-  [81def892] VersionParsing v1.3.0
   [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.16
-  [c2297ded] ZMQ v1.5.1
-  [e88e6eb3] Zygote v0.7.12
+  [e88e6eb3] Zygote v0.7.13
   [700de1a5] ZygoteRules v0.2.8
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
-⌅ [7cc45869] Enzyme_jll v0.0.290+0
+  [7cc45869] Enzyme_jll v0.0.293+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-  [2e619515] Expat_jll v2.8.3+0
+  [2e619515] Expat_jll v2.8.4+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
@@ -1422,17 +1415,15 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d2c73de3] GR_jll v0.73.27+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
-  [020c3dae] Git_LFS_jll v3.7.1+0
-  [f8c6e375] Git_jll v2.55.0+0
   [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
-  [2e76f6c2] HarfBuzz_jll v100.14003.0+0
+  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-  [88015f11] LERC_jll v4.1.0+0
+  [88015f11] LERC_jll v4.2.0+0
   [dad2f222] LLVMExtra_jll v0.0.47+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
   [ad6e5548] LibTracyClient_jll v0.13.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
@@ -1443,7 +1434,6 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [856f044c] MKL_jll v2025.2.0+0
   [e7412a2a] Ogg_jll v1.3.6+0
   [656ef2d0] OpenBLAS32_jll v0.3.34+0
-  [9bd350c2] OpenSSH_jll v10.5.1+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
   [36c8627f] Pango_jll v1.58.2+0
@@ -1454,11 +1444,11 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6de9746b] Qt6Svg_jll v6.10.2+0
   [e99dba38] Qt6Wayland_jll v6.10.2+1
   [f50d1b31] Rmath_jll v0.5.2+0
-  [ca45d3f4] SuiteSparse32_jll v7.12.1+0
+  [ca45d3f4] SuiteSparse32_jll v7.12.1+1
   [fb77eaff] Sundials_jll v7.5.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+  [ffd25f8a] XZ_jll v5.8.4+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0
@@ -1483,7 +1473,6 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [35661453] Xorg_xkbcomp_jll v1.4.7+0
   [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
-  [8f1865be] ZeroMQ_jll v4.3.6+0
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
@@ -1495,7 +1484,6 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
   [b53b4c65] libpng_jll v1.6.58+0
-  [a9144af2] libsodium_jll v1.0.21+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0

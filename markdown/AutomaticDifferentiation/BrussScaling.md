@@ -286,29 +286,29 @@ end
 ```
 
 ```
-(n, t) = (2, 0.000855941)
-(n, t) = (3, 0.007478834)
-(n, t) = (4, 0.029515121)
-(n, t) = (5, 0.219867336)
-(n, t) = (6, 0.46360374)
-(n, t) = (7, 0.710202076)
-(n, t) = (8, 1.521734707)
-(n, t) = (9, 3.030618803)
-(n, t) = (10, 8.106354476)
-(n, t) = (12, 26.985692959)
-(n, t) = (15, 100.163827379)
+(n, t) = (2, 0.001459562)
+(n, t) = (3, 0.009954915)
+(n, t) = (4, 0.039400813)
+(n, t) = (5, 0.181939321)
+(n, t) = (6, 0.400181132)
+(n, t) = (7, 1.172793899)
+(n, t) = (8, 2.035467911)
+(n, t) = (9, 3.969346768)
+(n, t) = (10, 9.470611813)
+(n, t) = (12, 31.640812253)
+(n, t) = (15, 116.313197846)
 11-element Vector{Float64}:
-   0.000855941
-   0.007478834
-   0.029515121
-   0.219867336
-   0.46360374
-   0.710202076
-   1.521734707
-   3.030618803
-   8.106354476
-  26.985692959
- 100.163827379
+   0.001459562
+   0.009954915
+   0.039400813
+   0.181939321
+   0.400181132
+   1.172793899
+   2.035467911
+   3.969346768
+   9.470611813
+  31.640812253
+ 116.313197846
 ```
 
 
@@ -339,27 +339,27 @@ end
 ```
 
 ```
-(n, t) = (2, 0.002892071)
-(n, t) = (3, 0.021583651)
-(n, t) = (4, 0.074257489)
-(n, t) = (5, 0.239773853)
-(n, t) = (6, 0.629463915)
-(n, t) = (7, 1.662346011)
-(n, t) = (8, 3.333508512)
-(n, t) = (9, 7.632075433)
-(n, t) = (10, 13.713935396)
-(n, t) = (12, 87.735620013)
+(n, t) = (2, 0.003868278)
+(n, t) = (3, 0.029838454)
+(n, t) = (4, 0.099196068)
+(n, t) = (5, 0.319011285)
+(n, t) = (6, 0.839714196)
+(n, t) = (7, 2.164495402)
+(n, t) = (8, 4.333828015)
+(n, t) = (9, 10.174363259)
+(n, t) = (10, 18.35778455)
+(n, t) = (12, 89.58415216)
 10-element Vector{Float64}:
-  0.002892071
-  0.021583651
-  0.074257489
-  0.239773853
-  0.629463915
-  1.662346011
-  3.333508512
-  7.632075433
- 13.713935396
- 87.735620013
+  0.003868278
+  0.029838454
+  0.099196068
+  0.319011285
+  0.839714196
+  2.164495402
+  4.333828015
+ 10.174363259
+ 18.35778455
+ 89.58415216
 ```
 
 
@@ -403,153 +403,155 @@ end
 ```
 
 ```
-0.004762 seconds (9.62 k allocations: 1.118 MiB)
-  0.003256 seconds (7.41 k allocations: 2.494 MiB)
-  0.003960 seconds (7.84 k allocations: 603.445 KiB)
-  0.001662 seconds (4.59 k allocations: 304.711 KiB)
-  0.001324 seconds (2.31 k allocations: 231.992 KiB)
-  0.002798 seconds (8.01 k allocations: 511.156 KiB)
-  0.775363 seconds (1.21 M allocations: 70.534 MiB, 93.51% compilation time
+0.005960 seconds (9.61 k allocations: 1.117 MiB)
+  0.003477 seconds (6.32 k allocations: 2.050 MiB)
+  0.003669 seconds (7.34 k allocations: 569.445 KiB)
+  0.001867 seconds (4.58 k allocations: 304.148 KiB)
+  0.001644 seconds (2.30 k allocations: 230.867 KiB)
+  0.002895 seconds (7.90 k allocations: 499.922 KiB)
+  0.963717 seconds (1.20 M allocations: 69.093 MiB, 94.37% compilation time
 : 6% of which was recompilation)
-(n, ts) = (2, [0.00482484, 0.00285069, 0.00387623, 0.001344026, 0.00096569,
- 0.002731011])
-  0.019745 seconds (14.75 k allocations: 2.061 MiB)
-  7.674434 seconds (8.38 M allocations: 403.426 MiB, 1.16% gc time, 99.86% 
+(n, ts) = (2, [0.006171065, 0.002836634, 0.003528211, 0.001600151, 0.001332
+193, 0.002764545])
+  0.025804 seconds (14.74 k allocations: 2.059 MiB)
+ 10.087194 seconds (8.09 M allocations: 388.772 MiB, 2.56% gc time, 99.85% 
 compilation time)
-  0.009310 seconds (11.12 k allocations: 1010.422 KiB)
-  0.003109 seconds (5.61 k allocations: 551.508 KiB)
-  7.958237 seconds (7.10 M allocations: 339.909 MiB, 1.87% gc time, 99.94% 
+  0.010339 seconds (10.96 k allocations: 994.891 KiB)
+  0.004046 seconds (5.60 k allocations: 550.633 KiB)
+ 10.231215 seconds (6.85 M allocations: 326.929 MiB, 0.57% gc time, 99.94% 
 compilation time)
-  0.005124 seconds (9.21 k allocations: 706.938 KiB)
- 15.728832 seconds (15.57 M allocations: 753.901 MiB, 1.51% gc time, 99.29%
+  0.006048 seconds (9.10 k allocations: 695.078 KiB)
+ 20.437824 seconds (15.03 M allocations: 726.195 MiB, 1.55% gc time, 99.31%
  compilation time)
-(n, ts) = (3, [0.019594937, 0.00966435, 0.009143775, 0.003004049, 0.0030696
-79, 0.00486643])
-  0.081467 seconds (22.88 k allocations: 4.007 MiB)
-  7.701582 seconds (8.38 M allocations: 404.202 MiB, 2.86% gc time, 99.47% 
+(n, ts) = (3, [0.02525832, 0.011758195, 0.010520651, 0.003880729, 0.0038506
+39, 0.006290635])
+  0.111492 seconds (22.87 k allocations: 4.004 MiB)
+  9.872295 seconds (8.10 M allocations: 389.665 MiB, 0.95% gc time, 99.54% 
 compilation time)
-  0.019323 seconds (16.93 k allocations: 1.779 MiB)
-  0.006904 seconds (7.45 k allocations: 1.058 MiB)
-  7.856095 seconds (7.10 M allocations: 340.182 MiB, 0.59% gc time, 99.87% 
+  0.022005 seconds (16.77 k allocations: 1.758 MiB)
+  0.008869 seconds (7.44 k allocations: 1.057 MiB)
+ 10.330958 seconds (6.85 M allocations: 327.161 MiB, 0.89% gc time, 99.88% 
 compilation time)
-  0.008991 seconds (11.50 k allocations: 1018.531 KiB)
- 15.845996 seconds (15.62 M allocations: 762.986 MiB, 1.69% gc time, 97.86%
+  0.010017 seconds (11.39 k allocations: 1005.797 KiB)
+ 20.569703 seconds (15.08 M allocations: 735.333 MiB, 0.90% gc time, 97.94%
  compilation time)
-(n, ts) = (4, [0.08110013, 0.038496692, 0.0193148, 0.00678653, 0.00864135, 
-0.00875719])
-  0.272900 seconds (32.73 k allocations: 6.985 MiB)
-  7.434639 seconds (7.40 M allocations: 358.114 MiB, 1.37% gc time, 98.39% 
+(n, ts) = (4, [0.107809398, 0.043582287, 0.022071127, 0.008899321, 0.010518
+741, 0.010023664])
+  0.360105 seconds (32.72 k allocations: 6.980 MiB)
+  9.512170 seconds (7.12 M allocations: 343.415 MiB, 0.85% gc time, 98.16% 
 compilation time)
-  0.038267 seconds (23.96 k allocations: 3.044 MiB)
-  0.015592 seconds (9.87 k allocations: 1.940 MiB)
-  7.877513 seconds (7.09 M allocations: 340.205 MiB, 0.71% gc time, 99.67% 
+  0.046810 seconds (23.80 k allocations: 3.015 MiB)
+  0.020013 seconds (9.86 k allocations: 1.938 MiB)
+ 10.364029 seconds (6.84 M allocations: 327.658 MiB, 1.54% gc time, 99.65% 
 compilation time)
-  0.016882 seconds (14.52 k allocations: 1.460 MiB)
- 16.150360 seconds (14.68 M allocations: 729.655 MiB, 0.98% gc time, 93.91%
+  0.019518 seconds (14.40 k allocations: 1.447 MiB)
+ 20.988198 seconds (14.14 M allocations: 702.280 MiB, 1.15% gc time, 93.70%
  compilation time)
-(n, ts) = (5, [0.272040874, 0.117671092, 0.039090005, 0.015388701, 0.023901
-082, 0.017109983])
-  0.750892 seconds (44.79 k allocations: 12.113 MiB)
-  7.506760 seconds (7.42 M allocations: 360.698 MiB, 0.59% gc time, 96.01% 
+(n, ts) = (5, [0.361169763, 0.172788135, 0.047564305, 0.020227567, 0.033864
+811, 0.01961637])
+  0.994153 seconds (44.78 k allocations: 12.106 MiB)
+  9.929286 seconds (7.13 M allocations: 345.993 MiB, 1.87% gc time, 95.05% 
 compilation time)
-  0.072130 seconds (32.58 k allocations: 5.039 MiB)
-  0.069577 seconds (12.61 k allocations: 3.542 MiB, 57.32% gc time)
-  7.875713 seconds (7.09 M allocations: 340.936 MiB, 0.56% gc time, 99.17% 
+  0.086210 seconds (32.42 k allocations: 5.000 MiB)
+  0.039311 seconds (12.60 k allocations: 3.539 MiB)
+ 10.207443 seconds (6.84 M allocations: 327.941 MiB, 0.51% gc time, 99.31% 
 compilation time)
-  0.028588 seconds (17.93 k allocations: 2.018 MiB)
- 17.601741 seconds (14.75 M allocations: 754.300 MiB, 0.99% gc time, 85.32%
+  0.033539 seconds (17.82 k allocations: 2.003 MiB)
+ 23.050965 seconds (14.22 M allocations: 726.433 MiB, 1.19% gc time, 84.92%
  compilation time)
-(n, ts) = (6, [0.795344358, 0.29764296, 0.07247919, 0.029556154, 0.06296780
-8, 0.028620984])
-  1.976698 seconds (61.31 k allocations: 19.872 MiB, 2.32% gc time)
-  7.876652 seconds (6.34 M allocations: 311.890 MiB, 1.44% gc time, 88.60% 
+(n, ts) = (6, [0.996815545, 0.488680971, 0.086696966, 0.039261421, 0.104752
+605, 0.033367834])
+  2.529728 seconds (61.29 k allocations: 19.862 MiB)
+  9.842722 seconds (6.05 M allocations: 297.285 MiB, 0.92% gc time, 88.88% 
 compilation time)
-  0.152729 seconds (44.40 k allocations: 8.014 MiB)
-  0.055779 seconds (15.83 k allocations: 5.743 MiB)
-  1.726452 seconds (754.21 k allocations: 39.441 MiB, 3.08% gc time, 88.50%
- compilation time)
-  0.044806 seconds (21.96 k allocations: 2.710 MiB)
- 15.055776 seconds (7.41 M allocations: 435.088 MiB, 1.41% gc time, 56.50% 
+  0.172945 seconds (44.24 k allocations: 7.965 MiB)
+  0.075276 seconds (15.82 k allocations: 5.740 MiB)
+  2.235917 seconds (789.87 k allocations: 41.042 MiB, 92.94% compilation ti
+me)
+  0.054366 seconds (21.85 k allocations: 2.693 MiB)
+ 19.077269 seconds (7.16 M allocations: 421.874 MiB, 0.83% gc time, 56.75% 
 compilation time)
-(n, ts) = (7, [1.922663233, 0.887245789, 0.154566691, 0.055864941, 0.145526
-204, 0.044550179])
-  4.136518 seconds (78.34 k allocations: 30.027 MiB)
-  1.682543 seconds (24.29 k allocations: 11.870 MiB)
-  0.245688 seconds (56.56 k allocations: 12.158 MiB)
-  0.095069 seconds (20.62 k allocations: 9.057 MiB)
-  0.318507 seconds (7.29 k allocations: 4.431 MiB)
-  0.067482 seconds (27.82 k allocations: 3.655 MiB)
- 13.426910 seconds (431.95 k allocations: 143.262 MiB, 2.34% gc time)
-(n, ts) = (8, [4.240612619, 1.688640206, 0.248239152, 0.306384119, 0.317322
-676, 0.06766981])
-  8.587448 seconds (101.10 k allocations: 45.376 MiB)
-  3.890280 seconds (33.77 k allocations: 18.403 MiB)
-  0.463790 seconds (72.81 k allocations: 18.081 MiB, 9.24% gc time)
-  0.165251 seconds (24.98 k allocations: 13.637 MiB)
-  0.628145 seconds (8.38 k allocations: 6.510 MiB)
-  0.108540 seconds (33.27 k allocations: 4.814 MiB)
- 27.735309 seconds (550.72 k allocations: 214.507 MiB, 0.46% gc time)
-(n, ts) = (9, [8.637791094, 3.887435137, 0.414422872, 0.202772382, 0.627621
-386, 0.108696576])
- 15.971005 seconds (123.40 k allocations: 67.523 MiB, 0.46% gc time)
-  6.704518 seconds (37.17 k allocations: 26.865 MiB, 0.51% gc time)
-  0.814111 seconds (88.75 k allocations: 25.713 MiB, 10.46% gc time)
-  0.264392 seconds (29.84 k allocations: 20.844 MiB)
-  1.142273 seconds (9.60 k allocations: 9.237 MiB)
-  0.153960 seconds (39.34 k allocations: 6.180 MiB)
- 50.061049 seconds (658.31 k allocations: 313.590 MiB, 0.62% gc time)
-(n, ts) = (10, [15.960729325, 6.672595752, 0.763416963, 0.300945907, 1.1470
-56234, 0.153284574])
- 48.989331 seconds (181.93 k allocations: 130.739 MiB, 0.33% gc time)
- 21.880764 seconds (54.44 k allocations: 53.367 MiB, 0.26% gc time)
-  1.628146 seconds (130.82 k allocations: 48.827 MiB, 1.29% gc time)
-  0.769069 seconds (41.40 k allocations: 40.377 MiB, 10.92% gc time)
-  3.333468 seconds (12.71 k allocations: 17.477 MiB)
-  0.356759 seconds (53.73 k allocations: 9.914 MiB)
-153.605967 seconds (952.18 k allocations: 602.268 MiB, 0.55% gc time)
-(n, ts) = (12, [48.403238459, 21.976154972, 1.697642938, 0.838799807, 3.359
-240469, 0.359025798])
-172.811688 seconds (271.11 k allocations: 298.678 MiB, 0.13% gc time)
- 85.302858 seconds (85.38 k allocations: 125.671 MiB, 0.08% gc time)
-  3.874097 seconds (208.12 k allocations: 110.003 MiB, 6.91% gc time)
-  2.394922 seconds (62.15 k allocations: 96.893 MiB, 11.61% gc time)
- 12.599516 seconds (17.89 k allocations: 39.461 MiB, 0.12% gc time)
-  0.813798 seconds (79.65 k allocations: 18.660 MiB)
-555.752539 seconds (1.45 M allocations: 1.347 GiB, 0.29% gc time)
-(n, ts) = (15, [173.285936826, 85.40806671, 3.661743243, 2.147097202, 12.59
-32905, 0.84406669])
-446.431490 seconds (460.10 k allocations: 470.399 MiB, 0.17% gc time)
-559.090773 seconds (101.45 k allocations: 203.898 MiB, 0.03% gc time)
-  6.181718 seconds (248.29 k allocations: 173.948 MiB, 4.03% gc time)
-  4.365082 seconds (116.41 k allocations: 149.927 MiB, 2.37% gc time)
- 27.676553 seconds (21.99 k allocations: 63.040 MiB, 0.04% gc time)
-  1.490735 seconds (100.13 k allocations: 27.246 MiB)
-2098.211994 seconds (2.10 M allocations: 2.127 GiB, 0.14% gc time)
-(n, ts) = (17, [452.763670151, 560.364514396, 6.218621109, 4.428579457, 27.
-606190509, 1.579564423])
+(n, ts) = (7, [2.530754208, 1.090251481, 0.24535913, 0.074840353, 0.1576308
+69, 0.054149718])
+  5.498522 seconds (78.33 k allocations: 30.015 MiB, 0.97% gc time)
+  2.764278 seconds (24.18 k allocations: 11.810 MiB)
+  0.287365 seconds (56.40 k allocations: 12.095 MiB)
+  0.179019 seconds (20.61 k allocations: 9.053 MiB, 26.99% gc time)
+  0.344099 seconds (7.27 k allocations: 4.423 MiB)
+  0.086916 seconds (27.71 k allocations: 3.636 MiB)
+ 18.292580 seconds (431.11 k allocations: 142.930 MiB, 0.88% gc time)
+(n, ts) = (8, [5.508283047, 2.76269396, 0.286064982, 0.127681997, 0.3461244
+37, 0.084475698])
+ 12.549997 seconds (111.52 k allocations: 48.409 MiB, 0.58% gc time)
+  6.535358 seconds (34.65 k allocations: 18.375 MiB, 0.44% gc time)
+  0.845336 seconds (107.37 k allocations: 20.228 MiB, 18.03% gc time)
+  0.385244 seconds (24.97 k allocations: 13.632 MiB, 43.23% gc time)
+  0.683794 seconds (8.36 k allocations: 6.499 MiB)
+  0.136613 seconds (33.16 k allocations: 4.793 MiB)
+ 41.875855 seconds (642.17 k allocations: 224.738 MiB, 1.08% gc time)
+(n, ts) = (9, [12.491102848, 6.508444383, 0.690010995, 0.219140206, 0.68078
+4867, 0.136480417])
+ 21.028911 seconds (123.39 k allocations: 67.505 MiB, 0.13% gc time)
+ 10.829744 seconds (37.06 k allocations: 26.776 MiB, 0.30% gc time)
+  0.813356 seconds (88.59 k allocations: 25.620 MiB, 4.44% gc time)
+  0.383398 seconds (29.83 k allocations: 20.837 MiB, 8.69% gc time)
+  1.258185 seconds (9.58 k allocations: 9.225 MiB)
+  0.192865 seconds (39.23 k allocations: 6.158 MiB)
+ 69.205073 seconds (657.47 k allocations: 313.107 MiB, 0.38% gc time)
+(n, ts) = (10, [21.255836426, 10.797951878, 0.806370854, 0.377695749, 1.249
+375577, 0.19322269])
+ 65.442142 seconds (181.92 k allocations: 130.713 MiB, 0.70% gc time)
+ 32.586795 seconds (54.28 k allocations: 53.241 MiB, 0.07% gc time)
+  2.255074 seconds (130.62 k allocations: 48.696 MiB, 13.47% gc time)
+  0.959829 seconds (41.39 k allocations: 40.368 MiB, 6.45% gc time)
+  3.936722 seconds (12.68 k allocations: 17.459 MiB)
+  0.424866 seconds (53.61 k allocations: 9.886 MiB)
+209.515725 seconds (951.12 k allocations: 601.591 MiB, 0.59% gc time)
+(n, ts) = (12, [63.872513055, 32.67609872, 2.030823259, 0.898381484, 3.9445
+00053, 0.459260821])
+229.391276 seconds (271.09 k allocations: 298.637 MiB, 0.19% gc time)
+122.963619 seconds (82.50 k allocations: 125.349 MiB, 0.06% gc time)
+  4.352613 seconds (207.92 k allocations: 109.802 MiB, 4.96% gc time)
+  3.002017 seconds (62.13 k allocations: 96.879 MiB, 8.75% gc time)
+ 14.816399 seconds (17.87 k allocations: 39.433 MiB, 0.23% gc time)
+  1.012913 seconds (79.53 k allocations: 18.622 MiB)
+751.734557 seconds (1.44 M allocations: 1.346 GiB, 0.30% gc time)
+(n, ts) = (15, [229.61943815, 123.700041422, 4.184588132, 2.751999032, 14.7
+98665264, 1.119510035])
+590.008927 seconds (475.80 k allocations: 479.804 MiB, 0.17% gc time)
+646.649764 seconds (101.29 k allocations: 203.644 MiB, 0.08% gc time)
+  7.032174 seconds (248.09 k allocations: 173.691 MiB, 3.92% gc time)
+  5.703297 seconds (116.40 k allocations: 149.955 MiB, 4.53% gc time)
+ 32.259683 seconds (21.97 k allocations: 63.005 MiB, 0.04% gc time)
+  1.954583 seconds (100.02 k allocations: 27.201 MiB, 5.40% gc time)
+2563.290144 seconds (2.13 M allocations: 2.144 GiB, 0.16% gc time)
+(n, ts) = (17, [587.996828594, 645.393233337, 6.780198853, 5.500113209, 32.
+211955373, 1.77538201])
 12-element Vector{Vector{Float64}}:
- [0.00482484, 0.00285069, 0.00387623, 0.001344026, 0.00096569, 0.002731011]
- [0.019594937, 0.00966435, 0.009143775, 0.003004049, 0.003069679, 0.0048664
-3]
- [0.08110013, 0.038496692, 0.0193148, 0.00678653, 0.00864135, 0.00875719]
- [0.272040874, 0.117671092, 0.039090005, 0.015388701, 0.023901082, 0.017109
-983]
- [0.795344358, 0.29764296, 0.07247919, 0.029556154, 0.062967808, 0.02862098
-4]
- [1.922663233, 0.887245789, 0.154566691, 0.055864941, 0.145526204, 0.044550
-179]
- [4.240612619, 1.688640206, 0.248239152, 0.306384119, 0.317322676, 0.067669
-81]
- [8.637791094, 3.887435137, 0.414422872, 0.202772382, 0.627621386, 0.108696
-576]
- [15.960729325, 6.672595752, 0.763416963, 0.300945907, 1.147056234, 0.15328
-4574]
- [48.403238459, 21.976154972, 1.697642938, 0.838799807, 3.359240469, 0.3590
-25798]
- [173.285936826, 85.40806671, 3.661743243, 2.147097202, 12.5932905, 0.84406
-669]
- [452.763670151, 560.364514396, 6.218621109, 4.428579457, 27.606190509, 1.5
-79564423]
+ [0.006171065, 0.002836634, 0.003528211, 0.001600151, 0.001332193, 0.002764
+545]
+ [0.02525832, 0.011758195, 0.010520651, 0.003880729, 0.003850639, 0.0062906
+35]
+ [0.107809398, 0.043582287, 0.022071127, 0.008899321, 0.010518741, 0.010023
+664]
+ [0.361169763, 0.172788135, 0.047564305, 0.020227567, 0.033864811, 0.019616
+37]
+ [0.996815545, 0.488680971, 0.086696966, 0.039261421, 0.104752605, 0.033367
+834]
+ [2.530754208, 1.090251481, 0.24535913, 0.074840353, 0.157630869, 0.0541497
+18]
+ [5.508283047, 2.76269396, 0.286064982, 0.127681997, 0.346124437, 0.0844756
+98]
+ [12.491102848, 6.508444383, 0.690010995, 0.219140206, 0.680784867, 0.13648
+0417]
+ [21.255836426, 10.797951878, 0.806370854, 0.377695749, 1.249375577, 0.1932
+2269]
+ [63.872513055, 32.67609872, 2.030823259, 0.898381484, 3.944500053, 0.45926
+0821]
+ [229.61943815, 123.700041422, 4.184588132, 2.751999032, 14.798665264, 1.11
+9510035]
+ [587.996828594, 645.393233337, 6.780198853, 5.500113209, 32.211955373, 1.7
+7538201]
 ```
 
 
@@ -570,107 +572,107 @@ end
 ```
 
 ```
-0.001401 seconds (2.65 k allocations: 296.195 KiB)
-  0.002714 seconds (6.37 k allocations: 502.938 KiB)
-  0.001594 seconds (4.86 k allocations: 345.648 KiB)
-  0.003277 seconds (9.12 k allocations: 589.516 KiB)
-  0.370413 seconds (447.17 k allocations: 24.671 MiB, 93.45% compilation ti
+0.001806 seconds (2.54 k allocations: 289.445 KiB)
+  0.002849 seconds (6.17 k allocations: 488.875 KiB)
+  0.002105 seconds (4.75 k allocations: 338.898 KiB)
+  0.003188 seconds (8.92 k allocations: 575.453 KiB)
+  0.470901 seconds (441.66 k allocations: 24.257 MiB, 94.39% compilation ti
 me)
-(n, ts) = (2, [0.00100284, 0.002362355, 0.001184278, 0.002864851])
-  7.238249 seconds (7.81 M allocations: 387.606 MiB, 3.66% gc time, 99.92% 
+(n, ts) = (2, [0.001299582, 0.002450377, 0.001583211, 0.002916453])
+  9.165433 seconds (7.52 M allocations: 372.279 MiB, 2.56% gc time, 99.93% 
 compilation time)
-  0.005199 seconds (7.39 k allocations: 699.938 KiB)
-  7.221275 seconds (8.03 M allocations: 398.148 MiB, 1.48% gc time, 99.90% 
+  0.005951 seconds (7.19 k allocations: 682.125 KiB)
+  9.270521 seconds (7.73 M allocations: 382.894 MiB, 1.06% gc time, 99.91% 
 compilation time)
-  0.006831 seconds (13.43 k allocations: 927.844 KiB)
- 14.499018 seconds (15.90 M allocations: 790.643 MiB, 2.56% gc time, 99.64%
+  0.007348 seconds (13.23 k allocations: 910.031 KiB)
+ 18.479189 seconds (15.31 M allocations: 759.973 MiB, 1.80% gc time, 99.68%
  compilation time)
-(n, ts) = (3, [0.003628423, 0.005302536, 0.004240146, 0.007005419])
-  7.168305 seconds (7.81 M allocations: 388.534 MiB, 1.47% gc time, 99.85% 
+(n, ts) = (3, [0.003959128, 0.005819448, 0.00540886, 0.007030011])
+  9.093432 seconds (7.52 M allocations: 372.629 MiB, 1.02% gc time, 99.86% 
 compilation time)
-  0.008808 seconds (9.46 k allocations: 1.089 MiB)
-  7.288016 seconds (8.03 M allocations: 398.630 MiB, 1.54% gc time, 99.79% 
+  0.010141 seconds (9.26 k allocations: 1.067 MiB)
+  9.190527 seconds (7.74 M allocations: 383.313 MiB, 0.97% gc time, 99.80% 
 compilation time)
-  0.011129 seconds (18.30 k allocations: 1.449 MiB)
- 14.523114 seconds (15.92 M allocations: 794.852 MiB, 1.50% gc time, 99.36%
+  0.013337 seconds (18.10 k allocations: 1.426 MiB)
+ 18.362876 seconds (15.33 M allocations: 763.509 MiB, 0.99% gc time, 99.40%
  compilation time)
-(n, ts) = (4, [0.008558323, 0.008742591, 0.012404493, 0.010875699])
-  6.614815 seconds (6.13 M allocations: 295.080 MiB, 0.84% gc time, 99.64% 
+(n, ts) = (4, [0.009938495, 0.009941075, 0.015590993, 0.013444855])
+  8.423085 seconds (5.83 M allocations: 279.143 MiB, 1.01% gc time, 99.60% 
 compilation time)
-  0.016695 seconds (11.94 k allocations: 1.772 MiB)
-  6.804771 seconds (6.50 M allocations: 313.023 MiB, 2.05% gc time, 99.52% 
+  0.020250 seconds (11.74 k allocations: 1.742 MiB)
+  8.737583 seconds (6.20 M allocations: 297.419 MiB, 1.57% gc time, 99.16% 
 compilation time)
-  0.019752 seconds (20.78 k allocations: 2.185 MiB)
- 13.551134 seconds (12.71 M allocations: 620.054 MiB, 1.44% gc time, 98.61%
+  0.023570 seconds (20.58 k allocations: 2.155 MiB)
+ 17.357630 seconds (12.10 M allocations: 588.358 MiB, 1.28% gc time, 98.25%
  compilation time)
-(n, ts) = (5, [0.021861407, 0.016592251, 0.03039762, 0.020434661])
-  6.821464 seconds (6.13 M allocations: 296.241 MiB, 3.03% gc time, 98.26% 
+(n, ts) = (5, [0.031967453, 0.020054849, 0.071021427, 0.02348135])
+  8.676998 seconds (5.83 M allocations: 280.514 MiB, 2.29% gc time, 99.21% 
 compilation time)
-  0.028581 seconds (14.95 k allocations: 2.880 MiB)
-  6.825401 seconds (6.50 M allocations: 314.488 MiB, 1.40% gc time, 98.76% 
+  0.035212 seconds (14.75 k allocations: 2.842 MiB)
+  8.754428 seconds (6.20 M allocations: 298.816 MiB, 1.08% gc time, 98.84% 
 compilation time)
-  0.033832 seconds (27.09 k allocations: 3.515 MiB)
- 13.977435 seconds (12.74 M allocations: 630.422 MiB, 2.16% gc time, 96.18%
+  0.041764 seconds (27.09 k allocations: 3.487 MiB)
+ 17.757278 seconds (12.13 M allocations: 598.843 MiB, 1.65% gc time, 97.21%
  compilation time)
-(n, ts) = (6, [0.117121893, 0.028233422, 0.083003072, 0.033102462])
-  6.577527 seconds (5.94 M allocations: 288.969 MiB, 1.56% gc time, 97.23% 
+(n, ts) = (6, [0.066605202, 0.034677438, 0.09929653, 0.040888984])
+  8.475536 seconds (5.64 M allocations: 273.301 MiB, 1.10% gc time, 98.29% 
 compilation time)
-  0.046217 seconds (18.42 k allocations: 4.478 MiB)
-  6.752278 seconds (6.32 M allocations: 307.412 MiB, 0.65% gc time, 97.30% 
+  0.057168 seconds (18.22 k allocations: 4.432 MiB)
+  8.768203 seconds (6.01 M allocations: 291.727 MiB, 1.18% gc time, 97.44% 
 compilation time)
-  0.053214 seconds (32.12 k allocations: 5.278 MiB)
- 13.896762 seconds (12.39 M allocations: 626.691 MiB, 1.42% gc time, 93.30%
+  0.064860 seconds (32.50 k allocations: 5.265 MiB)
+ 17.858263 seconds (11.78 M allocations: 595.182 MiB, 1.10% gc time, 94.49%
  compilation time)
-(n, ts) = (7, [0.129735514, 0.046386966, 0.23106695, 0.053086528])
-  0.602490 seconds (6.71 k allocations: 7.881 MiB)
-  0.069651 seconds (22.49 k allocations: 6.825 MiB)
-  0.448125 seconds (19.15 k allocations: 8.661 MiB, 13.88% gc time)
-  0.079902 seconds (40.16 k allocations: 7.961 MiB)
-  2.348563 seconds (178.35 k allocations: 63.235 MiB, 2.65% gc time)
-(n, ts) = (8, [0.604215688, 0.069914206, 0.386596731, 0.079386269])
-  1.208210 seconds (7.62 k allocations: 12.178 MiB)
-  0.114376 seconds (27.08 k allocations: 10.157 MiB)
-  0.751500 seconds (22.04 k allocations: 13.255 MiB)
-  0.127236 seconds (47.31 k allocations: 11.634 MiB)
-  4.488354 seconds (209.45 k allocations: 95.024 MiB, 1.72% gc time)
-(n, ts) = (9, [1.24816137, 0.11359794, 0.789205088, 0.126982983])
-  2.506398 seconds (9.30 k allocations: 17.992 MiB, 1.37% gc time)
-  0.209312 seconds (34.36 k allocations: 14.665 MiB, 17.86% gc time)
-  1.417772 seconds (24.49 k allocations: 19.315 MiB)
-  0.184530 seconds (55.15 k allocations: 16.370 MiB)
-  8.647609 seconds (247.96 k allocations: 137.263 MiB, 1.72% gc time)
-(n, ts) = (10, [2.469575683, 0.170065513, 1.457571461, 0.223007142])
-  6.863103 seconds (12.15 k allocations: 35.855 MiB, 0.38% gc time)
-  0.451072 seconds (46.42 k allocations: 27.877 MiB, 9.30% gc time)
-  4.004026 seconds (30.58 k allocations: 37.996 MiB, 2.11% gc time)
-  0.426405 seconds (73.04 k allocations: 30.617 MiB)
- 23.693736 seconds (325.76 k allocations: 265.269 MiB, 1.80% gc time)
-(n, ts) = (12, [6.836065879, 0.468620493, 4.119659977, 0.514809081])
- 38.510132 seconds (23.19 k allocations: 85.149 MiB, 0.21% gc time)
-  1.164666 seconds (71.45 k allocations: 63.607 MiB, 7.23% gc time)
- 19.283190 seconds (45.13 k allocations: 88.944 MiB, 0.14% gc time)
-  1.211068 seconds (103.67 k allocations: 68.193 MiB, 7.41% gc time)
-120.537915 seconds (488.26 k allocations: 612.365 MiB, 0.69% gc time)
-(n, ts) = (15, [38.508190791, 1.262028839, 19.298073772, 1.290419419])
- 53.092030 seconds (19.72 k allocations: 138.219 MiB, 0.23% gc time)
-  2.126601 seconds (98.91 k allocations: 102.479 MiB, 10.72% gc time)
- 46.179468 seconds (42.46 k allocations: 143.069 MiB, 0.35% gc time)
-  2.137321 seconds (133.35 k allocations: 108.457 MiB, 4.33% gc time)
-206.976513 seconds (590.22 k allocations: 985.032 MiB, 0.60% gc time)
-(n, ts) = (17, [53.231569283, 2.240438107, 45.638120749, 2.321057995])
+(n, ts) = (7, [0.143510306, 0.056491407, 0.220610989, 0.063846087])
+  0.310545 seconds (6.60 k allocations: 7.829 MiB)
+  0.087917 seconds (22.29 k allocations: 6.766 MiB)
+  0.454546 seconds (19.32 k allocations: 8.627 MiB)
+  0.098933 seconds (40.35 k allocations: 7.927 MiB)
+  2.184856 seconds (178.47 k allocations: 62.874 MiB, 12.50% gc time)
+(n, ts) = (8, [0.409239615, 0.087388036, 0.629126559, 0.098297667])
+  0.608577 seconds (7.51 k allocations: 12.114 MiB)
+  0.176661 seconds (26.88 k allocations: 10.085 MiB, 17.82% gc time)
+  0.886739 seconds (22.78 k allocations: 13.252 MiB)
+  0.160880 seconds (47.70 k allocations: 11.604 MiB)
+  3.708159 seconds (211.10 k allocations: 94.687 MiB, 2.46% gc time)
+(n, ts) = (9, [0.611990584, 0.144533841, 0.916550719, 0.190512426])
+  1.154813 seconds (8.77 k allocations: 17.895 MiB)
+  0.217186 seconds (34.16 k allocations: 14.581 MiB)
+  1.568501 seconds (23.96 k allocations: 19.216 MiB)
+  0.234477 seconds (55.54 k allocations: 16.334 MiB)
+  6.446957 seconds (246.20 k allocations: 136.628 MiB, 1.58% gc time)
+(n, ts) = (10, [1.161188145, 0.249260181, 1.584077804, 0.265996047])
+  4.156729 seconds (13.50 k allocations: 35.815 MiB, 0.45% gc time)
+  0.498971 seconds (46.18 k allocations: 27.760 MiB, 2.15% gc time)
+  5.400423 seconds (31.86 k allocations: 37.959 MiB, 0.29% gc time)
+  0.693351 seconds (72.60 k allocations: 30.481 MiB, 24.09% gc time)
+ 21.493533 seconds (329.63 k allocations: 264.610 MiB, 1.93% gc time)
+(n, ts) = (12, [4.17988877, 0.538733149, 5.462228645, 0.552399873])
+ 13.421478 seconds (16.55 k allocations: 84.682 MiB, 0.22% gc time)
+  1.462577 seconds (73.53 k allocations: 63.578 MiB, 11.98% gc time)
+ 17.382767 seconds (40.63 k allocations: 88.781 MiB, 0.28% gc time)
+  1.344119 seconds (104.84 k allocations: 68.044 MiB, 2.30% gc time)
+ 67.533788 seconds (472.47 k allocations: 610.750 MiB, 1.24% gc time)
+(n, ts) = (15, [13.58970723, 1.328753451, 17.560043902, 1.432725345])
+ 27.700902 seconds (19.56 k allocations: 138.003 MiB, 0.48% gc time)
+  2.515945 seconds (89.78 k allocations: 101.685 MiB, 6.42% gc time)
+ 51.880001 seconds (42.30 k allocations: 142.853 MiB, 0.24% gc time)
+  2.581125 seconds (126.33 k allocations: 108.001 MiB, 9.77% gc time)
+169.304522 seconds (557.30 k allocations: 981.664 MiB, 0.83% gc time)
+(n, ts) = (17, [27.892838065, 2.495646676, 51.890351576, 2.332406881])
 12-element Vector{Vector{Float64}}:
- [0.00100284, 0.002362355, 0.001184278, 0.002864851]
- [0.003628423, 0.005302536, 0.004240146, 0.007005419]
- [0.008558323, 0.008742591, 0.012404493, 0.010875699]
- [0.021861407, 0.016592251, 0.03039762, 0.020434661]
- [0.117121893, 0.028233422, 0.083003072, 0.033102462]
- [0.129735514, 0.046386966, 0.23106695, 0.053086528]
- [0.604215688, 0.069914206, 0.386596731, 0.079386269]
- [1.24816137, 0.11359794, 0.789205088, 0.126982983]
- [2.469575683, 0.170065513, 1.457571461, 0.223007142]
- [6.836065879, 0.468620493, 4.119659977, 0.514809081]
- [38.508190791, 1.262028839, 19.298073772, 1.290419419]
- [53.231569283, 2.240438107, 45.638120749, 2.321057995]
+ [0.001299582, 0.002450377, 0.001583211, 0.002916453]
+ [0.003959128, 0.005819448, 0.00540886, 0.007030011]
+ [0.009938495, 0.009941075, 0.015590993, 0.013444855]
+ [0.031967453, 0.020054849, 0.071021427, 0.02348135]
+ [0.066605202, 0.034677438, 0.09929653, 0.040888984]
+ [0.143510306, 0.056491407, 0.220610989, 0.063846087]
+ [0.409239615, 0.087388036, 0.629126559, 0.098297667]
+ [0.611990584, 0.144533841, 0.916550719, 0.190512426]
+ [1.161188145, 0.249260181, 1.584077804, 0.265996047]
+ [4.17988877, 0.538733149, 5.462228645, 0.552399873]
+ [13.58970723, 1.328753451, 17.560043902, 1.432725345]
+ [27.892838065, 2.495646676, 51.890351576, 2.332406881]
 ```
 
 
@@ -836,288 +838,287 @@ end
 ```
 
 ```
-0.003781 seconds (7.84 k allocations: 603.445 KiB)
-  0.112750 seconds (567.70 k allocations: 23.804 MiB)
-  0.006821 seconds (3.74 k allocations: 302.867 KiB)
-  1.008087 seconds (2.89 M allocations: 127.649 MiB, 4.90% gc time, 59.69% 
+0.003472 seconds (7.34 k allocations: 569.445 KiB)
+  0.123174 seconds (567.59 k allocations: 23.797 MiB)
+  0.008846 seconds (3.63 k allocations: 295.617 KiB)
+  1.211385 seconds (2.71 M allocations: 124.079 MiB, 65.28% compilation tim
+e: <1% of which was recompilation)
+  0.002648 seconds (7.90 k allocations: 499.922 KiB)
+  0.092986 seconds (450.86 k allocations: 18.901 MiB)
+  0.062070 seconds (4.40 k allocations: 307.938 KiB, 88.58% gc time)
+  0.002642 seconds (3.98 k allocations: 474.500 KiB)
+  0.002573 seconds (6.17 k allocations: 488.875 KiB)
+  0.081982 seconds (422.27 k allocations: 17.729 MiB)
+  0.007201 seconds (4.74 k allocations: 343.312 KiB)
+  0.002821 seconds (4.32 k allocations: 520.328 KiB)
+  0.003300 seconds (8.92 k allocations: 575.453 KiB)
+  0.087951 seconds (500.39 k allocations: 20.936 MiB)
+  0.008077 seconds (6.82 k allocations: 386.578 KiB)
+  0.003437 seconds (6.67 k allocations: 604.844 KiB)
+  3.678478 seconds (7.97 M allocations: 363.135 MiB, 2.66% gc time, 62.33% 
 compilation time: <1% of which was recompilation)
-  0.002785 seconds (8.01 k allocations: 511.156 KiB)
-  0.073944 seconds (364.78 k allocations: 15.301 MiB)
-  0.005490 seconds (4.27 k allocations: 287.969 KiB)
-  0.002244 seconds (4.00 k allocations: 475.625 KiB)
-  0.003012 seconds (6.37 k allocations: 502.938 KiB)
-  0.050196 seconds (365.35 k allocations: 15.363 MiB)
-  0.005350 seconds (4.85 k allocations: 350.062 KiB)
-  0.002252 seconds (4.43 k allocations: 527.078 KiB)
-  0.003025 seconds (9.12 k allocations: 589.516 KiB)
-  0.059113 seconds (367.44 k allocations: 15.405 MiB)
-  0.006841 seconds (6.93 k allocations: 393.328 KiB)
-  0.002657 seconds (6.78 k allocations: 611.594 KiB)
-  2.925472 seconds (7.61 M allocations: 345.052 MiB, 3.71% gc time, 60.55% 
-compilation time: <1% of which was recompilation)
-(n, ts) = (2, [0.003802581, 0.084896953, 0.006227816, 0.002388546, 0.002878
-461, 0.066473851, 0.004801681, 0.001632584, 0.002816751, 0.10771938, 0.0047
-11002, 0.001699512, 0.002769912, 0.06944711, 0.006215617, 0.002074858])
-  0.009389 seconds (11.12 k allocations: 1010.422 KiB)
-  0.372799 seconds (2.11 M allocations: 92.720 MiB, 15.16% gc time)
-  0.022327 seconds (5.20 k allocations: 568.695 KiB)
-  0.007111 seconds (6.21 k allocations: 1005.570 KiB)
-  0.005644 seconds (9.21 k allocations: 706.938 KiB)
-  0.260445 seconds (1.10 M allocations: 48.576 MiB, 24.99% gc time)
-  0.013734 seconds (7.06 k allocations: 537.391 KiB)
-  0.004293 seconds (4.47 k allocations: 672.859 KiB)
-  0.005641 seconds (7.39 k allocations: 699.938 KiB)
-  0.197677 seconds (1.04 M allocations: 45.634 MiB, 20.24% gc time)
-  0.012925 seconds (7.83 k allocations: 625.641 KiB)
-  0.004415 seconds (4.94 k allocations: 726.719 KiB)
-  0.007098 seconds (13.43 k allocations: 927.844 KiB)
-  0.194103 seconds (1.04 M allocations: 45.734 MiB, 19.30% gc time)
-  0.018892 seconds (11.95 k allocations: 727.547 KiB)
-  0.006013 seconds (9.83 k allocations: 948.625 KiB)
-  2.154079 seconds (10.78 M allocations: 485.525 MiB, 9.24% gc time)
-(n, ts) = (3, [0.009361815, 0.322682635, 0.021956386, 0.007052058, 0.005439
-594, 0.1645387, 0.013395413, 0.003974099, 0.005382245, 0.184512886, 0.01258
-5051, 0.004205398, 0.007114967, 0.204428542, 0.018633759, 0.005631302])
-  0.018708 seconds (16.93 k allocations: 1.779 MiB)
-  0.999759 seconds (6.26 M allocations: 263.576 MiB, 7.90% gc time)
-  0.067348 seconds (7.19 k allocations: 1.062 MiB)
-  0.017561 seconds (8.58 k allocations: 1.781 MiB)
-  0.008674 seconds (11.50 k allocations: 1018.531 KiB)
-  0.480743 seconds (2.95 M allocations: 124.153 MiB, 7.53% gc time)
-  0.032758 seconds (11.00 k allocations: 875.219 KiB)
-  0.008614 seconds (5.46 k allocations: 1.005 MiB)
-  0.008809 seconds (9.46 k allocations: 1.089 MiB)
-  0.447740 seconds (2.72 M allocations: 114.619 MiB, 8.71% gc time)
-  0.030616 seconds (11.78 k allocations: 1.057 MiB)
-  0.008726 seconds (5.85 k allocations: 1.160 MiB)
-  0.011786 seconds (18.30 k allocations: 1.449 MiB)
-  0.496907 seconds (2.72 M allocations: 114.791 MiB, 7.87% gc time)
-  0.043361 seconds (17.71 k allocations: 1.230 MiB)
-  0.012253 seconds (12.94 k allocations: 1.511 MiB)
-  5.461901 seconds (29.58 M allocations: 1.237 GiB, 7.67% gc time)
-(n, ts) = (4, [0.018737548, 1.052148886, 0.067403322, 0.017329293, 0.008891
-989, 0.482349674, 0.032764916, 0.008467063, 0.00883126, 0.449351251, 0.0304
-81298, 0.008697961, 0.011611811, 0.495245852, 0.043779543, 0.012297304])
-  0.038212 seconds (23.96 k allocations: 3.044 MiB)
-  2.387695 seconds (14.56 M allocations: 645.083 MiB, 9.72% gc time)
-  0.149555 seconds (9.73 k allocations: 1.999 MiB)
-  0.039247 seconds (11.40 k allocations: 3.026 MiB)
-  0.015923 seconds (14.52 k allocations: 1.460 MiB)
-  1.078647 seconds (6.65 M allocations: 294.556 MiB, 7.29% gc time)
-  0.071853 seconds (16.07 k allocations: 1.370 MiB)
-  0.017197 seconds (6.67 k allocations: 1.464 MiB)
-  0.016255 seconds (11.94 k allocations: 1.772 MiB)
-  0.975999 seconds (5.92 M allocations: 262.817 MiB, 11.55% gc time)
-  0.071906 seconds (16.86 k allocations: 1.825 MiB)
-  0.017131 seconds (6.85 k allocations: 1.837 MiB)
-  0.019318 seconds (20.78 k allocations: 2.185 MiB)
-  1.009022 seconds (5.93 M allocations: 263.042 MiB, 7.00% gc time)
-  0.090891 seconds (22.78 k allocations: 2.050 MiB)
-  0.021803 seconds (13.94 k allocations: 2.241 MiB)
- 12.211444 seconds (66.46 M allocations: 2.912 GiB, 8.72% gc time)
-(n, ts) = (5, [0.038678485, 2.427221053, 0.14890947, 0.038982372, 0.0159616
-57, 1.11135424, 0.071967855, 0.017029036, 0.016022666, 0.97242849, 0.073343
-251, 0.017173645, 0.019273623, 1.089093348, 0.091201279, 0.02147201])
-  0.070297 seconds (32.58 k allocations: 5.039 MiB)
-  4.726299 seconds (29.36 M allocations: 1.230 GiB, 8.99% gc time)
-  0.304096 seconds (12.87 k allocations: 3.579 MiB)
-  0.077483 seconds (14.94 k allocations: 5.095 MiB)
-  0.027311 seconds (17.93 k allocations: 2.018 MiB)
-  2.036221 seconds (12.91 M allocations: 553.516 MiB, 9.25% gc time)
-  0.136328 seconds (22.26 k allocations: 1.980 MiB)
-  0.031256 seconds (8.18 k allocations: 2.212 MiB)
-  0.028149 seconds (14.95 k allocations: 2.880 MiB)
-  1.932710 seconds (11.43 M allocations: 491.217 MiB, 17.54% gc time)
-  0.123010 seconds (23.08 k allocations: 3.013 MiB)
-  0.031454 seconds (8.22 k allocations: 3.137 MiB)
-  0.032856 seconds (27.09 k allocations: 3.515 MiB)
-  1.989161 seconds (11.44 M allocations: 491.594 MiB, 8.62% gc time)
-  0.185948 seconds (31.24 k allocations: 3.389 MiB)
-  0.040509 seconds (18.05 k allocations: 3.769 MiB)
- 23.585191 seconds (130.72 M allocations: 5.541 GiB, 8.97% gc time)
-(n, ts) = (6, [0.070201713, 4.732354174, 0.30163784, 0.077259271, 0.0270186
-04, 2.039087967, 0.136766074, 0.031175732, 0.027916105, 1.933898481, 0.1217
-57057, 0.031069042, 0.032591358, 1.98879026, 0.19681265, 0.040307548])
-  0.150616 seconds (44.40 k allocations: 8.014 MiB)
-  9.115777 seconds (55.63 M allocations: 2.474 GiB, 7.83% gc time)
-  0.615599 seconds (16.59 k allocations: 5.983 MiB)
-  0.174750 seconds (19.71 k allocations: 8.034 MiB)
-  0.042977 seconds (21.96 k allocations: 2.710 MiB)
-  3.655602 seconds (22.94 M allocations: 1.020 GiB, 8.33% gc time)
-  0.276934 seconds (29.57 k allocations: 2.780 MiB)
-  0.056324 seconds (9.79 k allocations: 2.894 MiB)
-  0.045369 seconds (18.42 k allocations: 4.478 MiB)
-  3.229451 seconds (20.18 M allocations: 920.484 MiB, 7.12% gc time)
-  0.215380 seconds (30.39 k allocations: 4.755 MiB)
-  0.054802 seconds (9.61 k allocations: 4.727 MiB)
-  0.051077 seconds (32.12 k allocations: 5.278 MiB)
-  3.522169 seconds (20.19 M allocations: 920.984 MiB, 7.59% gc time)
-  0.312246 seconds (39.41 k allocations: 5.256 MiB)
-  0.067827 seconds (20.65 k allocations: 5.524 MiB)
- 43.090089 seconds (238.47 M allocations: 10.705 GiB, 7.10% gc time)
-(n, ts) = (7, [0.149203796, 9.082546151, 0.609516636, 0.175520107, 0.042618
-595, 3.592471814, 0.272592537, 0.054414785, 0.0450148, 3.288358941, 0.21691
-9845, 0.054549003, 0.05094322, 3.463671611, 0.310582658, 0.06751316])
-  0.243248 seconds (56.56 k allocations: 12.158 MiB)
- 15.259900 seconds (93.83 M allocations: 4.048 GiB, 7.71% gc time)
-  1.033790 seconds (20.82 k allocations: 9.533 MiB)
-  0.340022 seconds (24.59 k allocations: 12.143 MiB, 10.63% gc time)
-  0.067347 seconds (27.82 k allocations: 3.655 MiB)
-  6.236926 seconds (39.35 M allocations: 1.696 GiB, 7.87% gc time)
-  0.408228 seconds (38.48 k allocations: 3.749 MiB)
-  0.091426 seconds (12.43 k allocations: 3.825 MiB)
-  0.071381 seconds (22.49 k allocations: 6.825 MiB)
-  5.388834 seconds (33.41 M allocations: 1.444 GiB, 8.52% gc time)
-  0.355705 seconds (38.84 k allocations: 7.212 MiB)
-  0.088802 seconds (11.25 k allocations: 7.065 MiB)
-  0.078285 seconds (40.16 k allocations: 7.961 MiB)
-  5.717638 seconds (33.42 M allocations: 1.444 GiB, 7.17% gc time)
-  0.460161 seconds (50.13 k allocations: 7.939 MiB)
-  0.112107 seconds (25.93 k allocations: 8.231 MiB)
- 71.765305 seconds (400.76 M allocations: 17.441 GiB, 7.16% gc time)
-(n, ts) = (8, [0.246299245, 15.184537383, 1.038898802, 0.296097827, 0.06705
-5045, 6.165985377, 0.407266081, 0.090364098, 0.068640259, 5.349247767, 0.35
-6738837, 0.088693814, 0.115111165, 5.736690401, 0.460403989, 0.110580611])
-  0.416598 seconds (72.81 k allocations: 18.081 MiB)
- 27.062615 seconds (165.57 M allocations: 6.990 GiB, 9.06% gc time)
-  1.878816 seconds (25.60 k allocations: 14.622 MiB, 2.33% gc time)
-  0.529452 seconds (33.08 k allocations: 18.332 MiB)
-  0.107744 seconds (33.27 k allocations: 4.814 MiB)
-  9.661632 seconds (61.78 M allocations: 2.606 GiB, 8.47% gc time)
-  0.717223 seconds (48.04 k allocations: 4.978 MiB)
-  0.144714 seconds (14.61 k allocations: 4.995 MiB)
-  0.112594 seconds (27.08 k allocations: 10.157 MiB)
-  8.391493 seconds (52.39 M allocations: 2.216 GiB, 8.18% gc time)
-  0.602374 seconds (48.39 k allocations: 10.667 MiB, 6.20% gc time)
-  0.143109 seconds (13.09 k allocations: 10.409 MiB)
-  0.125372 seconds (47.31 k allocations: 11.634 MiB)
-  8.912016 seconds (52.41 M allocations: 2.217 GiB, 7.91% gc time)
-  0.771220 seconds (62.09 k allocations: 11.730 MiB)
-  0.173997 seconds (29.64 k allocations: 11.906 MiB)
-119.430471 seconds (665.21 M allocations: 28.319 GiB, 7.59% gc time)
-(n, ts) = (9, [0.459263061, 26.846858147, 1.918422421, 0.529117997, 0.10853
-9652, 9.629858011, 0.900828851, 0.143231957, 0.112180065, 8.320877508, 0.57
-5324176, 0.143118949, 0.124695907, 8.888977618, 0.774091026, 0.173690497])
-  0.680306 seconds (88.75 k allocations: 25.713 MiB, 6.02% gc time)
- 38.617379 seconds (234.14 M allocations: 9.730 GiB, 8.69% gc time)
-  2.732763 seconds (30.95 k allocations: 21.466 MiB, 1.98% gc time)
-  0.798915 seconds (37.49 k allocations: 25.614 MiB)
-  0.151408 seconds (39.34 k allocations: 6.180 MiB)
- 14.588199 seconds (92.80 M allocations: 3.852 GiB, 8.21% gc time)
-  0.965277 seconds (58.72 k allocations: 6.422 MiB)
-  0.214703 seconds (17.04 k allocations: 6.346 MiB)
-  0.168195 seconds (34.36 k allocations: 14.665 MiB)
- 13.549274 seconds (84.39 M allocations: 3.512 GiB, 8.42% gc time)
-  0.896277 seconds (59.08 k allocations: 15.176 MiB)
-  0.229266 seconds (16.43 k allocations: 14.963 MiB)
-  0.223022 seconds (55.15 k allocations: 16.370 MiB, 17.84% gc time)
- 14.260337 seconds (84.40 M allocations: 3.513 GiB, 7.76% gc time)
-  1.091196 seconds (73.17 k allocations: 16.461 MiB)
-  0.268037 seconds (33.20 k allocations: 16.671 MiB)
-178.650678 seconds (992.56 M allocations: 41.581 GiB, 7.81% gc time)
-(n, ts) = (10, [0.652294079, 38.336428457, 2.670612167, 0.864291383, 0.1537
-96272, 14.497481139, 0.967159411, 0.212734001, 0.168458897, 13.73477638, 0.
-895344758, 0.228915281, 0.181383732, 14.222577709, 1.131169038, 0.267518896
+(n, ts) = (2, [0.00361374, 0.13941255, 0.008303054, 0.003268732, 0.00258191
+5, 0.073138846, 0.006432454, 0.002191308, 0.002372366, 0.090886087, 0.00654
+6363, 0.002448847, 0.003303522, 0.078120968, 0.007549068, 0.002921654])
+  0.010715 seconds (10.96 k allocations: 994.922 KiB)
+  0.456049 seconds (2.11 M allocations: 92.709 MiB, 13.44% gc time)
+  0.029405 seconds (5.10 k allocations: 556.945 KiB)
+  0.009134 seconds (6.10 k allocations: 993.820 KiB)
+  0.005902 seconds (9.10 k allocations: 695.078 KiB)
+  0.247037 seconds (1.29 M allocations: 56.838 MiB, 12.97% gc time)
+  0.018209 seconds (7.19 k allocations: 556.734 KiB)
+  0.005341 seconds (4.45 k allocations: 671.109 KiB)
+  0.005861 seconds (7.19 k allocations: 682.125 KiB)
+  0.238043 seconds (1.13 M allocations: 49.919 MiB, 14.32% gc time)
+  0.017019 seconds (7.72 k allocations: 615.203 KiB)
+  0.005471 seconds (4.83 k allocations: 716.219 KiB)
+  0.007426 seconds (13.23 k allocations: 910.031 KiB)
+  0.355085 seconds (1.62 M allocations: 71.162 MiB, 9.51% gc time)
+  0.024421 seconds (11.85 k allocations: 717.047 KiB)
+  0.007426 seconds (9.72 k allocations: 938.125 KiB)
+  2.882323 seconds (12.51 M allocations: 561.240 MiB, 8.76% gc time)
+(n, ts) = (3, [0.010507832, 0.456075969, 0.029429637, 0.009015331, 0.005827
+037, 0.26410017, 0.017874291, 0.005028922, 0.005796197, 0.220319642, 0.0167
+92477, 0.005299771, 0.007610037, 0.330758412, 0.024394034, 0.00721734])
+  0.021730 seconds (16.77 k allocations: 1.758 MiB)
+  1.252436 seconds (6.26 M allocations: 263.560 MiB, 7.86% gc time)
+  0.084339 seconds (7.08 k allocations: 1.045 MiB)
+  0.023253 seconds (8.47 k allocations: 1.764 MiB)
+  0.009896 seconds (11.39 k allocations: 1005.797 KiB)
+  0.669561 seconds (3.28 M allocations: 138.065 MiB, 4.99% gc time)
+  0.045197 seconds (11.13 k allocations: 893.750 KiB)
+  0.011199 seconds (5.44 k allocations: 1.003 MiB)
+  0.010413 seconds (9.26 k allocations: 1.067 MiB)
+  0.586237 seconds (2.90 M allocations: 122.115 MiB, 5.78% gc time)
+  0.040587 seconds (11.68 k allocations: 1.042 MiB)
+  0.011392 seconds (5.75 k allocations: 1.145 MiB)
+  0.013009 seconds (18.10 k allocations: 1.426 MiB)
+  0.845008 seconds (4.19 M allocations: 176.445 MiB, 8.09% gc time)
+  0.057304 seconds (17.60 k allocations: 1.214 MiB)
+  0.015790 seconds (12.84 k allocations: 1.495 MiB)
+  7.360607 seconds (33.54 M allocations: 1.399 GiB, 6.77% gc time)
+(n, ts) = (4, [0.022025398, 1.252281567, 0.083749416, 0.022984393, 0.010180
+723, 0.646644736, 0.046507693, 0.011080109, 0.010152164, 0.559158369, 0.040
+791524, 0.011312927, 0.013460266, 0.838309926, 0.056885436, 0.015582534])
+  0.047044 seconds (23.80 k allocations: 3.015 MiB)
+  2.883171 seconds (14.56 M allocations: 645.065 MiB, 7.99% gc time)
+  0.199217 seconds (9.63 k allocations: 1.973 MiB)
+  0.052936 seconds (11.29 k allocations: 3.000 MiB)
+  0.019205 seconds (14.40 k allocations: 1.447 MiB)
+  1.388445 seconds (7.16 M allocations: 317.339 MiB, 7.10% gc time)
+  0.095613 seconds (16.21 k allocations: 1.387 MiB)
+  0.022606 seconds (6.66 k allocations: 1.460 MiB)
+  0.020205 seconds (11.74 k allocations: 1.742 MiB)
+  1.242414 seconds (6.20 M allocations: 275.098 MiB, 8.34% gc time)
+  0.094449 seconds (16.75 k allocations: 1.802 MiB)
+  0.022852 seconds (6.74 k allocations: 1.815 MiB)
+  0.023849 seconds (20.58 k allocations: 2.155 MiB)
+  1.576231 seconds (8.21 M allocations: 364.008 MiB, 6.07% gc time)
+  0.140551 seconds (22.67 k allocations: 2.027 MiB)
+  0.028335 seconds (13.83 k allocations: 2.218 MiB)
+ 15.740935 seconds (72.62 M allocations: 3.177 GiB, 7.02% gc time)
+(n, ts) = (5, [0.045819467, 2.909324098, 0.199773585, 0.052205821, 0.019497
+272, 1.39468882, 0.095082294, 0.022423617, 0.019641702, 1.192356089, 0.0954
+57303, 0.022573345, 0.023824158, 1.602353592, 0.136287997, 0.028805291])
+  0.086944 seconds (32.42 k allocations: 5.000 MiB)
+  5.580199 seconds (29.36 M allocations: 1.230 GiB, 6.56% gc time)
+  0.400064 seconds (12.76 k allocations: 3.543 MiB)
+  0.102726 seconds (14.84 k allocations: 5.060 MiB)
+  0.033159 seconds (17.82 k allocations: 2.003 MiB)
+  2.585226 seconds (13.65 M allocations: 585.186 MiB, 6.51% gc time)
+  0.182559 seconds (22.39 k allocations: 1.996 MiB)
+  0.041794 seconds (8.16 k allocations: 2.207 MiB)
+  0.034340 seconds (14.75 k allocations: 2.842 MiB)
+  2.267800 seconds (11.83 M allocations: 508.290 MiB, 7.23% gc time)
+  0.168149 seconds (22.97 k allocations: 2.982 MiB)
+  0.041322 seconds (8.11 k allocations: 3.107 MiB)
+  0.040205 seconds (27.09 k allocations: 3.487 MiB)
+  3.012420 seconds (15.96 M allocations: 685.153 MiB, 6.55% gc time)
+  0.286655 seconds (31.13 k allocations: 3.359 MiB)
+  0.052760 seconds (17.94 k allocations: 3.739 MiB)
+ 29.828166 seconds (142.04 M allocations: 6.014 GiB, 5.88% gc time)
+(n, ts) = (6, [0.087048488, 5.581079745, 0.397664201, 0.103423198, 0.032759
+969, 2.600944951, 0.181199178, 0.04161923, 0.03431266, 2.2231238, 0.1637631
+05, 0.041262762, 0.03983651, 3.016810291, 0.288201676, 0.052403801])
+  0.179635 seconds (44.24 k allocations: 7.964 MiB)
+ 10.625923 seconds (55.63 M allocations: 2.474 GiB, 6.83% gc time)
+  0.784731 seconds (16.48 k allocations: 5.938 MiB)
+  0.214418 seconds (19.60 k allocations: 7.989 MiB)
+  0.052983 seconds (21.85 k allocations: 2.693 MiB)
+  4.606611 seconds (23.94 M allocations: 1.064 GiB, 7.22% gc time)
+  0.419871 seconds (29.70 k allocations: 2.794 MiB)
+  0.071463 seconds (9.77 k allocations: 2.887 MiB)
+  0.056625 seconds (18.22 k allocations: 4.432 MiB)
+  3.933408 seconds (20.72 M allocations: 945.126 MiB, 6.78% gc time)
+  0.332488 seconds (30.28 k allocations: 4.716 MiB)
+  0.072627 seconds (9.50 k allocations: 4.688 MiB)
+  0.064053 seconds (32.50 k allocations: 5.265 MiB)
+  5.171406 seconds (27.37 M allocations: 1.218 GiB, 6.32% gc time)
+  0.431902 seconds (39.80 k allocations: 5.243 MiB)
+  0.089674 seconds (20.70 k allocations: 5.495 MiB)
+ 54.532379 seconds (255.93 M allocations: 11.479 GiB, 6.81% gc time)
+(n, ts) = (7, [0.170317159, 10.585433809, 0.777226412, 0.216174304, 0.05269
+0309, 4.59330884, 0.418179807, 0.071603244, 0.05608409, 4.272567993, 0.3225
+71636, 0.07235445, 0.06335653, 5.196515183, 0.435314463, 0.089440925])
+  0.279071 seconds (56.40 k allocations: 12.095 MiB)
+ 17.778492 seconds (93.83 M allocations: 4.048 GiB, 6.67% gc time)
+  1.335491 seconds (20.71 k allocations: 9.473 MiB)
+  0.359945 seconds (24.48 k allocations: 12.083 MiB)
+  0.084253 seconds (27.71 k allocations: 3.636 MiB)
+  7.735270 seconds (40.66 M allocations: 1.752 GiB, 6.40% gc time)
+  0.609803 seconds (38.62 k allocations: 3.761 MiB)
+  0.120301 seconds (12.41 k allocations: 3.817 MiB)
+  0.087511 seconds (22.29 k allocations: 6.766 MiB)
+  6.431936 seconds (34.12 M allocations: 1.474 GiB, 6.77% gc time)
+  0.478763 seconds (38.73 k allocations: 7.160 MiB)
+  0.117642 seconds (11.14 k allocations: 7.013 MiB)
+  0.098242 seconds (40.35 k allocations: 7.927 MiB)
+  8.501917 seconds (45.24 M allocations: 1.953 GiB, 6.73% gc time)
+  0.619764 seconds (51.03 k allocations: 7.950 MiB)
+  0.145261 seconds (24.90 k allocations: 8.106 MiB)
+ 89.780298 seconds (428.43 M allocations: 18.631 GiB, 6.04% gc time)
+(n, ts) = (8, [0.278147102, 17.840925802, 1.333375775, 0.411650163, 0.08407
+3865, 7.809434981, 0.592889691, 0.11934694, 0.087670476, 6.412567376, 0.480
+473932, 0.116774134, 0.099939517, 8.532365066, 0.618991086, 0.146104162])
+  0.668823 seconds (107.37 k allocations: 20.228 MiB)
+ 30.717385 seconds (160.08 M allocations: 6.759 GiB, 8.34% gc time)
+  2.309240 seconds (25.49 k allocations: 14.548 MiB)
+  0.656716 seconds (31.97 k allocations: 18.106 MiB, 5.68% gc time)
+  0.136033 seconds (33.16 k allocations: 4.793 MiB)
+ 12.083068 seconds (63.44 M allocations: 2.676 GiB, 6.49% gc time)
+  0.904192 seconds (48.17 k allocations: 4.988 MiB, 4.00% gc time)
+  0.189321 seconds (14.59 k allocations: 4.984 MiB)
+  0.143452 seconds (26.88 k allocations: 10.085 MiB)
+ 10.004703 seconds (53.29 M allocations: 2.254 GiB, 6.56% gc time)
+  0.756772 seconds (48.28 k allocations: 10.603 MiB)
+  0.189670 seconds (12.98 k allocations: 10.345 MiB)
+  0.159825 seconds (47.70 k allocations: 11.604 MiB)
+ 13.293057 seconds (68.74 M allocations: 2.905 GiB, 9.85% gc time)
+  1.201789 seconds (61.73 k allocations: 11.646 MiB)
+  0.229088 seconds (29.22 k allocations: 11.814 MiB)
+146.195951 seconds (692.06 M allocations: 29.450 GiB, 6.57% gc time)
+(n, ts) = (9, [0.706431551, 30.16606051, 2.294413262, 0.618776356, 0.135549
+89, 11.950760286, 0.904923691, 0.18977602, 0.143154308, 9.939428693, 0.7506
+95665, 0.223405964, 0.161263537, 12.902374414, 1.203922575, 0.229141061])
+  0.755396 seconds (88.59 k allocations: 25.620 MiB, 5.17% gc time)
+ 44.508793 seconds (234.14 M allocations: 9.730 GiB, 6.52% gc time)
+  3.904849 seconds (30.84 k allocations: 21.377 MiB)
+  0.984076 seconds (37.36 k allocations: 25.523 MiB, 4.10% gc time)
+  0.193005 seconds (39.23 k allocations: 6.158 MiB)
+ 18.076197 seconds (94.85 M allocations: 3.937 GiB, 6.51% gc time)
+  1.397158 seconds (58.85 k allocations: 6.430 MiB, 2.35% gc time)
+  0.280856 seconds (17.02 k allocations: 6.333 MiB)
+  0.215839 seconds (34.16 k allocations: 14.581 MiB)
+ 16.022582 seconds (85.57 M allocations: 3.561 GiB, 6.55% gc time)
+  1.243664 seconds (58.97 k allocations: 15.100 MiB, 2.70% gc time)
+  0.298666 seconds (15.90 k allocations: 14.821 MiB)
+  0.232980 seconds (55.54 k allocations: 16.333 MiB)
+ 20.007104 seconds (104.93 M allocations: 4.364 GiB, 8.50% gc time)
+  1.497438 seconds (72.68 k allocations: 16.351 MiB, 2.32% gc time)
+  0.346367 seconds (32.59 k allocations: 16.521 MiB)
+220.029876 seconds (1.04 G allocations: 43.549 GiB, 6.37% gc time)
+(n, ts) = (10, [0.718035705, 45.007271432, 4.184487615, 0.986516006, 0.1925
+43374, 17.877754083, 1.370441489, 0.280697685, 0.215208848, 15.965065824, 1
+.209687548, 0.29770552, 0.266546783, 19.649636674, 1.460936135, 0.345842513
 ])
-  1.708143 seconds (130.82 k allocations: 48.827 MiB, 2.86% gc time)
- 81.521223 seconds (499.22 M allocations: 21.553 GiB, 8.39% gc time)
-  6.800627 seconds (44.06 k allocations: 42.520 MiB)
-  1.997424 seconds (54.82 k allocations: 48.971 MiB, 2.52% gc time)
-  0.358465 seconds (53.73 k allocations: 9.914 MiB)
- 29.852589 seconds (188.82 M allocations: 8.144 GiB, 9.54% gc time)
-  2.040448 seconds (83.75 k allocations: 10.435 MiB, 1.95% gc time)
-  0.496796 seconds (23.12 k allocations: 10.783 MiB)
-  0.434495 seconds (46.42 k allocations: 27.877 MiB)
- 26.658027 seconds (165.66 M allocations: 7.163 GiB, 8.17% gc time)
-  1.889584 seconds (84.63 k allocations: 28.849 MiB)
-  0.594633 seconds (21.46 k allocations: 28.823 MiB, 7.94% gc time)
-  0.489764 seconds (73.04 k allocations: 30.617 MiB, 7.13% gc time)
- 28.210625 seconds (165.68 M allocations: 7.166 GiB, 8.05% gc time)
-  2.293846 seconds (103.09 k allocations: 31.124 MiB, 1.80% gc time)
-  0.672178 seconds (43.04 k allocations: 31.593 MiB, 8.13% gc time)
-371.707434 seconds (2.04 G allocations: 88.737 GiB, 7.78% gc time)
-(n, ts) = (12, [1.696299283, 81.91921695, 6.318740914, 1.98723692, 0.354275
-566, 29.377920044, 2.120264838, 0.491845641, 0.477274725, 26.833970292, 1.8
-95786083, 0.545118464, 0.456494234, 28.150738422, 2.41167953, 0.61882177])
-  3.940898 seconds (208.12 k allocations: 110.003 MiB, 2.38% gc time)
-206.774765 seconds (1.25 G allocations: 52.110 GiB, 8.58% gc time)
- 16.653606 seconds (66.84 k allocations: 99.737 MiB, 0.24% gc time)
-  4.508980 seconds (85.76 k allocations: 109.941 MiB)
-  0.820511 seconds (79.65 k allocations: 18.660 MiB)
- 71.201785 seconds (453.66 M allocations: 18.846 GiB, 8.94% gc time)
-  5.464059 seconds (129.27 k allocations: 19.512 MiB, 0.69% gc time)
-  1.254195 seconds (33.49 k allocations: 19.515 MiB)
-  1.124725 seconds (71.45 k allocations: 63.607 MiB, 5.54% gc time)
- 86.826298 seconds (538.66 M allocations: 22.419 GiB, 8.64% gc time)
-  6.257254 seconds (130.18 k allocations: 64.970 MiB, 0.72% gc time)
-  1.526674 seconds (32.42 k allocations: 64.683 MiB, 6.22% gc time)
-  1.101120 seconds (103.67 k allocations: 68.193 MiB)
- 88.570636 seconds (538.68 M allocations: 22.422 GiB, 8.40% gc time)
-  6.839910 seconds (148.53 k allocations: 68.385 MiB, 0.62% gc time)
-  1.606936 seconds (59.11 k allocations: 69.440 MiB, 2.32% gc time)
-1009.659206 seconds (5.57 G allocations: 233.112 GiB, 7.79% gc time)
-(n, ts) = (15, [3.742562964, 206.166700828, 16.131999197, 4.795429155, 0.82
-1949155, 70.843756932, 5.926070181, 1.208976631, 1.107007971, 86.774189017,
- 6.807839094, 1.637981199, 1.146854711, 88.866267156, 7.50993285, 1.6639790
-39])
-  6.815093 seconds (248.29 k allocations: 173.948 MiB, 3.71% gc time)
-317.543269 seconds (1.92 G allocations: 83.774 GiB, 8.55% gc time)
- 23.572667 seconds (84.84 k allocations: 161.996 MiB, 0.33% gc time)
-  7.549587 seconds (101.83 k allocations: 173.766 MiB, 0.43% gc time)
-  1.428639 seconds (100.13 k allocations: 27.246 MiB)
-116.382762 seconds (743.72 M allocations: 32.327 GiB, 8.92% gc time)
-  8.099197 seconds (165.25 k allocations: 28.567 MiB)
-  2.080585 seconds (41.69 k allocations: 28.051 MiB)
-  2.080521 seconds (98.91 k allocations: 102.479 MiB, 4.77% gc time)
-108.874242 seconds (674.82 M allocations: 29.408 GiB, 9.04% gc time)
- 10.298603 seconds (166.16 k allocations: 103.864 MiB, 0.42% gc time)
-  2.407581 seconds (38.93 k allocations: 102.800 MiB)
-  2.029017 seconds (133.35 k allocations: 108.457 MiB, 4.85% gc time)
-112.715162 seconds (674.84 M allocations: 29.413 GiB, 8.63% gc time)
- 10.296813 seconds (189.65 k allocations: 109.280 MiB, 0.43% gc time)
-  2.726464 seconds (67.41 k allocations: 108.978 MiB)
-1467.041343 seconds (8.04 G allocations: 352.246 GiB, 7.93% gc time)
-(n, ts) = (17, [6.034506041, 315.905645686, 24.492150742, 7.946003073, 1.43
-6635284, 116.153663775, 9.140850916, 2.134088187, 2.141051274, 108.52657301
-9, 8.490944178, 2.423674452, 2.083149333, 112.614864603, 9.827376796, 2.752
-212426])
+  1.810605 seconds (130.62 k allocations: 48.696 MiB, 1.89% gc time)
+ 95.713872 seconds (499.22 M allocations: 21.553 GiB, 7.00% gc time)
+  8.169386 seconds (43.90 k allocations: 42.393 MiB)
+  2.438446 seconds (54.66 k allocations: 48.844 MiB, 0.55% gc time)
+  0.522102 seconds (53.61 k allocations: 9.886 MiB, 19.37% gc time)
+ 36.996231 seconds (191.77 M allocations: 8.270 GiB, 7.49% gc time)
+  2.699760 seconds (83.88 k allocations: 10.438 MiB, 1.26% gc time)
+  0.604649 seconds (23.09 k allocations: 10.766 MiB)
+  0.481880 seconds (46.18 k allocations: 27.760 MiB)
+ 31.928776 seconds (167.31 M allocations: 7.234 GiB, 8.16% gc time)
+  3.324429 seconds (84.47 k allocations: 28.740 MiB)
+  0.677660 seconds (21.31 k allocations: 28.713 MiB, 5.03% gc time)
+  0.511944 seconds (72.60 k allocations: 30.481 MiB)
+ 38.895637 seconds (204.15 M allocations: 8.823 GiB, 7.64% gc time)
+  2.904504 seconds (102.30 k allocations: 30.938 MiB)
+  0.750218 seconds (43.04 k allocations: 31.504 MiB)
+454.100777 seconds (2.13 G allocations: 92.446 GiB, 6.47% gc time)
+(n, ts) = (12, [1.783814185, 95.235942276, 8.173629281, 2.388099616, 0.4193
+40934, 36.115468862, 2.713958114, 0.603202313, 0.509908561, 31.407736198, 2
+.89952596, 0.673656871, 0.54436349, 38.417911535, 2.953413686, 0.79634494])
+  4.436341 seconds (207.92 k allocations: 109.801 MiB, 6.23% gc time)
+238.907946 seconds (1.25 G allocations: 52.110 GiB, 7.15% gc time)
+ 21.535459 seconds (66.69 k allocations: 99.539 MiB, 0.17% gc time)
+  6.692668 seconds (104.65 k allocations: 112.650 MiB, 0.42% gc time)
+  1.031336 seconds (79.53 k allocations: 18.622 MiB)
+ 88.015483 seconds (458.25 M allocations: 19.037 GiB, 7.48% gc time)
+  6.647030 seconds (129.40 k allocations: 19.505 MiB)
+  1.538462 seconds (33.47 k allocations: 19.487 MiB, 2.87% gc time)
+  1.322483 seconds (73.53 k allocations: 63.577 MiB, 5.09% gc time)
+ 78.525239 seconds (414.43 M allocations: 17.262 GiB, 7.88% gc time)
+  6.316001 seconds (130.02 k allocations: 64.799 MiB, 0.63% gc time)
+  1.756263 seconds (31.34 k allocations: 64.371 MiB, 1.64% gc time)
+  1.687656 seconds (104.84 k allocations: 68.044 MiB, 17.96% gc time)
+ 92.155068 seconds (484.08 M allocations: 20.156 GiB, 7.20% gc time)
+  8.663405 seconds (151.47 k allocations: 68.739 MiB, 0.47% gc time)
+  1.933720 seconds (58.26 k allocations: 69.166 MiB, 0.82% gc time)
+1118.787890 seconds (5.22 G allocations: 218.650 GiB, 6.67% gc time)
+(n, ts) = (15, [4.24788943, 239.356738771, 19.706477595, 7.0467489, 1.03581
+9545, 87.516289708, 6.476677465, 1.49842556, 1.293256141, 77.71851507, 6.66
+3641966, 1.763134963, 1.368057221, 91.763055259, 8.202273278, 1.920254193])
+  8.611386 seconds (248.09 k allocations: 173.692 MiB, 3.18% gc time)
+365.176599 seconds (1.92 G allocations: 83.774 GiB, 7.72% gc time)
+ 32.736689 seconds (84.69 k allocations: 161.743 MiB, 0.18% gc time)
+  8.875047 seconds (101.67 k allocations: 173.513 MiB, 0.36% gc time)
+  1.818401 seconds (100.02 k allocations: 27.201 MiB)
+143.852181 seconds (749.62 M allocations: 32.584 GiB, 7.82% gc time)
+ 10.662632 seconds (165.37 k allocations: 28.552 MiB)
+  2.560827 seconds (41.66 k allocations: 28.016 MiB)
+  2.391044 seconds (89.78 k allocations: 101.685 MiB, 4.07% gc time)
+129.604663 seconds (678.24 M allocations: 29.556 GiB, 7.51% gc time)
+ 11.501967 seconds (166.01 k allocations: 103.646 MiB, 0.33% gc time)
+  3.250167 seconds (38.78 k allocations: 102.582 MiB, 5.80% gc time)
+  2.480234 seconds (126.33 k allocations: 108.000 MiB, 3.28% gc time)
+148.445979 seconds (772.63 M allocations: 33.660 GiB, 8.19% gc time)
+ 14.920421 seconds (188.60 k allocations: 108.863 MiB, 0.26% gc time)
+  3.503452 seconds (66.17 k allocations: 108.531 MiB, 8.51% gc time)
+1784.531866 seconds (8.25 G allocations: 361.545 GiB, 6.91% gc time)
+(n, ts) = (17, [8.456774942, 366.187780845, 34.460836359, 9.089973576, 1.93
+1337333, 145.807917744, 10.708935184, 2.674365185, 2.46675501, 128.26010347
+4, 14.133592402, 3.064827466, 2.57251467, 147.914193369, 13.114946171, 3.24
+462207])
 12-element Vector{Vector{Float64}}:
- [0.003802581, 0.084896953, 0.006227816, 0.002388546, 0.002878461, 0.066473
-851, 0.004801681, 0.001632584, 0.002816751, 0.10771938, 0.004711002, 0.0016
-99512, 0.002769912, 0.06944711, 0.006215617, 0.002074858]
- [0.009361815, 0.322682635, 0.021956386, 0.007052058, 0.005439594, 0.164538
-7, 0.013395413, 0.003974099, 0.005382245, 0.184512886, 0.012585051, 0.00420
-5398, 0.007114967, 0.204428542, 0.018633759, 0.005631302]
- [0.018737548, 1.052148886, 0.067403322, 0.017329293, 0.008891989, 0.482349
-674, 0.032764916, 0.008467063, 0.00883126, 0.449351251, 0.030481298, 0.0086
-97961, 0.011611811, 0.495245852, 0.043779543, 0.012297304]
- [0.038678485, 2.427221053, 0.14890947, 0.038982372, 0.015961657, 1.1113542
-4, 0.071967855, 0.017029036, 0.016022666, 0.97242849, 0.073343251, 0.017173
-645, 0.019273623, 1.089093348, 0.091201279, 0.02147201]
- [0.070201713, 4.732354174, 0.30163784, 0.077259271, 0.027018604, 2.0390879
-67, 0.136766074, 0.031175732, 0.027916105, 1.933898481, 0.121757057, 0.0310
-69042, 0.032591358, 1.98879026, 0.19681265, 0.040307548]
- [0.149203796, 9.082546151, 0.609516636, 0.175520107, 0.042618595, 3.592471
-814, 0.272592537, 0.054414785, 0.0450148, 3.288358941, 0.216919845, 0.05454
-9003, 0.05094322, 3.463671611, 0.310582658, 0.06751316]
- [0.246299245, 15.184537383, 1.038898802, 0.296097827, 0.067055045, 6.16598
-5377, 0.407266081, 0.090364098, 0.068640259, 5.349247767, 0.356738837, 0.08
-8693814, 0.115111165, 5.736690401, 0.460403989, 0.110580611]
- [0.459263061, 26.846858147, 1.918422421, 0.529117997, 0.108539652, 9.62985
-8011, 0.900828851, 0.143231957, 0.112180065, 8.320877508, 0.575324176, 0.14
-3118949, 0.124695907, 8.888977618, 0.774091026, 0.173690497]
- [0.652294079, 38.336428457, 2.670612167, 0.864291383, 0.153796272, 14.4974
-81139, 0.967159411, 0.212734001, 0.168458897, 13.73477638, 0.895344758, 0.2
-28915281, 0.181383732, 14.222577709, 1.131169038, 0.267518896]
- [1.696299283, 81.91921695, 6.318740914, 1.98723692, 0.354275566, 29.377920
-044, 2.120264838, 0.491845641, 0.477274725, 26.833970292, 1.895786083, 0.54
-5118464, 0.456494234, 28.150738422, 2.41167953, 0.61882177]
- [3.742562964, 206.166700828, 16.131999197, 4.795429155, 0.821949155, 70.84
-3756932, 5.926070181, 1.208976631, 1.107007971, 86.774189017, 6.807839094, 
-1.637981199, 1.146854711, 88.866267156, 7.50993285, 1.663979039]
- [6.034506041, 315.905645686, 24.492150742, 7.946003073, 1.436635284, 116.1
-53663775, 9.140850916, 2.134088187, 2.141051274, 108.526573019, 8.490944178
-, 2.423674452, 2.083149333, 112.614864603, 9.827376796, 2.752212426]
+ [0.00361374, 0.13941255, 0.008303054, 0.003268732, 0.002581915, 0.07313884
+6, 0.006432454, 0.002191308, 0.002372366, 0.090886087, 0.006546363, 0.00244
+8847, 0.003303522, 0.078120968, 0.007549068, 0.002921654]
+ [0.010507832, 0.456075969, 0.029429637, 0.009015331, 0.005827037, 0.264100
+17, 0.017874291, 0.005028922, 0.005796197, 0.220319642, 0.016792477, 0.0052
+99771, 0.007610037, 0.330758412, 0.024394034, 0.00721734]
+ [0.022025398, 1.252281567, 0.083749416, 0.022984393, 0.010180723, 0.646644
+736, 0.046507693, 0.011080109, 0.010152164, 0.559158369, 0.040791524, 0.011
+312927, 0.013460266, 0.838309926, 0.056885436, 0.015582534]
+ [0.045819467, 2.909324098, 0.199773585, 0.052205821, 0.019497272, 1.394688
+82, 0.095082294, 0.022423617, 0.019641702, 1.192356089, 0.095457303, 0.0225
+73345, 0.023824158, 1.602353592, 0.136287997, 0.028805291]
+ [0.087048488, 5.581079745, 0.397664201, 0.103423198, 0.032759969, 2.600944
+951, 0.181199178, 0.04161923, 0.03431266, 2.2231238, 0.163763105, 0.0412627
+62, 0.03983651, 3.016810291, 0.288201676, 0.052403801]
+ [0.170317159, 10.585433809, 0.777226412, 0.216174304, 0.052690309, 4.59330
+884, 0.418179807, 0.071603244, 0.05608409, 4.272567993, 0.322571636, 0.0723
+5445, 0.06335653, 5.196515183, 0.435314463, 0.089440925]
+ [0.278147102, 17.840925802, 1.333375775, 0.411650163, 0.084073865, 7.80943
+4981, 0.592889691, 0.11934694, 0.087670476, 6.412567376, 0.480473932, 0.116
+774134, 0.099939517, 8.532365066, 0.618991086, 0.146104162]
+ [0.706431551, 30.16606051, 2.294413262, 0.618776356, 0.13554989, 11.950760
+286, 0.904923691, 0.18977602, 0.143154308, 9.939428693, 0.750695665, 0.2234
+05964, 0.161263537, 12.902374414, 1.203922575, 0.229141061]
+ [0.718035705, 45.007271432, 4.184487615, 0.986516006, 0.192543374, 17.8777
+54083, 1.370441489, 0.280697685, 0.215208848, 15.965065824, 1.209687548, 0.
+29770552, 0.266546783, 19.649636674, 1.460936135, 0.345842513]
+ [1.783814185, 95.235942276, 8.173629281, 2.388099616, 0.419340934, 36.1154
+68862, 2.713958114, 0.603202313, 0.509908561, 31.407736198, 2.89952596, 0.6
+73656871, 0.54436349, 38.417911535, 2.953413686, 0.79634494]
+ [4.24788943, 239.356738771, 19.706477595, 7.0467489, 1.035819545, 87.51628
+9708, 6.476677465, 1.49842556, 1.293256141, 77.71851507, 6.663641966, 1.763
+134963, 1.368057221, 91.763055259, 8.202273278, 1.920254193]
+ [8.456774942, 366.187780845, 34.460836359, 9.089973576, 1.931337333, 145.8
+07917744, 10.708935184, 2.674365185, 2.46675501, 128.260103474, 14.13359240
+2, 3.064827466, 2.57251467, 147.914193369, 13.114946171, 3.24462207]
 ```
 
 
@@ -1286,14 +1287,14 @@ end
 ```
 
 ```
-(name, err_du0, err_dp) = ("CVODES Dense EnzymeVJP", 1.5763687093741598e-6,
- 1.1362905959096014e-5)
-(name, err_du0, err_dp) = ("CVODES Dense Compiled ReverseDiffVJP", 1.576368
-5821745964e-6, 1.13629055692829e-5)
-(name, err_du0, err_dp) = ("CVODES GMRES EnzymeVJP", 1.4691507646204004e-6,
- 1.0806327429333602e-5)
-(name, err_du0, err_dp) = ("CVODES GMRES Compiled ReverseDiffVJP", 1.469150
-6369632608e-6, 1.0806327218871115e-5)
+(name, err_du0, err_dp) = ("CVODES Dense EnzymeVJP", 1.576392245414933e-6, 
+1.1362910965483166e-5)
+(name, err_du0, err_dp) = ("CVODES Dense Compiled ReverseDiffVJP", 1.576392
+118216258e-6, 1.1362910575670025e-5)
+(name, err_du0, err_dp) = ("CVODES GMRES EnzymeVJP", 1.4691746698600681e-6,
+ 1.08063323821113e-5)
+(name, err_du0, err_dp) = ("CVODES GMRES Compiled ReverseDiffVJP", 1.469174
+542203823e-6, 1.0806332171648812e-5)
 ```
 
 
@@ -1314,94 +1315,92 @@ end
 ```
 
 ```
-0.002603 seconds (7.37 k allocations: 326.547 KiB)
-  0.004474 seconds (6.96 k allocations: 249.562 KiB)
-  0.003018 seconds (9.52 k allocations: 412.797 KiB)
-  0.005226 seconds (8.32 k allocations: 286.875 KiB)
-  0.285040 seconds (513.70 k allocations: 25.289 MiB, 88.96% compilation ti
-me)
-(n, ts) = (2, [0.002469295, 0.003879609, 0.003196457, 0.004656812])
-  0.004880 seconds (11.30 k allocations: 482.547 KiB)
-  0.011902 seconds (12.46 k allocations: 460.938 KiB)
-  0.006426 seconds (15.30 k allocations: 626.109 KiB)
-  0.014186 seconds (15.56 k allocations: 545.438 KiB)
-  0.074878 seconds (109.80 k allocations: 4.174 MiB)
-(n, ts) = (3, [0.00481075, 0.012029755, 0.006424733, 0.013681189])
-  0.007313 seconds (13.64 k allocations: 584.859 KiB)
-  0.023608 seconds (17.89 k allocations: 684.312 KiB)
-  0.007518 seconds (16.35 k allocations: 674.484 KiB)
-  0.025926 seconds (20.04 k allocations: 741.531 KiB)
-  0.130051 seconds (136.40 k allocations: 5.287 MiB)
-(n, ts) = (4, [0.007190405, 0.023584515, 0.007543871, 0.02703307])
-  0.010858 seconds (15.91 k allocations: 681.203 KiB)
-  0.047944 seconds (24.53 k allocations: 983.406 KiB)
-  0.010066 seconds (18.11 k allocations: 736.172 KiB)
-  0.046299 seconds (26.79 k allocations: 1.018 MiB)
-  0.230570 seconds (171.21 k allocations: 6.767 MiB)
-(n, ts) = (5, [0.011162014, 0.047402359, 0.010044756, 0.046472898])
-  0.018693 seconds (19.70 k allocations: 849.688 KiB)
-  0.088022 seconds (33.08 k allocations: 1.304 MiB)
-  0.014844 seconds (21.86 k allocations: 876.875 KiB)
-  0.077152 seconds (35.90 k allocations: 1.373 MiB)
-  0.392579 seconds (221.62 k allocations: 8.770 MiB)
-(n, ts) = (6, [0.018783815, 0.087767171, 0.014681278, 0.072306571])
-  0.026819 seconds (22.55 k allocations: 971.625 KiB)
-  0.129016 seconds (42.32 k allocations: 1.732 MiB)
-  0.017187 seconds (22.70 k allocations: 914.250 KiB)
-  0.103839 seconds (44.07 k allocations: 1.771 MiB)
-  0.553385 seconds (263.82 k allocations: 10.732 MiB)
-(n, ts) = (7, [0.027366666, 0.130750945, 0.016995224, 0.101063863])
-  0.046215 seconds (28.43 k allocations: 1.200 MiB)
-  0.213021 seconds (54.50 k allocations: 2.215 MiB)
-  0.025880 seconds (35.47 k allocations: 1.265 MiB)
-  0.147001 seconds (64.20 k allocations: 2.451 MiB)
-  0.843538 seconds (365.77 k allocations: 14.304 MiB)
-(n, ts) = (8, [0.044181612, 0.206229683, 0.025910261, 0.134728624])
-  0.072296 seconds (34.70 k allocations: 1.450 MiB)
-  0.291847 seconds (68.48 k allocations: 2.765 MiB)
-  0.034128 seconds (36.75 k allocations: 1.332 MiB)
-  0.180452 seconds (74.45 k allocations: 2.900 MiB)
-  1.158941 seconds (429.30 k allocations: 16.937 MiB)
-(n, ts) = (9, [0.072678397, 0.290904496, 0.034030027, 0.182212862])
-  0.108552 seconds (39.55 k allocations: 1.675 MiB)
-  0.432547 seconds (81.90 k allocations: 3.322 MiB)
-  0.041296 seconds (32.70 k allocations: 1.303 MiB)
-  0.326962 seconds (79.70 k allocations: 3.248 MiB, 15.78% gc time, 2.10% c
-ompilation time)
-  1.762122 seconds (468.23 k allocations: 19.136 MiB, 2.93% gc time, 0.39% 
-compilation time)
-(n, ts) = (10, [0.108685163, 0.432944933, 0.041124324, 0.269496977])
-  0.254237 seconds (53.57 k allocations: 2.268 MiB)
-  0.949499 seconds (115.78 k allocations: 4.784 MiB)
-  0.083899 seconds (50.61 k allocations: 1.964 MiB)
-  0.644318 seconds (119.00 k allocations: 4.847 MiB)
-  3.877019 seconds (678.46 k allocations: 27.769 MiB)
-(n, ts) = (12, [0.254066787, 0.986364928, 0.084176908, 0.619649038])
-  0.806500 seconds (78.86 k allocations: 3.346 MiB)
-  2.478684 seconds (177.69 k allocations: 7.285 MiB)
-  0.147680 seconds (61.52 k allocations: 2.435 MiB)
-  1.277061 seconds (172.19 k allocations: 7.103 MiB)
- 10.019874 seconds (981.09 k allocations: 40.379 MiB)
-(n, ts) = (15, [0.805242765, 3.147719389, 0.147097245, 1.208789433])
-  1.462901 seconds (98.67 k allocations: 4.192 MiB)
-  3.867537 seconds (226.44 k allocations: 9.461 MiB)
-  0.191276 seconds (61.87 k allocations: 2.502 MiB)
-  1.368127 seconds (207.07 k allocations: 8.895 MiB)
- 13.787365 seconds (1.19 M allocations: 50.142 MiB)
-(n, ts) = (17, [1.458824662, 3.880845642, 0.191755103, 1.364973815])
+0.002254 seconds (7.28 k allocations: 319.281 KiB)
+  0.005884 seconds (6.96 k allocations: 249.562 KiB)
+  0.002911 seconds (9.43 k allocations: 405.531 KiB)
+  0.006926 seconds (8.32 k allocations: 286.875 KiB)
+  0.411032 seconds (510.40 k allocations: 25.015 MiB, 11.78% gc time, 91.19
+% compilation time)
+(n, ts) = (2, [0.00183678, 0.00532172, 0.002630326, 0.006280965])
+  0.005005 seconds (11.21 k allocations: 475.281 KiB)
+  0.015614 seconds (12.46 k allocations: 460.938 KiB)
+  0.006127 seconds (15.21 k allocations: 618.844 KiB)
+  0.018740 seconds (15.56 k allocations: 545.438 KiB)
+  0.091486 seconds (109.43 k allocations: 4.146 MiB)
+(n, ts) = (3, [0.005080591, 0.015367953, 0.006208965, 0.018711376])
+  0.007546 seconds (13.55 k allocations: 577.594 KiB)
+  0.031428 seconds (17.89 k allocations: 684.312 KiB)
+  0.007529 seconds (16.26 k allocations: 667.219 KiB)
+  0.034186 seconds (20.04 k allocations: 741.531 KiB)
+  0.161573 seconds (136.03 k allocations: 5.259 MiB)
+(n, ts) = (4, [0.007802367, 0.030955487, 0.007928925, 0.033798811])
+  0.012927 seconds (15.82 k allocations: 673.938 KiB)
+  0.056775 seconds (24.53 k allocations: 983.406 KiB)
+  0.011046 seconds (18.01 k allocations: 728.906 KiB)
+  0.057761 seconds (26.79 k allocations: 1.018 MiB)
+  0.275518 seconds (170.84 k allocations: 6.739 MiB)
+(n, ts) = (5, [0.012844889, 0.057778578, 0.011146358, 0.054837914])
+  0.022197 seconds (19.61 k allocations: 842.422 KiB)
+  0.103085 seconds (33.08 k allocations: 1.304 MiB)
+  0.017572 seconds (21.76 k allocations: 869.609 KiB)
+  0.117228 seconds (35.90 k allocations: 1.373 MiB)
+  0.537792 seconds (221.26 k allocations: 8.742 MiB)
+(n, ts) = (6, [0.022454845, 0.127030141, 0.017593611, 0.110177455])
+  0.033584 seconds (22.45 k allocations: 964.359 KiB)
+  0.161578 seconds (42.32 k allocations: 1.732 MiB)
+  0.021244 seconds (22.60 k allocations: 906.984 KiB)
+  0.133569 seconds (44.07 k allocations: 1.771 MiB)
+  0.704647 seconds (263.45 k allocations: 10.704 MiB)
+(n, ts) = (7, [0.03397384, 0.15768068, 0.021229632, 0.141042663])
+  0.056076 seconds (28.34 k allocations: 1.193 MiB)
+  0.324117 seconds (54.50 k allocations: 2.215 MiB)
+  0.033555 seconds (35.38 k allocations: 1.257 MiB)
+  0.232314 seconds (64.20 k allocations: 2.451 MiB)
+  1.292829 seconds (365.40 k allocations: 14.276 MiB)
+(n, ts) = (8, [0.056600525, 0.329599551, 0.033647932, 0.226354778])
+  0.092781 seconds (34.60 k allocations: 1.442 MiB)
+  0.490026 seconds (68.48 k allocations: 2.765 MiB)
+  0.045023 seconds (36.66 k allocations: 1.325 MiB)
+  0.304748 seconds (74.45 k allocations: 2.900 MiB)
+  1.846602 seconds (428.93 k allocations: 16.909 MiB)
+(n, ts) = (9, [0.091864218, 0.477933803, 0.04471587, 0.298878422])
+  0.142494 seconds (39.46 k allocations: 1.668 MiB)
+  0.655841 seconds (81.90 k allocations: 3.322 MiB)
+  0.053916 seconds (32.61 k allocations: 1.296 MiB)
+  0.366377 seconds (79.64 k allocations: 3.245 MiB)
+  2.437129 seconds (467.79 k allocations: 19.104 MiB)
+(n, ts) = (10, [0.141302711, 0.665727226, 0.05564256, 0.355051519])
+  0.329276 seconds (53.48 k allocations: 2.260 MiB)
+  1.196274 seconds (115.78 k allocations: 4.784 MiB)
+  0.108298 seconds (50.52 k allocations: 1.957 MiB)
+  0.769534 seconds (119.00 k allocations: 4.847 MiB)
+  4.805530 seconds (678.09 k allocations: 27.741 MiB)
+(n, ts) = (12, [0.328821866, 1.189259415, 0.107593889, 0.775427843])
+  1.044998 seconds (78.77 k allocations: 3.339 MiB)
+  3.041670 seconds (177.69 k allocations: 7.285 MiB)
+  0.190320 seconds (61.42 k allocations: 2.427 MiB)
+  1.470264 seconds (172.19 k allocations: 7.103 MiB)
+ 11.659864 seconds (980.72 k allocations: 40.351 MiB, 0.47% gc time)
+(n, ts) = (15, [1.035520923, 3.021333253, 0.18992173, 1.664434614])
+  1.893901 seconds (98.57 k allocations: 4.185 MiB)
+  5.994477 seconds (226.44 k allocations: 9.461 MiB)
+  0.247590 seconds (61.78 k allocations: 2.495 MiB)
+  2.365282 seconds (207.07 k allocations: 8.895 MiB)
+ 21.661627 seconds (1.19 M allocations: 50.114 MiB)
+(n, ts) = (17, [1.89093375, 6.437804369, 0.246023017, 2.583206237])
 12-element Vector{Vector{Float64}}:
- [0.002469295, 0.003879609, 0.003196457, 0.004656812]
- [0.00481075, 0.012029755, 0.006424733, 0.013681189]
- [0.007190405, 0.023584515, 0.007543871, 0.02703307]
- [0.011162014, 0.047402359, 0.010044756, 0.046472898]
- [0.018783815, 0.087767171, 0.014681278, 0.072306571]
- [0.027366666, 0.130750945, 0.016995224, 0.101063863]
- [0.044181612, 0.206229683, 0.025910261, 0.134728624]
- [0.072678397, 0.290904496, 0.034030027, 0.182212862]
- [0.108685163, 0.432944933, 0.041124324, 0.269496977]
- [0.254066787, 0.986364928, 0.084176908, 0.619649038]
- [0.805242765, 3.147719389, 0.147097245, 1.208789433]
- [1.458824662, 3.880845642, 0.191755103, 1.364973815]
+ [0.00183678, 0.00532172, 0.002630326, 0.006280965]
+ [0.005080591, 0.015367953, 0.006208965, 0.018711376]
+ [0.007802367, 0.030955487, 0.007928925, 0.033798811]
+ [0.012844889, 0.057778578, 0.011146358, 0.054837914]
+ [0.022454845, 0.127030141, 0.017593611, 0.110177455]
+ [0.03397384, 0.15768068, 0.021229632, 0.141042663]
+ [0.056600525, 0.329599551, 0.033647932, 0.226354778]
+ [0.091864218, 0.477933803, 0.04471587, 0.298878422]
+ [0.141302711, 0.665727226, 0.05564256, 0.355051519]
+ [0.328821866, 1.189259415, 0.107593889, 0.775427843]
+ [1.035520923, 3.021333253, 0.18992173, 1.664434614]
+ [1.89093375, 6.437804369, 0.246023017, 2.583206237]
 ```
 
 
@@ -1506,18 +1505,18 @@ end
 ```
 
 ```
-(name, err_du0, err_dp) = ("CVODE_BDF Dense + SundialsAdjoint", 1.576368709
-3741598e-6, 1.1362905959096014e-5)
-(name, err_du0, err_dp) = ("CVODE_BDF Dense + GaussAdjoint", 1.572171782030
-254e-6, 1.8830165592856783e-5)
-(name, err_du0, err_dp) = ("CVODE_BDF GMRES + SundialsAdjoint", 1.469150764
-6204004e-6, 1.0806327429333602e-5)
-(name, err_du0, err_dp) = ("CVODE_BDF GMRES + GaussAdjoint", 1.578943033599
-1267e-6, 1.8891966872077684e-5)
-(name, err_du0, err_dp) = ("FBDF + GaussAdjoint", 4.3295351074241675e-7, 2.
-319162115661998e-5)
-(name, err_du0, err_dp) = ("FBDF GMRES + GaussAdjoint", 9.71031217101312e-7
-, 2.4074573839351162e-5)
+(name, err_du0, err_dp) = ("CVODE_BDF Dense + SundialsAdjoint", 1.576392245
+414933e-6, 1.1362910965483166e-5)
+(name, err_du0, err_dp) = ("CVODE_BDF Dense + GaussAdjoint", 1.572195778601
+5652e-6, 1.8830159827863253e-5)
+(name, err_du0, err_dp) = ("CVODE_BDF GMRES + SundialsAdjoint", 1.469174669
+8600681e-6, 1.08063323821113e-5)
+(name, err_du0, err_dp) = ("CVODE_BDF GMRES + GaussAdjoint", 1.578966610320
+9478e-6, 1.8891961107264642e-5)
+(name, err_du0, err_dp) = ("FBDF + GaussAdjoint", 4.1711912972772977e-7, 2.
+3283254883689787e-5)
+(name, err_du0, err_dp) = ("FBDF GMRES + GaussAdjoint", 9.621092548258918e-
+7, 2.387569401387661e-5)
 ```
 
 
@@ -1537,140 +1536,140 @@ end
 ```
 
 ```
-0.002190 seconds (7.37 k allocations: 326.547 KiB)
-  0.002974 seconds (7.65 k allocations: 434.047 KiB)
-  0.002596 seconds (9.52 k allocations: 412.797 KiB)
-  0.003231 seconds (9.31 k allocations: 502.875 KiB)
-  0.002429 seconds (5.80 k allocations: 426.016 KiB)
-  0.009494 seconds (36.72 k allocations: 1.941 MiB)
-  0.345817 seconds (828.15 k allocations: 41.448 MiB, 86.56% compilation ti
-me)
-(n, ts) = (2, [0.001968369, 0.002594883, 0.002539194, 0.003123708, 0.002088
-438, 0.008918268])
-  0.004388 seconds (11.30 k allocations: 482.547 KiB)
-  0.005518 seconds (11.16 k allocations: 624.555 KiB)
-  0.005324 seconds (15.30 k allocations: 626.109 KiB)
-  0.006471 seconds (14.12 k allocations: 740.398 KiB)
-  0.004630 seconds (8.40 k allocations: 670.734 KiB)
-  0.022518 seconds (70.30 k allocations: 4.140 MiB)
-  0.097419 seconds (262.00 k allocations: 14.486 MiB)
-(n, ts) = (3, [0.004190786, 0.005491413, 0.005446964, 0.006323104, 0.004298
-715, 0.02218979])
-  0.006684 seconds (13.64 k allocations: 584.859 KiB)
-  0.007283 seconds (12.66 k allocations: 721.461 KiB)
-  0.006489 seconds (16.35 k allocations: 674.484 KiB)
-  0.007453 seconds (14.67 k allocations: 800.820 KiB)
-  0.006258 seconds (8.89 k allocations: 820.578 KiB)
-  0.031555 seconds (87.52 k allocations: 5.706 MiB)
-  0.131038 seconds (308.28 k allocations: 18.512 MiB)
-(n, ts) = (4, [0.006353454, 0.007144716, 0.006442653, 0.007511862, 0.005961
-118, 0.031406444])
-  0.010697 seconds (15.91 k allocations: 681.203 KiB)
-  0.011221 seconds (14.94 k allocations: 881.180 KiB)
-  0.009062 seconds (18.11 k allocations: 736.172 KiB)
-  0.010182 seconds (15.99 k allocations: 908.211 KiB)
-  0.009848 seconds (9.28 k allocations: 1.018 MiB)
-  0.283319 seconds (100.36 k allocations: 7.035 MiB, 81.26% gc time)
-  0.434481 seconds (350.01 k allocations: 22.434 MiB, 52.99% gc time)
-(n, ts) = (5, [0.010264684, 0.011205613, 0.009171975, 0.010067686, 0.009557
-751, 0.049318539])
-  0.018452 seconds (19.70 k allocations: 849.688 KiB)
-  0.018206 seconds (17.42 k allocations: 1.017 MiB)
-  0.014120 seconds (21.86 k allocations: 876.875 KiB)
-  0.014477 seconds (18.28 k allocations: 1.058 MiB)
-  0.015430 seconds (9.54 k allocations: 1.338 MiB)
-  0.071561 seconds (121.38 k allocations: 8.678 MiB)
-  0.304411 seconds (417.19 k allocations: 27.617 MiB)
-(n, ts) = (6, [0.018113113, 0.018177522, 0.013972335, 0.014811367, 0.014716
-077, 0.071746197])
-  0.027984 seconds (22.55 k allocations: 971.625 KiB)
-  0.027873 seconds (20.51 k allocations: 1.207 MiB)
-  0.017099 seconds (22.70 k allocations: 914.250 KiB)
-  0.018564 seconds (19.27 k allocations: 1.186 MiB)
-  0.023993 seconds (9.71 k allocations: 1.789 MiB)
-  0.095122 seconds (139.74 k allocations: 10.219 MiB)
-  0.420683 seconds (469.76 k allocations: 32.548 MiB)
-(n, ts) = (7, [0.027127479, 0.027180948, 0.017174262, 0.018807005, 0.023510
-806, 0.095617779])
-  0.045050 seconds (28.43 k allocations: 1.200 MiB)
-  0.042234 seconds (24.29 k allocations: 1.468 MiB)
-  0.026285 seconds (35.47 k allocations: 1.265 MiB)
-  0.023348 seconds (23.28 k allocations: 1.534 MiB)
-  0.034812 seconds (11.11 k allocations: 2.354 MiB)
-  0.124704 seconds (170.04 k allocations: 13.122 MiB)
-  0.595098 seconds (586.09 k allocations: 41.949 MiB)
-(n, ts) = (8, [0.044544398, 0.042401681, 0.026249198, 0.02310973, 0.0337723
-9, 0.127875685])
-  0.069515 seconds (34.70 k allocations: 1.450 MiB)
-  0.065893 seconds (29.40 k allocations: 1.769 MiB)
-  0.034771 seconds (36.75 k allocations: 1.332 MiB)
-  0.030740 seconds (24.60 k allocations: 1.758 MiB)
-  0.052797 seconds (9.33 k allocations: 2.950 MiB)
-  0.164212 seconds (184.80 k allocations: 15.584 MiB)
-  0.837583 seconds (639.98 k allocations: 49.750 MiB)
-(n, ts) = (9, [0.070921255, 0.06563982, 0.034445523, 0.031331945, 0.0523111
-37, 0.164152479])
-  0.109870 seconds (39.55 k allocations: 1.675 MiB)
-  0.099551 seconds (32.89 k allocations: 1.981 MiB)
-  0.042079 seconds (32.70 k allocations: 1.303 MiB)
-  0.038160 seconds (24.79 k allocations: 1.838 MiB)
-  0.078275 seconds (11.08 k allocations: 3.952 MiB)
-  0.301730 seconds (214.43 k allocations: 17.997 MiB, 33.25% gc time)
-  1.229853 seconds (711.71 k allocations: 57.555 MiB, 8.16% gc time)
-(n, ts) = (10, [0.110196848, 0.099245512, 0.042280122, 0.038221424, 0.07786
-9793, 0.191459296])
-  0.251037 seconds (53.57 k allocations: 2.268 MiB)
-  0.217938 seconds (44.08 k allocations: 2.713 MiB)
-  0.084326 seconds (50.61 k allocations: 1.964 MiB)
-  0.080709 seconds (39.04 k allocations: 2.899 MiB)
-  0.260247 seconds (12.65 k allocations: 6.583 MiB)
-  0.313739 seconds (270.42 k allocations: 24.155 MiB)
-  2.422981 seconds (941.58 k allocations: 81.228 MiB)
-(n, ts) = (12, [0.250344606, 0.218447606, 0.084549144, 0.082349447, 0.26537
-741, 0.312821529])
-  0.809064 seconds (78.86 k allocations: 3.346 MiB)
-  0.690723 seconds (63.95 k allocations: 4.035 MiB)
-  0.149485 seconds (61.52 k allocations: 2.435 MiB)
-  0.192683 seconds (48.52 k allocations: 4.225 MiB, 25.88% gc time)
-  0.722480 seconds (15.12 k allocations: 13.482 MiB)
-  0.589699 seconds (394.15 k allocations: 38.433 MiB, 6.92% gc time)
-  6.186587 seconds (1.33 M allocations: 131.978 MiB, 1.47% gc time)
-(n, ts) = (15, [0.805436223, 0.689704063, 0.148011706, 0.140687962, 0.70371
-0228, 0.543100391])
-  1.451959 seconds (98.67 k allocations: 4.192 MiB)
-  1.259308 seconds (79.41 k allocations: 4.989 MiB)
-  0.192243 seconds (61.87 k allocations: 2.502 MiB)
-  0.178150 seconds (48.18 k allocations: 4.935 MiB)
-  1.320147 seconds (12.53 k allocations: 20.356 MiB)
-  0.741060 seconds (446.91 k allocations: 48.799 MiB)
- 10.422560 seconds (1.50 M allocations: 171.610 MiB, 1.36% gc time)
-(n, ts) = (17, [1.449707357, 1.260163061, 0.191553905, 0.222872971, 1.37092
-0374, 0.78260111])
+0.002547 seconds (7.28 k allocations: 319.281 KiB)
+  0.002890 seconds (7.56 k allocations: 426.625 KiB)
+  0.002518 seconds (9.43 k allocations: 405.531 KiB)
+  0.003746 seconds (9.22 k allocations: 495.453 KiB)
+  0.002477 seconds (5.50 k allocations: 405.812 KiB)
+  0.010041 seconds (36.68 k allocations: 1.940 MiB)
+  0.477326 seconds (817.84 k allocations: 40.909 MiB, 10.34% gc time, 89.77
+% compilation time)
+(n, ts) = (2, [0.002149589, 0.002593146, 0.002285169, 0.003530381, 0.002218
+059, 0.009112583])
+  0.004972 seconds (11.21 k allocations: 475.281 KiB)
+  0.007023 seconds (11.07 k allocations: 617.133 KiB)
+  0.005761 seconds (15.21 k allocations: 618.844 KiB)
+  0.007362 seconds (14.03 k allocations: 732.977 KiB)
+  0.004679 seconds (7.43 k allocations: 609.484 KiB)
+  0.025623 seconds (64.76 k allocations: 3.796 MiB)
+  0.110450 seconds (248.24 k allocations: 13.620 MiB)
+(n, ts) = (3, [0.004726295, 0.006178137, 0.005629141, 0.007078093, 0.004368
+237, 0.026223994])
+  0.007819 seconds (13.55 k allocations: 577.594 KiB)
+  0.009107 seconds (12.57 k allocations: 714.039 KiB)
+  0.008233 seconds (16.26 k allocations: 667.219 KiB)
+  0.010012 seconds (14.58 k allocations: 793.398 KiB)
+  0.006886 seconds (7.54 k allocations: 737.359 KiB)
+  0.039299 seconds (80.79 k allocations: 5.176 MiB)
+  0.161450 seconds (291.40 k allocations: 17.231 MiB)
+(n, ts) = (4, [0.007866299, 0.009154472, 0.008465566, 0.009840299, 0.006530
+396, 0.037552865])
+  0.013356 seconds (15.82 k allocations: 673.938 KiB)
+  0.014501 seconds (14.85 k allocations: 873.758 KiB)
+  0.011877 seconds (18.01 k allocations: 728.906 KiB)
+  0.013303 seconds (15.90 k allocations: 900.789 KiB)
+  0.010408 seconds (7.63 k allocations: 942.953 KiB)
+  0.055676 seconds (94.58 k allocations: 6.476 MiB)
+  0.237505 seconds (334.40 k allocations: 21.064 MiB)
+(n, ts) = (5, [0.012890114, 0.014559434, 0.011828959, 0.013354741, 0.009964
+788, 0.055065725])
+  0.022396 seconds (19.61 k allocations: 842.422 KiB)
+  0.022855 seconds (17.33 k allocations: 1.009 MiB)
+  0.017980 seconds (21.76 k allocations: 869.609 KiB)
+  0.019229 seconds (18.18 k allocations: 1.051 MiB)
+  0.015591 seconds (7.83 k allocations: 1.236 MiB)
+  0.082358 seconds (114.08 k allocations: 7.992 MiB)
+  0.360883 seconds (398.43 k allocations: 25.985 MiB)
+(n, ts) = (6, [0.022620963, 0.022869871, 0.018150276, 0.018892301, 0.015290
+761, 0.081875115])
+  0.034017 seconds (22.45 k allocations: 964.359 KiB)
+  0.034645 seconds (20.42 k allocations: 1.200 MiB)
+  0.020978 seconds (22.60 k allocations: 906.984 KiB)
+  0.022664 seconds (19.18 k allocations: 1.179 MiB)
+  0.026596 seconds (8.25 k allocations: 1.701 MiB)
+  0.104956 seconds (134.25 k allocations: 9.484 MiB)
+  0.490595 seconds (455.14 k allocations: 30.847 MiB)
+(n, ts) = (7, [0.034233252, 0.034665091, 0.02128273, 0.022735362, 0.0256957
+97, 0.107307314])
+  0.058325 seconds (28.34 k allocations: 1.193 MiB)
+  0.052916 seconds (24.20 k allocations: 1.461 MiB)
+  0.033499 seconds (35.38 k allocations: 1.257 MiB)
+  0.029757 seconds (23.19 k allocations: 1.527 MiB)
+  0.035642 seconds (8.07 k allocations: 2.166 MiB)
+  0.201709 seconds (161.03 k allocations: 12.050 MiB, 26.03% gc time)
+  0.758505 seconds (561.25 k allocations: 39.373 MiB, 6.92% gc time)
+(n, ts) = (8, [0.057031195, 0.053012555, 0.033497076, 0.029668946, 0.035435
+957, 0.1370588])
+  0.092250 seconds (34.60 k allocations: 1.442 MiB)
+  0.083211 seconds (29.31 k allocations: 1.761 MiB)
+  0.043834 seconds (36.66 k allocations: 1.325 MiB)
+  0.037919 seconds (24.50 k allocations: 1.751 MiB)
+  0.062960 seconds (8.32 k allocations: 2.881 MiB)
+  0.188368 seconds (182.26 k allocations: 14.536 MiB)
+  1.017706 seconds (632.14 k allocations: 47.457 MiB)
+(n, ts) = (9, [0.092080473, 0.083297899, 0.043524255, 0.038264382, 0.063091
+293, 0.188000405])
+  0.142457 seconds (39.46 k allocations: 1.668 MiB)
+  0.128463 seconds (32.80 k allocations: 1.974 MiB)
+  0.053363 seconds (32.61 k allocations: 1.296 MiB)
+  0.047055 seconds (24.70 k allocations: 1.831 MiB)
+  0.085461 seconds (8.44 k allocations: 3.785 MiB)
+  0.309035 seconds (214.93 k allocations: 17.122 MiB, 20.14% gc time)
+  1.463966 seconds (706.70 k allocations: 55.415 MiB, 4.25% gc time)
+(n, ts) = (10, [0.141700506, 0.12747261, 0.053191495, 0.047351215, 0.085382
+168, 0.242084426])
+  0.326411 seconds (53.48 k allocations: 2.260 MiB)
+  0.283427 seconds (43.99 k allocations: 2.706 MiB)
+  0.108462 seconds (50.52 k allocations: 1.957 MiB)
+  0.103280 seconds (38.95 k allocations: 2.892 MiB)
+  0.236948 seconds (9.66 k allocations: 6.391 MiB)
+  0.421256 seconds (265.69 k allocations: 22.871 MiB, 8.93% gc time)
+  2.921088 seconds (925.42 k allocations: 78.218 MiB, 1.29% gc time)
+(n, ts) = (12, [0.328917835, 0.285966748, 0.108171159, 0.105191944, 0.23379
+9438, 0.377995432])
+  1.054349 seconds (78.77 k allocations: 3.339 MiB)
+  0.889923 seconds (63.86 k allocations: 4.027 MiB)
+  0.192349 seconds (61.42 k allocations: 2.427 MiB)
+  0.185581 seconds (48.43 k allocations: 4.218 MiB)
+  0.678442 seconds (10.67 k allocations: 13.194 MiB)
+  0.707350 seconds (385.68 k allocations: 36.270 MiB, 5.30% gc time)
+  7.428039 seconds (1.30 M allocations: 127.019 MiB, 1.19% gc time)
+(n, ts) = (15, [1.036059742, 0.8993121, 0.190723311, 0.186467903, 0.7371385
+2, 0.668385507])
+  1.907196 seconds (98.57 k allocations: 4.185 MiB)
+  1.642142 seconds (79.31 k allocations: 4.983 MiB)
+  0.248583 seconds (61.78 k allocations: 2.495 MiB)
+  0.230912 seconds (48.09 k allocations: 4.928 MiB)
+  1.238176 seconds (11.41 k allocations: 20.257 MiB)
+  0.979468 seconds (446.16 k allocations: 46.480 MiB, 3.61% gc time)
+ 12.596462 seconds (1.49 M allocations: 166.723 MiB, 1.39% gc time)
+(n, ts) = (17, [1.897472356, 1.718322554, 0.247664066, 0.232154447, 1.28148
+4197, 0.970747668])
 12-element Vector{Vector{Float64}}:
- [0.001968369, 0.002594883, 0.002539194, 0.003123708, 0.002088438, 0.008918
-268]
- [0.004190786, 0.005491413, 0.005446964, 0.006323104, 0.004298715, 0.022189
-79]
- [0.006353454, 0.007144716, 0.006442653, 0.007511862, 0.005961118, 0.031406
-444]
- [0.010264684, 0.011205613, 0.009171975, 0.010067686, 0.009557751, 0.049318
-539]
- [0.018113113, 0.018177522, 0.013972335, 0.014811367, 0.014716077, 0.071746
-197]
- [0.027127479, 0.027180948, 0.017174262, 0.018807005, 0.023510806, 0.095617
-779]
- [0.044544398, 0.042401681, 0.026249198, 0.02310973, 0.03377239, 0.12787568
-5]
- [0.070921255, 0.06563982, 0.034445523, 0.031331945, 0.052311137, 0.1641524
-79]
- [0.110196848, 0.099245512, 0.042280122, 0.038221424, 0.077869793, 0.191459
-296]
- [0.250344606, 0.218447606, 0.084549144, 0.082349447, 0.26537741, 0.3128215
-29]
- [0.805436223, 0.689704063, 0.148011706, 0.140687962, 0.703710228, 0.543100
-391]
- [1.449707357, 1.260163061, 0.191553905, 0.222872971, 1.370920374, 0.782601
-11]
+ [0.002149589, 0.002593146, 0.002285169, 0.003530381, 0.002218059, 0.009112
+583]
+ [0.004726295, 0.006178137, 0.005629141, 0.007078093, 0.004368237, 0.026223
+994]
+ [0.007866299, 0.009154472, 0.008465566, 0.009840299, 0.006530396, 0.037552
+865]
+ [0.012890114, 0.014559434, 0.011828959, 0.013354741, 0.009964788, 0.055065
+725]
+ [0.022620963, 0.022869871, 0.018150276, 0.018892301, 0.015290761, 0.081875
+115]
+ [0.034233252, 0.034665091, 0.02128273, 0.022735362, 0.025695797, 0.1073073
+14]
+ [0.057031195, 0.053012555, 0.033497076, 0.029668946, 0.035435957, 0.137058
+8]
+ [0.092080473, 0.083297899, 0.043524255, 0.038264382, 0.063091293, 0.188000
+405]
+ [0.141700506, 0.12747261, 0.053191495, 0.047351215, 0.085382168, 0.2420844
+26]
+ [0.328917835, 0.285966748, 0.108171159, 0.105191944, 0.233799438, 0.377995
+432]
+ [1.036059742, 0.8993121, 0.190723311, 0.186467903, 0.73713852, 0.668385507
+]
+ [1.897472356, 1.718322554, 0.247664066, 0.232154447, 1.281484197, 0.970747
+668]
 ```
 
 
@@ -1741,78 +1740,78 @@ end
 
 ```
 (n, agreement, errs) = (2, 2.1963974702304678e-11, [1.1360036542730342e-5, 
-1.8833104332738728e-5, 1.0803476551076878e-5, 1.8894905218340053e-5, 2.3194
-648371761776e-5, 2.4077599256577808e-5, 3.0337412750480918e-9])
+1.8833104332738728e-5, 1.0803476551076878e-5, 1.8894905218340053e-5, 2.3286
+287656629697e-5, 2.3878725506819976e-5, 3.0394201713227987e-9])
 (n, agreement, errs) = (3, 3.010588434012082e-10, [0.00028737837337994515, 
-2.80086857116937e-5, 0.00023912428713242524, 3.714568563653246e-5, 0.000731
-5561896987306, 0.0008238755430193239, 4.1228790905886565e-5])
+2.80086857116937e-5, 0.00023912428713242524, 3.714568563653246e-5, 0.001505
+4829082979052, 0.0014766321747167997, 4.117603080409098e-5])
 (n, agreement, errs) = (4, 1.947292936038399e-10, [0.0001687926610456094, 1
-.874971527376774e-5, 0.00015883934120616695, 3.691915020869242e-5, 0.000498
-7121643265487, 0.0005381081652302444, 1.582668568566446e-5])
+.874971527376774e-5, 0.00015883934120616695, 3.691915020869242e-5, 0.001018
+0981813033077, 0.0010587913364942991, 1.581329703357047e-5])
 (n, agreement, errs) = (5, 1.1458770290019084e-10, [0.00012861447619119944,
- 2.1358797849169975e-5, 0.000139683208049175, 1.55745766292639e-5, 0.000485
-03440587208905, 0.00048141589588903094, 1.133393036708487e-5])
+ 2.1358797849169975e-5, 0.000139683208049175, 1.55745766292639e-5, 0.000778
+2160218531484, 0.0007979527317029229, 1.132856087354418e-5])
 (n, agreement, errs) = (6, 1.1084599668766109e-10, [0.00010956844524867612,
  2.0269472136113163e-5, 0.00010943230107359006, 2.3143298643346274e-5, 0.00
-03564464498410921, 0.0003314102060554131, 7.980663313701766e-6])
+06166101072026013, 0.0006496243246276735, 8.017922704767997e-6])
 (n, agreement, errs) = (7, 9.654055320116652e-11, [9.417453384377807e-5, 1.
-6873080971675968e-5, 9.234561714067285e-5, 1.3570524356883525e-5, 0.0002394
-8345656455672, 0.00023164942164634875, 5.059289841091847e-6])
+6873080971675968e-5, 9.234561714067285e-5, 1.3570524356883525e-5, 0.0005370
+742416252596, 0.0005447209207241839, 5.06464820260714e-6])
 (n, agreement, errs) = (8, 9.794632556352656e-11, [8.831634072154492e-5, 1.
-6851933957859684e-5, 8.557186511651593e-5, 9.322418419792044e-6, 0.00024658
-804620045086, 0.00024487332454898176, 3.529033676406109e-6])
+6851933957859684e-5, 8.557186511651593e-5, 9.322418419792044e-6, 0.00055794
+43464255073, 0.0005556296118236512, 3.5306893395213555e-6])
 (n, agreement, errs) = (9, 8.892003424263953e-11, [8.565053270513868e-5, 1.
-462096461377351e-5, 8.083127239464406e-5, 4.795229093527008e-6, 0.000263736
-161576312, 0.00023423844560872272, 2.9730451369135064e-6])
+462096461377351e-5, 8.083127239464406e-5, 4.795229093527008e-6, 0.000464146
+1425833273, 0.0004611103756681643, 2.9710570433722095e-6])
 (n, agreement, errs) = (10, 9.066173619606881e-11, [7.682476620291043e-5, 1
-.8437614241217117e-5, 8.89644356071134e-5, 3.104678797113946e-5, 0.00019550
-790482353116, 0.00018937313297610886, 2.794772448217821e-6])
+.8437614241217117e-5, 8.89644356071134e-5, 3.104678797113946e-5, 0.00047807
+01676914919, 0.0004783628725488691, 2.794065437343273e-6])
 (n, agreement, errs) = (12, 7.67140688387645e-11, [7.411141828954412e-5, 2.
-2215058788081397e-5, 6.526502659179764e-5, 1.2430558885657634e-5, 0.0002006
-0186553510476, 0.00021503847555626353, 2.728004916857775e-6])
+2215058788081397e-5, 6.526502659179764e-5, 1.2430558885657634e-5, 0.0004238
+766249800418, 0.00042744908731910143, 2.730558096856138e-6])
 (n, agreement, errs) = (15, 6.721550805195372e-11, [7.380143188028393e-5, 9
-.487618540479155e-6, 9.757134118760027e-5, 4.297504300599217e-5, 0.00022116
-868567405719, 0.000270615567380134, 2.91409915486092e-6])
+.487618540479155e-6, 9.757134118760027e-5, 4.297504300599217e-5, 0.00044138
+559604753525, 0.0004439295999529228, 2.9139178684502948e-6])
 (n, agreement, errs) = (17, 7.560204822537469e-11, [6.830653284894397e-5, 1
-.0787115927338272e-5, 0.0001115941045792728, 7.272612520132917e-5, 0.000226
-55973219878864, 0.0002645139178919322, 3.855128697211941e-6])
+.0787115927338272e-5, 0.0001115941045792728, 7.272612520132917e-5, 0.000414
+3204376360607, 0.00041593354967809336, 3.89049367453392e-6])
 12-element Vector{Vector{Float64}}:
  [1.1360036542730342e-5, 1.8833104332738728e-5, 1.0803476551076878e-5, 1.88
-94905218340053e-5, 2.3194648371761776e-5, 2.4077599256577808e-5, 3.03374127
-50480918e-9]
+94905218340053e-5, 2.3286287656629697e-5, 2.3878725506819976e-5, 3.03942017
+13227987e-9]
  [0.00028737837337994515, 2.80086857116937e-5, 0.00023912428713242524, 3.71
-4568563653246e-5, 0.0007315561896987306, 0.0008238755430193239, 4.122879090
-5886565e-5]
+4568563653246e-5, 0.0015054829082979052, 0.0014766321747167997, 4.117603080
+409098e-5]
  [0.0001687926610456094, 1.874971527376774e-5, 0.00015883934120616695, 3.69
-1915020869242e-5, 0.0004987121643265487, 0.0005381081652302444, 1.582668568
-566446e-5]
+1915020869242e-5, 0.0010180981813033077, 0.0010587913364942991, 1.581329703
+357047e-5]
  [0.00012861447619119944, 2.1358797849169975e-5, 0.000139683208049175, 1.55
-745766292639e-5, 0.00048503440587208905, 0.00048141589588903094, 1.13339303
-6708487e-5]
+745766292639e-5, 0.0007782160218531484, 0.0007979527317029229, 1.1328560873
+54418e-5]
  [0.00010956844524867612, 2.0269472136113163e-5, 0.00010943230107359006, 2.
-3143298643346274e-5, 0.0003564464498410921, 0.0003314102060554131, 7.980663
-313701766e-6]
+3143298643346274e-5, 0.0006166101072026013, 0.0006496243246276735, 8.017922
+704767997e-6]
  [9.417453384377807e-5, 1.6873080971675968e-5, 9.234561714067285e-5, 1.3570
-524356883525e-5, 0.00023948345656455672, 0.00023164942164634875, 5.05928984
-1091847e-6]
+524356883525e-5, 0.0005370742416252596, 0.0005447209207241839, 5.0646482026
+0714e-6]
  [8.831634072154492e-5, 1.6851933957859684e-5, 8.557186511651593e-5, 9.3224
-18419792044e-6, 0.00024658804620045086, 0.00024487332454898176, 3.529033676
-406109e-6]
+18419792044e-6, 0.0005579443464255073, 0.0005556296118236512, 3.53068933952
+13555e-6]
  [8.565053270513868e-5, 1.462096461377351e-5, 8.083127239464406e-5, 4.79522
-9093527008e-6, 0.000263736161576312, 0.00023423844560872272, 2.973045136913
-5064e-6]
+9093527008e-6, 0.0004641461425833273, 0.0004611103756681643, 2.971057043372
+2095e-6]
  [7.682476620291043e-5, 1.8437614241217117e-5, 8.89644356071134e-5, 3.10467
-8797113946e-5, 0.00019550790482353116, 0.00018937313297610886, 2.7947724482
-17821e-6]
+8797113946e-5, 0.0004780701676914919, 0.0004783628725488691, 2.794065437343
+273e-6]
  [7.411141828954412e-5, 2.2215058788081397e-5, 6.526502659179764e-5, 1.2430
-558885657634e-5, 0.00020060186553510476, 0.00021503847555626353, 2.72800491
-6857775e-6]
+558885657634e-5, 0.0004238766249800418, 0.00042744908731910143, 2.730558096
+856138e-6]
  [7.380143188028393e-5, 9.487618540479155e-6, 9.757134118760027e-5, 4.29750
-4300599217e-5, 0.00022116868567405719, 0.000270615567380134, 2.914099154860
-92e-6]
+4300599217e-5, 0.00044138559604753525, 0.0004439295999529228, 2.91391786845
+02948e-6]
  [6.830653284894397e-5, 1.0787115927338272e-5, 0.0001115941045792728, 7.272
-612520132917e-5, 0.00022655973219878864, 0.0002645139178919322, 3.855128697
-211941e-6]
+612520132917e-5, 0.0004143204376360607, 0.00041593354967809336, 3.890493674
+53392e-6]
 ```
 
 
@@ -2063,32 +2062,32 @@ end
 ```
 
 ```
-(n, result) = (2, (rss_before = 1074.86328125, rss_after = 1226.46484375, d
-elta_mib = 151.6015625, timing = 0.001115519))
-(n, result) = (4, (rss_before = 1072.26171875, rss_after = 1267.59375, delt
-a_mib = 195.33203125, timing = 0.030301507))
-(n, result) = (6, (rss_before = 1095.52734375, rss_after = 1245.87890625, d
-elta_mib = 150.3515625, timing = 0.327088971))
-(n, result) = (8, (rss_before = 1073.4140625, rss_after = 1238.171875, delt
-a_mib = 164.7578125, timing = 1.543538599))
-(n, result) = (10, (rss_before = 1071.375, rss_after = 1239.21875, delta_mi
-b = 167.84375, timing = 8.443553962))
-(n, result) = (12, (rss_before = 1074.55859375, rss_after = 1250.0546875, d
-elta_mib = 175.49609375, timing = 27.803213906))
+(n, result) = (2, (rss_before = 1053.9375, rss_after = 1204.18359375, delta
+_mib = 150.24609375, timing = 0.003111414))
+(n, result) = (4, (rss_before = 1052.5859375, rss_after = 1226.33203125, de
+lta_mib = 173.74609375, timing = 0.039805451))
+(n, result) = (6, (rss_before = 1057.484375, rss_after = 1229.24609375, del
+ta_mib = 171.76171875, timing = 0.448656414))
+(n, result) = (8, (rss_before = 1073.2421875, rss_after = 1231.90625, delta
+_mib = 158.6640625, timing = 2.326156929))
+(n, result) = (10, (rss_before = 1056.43359375, rss_after = 1233.49609375, 
+delta_mib = 177.0625, timing = 11.260277147))
+(n, result) = (12, (rss_before = 1046.56640625, rss_after = 1238.30078125, 
+delta_mib = 191.734375, timing = 31.386858693))
 6-element Vector{@NamedTuple{rss_before::Float64, rss_after::Float64, delta
 _mib::Float64, timing::Float64}}:
- (rss_before = 1074.86328125, rss_after = 1226.46484375, delta_mib = 151.60
-15625, timing = 0.001115519)
- (rss_before = 1072.26171875, rss_after = 1267.59375, delta_mib = 195.33203
-125, timing = 0.030301507)
- (rss_before = 1095.52734375, rss_after = 1245.87890625, delta_mib = 150.35
-15625, timing = 0.327088971)
- (rss_before = 1073.4140625, rss_after = 1238.171875, delta_mib = 164.75781
-25, timing = 1.543538599)
- (rss_before = 1071.375, rss_after = 1239.21875, delta_mib = 167.84375, tim
-ing = 8.443553962)
- (rss_before = 1074.55859375, rss_after = 1250.0546875, delta_mib = 175.496
-09375, timing = 27.803213906)
+ (rss_before = 1053.9375, rss_after = 1204.18359375, delta_mib = 150.246093
+75, timing = 0.003111414)
+ (rss_before = 1052.5859375, rss_after = 1226.33203125, delta_mib = 173.746
+09375, timing = 0.039805451)
+ (rss_before = 1057.484375, rss_after = 1229.24609375, delta_mib = 171.7617
+1875, timing = 0.448656414)
+ (rss_before = 1073.2421875, rss_after = 1231.90625, delta_mib = 158.664062
+5, timing = 2.326156929)
+ (rss_before = 1056.43359375, rss_after = 1233.49609375, delta_mib = 177.06
+25, timing = 11.260277147)
+ (rss_before = 1046.56640625, rss_after = 1238.30078125, delta_mib = 191.73
+4375, timing = 31.386858693)
 ```
 
 
@@ -2107,32 +2106,32 @@ end
 ```
 
 ```
-(n, result) = (2, (rss_before = 1071.0625, rss_after = 1195.9765625, delta_
-mib = 124.9140625, timing = 0.003395605))
-(n, result) = (4, (rss_before = 1085.58984375, rss_after = 1175.92578125, d
-elta_mib = 90.3359375, timing = 0.074181417))
-(n, result) = (6, (rss_before = 1077.66015625, rss_after = 1171.96875, delt
-a_mib = 94.30859375, timing = 0.702444468))
-(n, result) = (8, (rss_before = 1069.84375, rss_after = 1195.76953125, delt
-a_mib = 125.92578125, timing = 3.307614785))
-(n, result) = (10, (rss_before = 1083.65234375, rss_after = 1178.21875, del
-ta_mib = 94.56640625, timing = 13.805399064))
-(n, result) = (12, (rss_before = 1075.78515625, rss_after = 1177.7109375, d
-elta_mib = 101.92578125, timing = 77.299828978))
+(n, result) = (2, (rss_before = 1042.02734375, rss_after = 1147.80859375, d
+elta_mib = 105.78125, timing = 0.004071329))
+(n, result) = (4, (rss_before = 1043.4140625, rss_after = 1155.3515625, del
+ta_mib = 111.9375, timing = 0.099820814))
+(n, result) = (6, (rss_before = 1062.9765625, rss_after = 1165.4765625, del
+ta_mib = 102.5, timing = 0.899974812))
+(n, result) = (8, (rss_before = 1074.765625, rss_after = 1186.1171875, delt
+a_mib = 111.3515625, timing = 4.436777599))
+(n, result) = (10, (rss_before = 1057.4609375, rss_after = 1164.49609375, d
+elta_mib = 107.03515625, timing = 18.467509641))
+(n, result) = (12, (rss_before = 1057.69140625, rss_after = 1178.18359375, 
+delta_mib = 120.4921875, timing = 88.274741172))
 6-element Vector{@NamedTuple{rss_before::Float64, rss_after::Float64, delta
 _mib::Float64, timing::Float64}}:
- (rss_before = 1071.0625, rss_after = 1195.9765625, delta_mib = 124.9140625
-, timing = 0.003395605)
- (rss_before = 1085.58984375, rss_after = 1175.92578125, delta_mib = 90.335
-9375, timing = 0.074181417)
- (rss_before = 1077.66015625, rss_after = 1171.96875, delta_mib = 94.308593
-75, timing = 0.702444468)
- (rss_before = 1069.84375, rss_after = 1195.76953125, delta_mib = 125.92578
-125, timing = 3.307614785)
- (rss_before = 1083.65234375, rss_after = 1178.21875, delta_mib = 94.566406
-25, timing = 13.805399064)
- (rss_before = 1075.78515625, rss_after = 1177.7109375, delta_mib = 101.925
-78125, timing = 77.299828978)
+ (rss_before = 1042.02734375, rss_after = 1147.80859375, delta_mib = 105.78
+125, timing = 0.004071329)
+ (rss_before = 1043.4140625, rss_after = 1155.3515625, delta_mib = 111.9375
+, timing = 0.099820814)
+ (rss_before = 1062.9765625, rss_after = 1165.4765625, delta_mib = 102.5, t
+iming = 0.899974812)
+ (rss_before = 1074.765625, rss_after = 1186.1171875, delta_mib = 111.35156
+25, timing = 4.436777599)
+ (rss_before = 1057.4609375, rss_after = 1164.49609375, delta_mib = 107.035
+15625, timing = 18.467509641)
+ (rss_before = 1057.69140625, rss_after = 1178.18359375, delta_mib = 120.49
+21875, timing = 88.274741172)
 ```
 
 
@@ -2172,145 +2171,147 @@ end
 ```
 
 ```
-(name, n, result) = ("Interp user-Jacobian", 2, (rss_before = 1072.1640625,
- rss_after = 1269.6484375, delta_mib = 197.484375, timing = 0.005122497))
-(name, n, result) = ("Interp user-Jacobian", 4, (rss_before = 1073.92578125
-, rss_after = 1292.828125, delta_mib = 218.90234375, timing = 0.082107705))
-(name, n, result) = ("Interp user-Jacobian", 6, (rss_before = 1069.53515625
-, rss_after = 1273.0859375, delta_mib = 203.55078125, timing = 0.742939923)
+(name, n, result) = ("Interp user-Jacobian", 2, (rss_before = 1054.25, rss_
+after = 1269.0, delta_mib = 214.75, timing = 0.006790763))
+(name, n, result) = ("Interp user-Jacobian", 4, (rss_before = 1058.74609375
+, rss_after = 1240.6484375, delta_mib = 181.90234375, timing = 0.109615458)
 )
-(name, n, result) = ("Interp user-Jacobian", 8, (rss_before = 1080.4609375,
- rss_after = 1273.37890625, delta_mib = 192.91796875, timing = 4.193316537)
+(name, n, result) = ("Interp user-Jacobian", 6, (rss_before = 1062.1796875,
+ rss_after = 1243.41796875, delta_mib = 181.23828125, timing = 0.992203019)
 )
-(name, n, result) = ("Interp user-Jacobian", 10, (rss_before = 1073.15625, 
-rss_after = 1264.30859375, delta_mib = 191.15234375, timing = 17.541102343)
+(name, n, result) = ("Interp user-Jacobian", 8, (rss_before = 1063.8515625,
+ rss_after = 1245.82421875, delta_mib = 181.97265625, timing = 5.488170208)
 )
-(name, n, result) = ("Interp user-Jacobian", 12, (rss_before = 1068.5351562
-5, rss_after = 1269.25390625, delta_mib = 200.71875, timing = 49.255116759)
-)
-(name, n, result) = ("Interp AD-Jacobian", 2, (rss_before = 1091.87109375, 
-rss_after = 1274.265625, delta_mib = 182.39453125, timing = 0.003681942))
-(name, n, result) = ("Interp AD-Jacobian", 4, (rss_before = 1071.73046875, 
-rss_after = 1307.91015625, delta_mib = 236.1796875, timing = 0.035711929))
-(name, n, result) = ("Interp AD-Jacobian", 6, (rss_before = 1068.83984375, 
-rss_after = 1313.76953125, delta_mib = 244.9296875, timing = 0.413579447))
-(name, n, result) = ("Interp AD-Jacobian", 8, (rss_before = 1070.453125, rs
-s_after = 1326.51171875, delta_mib = 256.05859375, timing = 2.132885601))
-(name, n, result) = ("Interp AD-Jacobian", 10, (rss_before = 1071.41015625,
- rss_after = 1334.82421875, delta_mib = 263.4140625, timing = 8.234888948))
-(name, n, result) = ("Interp AD-Jacobian", 12, (rss_before = 1072.78125, rs
-s_after = 1336.8671875, delta_mib = 264.0859375, timing = 24.993491555))
-(name, n, result) = ("Quad user-Jacobian", 2, (rss_before = 1073.01953125, 
-rss_after = 1327.32421875, delta_mib = 254.3046875, timing = 0.002743941))
-(name, n, result) = ("Quad user-Jacobian", 4, (rss_before = 1089.69921875, 
-rss_after = 1315.0, delta_mib = 225.30078125, timing = 0.007770599))
-(name, n, result) = ("Quad user-Jacobian", 6, (rss_before = 1071.5, rss_aft
-er = 1347.21484375, delta_mib = 275.71484375, timing = 0.030479194))
-(name, n, result) = ("Quad user-Jacobian", 8, (rss_before = 1086.3984375, r
-ss_after = 1325.58203125, delta_mib = 239.18359375, timing = 0.094997224))
-(name, n, result) = ("Quad user-Jacobian", 10, (rss_before = 1069.96875, rs
-s_after = 1350.703125, delta_mib = 280.734375, timing = 0.258949673))
-(name, n, result) = ("Quad user-Jacobian", 12, (rss_before = 1087.66015625,
- rss_after = 1314.04296875, delta_mib = 226.3828125, timing = 0.714427048))
-(name, n, result) = ("Quad AD-Jacobian", 2, (rss_before = 1086.4140625, rss
-_after = 1321.953125, delta_mib = 235.5390625, timing = 0.001763002))
-(name, n, result) = ("Quad AD-Jacobian", 4, (rss_before = 1070.69921875, rs
-s_after = 1333.26171875, delta_mib = 262.5625, timing = 0.009363252))
-(name, n, result) = ("Quad AD-Jacobian", 6, (rss_before = 1078.00390625, rs
-s_after = 1320.1171875, delta_mib = 242.11328125, timing = 0.062544521))
-(name, n, result) = ("Quad AD-Jacobian", 8, (rss_before = 1078.4296875, rss
-_after = 1342.78125, delta_mib = 264.3515625, timing = 0.315595846))
-(name, n, result) = ("Quad AD-Jacobian", 10, (rss_before = 1073.30078125, r
-ss_after = 1336.25, delta_mib = 262.94921875, timing = 1.144706728))
-(name, n, result) = ("Quad AD-Jacobian", 12, (rss_before = 1076.94140625, r
-ss_after = 1339.1484375, delta_mib = 262.20703125, timing = 3.325987039))
-(name, n, result) = ("Gauss AD-Jacobian", 2, (rss_before = 1072.72265625, r
-ss_after = 1283.94140625, delta_mib = 211.21875, timing = 0.002062869))
-(name, n, result) = ("Gauss AD-Jacobian", 4, (rss_before = 1071.74609375, r
-ss_after = 1271.23046875, delta_mib = 199.484375, timing = 0.009071756))
-(name, n, result) = ("Gauss AD-Jacobian", 6, (rss_before = 1070.15234375, r
-ss_after = 1280.66015625, delta_mib = 210.5078125, timing = 0.049807963))
-(name, n, result) = ("Gauss AD-Jacobian", 8, (rss_before = 1071.75390625, r
-ss_after = 1290.5390625, delta_mib = 218.78515625, timing = 0.235095293))
-(name, n, result) = ("Gauss AD-Jacobian", 10, (rss_before = 1072.62109375, 
-rss_after = 1317.44921875, delta_mib = 244.828125, timing = 0.949827523))
-(name, n, result) = ("Gauss AD-Jacobian", 12, (rss_before = 1074.375, rss_a
-fter = 1305.08203125, delta_mib = 230.70703125, timing = 2.786806403))
-(name, n, result) = ("GaussKronrod AD-Jacobian", 2, (rss_before = 1071.7460
-9375, rss_after = 1307.46875, delta_mib = 235.72265625, timing = 0.00191725
+(name, n, result) = ("Interp user-Jacobian", 10, (rss_before = 1049.984375,
+ rss_after = 1260.26953125, delta_mib = 210.28515625, timing = 21.858526666
 ))
-(name, n, result) = ("GaussKronrod AD-Jacobian", 4, (rss_before = 1088.1875
-, rss_after = 1285.30078125, delta_mib = 197.11328125, timing = 0.013448059
-))
-(name, n, result) = ("GaussKronrod AD-Jacobian", 6, (rss_before = 1073.9257
-8125, rss_after = 1291.27734375, delta_mib = 217.3515625, timing = 0.076230
-151))
-(name, n, result) = ("GaussKronrod AD-Jacobian", 8, (rss_before = 1071.2539
-0625, rss_after = 1286.91796875, delta_mib = 215.6640625, timing = 0.338202
-255))
-(name, n, result) = ("GaussKronrod AD-Jacobian", 10, (rss_before = 1087.328
-125, rss_after = 1279.63671875, delta_mib = 192.30859375, timing = 1.279431
-158))
-(name, n, result) = ("GaussKronrod AD-Jacobian", 12, (rss_before = 1070.085
-9375, rss_after = 1294.88671875, delta_mib = 224.80078125, timing = 3.60232
-3026))
+(name, n, result) = ("Interp user-Jacobian", 12, (rss_before = 1058.2226562
+5, rss_after = 1295.46484375, delta_mib = 237.2421875, timing = 64.91960673
+7))
+(name, n, result) = ("Interp AD-Jacobian", 2, (rss_before = 1061.01953125, 
+rss_after = 1228.64453125, delta_mib = 167.625, timing = 0.003785809))
+(name, n, result) = ("Interp AD-Jacobian", 4, (rss_before = 1061.0625, rss_
+after = 1277.60546875, delta_mib = 216.54296875, timing = 0.055551443))
+(name, n, result) = ("Interp AD-Jacobian", 6, (rss_before = 1052.67578125, 
+rss_after = 1268.65625, delta_mib = 215.98046875, timing = 0.402205139))
+(name, n, result) = ("Interp AD-Jacobian", 8, (rss_before = 1052.28515625, 
+rss_after = 1261.29296875, delta_mib = 209.0078125, timing = 2.255278622))
+(name, n, result) = ("Interp AD-Jacobian", 10, (rss_before = 1053.1328125, 
+rss_after = 1263.99609375, delta_mib = 210.86328125, timing = 9.046674812))
+(name, n, result) = ("Interp AD-Jacobian", 12, (rss_before = 1057.3046875, 
+rss_after = 1289.20703125, delta_mib = 231.90234375, timing = 29.726450905)
+)
+(name, n, result) = ("Quad user-Jacobian", 2, (rss_before = 1057.21875, rss
+_after = 1305.8671875, delta_mib = 248.6484375, timing = 0.002723985))
+(name, n, result) = ("Quad user-Jacobian", 4, (rss_before = 1060.97265625, 
+rss_after = 1299.16015625, delta_mib = 238.1875, timing = 0.010001066))
+(name, n, result) = ("Quad user-Jacobian", 6, (rss_before = 1069.65625, rss
+_after = 1332.31640625, delta_mib = 262.66015625, timing = 0.040655362))
+(name, n, result) = ("Quad user-Jacobian", 8, (rss_before = 1056.4296875, r
+ss_after = 1299.27734375, delta_mib = 242.84765625, timing = 0.128827367))
+(name, n, result) = ("Quad user-Jacobian", 10, (rss_before = 1057.3828125, 
+rss_after = 1301.59375, delta_mib = 244.2109375, timing = 0.342561216))
+(name, n, result) = ("Quad user-Jacobian", 12, (rss_before = 1058.96484375,
+ rss_after = 1329.375, delta_mib = 270.41015625, timing = 0.877061737))
+(name, n, result) = ("Quad AD-Jacobian", 2, (rss_before = 1072.125, rss_aft
+er = 1323.4375, delta_mib = 251.3125, timing = 0.002383447))
+(name, n, result) = ("Quad AD-Jacobian", 4, (rss_before = 1046.640625, rss_
+after = 1328.3671875, delta_mib = 281.7265625, timing = 0.011314111))
+(name, n, result) = ("Quad AD-Jacobian", 6, (rss_before = 1066.20703125, rs
+s_after = 1321.20703125, delta_mib = 255.0, timing = 0.076300865))
+(name, n, result) = ("Quad AD-Jacobian", 8, (rss_before = 1057.453125, rss_
+after = 1310.921875, delta_mib = 253.46875, timing = 0.345494046))
+(name, n, result) = ("Quad AD-Jacobian", 10, (rss_before = 1059.203125, rss
+_after = 1318.80859375, delta_mib = 259.60546875, timing = 1.270096463))
+(name, n, result) = ("Quad AD-Jacobian", 12, (rss_before = 1061.97265625, r
+ss_after = 1329.015625, delta_mib = 267.04296875, timing = 3.939367725))
+(name, n, result) = ("Gauss AD-Jacobian", 2, (rss_before = 1062.859375, rss
+_after = 1271.6640625, delta_mib = 208.8046875, timing = 0.002463167))
+(name, n, result) = ("Gauss AD-Jacobian", 4, (rss_before = 1055.6953125, rs
+s_after = 1272.1953125, delta_mib = 216.5, timing = 0.012260795))
+(name, n, result) = ("Gauss AD-Jacobian", 6, (rss_before = 1053.86328125, r
+ss_after = 1251.92578125, delta_mib = 198.0625, timing = 0.079090919))
+(name, n, result) = ("Gauss AD-Jacobian", 8, (rss_before = 1055.5390625, rs
+s_after = 1264.19921875, delta_mib = 208.66015625, timing = 0.496952761))
+(name, n, result) = ("Gauss AD-Jacobian", 10, (rss_before = 1052.53125, rss
+_after = 1261.86328125, delta_mib = 209.33203125, timing = 1.400832268))
+(name, n, result) = ("Gauss AD-Jacobian", 12, (rss_before = 1041.90234375, 
+rss_after = 1294.0078125, delta_mib = 252.10546875, timing = 4.687952525))
+(name, n, result) = ("GaussKronrod AD-Jacobian", 2, (rss_before = 1056.3359
+375, rss_after = 1271.94140625, delta_mib = 215.60546875, timing = 0.003018
+444))
+(name, n, result) = ("GaussKronrod AD-Jacobian", 4, (rss_before = 1053.2226
+5625, rss_after = 1273.80859375, delta_mib = 220.5859375, timing = 0.017698
+026))
+(name, n, result) = ("GaussKronrod AD-Jacobian", 6, (rss_before = 1061.5820
+3125, rss_after = 1254.75390625, delta_mib = 193.171875, timing = 0.1139098
+01))
+(name, n, result) = ("GaussKronrod AD-Jacobian", 8, (rss_before = 1054.5156
+25, rss_after = 1269.67578125, delta_mib = 215.16015625, timing = 0.6437434
+75))
+(name, n, result) = ("GaussKronrod AD-Jacobian", 10, (rss_before = 1057.890
+625, rss_after = 1288.76953125, delta_mib = 230.87890625, timing = 1.851769
+374))
+(name, n, result) = ("GaussKronrod AD-Jacobian", 12, (rss_before = 1074.300
+78125, rss_after = 1286.1328125, delta_mib = 211.83203125, timing = 5.89324
+909))
 6-element Vector{@NamedTuple{name::String, results::Vector{@NamedTuple{rss_
 before::Float64, rss_after::Float64, delta_mib::Float64, timing::Float64}}}
 }:
- (name = "Interp user-Jacobian", results = [(rss_before = 1072.1640625, rss
-_after = 1269.6484375, delta_mib = 197.484375, timing = 0.005122497), (rss_
-before = 1073.92578125, rss_after = 1292.828125, delta_mib = 218.90234375, 
-timing = 0.082107705), (rss_before = 1069.53515625, rss_after = 1273.085937
-5, delta_mib = 203.55078125, timing = 0.742939923), (rss_before = 1080.4609
-375, rss_after = 1273.37890625, delta_mib = 192.91796875, timing = 4.193316
-537), (rss_before = 1073.15625, rss_after = 1264.30859375, delta_mib = 191.
-15234375, timing = 17.541102343), (rss_before = 1068.53515625, rss_after = 
-1269.25390625, delta_mib = 200.71875, timing = 49.255116759)])
- (name = "Interp AD-Jacobian", results = [(rss_before = 1091.87109375, rss_
-after = 1274.265625, delta_mib = 182.39453125, timing = 0.003681942), (rss_
-before = 1071.73046875, rss_after = 1307.91015625, delta_mib = 236.1796875,
- timing = 0.035711929), (rss_before = 1068.83984375, rss_after = 1313.76953
-125, delta_mib = 244.9296875, timing = 0.413579447), (rss_before = 1070.453
-125, rss_after = 1326.51171875, delta_mib = 256.05859375, timing = 2.132885
-601), (rss_before = 1071.41015625, rss_after = 1334.82421875, delta_mib = 2
-63.4140625, timing = 8.234888948), (rss_before = 1072.78125, rss_after = 13
-36.8671875, delta_mib = 264.0859375, timing = 24.993491555)])
- (name = "Quad user-Jacobian", results = [(rss_before = 1073.01953125, rss_
-after = 1327.32421875, delta_mib = 254.3046875, timing = 0.002743941), (rss
-_before = 1089.69921875, rss_after = 1315.0, delta_mib = 225.30078125, timi
-ng = 0.007770599), (rss_before = 1071.5, rss_after = 1347.21484375, delta_m
-ib = 275.71484375, timing = 0.030479194), (rss_before = 1086.3984375, rss_a
-fter = 1325.58203125, delta_mib = 239.18359375, timing = 0.094997224), (rss
-_before = 1069.96875, rss_after = 1350.703125, delta_mib = 280.734375, timi
-ng = 0.258949673), (rss_before = 1087.66015625, rss_after = 1314.04296875, 
-delta_mib = 226.3828125, timing = 0.714427048)])
- (name = "Quad AD-Jacobian", results = [(rss_before = 1086.4140625, rss_aft
-er = 1321.953125, delta_mib = 235.5390625, timing = 0.001763002), (rss_befo
-re = 1070.69921875, rss_after = 1333.26171875, delta_mib = 262.5625, timing
- = 0.009363252), (rss_before = 1078.00390625, rss_after = 1320.1171875, del
-ta_mib = 242.11328125, timing = 0.062544521), (rss_before = 1078.4296875, r
-ss_after = 1342.78125, delta_mib = 264.3515625, timing = 0.315595846), (rss
-_before = 1073.30078125, rss_after = 1336.25, delta_mib = 262.94921875, tim
-ing = 1.144706728), (rss_before = 1076.94140625, rss_after = 1339.1484375, 
-delta_mib = 262.20703125, timing = 3.325987039)])
- (name = "Gauss AD-Jacobian", results = [(rss_before = 1072.72265625, rss_a
-fter = 1283.94140625, delta_mib = 211.21875, timing = 0.002062869), (rss_be
-fore = 1071.74609375, rss_after = 1271.23046875, delta_mib = 199.484375, ti
-ming = 0.009071756), (rss_before = 1070.15234375, rss_after = 1280.66015625
-, delta_mib = 210.5078125, timing = 0.049807963), (rss_before = 1071.753906
-25, rss_after = 1290.5390625, delta_mib = 218.78515625, timing = 0.23509529
-3), (rss_before = 1072.62109375, rss_after = 1317.44921875, delta_mib = 244
-.828125, timing = 0.949827523), (rss_before = 1074.375, rss_after = 1305.08
-203125, delta_mib = 230.70703125, timing = 2.786806403)])
- (name = "GaussKronrod AD-Jacobian", results = [(rss_before = 1071.74609375
-, rss_after = 1307.46875, delta_mib = 235.72265625, timing = 0.00191725), (
-rss_before = 1088.1875, rss_after = 1285.30078125, delta_mib = 197.11328125
-, timing = 0.013448059), (rss_before = 1073.92578125, rss_after = 1291.2773
-4375, delta_mib = 217.3515625, timing = 0.076230151), (rss_before = 1071.25
-390625, rss_after = 1286.91796875, delta_mib = 215.6640625, timing = 0.3382
-02255), (rss_before = 1087.328125, rss_after = 1279.63671875, delta_mib = 1
-92.30859375, timing = 1.279431158), (rss_before = 1070.0859375, rss_after =
- 1294.88671875, delta_mib = 224.80078125, timing = 3.602323026)])
+ (name = "Interp user-Jacobian", results = [(rss_before = 1054.25, rss_afte
+r = 1269.0, delta_mib = 214.75, timing = 0.006790763), (rss_before = 1058.7
+4609375, rss_after = 1240.6484375, delta_mib = 181.90234375, timing = 0.109
+615458), (rss_before = 1062.1796875, rss_after = 1243.41796875, delta_mib =
+ 181.23828125, timing = 0.992203019), (rss_before = 1063.8515625, rss_after
+ = 1245.82421875, delta_mib = 181.97265625, timing = 5.488170208), (rss_bef
+ore = 1049.984375, rss_after = 1260.26953125, delta_mib = 210.28515625, tim
+ing = 21.858526666), (rss_before = 1058.22265625, rss_after = 1295.46484375
+, delta_mib = 237.2421875, timing = 64.919606737)])
+ (name = "Interp AD-Jacobian", results = [(rss_before = 1061.01953125, rss_
+after = 1228.64453125, delta_mib = 167.625, timing = 0.003785809), (rss_bef
+ore = 1061.0625, rss_after = 1277.60546875, delta_mib = 216.54296875, timin
+g = 0.055551443), (rss_before = 1052.67578125, rss_after = 1268.65625, delt
+a_mib = 215.98046875, timing = 0.402205139), (rss_before = 1052.28515625, r
+ss_after = 1261.29296875, delta_mib = 209.0078125, timing = 2.255278622), (
+rss_before = 1053.1328125, rss_after = 1263.99609375, delta_mib = 210.86328
+125, timing = 9.046674812), (rss_before = 1057.3046875, rss_after = 1289.20
+703125, delta_mib = 231.90234375, timing = 29.726450905)])
+ (name = "Quad user-Jacobian", results = [(rss_before = 1057.21875, rss_aft
+er = 1305.8671875, delta_mib = 248.6484375, timing = 0.002723985), (rss_bef
+ore = 1060.97265625, rss_after = 1299.16015625, delta_mib = 238.1875, timin
+g = 0.010001066), (rss_before = 1069.65625, rss_after = 1332.31640625, delt
+a_mib = 262.66015625, timing = 0.040655362), (rss_before = 1056.4296875, rs
+s_after = 1299.27734375, delta_mib = 242.84765625, timing = 0.128827367), (
+rss_before = 1057.3828125, rss_after = 1301.59375, delta_mib = 244.2109375,
+ timing = 0.342561216), (rss_before = 1058.96484375, rss_after = 1329.375, 
+delta_mib = 270.41015625, timing = 0.877061737)])
+ (name = "Quad AD-Jacobian", results = [(rss_before = 1072.125, rss_after =
+ 1323.4375, delta_mib = 251.3125, timing = 0.002383447), (rss_before = 1046
+.640625, rss_after = 1328.3671875, delta_mib = 281.7265625, timing = 0.0113
+14111), (rss_before = 1066.20703125, rss_after = 1321.20703125, delta_mib =
+ 255.0, timing = 0.076300865), (rss_before = 1057.453125, rss_after = 1310.
+921875, delta_mib = 253.46875, timing = 0.345494046), (rss_before = 1059.20
+3125, rss_after = 1318.80859375, delta_mib = 259.60546875, timing = 1.27009
+6463), (rss_before = 1061.97265625, rss_after = 1329.015625, delta_mib = 26
+7.04296875, timing = 3.939367725)])
+ (name = "Gauss AD-Jacobian", results = [(rss_before = 1062.859375, rss_aft
+er = 1271.6640625, delta_mib = 208.8046875, timing = 0.002463167), (rss_bef
+ore = 1055.6953125, rss_after = 1272.1953125, delta_mib = 216.5, timing = 0
+.012260795), (rss_before = 1053.86328125, rss_after = 1251.92578125, delta_
+mib = 198.0625, timing = 0.079090919), (rss_before = 1055.5390625, rss_afte
+r = 1264.19921875, delta_mib = 208.66015625, timing = 0.496952761), (rss_be
+fore = 1052.53125, rss_after = 1261.86328125, delta_mib = 209.33203125, tim
+ing = 1.400832268), (rss_before = 1041.90234375, rss_after = 1294.0078125, 
+delta_mib = 252.10546875, timing = 4.687952525)])
+ (name = "GaussKronrod AD-Jacobian", results = [(rss_before = 1056.3359375,
+ rss_after = 1271.94140625, delta_mib = 215.60546875, timing = 0.003018444)
+, (rss_before = 1053.22265625, rss_after = 1273.80859375, delta_mib = 220.5
+859375, timing = 0.017698026), (rss_before = 1061.58203125, rss_after = 125
+4.75390625, delta_mib = 193.171875, timing = 0.113909801), (rss_before = 10
+54.515625, rss_after = 1269.67578125, delta_mib = 215.16015625, timing = 0.
+643743475), (rss_before = 1057.890625, rss_after = 1288.76953125, delta_mib
+ = 230.87890625, timing = 1.851769374), (rss_before = 1074.30078125, rss_af
+ter = 1286.1328125, delta_mib = 211.83203125, timing = 5.89324909)])
 ```
 
 
@@ -2367,7 +2368,6 @@ Platform Info:
   GC: Built with stock GC
 Threads: 128 default, 1 interactive, 128 GC (on 128 virtual cores)
 Environment:
-  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
 
 ```
@@ -2375,30 +2375,30 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AutomaticDifferentiation/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AutomaticDifferentiation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
   [0ca39b1e] Chairmarks v1.3.1
   [a93c6f00] DataFrames v1.8.2
   [1313f7d8] DataFramesMeta v0.15.6
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [a82114a7] DifferentiationInterfaceTest v0.11.0
-  [7da242da] Enzyme v0.13.199
+⌃ [7da242da] Enzyme v0.13.203
   [6a86dc24] FiniteDiff v2.33.0
-  [f6369f11] ForwardDiff v1.4.5
-  [7ed4a6bd] LinearSolve v5.14.1
-  [da2b9cff] Mooncake v0.5.48
+  [f6369f11] ForwardDiff v1.4.6
+⌃ [7ed4a6bd] LinearSolve v5.17.3
+⌃ [da2b9cff] Mooncake v0.5.56
   [1dea7af3] OrdinaryDiffEq v7.8.1
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.1
+  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [65888b18] ParameterizedFunctions v5.27.0
   [91a5bcdd] Plots v1.41.7
   [08abe8d2] PrettyTables v3.4.8
   [37e2e3b7] ReverseDiff v1.17.0
-⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.0]
-  [1ed8b502] SciMLSensitivity v7.119.1
-  [90137ffa] StaticArrays v1.9.19
-  [c3572dad] Sundials v6.6.0
-  [9f7883ad] Tracker v0.2.38
-  [e88e6eb3] Zygote v0.7.12
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+⌃ [1ed8b502] SciMLSensitivity v7.119.7
+  [90137ffa] StaticArrays v1.9.20
+  [c3572dad] Sundials v6.7.1
+  [9f7883ad] Tracker v0.2.39
+  [e88e6eb3] Zygote v0.7.13
   [37e2e46d] LinearAlgebra v1.12.0
   [d6f4376e] Markdown v1.11.0
   [de0858da] Printf v1.11.0
@@ -2409,28 +2409,28 @@ Info Packages marked with ⌃ have new versions available and may be upgradable.
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/AutomaticDifferentiation/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
-  [14f7f29c] AMD v0.5.3
+  [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
-  [6e696c72] AbstractPlutoDingetjes v1.4.0
+  [6e696c72] AbstractPlutoDingetjes v1.4.1
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [9b6a8646] AllocCheck v0.2.6
   [ec485272] ArnoldiMethod v0.4.0
-  [4fba245c] ArrayInterface v7.30.0
+⌃ [4fba245c] ArrayInterface v7.30.1
   [4c555306] ArrayLayouts v1.12.2
-  [a9b6321e] Atomix v1.1.3
+  [a9b6321e] Atomix v1.2.1
   [ab4f0b2a] BFloat16s v0.6.1
   [aae01518] BandedMatrices v1.12.0
   [6e4b80f9] BenchmarkTools v1.8.0
   [e2ed5e7c] Bijections v0.2.2
   [b2a6c25c] BinaryHeaps v1.1.0
-  [caf10ac8] BipartiteGraphs v0.1.12
+  [caf10ac8] BipartiteGraphs v0.1.14
   [8e7c35d0] BlockArrays v1.10.0
-  [70df07ce] BracketingNonlinearSolve v1.12.6
+  [70df07ce] BracketingNonlinearSolve v1.12.7
   [fa961155] CEnum v0.5.0
   [8be319e6] Chain v1.0.0
   [082447d4] ChainRules v1.73.0
@@ -2443,12 +2443,11 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
-  [f70d9fcc] CommonWorldInvalidations v1.2.0
+  [f70d9fcc] CommonWorldInvalidations v1.2.2
   [34da2185] Compat v4.18.1
   [b152e2b5] CompositeTypes v0.1.4
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.8
-  [8f4d0f93] Conda v1.10.3
   [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
   [a8cc5b0e] Crayons v4.2.0
@@ -2458,9 +2457,9 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.19.0
-  [459566f4] DiffEqCallbacks v4.19.3
-  [77a26b50] DiffEqNoiseProcess v5.36.1
+  [2b5f629d] DiffEqBase v7.21.1
+  [459566f4] DiffEqCallbacks v4.19.4
+  [77a26b50] DiffEqNoiseProcess v5.36.3
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
@@ -2469,9 +2468,9 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [31c24e10] Distributions v0.25.131
   [ffbed154] DocStringExtensions v0.9.5
   [5b8099bc] DomainSets v0.8.1
-  [7c1d4256] DynamicPolynomials v0.6.7
+  [7c1d4256] DynamicPolynomials v0.6.8
   [4e289a0a] EnumX v1.0.7
-  [7da242da] Enzyme v0.13.199
+⌃ [7da242da] Enzyme v0.13.203
   [f151be2c] EnzymeCore v0.8.21
   [e2ba6199] ExprTools v0.1.11
   [55351af7] ExproniconLite v0.10.14
@@ -2484,7 +2483,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+  [f6369f11] ForwardDiff v1.4.6
   [a85aefff] FunctionMaps v0.1.2
   [f62d2435] FunctionProperties v1.2.0
   [069b7b12] FunctionWrappers v1.1.3
@@ -2493,18 +2492,15 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [46192b85] GPUArraysCore v0.2.0
 ⌅ [61eb1bfa] GPUCompiler v1.23.0
   [28b8d3ca] GR v0.73.27
-⌃ [a0844989] Gamma v1.1.0
-  [d7ba0133] Git v1.5.0
-  [86223c79] Graphs v1.14.0
-  [42e2da0e] Grisu v1.0.2
+  [a0844989] Gamma v1.2.0
+  [86223c79] Graphs v1.15.0
   [076d061b] HashArrayMappedTries v0.2.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.30
-  [7073ff75] IJulia v1.34.4
   [7869d1d1] IRTools v0.4.20
-  [3263718b] ImplicitDiscreteSolve v2.2.0
+  [3263718b] ImplicitDiscreteSolve v2.3.0
   [d25df0c9] Inflate v0.1.5
-  [842dd82b] InlineStrings v1.4.5
+⌅ [842dd82b] InlineStrings v1.4.6
   [18e54dd8] IntegerMathUtils v0.1.4
   [8197267c] IntervalSets v0.7.14
   [3587e190] InverseFunctions v0.1.17
@@ -2515,56 +2511,56 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-  [ccbc3e58] JumpProcesses v9.30.1
+⌃ [ccbc3e58] JumpProcesses v9.32.3
   [63c18a36] KernelAbstractions v0.9.42
-  [ba0b0d4f] Krylov v0.10.9
-  [2faa5264] LHLFactorization v2.2.1
+  [ba0b0d4f] Krylov v0.10.10
+  [2faa5264] LHLFactorization v2.2.2
   [929cbde3] LLVM v9.13.1
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
-  [87fe0de2] LineSearch v0.1.16
-  [7ed4a6bd] LinearSolve v5.14.1
-⌅ [2ab3a3ac] LogExpFunctions v0.3.29
+  [87fe0de2] LineSearch v0.1.18
+⌃ [7ed4a6bd] LinearSolve v5.17.3
+  [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
   [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
   [dbe65cb8] MistyClosures v2.1.0
-  [961ee093] ModelingToolkit v11.40.0
-⌃ [7771a370] ModelingToolkitBase v1.68.0
+  [961ee093] ModelingToolkit v11.43.1
+⌃ [7771a370] ModelingToolkitBase v1.71.1
   [6bb917b9] ModelingToolkitTearing v1.20.6
-  [da2b9cff] Mooncake v0.5.48
-  [2e0e35c7] Moshi v0.3.12
+⌃ [da2b9cff] Mooncake v0.5.56
+⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
   [102ac46a] MultivariatePolynomials v0.5.19
   [ffc61752] Mustache v1.0.21
   [d8a4904e] MutableArithmetics v1.8.0
   [872c559c] NNlib v0.9.45
   [77ba4419] NaNMath v1.1.4
-  [8913a72c] NonlinearSolve v4.28.1
-  [be0214bd] NonlinearSolveBase v2.48.2
-  [5959db7a] NonlinearSolveFirstOrder v2.4.1
-  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.2
-  [26075421] NonlinearSolveSpectralMethods v1.8.1
+⌃ [8913a72c] NonlinearSolve v4.30.0
+⌃ [be0214bd] NonlinearSolveBase v2.49.5
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
+  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3
+  [26075421] NonlinearSolveSpectralMethods v1.8.3
   [d8793406] ObjectFile v0.5.1
   [6fe1bfb0] OffsetArrays v1.17.0
   [3bd65402] Optimisers v0.4.9
 ⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.1]
   [1dea7af3] OrdinaryDiffEq v7.8.1
-⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.5
-  [bbf590c4] OrdinaryDiffEqCore v4.15.2
-  [50262376] OrdinaryDiffEqDefault v2.6.0
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.11.0
-⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.2
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.1
+⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
+  [50262376] OrdinaryDiffEqDefault v2.6.2
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
+  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
+  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
-  [2d112036] OrdinaryDiffEqSDIRK v2.9.1
+⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.3
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
   [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
   [65888b18] ParameterizedFunctions v5.27.0
-⌅ [69de0a69] Parsers v2.8.7
+⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
   [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
@@ -2572,12 +2568,12 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
-  [21216c6a] Preferences v1.5.2
+  [21216c6a] Preferences v1.6.0
   [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.4.1
+  [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
   [e6cf234a] RandomNumbers v1.6.0
   [988b38a3] ReadOnlyArrays v0.2.0
@@ -2593,75 +2589,73 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9fe22ead] RespecializeParams v1.3.0
   [37e2e3b7] ReverseDiff v1.17.0
   [79098fc4] Rmath v0.9.0
-  [f2b01f46] Roots v3.0.7
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.25
-  [9dfe8606] SCCNonlinearSolve v1.15.1
-  [0bca4576] SciMLBase v3.50.0
-⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.0]
-  [19f34311] SciMLJacobianOperators v0.1.18
+  [f2b01f46] Roots v3.0.8
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+  [9dfe8606] SCCNonlinearSolve v1.15.3
+  [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
-  [c0aeaf25] SciMLOperators v1.30.0
+⌃ [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
-  [1ed8b502] SciMLSensitivity v7.119.1
+⌃ [1ed8b502] SciMLSensitivity v7.119.7
   [53ae85a6] SciMLStructures v1.10.5
   [7e506255] ScopedValues v1.6.2
   [6c6a2e73] Scratch v1.3.0
   [91c51154] SentinelArrays v1.4.10
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
-  [727e6d20] SimpleNonlinearSolve v2.14.1
+  [992d4aef] Showoff v1.1.1
+  [727e6d20] SimpleNonlinearSolve v2.14.5
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
-  [a57abbd0] SparseColumnPivotedQR v2.1.7
+  [a57abbd0] SparseColumnPivotedQR v2.1.8
   [dc90abb0] SparseInverseSubset v0.1.3
-  [0a514795] SparseMatrixColorings v0.4.27
+  [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
   [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
   [64909d44] StateSelection v1.11.1
-  [90137ffa] StaticArrays v1.9.19
+  [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
-  [10745b16] Statistics v1.11.4
+  [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.13
   [4c63d2b9] StatsFuns v2.2.1
   [69024149] StringEncodings v0.3.7
-  [892a3eda] StringManipulation v0.5.0
+⌅ [892a3eda] StringManipulation v0.5.0
   [09ab397b] StructArrays v0.7.3
   [53d494c1] StructIO v0.3.1
-  [c3572dad] Sundials v6.6.0
+  [c3572dad] Sundials v6.7.1
   [2efcf032] SymbolicIndexingInterface v0.3.55
-  [19f23fe9] SymbolicLimits v1.2.0
-⌅ [d1185830] SymbolicUtils v4.45.0
-  [0c5d862f] Symbolics v7.39.0
+  [19f23fe9] SymbolicLimits v1.2.1
+  [d1185830] SymbolicUtils v4.46.6
+  [0c5d862f] Symbolics v7.39.2
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [ed4db957] TaskLocalValues v0.1.3
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
-  [a759f4b9] TimerOutputs v1.2.0
-  [9f7883ad] Tracker v0.2.38
+  [a759f4b9] TimerOutputs v1.2.1
+  [9f7883ad] Tracker v0.2.39
   [e689c965] Tracy v0.1.6
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [1986cc42] Unitful v1.28.0
+  [1986cc42] Unitful v1.29.0
   [013be700] UnsafeAtomics v0.3.2
   [41fe7b60] Unzip v0.2.0
-  [81def892] VersionParsing v1.3.0
   [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.16
-  [c2297ded] ZMQ v1.5.1
-  [e88e6eb3] Zygote v0.7.12
+  [e88e6eb3] Zygote v0.7.13
   [700de1a5] ZygoteRules v0.2.8
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
-⌅ [7cc45869] Enzyme_jll v0.0.290+0
+  [7cc45869] Enzyme_jll v0.0.293+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-  [2e619515] Expat_jll v2.8.3+0
+  [2e619515] Expat_jll v2.8.4+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
@@ -2670,17 +2664,15 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d2c73de3] GR_jll v0.73.27+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
-  [020c3dae] Git_LFS_jll v3.7.1+0
-  [f8c6e375] Git_jll v2.55.0+0
   [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
-  [2e76f6c2] HarfBuzz_jll v100.14003.0+0
+  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-  [88015f11] LERC_jll v4.1.0+0
+  [88015f11] LERC_jll v4.2.0+0
   [dad2f222] LLVMExtra_jll v0.0.47+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
   [ad6e5548] LibTracyClient_jll v0.13.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
@@ -2691,7 +2683,6 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [856f044c] MKL_jll v2025.2.0+0
   [e7412a2a] Ogg_jll v1.3.6+0
   [656ef2d0] OpenBLAS32_jll v0.3.34+0
-  [9bd350c2] OpenSSH_jll v10.5.1+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
   [36c8627f] Pango_jll v1.58.2+0
@@ -2702,11 +2693,11 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6de9746b] Qt6Svg_jll v6.10.2+0
   [e99dba38] Qt6Wayland_jll v6.10.2+1
   [f50d1b31] Rmath_jll v0.5.2+0
-  [ca45d3f4] SuiteSparse32_jll v7.12.1+0
+  [ca45d3f4] SuiteSparse32_jll v7.12.1+1
   [fb77eaff] Sundials_jll v7.5.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+  [ffd25f8a] XZ_jll v5.8.4+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0
@@ -2731,7 +2722,6 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [35661453] Xorg_xkbcomp_jll v1.4.7+0
   [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
-  [8f1865be] ZeroMQ_jll v4.3.6+0
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
@@ -2743,7 +2733,6 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
   [b53b4c65] libpng_jll v1.6.58+0
-  [a9144af2] libsodium_jll v1.0.21+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
