@@ -342,6 +342,7 @@ Platform Info:
   LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
+  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
 
 ```
@@ -349,25 +350,24 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/StiffBVP/Project.toml`
+Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/StiffBVP/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
   [764a87c0] BoundaryValueDiffEq v5.25.0
-  [70df07ce] BracketingNonlinearSolve v1.12.6
-⌃ [13f3f980] CairoMakie v0.15.13
-⌃ [f3b72e0c] DiffEqDevTools v3.6.1
+  [70df07ce] BracketingNonlinearSolve v1.12.7
+  [13f3f980] CairoMakie v0.15.14
+  [f3b72e0c] DiffEqDevTools v3.6.3
   [a98d9a8b] Interpolations v0.16.3
   [54ca160b] ODEInterface v0.5.2
-  [31c91b34] SciMLBenchmarks v0.2.0
-⌃ [90137ffa] StaticArrays v1.9.19
-Info Packages marked with ⌃ have new versions available and may be upgradable.
+  [31c91b34] SciMLBenchmarks v0.2.1
+  [90137ffa] StaticArrays v1.9.20
 ```
 
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/StiffBVP/Manifest.toml`
+Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/StiffBVP/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
-⌃ [14f7f29c] AMD v0.5.3
+  [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
@@ -376,7 +376,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [66dad0bd] AliasTables v1.1.3
   [a95523ee] AlmostBlockDiagonals v0.1.10
   [27a7e980] Animations v0.4.2
-  [4fba245c] ArrayInterface v7.30.1
+  [4fba245c] ArrayInterface v7.30.2
   [4c555306] ArrayLayouts v1.12.2
   [67c07d97] Automa v1.2.0
   [13072b0f] AxisAlgorithms v1.1.0
@@ -388,15 +388,15 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [764a87c0] BoundaryValueDiffEq v5.25.0
   [7227322d] BoundaryValueDiffEqAscher v1.16.1
   [56b672f2] BoundaryValueDiffEqCore v2.8.3
-⌃ [85d9eb09] BoundaryValueDiffEqFIRK v1.19.1
-  [1a22d4ce] BoundaryValueDiffEqMIRK v1.18.1
+⌃ [85d9eb09] BoundaryValueDiffEqFIRK v1.19.2
+⌃ [1a22d4ce] BoundaryValueDiffEqMIRK v1.18.1
   [9255f1d6] BoundaryValueDiffEqMIRKN v1.17.1
   [ed55bfe0] BoundaryValueDiffEqShooting v1.18.2
-  [70df07ce] BracketingNonlinearSolve v1.12.6
+  [70df07ce] BracketingNonlinearSolve v1.12.7
   [fa961155] CEnum v0.5.0
   [96374032] CRlibm v1.0.2
   [159f3aea] Cairo v1.1.1
-⌃ [13f3f980] CairoMakie v0.15.13
+  [13f3f980] CairoMakie v0.15.14
   [d360d2e6] ChainRulesCore v1.26.1
   [6b39b394] CodecZstd v0.8.7
   [a2cac450] ColorBrewer v0.4.2
@@ -418,11 +418,11 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9a962f9c] DataAPI v1.16.0
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
-  [927a84f5] DelaunayTriangulation v1.6.6
+  [927a84f5] DelaunayTriangulation v1.6.7
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v7.20.0
-⌃ [f3b72e0c] DiffEqDevTools v3.6.1
-  [77a26b50] DiffEqNoiseProcess v5.36.2
+  [2b5f629d] DiffEqBase v7.21.1
+  [f3b72e0c] DiffEqDevTools v3.6.3
+  [77a26b50] DiffEqNoiseProcess v5.36.3
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
@@ -445,7 +445,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+  [f6369f11] ForwardDiff v1.4.6
   [b38be410] FreeType v4.1.1
   [663a7486] FreeTypeAbstraction v0.10.8
   [069b7b12] FunctionWrappers v1.1.3
@@ -454,7 +454,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a0844989] Gamma v1.2.0
   [5c1252a2] GeometryBasics v0.5.12
   [a2bd30eb] Graphics v1.1.3
-⌃ [3955a311] GridLayoutBase v0.11.2
+  [3955a311] GridLayoutBase v0.11.3
   [19dc6840] HCubature v1.8.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.30
@@ -466,9 +466,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9b13fd28] IndirectArrays v1.0.0
   [d25df0c9] Inflate v0.1.5
   [18e54dd8] IntegerMathUtils v0.1.4
-  [de52edbc] Integrals v5.5.0
+  [de52edbc] Integrals v5.5.2
   [a98d9a8b] Interpolations v0.16.3
-  [d1acc4aa] IntervalArithmetic v1.0.11
+  [d1acc4aa] IntervalArithmetic v1.0.12
   [8197267c] IntervalSets v0.7.14
   [3587e190] InverseFunctions v0.1.17
   [92d709cd] IrrationalConstants v0.2.6
@@ -479,60 +479,60 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [682c06a0] JSON v0.21.4
   [b835a17e] JpegTurbo v0.1.6
   [5ab0869b] KernelDensity v0.6.12
-  [ba0b0d4f] Krylov v0.10.9
+  [ba0b0d4f] Krylov v0.10.10
   [2faa5264] LHLFactorization v2.2.2
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
-  [73f95e8e] LatticeRules v0.0.1
-  [5078a376] LazyArrays v2.12.0
+  [73f95e8e] LatticeRules v0.0.2
+  [5078a376] LazyArrays v2.13.0
   [8cdb02fc] LazyModules v0.3.1
-  [87fe0de2] LineSearch v0.1.16
-⌃ [7ed4a6bd] LinearSolve v5.15.1
+  [87fe0de2] LineSearch v0.1.18
+⌃ [7ed4a6bd] LinearSolve v5.17.3
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
-⌅ [ee78f7c6] Makie v0.24.13
+  [ee78f7c6] Makie v0.24.14
   [dbb5928d] MappedArrays v0.4.3
   [0a4f8689] MathTeXEngine v0.6.9
   [a3b82374] MatrixFactorizations v3.1.3
   [bb5d69b7] MaybeInplace v0.1.8
   [e1d29d7a] Missings v1.2.0
-  [4886b29c] MonteCarloIntegration v0.2.0
+  [4886b29c] MonteCarloIntegration v0.3.0
   [e94cdb99] MosaicViews v0.3.4
   [46d2c3a1] MuladdMacro v0.2.7
   [ffc61752] Mustache v1.0.21
   [77ba4419] NaNMath v1.1.4
   [f09324ee] Netpbm v1.1.1
-⌃ [be0214bd] NonlinearSolveBase v2.49.2
-⌃ [5959db7a] NonlinearSolveFirstOrder v2.5.0
+⌃ [be0214bd] NonlinearSolveBase v2.49.5
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
   [54ca160b] ODEInterface v0.5.2
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.17.0
   [52e1d378] OpenEXR v0.3.3
-  [bca83a33] OptimizationBase v5.5.3
+  [bca83a33] OptimizationBase v5.6.1
   [bac558e1] OrderedCollections v2.0.1
-⌃ [bbf590c4] OrdinaryDiffEqCore v4.16.0
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
   [90014a1f] PDMats v0.11.41
   [f57f5aa1] PNGFiles v0.4.5
   [19eb6ba3] Packing v0.5.1
   [5432bcbf] PaddedViews v0.5.12
-⌅ [69de0a69] Parsers v2.8.7
+⌅ [69de0a69] Parsers v2.8.8
   [eebad327] PkgVersion v0.3.3
   [995b91a9] PlotUtils v1.4.4
   [e409e4f3] PoissonRandom v0.4.13
   [647866c9] PolygonOps v0.1.2
   [d236fae5] PreallocationTools v1.7.1
 ⌅ [aea7be01] PrecompileTools v1.2.1
-  [21216c6a] Preferences v1.5.2
+  [21216c6a] Preferences v1.6.0
   [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.4.1
+  [0c0d3e7f] PureKLU v1.5.0
   [4b34888f] QOI v1.0.2
   [1fd47b50] QuadGK v2.11.3
-⌅ [8a4e6c94] QuasiMonteCarlo v0.3.11
+  [8a4e6c94] QuasiMonteCarlo v0.4.4
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
@@ -544,35 +544,35 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
   [47965b36] RootedTrees v2.27.0
-⌃ [f2b01f46] Roots v3.0.7
+  [f2b01f46] Roots v3.0.8
   [5eaf0fd0] RoundingEmulator v0.2.1
-⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.25
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
   [fdea26ae] SIMD v3.7.2
-⌃ [0bca4576] SciMLBase v3.50.2
-  [31c91b34] SciMLBenchmarks v0.2.0
-  [19f34311] SciMLJacobianOperators v0.1.18
+  [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1
+  [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
-  [c0aeaf25] SciMLOperators v1.30.0
+⌃ [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
   [53ae85a6] SciMLStructures v1.10.5
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
   [65257c39] ShaderAbstractions v0.5.0
   [73760f76] SignedDistanceFields v0.4.1
-  [727e6d20] SimpleNonlinearSolve v2.14.1
+  [727e6d20] SimpleNonlinearSolve v2.14.5
   [699a6c99] SimpleTraits v0.9.6
   [45858cf5] Sixel v0.1.5
   [ed01d8cd] Sobol v1.5.0
   [a2af1166] SortingAlgorithms v1.2.3
-⌃ [a57abbd0] SparseColumnPivotedQR v2.1.7
+  [a57abbd0] SparseColumnPivotedQR v2.1.8
   [9f842d2f] SparseConnectivityTracer v1.2.3
-⌃ [0a514795] SparseMatrixColorings v0.4.27
+  [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
   [860ef19b] StableRNGs v1.0.4
   [cae243ae] StackViews v0.1.2
-⌃ [90137ffa] StaticArrays v1.9.19
+  [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
-⌃ [10745b16] Statistics v1.11.4
+  [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.13
   [4c63d2b9] StatsFuns v2.2.1
@@ -584,12 +584,12 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [bd369af6] Tables v1.14.0
   [62fd8b95] TensorCore v0.1.1
   [731e570b] TiffImages v0.11.9
-⌃ [a759f4b9] TimerOutputs v1.2.0
+  [a759f4b9] TimerOutputs v1.2.1
   [3bb67fe8] TranscodingStreams v0.11.3
   [981d1d27] TriplotBase v0.1.0
   [781d530d] TruncatedStacktraces v1.4.0
   [1cfade01] UnicodeFun v0.4.1
-⌃ [1986cc42] Unitful v1.28.0
+  [1986cc42] Unitful v1.29.0
   [44d3d7a6] Weave v0.10.12
   [e3aaa7dc] WebP v0.1.3
   [efce3f68] WoodburyMatrices v1.1.0
@@ -599,7 +599,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [83423d85] Cairo_jll v1.18.7+0
   [a38c48d9] CoreMath_jll v0.1.0+0
 ⌅ [5ae413db] EarCut_jll v2.2.4+0
-  [2e619515] Expat_jll v2.8.3+0
+  [2e619515] Expat_jll v2.8.4+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
@@ -609,13 +609,13 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [59f7168a] Giflib_jll v5.2.3+0
   [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
-  [2e76f6c2] HarfBuzz_jll v100.14003.0+0
+  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
   [905a6f67] Imath_jll v3.2.2+0
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-  [88015f11] LERC_jll v4.1.0+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+  [88015f11] LERC_jll v4.2.0+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
@@ -626,14 +626,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [c771fb93] ODEInterface_jll v0.0.2+0
   [e7412a2a] Ogg_jll v1.3.6+0
   [6cdc7f73] OpenBLASConsistentFPCSR_jll v0.3.34+0
-  [18a262bb] OpenEXR_jll v3.4.14+0
+  [18a262bb] OpenEXR_jll v3.4.15+0
   [458c3c95] OpenSSL_jll v3.5.8+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
   [36c8627f] Pango_jll v1.58.2+0
   [30392449] Pixman_jll v0.46.4+0
   [f50d1b31] Rmath_jll v0.5.2+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+  [ffd25f8a] XZ_jll v5.8.4+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
   [a3789734] Xorg_libXdmcp_jll v1.1.6+0
