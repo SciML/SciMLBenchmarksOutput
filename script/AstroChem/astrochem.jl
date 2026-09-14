@@ -422,3 +422,7 @@ wp = WorkPrecisionSet(oprob, abstols, reltols, setups; verbose = SciMLLogging.No
     print_names = true)
 plot(wp)
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
