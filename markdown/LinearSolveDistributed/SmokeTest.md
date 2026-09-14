@@ -63,8 +63,8 @@ rows
 
 ```
 2-element Vector{String}:
- "1,10000,49600,gmres,jacobi,0.186488195,9.934774047774281e-9,1398,Success"
- "2,10000,49600,gmres,jacobi,0.110038098,9.942744958796099e-9,1398,Success"
+ "1,10000,49600,gmres,jacobi,0.184763573,9.934774047774281e-9,1398,Success"
+ "2,10000,49600,gmres,jacobi,0.109497759,9.942744958796099e-9,1398,Success"
 ```
 
 
@@ -89,9 +89,9 @@ ranks |     N   |   nnz   | solver | pc     |  time (s)  |  residual  | ret
 code
 ------+---------+---------+--------+--------+------------+------------+----
 -----
-    1 |   10000 |   49600 | gmres  | jacobi |     0.1865 |   9.93e-09 | 139
+    1 |   10000 |   49600 | gmres  | jacobi |     0.1848 |   9.93e-09 | 139
 8
-    2 |   10000 |   49600 | gmres  | jacobi |       0.11 |   9.94e-09 | 139
+    2 |   10000 |   49600 | gmres  | jacobi |     0.1095 |   9.94e-09 | 139
 8
 ```
 
@@ -138,13 +138,13 @@ Package Information:
 ```
 Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/LinearSolveDistributed/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
-⌃ [7ed4a6bd] LinearSolve v5.16.0
+⌃ [7ed4a6bd] LinearSolve v5.17.3
   [da04e1cc] MPI v0.20.27
   [3da0fdf6] MPIPreferences v0.1.12
-  [ace2c81b] PETSc v0.4.10
+⌃ [ace2c81b] PETSc v0.4.10
   [91a5bcdd] Plots v1.41.7
-  [0bca4576] SciMLBase v3.53.1
-⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.1]
+  [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
   [a0a7dd2c] SparseMatricesCSR v0.6.12
   [37e2e46d] LinearAlgebra v1.12.0
   [de0858da] Printf v1.11.0
@@ -161,8 +161,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [7d9f7c33] Accessors v0.1.45
   [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
-  [4fba245c] ArrayInterface v7.30.1
-⌃ [a9b6321e] Atomix v1.1.3
+⌃ [4fba245c] ArrayInterface v7.30.1
+  [a9b6321e] Atomix v1.2.1
   [6e4b80f9] BenchmarkTools v1.8.0
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [2a0fbf3d] CPUSummary v0.2.7
@@ -177,7 +177,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [34da2185] Compat v4.18.1
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.8
-  [8f4d0f93] Conda v1.10.3
   [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
   [adafc99b] CpuId v0.3.1
@@ -195,14 +194,12 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [64ca27bc] FindFirstFunctions v3.2.1
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+  [f6369f11] ForwardDiff v1.4.6
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v1.13.0
   [46192b85] GPUArraysCore v0.2.0
   [28b8d3ca] GR v0.73.27
-  [d7ba0133] Git v1.5.0
 ⌅ [eafb193a] Highlights v0.5.3
-  [7073ff75] IJulia v1.34.4
   [615f187c] IfElse v0.1.1
   [3587e190] InverseFunctions v0.1.17
   [92d709cd] IrrationalConstants v0.2.6
@@ -210,12 +207,12 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [1019f520] JLFzf v0.1.11
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
-  [ba0b0d4f] Krylov v0.10.9
+  [ba0b0d4f] Krylov v0.10.10
   [2faa5264] LHLFactorization v2.2.2
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [10f19ff3] LayoutPointers v0.1.17
-⌃ [7ed4a6bd] LinearSolve v5.16.0
+⌃ [7ed4a6bd] LinearSolve v5.17.3
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [da04e1cc] MPI v0.20.27
@@ -229,7 +226,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [77ba4419] NaNMath v1.1.4
   [6fe1bfb0] OffsetArrays v1.17.0
   [bac558e1] OrderedCollections v2.0.1
-  [ace2c81b] PETSc v0.4.10
+⌃ [ace2c81b] PETSc v0.4.10
 ⌅ [69de0a69] Parsers v2.8.8
   [eebad327] PkgVersion v0.3.3
   [ccf2f8ad] PlotThemes v3.3.0
@@ -239,9 +236,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [1d0040c9] PolyesterWeave v0.2.2
   [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
-  [21216c6a] Preferences v1.5.2
+  [21216c6a] Preferences v1.6.0
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.4.1
+  [0c0d3e7f] PureKLU v1.5.0
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
   [731186ca] RecursiveArrayTools v4.5.1
@@ -250,10 +247,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ae029012] Requires v1.3.1
   [7e49a35a] RuntimeGeneratedFunctions v0.5.26
   [94e857df] SIMDTypes v0.1.0
-  [0bca4576] SciMLBase v3.53.1
-⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.1]
+  [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
   [a6db7da4] SciMLLogging v2.1.0
-  [c0aeaf25] SciMLOperators v1.30.0
+⌃ [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
   [53ae85a6] SciMLStructures v1.10.5
   [6c6a2e73] Scratch v1.3.0
@@ -282,10 +279,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [b8865327] UnicodePlots v3.8.4
   [013be700] UnsafeAtomics v0.3.2
   [41fe7b60] Unzip v0.2.0
-  [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
   [ddb6d928] YAML v0.4.16
-  [c2297ded] ZMQ v1.5.1
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
@@ -299,8 +294,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d2c73de3] GR_jll v0.73.27+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
-  [020c3dae] Git_LFS_jll v3.7.1+0
-  [f8c6e375] Git_jll v2.55.0+0
   [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
   [2e76f6c2] HarfBuzz_jll v100.14004.0+0
@@ -309,7 +302,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
   [88015f11] LERC_jll v4.2.0+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
@@ -324,7 +317,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e7412a2a] Ogg_jll v1.3.6+0
   [656ef2d0] OpenBLAS32_jll v0.3.34+0
   [fe0851c0] OpenMPI_jll v5.0.11+0
-  [9bd350c2] OpenSSH_jll v10.5.1+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
   [8fa3689e] PETSc_jll v3.22.2+0
@@ -339,7 +331,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
 ⌅ [02c8fc9c] XML2_jll v2.13.9+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+  [ffd25f8a] XZ_jll v5.8.4+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0
@@ -364,7 +356,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [35661453] Xorg_xkbcomp_jll v1.4.7+0
   [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
-  [8f1865be] ZeroMQ_jll v4.3.6+0
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
@@ -376,7 +367,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
   [b53b4c65] libpng_jll v1.6.58+0
-  [a9144af2] libsodium_jll v1.0.21+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [9aeb927a] mpif_jll v1.0.0+0
@@ -420,14 +410,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8dfed614] Test v1.11.0
   [cf7118a7] UUIDs v1.11.0
   [4ec0a83e] Unicode v1.11.0
-  [e66e0078] CompilerSupportLibraries_jll v1.3.0+1
+  [e66e0078] CompilerSupportLibraries_jll v1.3.1+2
   [deac9b47] LibCURL_jll v8.15.0+0
   [e37daf67] LibGit2_jll v1.9.0+0
   [29816b5a] LibSSH2_jll v1.11.3+1
-  [14a3606d] MozillaCACerts_jll v2025.5.20
+  [14a3606d] MozillaCACerts_jll v2025.11.4
   [4536629a] OpenBLAS_jll v0.3.29+0
   [05823500] OpenLibm_jll v0.8.7+0
-  [458c3c95] OpenSSL_jll v3.5.4+0
+  [458c3c95] OpenSSL_jll v3.5.6+0
   [efcefdf7] PCRE2_jll v10.44.0+1
   [bea87d4a] SuiteSparse_jll v7.8.3+2
   [83775a58] Zlib_jll v1.3.1+2
