@@ -74,3 +74,7 @@ table = PrettyTables.pretty_table(
 
 Markdown.parse(table)
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
