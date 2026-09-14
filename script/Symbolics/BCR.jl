@@ -180,3 +180,7 @@ Legend(f[1, 3], axes2[1], "Code generation", tellwidth = false, labelsize = 12, 
 save("bcr.pdf", f)
 f
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
