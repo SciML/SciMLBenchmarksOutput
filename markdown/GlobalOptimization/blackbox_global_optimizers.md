@@ -73,7 +73,7 @@ function benchmark_time_to_success(
 )
     times = Float64[]
     for i in 1:Ntrials
-        tracked_f, t0_ref, tts_ref = make_success_tracker(f.f, f.f_opt, Δf)
+        tracked_f, t0_ref, tts_ref = make_success_tracker(f, f.f_opt, Δf)
         try
             t0_ref[] = time()
             sol = solve_problem_timed(optimizer, tracked_f, dimension, max_run_length)
@@ -124,12 +124,12 @@ chain = (t;
     0.9
 )
 
-test_functions = BBOB.list_functions()
 dimension = 3
+test_functions = BBOB.bbob_suite(Val(dimension))
 run_length = round.(Int, 10 .^ LinRange(1, 5, 30))
 
 @memoize run_bench(algo) = BBOB.benchmark(
-    setup[algo], test_functions, run_length, Ntrials = 40, dimension = dimension)
+    setup[algo], test_functions, run_length, Ntrials = 40)
 @memoize run_tts(algo) = benchmark_time_to_success(
     setup[algo], test_functions, Ntrials = 40, dimension = dimension)
 ```
@@ -215,15 +215,15 @@ d)…
 ```julia
 @time b = BBOB.benchmark(
     chain(OptimizationMetaheuristics.CGSA(), isboxed = true),
-    test_functions[1:10], 100:500:10_000, Ntrials = 10, dimension = 3
+    test_functions[1:10], 100:500:10_000, Ntrials = 10
 )
 
 plot(b)
 ```
 
 ```
-31.934030 seconds (256.97 M allocations: 12.359 GiB, 10.82% gc time, 42.43
-% compilation time: 14% of which was recompilation)
+43.096910 seconds (193.54 M allocations: 9.382 GiB, 6.27% gc time, 74.76% 
+compilation time: 3% of which was recompilation)
 ```
 
 
@@ -235,11 +235,12 @@ plot(b)
 
 ```julia
 Δf = 1e-6
-f = test_functions[3]
+# The BBOBFunction contour recipe is 2-D, so use the 2-D instance of F3 (Rastrigin).
+f = BBOB.bbob_suite(Val(2))[3]
 
 single_setup = BenchmarkSetup(NLopt.GN_CRS2_LM(), isboxed = true)
 
-sol = [BBOB.solve_problem(single_setup, f, 3, 5_000) for in in 1:10]
+sol = [BBOB.solve_problem(single_setup, f, 2, 5_000) for in in 1:10]
 @info [sol.objective < Δf + f.f_opt for sol in sol]
 
 p = plot(f, size = (600, 600), zoom = 1.5)
@@ -282,117 +283,117 @@ results
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.00375, 0.00625, 0.00625, 0.00875, 0.00875, 0.01875, 0.028
-75, 0.0325, 0.0425, 0.04875  …  0.5425, 0.53125, 0.5325, 0.54, 0.5375, 0.53
-75, 0.5325, 0.525, 0.53125, 0.545]
+Success rate : [0.00625, 0.00375, 0.01, 0.0125, 0.02, 0.00875, 0.02375, 0.0
+325, 0.0425, 0.04875  …  0.53875, 0.5625, 0.54875, 0.55375, 0.54125, 0.5375
+, 0.56125, 0.54625, 0.55375, 0.54875]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.015, 0.03125, 0.03625, 0.0425, 0.04625, 0.05125, 0.0725, 
-0.1025, 0.14, 0.2975  …  0.61875, 0.63, 0.625, 0.6125, 0.61625, 0.61625, 0.
-635, 0.63, 0.62625, 0.6275]
+Success rate : [0.0175, 0.02125, 0.03875, 0.0425, 0.04875, 0.05, 0.07375, 0
+.13375, 0.20625, 0.26875  …  0.5775, 0.61125, 0.6025, 0.61625, 0.615, 0.618
+75, 0.6, 0.6075, 0.60125, 0.6075]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.01375, 0.0325, 0.03, 0.0425, 0.04875, 0.05, 0.10125, 0.14
-5, 0.2275, 0.38125  …  0.53875, 0.54, 0.53, 0.53625, 0.5375, 0.53875, 0.536
-25, 0.54, 0.53875, 0.53625]
+Success rate : [0.02, 0.0325, 0.035, 0.045, 0.05375, 0.05625, 0.09, 0.15375
+, 0.26375, 0.3825  …  0.5475, 0.54875, 0.5375, 0.545, 0.5325, 0.5425, 0.552
+5, 0.5375, 0.54625, 0.5525]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.0025, 0.00375, 0.00625, 0.00875, 0.0175, 0.0125, 0.0325, 
-0.0375, 0.04625, 0.0475  …  0.845, 0.90875, 0.92375, 0.93875, 0.96125, 0.98
-875, 0.995, 0.99875, 1.0, 0.99875]
+Success rate : [0.005, 0.005, 0.00875, 0.0125, 0.01125, 0.015, 0.03, 0.0337
+5, 0.0475, 0.0525  …  0.7475, 0.81875, 0.85625, 0.92125, 0.96375, 0.985, 0.
+99375, 1.0, 1.0, 1.0]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.0, 0.0025, 0.00375, 0.00625, 0.01, 0.02375, 0.03375, 0.04
-125, 0.045, 0.05  …  0.87, 0.93625, 0.9525, 0.9675, 0.97, 0.9725, 0.9725, 0
-.97125, 0.975, 0.975]
+Success rate : [0.00375, 0.0075, 0.0075, 0.0075, 0.01125, 0.025, 0.03125, 0
+.0375, 0.04375, 0.04875  …  0.74875, 0.8375, 0.89625, 0.96375, 0.9575, 0.97
+5, 0.97625, 0.97, 0.97125, 0.97125]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.0025, 0.0025, 0.0075, 0.01, 0.0175, 0.02125, 0.03, 0.0412
-5, 0.03875, 0.04875  …  0.7625, 0.84625, 0.885, 0.915, 0.91875, 0.94375, 0.
-94375, 0.94875, 0.95375, 0.96375]
+Success rate : [0.00375, 0.0025, 0.00375, 0.00625, 0.0125, 0.02125, 0.02875
+, 0.0325, 0.0475, 0.05  …  0.67125, 0.7725, 0.80125, 0.8525, 0.9, 0.935, 0.
+93625, 0.95375, 0.95875, 0.96375]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
 Success rate : [0.0, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05  
-…  0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7]
+…  0.65, 0.7, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.0025, 0.00375, 0.005, 0.0025, 0.00875, 0.01375, 0.01625, 
-0.02375, 0.0325, 0.045  …  0.58, 0.5975, 0.60625, 0.6075, 0.60875, 0.63625,
- 0.62625, 0.625, 0.6175, 0.63875]
+Success rate : [0.00125, 0.00375, 0.00375, 0.005, 0.00875, 0.0075, 0.01, 0.
+025, 0.035, 0.05125  …  0.5475, 0.57375, 0.61375, 0.6075, 0.63125, 0.63625,
+ 0.63625, 0.6375, 0.64625, 0.65625]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.04125, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.
-05  …  0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55]
+Success rate : [0.04125, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1, 0.1, 0.1, 0.1  
+…  0.5, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.35, 0.35, 0.35, 0.35, 0.35, 0.35, 0.35, 0.35, 0.35, 0.35 
- …  0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
+Success rate : [0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25, 0.25 
+ …  0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.0, 0.0, 0.0, 0.0, 0.0025, 0.0025, 0.01125, 0.01375, 0.022
-5, 0.03875  …  0.53, 0.5425, 0.54375, 0.52875, 0.53875, 0.53875, 0.53375, 0
-.5375, 0.53625, 0.53375]
+Success rate : [0.0, 0.0, 0.00125, 0.00125, 0.0025, 0.00125, 0.00625, 0.01,
+ 0.0275, 0.03375  …  0.52625, 0.53125, 0.53875, 0.5475, 0.52875, 0.53875, 0
+.545, 0.54125, 0.54125, 0.54625]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.0, 0.0, 0.0, 0.0, 0.00125, 0.00125, 0.00625, 0.0125, 0.02
-375, 0.035  …  0.52125, 0.53375, 0.52375, 0.5025, 0.47875, 0.43625, 0.44, 0
-.44625, 0.445, 0.43625]
+Success rate : [0.0, 0.0, 0.0, 0.0, 0.00125, 0.0, 0.0075, 0.00625, 0.02625,
+ 0.03125  …  0.5275, 0.5425, 0.5425, 0.54, 0.5525, 0.5475, 0.5475, 0.52625,
+ 0.54625, 0.555]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1, 0.1, 0.1  … 
- 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7, 0.7]
+Success rate : [0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05 
+ …  0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75, 0.75]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.37875, 0.3675, 0.3775, 0.38, 0.40875, 0.4425, 0.45, 0.456
-25, 0.455, 0.45875  …  0.695, 0.6925, 0.7, 0.71125, 0.6975, 0.69625, 0.7162
-5, 0.70375, 0.6875, 0.69]
+Success rate : [0.38625, 0.4025, 0.415, 0.425, 0.445, 0.48625, 0.46625, 0.4
+8625, 0.4825, 0.48  …  0.70125, 0.7175, 0.7025, 0.695, 0.70875, 0.6875, 0.6
+9625, 0.6925, 0.70375, 0.68625]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5  …  0.6, 0
-.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6]
+Success rate : [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5  …  0.55, 
+0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.05, 0.05, 0.05, 0.05, 0.05375, 0.0625, 0.13375, 0.2475, 0
-.385, 0.41875  …  0.72625, 0.745, 0.74875, 0.735, 0.7475, 0.73875, 0.72375,
- 0.7425, 0.72125, 0.725]
+Success rate : [0.05, 0.05, 0.05, 0.05, 0.05, 0.06, 0.1325, 0.27125, 0.3575
+, 0.38625  …  0.6975, 0.68625, 0.65375, 0.69, 0.7075, 0.7125, 0.69375, 0.71
+375, 0.69, 0.68625]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.0, 0.0, 0.0, 0.00125, 0.0025, 0.0025, 0.015, 0.01375, 0.0
-225, 0.03375  …  0.49, 0.49375, 0.5, 0.485, 0.48875, 0.5, 0.49, 0.47375, 0.
-48875, 0.48875]
+Success rate : [0.0, 0.0, 0.0, 0.0, 0.00375, 0.005, 0.0075, 0.02, 0.01875, 
+0.0325  …  0.5325, 0.55, 0.54375, 0.5525, 0.55125, 0.55125, 0.5525, 0.54375
+, 0.55125, 0.55625]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.045, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05
-  …  0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55]
+Success rate : [0.045, 0.05, 0.05, 0.05, 0.05, 0.05, 0.1, 0.1, 0.1, 0.1  … 
+ 0.5, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55, 0.55]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.00125, 0.00375, 0.0025, 0.005, 0.01125, 0.0425, 0.04875, 
-0.04875, 0.04875, 0.05  …  0.785, 0.78375, 0.78125, 0.81375, 0.79375, 0.791
-25, 0.77625, 0.79375, 0.785, 0.7975]
+Success rate : [0.00125, 0.00625, 0.00125, 0.00125, 0.0075, 0.04, 0.045, 0.
+04875, 0.05, 0.05  …  0.775, 0.7825, 0.775, 0.7825, 0.775, 0.77125, 0.77875
+, 0.7775, 0.7875, 0.78625]
  BenchmarkResults :
 Run length : [10, 14, 19, 26, 36, 49, 67, 92, 127, 174  …  5736, 7880, 1082
 6, 14874, 20434, 28072, 38566, 52983, 72790, 100000]
-Success rate : [0.0025, 0.0075, 0.0125, 0.015, 0.03375, 0.04, 0.0475, 0.05,
- 0.05, 0.05  …  0.69375, 0.77875, 0.8025, 0.77875, 0.80625, 0.8175, 0.805, 
-0.82, 0.8325, 0.8125]
+Success rate : [0.00375, 0.00625, 0.01625, 0.0225, 0.0375, 0.0425, 0.0475, 
+0.04625, 0.05, 0.05  …  0.62125, 0.71625, 0.71625, 0.73125, 0.77375, 0.7962
+5, 0.7775, 0.77, 0.76375, 0.7775]
 ```
 
 
@@ -544,3 +545,369 @@ bar(
 ```
 
 ![](figures/blackbox_global_optimizers_13_1.png)
+
+
+## Appendix
+
+These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
+
+To locally run this benchmark, do the following commands:
+```
+using SciMLBenchmarks
+SciMLBenchmarks.weave_file("benchmarks/GlobalOptimization","blackbox_global_optimizers.jmd")
+```
+
+Computer Information:
+
+```
+Julia Version 1.12.7
+Commit 6d172b025e4 (2026-08-15 08:05 UTC)
+Build Info:
+  Official https://julialang.org release
+Platform Info:
+  OS: Linux (x86_64-linux-gnu)
+  CPU: 128 × AMD EPYC 7502 32-Core Processor
+  WORD_SIZE: 64
+  LLVM: libLLVM-18.1.7 (ORCJIT, znver2)
+  GC: Built with stock GC
+Threads: 128 default, 1 interactive, 128 GC (on 128 virtual cores)
+Environment:
+  JULIA_CONDAPKG_BACKEND = Null
+  JULIA_LOAD_PATH = @:@stdlib
+  JULIA_PYTHONCALL_EXE = /home/crackauc/.cache/sciml-benchmarks/globalopt-python/bin/python
+  JULIA_NUM_THREADS = auto
+
+```
+
+Package Information:
+
+```
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/GlobalOptimization/Project.toml`
+  [4552ee2b] BlackBoxOptimizationBenchmarking v2.0.1
+  [c03570c3] Memoize v0.4.4
+⌃ [7f7a1694] Optimization v5.4.0
+⌃ [3e6eede4] OptimizationBBO v0.4.5
+⌃ [cb963754] OptimizationEvolutionary v0.4.6
+⌃ [3aafef2f] OptimizationMetaheuristics v0.3.4
+⌃ [4e6fcdb7] OptimizationNLopt v0.3.8
+⌃ [2cab0595] OptimizationNOMAD v0.3.4
+⌃ [36348300] OptimizationOptimJL v0.4.8
+⌃ [42dfb2eb] OptimizationOptimisers v0.3.15
+⌃ [72f8369c] OptimizationPRIMA v0.3.4
+⌃ [fb0822aa] OptimizationPyCMA v1.2.0
+⌃ [cce07bd8] OptimizationSciPy v0.4.5
+  [91a5bcdd] Plots v1.41.7
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+Info Packages marked with ⌃ have new versions available and may be upgradable.
+```
+
+And the full manifest:
+
+```
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/GlobalOptimization/Manifest.toml`
+  [47edcb42] ADTypes v1.24.0
+  [14f7f29c] AMD v0.5.4
+  [1520ce14] AbstractTrees v0.4.5
+  [7d9f7c33] Accessors v0.1.45
+  [79e6a3ab] Adapt v4.7.0
+  [66dad0bd] AliasTables v1.1.3
+⌃ [4fba245c] ArrayInterface v7.30.1
+  [a134a8b2] BlackBoxOptim v0.6.12
+  [4552ee2b] BlackBoxOptimizationBenchmarking v2.0.1
+  [fa961155] CEnum v0.5.0
+  [d360d2e6] ChainRulesCore v1.26.1
+  [523fee87] CodecBzip2 v0.8.5
+  [944b1d66] CodecZlib v0.7.9
+  [35d6a980] ColorSchemes v3.31.0
+  [3da002f7] ColorTypes v0.12.1
+  [c3611d14] ColorVectorSpace v0.11.0
+  [5ae59095] Colors v0.13.1
+  [861a8166] Combinatorics v1.1.0
+  [38540f10] CommonSolve v0.2.14
+  [bbf7d656] CommonSubexpressions v0.3.1
+  [34da2185] Compat v4.18.1
+  [a33af91c] CompositionsBase v0.1.2
+⌃ [992eb4ea] CondaPkg v0.2.33
+  [88cd18e8] ConsoleProgressMonitor v0.1.2
+  [187b0558] ConstructionBase v1.6.0
+  [d38c429a] Contour v0.6.3
+  [9a962f9c] DataAPI v1.16.0
+  [864edb3b] DataStructures v0.19.6
+  [e2d170a0] DataValueInterfaces v1.0.0
+  [8bb1440f] DelimitedFiles v1.9.1
+  [163ba53b] DiffResults v1.1.0
+  [b552c78f] DiffRules v1.16.0
+  [a0c0ee7d] DifferentiationInterface v0.7.21
+  [b4f34e82] Distances v0.10.12
+  [31c24e10] Distributions v0.25.131
+  [ffbed154] DocStringExtensions v0.9.5
+  [4e289a0a] EnumX v1.0.7
+⌅ [86b6b26d] Evolutionary v0.11.1
+  [e2ba6199] ExprTools v0.1.11
+  [55351af7] ExproniconLite v0.10.14
+  [c87230d0] FFMPEG v0.4.5
+  [9aa1b823] FastClosures v0.3.2
+  [1a297f60] FillArrays v1.17.0
+  [6a86dc24] FiniteDiff v2.33.0
+⌅ [53c48c17] FixedPointNumbers v0.8.6
+  [1fa38f19] Format v1.3.7
+  [f6369f11] ForwardDiff v1.4.6
+  [069b7b12] FunctionWrappers v1.1.3
+  [77dc65aa] FunctionWrappersWrappers v1.13.0
+  [d9f16b24] Functors v0.5.3
+  [46192b85] GPUArraysCore v0.2.0
+  [28b8d3ca] GR v0.73.27
+  [a0844989] Gamma v1.2.0
+⌅ [eafb193a] Highlights v0.5.3
+  [34004b35] HypergeometricFunctions v0.3.30
+  [3587e190] InverseFunctions v0.1.17
+  [92d709cd] IrrationalConstants v0.2.6
+  [82899510] IteratorInterfaceExtensions v1.0.0
+  [1019f520] JLFzf v0.1.11
+  [692b3bcd] JLLWrappers v1.8.0
+⌅ [358108f5] JMcDM v0.7.24
+⌅ [682c06a0] JSON v0.21.4
+  [0f8b85d8] JSON3 v1.14.3
+  [ae98c720] Jieko v0.2.1
+  [ba0b0d4f] Krylov v0.10.10
+  [40e66cde] LDLFactorizations v0.10.2
+  [b964fa9f] LaTeXStrings v1.4.1
+  [23fbe1c1] Latexify v0.16.12
+  [1d6d02ad] LeftChildRightSiblingTrees v0.3.0
+⌃ [d3d80556] LineSearches v7.5.1
+  [5c8ed15e] LinearOperators v2.14.2
+  [2ab3a3ac] LogExpFunctions v1.0.1
+  [e6f89c97] LoggingExtras v1.2.0
+  [1914dd2f] MacroTools v0.5.16
+  [b8f27783] MathOptInterface v1.53.0
+  [442fdcdd] Measures v0.3.3
+  [c03570c3] Memoize v0.4.4
+  [bcdb8e00] Metaheuristics v3.5.0
+  [0b3b1443] MicroMamba v0.1.15
+  [e1d29d7a] Missings v1.2.0
+  [2e0e35c7] Moshi v0.3.12
+  [ffc61752] Mustache v1.0.21
+  [d8a4904e] MutableArithmetics v1.8.0
+⌅ [d41bc354] NLSolversBase v7.10.0
+  [76087f3c] NLopt v1.2.1
+⌅ [02130f1c] NOMAD v2.4.2
+  [77ba4419] NaNMath v1.1.4
+  [6fe1bfb0] OffsetArrays v1.17.0
+⌅ [429524aa] Optim v1.13.3
+  [3bd65402] Optimisers v0.4.9
+⌃ [7f7a1694] Optimization v5.4.0
+⌃ [3e6eede4] OptimizationBBO v0.4.5
+⌅ [bca83a33] OptimizationBase v4.2.0
+⌃ [cb963754] OptimizationEvolutionary v0.4.6
+⌃ [3aafef2f] OptimizationMetaheuristics v0.3.4
+⌃ [4e6fcdb7] OptimizationNLopt v0.3.8
+⌃ [2cab0595] OptimizationNOMAD v0.3.4
+⌃ [36348300] OptimizationOptimJL v0.4.8
+⌃ [42dfb2eb] OptimizationOptimisers v0.3.15
+⌃ [72f8369c] OptimizationPRIMA v0.3.4
+⌃ [fb0822aa] OptimizationPyCMA v1.2.0
+⌃ [cce07bd8] OptimizationSciPy v0.4.5
+  [bac558e1] OrderedCollections v2.0.1
+  [90014a1f] PDMats v0.11.41
+  [0a7d04aa] PRIMA v0.2.4
+⌅ [69de0a69] Parsers v2.8.8
+  [fa939f87] Pidfile v1.3.0
+  [ccf2f8ad] PlotThemes v3.3.0
+  [995b91a9] PlotUtils v1.4.4
+  [91a5bcdd] Plots v1.41.7
+  [85a6dd25] PositiveFactorizations v0.2.4
+  [d236fae5] PreallocationTools v1.7.1
+  [aea7be01] PrecompileTools v1.3.4
+  [21216c6a] Preferences v1.6.0
+  [33c8b6b6] ProgressLogging v0.1.6
+  [92933f4c] ProgressMeter v1.11.0
+  [43287f4e] PtrArrays v1.4.0
+  [6099a3de] PythonCall v0.9.35
+  [10f199a5] QPSReader v0.2.1
+  [1fd47b50] QuadGK v2.11.3
+  [3cdcf5f2] RecipesBase v1.3.4
+  [01d81517] RecipesPipeline v0.6.12
+⌅ [731186ca] RecursiveArrayTools v3.54.0
+  [189a3867] Reexport v1.2.2
+  [05181044] RelocatableFolders v1.0.1
+  [ae029012] Requires v1.3.1
+  [79098fc4] Rmath v0.9.0
+  [f2b01f46] Roots v3.0.8
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+⌅ [0bca4576] SciMLBase v2.155.2
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+⌅ [a6db7da4] SciMLLogging v1.10.1
+⌃ [c0aeaf25] SciMLOperators v1.30.0
+  [431bcebd] SciMLPublic v1.3.0
+  [53ae85a6] SciMLStructures v1.10.5
+  [6c6a2e73] Scratch v1.3.0
+  [eb7571c6] SearchSpaces v0.2.0
+  [efcf1570] Setfield v1.1.2
+  [992d4aef] Showoff v1.1.1
+  [66db9d55] SnoopPrecompile v1.0.3
+  [a2af1166] SortingAlgorithms v1.2.3
+  [9f842d2f] SparseConnectivityTracer v1.2.3
+  [0a514795] SparseMatrixColorings v0.4.28
+  [276daf66] SpecialFunctions v2.9.0
+  [860ef19b] StableRNGs v1.0.4
+  [cae243ae] StackViews v0.1.2
+  [90137ffa] StaticArrays v1.9.20
+  [1e83bf80] StaticArraysCore v1.4.4
+  [10745b16] Statistics v1.11.5
+  [82ae8749] StatsAPI v1.8.0
+  [2913bbd2] StatsBase v0.34.13
+  [4c63d2b9] StatsFuns v2.2.1
+  [69024149] StringEncodings v0.3.7
+  [856f2bd8] StructTypes v1.11.0
+  [2efcf032] SymbolicIndexingInterface v0.3.55
+  [3783bdb8] TableTraits v1.0.1
+  [bd369af6] Tables v1.14.0
+  [62fd8b95] TensorCore v0.1.1
+  [5d786b92] TerminalLoggers v0.1.8
+⌅ [a759f4b9] TimerOutputs v0.5.29
+  [3bb67fe8] TranscodingStreams v0.11.3
+  [6dd1b50a] Tulip v0.9.8
+⌅ [c3b1956e] TypeUtils v1.14.0
+  [3a884ed6] UnPack v1.0.2
+  [1cfade01] UnicodeFun v0.4.1
+  [e17b2a0c] UnsafePointers v1.0.0
+  [41fe7b60] Unzip v0.2.0
+  [44d3d7a6] Weave v0.10.12
+  [ddb6d928] YAML v0.4.16
+  [6e34b625] Bzip2_jll v1.0.9+0
+  [83423d85] Cairo_jll v1.18.7+0
+  [ee1fde0b] Dbus_jll v1.16.2+0
+  [2702e6a9] EpollShim_jll v0.0.20230411+1
+  [2e619515] Expat_jll v2.8.4+0
+⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
+  [a3f928ae] Fontconfig_jll v2.17.1+0
+  [d7e528f0] FreeType2_jll v2.14.3+1
+  [559328eb] FriBidi_jll v1.0.17+0
+  [0656b61e] GLFW_jll v3.5.1+0
+  [d2c73de3] GR_jll v0.73.27+0
+⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
+  [61579ee1] Ghostscript_jll v9.55.1+0
+  [7746bdde] Glib_jll v2.88.3+0
+  [3b182d85] Graphite2_jll v1.3.16+0
+  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
+  [aacddb02] JpegTurbo_jll v3.2.0+1
+  [c1c5ebd0] LAME_jll v3.100.3+0
+  [88015f11] LERC_jll v4.2.0+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
+⌅ [e9f186c6] Libffi_jll v3.4.7+0
+  [7e76a0d4] Libglvnd_jll v1.7.1+1
+  [94ce4f54] Libiconv_jll v1.18.0+0
+  [4b2f31a3] Libmount_jll v2.42.0+0
+  [89763e89] Libtiff_jll v4.7.3+0
+  [38a345b3] Libuuid_jll v2.42.0+0
+  [079eb43e] NLopt_jll v2.11.0+0
+⌅ [2fc7fd02] NOMAD_jll v4.3.1+0
+  [e7412a2a] Ogg_jll v1.3.6+0
+  [efe28fd5] OpenSpecFun_jll v0.5.6+0
+  [91d4177d] Opus_jll v1.6.1+0
+  [eead6e0c] PRIMA_jll v0.7.1+0
+  [36c8627f] Pango_jll v1.58.2+0
+  [30392449] Pixman_jll v0.46.4+0
+  [c0090381] Qt6Base_jll v6.10.2+2
+  [629bc702] Qt6Declarative_jll v6.10.2+2
+  [ce943373] Qt6ShaderTools_jll v6.10.2+1
+  [6de9746b] Qt6Svg_jll v6.10.2+0
+  [e99dba38] Qt6Wayland_jll v6.10.2+1
+  [f50d1b31] Rmath_jll v0.5.2+0
+  [a44049a8] Vulkan_Loader_jll v1.3.243+0
+  [a2964d1f] Wayland_jll v1.24.0+0
+  [ffd25f8a] XZ_jll v5.8.4+0
+  [f67eecfb] Xorg_libICE_jll v1.1.2+0
+  [c834827a] Xorg_libSM_jll v1.2.6+0
+  [4f6342f7] Xorg_libX11_jll v1.8.13+0
+  [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
+  [935fb764] Xorg_libXcursor_jll v1.2.4+0
+  [a3789734] Xorg_libXdmcp_jll v1.1.6+0
+  [1082639a] Xorg_libXext_jll v1.3.8+0
+  [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
+  [a51aa0fd] Xorg_libXi_jll v1.8.4+0
+  [d1454406] Xorg_libXinerama_jll v1.1.7+0
+  [ec84b674] Xorg_libXrandr_jll v1.5.6+0
+  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+  [a65dc6b1] Xorg_libpciaccess_jll v0.19.0+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
+  [cc61e674] Xorg_libxkbfile_jll v1.2.0+0
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.6+0
+  [12413925] Xorg_xcb_util_image_jll v0.4.1+0
+  [2def613f] Xorg_xcb_util_jll v0.4.1+0
+  [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
+  [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
+  [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
+  [35661453] Xorg_xkbcomp_jll v1.4.7+0
+  [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
+  [c5fb5394] Xorg_xtrans_jll v1.6.0+0
+  [3161d3a3] Zstd_jll v1.5.7+1
+  [35ca27e7] eudev_jll v3.2.14+0
+⌅ [214eeab7] fzf_jll v0.61.1+0
+  [a4ae2306] libaom_jll v3.14.1+0
+  [0ac62f75] libass_jll v0.17.5+0
+  [1183f4f0] libdecor_jll v0.2.2+0
+  [8e53e030] libdrm_jll v2.4.134+0
+  [2db6ffa8] libevdev_jll v1.13.4+0
+  [f638f0a6] libfdk_aac_jll v2.0.4+0
+  [36db933b] libinput_jll v1.28.1+0
+  [b53b4c65] libpng_jll v1.6.58+0
+  [9a156e7d] libva_jll v2.23.0+0
+  [f27f6e37] libvorbis_jll v1.3.8+0
+  [f8abcde7] micromamba_jll v2.3.1+0
+  [009596ad] mtdev_jll v1.1.7+0
+  [4d7b5844] pixi_jll v0.76.2+0
+⌅ [1270edf5] x264_jll v10164.0.1+0
+  [dfaa095f] x265_jll v4.1.0+0
+  [d8fb68d0] xkbcommon_jll v1.13.0+0
+  [0dad84c5] ArgTools v1.1.2
+  [56f22d72] Artifacts v1.11.0
+  [2a0f44e3] Base64 v1.11.0
+  [ade2ca70] Dates v1.11.0
+  [8ba89e20] Distributed v1.11.0
+  [f43a241f] Downloads v1.7.0
+  [7b1f6079] FileWatching v1.11.0
+  [9fa8497b] Future v1.11.0
+  [b77e0a4c] InteractiveUtils v1.11.0
+  [ac6e5ff7] JuliaSyntaxHighlighting v1.12.0
+  [4af54fe1] LazyArtifacts v1.11.0
+  [b27032c2] LibCURL v0.6.4
+  [76f85450] LibGit2 v1.11.0
+  [8f399da3] Libdl v1.11.0
+  [37e2e46d] LinearAlgebra v1.12.0
+  [56ddb016] Logging v1.11.0
+  [d6f4376e] Markdown v1.11.0
+  [a63ad114] Mmap v1.11.0
+  [ca575930] NetworkOptions v1.3.0
+  [44cfe95a] Pkg v1.12.1
+  [de0858da] Printf v1.11.0
+  [3fa0cd96] REPL v1.11.0
+  [9a3f8284] Random v1.11.0
+  [ea8e919c] SHA v0.7.0
+  [9e88b42a] Serialization v1.11.0
+  [6462fe0b] Sockets v1.11.0
+  [2f01184e] SparseArrays v1.12.0
+  [f489334b] StyledStrings v1.11.0
+  [4607b0f0] SuiteSparse
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
+  [8dfed614] Test v1.11.0
+  [cf7118a7] UUIDs v1.11.0
+  [4ec0a83e] Unicode v1.11.0
+  [e66e0078] CompilerSupportLibraries_jll v1.3.1+2
+  [deac9b47] LibCURL_jll v8.15.0+0
+  [e37daf67] LibGit2_jll v1.9.0+0
+  [29816b5a] LibSSH2_jll v1.11.3+1
+  [14a3606d] MozillaCACerts_jll v2025.11.4
+  [4536629a] OpenBLAS_jll v0.3.29+0
+  [05823500] OpenLibm_jll v0.8.7+0
+  [458c3c95] OpenSSL_jll v3.5.6+0
+  [efcefdf7] PCRE2_jll v10.44.0+1
+  [bea87d4a] SuiteSparse_jll v7.8.3+2
+  [83775a58] Zlib_jll v1.3.1+2
+  [8e850b90] libblastrampoline_jll v5.15.0+0
+  [8e850ede] nghttp2_jll v1.64.0+1
+  [3f19e933] p7zip_jll v17.7.0+0
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+```
+
