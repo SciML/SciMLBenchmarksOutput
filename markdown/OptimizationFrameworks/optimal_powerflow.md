@@ -35,64 +35,68 @@ import ConcreteStructs
 using BenchmarkTools
 using DataFrames
 
+# PowerModels logs through a Memento handler bound to the real stdout; Weave
+# captures chunk output on a pipe, so drop the level before any parse_file call.
+PowerModels.logger_config!("error")
+
 ConcreteStructs.@concrete struct DataRepresentation
-    data
-    ref
-    var_lookup
-    var_init
-    var_lb
-    var_ub
-    ref_gen_idxs
-    lookup_pg
-    lookup_qg
-    lookup_va
-    lookup_vm
-    lookup_lij
-    lookup_p_lij
-    lookup_q_lij
-    cost_arrs
-    f_bus
-    t_bus
-    ref_bus_idxs
-    ref_buses_idxs
-    ref_bus_gens
-    ref_bus_arcs
-    ref_branch_idxs
-    ref_arcs_from
-    ref_arcs_to
-    p_idxmap
-    q_idxmap
-    bus_pd
-    bus_qd
-    bus_gs
-    bus_bs
-    br_g
-    br_b
-    br_tr
-    br_ti
-    br_ttm
-    br_g_fr
-    br_b_fr
-    br_g_to
-    br_b_to
+    data::Any
+    ref::Any
+    var_lookup::Any
+    var_init::Any
+    var_lb::Any
+    var_ub::Any
+    ref_gen_idxs::Any
+    lookup_pg::Any
+    lookup_qg::Any
+    lookup_va::Any
+    lookup_vm::Any
+    lookup_lij::Any
+    lookup_p_lij::Any
+    lookup_q_lij::Any
+    cost_arrs::Any
+    f_bus::Any
+    t_bus::Any
+    ref_bus_idxs::Any
+    ref_buses_idxs::Any
+    ref_bus_gens::Any
+    ref_bus_arcs::Any
+    ref_branch_idxs::Any
+    ref_arcs_from::Any
+    ref_arcs_to::Any
+    p_idxmap::Any
+    q_idxmap::Any
+    bus_pd::Any
+    bus_qd::Any
+    bus_gs::Any
+    bus_bs::Any
+    br_g::Any
+    br_b::Any
+    br_tr::Any
+    br_ti::Any
+    br_ttm::Any
+    br_g_fr::Any
+    br_b_fr::Any
+    br_g_to::Any
+    br_b_to::Any
 end
 
 function load_and_setup_data(file_name)
     data = PowerModels.parse_file(file_name)
-    PowerModels.standardize_cost_terms!(data, order=2)
+    PowerModels.standardize_cost_terms!(data, order = 2)
     PowerModels.calc_thermal_limits!(data)
     ref = PowerModels.build_ref(data)[:it][:pm][:nw][0]
 
     # Some data munging to type-stable forms
 
-    var_lookup = Dict{String,Int}()
+    var_lookup = Dict{String, Int}()
 
     var_init = Float64[]
     var_lb = Float64[]
     var_ub = Float64[]
 
     var_idx = 1
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         push!(var_init, 0.0) #va
         push!(var_lb, -Inf)
         push!(var_ub, Inf)
@@ -106,7 +110,7 @@ function load_and_setup_data(file_name)
         var_idx += 1
     end
 
-    for (i,gen) in ref[:gen]
+    for (i, gen) in ref[:gen]
         push!(var_init, 0.0) #pg
         push!(var_lb, gen["pmin"])
         push!(var_ub, gen["pmax"])
@@ -120,18 +124,18 @@ function load_and_setup_data(file_name)
         var_idx += 1
     end
 
-    for (l,i,j) in ref[:arcs]
+    for (l, i, j) in ref[:arcs]
         branch = ref[:branch][l]
 
         push!(var_init, 0.0) #p
         push!(var_lb, -branch["rate_a"])
-        push!(var_ub,  branch["rate_a"])
+        push!(var_ub, branch["rate_a"])
         var_lookup["p_$(l)_$(i)_$(j)"] = var_idx
         var_idx += 1
 
         push!(var_init, 0.0) #q
         push!(var_lb, -branch["rate_a"])
-        push!(var_ub,  branch["rate_a"])
+        push!(var_ub, branch["rate_a"])
         var_lookup["q_$(l)_$(i)_$(j)"] = var_idx
         var_idx += 1
     end
@@ -139,36 +143,36 @@ function load_and_setup_data(file_name)
     @assert var_idx == length(var_init)+1
 
     ref_gen_idxs = [i for i in keys(ref[:gen])]
-    lookup_pg = Dict{Int,Int}()
-    lookup_qg = Dict{Int,Int}()
-    lookup_va = Dict{Int,Int}()
-    lookup_vm = Dict{Int,Int}()
-    lookup_lij = Tuple{Int,Int,Int}[]
+    lookup_pg = Dict{Int, Int}()
+    lookup_qg = Dict{Int, Int}()
+    lookup_va = Dict{Int, Int}()
+    lookup_vm = Dict{Int, Int}()
+    lookup_lij = Tuple{Int, Int, Int}[]
     lookup_p_lij = Int[]
     lookup_q_lij = Int[]
-    cost_arrs = Dict{Int,Vector{Float64}}()
+    cost_arrs = Dict{Int, Vector{Float64}}()
 
-    for (i,gen) in ref[:gen]
+    for (i, gen) in ref[:gen]
         lookup_pg[i] = var_lookup["pg_$(i)"]
         lookup_qg[i] = var_lookup["qg_$(i)"]
         cost_arrs[i] = gen["cost"]
     end
 
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         lookup_va[i] = var_lookup["va_$(i)"]
         lookup_vm[i] = var_lookup["vm_$(i)"]
     end
 
-    for (l,i,j) in ref[:arcs]
-        push!(lookup_lij, (l,i,j))
-        push!(lookup_p_lij,var_lookup["p_$(l)_$(i)_$(j)"])
-        push!(lookup_q_lij,var_lookup["q_$(l)_$(i)_$(j)"])
+    for (l, i, j) in ref[:arcs]
+        push!(lookup_lij, (l, i, j))
+        push!(lookup_p_lij, var_lookup["p_$(l)_$(i)_$(j)"])
+        push!(lookup_q_lij, var_lookup["q_$(l)_$(i)_$(j)"])
     end
 
-    f_bus = Dict{Int,Int}()
-    t_bus = Dict{Int,Int}()
+    f_bus = Dict{Int, Int}()
+    t_bus = Dict{Int, Int}()
 
-    for (l,branch) in ref[:branch]
+    for (l, branch) in ref[:branch]
         f_bus[l] = branch["f_bus"]
         t_bus[l] = branch["t_bus"]
     end
@@ -184,13 +188,13 @@ function load_and_setup_data(file_name)
     p_idxmap = Dict(lookup_lij[i] => lookup_p_lij[i] for i in 1:length(lookup_lij))
     q_idxmap = Dict(lookup_lij[i] => lookup_q_lij[i] for i in 1:length(lookup_lij))
 
-    bus_pd = Dict(i => 0.0 for (i,bus) in ref[:bus])
-    bus_qd = Dict(i => 0.0 for (i,bus) in ref[:bus])
+    bus_pd = Dict(i => 0.0 for (i, bus) in ref[:bus])
+    bus_qd = Dict(i => 0.0 for (i, bus) in ref[:bus])
 
-    bus_gs = Dict(i => 0.0 for (i,bus) in ref[:bus])
-    bus_bs = Dict(i => 0.0 for (i,bus) in ref[:bus])
+    bus_gs = Dict(i => 0.0 for (i, bus) in ref[:bus])
+    bus_bs = Dict(i => 0.0 for (i, bus) in ref[:bus])
 
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         if length(ref[:bus_loads][i]) > 0
             bus_pd[i] = sum(ref[:load][l]["pd"] for l in ref[:bus_loads][i])
             bus_qd[i] = sum(ref[:load][l]["qd"] for l in ref[:bus_loads][i])
@@ -202,20 +206,19 @@ function load_and_setup_data(file_name)
         end
     end
 
+    br_g = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_g = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b = Dict(i => 0.0 for (i,branch) in ref[:branch])
+    br_tr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_ti = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_ttm = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_tr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_ti = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_ttm = Dict(i => 0.0 for (i,branch) in ref[:branch])
+    br_g_fr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b_fr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_g_to = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b_to = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_g_fr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b_fr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_g_to = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b_to = Dict(i => 0.0 for (i,branch) in ref[:branch])
-
-    for (i,branch) in ref[:branch]
+    for (i, branch) in ref[:branch]
         g, b = PowerModels.calc_branch_y(branch)
         tr, ti = PowerModels.calc_branch_t(branch)
 
@@ -286,9 +289,32 @@ dataset = load_and_setup_data(file_name);
 Ensure that all objectives and constraints evaluate to the same value on a feasible point in the same dataset
 
 ```julia
-test_u0 = [0.062436387733897314, 1.0711076238965598, 0.0, 1.066509799068872, -0.023231313776594726, 1.0879315976617783, -0.033094993289919016, 1.0999999581285527, 0.07121718642320936, 1.094374845084077, 0.4228458440068076, -3.7102746662566277, 1.8046846767604458e-8, -0.44810504067067086, 8.80063717152151, -0.0, 0.8709675496332583, 3.6803022758556523, -0.0, 4.618897246588245, -1.1691336178031877, 1.3748418519024668, 0.9623014391707738, -1.3174990482204871, -2.3850868109149004, 0.1445158405684026, 2.813869610747349, 0.8151138880859179, 1.9869253829584679, 3.768252275480421, 3.9998421778156934, 0.03553108302190666, 1.177155791026922, -1.3025310027752557, -0.9598988325635542, 1.3193604239530325, 2.399997991458022, -0.003103523654225171, -2.7920689620650667, -0.6047898784636468, -1.9771521474512397, -3.7071711426024025, -3.9623014391707136, 0.3313990482205271]
+test_u0 = [0.062436387733897314, 1.0711076238965598, 0.0, 1.066509799068872,
+    -0.023231313776594726, 1.0879315976617783, -0.033094993289919016,
+    1.0999999581285527, 0.07121718642320936, 1.094374845084077, 0.4228458440068076,
+    -3.7102746662566277, 1.8046846767604458e-8, -0.44810504067067086, 8.80063717152151,
+    -0.0, 0.8709675496332583, 3.6803022758556523, -0.0, 4.618897246588245,
+    -1.1691336178031877, 1.3748418519024668, 0.9623014391707738, -1.3174990482204871,
+    -2.3850868109149004, 0.1445158405684026, 2.813869610747349, 0.8151138880859179,
+    1.9869253829584679, 3.768252275480421, 3.9998421778156934, 0.03553108302190666,
+    1.177155791026922, -1.3025310027752557, -0.9598988325635542, 1.3193604239530325,
+    2.399997991458022, -0.003103523654225171, -2.7920689620650667, -0.6047898784636468,
+    -1.9771521474512397, -3.7071711426024025, -3.9623014391707136, 0.3313990482205271]
 test_obj = 16236.704322376236
-test_cons = [0.0, 2.5424107263916085e-14, -1.0835776720341528e-13, -6.039613253960852e-14, 0.0, 0.0, 0.0, -1.7075230118734908e-13, -3.9968028886505635e-14, 1.532107773982716e-13, 0.0, 6.661338147750939e-16, -1.7763568394002505e-15, 0.0, 8.881784197001252e-16, 4.440892098500626e-16, 0.0, 4.440892098500626e-16, -1.7763568394002505e-15, -8.881784197001252e-16, -4.440892098500626e-16, 2.220446049250313e-16, 0.0, 1.7763568394002505e-15, 0.0, 6.8833827526759706e-15, -8.992806499463768e-15, 3.9968028886505635e-14, -7.105427357601002e-15, 0.0, 0.0, 7.327471962526033e-15, -7.105427357601002e-15, 2.842170943040401e-14, -7.105427357601002e-15, -0.033094993289919016, 0.00986367951332429, -0.062436387733897314, 0.07121718642320936, 0.008780798689312044, 0.09444850019980408, 3.2570635340201743, 2.661827801892032, 5.709523923775402, 8.58227283683798, 18.147597689108025, 15.999999905294098, 3.0822827695389314, 2.6621176970504, 5.759999990861611, 8.161419886019171, 17.65224849471505, 15.80965802401578]
+test_cons = [
+    0.0, 2.5424107263916085e-14, -1.0835776720341528e-13, -6.039613253960852e-14, 0.0,
+    0.0, 0.0, -1.7075230118734908e-13, -3.9968028886505635e-14, 1.532107773982716e-13,
+    0.0, 6.661338147750939e-16, -1.7763568394002505e-15, 0.0, 8.881784197001252e-16,
+    4.440892098500626e-16, 0.0, 4.440892098500626e-16, -1.7763568394002505e-15,
+    -8.881784197001252e-16, -4.440892098500626e-16, 2.220446049250313e-16,
+    0.0, 1.7763568394002505e-15, 0.0, 6.8833827526759706e-15, -8.992806499463768e-15,
+    3.9968028886505635e-14, -7.105427357601002e-15, 0.0, 0.0, 7.327471962526033e-15,
+    -7.105427357601002e-15, 2.842170943040401e-14, -7.105427357601002e-15,
+    -0.033094993289919016, 0.00986367951332429, -0.062436387733897314,
+    0.07121718642320936, 0.008780798689312044, 0.09444850019980408,
+    3.2570635340201743, 2.661827801892032, 5.709523923775402, 8.58227283683798,
+    18.147597689108025, 15.999999905294098, 3.0822827695389314, 2.6621176970504,
+    5.759999990861611, 8.161419886019171, 17.65224849471505, 15.80965802401578]
 ```
 
 ```
@@ -339,45 +365,45 @@ import Enzyme
 import ReverseDiff
 
 function build_opf_optimization_prob(dataset; adchoice = Optimization.AutoEnzyme())
-    (;data,
-    ref,
-    var_lookup,
-    var_init,
-    var_lb,
-    var_ub,
-    ref_gen_idxs,
-    lookup_pg,
-    lookup_qg,
-    lookup_va,
-    lookup_vm,
-    lookup_lij,
-    lookup_p_lij,
-    lookup_q_lij,
-    cost_arrs,
-    f_bus,
-    t_bus,
-    ref_bus_idxs,
-    ref_buses_idxs,
-    ref_bus_gens,
-    ref_bus_arcs,
-    ref_branch_idxs,
-    ref_arcs_from,
-    ref_arcs_to,
-    p_idxmap,
-    q_idxmap,
-    bus_pd,
-    bus_qd,
-    bus_gs,
-    bus_bs,
-    br_g,
-    br_b,
-    br_tr,
-    br_ti,
-    br_ttm,
-    br_g_fr,
-    br_b_fr,
-    br_g_to,
-    br_b_to) = dataset
+    (; data,
+        ref,
+        var_lookup,
+        var_init,
+        var_lb,
+        var_ub,
+        ref_gen_idxs,
+        lookup_pg,
+        lookup_qg,
+        lookup_va,
+        lookup_vm,
+        lookup_lij,
+        lookup_p_lij,
+        lookup_q_lij,
+        cost_arrs,
+        f_bus,
+        t_bus,
+        ref_bus_idxs,
+        ref_buses_idxs,
+        ref_bus_gens,
+        ref_bus_arcs,
+        ref_branch_idxs,
+        ref_arcs_from,
+        ref_arcs_to,
+        p_idxmap,
+        q_idxmap,
+        bus_pd,
+        bus_qd,
+        bus_gs,
+        bus_bs,
+        br_g,
+        br_b,
+        br_tr,
+        br_ti,
+        br_ttm,
+        br_g_fr,
+        br_b_fr,
+        br_g_to,
+        br_b_to) = dataset
 
     #total_callback_time = 0.0
     function opf_objective(x, param)
@@ -396,12 +422,12 @@ function build_opf_optimization_prob(dataset; adchoice = Optimization.AutoEnzyme
         offsetidx = 0
 
         # va_con
-        for (reti,i) in enumerate(ref_buses_idxs)
+        for (reti, i) in enumerate(ref_buses_idxs)
             ret[reti + offsetidx] = x[lookup_va[i]]
         end
 
         offsetidx += length(ref_buses_idxs)
-        
+
         #     @constraint(model,
         #         sum(p[a] for a in ref[:bus_arcs][i]) ==
         #         sum(pg[g] for g in ref_bus_gens[i]) -
@@ -410,11 +436,11 @@ function build_opf_optimization_prob(dataset; adchoice = Optimization.AutoEnzyme
         #     )
 
         # power_balance_p_con
-        for (reti,i) in enumerate(ref_bus_idxs)
-            ret[reti + offsetidx] = sum(x[lookup_pg[j]] for j in ref_bus_gens[i]; init=0.0) -
-            bus_pd[i] -
-            bus_gs[i]*x[lookup_vm[i]]^2 -
-            sum(x[p_idxmap[a]] for a in ref_bus_arcs[i])
+        for (reti, i) in enumerate(ref_bus_idxs)
+            ret[reti + offsetidx] = sum(x[lookup_pg[j]] for j in ref_bus_gens[i]; init = 0.0) -
+                                    bus_pd[i] -
+                                    bus_gs[i]*x[lookup_vm[i]]^2 -
+                                    sum(x[p_idxmap[a]] for a in ref_bus_arcs[i])
         end
 
         offsetidx += length(ref_bus_idxs)
@@ -426,55 +452,55 @@ function build_opf_optimization_prob(dataset; adchoice = Optimization.AutoEnzyme
         #         sum(shunt["bs"] for shunt in bus_shunts)*x[lookup_vm[i]]^2
         #     )
         # power_balance_q_con
-        for (reti,i) in enumerate(ref_bus_idxs)
-        ret[reti + offsetidx] = sum(x[lookup_qg[j]] for j in ref_bus_gens[i]; init=0.0) -
-        bus_qd[i] +
-        bus_bs[i]*x[lookup_vm[i]]^2 -
-        sum(x[q_idxmap[a]] for a in ref_bus_arcs[i])
+        for (reti, i) in enumerate(ref_bus_idxs)
+            ret[reti + offsetidx] = sum(x[lookup_qg[j]] for j in ref_bus_gens[i]; init = 0.0) -
+                                    bus_qd[i] +
+                                    bus_bs[i]*x[lookup_vm[i]]^2 -
+                                    sum(x[q_idxmap[a]] for a in ref_bus_arcs[i])
         end
 
         offsetidx += length(ref_bus_idxs)
 
         # @NLconstraint(model, p_fr ==  (g+g_fr)/ttm*vm_fr^2 + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) + (-b*tr-g*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to)) )
         # power_flow_p_from_con =
-        for (reti,(l,i,j)) in enumerate(ref_arcs_from)
-        ret[reti + offsetidx] = (br_g[l]+br_g_fr[l])/br_ttm[l]*x[lookup_vm[f_bus[l]]]^2 +
-        (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[f_bus[l]]]*x[lookup_vm[t_bus[l]]]*cos(x[lookup_va[f_bus[l]]]-x[lookup_va[t_bus[l]]])) +
-        (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[f_bus[l]]]*x[lookup_vm[t_bus[l]]]*sin(x[lookup_va[f_bus[l]]]-x[lookup_va[t_bus[l]]])) -
-        x[p_idxmap[(l,i,j)]]
+        for (reti, (l, i, j)) in enumerate(ref_arcs_from)
+            ret[reti + offsetidx] = (br_g[l]+br_g_fr[l])/br_ttm[l]*x[lookup_vm[f_bus[l]]]^2 +
+                                    (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[f_bus[l]]]*x[lookup_vm[t_bus[l]]]*cos(x[lookup_va[f_bus[l]]]-x[lookup_va[t_bus[l]]])) +
+                                    (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[f_bus[l]]]*x[lookup_vm[t_bus[l]]]*sin(x[lookup_va[f_bus[l]]]-x[lookup_va[t_bus[l]]])) -
+                                    x[p_idxmap[(l, i, j)]]
         end
 
         offsetidx += length(ref_arcs_from)
 
         # @NLconstraint(model, p_to ==  (g+g_to)*vm_to^2 + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) + (-b*tr+g*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr)) )
         # power_flow_p_to_con
-        for (reti,(l,i,j)) in enumerate(ref_arcs_to)
-        ret[reti + offsetidx] = (br_g[l]+br_g_to[l])*x[lookup_vm[t_bus[l]]]^2 +
-        (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[t_bus[l]]]*x[lookup_vm[f_bus[l]]]*cos(x[lookup_va[t_bus[l]]]-x[lookup_va[f_bus[l]]])) +
-        (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[t_bus[l]]]*x[lookup_vm[f_bus[l]]]*sin(x[lookup_va[t_bus[l]]]-x[lookup_va[f_bus[l]]])) -
-        x[p_idxmap[(l,i,j)]]
+        for (reti, (l, i, j)) in enumerate(ref_arcs_to)
+            ret[reti + offsetidx] = (br_g[l]+br_g_to[l])*x[lookup_vm[t_bus[l]]]^2 +
+                                    (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[t_bus[l]]]*x[lookup_vm[f_bus[l]]]*cos(x[lookup_va[t_bus[l]]]-x[lookup_va[f_bus[l]]])) +
+                                    (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[t_bus[l]]]*x[lookup_vm[f_bus[l]]]*sin(x[lookup_va[t_bus[l]]]-x[lookup_va[f_bus[l]]])) -
+                                    x[p_idxmap[(l, i, j)]]
         end
 
         offsetidx += length(ref_arcs_to)
 
         # @NLconstraint(model, q_fr == -(b+b_fr)/ttm*vm_fr^2 - (-b*tr-g*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to)) )
         # power_flow_q_from_con
-        for (reti,(l,i,j)) in enumerate(ref_arcs_from)
-        ret[reti + offsetidx] = -(br_b[l]+br_b_fr[l])/br_ttm[l]*x[lookup_vm[f_bus[l]]]^2 -
-        (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[f_bus[l]]]*x[lookup_vm[t_bus[l]]]*cos(x[lookup_va[f_bus[l]]]-x[lookup_va[t_bus[l]]])) +
-        (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[f_bus[l]]]*x[lookup_vm[t_bus[l]]]*sin(x[lookup_va[f_bus[l]]]-x[lookup_va[t_bus[l]]])) -
-        x[q_idxmap[(l,i,j)]]
+        for (reti, (l, i, j)) in enumerate(ref_arcs_from)
+            ret[reti + offsetidx] = -(br_b[l]+br_b_fr[l])/br_ttm[l]*x[lookup_vm[f_bus[l]]]^2 -
+                                    (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[f_bus[l]]]*x[lookup_vm[t_bus[l]]]*cos(x[lookup_va[f_bus[l]]]-x[lookup_va[t_bus[l]]])) +
+                                    (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[f_bus[l]]]*x[lookup_vm[t_bus[l]]]*sin(x[lookup_va[f_bus[l]]]-x[lookup_va[t_bus[l]]])) -
+                                    x[q_idxmap[(l, i, j)]]
         end
 
         offsetidx += length(ref_arcs_from)
 
         # @NLconstraint(model, q_to == -(b+b_to)*vm_to^2 - (-b*tr+g*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr)) )
         # power_flow_q_to_con
-        for (reti,(l,i,j)) in enumerate(ref_arcs_to)
-        ret[reti + offsetidx] = -(br_b[l]+br_b_to[l])*x[lookup_vm[t_bus[l]]]^2 -
-        (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[t_bus[l]]]*x[lookup_vm[f_bus[l]]]*cos(x[lookup_va[t_bus[l]]]-x[lookup_va[f_bus[l]]])) +
-        (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[t_bus[l]]]*x[lookup_vm[f_bus[l]]]*sin(x[lookup_va[t_bus[l]]]-x[lookup_va[f_bus[l]]])) -
-        x[q_idxmap[(l,i,j)]]
+        for (reti, (l, i, j)) in enumerate(ref_arcs_to)
+            ret[reti + offsetidx] = -(br_b[l]+br_b_to[l])*x[lookup_vm[t_bus[l]]]^2 -
+                                    (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[t_bus[l]]]*x[lookup_vm[f_bus[l]]]*cos(x[lookup_va[t_bus[l]]]-x[lookup_va[f_bus[l]]])) +
+                                    (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(x[lookup_vm[t_bus[l]]]*x[lookup_vm[f_bus[l]]]*sin(x[lookup_va[t_bus[l]]]-x[lookup_va[f_bus[l]]])) -
+                                    x[q_idxmap[(l, i, j)]]
         end
 
         offsetidx += length(ref_arcs_to)
@@ -482,24 +508,24 @@ function build_opf_optimization_prob(dataset; adchoice = Optimization.AutoEnzyme
         # @constraint(model, va_fr - va_to <= branch["angmax"])
         # @constraint(model, va_fr - va_to >= branch["angmin"])
         # power_flow_vad_con
-        for (reti,(l,i,j)) in enumerate(ref_arcs_from)
-        ret[reti + offsetidx] = x[lookup_va[f_bus[l]]] - x[lookup_va[t_bus[l]]]
+        for (reti, (l, i, j)) in enumerate(ref_arcs_from)
+            ret[reti + offsetidx] = x[lookup_va[f_bus[l]]] - x[lookup_va[t_bus[l]]]
         end
 
         offsetidx += length(ref_arcs_from)
 
         # @constraint(model, p_fr^2 + q_fr^2 <= branch["rate_a"]^2)
         # power_flow_mva_from_con
-        for (reti,(l,i,j)) in enumerate(ref_arcs_from)
-        ret[reti + offsetidx] = x[p_idxmap[(l,i,j)]]^2 + x[q_idxmap[(l,i,j)]]^2
+        for (reti, (l, i, j)) in enumerate(ref_arcs_from)
+            ret[reti + offsetidx] = x[p_idxmap[(l, i, j)]]^2 + x[q_idxmap[(l, i, j)]]^2
         end
 
         offsetidx += length(ref_arcs_from)
 
         # @constraint(model, p_to^2 + q_to^2 <= branch["rate_a"]^2)
         # power_flow_mva_to_con 
-        for (reti,(l,i,j)) in enumerate(ref_arcs_to)
-        ret[reti + offsetidx] = x[p_idxmap[(l,i,j)]]^2 + x[q_idxmap[(l,i,j)]]^2
+        for (reti, (l, i, j)) in enumerate(ref_arcs_to)
+            ret[reti + offsetidx] = x[p_idxmap[(l, i, j)]]^2 + x[q_idxmap[(l, i, j)]]^2
         end
 
         offsetidx += length(ref_arcs_to)
@@ -512,63 +538,63 @@ function build_opf_optimization_prob(dataset; adchoice = Optimization.AutoEnzyme
     con_ubs = Float64[]
 
     #@constraint(model, va[i] == 0)
-    for (i,bus) in ref[:ref_buses]
+    for (i, bus) in ref[:ref_buses]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_balance_p_con
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_balance_q_con
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_p_from_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_p_to_con
-    for (l,i,j) in ref[:arcs_to]
+    for (l, i, j) in ref[:arcs_to]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_q_from_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_q_to_con
-    for (l,i,j) in ref[:arcs_to]
+    for (l, i, j) in ref[:arcs_to]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_vad_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         branch = ref[:branch][l]
         push!(con_lbs, branch["angmin"])
         push!(con_ubs, branch["angmax"])
     end
 
     #power_flow_mva_from_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         branch = ref[:branch][l]
         push!(con_lbs, -Inf)
         push!(con_ubs, branch["rate_a"]^2)
     end
 
     #power_flow_mva_to_con
-    for (l,i,j) in ref[:arcs_to]
+    for (l, i, j) in ref[:arcs_to]
         branch = ref[:branch][l]
         push!(con_lbs, -Inf)
         push!(con_ubs, branch["rate_a"]^2)
@@ -578,11 +604,12 @@ function build_opf_optimization_prob(dataset; adchoice = Optimization.AutoEnzyme
     ret = Array{Float64}(undef, length(con_lbs))
     model_constraints = length(con_lbs)
 
-    optf = Optimization.OptimizationFunction(opf_objective, adchoice; cons=opf_constraints)
-    prob = Optimization.OptimizationProblem(optf, var_init; lb=var_lb, ub=var_ub, lcons=con_lbs, ucons=con_ubs)
+    optf = Optimization.OptimizationFunction(opf_objective, adchoice; cons = opf_constraints)
+    prob = Optimization.OptimizationProblem(
+        optf, var_init; lb = var_lb, ub = var_ub, lcons = con_lbs, ucons = con_ubs)
 end
 
-function solve_opf_optimization(dataset; adchoice = Optimization.AutoSparseReverseDiff(true))
+function solve_opf_optimization(dataset; adchoice = Optimization.AutoSparse(Optimization.AutoReverseDiff(true)))
     model_build_time = @elapsed prob = build_opf_optimization_prob(dataset; adchoice)
 
     # Correctness tests
@@ -591,14 +618,17 @@ function solve_opf_optimization(dataset; adchoice = Optimization.AutoSparseRever
     @allocated prob.f(prob.u0, nothing) == 0
     @allocated prob.f.cons(ret, prob.u0, nothing) == 0
 
-    solve_time_with_compilation = @elapsed sol = Optimization.solve(prob, Ipopt.Optimizer(), print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME)
-    cost = sol.minimum
+    solve_time_with_compilation = @elapsed sol = Optimization.solve(
+        prob, Ipopt.Optimizer(), print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME)
+    cost = sol.objective
     feasible = (sol.retcode == Optimization.SciMLBase.ReturnCode.Success)
     #println(sol.u) # solution vector
 
-    solve_time_without_compilation = @elapsed sol = Optimization.solve(prob, Ipopt.Optimizer(), print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME)
-    
-    return (prob,sol),Dict(
+    solve_time_without_compilation = @elapsed sol = Optimization.solve(
+        prob, Ipopt.Optimizer(), print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME)
+
+    return (prob, sol),
+    Dict(
         "case" => file_name,
         "variables" => length(prob.u0),
         "constraints" => length(prob.lcons),
@@ -606,7 +636,7 @@ function solve_opf_optimization(dataset; adchoice = Optimization.AutoSparseRever
         "cost" => cost,
         "time_build" => model_build_time,
         "time_solve" => solve_time_without_compilation,
-        "time_solve_compilation" => solve_time_with_compilation,
+        "time_solve_compilation" => solve_time_with_compilation
     )
 end
 
@@ -671,7 +701,7 @@ import SymbolicIndexingInterface
 using SymbolicIndexingInterface: variable_symbols, all_variable_symbols, getname
 
 function build_opf_mtk_prob(dataset)
-    (;data, ref) = dataset
+    (; data, ref) = dataset
 
     vars = Num[]
     lb = Float64[]
@@ -699,7 +729,9 @@ function build_opf_mtk_prob(dataset)
         push!(ub, ref[:gen][i]["qmax"])
     end
     vars = vcat(vars, [pg[i] for i in keys(ref[:gen])], [qg[i] for i in keys(ref[:gen])])
-    i_inds, j_inds, l_inds = maximum(first.(ref[:arcs])), maximum(getindex.(ref[:arcs], Ref(2))), maximum(last.(ref[:arcs]))
+    i_inds, j_inds,
+    l_inds = maximum(first.(ref[:arcs])), maximum(getindex.(ref[:arcs], Ref(2))),
+    maximum(last.(ref[:arcs]))
     ModelingToolkit.@variables p[1:i_inds, 1:j_inds, 1:l_inds]
     ModelingToolkit.@variables q[1:i_inds, 1:j_inds, 1:l_inds]
 
@@ -715,9 +747,10 @@ function build_opf_mtk_prob(dataset)
         push!(ub, ref[:branch][l]["rate_a"])
     end
 
-    loss = sum(gen["cost"][1] * pg[i]^2 + gen["cost"][2] * pg[i] + gen["cost"][3] for (i, gen) in ref[:gen])
+    loss = sum(gen["cost"][1] * pg[i]^2 + gen["cost"][2] * pg[i] + gen["cost"][3]
+    for (i, gen) in ref[:gen])
 
-    cons = Array{Union{ModelingToolkit.Equation,ModelingToolkit.Inequality}}([])
+    cons = Array{Union{ModelingToolkit.Equation, ModelingToolkit.Inequality}}([])
     for (i, bus) in ref[:ref_buses]
         push!(cons, va[i] ~ 0)
     end
@@ -727,16 +760,17 @@ function build_opf_mtk_prob(dataset)
         bus_shunts = [ref[:shunt][s] for s in ref[:bus_shunts][i]]
         push!(cons,
             sum(p[a...] for a in ref[:bus_arcs][i]) ~
-                (sum(pg[g] for g in ref[:bus_gens][i]; init = 0.0)) -
-                (sum(load["pd"] for load in bus_loads; init = 0.0)) -
-             sum(shunt["gs"] for shunt in bus_shunts; init = 0.0)*vm[i]^2
+            (sum(pg[g] for g in ref[:bus_gens][i]; init = 0.0)) -
+            (sum(load["pd"] for load in bus_loads; init = 0.0)) -
+            sum(shunt["gs"] for shunt in bus_shunts; init = 0.0)*vm[i]^2
         )
 
         push!(cons,
             sum(q[a...] for a in ref[:bus_arcs][i]) ~
-                (sum(qg[g] for g in ref[:bus_gens][i]; init = 0.0)) -
-                (sum(load["qd"] for load in bus_loads; init = 0.0))
-             + sum(shunt["bs"] for shunt in bus_shunts; init = 0.0)*vm[i]^2
+            (sum(qg[g] for g in ref[:bus_gens][i]; init = 0.0)) -
+            (sum(load["qd"] for load in bus_loads; init = 0.0))
+            +
+            sum(shunt["bs"] for shunt in bus_shunts; init = 0.0)*vm[i]^2
         )
     end
 
@@ -764,12 +798,28 @@ function build_opf_mtk_prob(dataset)
         b_to = branch["b_to"]
 
         # From side of the branch flow
-        push!(cons, p_fr ~ (g + g_fr) / ttm * vm_fr^2 + (-g * tr + b * ti) / ttm * (vm_fr * vm_to * cos(va_fr - va_to)) + (-b * tr - g * ti) / ttm * (vm_fr * vm_to * sin(va_fr - va_to)))
-        push!(cons, q_fr ~ -(b + b_fr) / ttm * vm_fr^2 - (-b * tr - g * ti) / ttm * (vm_fr * vm_to * cos(va_fr - va_to)) + (-g * tr + b * ti) / ttm * (vm_fr * vm_to * sin(va_fr - va_to)))
+        push!(cons,
+            p_fr ~
+            (g + g_fr) / ttm * vm_fr^2 +
+            (-g * tr + b * ti) / ttm * (vm_fr * vm_to * cos(va_fr - va_to)) +
+            (-b * tr - g * ti) / ttm * (vm_fr * vm_to * sin(va_fr - va_to)))
+        push!(cons,
+            q_fr ~
+            -(b + b_fr) / ttm * vm_fr^2 -
+            (-b * tr - g * ti) / ttm * (vm_fr * vm_to * cos(va_fr - va_to)) +
+            (-g * tr + b * ti) / ttm * (vm_fr * vm_to * sin(va_fr - va_to)))
 
         # To side of the branch flow
-        push!(cons, p_to ~ (g + g_to) * vm_to^2 + (-g * tr - b * ti) / ttm * (vm_to * vm_fr * cos(va_to - va_fr)) + (-b * tr + g * ti) / ttm * (vm_to * vm_fr * sin(va_to - va_fr)))
-        push!(cons, q_to ~ -(b + b_to) * vm_to^2 - (-b * tr + g * ti) / ttm * (vm_to * vm_fr * cos(va_to - va_fr)) + (-g * tr - b * ti) / ttm * (vm_to * vm_fr * sin(va_to - va_fr)))
+        push!(cons,
+            p_to ~
+            (g + g_to) * vm_to^2 +
+            (-g * tr - b * ti) / ttm * (vm_to * vm_fr * cos(va_to - va_fr)) +
+            (-b * tr + g * ti) / ttm * (vm_to * vm_fr * sin(va_to - va_fr)))
+        push!(cons,
+            q_to ~
+            -(b + b_to) * vm_to^2 -
+            (-b * tr + g * ti) / ttm * (vm_to * vm_fr * cos(va_to - va_fr)) +
+            (-g * tr - b * ti) / ttm * (vm_to * vm_fr * sin(va_to - va_fr)))
 
         # Voltage angle difference limit
         push!(cons, va_fr - va_to ≲ branch["angmax"])
@@ -780,7 +830,8 @@ function build_opf_mtk_prob(dataset)
         push!(cons, p_to^2 + q_to^2 ≲ branch["rate_a"]^2)
     end
 
-    optsys = ModelingToolkit.OptimizationSystem(loss, vars, [], constraints=cons, name=:rosetta)
+    optsys = ModelingToolkit.OptimizationSystem(
+        loss, vars, [], constraints = cons, name = :rosetta)
     optsys = ModelingToolkit.complete(optsys)
     u0map = [Num(k) => 0.0 for k in collect(unknowns(optsys))]
     ks = collect(Num.(unknowns(optsys)))
@@ -795,7 +846,9 @@ function build_opf_mtk_prob(dataset)
     for k in collect(unknowns(optsys))
         push!(inds, findall(x -> isequal(x, k), vars)[1])
     end
-    prob = Optimization.OptimizationProblem(optsys, Dict(u0map), lb = lb[inds], ub = ub[inds], grad=true, hess=true, cons_j=true, cons_h=true, cons_sparse=true, sparse=true)
+    prob = Optimization.OptimizationProblem(
+        optsys, Dict(u0map), lb = lb[inds], ub = ub[inds], grad = true, hess = true,
+        cons_j = true, cons_h = true, cons_sparse = true, sparse = true)
 end
 
 function solve_opf_mtk(dataset)
@@ -803,18 +856,18 @@ function solve_opf_mtk(dataset)
 
     # @assert prob.f(prob.u0, nothing) == 0.0 #MTK with simplification doesn't evaluate the same
     ret = zeros(length(prob.lcons))
-    prob.f.cons(ret, prob.u0, nothing, )
+    prob.f.cons(ret, prob.u0, nothing)
     @allocated prob.f(prob.u0, nothing) == 0
     @allocated prob.f.cons(ret, prob.u0, nothing) == 0
-
 
     solve_time_with_compilation = @elapsed sol = OptimizationMOI.solve(prob, Ipopt.Optimizer())
     solve_time_without_compilation = @elapsed sol = OptimizationMOI.solve(prob, Ipopt.Optimizer())
 
-    cost = sol.minimum
+    cost = sol.objective
     feasible = (sol.retcode == Optimization.SciMLBase.ReturnCode.Success)
 
-   return (prob,sol),Dict(
+    return (prob, sol),
+    Dict(
         "case" => file_name,
         "variables" => length(prob.u0),
         "constraints" => length(prob.lcons),
@@ -822,7 +875,7 @@ function solve_opf_mtk(dataset)
         "cost" => cost,
         "time_build" => model_build_time,
         "time_solve" => solve_time_without_compilation,
-        "time_solve_compilation" => solve_time_with_compilation,
+        "time_solve_compilation" => solve_time_with_compilation
     )
 end
 
@@ -874,15 +927,11 @@ objective, reconstructed_u0, cons_vals, lcons, ucons = test_mtk_prob(dataset, te
 16, 1.0999999581285527, 0.07121718642320936, 1.094374845084077  …  -0.95989
 88325635542, 1.3193604239530325, 2.399997991458022, -0.003103523654225171, 
 -2.7920689620650667, -0.6047898784636468, -1.9771521474512397, -3.707171142
-6024025, -3.9623014391707136, 0.3313990482205271], [0.0, -2.542410726391608
-5e-14, 0.0, 1.0782979045774244e-13, 1.7091883464104285e-13, 6.0174087934683
-48e-14, 3.9968028886505635e-14, 0.0, -1.5276668818842154e-13, 0.0  …  -2.31
-08919702252706e-6, -0.49535150528494754, 0.0, 1.5543122344752192e-15, 4.440
-892098500626e-16, -1.5543122344752192e-15, -0.42915027539849476, -0.6180472
-757981029, -9.470590205053371e-8, -0.19034197598422065], [0.0, 0.0, 0.0, 0.
-0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  -Inf, -Inf, 0.0, 0.0, 0.0, 0.0, -Inf, -
-Inf, -Inf, -Inf], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0
-, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+6024025, -3.9623014391707136, 0.3313990482205271], [0.0, 0.0, 0.0, 0.0, 0.0
+, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 
+0.0], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  -Inf, -Inf, 0.0
+, 0.0, 0.0, 0.0, -Inf, -Inf, -Inf, -Inf], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.
+0, 0.0, 0.0, 0.0  …  0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
 ```
 
 
@@ -898,21 +947,23 @@ Inf, -Inf, -Inf], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0  …  0.0
 # is arbitrary during simplification of the symbolic system.
 swappable_pairs = [
     [dataset.var_lookup["pg_1"], dataset.var_lookup["pg_2"]],
-    [dataset.var_lookup["qg_1"], dataset.var_lookup["qg_2"]],
+    [dataset.var_lookup["qg_1"], dataset.var_lookup["qg_2"]]
 ]
 
 # Indexes that must match
 non_swappable_idxs = setdiff(eachindex(reconstructed_u0), reduce(vcat, swappable_pairs))
 @assert isapprox(reconstructed_u0[non_swappable_idxs], test_u0[non_swappable_idxs])
 for (i, j) in swappable_pairs
-    @assert isapprox(reconstructed_u0[[i, j]], test_u0[[i, j]]) || isapprox(reconstructed_u0[[j, i]], test_u0[[i, j]])
+    @assert isapprox(reconstructed_u0[[i, j]], test_u0[[i, j]]) ||
+            isapprox(reconstructed_u0[[j, i]], test_u0[[i, j]])
 end
 ```
 
 
 ```julia
 # Test all constraint values
-@assert all(isapprox.(lcons, cons_vals, atol=1e-12) .|| (lcons .<= cons_vals .<= ucons) .|| isapprox.(cons_vals, ucons, atol=1e-12))
+@assert all(isapprox.(lcons, cons_vals, atol = 1e-12) .||
+            (lcons .<= cons_vals .<= ucons) .|| isapprox.(cons_vals, ucons, atol = 1e-12))
 ```
 
 
@@ -933,44 +984,54 @@ import Ipopt
 import JuMP
 
 function build_opf_jump_prob(dataset)
-    (;data, ref) = dataset
+    (; data, ref) = dataset
     constraints = Any[]
     model = JuMP.Model(Ipopt.Optimizer)
 
     vars = [JuMP.@variable(model, va[i in keys(ref[:bus])]),
-            JuMP.@variable(model, ref[:bus][i]["vmin"] <= vm[i in keys(ref[:bus])] <= ref[:bus][i]["vmax"], start=1.0),
-            JuMP.@variable(model, ref[:gen][i]["pmin"] <= pg[i in keys(ref[:gen])] <= ref[:gen][i]["pmax"]),
-            JuMP.@variable(model, ref[:gen][i]["qmin"] <= qg[i in keys(ref[:gen])] <= ref[:gen][i]["qmax"]),
-            JuMP.@variable(model, -ref[:branch][l]["rate_a"] <= p[(l,i,j) in ref[:arcs]] <= ref[:branch][l]["rate_a"]),
-            JuMP.@variable(model, -ref[:branch][l]["rate_a"] <= q[(l,i,j) in ref[:arcs]] <= ref[:branch][l]["rate_a"])]
+        JuMP.@variable(model,
+            ref[:bus][i]["vmin"] <= vm[i in keys(ref[:bus])] <= ref[:bus][i]["vmax"],
+            start=1.0),
+        JuMP.@variable(model,
+            ref[:gen][i]["pmin"] <= pg[i in keys(ref[:gen])] <= ref[:gen][i]["pmax"]),
+        JuMP.@variable(model,
+            ref[:gen][i]["qmin"] <= qg[i in keys(ref[:gen])] <= ref[:gen][i]["qmax"]),
+        JuMP.@variable(model,
+            -ref[:branch][l]["rate_a"] <= p[(l, i, j) in ref[:arcs]] <=
+            ref[:branch][l]["rate_a"]),
+        JuMP.@variable(model,
+            -ref[:branch][l]["rate_a"] <= q[(l, i, j) in ref[:arcs]] <=
+            ref[:branch][l]["rate_a"])]
 
-    JuMP.@objective(model, Min, sum(gen["cost"][1]*pg[i]^2 + gen["cost"][2]*pg[i] + gen["cost"][3] for (i,gen) in ref[:gen]))
+    JuMP.@objective(model, Min,
+        sum(gen["cost"][1]*pg[i]^2 + gen["cost"][2]*pg[i] + gen["cost"][3]
+        for (i, gen) in ref[:gen]))
 
-    for (i,bus) in ref[:ref_buses]
-        push!(constraints,JuMP.@constraint(model, va[i] == 0))
+    for (i, bus) in ref[:ref_buses]
+        push!(constraints, JuMP.@constraint(model, va[i] == 0))
     end
 
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         bus_loads = [ref[:load][l] for l in ref[:bus_loads][i]]
         bus_shunts = [ref[:shunt][s] for s in ref[:bus_shunts][i]]
 
-        push!(constraints,JuMP.@constraint(model,
-            sum(p[a] for a in ref[:bus_arcs][i]) ==
-            sum(pg[g] for g in ref[:bus_gens][i]) -
-            sum(load["pd"] for load in bus_loads) -
-            sum(shunt["gs"] for shunt in bus_shunts)*vm[i]^2
-        ))
+        push!(constraints,
+            JuMP.@constraint(model,
+                sum(p[a] for a in ref[:bus_arcs][i]) ==
+                sum(pg[g] for g in ref[:bus_gens][i]) -
+                sum(load["pd"] for load in bus_loads) -
+                sum(shunt["gs"] for shunt in bus_shunts)*vm[i]^2))
 
-        push!(constraints,JuMP.@constraint(model,
-            sum(q[a] for a in ref[:bus_arcs][i]) ==
-            sum(qg[g] for g in ref[:bus_gens][i]) -
-            sum(load["qd"] for load in bus_loads) +
-            sum(shunt["bs"] for shunt in bus_shunts)*vm[i]^2
-        ))
+        push!(constraints,
+            JuMP.@constraint(model,
+                sum(q[a] for a in ref[:bus_arcs][i]) ==
+                sum(qg[g] for g in ref[:bus_gens][i]) -
+                sum(load["qd"] for load in bus_loads) +
+                sum(shunt["bs"] for shunt in bus_shunts)*vm[i]^2))
     end
 
     # Branch power flow physics and limit constraints
-    for (i,branch) in ref[:branch]
+    for (i, branch) in ref[:branch]
         f_idx = (i, branch["f_bus"], branch["t_bus"])
         t_idx = (i, branch["t_bus"], branch["f_bus"])
 
@@ -993,25 +1054,43 @@ function build_opf_jump_prob(dataset)
         b_to = branch["b_to"]
 
         # From side of the branch flow
-        push!(constraints,JuMP.@NLconstraint(model, p_fr ==  (g+g_fr)/ttm*vm_fr^2 + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) + (-b*tr-g*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to)) ))
-        push!(constraints,JuMP.@NLconstraint(model, q_fr == -(b+b_fr)/ttm*vm_fr^2 - (-b*tr-g*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to)) ))
+        push!(constraints,
+            JuMP.@NLconstraint(model,
+                p_fr ==
+                (g+g_fr)/ttm*vm_fr^2 + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) +
+                (-b*tr-g*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to))))
+        push!(constraints,
+            JuMP.@NLconstraint(model,
+                q_fr ==
+                -(b+b_fr)/ttm*vm_fr^2 - (-b*tr-g*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) +
+                (-g*tr+b*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to))))
 
         # To side of the branch flow
-        push!(constraints,JuMP.@NLconstraint(model, p_to ==  (g+g_to)*vm_to^2 + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) + (-b*tr+g*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr)) ))
-        push!(constraints,JuMP.@NLconstraint(model, q_to == -(b+b_to)*vm_to^2 - (-b*tr+g*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr)) ))
+        push!(constraints,
+            JuMP.@NLconstraint(model,
+                p_to ==
+                (g+g_to)*vm_to^2 + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) +
+                (-b*tr+g*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr))))
+        push!(constraints,
+            JuMP.@NLconstraint(model,
+                q_to ==
+                -(b+b_to)*vm_to^2 - (-b*tr+g*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) +
+                (-g*tr-b*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr))))
 
         # Voltage angle difference limit
-        push!(constraints,JuMP.@constraint(model, branch["angmin"] <= va_fr - va_to <= branch["angmax"]))
+        push!(constraints, JuMP.@constraint(model,
+            branch["angmin"] <= va_fr - va_to <= branch["angmax"]))
 
         # Apparent power limit, from side and to side
-        push!(constraints,JuMP.@constraint(model, p_fr^2 + q_fr^2 <= branch["rate_a"]^2))
-        push!(constraints,JuMP.@constraint(model, p_to^2 + q_to^2 <= branch["rate_a"]^2))
+        push!(constraints, JuMP.@constraint(model, p_fr^2 + q_fr^2 <= branch["rate_a"]^2))
+        push!(constraints, JuMP.@constraint(model, p_to^2 + q_to^2 <= branch["rate_a"]^2))
     end
 
     model_variables = JuMP.num_variables(model)
 
     # for consistency with other solvers, skip the variable bounds in the constraint count
-    non_nl_constraints = sum(JuMP.num_constraints(model, ft, st) for (ft, st) in JuMP.list_of_constraint_types(model) if ft != JuMP.VariableRef)
+    non_nl_constraints = sum(JuMP.num_constraints(model, ft, st)
+    for (ft, st) in JuMP.list_of_constraint_types(model) if ft != JuMP.VariableRef)
     model_constraints = JuMP.num_nonlinear_constraints(model) + non_nl_constraints
 
     model, vars, constraints
@@ -1029,17 +1108,18 @@ function solve_opf_jump(dataset)
     feasible = (JuMP.termination_status(model) == JuMP.LOCALLY_SOLVED)
 
     nlp_block = JuMP.MOI.get(model, JuMP.MOI.NLPBlock())
-    total_callback_time =
-        nlp_block.evaluator.eval_objective_timer +
-        nlp_block.evaluator.eval_objective_gradient_timer +
-        nlp_block.evaluator.eval_constraint_timer +
-        nlp_block.evaluator.eval_constraint_jacobian_timer +
-        nlp_block.evaluator.eval_hessian_lagrangian_timer
+    total_callback_time = nlp_block.evaluator.eval_objective_timer +
+                          nlp_block.evaluator.eval_objective_gradient_timer +
+                          nlp_block.evaluator.eval_constraint_timer +
+                          nlp_block.evaluator.eval_constraint_jacobian_timer +
+                          nlp_block.evaluator.eval_hessian_lagrangian_timer
     model_variables = JuMP.num_variables(model)
-    non_nl_constraints = sum(JuMP.num_constraints(model, ft, st) for (ft, st) in JuMP.list_of_constraint_types(model) if ft != JuMP.VariableRef)
+    non_nl_constraints = sum(JuMP.num_constraints(model, ft, st)
+    for (ft, st) in JuMP.list_of_constraint_types(model) if ft != JuMP.VariableRef)
     model_constraints = JuMP.num_nonlinear_constraints(model) + non_nl_constraints
-    
-    return model, Dict(
+
+    return model,
+    Dict(
         "case" => file_name,
         "variables" => model_variables,
         "constraints" => model_constraints,
@@ -1047,37 +1127,37 @@ function solve_opf_jump(dataset)
         "cost" => cost,
         "time_build" => model_build_time,
         "time_solve" => solve_time_without_compilation,
-        "time_solve_compilation" => solve_time_with_compilation,
+        "time_solve_compilation" => solve_time_with_compilation
     )
 end
 
 function test_jump_prob(dataset, test_u0)
-    model, vars, constraints  = build_opf_jump_prob(dataset)
+    model, vars, constraints = build_opf_jump_prob(dataset)
     (;
-    lookup_pg,
-    lookup_qg,
-    lookup_va,
-    lookup_vm,
-    lookup_lij,
-    lookup_p_lij,
-    lookup_q_lij) = dataset
+        lookup_pg,
+        lookup_qg,
+        lookup_va,
+        lookup_vm,
+        lookup_lij,
+        lookup_p_lij,
+        lookup_q_lij) = dataset
     f = JuMP.objective_function(model)
 
-    flatvars = reduce(vcat,[reduce(vcat,vars[i]) for i in 1:length(vars)])
+    flatvars = reduce(vcat, [reduce(vcat, vars[i]) for i in 1:length(vars)])
     point = Dict()
     for v in flatvars
         varname, varint = split(JuMP.name(v), "[")
         idx = if varint[1] == '('
             varint = (parse(Int, varint[2]), parse(Int, varint[5]), parse(Int, varint[8]))
             if varname == "p"
-                lookup_p_lij[findfirst(x->x==varint,lookup_lij)]
+                lookup_p_lij[findfirst(x->x==varint, lookup_lij)]
             elseif varname == "q"
-                lookup_q_lij[findfirst(x->x==varint,lookup_lij)]
+                lookup_q_lij[findfirst(x->x==varint, lookup_lij)]
             else
                 error("Invalid $varname, $varint")
             end
         else
-            varint = parse(Int, varint[1:end-1])
+            varint = parse(Int, varint[1:(end - 1)])
             if varname == "va"
                 lookup_va[varint]
             elseif varname == "pg"
@@ -1158,15 +1238,15 @@ import ADNLPModels
 import NLPModelsIpopt
 
 function build_opf_nlpmodels_prob(dataset)
-    (;data, ref) = dataset
+    (; data, ref) = dataset
 
-    bus_pd = Dict(i => 0.0 for (i,bus) in ref[:bus])
-    bus_qd = Dict(i => 0.0 for (i,bus) in ref[:bus])
+    bus_pd = Dict(i => 0.0 for (i, bus) in ref[:bus])
+    bus_qd = Dict(i => 0.0 for (i, bus) in ref[:bus])
 
-    bus_gs = Dict(i => 0.0 for (i,bus) in ref[:bus])
-    bus_bs = Dict(i => 0.0 for (i,bus) in ref[:bus])
+    bus_gs = Dict(i => 0.0 for (i, bus) in ref[:bus])
+    bus_bs = Dict(i => 0.0 for (i, bus) in ref[:bus])
 
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         if length(ref[:bus_loads][i]) > 0
             bus_pd[i] = sum(ref[:load][l]["pd"] for l in ref[:bus_loads][i])
             bus_qd[i] = sum(ref[:load][l]["qd"] for l in ref[:bus_loads][i])
@@ -1178,20 +1258,19 @@ function build_opf_nlpmodels_prob(dataset)
         end
     end
 
+    br_g = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_g = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b = Dict(i => 0.0 for (i,branch) in ref[:branch])
+    br_tr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_ti = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_ttm = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_tr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_ti = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_ttm = Dict(i => 0.0 for (i,branch) in ref[:branch])
+    br_g_fr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b_fr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_g_to = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b_to = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_g_fr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b_fr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_g_to = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b_to = Dict(i => 0.0 for (i,branch) in ref[:branch])
-
-    for (i,branch) in ref[:branch]
+    for (i, branch) in ref[:branch]
         g, b = PowerModels.calc_branch_y(branch)
         tr, ti = PowerModels.calc_branch_t(branch)
 
@@ -1208,14 +1287,14 @@ function build_opf_nlpmodels_prob(dataset)
         br_b_to[i] = branch["b_to"]
     end
 
-    var_lookup = Dict{String,Int}()
+    var_lookup = Dict{String, Int}()
 
     var_init = Float64[]
     var_lb = Float64[]
     var_ub = Float64[]
 
     var_idx = 1
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         push!(var_init, 0.0) #va
         push!(var_lb, -Inf)
         push!(var_ub, Inf)
@@ -1229,7 +1308,7 @@ function build_opf_nlpmodels_prob(dataset)
         var_idx += 1
     end
 
-    for (i,gen) in ref[:gen]
+    for (i, gen) in ref[:gen]
         push!(var_init, 0.0) #pg
         push!(var_lb, gen["pmin"])
         push!(var_ub, gen["pmax"])
@@ -1243,18 +1322,18 @@ function build_opf_nlpmodels_prob(dataset)
         var_idx += 1
     end
 
-    for (l,i,j) in ref[:arcs]
+    for (l, i, j) in ref[:arcs]
         branch = ref[:branch][l]
 
         push!(var_init, 0.0) #p
         push!(var_lb, -branch["rate_a"])
-        push!(var_ub,  branch["rate_a"])
+        push!(var_ub, branch["rate_a"])
         var_lookup["p_$(l)_$(i)_$(j)"] = var_idx
         var_idx += 1
 
         push!(var_init, 0.0) #q
         push!(var_lb, -branch["rate_a"])
-        push!(var_ub,  branch["rate_a"])
+        push!(var_ub, branch["rate_a"])
         var_lookup["q_$(l)_$(i)_$(j)"] = var_idx
         var_idx += 1
     end
@@ -1264,7 +1343,7 @@ function build_opf_nlpmodels_prob(dataset)
     function opf_objective(x)
         #start = time()
         cost = 0.0
-        for (i,gen) in ref[:gen]
+        for (i, gen) in ref[:gen]
             pg = x[var_lookup["pg_$(i)"]]
             cost += gen["cost"][1]*pg^2 + gen["cost"][2]*pg + gen["cost"][3]
         end
@@ -1275,24 +1354,23 @@ function build_opf_nlpmodels_prob(dataset)
     function opf_constraints!(cx, x)
         #start = time()
 
-        va = Dict(i => x[var_lookup["va_$(i)"]] for (i,bus) in ref[:bus])
-        vm = Dict(i => x[var_lookup["vm_$(i)"]] for (i,bus) in ref[:bus])
+        va = Dict(i => x[var_lookup["va_$(i)"]] for (i, bus) in ref[:bus])
+        vm = Dict(i => x[var_lookup["vm_$(i)"]] for (i, bus) in ref[:bus])
 
-        pg = Dict(i => x[var_lookup["pg_$(i)"]] for (i,gen) in ref[:gen])
-        qg = Dict(i => x[var_lookup["qg_$(i)"]] for (i,gen) in ref[:gen])
+        pg = Dict(i => x[var_lookup["pg_$(i)"]] for (i, gen) in ref[:gen])
+        qg = Dict(i => x[var_lookup["qg_$(i)"]] for (i, gen) in ref[:gen])
 
-        p = Dict((l,i,j) => x[var_lookup["p_$(l)_$(i)_$(j)"]] for (l,i,j) in ref[:arcs])
-        q = Dict((l,i,j) => x[var_lookup["q_$(l)_$(i)_$(j)"]] for (l,i,j) in ref[:arcs])
+        p = Dict((l, i, j) => x[var_lookup["p_$(l)_$(i)_$(j)"]] for (l, i, j) in ref[:arcs])
+        q = Dict((l, i, j) => x[var_lookup["q_$(l)_$(i)_$(j)"]] for (l, i, j) in ref[:arcs])
 
-        vm_fr = Dict(l => vm[branch["f_bus"]] for (l,branch) in ref[:branch])
-        vm_to = Dict(l => vm[branch["t_bus"]] for (l,branch) in ref[:branch])
-        va_fr = Dict(l => va[branch["f_bus"]] for (l,branch) in ref[:branch])
-        va_to = Dict(l => va[branch["t_bus"]] for (l,branch) in ref[:branch])
-
+        vm_fr = Dict(l => vm[branch["f_bus"]] for (l, branch) in ref[:branch])
+        vm_to = Dict(l => vm[branch["t_bus"]] for (l, branch) in ref[:branch])
+        va_fr = Dict(l => va[branch["f_bus"]] for (l, branch) in ref[:branch])
+        va_to = Dict(l => va[branch["t_bus"]] for (l, branch) in ref[:branch])
 
         # va_con = [va[i] for (i,bus) in ref[:ref_buses]]
         k = 0
-        for (i,bus) in ref[:ref_buses]
+        for (i, bus) in ref[:ref_buses]
             k += 1
             cx[k] = va[i]
         end
@@ -1305,7 +1383,8 @@ function build_opf_nlpmodels_prob(dataset)
         #     )
         for (i, bus) in ref[:bus]
             k += 1
-            cx[k] = sum(pg[j] for j in ref[:bus_gens][i]; init=0.0) - bus_pd[i] - bus_gs[i]*vm[i]^2 - sum(p[a] for a in ref[:bus_arcs][i])
+            cx[k] = sum(pg[j] for j in ref[:bus_gens][i]; init = 0.0) - bus_pd[i] -
+                    bus_gs[i]*vm[i]^2 - sum(p[a] for a in ref[:bus_arcs][i])
         end
 
         #     @constraint(model,
@@ -1316,63 +1395,63 @@ function build_opf_nlpmodels_prob(dataset)
         #     )
         for (i, bus) in ref[:bus]
             k += 1
-            cx[k] = sum(qg[j] for j in ref[:bus_gens][i]; init=0.0) - bus_qd[i] + bus_bs[i]*vm[i]^2 - sum(q[a] for a in ref[:bus_arcs][i])
+            cx[k] = sum(qg[j] for j in ref[:bus_gens][i]; init = 0.0) - bus_qd[i] +
+                    bus_bs[i]*vm[i]^2 - sum(q[a] for a in ref[:bus_arcs][i])
         end
 
-
         # @NLconstraint(model, p_fr ==  (g+g_fr)/ttm*vm_fr^2 + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) + (-b*tr-g*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to)) )
-        for (l,i,j) in ref[:arcs_from]
+        for (l, i, j) in ref[:arcs_from]
             k += 1
             cx[k] = (br_g[l]+br_g_fr[l])/br_ttm[l]*vm_fr[l]^2 +
-            (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*cos(va_fr[l]-va_to[l])) +
-            (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*sin(va_fr[l]-va_to[l])) -
-            p[(l,i,j)]
+                    (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*cos(va_fr[l]-va_to[l])) +
+                    (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*sin(va_fr[l]-va_to[l])) -
+                    p[(l, i, j)]
         end
 
         # @NLconstraint(model, p_to ==  (g+g_to)*vm_to^2 + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) + (-b*tr+g*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr)) )
-        for (l,i,j) in ref[:arcs_to]
+        for (l, i, j) in ref[:arcs_to]
             k += 1
             cx[k] = (br_g[l]+br_g_to[l])*vm_to[l]^2 +
-            (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*cos(va_to[l]-va_fr[l])) +
-            (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*sin(va_to[l]-va_fr[l])) -
-            p[(l,i,j)]
+                    (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*cos(va_to[l]-va_fr[l])) +
+                    (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*sin(va_to[l]-va_fr[l])) -
+                    p[(l, i, j)]
         end
 
         # @NLconstraint(model, q_fr == -(b+b_fr)/ttm*vm_fr^2 - (-b*tr-g*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to)) )
-        for (l,i,j) in ref[:arcs_from]
+        for (l, i, j) in ref[:arcs_from]
             k += 1
             cx[k] = -(br_b[l]+br_b_fr[l])/br_ttm[l]*vm_fr[l]^2 -
-            (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*cos(va_fr[l]-va_to[l])) +
-            (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*sin(va_fr[l]-va_to[l])) -
-            q[(l,i,j)]
+                    (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*cos(va_fr[l]-va_to[l])) +
+                    (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*sin(va_fr[l]-va_to[l])) -
+                    q[(l, i, j)]
         end
 
         # @NLconstraint(model, q_to == -(b+b_to)*vm_to^2 - (-b*tr+g*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr)) )
-        for (l,i,j) in ref[:arcs_to]
+        for (l, i, j) in ref[:arcs_to]
             k += 1
             cx[k] = -(br_b[l]+br_b_to[l])*vm_to[l]^2 -
-            (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*cos(va_to[l]-va_fr[l])) +
-            (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*sin(va_to[l]-va_fr[l])) -
-            q[(l,i,j)]
+                    (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*cos(va_to[l]-va_fr[l])) +
+                    (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*sin(va_to[l]-va_fr[l])) -
+                    q[(l, i, j)]
         end
 
         # @constraint(model, va_fr - va_to <= branch["angmax"])
         # @constraint(model, va_fr - va_to >= branch["angmin"])
-        for (l,i,j) in ref[:arcs_from]
+        for (l, i, j) in ref[:arcs_from]
             k += 1
             cx[k] = va_fr[l] - va_to[l]
         end
 
         # @constraint(model, p_fr^2 + q_fr^2 <= branch["rate_a"]^2)
-        for (l,i,j) in ref[:arcs_from]
+        for (l, i, j) in ref[:arcs_from]
             k += 1
-            cx[k] = p[(l,i,j)]^2 + q[(l,i,j)]^2
+            cx[k] = p[(l, i, j)]^2 + q[(l, i, j)]^2
         end
 
         # @constraint(model, p_to^2 + q_to^2 <= branch["rate_a"]^2)
-        for (l,i,j) in ref[:arcs_to]
+        for (l, i, j) in ref[:arcs_to]
             k += 1
-            cx[k] = p[(l,i,j)]^2 + q[(l,i,j)]^2
+            cx[k] = p[(l, i, j)]^2 + q[(l, i, j)]^2
         end
 
         #total_callback_time += time() - start
@@ -1383,63 +1462,63 @@ function build_opf_nlpmodels_prob(dataset)
     con_ubs = Float64[]
 
     #@constraint(model, va[i] == 0)
-    for (i,bus) in ref[:ref_buses]
+    for (i, bus) in ref[:ref_buses]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_balance_p_con
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_balance_q_con
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_p_from_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_p_to_con
-    for (l,i,j) in ref[:arcs_to]
+    for (l, i, j) in ref[:arcs_to]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_q_from_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_q_to_con
-    for (l,i,j) in ref[:arcs_to]
+    for (l, i, j) in ref[:arcs_to]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_vad_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         branch = ref[:branch][l]
         push!(con_lbs, branch["angmin"])
         push!(con_ubs, branch["angmax"])
     end
 
     #power_flow_mva_from_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         branch = ref[:branch][l]
         push!(con_lbs, -Inf)
         push!(con_ubs, branch["rate_a"]^2)
     end
 
     #power_flow_mva_to_con
-    for (l,i,j) in ref[:arcs_to]
+    for (l, i, j) in ref[:arcs_to]
         branch = ref[:branch][l]
         push!(con_lbs, -Inf)
         push!(con_ubs, branch["rate_a"]^2)
@@ -1463,20 +1542,24 @@ function build_opf_nlpmodels_prob(dataset)
                    hessian_residual_backend = ADNLPModels.ForwardDiffADHessian
                    )
     =#
-    nlp = ADNLPModels.ADNLPModel!(opf_objective, var_init, var_lb, var_ub, opf_constraints!, con_lbs, con_ubs, backend = :optimized)
+    nlp = ADNLPModels.ADNLPModel!(opf_objective, var_init, var_lb, var_ub,
+        opf_constraints!, con_lbs, con_ubs, backend = :optimized)
 end
 
 function solve_opf_nlpmodels(dataset)
     model_build_time = @elapsed nlp = build_opf_nlpmodels_prob(dataset)
-    solve_time_with_compilation = @elapsed output = NLPModelsIpopt.ipopt(nlp, print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME)
-    solve_time_without_compilation = @elapsed output = NLPModelsIpopt.ipopt(nlp, print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME)
+    solve_time_with_compilation = @elapsed output = NLPModelsIpopt.ipopt(
+        nlp, print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME)
+    solve_time_without_compilation = @elapsed output = NLPModelsIpopt.ipopt(
+        nlp, print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME)
     cost = output.objective
-    feasible = (output.primal_feas <= 1e-6)  
+    feasible = (output.primal_feas <= 1e-6)
 
     model_variables = nlp.meta.nvar
     model_constraints = nlp.meta.ncon
 
-    return (nlp, output), Dict(
+    return (nlp, output),
+    Dict(
         "case" => file_name,
         "variables" => model_variables,
         "constraints" => model_constraints,
@@ -1484,7 +1567,7 @@ function solve_opf_nlpmodels(dataset)
         "cost" => cost,
         "time_build" => model_build_time,
         "time_solve" => solve_time_without_compilation,
-        "time_solve_compilation" => solve_time_with_compilation,
+        "time_solve_compilation" => solve_time_with_compilation
     )
 end
 
@@ -1534,24 +1617,26 @@ nlpmodels_test_res = test_nlpmodels_prob(dataset, test_u0)
 
 Implementation reference: https://julianonconvex.github.io/Nonconvex.jl/stable/problem/
 Currently does not converge due to an upstream issue with the AD backend Zygote: https://github.com/JuliaNonconvex/Nonconvex.jl/issues/130
+Note: Nonconvex.jl is incompatible with Symbolics v7 and has been removed from this benchmark.
 
 ```julia
+#=
 import Nonconvex
 Nonconvex.@load Ipopt
 
 function build_opf_nonconvex_prob(dataset)
-    (;data, ref) = dataset
+    (; data, ref) = dataset
     time_model_start = time()
 
     model = Nonconvex.DictModel()
 
-    bus_pd = Dict(i => 0.0 for (i,bus) in ref[:bus])
-    bus_qd = Dict(i => 0.0 for (i,bus) in ref[:bus])
+    bus_pd = Dict(i => 0.0 for (i, bus) in ref[:bus])
+    bus_qd = Dict(i => 0.0 for (i, bus) in ref[:bus])
 
-    bus_gs = Dict(i => 0.0 for (i,bus) in ref[:bus])
-    bus_bs = Dict(i => 0.0 for (i,bus) in ref[:bus])
+    bus_gs = Dict(i => 0.0 for (i, bus) in ref[:bus])
+    bus_bs = Dict(i => 0.0 for (i, bus) in ref[:bus])
 
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         if length(ref[:bus_loads][i]) > 0
             bus_pd[i] = sum(ref[:load][l]["pd"] for l in ref[:bus_loads][i])
             bus_qd[i] = sum(ref[:load][l]["qd"] for l in ref[:bus_loads][i])
@@ -1563,24 +1648,23 @@ function build_opf_nonconvex_prob(dataset)
         end
     end
 
+    br_g = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_g = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b = Dict(i => 0.0 for (i,branch) in ref[:branch])
+    br_tr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_ti = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_ttm = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_tr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_ti = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_ttm = Dict(i => 0.0 for (i,branch) in ref[:branch])
+    br_g_fr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b_fr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_g_to = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b_to = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_g_fr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b_fr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_g_to = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b_to = Dict(i => 0.0 for (i,branch) in ref[:branch])
+    br_rate_a = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_angmin = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_angmax = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_rate_a = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_angmin = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_angmax = Dict(i => 0.0 for (i,branch) in ref[:branch])
-
-    for (i,branch) in ref[:branch]
+    for (i, branch) in ref[:branch]
         g, b = PowerModels.calc_branch_y(branch)
         tr, ti = PowerModels.calc_branch_t(branch)
 
@@ -1601,28 +1685,26 @@ function build_opf_nonconvex_prob(dataset)
         br_angmax[i] = branch["angmax"]
     end
 
-
-    for (i,bus) in ref[:bus]
-        addvar!(model, "va_$(i)", -Inf, Inf, init=0.0) #va
-        addvar!(model, "vm_$(i)", bus["vmin"], bus["vmax"], init=1.0) #vm
+    for (i, bus) in ref[:bus]
+        addvar!(model, "va_$(i)", -Inf, Inf, init = 0.0) #va
+        addvar!(model, "vm_$(i)", bus["vmin"], bus["vmax"], init = 1.0) #vm
     end
 
-    for (i,gen) in ref[:gen]
-        addvar!(model, "pg_$(i)", gen["pmin"], gen["pmax"], init=0.0) #pg
-        addvar!(model, "qg_$(i)", gen["qmin"], gen["qmax"], init=0.0) #qg
+    for (i, gen) in ref[:gen]
+        addvar!(model, "pg_$(i)", gen["pmin"], gen["pmax"], init = 0.0) #pg
+        addvar!(model, "qg_$(i)", gen["qmin"], gen["qmax"], init = 0.0) #qg
     end
 
-    for (l,i,j) in ref[:arcs]
+    for (l, i, j) in ref[:arcs]
         branch = ref[:branch][l]
-        addvar!(model, "p_$(l)_$(i)_$(j)", -branch["rate_a"], branch["rate_a"], init=0.0) #p
-        addvar!(model, "q_$(l)_$(i)_$(j)", -branch["rate_a"], branch["rate_a"], init=0.0) #q
+        addvar!(model, "p_$(l)_$(i)_$(j)", -branch["rate_a"], branch["rate_a"], init = 0.0) #p
+        addvar!(model, "q_$(l)_$(i)_$(j)", -branch["rate_a"], branch["rate_a"], init = 0.0) #q
     end
-
 
     # JuMP.@objective(model, Min, sum(gen["cost"][1]*pg[i]^2 + gen["cost"][2]*pg[i] + gen["cost"][3] for (i,gen) in ref[:gen]))
     function opf_objective(x::OrderedDict)
         cost = 0.0
-        for (i,gen) in ref[:gen]
+        for (i, gen) in ref[:gen]
             pg = x["pg_$(i)"]
             cost += gen["cost"][1]*pg^2 + gen["cost"][2]*pg + gen["cost"][3]
         end
@@ -1634,8 +1716,8 @@ function build_opf_nonconvex_prob(dataset)
     function const_ref_bus(x::OrderedDict, i)
         return x["va_$(i)"]
     end
-    for (i,bus) in ref[:ref_buses]
-        add_eq_constraint!(model, x -> const_ref_bus(x,i))
+    for (i, bus) in ref[:ref_buses]
+        add_eq_constraint!(model, x -> const_ref_bus(x, i))
     end
 
     # @constraint(model,
@@ -1646,7 +1728,7 @@ function build_opf_nonconvex_prob(dataset)
     # )
     function const_power_balance_p(x::OrderedDict, b)
         balance = - bus_pd[b] - bus_gs[b]*x["vm_$(b)"]^2
-        for (l,i,j) in ref[:bus_arcs][b]
+        for (l, i, j) in ref[:bus_arcs][b]
             balance -= x["p_$(l)_$(i)_$(j)"]
         end
         for j in ref[:bus_gens][b]
@@ -1663,7 +1745,7 @@ function build_opf_nonconvex_prob(dataset)
     # )
     function const_power_balance_q(x::OrderedDict, b)
         balance = - bus_qd[b] + bus_bs[b]*x["vm_$(b)"]^2
-        for (l,i,j) in ref[:bus_arcs][b]
+        for (l, i, j) in ref[:bus_arcs][b]
             balance -= x["q_$(l)_$(i)_$(j)"]
         end
         for j in ref[:bus_gens][b]
@@ -1672,66 +1754,65 @@ function build_opf_nonconvex_prob(dataset)
         return balance
     end
 
-    for (i,bus) in ref[:bus]
-        add_eq_constraint!(model, x -> const_power_balance_p(x,i))
-        add_eq_constraint!(model, x -> const_power_balance_q(x,i))
+    for (i, bus) in ref[:bus]
+        add_eq_constraint!(model, x -> const_power_balance_p(x, i))
+        add_eq_constraint!(model, x -> const_power_balance_q(x, i))
     end
-
 
     # @NLconstraint(model, p_fr ==  (g+g_fr)/ttm*vm_fr^2 + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) + (-b*tr-g*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to)) )
-    function const_flow_p_from(x::OrderedDict,l,i,j)
+    function const_flow_p_from(x::OrderedDict, l, i, j)
         return (br_g[l]+br_g_fr[l])/br_ttm[l]*x["vm_$(i)"]^2 +
-        (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(x["vm_$(i)"]*x["vm_$(j)"]*cos(x["va_$(i)"]-x["va_$(j)"])) +
-        (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(x["vm_$(i)"]*x["vm_$(j)"]*sin(x["va_$(i)"]-x["va_$(j)"])) -
-        x["p_$(l)_$(i)_$(j)"]
+               (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(x["vm_$(i)"]*x["vm_$(j)"]*cos(x["va_$(i)"]-x["va_$(j)"])) +
+               (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(x["vm_$(i)"]*x["vm_$(j)"]*sin(x["va_$(i)"]-x["va_$(j)"])) -
+               x["p_$(l)_$(i)_$(j)"]
     end
     # @NLconstraint(model, q_fr == -(b+b_fr)/ttm*vm_fr^2 - (-b*tr-g*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to)) )
-    function const_flow_q_from(x::OrderedDict,l,i,j)
+    function const_flow_q_from(x::OrderedDict, l, i, j)
         return -(br_b[l]+br_b_fr[l])/br_ttm[l]*x["vm_$(i)"]^2 -
-       (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(x["vm_$(i)"]*x["vm_$(j)"]*cos(x["va_$(i)"]-x["va_$(j)"])) +
-       (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(x["vm_$(i)"]*x["vm_$(j)"]*sin(x["va_$(i)"]-x["va_$(j)"])) -
-       x["q_$(l)_$(i)_$(j)"]
+               (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(x["vm_$(i)"]*x["vm_$(j)"]*cos(x["va_$(i)"]-x["va_$(j)"])) +
+               (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(x["vm_$(i)"]*x["vm_$(j)"]*sin(x["va_$(i)"]-x["va_$(j)"])) -
+               x["q_$(l)_$(i)_$(j)"]
     end
 
     # @NLconstraint(model, p_to ==  (g+g_to)*vm_to^2 + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) + (-b*tr+g*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr)) )
-    function const_flow_p_to(x::OrderedDict,l,i,j)
+    function const_flow_p_to(x::OrderedDict, l, i, j)
         return (br_g[l]+br_g_to[l])*x["vm_$(j)"]^2 +
-        (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(x["vm_$(j)"]*x["vm_$(i)"]*cos(x["va_$(j)"]-x["va_$(i)"])) +
-        (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(x["vm_$(j)"]*x["vm_$(i)"]*sin(x["va_$(j)"]-x["va_$(i)"])) -
-        x["p_$(l)_$(j)_$(i)"]
+               (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(x["vm_$(j)"]*x["vm_$(i)"]*cos(x["va_$(j)"]-x["va_$(i)"])) +
+               (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(x["vm_$(j)"]*x["vm_$(i)"]*sin(x["va_$(j)"]-x["va_$(i)"])) -
+               x["p_$(l)_$(j)_$(i)"]
     end
     # @NLconstraint(model, q_to == -(b+b_to)*vm_to^2 - (-b*tr+g*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr)) )
-    function const_flow_q_to(x::OrderedDict,l,i,j)
-       return -(br_b[l]+br_b_to[l])*x["vm_$(j)"]^2 -
-       (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(x["vm_$(j)"]*x["vm_$(i)"]*cos(x["va_$(j)"]-x["va_$(i)"])) +
-       (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(x["vm_$(j)"]*x["vm_$(i)"]*sin(x["va_$(j)"]-x["va_$(i)"])) -
-       x["q_$(l)_$(j)_$(i)"]
+    function const_flow_q_to(x::OrderedDict, l, i, j)
+        return -(br_b[l]+br_b_to[l])*x["vm_$(j)"]^2 -
+               (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(x["vm_$(j)"]*x["vm_$(i)"]*cos(x["va_$(j)"]-x["va_$(i)"])) +
+               (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(x["vm_$(j)"]*x["vm_$(i)"]*sin(x["va_$(j)"]-x["va_$(i)"])) -
+               x["q_$(l)_$(j)_$(i)"]
     end
 
-    function const_thermal_limit(x::OrderedDict,l,i,j)
-       return x["p_$(l)_$(i)_$(j)"]^2 + x["q_$(l)_$(i)_$(j)"]^2 - br_rate_a[l]^2
+    function const_thermal_limit(x::OrderedDict, l, i, j)
+        return x["p_$(l)_$(i)_$(j)"]^2 + x["q_$(l)_$(i)_$(j)"]^2 - br_rate_a[l]^2
     end
 
-    function const_voltage_angle_difference_lb(x::OrderedDict,l,i,j)
-       return br_angmin[l] - x["va_$(i)"] + x["va_$(j)"]
+    function const_voltage_angle_difference_lb(x::OrderedDict, l, i, j)
+        return br_angmin[l] - x["va_$(i)"] + x["va_$(j)"]
     end
 
-    function const_voltage_angle_difference_ub(x::OrderedDict,l,i,j)
-       return x["va_$(i)"] - x["va_$(j)"] - br_angmax[l]
+    function const_voltage_angle_difference_ub(x::OrderedDict, l, i, j)
+        return x["va_$(i)"] - x["va_$(j)"] - br_angmax[l]
     end
 
-    for (l,i,j) in ref[:arcs_from]
-        add_eq_constraint!(model, x -> const_flow_p_from(x,l,i,j))
-        add_eq_constraint!(model, x -> const_flow_q_from(x,l,i,j))
+    for (l, i, j) in ref[:arcs_from]
+        add_eq_constraint!(model, x -> const_flow_p_from(x, l, i, j))
+        add_eq_constraint!(model, x -> const_flow_q_from(x, l, i, j))
 
-        add_eq_constraint!(model, x -> const_flow_p_to(x,l,i,j))
-        add_eq_constraint!(model, x -> const_flow_q_to(x,l,i,j))
+        add_eq_constraint!(model, x -> const_flow_p_to(x, l, i, j))
+        add_eq_constraint!(model, x -> const_flow_q_to(x, l, i, j))
 
-        add_ineq_constraint!(model, x -> const_thermal_limit(x,l,i,j))
-        add_ineq_constraint!(model, x -> const_thermal_limit(x,l,j,i))
+        add_ineq_constraint!(model, x -> const_thermal_limit(x, l, i, j))
+        add_ineq_constraint!(model, x -> const_thermal_limit(x, l, j, i))
 
-        add_ineq_constraint!(model, x -> const_voltage_angle_difference_lb(x,l,i,j))
-        add_ineq_constraint!(model, x -> const_voltage_angle_difference_ub(x,l,i,j))
+        add_ineq_constraint!(model, x -> const_voltage_angle_difference_lb(x, l, i, j))
+        add_ineq_constraint!(model, x -> const_voltage_angle_difference_ub(x, l, i, j))
     end
     model
 end
@@ -1743,14 +1824,16 @@ function solve_opf_nonconvex(dataset)
         model,
         IpoptAlg(),
         NonconvexCore.getinit(model);
-        options = IpoptOptions(; first_order=false, symbolic=false, sparse=true, print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME),
+        options = IpoptOptions(; first_order = false, symbolic = false, sparse = true,
+            print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME)
     )
 
     solve_time_without_compilation = @elapsed result = Nonconvex.optimize(
         model,
         IpoptAlg(),
         NonconvexCore.getinit(model);
-        options = IpoptOptions(; first_order=false, symbolic=false, sparse=true, print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME),
+        options = IpoptOptions(; first_order = false, symbolic = false, sparse = true,
+            print_level = PRINT_LEVEL, max_cpu_time = MAX_CPU_TIME)
     )
 
     cost = result.minimum
@@ -1759,7 +1842,8 @@ function solve_opf_nonconvex(dataset)
     model_variables = Nonconvex.NonconvexCore.getnvars(model)
     model_constraints = Nonconvex.NonconvexCore.getnconstraints(model)
 
-    return (model, result), Dict(
+    return (model, result),
+    Dict(
         "case" => file_name,
         "variables" => model_variables,
         "constraints" => model_constraints,
@@ -1767,20 +1851,20 @@ function solve_opf_nonconvex(dataset)
         "cost" => cost,
         "time_build" => model_build_time,
         "time_solve" => solve_time_without_compilation,
-        "time_solve_compilation" => solve_time_with_compilation,
+        "time_solve_compilation" => solve_time_with_compilation
     )
 end
 
 function test_nonconvex_prob(dataset, test_u0)
     model = build_opf_nonconvex_prob(dataset)
-        (;
-    lookup_pg,
-    lookup_qg,
-    lookup_va,
-    lookup_vm,
-    lookup_lij,
-    lookup_p_lij,
-    lookup_q_lij) = dataset
+    (;
+        lookup_pg,
+        lookup_qg,
+        lookup_va,
+        lookup_vm,
+        lookup_lij,
+        lookup_p_lij,
+        lookup_q_lij) = dataset
 
     point = Dict()
     for v in keys(model.init)
@@ -1789,9 +1873,9 @@ function test_nonconvex_prob(dataset, test_u0)
         varint = parse.(Int, varsplit[2:end])
 
         idx = if varname == "p"
-            lookup_p_lij[findfirst(x->x==Tuple(varint),lookup_lij)]
+            lookup_p_lij[findfirst(x->x==Tuple(varint), lookup_lij)]
         elseif varname == "q"
-            lookup_q_lij[findfirst(x->x==Tuple(varint),lookup_lij)]
+            lookup_q_lij[findfirst(x->x==Tuple(varint), lookup_lij)]
         elseif varname == "va"
             lookup_va[varint[1]]
         elseif varname == "pg"
@@ -1805,72 +1889,23 @@ function test_nonconvex_prob(dataset, test_u0)
         end
         point[v] = test_u0[idx]
     end
-    u0 = OrderedDict(keys(model.init) .=> getindex.((point,),keys(model.init)))
+    u0 = OrderedDict(keys(model.init) .=> getindex.((point,), keys(model.init)))
     obj = model.objective(u0)
     cons = vcat(model.eq_constraints(u0), model.ineq_constraints(u0))
     obj, cons
 end
+=#
 ```
-
-```
-test_nonconvex_prob (generic function with 1 method)
-```
-
 
 
 ```julia
+#= Nonconvex tests disabled - package incompatible with Symbolics v7
 nonconvex_test_res = test_nonconvex_prob(dataset, test_u0)
-```
-
-```
-(16236.704322376236, [0.0, 2.5424107263916085e-14, 0.0, -1.0782979045774244
-e-13, -1.7091883464104285e-13, -5.995204332975845e-14, -3.9968028886505635e
--14, 2.220446049250313e-16, 1.5276668818842154e-13, 0.0  …  -0.594815962021
-5082, -0.45238158917508947, -2.3108919720016274e-6, -0.49535150528494754, -
-0.532379574287611, -0.5148179769089868, -9.470590178750626e-8, -0.190341975
-98421976, -0.6180472757981029, -0.4291502753984947])
-```
-
-
-
-```julia
 @assert nonconvex_test_res[1] ≈ test_obj
-```
-
-
-```julia
 @assert sort(abs.(nonconvex_test_res[2])) ≈ sort(abs.(test_cons))
-```
-
-```
-Error: DimensionMismatch: dimensions must match: a has dims (Base.OneTo(59)
-,), b has dims (Base.OneTo(53),), mismatch at 1
-```
-
-
-
-```julia
 println(sort(abs.(nonconvex_test_res[2])))
+=#
 ```
-
-```
-[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.220446049250313e-16, 2
-.220446049250313e-16, 4.440892098500626e-16, 4.440892098500626e-16, 4.44089
-2098500626e-16, 6.661338147750939e-16, 8.881784197001252e-16, 8.88178419700
-1252e-16, 1.7763568394002505e-15, 1.7763568394002505e-15, 1.776356839400250
-5e-15, 6.8833827526759706e-15, 7.105427357601002e-15, 7.105427357601002e-15
-, 7.105427357601002e-15, 7.327471962526033e-15, 8.992806499463768e-15, 2.54
-24107263916085e-14, 2.842170943040401e-14, 3.9968028886505635e-14, 3.996802
-8886505635e-14, 5.995204332975845e-14, 1.0782979045774244e-13, 1.5276668818
-842154e-13, 1.7091883464104285e-13, 9.138388712415235e-9, 9.470590178750626
-e-8, 2.3108919720016274e-6, 0.05047607622459793, 0.19034197598421976, 0.429
-1502753984947, 0.45238158917508947, 0.4611623878644015, 0.4905037823083798,
- 0.49535150528494754, 0.5137350960849745, 0.5148179769089868, 0.53237957428
-7611, 0.5334624551116232, 0.5566937688882179, 0.5860351633321961, 0.5948159
-620215082, 0.6180472757981029, 9.565327163162017, 9.986180113980826, 14.890
-536465979823, 15.065317230461066, 15.485482302949597, 15.485772198107965]
-```
-
 
 
 ```julia
@@ -1907,15 +1942,15 @@ Currently does not converge to a feasible point, root cause in unclear
 import Optim
 
 function build_opf_optim_prob(dataset)
-    (;data, ref) = dataset
+    (; data, ref) = dataset
 
-    bus_pd = Dict(i => 0.0 for (i,bus) in ref[:bus])
-    bus_qd = Dict(i => 0.0 for (i,bus) in ref[:bus])
+    bus_pd = Dict(i => 0.0 for (i, bus) in ref[:bus])
+    bus_qd = Dict(i => 0.0 for (i, bus) in ref[:bus])
 
-    bus_gs = Dict(i => 0.0 for (i,bus) in ref[:bus])
-    bus_bs = Dict(i => 0.0 for (i,bus) in ref[:bus])
+    bus_gs = Dict(i => 0.0 for (i, bus) in ref[:bus])
+    bus_bs = Dict(i => 0.0 for (i, bus) in ref[:bus])
 
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         if length(ref[:bus_loads][i]) > 0
             bus_pd[i] = sum(ref[:load][l]["pd"] for l in ref[:bus_loads][i])
             bus_qd[i] = sum(ref[:load][l]["qd"] for l in ref[:bus_loads][i])
@@ -1927,20 +1962,19 @@ function build_opf_optim_prob(dataset)
         end
     end
 
+    br_g = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_g = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b = Dict(i => 0.0 for (i,branch) in ref[:branch])
+    br_tr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_ti = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_ttm = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_tr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_ti = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_ttm = Dict(i => 0.0 for (i,branch) in ref[:branch])
+    br_g_fr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b_fr = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_g_to = Dict(i => 0.0 for (i, branch) in ref[:branch])
+    br_b_to = Dict(i => 0.0 for (i, branch) in ref[:branch])
 
-    br_g_fr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b_fr = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_g_to = Dict(i => 0.0 for (i,branch) in ref[:branch])
-    br_b_to = Dict(i => 0.0 for (i,branch) in ref[:branch])
-
-    for (i,branch) in ref[:branch]
+    for (i, branch) in ref[:branch]
         g, b = PowerModels.calc_branch_y(branch)
         tr, ti = PowerModels.calc_branch_t(branch)
 
@@ -1957,14 +1991,14 @@ function build_opf_optim_prob(dataset)
         br_b_to[i] = branch["b_to"]
     end
 
-    var_lookup = Dict{String,Int}()
+    var_lookup = Dict{String, Int}()
 
     var_init = Float64[]
     var_lb = Float64[]
     var_ub = Float64[]
 
     var_idx = 1
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         push!(var_init, 0.0) #va
         push!(var_lb, -Inf)
         push!(var_ub, Inf)
@@ -1978,7 +2012,7 @@ function build_opf_optim_prob(dataset)
         var_idx += 1
     end
 
-    for (i,gen) in ref[:gen]
+    for (i, gen) in ref[:gen]
         #push!(var_init, 0.0) #pg
         push!(var_init, (gen["pmax"]+gen["pmin"])/2) # non-standard start
         push!(var_lb, gen["pmin"])
@@ -1994,18 +2028,18 @@ function build_opf_optim_prob(dataset)
         var_idx += 1
     end
 
-    for (l,i,j) in ref[:arcs]
+    for (l, i, j) in ref[:arcs]
         branch = ref[:branch][l]
 
         push!(var_init, 0.0) #p
         push!(var_lb, -branch["rate_a"])
-        push!(var_ub,  branch["rate_a"])
+        push!(var_ub, branch["rate_a"])
         var_lookup["p_$(l)_$(i)_$(j)"] = var_idx
         var_idx += 1
 
         push!(var_init, 0.0) #q
         push!(var_lb, -branch["rate_a"])
-        push!(var_ub,  branch["rate_a"])
+        push!(var_ub, branch["rate_a"])
         var_lookup["q_$(l)_$(i)_$(j)"] = var_idx
         var_idx += 1
     end
@@ -2015,7 +2049,7 @@ function build_opf_optim_prob(dataset)
     function opf_objective(x)
         #start = time()
         cost = 0.0
-        for (i,gen) in ref[:gen]
+        for (i, gen) in ref[:gen]
             pg = x[var_lookup["pg_$(i)"]]
             cost += gen["cost"][1]*pg^2 + gen["cost"][2]*pg + gen["cost"][3]
         end
@@ -2023,24 +2057,23 @@ function build_opf_optim_prob(dataset)
         return cost
     end
 
-    function opf_constraints(c,x)
+    function opf_constraints(c, x)
         #start = time()
-        va = Dict(i => x[var_lookup["va_$(i)"]] for (i,bus) in ref[:bus])
-        vm = Dict(i => x[var_lookup["vm_$(i)"]] for (i,bus) in ref[:bus])
+        va = Dict(i => x[var_lookup["va_$(i)"]] for (i, bus) in ref[:bus])
+        vm = Dict(i => x[var_lookup["vm_$(i)"]] for (i, bus) in ref[:bus])
 
-        pg = Dict(i => x[var_lookup["pg_$(i)"]] for (i,gen) in ref[:gen])
-        qg = Dict(i => x[var_lookup["qg_$(i)"]] for (i,gen) in ref[:gen])
+        pg = Dict(i => x[var_lookup["pg_$(i)"]] for (i, gen) in ref[:gen])
+        qg = Dict(i => x[var_lookup["qg_$(i)"]] for (i, gen) in ref[:gen])
 
-        p = Dict((l,i,j) => x[var_lookup["p_$(l)_$(i)_$(j)"]] for (l,i,j) in ref[:arcs])
-        q = Dict((l,i,j) => x[var_lookup["q_$(l)_$(i)_$(j)"]] for (l,i,j) in ref[:arcs])
+        p = Dict((l, i, j) => x[var_lookup["p_$(l)_$(i)_$(j)"]] for (l, i, j) in ref[:arcs])
+        q = Dict((l, i, j) => x[var_lookup["q_$(l)_$(i)_$(j)"]] for (l, i, j) in ref[:arcs])
 
-        vm_fr = Dict(l => vm[branch["f_bus"]] for (l,branch) in ref[:branch])
-        vm_to = Dict(l => vm[branch["t_bus"]] for (l,branch) in ref[:branch])
-        va_fr = Dict(l => va[branch["f_bus"]] for (l,branch) in ref[:branch])
-        va_to = Dict(l => va[branch["t_bus"]] for (l,branch) in ref[:branch])
+        vm_fr = Dict(l => vm[branch["f_bus"]] for (l, branch) in ref[:branch])
+        vm_to = Dict(l => vm[branch["t_bus"]] for (l, branch) in ref[:branch])
+        va_fr = Dict(l => va[branch["f_bus"]] for (l, branch) in ref[:branch])
+        va_to = Dict(l => va[branch["t_bus"]] for (l, branch) in ref[:branch])
 
-
-        va_con = [va[i] for (i,bus) in ref[:ref_buses]]
+        va_con = [va[i] for (i, bus) in ref[:ref_buses]]
 
         #     @constraint(model,
         #         sum(p[a] for a in ref[:bus_arcs][i]) ==
@@ -2048,13 +2081,11 @@ function build_opf_optim_prob(dataset)
         #         sum(load["pd"] for load in bus_loads) -
         #         sum(shunt["gs"] for shunt in bus_shunts)*vm[i]^2
         #     )
-        power_balance_p_con = [
-           sum(pg[j] for j in ref[:bus_gens][i]; init=0.0) -
-           bus_pd[i] -
-           bus_gs[i]*vm[i]^2 -
-           sum(p[a] for a in ref[:bus_arcs][i])
-           for (i,bus) in ref[:bus]
-        ]
+        power_balance_p_con = [sum(pg[j] for j in ref[:bus_gens][i]; init = 0.0) -
+                               bus_pd[i] -
+                               bus_gs[i]*vm[i]^2 -
+                               sum(p[a] for a in ref[:bus_arcs][i])
+                               for (i, bus) in ref[:bus]]
 
         #     @constraint(model,
         #         sum(q[a] for a in ref[:bus_arcs][i]) ==
@@ -2062,69 +2093,52 @@ function build_opf_optim_prob(dataset)
         #         sum(load["qd"] for load in bus_loads) +
         #         sum(shunt["bs"] for shunt in bus_shunts)*vm[i]^2
         #     )
-        power_balance_q_con = [
-           sum(qg[j] for j in ref[:bus_gens][i]; init=0.0) -
-           bus_qd[i] +
-           bus_bs[i]*vm[i]^2 -
-           sum(q[a] for a in ref[:bus_arcs][i])
-           for (i,bus) in ref[:bus]
-        ]
-
+        power_balance_q_con = [sum(qg[j] for j in ref[:bus_gens][i]; init = 0.0) -
+                               bus_qd[i] +
+                               bus_bs[i]*vm[i]^2 -
+                               sum(q[a] for a in ref[:bus_arcs][i])
+                               for (i, bus) in ref[:bus]]
 
         # @NLconstraint(model, p_fr ==  (g+g_fr)/ttm*vm_fr^2 + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) + (-b*tr-g*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to)) )
-        power_flow_p_from_con = [
-           (br_g[l]+br_g_fr[l])/br_ttm[l]*vm_fr[l]^2 +
-           (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*cos(va_fr[l]-va_to[l])) +
-           (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*sin(va_fr[l]-va_to[l])) -
-           p[(l,i,j)]
-           for (l,i,j) in ref[:arcs_from]
-        ]
+        power_flow_p_from_con = [(br_g[l]+br_g_fr[l])/br_ttm[l]*vm_fr[l]^2 +
+                                 (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*cos(va_fr[l]-va_to[l])) +
+                                 (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*sin(va_fr[l]-va_to[l])) -
+                                 p[(l, i, j)]
+                                 for (l, i, j) in ref[:arcs_from]]
 
         # @NLconstraint(model, p_to ==  (g+g_to)*vm_to^2 + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) + (-b*tr+g*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr)) )
-        power_flow_p_to_con = [
-           (br_g[l]+br_g_to[l])*vm_to[l]^2 +
-           (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*cos(va_to[l]-va_fr[l])) +
-           (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*sin(va_to[l]-va_fr[l])) -
-           p[(l,i,j)]
-           for (l,i,j) in ref[:arcs_to]
-        ]
+        power_flow_p_to_con = [(br_g[l]+br_g_to[l])*vm_to[l]^2 +
+                               (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*cos(va_to[l]-va_fr[l])) +
+                               (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*sin(va_to[l]-va_fr[l])) -
+                               p[(l, i, j)]
+                               for (l, i, j) in ref[:arcs_to]]
 
         # @NLconstraint(model, q_fr == -(b+b_fr)/ttm*vm_fr^2 - (-b*tr-g*ti)/ttm*(vm_fr*vm_to*cos(va_fr-va_to)) + (-g*tr+b*ti)/ttm*(vm_fr*vm_to*sin(va_fr-va_to)) )
-        power_flow_q_from_con = [
-           -(br_b[l]+br_b_fr[l])/br_ttm[l]*vm_fr[l]^2 -
-           (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*cos(va_fr[l]-va_to[l])) +
-           (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*sin(va_fr[l]-va_to[l])) -
-           q[(l,i,j)]
-           for (l,i,j) in ref[:arcs_from]
-        ]
+        power_flow_q_from_con = [-(br_b[l]+br_b_fr[l])/br_ttm[l]*vm_fr[l]^2 -
+                                 (-br_b[l]*br_tr[l]-br_g[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*cos(va_fr[l]-va_to[l])) +
+                                 (-br_g[l]*br_tr[l]+br_b[l]*br_ti[l])/br_ttm[l]*(vm_fr[l]*vm_to[l]*sin(va_fr[l]-va_to[l])) -
+                                 q[(l, i, j)]
+                                 for (l, i, j) in ref[:arcs_from]]
 
         # @NLconstraint(model, q_to == -(b+b_to)*vm_to^2 - (-b*tr+g*ti)/ttm*(vm_to*vm_fr*cos(va_to-va_fr)) + (-g*tr-b*ti)/ttm*(vm_to*vm_fr*sin(va_to-va_fr)) )
-        power_flow_q_to_con = [
-           -(br_b[l]+br_b_to[l])*vm_to[l]^2 -
-           (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*cos(va_to[l]-va_fr[l])) +
-           (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*sin(va_to[l]-va_fr[l])) -
-           q[(l,i,j)]
-           for (l,i,j) in ref[:arcs_to]
-        ]
+        power_flow_q_to_con = [-(br_b[l]+br_b_to[l])*vm_to[l]^2 -
+                               (-br_b[l]*br_tr[l]+br_g[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*cos(va_to[l]-va_fr[l])) +
+                               (-br_g[l]*br_tr[l]-br_b[l]*br_ti[l])/br_ttm[l]*(vm_to[l]*vm_fr[l]*sin(va_to[l]-va_fr[l])) -
+                               q[(l, i, j)]
+                               for (l, i, j) in ref[:arcs_to]]
 
         # @constraint(model, va_fr - va_to <= branch["angmax"])
         # @constraint(model, va_fr - va_to >= branch["angmin"])
-        power_flow_vad_con = [
-           va_fr[l] - va_to[l]
-           for (l,i,j) in ref[:arcs_from]
-        ]
+        power_flow_vad_con = [va_fr[l] - va_to[l]
+                              for (l, i, j) in ref[:arcs_from]]
 
         # @constraint(model, p_fr^2 + q_fr^2 <= branch["rate_a"]^2)
-        power_flow_mva_from_con = [
-           p[(l,i,j)]^2 + q[(l,i,j)]^2
-           for (l,i,j) in ref[:arcs_from]
-        ]
+        power_flow_mva_from_con = [p[(l, i, j)]^2 + q[(l, i, j)]^2
+                                   for (l, i, j) in ref[:arcs_from]]
 
         # @constraint(model, p_to^2 + q_to^2 <= branch["rate_a"]^2)
-        power_flow_mva_to_con = [
-           p[(l,i,j)]^2 + q[(l,i,j)]^2
-           for (l,i,j) in ref[:arcs_to]
-        ]
+        power_flow_mva_to_con = [p[(l, i, j)]^2 + q[(l, i, j)]^2
+                                 for (l, i, j) in ref[:arcs_to]]
 
         c .= [
             va_con...,
@@ -2136,7 +2150,7 @@ function build_opf_optim_prob(dataset)
             power_flow_q_to_con...,
             power_flow_vad_con...,
             power_flow_mva_from_con...,
-            power_flow_mva_to_con...,
+            power_flow_mva_to_con...
         ]
         #total_callback_time += time() - start
         return c
@@ -2146,14 +2160,13 @@ function build_opf_optim_prob(dataset)
     con_ubs = Float64[]
 
     #@constraint(model, va[i] == 0)
-    for (i,bus) in ref[:ref_buses]
+    for (i, bus) in ref[:ref_buses]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
-
     #power_balance_p_con
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
         #push!(con_lbs, -Inf)
@@ -2161,70 +2174,73 @@ function build_opf_optim_prob(dataset)
     end
 
     #power_balance_q_con
-    for (i,bus) in ref[:bus]
+    for (i, bus) in ref[:bus]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
         #push!(con_lbs, -Inf)
         #push!(con_ubs, Inf)
     end
 
-
     #power_flow_p_from_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_p_to_con
-    for (l,i,j) in ref[:arcs_to]
+    for (l, i, j) in ref[:arcs_to]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_q_from_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_q_to_con
-    for (l,i,j) in ref[:arcs_to]
+    for (l, i, j) in ref[:arcs_to]
         push!(con_lbs, 0.0)
         push!(con_ubs, 0.0)
     end
 
     #power_flow_vad_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         branch = ref[:branch][l]
         push!(con_lbs, branch["angmin"])
         push!(con_ubs, branch["angmax"])
     end
 
     #power_flow_mva_from_con
-    for (l,i,j) in ref[:arcs_from]
+    for (l, i, j) in ref[:arcs_from]
         branch = ref[:branch][l]
         push!(con_lbs, -Inf)
         push!(con_ubs, branch["rate_a"]^2)
     end
 
     #power_flow_mva_to_con
-    for (l,i,j) in ref[:arcs_to]
+    for (l, i, j) in ref[:arcs_to]
         branch = ref[:branch][l]
         push!(con_lbs, -Inf)
         push!(con_ubs, branch["rate_a"]^2)
     end
 
     df = Optim.TwiceDifferentiable(opf_objective, var_init)
-    dfc = Optim.TwiceDifferentiableConstraints(opf_constraints, var_lb, var_ub, con_lbs, con_ubs)
+    dfc = Optim.TwiceDifferentiableConstraints(
+        opf_constraints, var_lb, var_ub, con_lbs, con_ubs)
     df, dfc, var_init, con_lbs, con_ubs
 end
 
 function solve_opf_optim(dataset)
-    model_build_time = @elapsed df, dfc, var_init, con_lbs, con_ubs = build_opf_optim_prob(dataset)
+    model_build_time = @elapsed df, dfc, var_init, con_lbs,
+    con_ubs = build_opf_optim_prob(dataset)
 
-    options = Optim.Options(show_trace=PRINT_LEVEL != 0,time_limit=MAX_CPU_TIME)
-    solve_time_with_compilation = @elapsed res = Optim.optimize(df, dfc, var_init, Optim.IPNewton(), options)
-    solve_time_without_compilation = @elapsed res = Optim.optimize(df, dfc, var_init, Optim.IPNewton(), options)
+    options = Optim.Options(show_trace = PRINT_LEVEL != 0, time_limit = MAX_CPU_TIME)
+    solve_time_with_compilation = @elapsed res = Optim.optimize(
+        df, dfc, var_init, Optim.IPNewton(), options)
+    solve_time_without_compilation = @elapsed res = Optim.optimize(
+        df, dfc, var_init, Optim.IPNewton(), options)
 
     sol = res.minimizer
     cost = res.minimum
@@ -2232,13 +2248,14 @@ function solve_opf_optim(dataset)
     # NOTE: confirmed these constraint violations can be eliminated
     # if a better starting point is used
     sol_eval = dfc.c!(zeros(dfc.bounds.nc), sol)
-    vio_lb = [max(v,0) for v in (con_lbs .- sol_eval)]
-    vio_ub = [max(v,0) for v in (sol_eval .- con_ubs)]
+    vio_lb = [max(v, 0) for v in (con_lbs .- sol_eval)]
+    vio_ub = [max(v, 0) for v in (sol_eval .- con_ubs)]
     const_vio = vio_lb .+ vio_ub
     constraint_tol = 1e-6
     feasible = (sum(const_vio) <= constraint_tol)
 
-    return (res,), Dict(
+    return (res,),
+    Dict(
         "case" => file_name,
         "variables" => length(var_init),
         "constraints" => dfc.bounds.nc,
@@ -2246,7 +2263,7 @@ function solve_opf_optim(dataset)
         "cost" => cost,
         "time_build" => model_build_time,
         "time_solve" => solve_time_without_compilation,
-        "time_solve_compilation" => solve_time_with_compilation,
+        "time_solve_compilation" => solve_time_with_compilation
     )
 end
 
@@ -2510,9 +2527,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.000189458
-  "time_solve_compilation" => 16.5577
-  "time_solve"             => 0.459221
+  "time_build"             => 0.0953678
+  "time_solve_compilation" => 18.634
+  "time_solve"             => 0.724718
   "feasible"               => true
 ```
 
@@ -2530,9 +2547,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.00215803
-  "time_solve_compilation" => 1.08609
-  "time_solve"             => 0.012472
+  "time_build"             => 0.00365001
+  "time_solve_compilation" => 7.42519
+  "time_solve"             => 0.0133982
   "feasible"               => true
 ```
 
@@ -2550,209 +2567,19 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.621379
-  "time_solve_compilation" => 2.6468
-  "time_solve"             => 0.0346682
+  "time_build"             => 0.0116992
+  "time_solve_compilation" => 4.34116
+  "time_solve"             => 0.0477297
   "feasible"               => true
 ```
 
 
 
 ```julia
-model, res = solve_opf_nonconvex(dataset);
-res
+# Nonconvex disabled - incompatible with Symbolics v7
+# model, res = solve_opf_nonconvex(dataset);
+# res
 ```
-
-```
-Error: MethodError: no method matching Float64(::ForwardDiff.Dual{ForwardDi
-ff.Tag{NonconvexUtils.var"#101#108"{NonconvexUtils.var"#100#107"{NonconvexU
-tils.var"#97#104"{NonconvexCore.VectorOfFunctions{Tuple{NonconvexCore.IneqC
-onstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"
-##WeaveSandBox#225".var"#221#263"{Main.var"##WeaveSandBox#225".var"#const_t
-hermal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, Differentia
-bleFlatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Float64}}
-, DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int
-64}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity
-), OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, Nonconve
-xCore.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrappe
-r{Main.var"##WeaveSandBox#225".var"#222#264"{Main.var"##WeaveSandBox#225".v
-ar"#const_thermal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, 
-DifferentiableFlatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String
-, Float64}}, DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}
-, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{type
-of(identity), OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64
-}, NonconvexCore.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.Fun
-ctionWrapper{Main.var"##WeaveSandBox#225".var"#223#265"{Main.var"##WeaveSan
-dBox#225".var"#const_voltage_angle_difference_lb#257"{Dict{Int64, Float64}}
-, Int64, Int64, Int64}}, DifferentiableFlatten.Unflatten{Tuple{OrderedColle
-ctions.OrderedDict{String, Float64}}, DifferentiableFlatten.var"#unflatten_
-to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#u
-nflatten_to_Dict#16"{typeof(identity), OrderedCollections.OrderedDict{Strin
-g, Float64}}}}}}, Float64}, NonconvexCore.IneqConstraint{NonconvexCore.var"
-#80#82"{NonconvexCore.FunctionWrapper{Main.var"##WeaveSandBox#225".var"#224
-#266"{Main.var"##WeaveSandBox#225".var"#const_voltage_angle_difference_ub#2
-58"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.Unf
-latten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, Differentiab
-leFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{Dif
-ferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedColl
-ections.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.IneqCons
-traint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"##W
-eaveSandBox#225".var"#221#263"{Main.var"##WeaveSandBox#225".var"#const_ther
-mal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, Differentiable
-Flatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, D
-ifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}
-, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), 
-OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCo
-re.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{M
-ain.var"##WeaveSandBox#225".var"#222#264"{Main.var"##WeaveSandBox#225".var"
-#const_thermal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, Dif
-ferentiableFlatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, F
-loat64}}, DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, T
-uple{Int64}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(
-identity), OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, 
-NonconvexCore.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.Functi
-onWrapper{Main.var"##WeaveSandBox#225".var"#223#265"{Main.var"##WeaveSandBo
-x#225".var"#const_voltage_angle_difference_lb#257"{Dict{Int64, Float64}}, I
-nt64, Int64, Int64}}, DifferentiableFlatten.Unflatten{Tuple{OrderedCollecti
-ons.OrderedDict{String, Float64}}, DifferentiableFlatten.var"#unflatten_to_
-Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#unfl
-atten_to_Dict#16"{typeof(identity), OrderedCollections.OrderedDict{String, 
-Float64}}}}}}, Float64}, NonconvexCore.IneqConstraint{NonconvexCore.var"#80
-#82"{NonconvexCore.FunctionWrapper{Main.var"##WeaveSandBox#225".var"#224#26
-6"{Main.var"##WeaveSandBox#225".var"#const_voltage_angle_difference_ub#258"
-{Dict{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.Unflat
-ten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, DifferentiableF
-latten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{Differ
-entiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedCollect
-ions.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.IneqConstra
-int{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"##Weav
-eSandBox#225".var"#221#263"{Main.var"##WeaveSandBox#225".var"#const_thermal
-_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFla
-tten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, Diff
-erentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, T
-uple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), Ord
-eredCollections.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.
-IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main
-.var"##WeaveSandBox#225".var"#222#264"{Main.var"##WeaveSandBox#225".var"#co
-nst_thermal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, Differ
-entiableFlatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Floa
-t64}}, DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tupl
-e{Int64}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(ide
-ntity), OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, Non
-convexCore.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionW
-rapper{Main.var"##WeaveSandBox#225".var"#223#265"{Main.var"##WeaveSandBox#2
-25".var"#const_voltage_angle_difference_lb#257"{Dict{Int64, Float64}}, Int6
-4, Int64, Int64}}, DifferentiableFlatten.Unflatten{Tuple{OrderedCollections
-.OrderedDict{String, Float64}}, DifferentiableFlatten.var"#unflatten_to_Tup
-le#11"{Tuple{Int64}, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#unflatt
-en_to_Dict#16"{typeof(identity), OrderedCollections.OrderedDict{String, Flo
-at64}}}}}}, Float64}, NonconvexCore.IneqConstraint{NonconvexCore.var"#80#82
-"{NonconvexCore.FunctionWrapper{Main.var"##WeaveSandBox#225".var"#224#266"{
-Main.var"##WeaveSandBox#225".var"#const_voltage_angle_difference_ub#258"{Di
-ct{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.Unflatten
-{Tuple{OrderedCollections.OrderedDict{String, Float64}}, DifferentiableFlat
-ten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{Different
-iableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedCollection
-s.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.IneqConstraint
-{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"##WeaveSa
-ndBox#225".var"#221#263"{Main.var"##WeaveSandBox#225".var"#const_thermal_li
-mit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatte
-n.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, Differe
-ntiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tupl
-e{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), Ordere
-dCollections.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.Ine
-qConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.va
-r"##WeaveSandBox#225".var"#222#264"{Main.var"##WeaveSandBox#225".var"#const
-_thermal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, Different
-iableFlatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Float64
-}}, DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{I
-nt64}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identi
-ty), OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, Noncon
-vexCore.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrap
-per{Main.var"##WeaveSandBox#225".var"#223#265"{Main.var"##WeaveSandBox#225"
-.var"#const_voltage_angle_difference_lb#257"{Dict{Int64, Float64}}, Int64, 
-Int64, Int64}}, DifferentiableFlatten.Unflatten{Tuple{OrderedCollections.Or
-deredDict{String, Float64}}, DifferentiableFlatten.var"#unflatten_to_Tuple#
-11"{Tuple{Int64}, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#unflatten_
-to_Dict#16"{typeof(identity), OrderedCollections.OrderedDict{String, Float6
-4}}}}}}, Float64}, NonconvexCore.IneqConstraint{NonconvexCore.var"#80#82"{N
-onconvexCore.FunctionWrapper{Main.var"##WeaveSandBox#225".var"#224#266"{Mai
-n.var"##WeaveSandBox#225".var"#const_voltage_angle_difference_ub#258"{Dict{
-Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.Unflatten{Tu
-ple{OrderedCollections.OrderedDict{String, Float64}}, DifferentiableFlatten
-.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{Differentiab
-leFlatten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedCollections.O
-rderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.IneqConstraint{No
-nconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"##WeaveSandB
-ox#225".var"#221#263"{Main.var"##WeaveSandBox#225".var"#const_thermal_limit
-#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.U
-nflatten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, Differenti
-ableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{D
-ifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedCo
-llections.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.IneqCo
-nstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"#
-#WeaveSandBox#225".var"#222#264"{Main.var"##WeaveSandBox#225".var"#const_th
-ermal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, Differentiab
-leFlatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Float64}},
- DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int6
-4}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity)
-, OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, Nonconvex
-Core.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper
-{Main.var"##WeaveSandBox#225".var"#223#265"{Main.var"##WeaveSandBox#225".va
-r"#const_voltage_angle_difference_lb#257"{Dict{Int64, Float64}}, Int64, Int
-64, Int64}}, DifferentiableFlatten.Unflatten{Tuple{OrderedCollections.Order
-edDict{String, Float64}}, DifferentiableFlatten.var"#unflatten_to_Tuple#11"
-{Tuple{Int64}, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#unflatten_to_
-Dict#16"{typeof(identity), OrderedCollections.OrderedDict{String, Float64}}
-}}}}, Float64}, NonconvexCore.IneqConstraint{NonconvexCore.var"#80#82"{Nonc
-onvexCore.FunctionWrapper{Main.var"##WeaveSandBox#225".var"#224#266"{Main.v
-ar"##WeaveSandBox#225".var"#const_voltage_angle_difference_ub#258"{Dict{Int
-64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.Unflatten{Tuple
-{OrderedCollections.OrderedDict{String, Float64}}, DifferentiableFlatten.va
-r"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{DifferentiableF
-latten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedCollections.Orde
-redDict{String, Float64}}}}}}, Float64}, NonconvexCore.IneqConstraint{Nonco
-nvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"##WeaveSandBox#
-225".var"#221#263"{Main.var"##WeaveSandBox#225".var"#const_thermal_limit#25
-6"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.Unfl
-atten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, Differentiabl
-eFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{Diff
-erentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedColle
-ctions.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.IneqConst
-raint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"##We
-aveSandBox#225".var"#222#264"{Main.var"##WeaveSandBox#225".var"#const_therm
-al_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableF
-latten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, Di
-fferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64},
- Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), O
-rderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCor
-e.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Ma
-in.var"##WeaveSandBox#225".var"#223#265"{Main.var"##WeaveSandBox#225".var"#
-const_voltage_angle_difference_lb#257"{Dict{Int64, Float64}}, Int64, Int64,
- Int64}}, DifferentiableFlatten.Unflatten{Tuple{OrderedCollections.OrderedD
-ict{String, Float64}}, DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tu
-ple{Int64}, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dic
-t#16"{typeof(identity), OrderedCollections.OrderedDict{String, Float64}}}}}
-}, Float64}, NonconvexCore.IneqConstraint{NonconvexCore.var"#80#82"{Nonconv
-exCore.FunctionWrapper{Main.var"##WeaveSandBox#225".var"#224#266"{Main.var"
-##WeaveSandBox#225".var"#const_voltage_angle_difference_ub#258"{Dict{Int64,
- Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.Unflatten{Tuple{Or
-deredCollections.OrderedDict{String, Float64}}, DifferentiableFlatten.var"#
-unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{DifferentiableFlat
-ten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedCollections.Ordered
-Dict{String, Float64}}}}}}, Float64}}}}}}, Float64}, Float64, 1})
-
-Closest candidates are:
-  (::Type{T})(::Real, !Matched::RoundingMode) where T<:AbstractFloat
-   @ Base rounding.jl:207
-  (::Type{T})(::T) where T<:Number
-   @ Core boot.jl:792
-  Float64(!Matched::IrrationalConstants.Sqrt3)
-   @ IrrationalConstants /cache/julia-buildkite-plugin/depots/5b300254-1738
--4989-ae0a-f4d2d937f953/packages/IrrationalConstants/vp5v4/src/macro.jl:112
-  ...
-```
-
 
 
 ```julia
@@ -2762,14 +2589,14 @@ res
 
 ```
 Dict{String, Any} with 8 entries:
-  "cost"                   => 77.9548
+  "cost"                   => 90.6969
   "variables"              => 44
   "constraints"            => 53
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.000570855
-  "time_solve_compilation" => 21.4562
-  "time_solve"             => 16.304
+  "time_build"             => 0.00155903
+  "time_solve_compilation" => 18.1014
+  "time_solve"             => 12.8387
   "feasible"               => false
 ```
 
@@ -2793,9 +2620,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 8.7959e-5
-  "time_solve_compilation" => 0.0758728
-  "time_solve"             => 0.0818315
+  "time_build"             => 0.000316998
+  "time_solve_compilation" => 0.216039
+  "time_solve"             => 0.325786
   "feasible"               => true
 ```
 
@@ -2813,9 +2640,9 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.00333447
-  "time_solve_compilation" => 0.00856609
-  "time_solve"             => 0.00782539
+  "time_build"             => 0.00258486
+  "time_solve_compilation" => 0.0105703
+  "time_solve"             => 0.0095622
   "feasible"               => true
 ```
 
@@ -2833,122 +2660,19 @@ Dict{String, Any} with 8 entries:
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0159399
-  "time_solve_compilation" => 0.0181383
-  "time_solve"             => 0.0169084
+  "time_build"             => 0.00521975
+  "time_solve_compilation" => 0.0264786
+  "time_solve"             => 0.0263811
   "feasible"               => true
 ```
 
 
 
 ```julia
-model, res = solve_opf_nonconvex(dataset);
-res
+# Nonconvex disabled - incompatible with Symbolics v7
+# model, res = solve_opf_nonconvex(dataset);
+# res
 ```
-
-```
-Error: MethodError: no method matching Float64(::ForwardDiff.Dual{ForwardDi
-ff.Tag{NonconvexUtils.var"#101#108"{NonconvexUtils.var"#100#107"{NonconvexU
-tils.var"#97#104"{NonconvexCore.VectorOfFunctions{Tuple{NonconvexCore.IneqC
-onstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"
-##WeaveSandBox#225".var"#221#263"{Main.var"##WeaveSandBox#225".var"#const_t
-hermal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, Differentia
-bleFlatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Float64}}
-, DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int
-64}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity
-), OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, Nonconve
-xCore.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrappe
-r{Main.var"##WeaveSandBox#225".var"#222#264"{Main.var"##WeaveSandBox#225".v
-ar"#const_thermal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, 
-DifferentiableFlatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String
-, Float64}}, DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}
-, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{type
-of(identity), OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64
-}, NonconvexCore.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.Fun
-ctionWrapper{Main.var"##WeaveSandBox#225".var"#223#265"{Main.var"##WeaveSan
-dBox#225".var"#const_voltage_angle_difference_lb#257"{Dict{Int64, Float64}}
-, Int64, Int64, Int64}}, DifferentiableFlatten.Unflatten{Tuple{OrderedColle
-ctions.OrderedDict{String, Float64}}, DifferentiableFlatten.var"#unflatten_
-to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#u
-nflatten_to_Dict#16"{typeof(identity), OrderedCollections.OrderedDict{Strin
-g, Float64}}}}}}, Float64}, NonconvexCore.IneqConstraint{NonconvexCore.var"
-#80#82"{NonconvexCore.FunctionWrapper{Main.var"##WeaveSandBox#225".var"#224
-#266"{Main.var"##WeaveSandBox#225".var"#const_voltage_angle_difference_ub#2
-58"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.Unf
-latten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, Differentiab
-leFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{Dif
-ferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedColl
-ections.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.IneqCons
-traint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"##W
-eaveSandBox#225".var"#221#263"{Main.var"##WeaveSandBox#225".var"#const_ther
-mal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, Differentiable
-Flatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, D
-ifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}
-, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), 
-OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCo
-re.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{M
-ain.var"##WeaveSandBox#225".var"#222#264"{Main.var"##WeaveSandBox#225".var"
-#const_thermal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, Dif
-ferentiableFlatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, F
-loat64}}, DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, T
-uple{Int64}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(
-identity), OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, 
-NonconvexCore.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.Functi
-onWrapper{Main.var"##WeaveSandBox#225".var"#223#265"{Main.var"##WeaveSandBo
-x#225".var"#const_voltage_angle_difference_lb#257"{Dict{Int64, Float64}}, I
-nt64, Int64, Int64}}, DifferentiableFlatten.Unflatten{Tuple{OrderedCollecti
-ons.OrderedDict{String, Float64}}, DifferentiableFlatten.var"#unflatten_to_
-Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#unfl
-atten_to_Dict#16"{typeof(identity), OrderedCollections.OrderedDict{String, 
-Float64}}}}}}, Float64}, NonconvexCore.IneqConstraint{NonconvexCore.var"#80
-#82"{NonconvexCore.FunctionWrapper{Main.var"##WeaveSandBox#225".var"#224#26
-6"{Main.var"##WeaveSandBox#225".var"#const_voltage_angle_difference_ub#258"
-{Dict{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.Unflat
-ten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, DifferentiableF
-latten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{Differ
-entiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedCollect
-ions.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.IneqConstra
-int{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main.var"##Weav
-eSandBox#225".var"#221#263"{Main.var"##WeaveSandBox#225".var"#const_thermal
-_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFla
-tten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Float64}}, Diff
-erentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, T
-uple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), Ord
-eredCollections.OrderedDict{String, Float64}}}}}}, Float64}, NonconvexCore.
-IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionWrapper{Main
-.var"##WeaveSandBox#225".var"#222#264"{Main.var"##WeaveSandBox#225".var"#co
-nst_thermal_limit#256"{Dict{Int64, Float64}}, Int64, Int64, Int64}}, Differ
-entiableFlatten.Unflatten{Tuple{OrderedCollections.OrderedDict{String, Floa
-t64}}, DifferentiableFlatten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tupl
-e{Int64}, Tuple{DifferentiableFlatten.var"#unflatten_to_Dict#16"{typeof(ide
-ntity), OrderedCollections.OrderedDict{String, Float64}}}}}}, Float64}, Non
-convexCore.IneqConstraint{NonconvexCore.var"#80#82"{NonconvexCore.FunctionW
-rapper{Main.var"##WeaveSandBox#225".var"#223#265"{Main.var"##WeaveSandBox#2
-25".var"#const_voltage_angle_difference_lb#257"{Dict{Int64, Float64}}, Int6
-4, Int64, Int64}}, DifferentiableFlatten.Unflatten{Tuple{OrderedCollections
-.OrderedDict{String, Float64}}, DifferentiableFlatten.var"#unflatten_to_Tup
-le#11"{Tuple{Int64}, Tuple{Int64}, Tuple{DifferentiableFlatten.var"#unflatt
-en_to_Dict#16"{typeof(identity), OrderedCollections.OrderedDict{String, Flo
-at64}}}}}}, Float64}, NonconvexCore.IneqConstraint{NonconvexCore.var"#80#82
-"{NonconvexCore.FunctionWrapper{Main.var"##WeaveSandBox#225".var"#224#266"{
-Main.var"##WeaveSandBox#225".var"#const_voltage_angle_difference_ub#258"{Di
-ct{Int64, Float64}}, Int64, Int64, Int64}}, DifferentiableFlatten.Unflatten
-{Tuple{OrderedCollections.OrderedDict{String, Float64}}, DifferentiableFlat
-ten.var"#unflatten_to_Tuple#11"{Tuple{Int64}, Tuple{Int64}, Tuple{Different
-iableFlatten.var"#unflatten_to_Dict#16"{typeof(identity), OrderedCollection
-s.OrderedDict{String, Float64}}}}}}, Float64}}}}}}, Float64}, Float64, 1})
-
-Closest candidates are:
-  (::Type{T})(::Real, !Matched::RoundingMode) where T<:AbstractFloat
-   @ Base rounding.jl:207
-  (::Type{T})(::T) where T<:Number
-   @ Core boot.jl:792
-  Float64(!Matched::IrrationalConstants.Sqrt3)
-   @ IrrationalConstants /cache/julia-buildkite-plugin/depots/5b300254-1738
--4989-ae0a-f4d2d937f953/packages/IrrationalConstants/vp5v4/src/macro.jl:112
-  ...
-```
-
 
 
 ```julia
@@ -2958,14 +2682,14 @@ res
 
 ```
 Dict{String, Any} with 8 entries:
-  "cost"                   => 6273.63
+  "cost"                   => 1.93871e5
   "variables"              => 24
   "constraints"            => 28
   "case"                   => "../../benchmarks/OptimizationFrameworks/opf_
 data…
-  "time_build"             => 0.0517723
-  "time_solve_compilation" => 2.09519
-  "time_solve"             => 2.06204
+  "time_build"             => 0.335146
+  "time_solve_compilation" => 0.500173
+  "time_solve"             => 0.617059
   "feasible"               => false
 ```
 
@@ -2975,7 +2699,6 @@ data…
 using DataFrames, PrettyTables
 
 function multidata_multisolver_benchmark(dataset_files; sizelimit = SIZE_LIMIT)
-
     cases = String[]
     vars = Int[]
     cons = Int[]
@@ -2984,46 +2707,42 @@ function multidata_multisolver_benchmark(dataset_files; sizelimit = SIZE_LIMIT)
     mtk_time = Float64[]
     jump_time = Float64[]
     nlpmodels_time = Float64[]
-    nonconvex_time = Float64[]
     optim_time = Float64[]
 
     optimization_time_modelbuild = Float64[]
     mtk_time_modelbuild = Float64[]
     jump_time_modelbuild = Float64[]
     nlpmodels_time_modelbuild = Float64[]
-    nonconvex_time_modelbuild = Float64[]
     optim_time_modelbuild = Float64[]
 
     optimization_time_compilation = Float64[]
     mtk_time_compilation = Float64[]
     jump_time_compilation = Float64[]
     nlpmodels_time_compilation = Float64[]
-    nonconvex_time_compilation = Float64[]
     optim_time_compilation = Float64[]
 
     optimization_cost = Float64[]
     mtk_cost = Float64[]
     jump_cost = Float64[]
     nlpmodels_cost = Float64[]
-    nonconvex_cost = Float64[]
     optim_cost = Float64[]
 
     for file in dataset_files
         @show file
         dataset = load_and_setup_data(file)
 
-        prob = build_opf_optimization_prob(dataset)
-        @info "Number of Variables: $(length(prob.u0))"
-        @info "Number of Constraints: $(length(prob.lcons))"
+        model_variables = length(dataset.var_init)
+        @info "Number of Variables: $(model_variables)"
 
-        if length(prob.u0) > sizelimit
+        if model_variables > sizelimit
             @info "Variable size over global limit. Skipping for now"
             continue
         end
-        
+
         @info "Running Optimization.jl"
         model, res = solve_opf_optimization(dataset)
-        push!(cases, split(file,"/")[end])
+        @info "Number of Constraints: $(res["constraints"])"
+        push!(cases, split(file, "/")[end])
         push!(vars, res["variables"])
         push!(cons, res["constraints"])
         push!(optimization_time, res["time_solve"])
@@ -3038,7 +2757,6 @@ function multidata_multisolver_benchmark(dataset_files; sizelimit = SIZE_LIMIT)
         push!(mtk_time_compilation, res["time_solve_compilation"])
         push!(mtk_cost, res["cost"])
 
-
         @info "Running JuMP.jl"
         model, res = solve_opf_jump(dataset)
         push!(jump_time, res["time_solve"])
@@ -3052,7 +2770,7 @@ function multidata_multisolver_benchmark(dataset_files; sizelimit = SIZE_LIMIT)
         push!(nlpmodels_time_modelbuild, res["time_build"])
         push!(nlpmodels_time_compilation, res["time_solve_compilation"])
         push!(nlpmodels_cost, res["cost"])
-        
+
         #=
         @info "Running Nonconvex.jl"
         model, res = solve_opf_nonconvex(dataset)
@@ -3061,10 +2779,9 @@ function multidata_multisolver_benchmark(dataset_files; sizelimit = SIZE_LIMIT)
         push!(nonconvex_time_compilation, res["time_solve_compilation"])
         push!(nonconvex_cost, res["cost"])
         =#
-        
-        if length(prob.u0) > 400
-            @info "Running Optim.jl"
-            model, res = solve_opf_optim(dataset)
+
+        if model_variables > 400
+            @info "Variable size over Optim.jl limit. Skipping for now"
             push!(optim_time, NaN)
             push!(optim_time_modelbuild, NaN)
             push!(optim_time_compilation, NaN)
@@ -3078,19 +2795,26 @@ function multidata_multisolver_benchmark(dataset_files; sizelimit = SIZE_LIMIT)
             push!(optim_cost, res["cost"])
         end
     end
-    DataFrame(:case => cases, :vars => vars, :cons => cons, 
-              :optimization => optimization_time, :optimization_modelbuild => optimization_time_modelbuild, :optimization_wcompilation => optimization_time_compilation, :optimization_cost => optimization_cost,
-              :mtk => mtk_time, :mtk_time_modelbuild => mtk_time_modelbuild, :mtk_time_wcompilation => mtk_time_compilation, :mtk_cost => mtk_cost,
-              :jump => jump_time, :jump_modelbuild => jump_time_modelbuild, :jump_wcompilation => jump_time_compilation, :jump_cost => jump_cost, 
-              :nlpmodels => nlpmodels_time, :nlpmodels_modelbuild => nlpmodels_time_modelbuild, :nlpmodels_wcompilation => nlpmodels_time_compilation,  :nlpmodels_cost => nlpmodels_cost, 
-              #:nonconvex => nonconvex_time, :nonconvex_modelbuild => nonconvex_time_modelbuild, :nonconvex_wcompilation => nonconvex_time_compilation,  :nonconvex_cost => nonconvex_cost,
-              :optim => optim_time, :optim_modelbuild => optim_time_modelbuild, :optim_wcompilation => optim_time_compilation,  :optim_cost => optim_cost)
+    DataFrame(:case => cases, :vars => vars, :cons => cons,
+        :optimization => optimization_time, :optimization_modelbuild => optimization_time_modelbuild,
+        :optimization_wcompilation => optimization_time_compilation,
+        :optimization_cost => optimization_cost,
+        :mtk => mtk_time, :mtk_time_modelbuild => mtk_time_modelbuild,
+        :mtk_time_wcompilation => mtk_time_compilation, :mtk_cost => mtk_cost,
+        :jump => jump_time, :jump_modelbuild => jump_time_modelbuild,
+        :jump_wcompilation => jump_time_compilation, :jump_cost => jump_cost,
+        :nlpmodels => nlpmodels_time, :nlpmodels_modelbuild => nlpmodels_time_modelbuild,
+        :nlpmodels_wcompilation => nlpmodels_time_compilation,
+        :nlpmodels_cost => nlpmodels_cost,
+        #:nonconvex => nonconvex_time, :nonconvex_modelbuild => nonconvex_time_modelbuild, :nonconvex_wcompilation => nonconvex_time_compilation,  :nonconvex_cost => nonconvex_cost,
+        :optim => optim_time, :optim_modelbuild => optim_time_modelbuild,
+        :optim_wcompilation => optim_time_compilation, :optim_cost => optim_cost)
 end
 
 test_datasets = [
     "../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case3_lmbd.m",
     "../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case5_pjm.m"
-    ]
+]
 ```
 
 ```
@@ -3107,7 +2831,7 @@ timing_data = multidata_multisolver_benchmark(test_datasets)
 
 ```
 file = "../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case3_lmbd.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:       78
 Number of nonzeros in inequality constraint Jacobian.:       24
@@ -3139,17 +2863,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   11  5.8127612e+03 1.60e-05 1.36e-02  -2.5 8.27e-03    -  1.00e+00 1.00e+00f  1
   12  5.8126464e+03 2.60e-07 1.15e-04  -3.8 1.05e-03    -  1.00e+00 1.00e+00f  1
   13  5.8126430e+03 1.32e-10 8.31e-08  -5.7 2.50e-05    -  1.00e+00 1.00e+00h  1
-  14  5.8126429e+03 7.55e-15 6.25e-12  -8.6 1.78e-07    -  1.00e+00 1.00e+00h  1
+  14  5.8126429e+03 7.77e-15 6.25e-12  -8.6 1.78e-07    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 14
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.1625285870072360e+03    5.8126429350361796e+03
-Dual infeasibility......:   6.2541517268298295e-12    3.1270758634149147e-11
-Constraint violation....:   7.5495165674510645e-15    7.5495165674510645e-15
+Objective...............:   1.1625285870072362e+03    5.8126429350361805e+03
+Dual infeasibility......:   6.2541516535614795e-12    3.1270758267807398e-11
+Constraint violation....:   7.7715611723760958e-15    7.7715611723760958e-15
 Variable bound violation:   1.0911841874516881e-08    1.0911841874516881e-08
-Complementarity.........:   2.5102170848799089e-09    1.2551085424399544e-08
-Overall NLP error.......:   2.5102170848799089e-09    1.2551085424399544e-08
+Complementarity.........:   2.5102170848799279e-09    1.2551085424399639e-08
+Overall NLP error.......:   2.5102170848799279e-09    1.2551085424399639e-08
 
 
 Number of objective function evaluations             = 15
@@ -3159,10 +2883,10 @@ Number of inequality constraint evaluations          = 15
 Number of equality constraint Jacobian evaluations   = 15
 Number of inequality constraint Jacobian evaluations = 15
 Number of Lagrangian Hessian evaluations             = 14
-Total seconds in IPOPT                               = 0.799
+Total seconds in IPOPT                               = 0.932
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:       78
 Number of nonzeros in inequality constraint Jacobian.:       24
@@ -3194,17 +2918,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   11  5.8127612e+03 1.60e-05 1.36e-02  -2.5 8.27e-03    -  1.00e+00 1.00e+00f  1
   12  5.8126464e+03 2.60e-07 1.15e-04  -3.8 1.05e-03    -  1.00e+00 1.00e+00f  1
   13  5.8126430e+03 1.32e-10 8.31e-08  -5.7 2.50e-05    -  1.00e+00 1.00e+00h  1
-  14  5.8126429e+03 7.55e-15 6.25e-12  -8.6 1.78e-07    -  1.00e+00 1.00e+00h  1
+  14  5.8126429e+03 7.77e-15 6.25e-12  -8.6 1.78e-07    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 14
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.1625285870072360e+03    5.8126429350361796e+03
-Dual infeasibility......:   6.2541517268298295e-12    3.1270758634149147e-11
-Constraint violation....:   7.5495165674510645e-15    7.5495165674510645e-15
+Objective...............:   1.1625285870072362e+03    5.8126429350361805e+03
+Dual infeasibility......:   6.2541516535614795e-12    3.1270758267807398e-11
+Constraint violation....:   7.7715611723760958e-15    7.7715611723760958e-15
 Variable bound violation:   1.0911841874516881e-08    1.0911841874516881e-08
-Complementarity.........:   2.5102170848799089e-09    1.2551085424399544e-08
-Overall NLP error.......:   2.5102170848799089e-09    1.2551085424399544e-08
+Complementarity.........:   2.5102170848799279e-09    1.2551085424399639e-08
+Overall NLP error.......:   2.5102170848799279e-09    1.2551085424399639e-08
 
 
 Number of objective function evaluations             = 15
@@ -3214,11 +2938,11 @@ Number of inequality constraint evaluations          = 15
 Number of equality constraint Jacobian evaluations   = 15
 Number of inequality constraint Jacobian evaluations = 15
 Number of Lagrangian Hessian evaluations             = 14
-Total seconds in IPOPT                               = 0.008
+Total seconds in IPOPT                               = 0.005
 
 EXIT: Optimal Solution Found.
 file = "../../benchmarks/OptimizationFrameworks/opf_data/pglib_opf_case5_pjm.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      155
 Number of nonzeros in inequality constraint Jacobian.:       48
@@ -3255,20 +2979,20 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   16  1.7551940e+04 2.35e-10 2.06e-04  -3.8 3.83e-04    -  1.00e+00 1.00e+00h  1
   17  1.7551893e+04 1.75e-07 2.10e-01  -5.7 2.49e-03    -  1.00e+00 9.68e-01f  1
   18  1.7551891e+04 6.80e-11 3.09e-05  -5.7 2.38e-04    -  1.00e+00 1.00e+00f  1
-  19  1.7551891e+04 5.68e-14 6.47e-10  -5.7 5.17e-07    -  1.00e+00 1.00e+00h  1
+  19  1.7551891e+04 3.06e-14 6.47e-10  -5.7 5.17e-07    -  1.00e+00 1.00e+00h  1
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   20  1.7551891e+04 6.26e-12 3.03e-07  -8.6 3.52e-05    -  1.00e+00 1.00e+00f  1
-  21  1.7551891e+04 5.68e-14 3.38e-12  -8.6 3.33e-08    -  1.00e+00 1.00e+00h  1
+  21  1.7551891e+04 2.92e-14 3.65e-12  -8.6 3.33e-08    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 21
 
                                    (scaled)                 (unscaled)
-Objective...............:   4.3879727248486898e+02    1.7551890899394759e+04
-Dual infeasibility......:   3.3822003142280486e-12    1.3528801256912194e-10
-Constraint violation....:   3.6743585951626306e-14    5.6843418860808015e-14
+Objective...............:   4.3879727248486864e+02    1.7551890899394744e+04
+Dual infeasibility......:   3.6484809026628434e-12    1.4593923610651373e-10
+Constraint violation....:   1.8856205485917602e-14    2.9171109972025988e-14
 Variable bound violation:   2.9463905093507492e-08    2.9463905093507492e-08
-Complementarity.........:   2.5059076126917168e-09    1.0023630450766867e-07
-Overall NLP error.......:   2.5059076126917168e-09    1.0023630450766867e-07
+Complementarity.........:   2.5059076126554735e-09    1.0023630450621893e-07
+Overall NLP error.......:   2.5059076126554735e-09    1.0023630450621893e-07
 
 
 Number of objective function evaluations             = 28
@@ -3278,10 +3002,10 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 22
 Number of inequality constraint Jacobian evaluations = 22
 Number of Lagrangian Hessian evaluations             = 21
-Total seconds in IPOPT                               = 1.356
+Total seconds in IPOPT                               = 2.077
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      155
 Number of nonzeros in inequality constraint Jacobian.:       48
@@ -3318,20 +3042,20 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   16  1.7551940e+04 2.35e-10 2.06e-04  -3.8 3.83e-04    -  1.00e+00 1.00e+00h  1
   17  1.7551893e+04 1.75e-07 2.10e-01  -5.7 2.49e-03    -  1.00e+00 9.68e-01f  1
   18  1.7551891e+04 6.80e-11 3.09e-05  -5.7 2.38e-04    -  1.00e+00 1.00e+00f  1
-  19  1.7551891e+04 5.68e-14 6.47e-10  -5.7 5.17e-07    -  1.00e+00 1.00e+00h  1
+  19  1.7551891e+04 3.06e-14 6.47e-10  -5.7 5.17e-07    -  1.00e+00 1.00e+00h  1
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   20  1.7551891e+04 6.26e-12 3.03e-07  -8.6 3.52e-05    -  1.00e+00 1.00e+00f  1
-  21  1.7551891e+04 5.68e-14 3.38e-12  -8.6 3.33e-08    -  1.00e+00 1.00e+00h  1
+  21  1.7551891e+04 2.92e-14 3.65e-12  -8.6 3.33e-08    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 21
 
                                    (scaled)                 (unscaled)
-Objective...............:   4.3879727248486898e+02    1.7551890899394759e+04
-Dual infeasibility......:   3.3822003142280486e-12    1.3528801256912194e-10
-Constraint violation....:   3.6743585951626306e-14    5.6843418860808015e-14
+Objective...............:   4.3879727248486864e+02    1.7551890899394744e+04
+Dual infeasibility......:   3.6484809026628434e-12    1.4593923610651373e-10
+Constraint violation....:   1.8856205485917602e-14    2.9171109972025988e-14
 Variable bound violation:   2.9463905093507492e-08    2.9463905093507492e-08
-Complementarity.........:   2.5059076126917168e-09    1.0023630450766867e-07
-Overall NLP error.......:   2.5059076126917168e-09    1.0023630450766867e-07
+Complementarity.........:   2.5059076126554735e-09    1.0023630450621893e-07
+Overall NLP error.......:   2.5059076126554735e-09    1.0023630450621893e-07
 
 
 Number of objective function evaluations             = 28
@@ -3341,15 +3065,15 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 22
 Number of inequality constraint Jacobian evaluations = 22
 Number of Lagrangian Hessian evaluations             = 21
-Total seconds in IPOPT                               = 0.016
+Total seconds in IPOPT                               = 0.010
 
 EXIT: Optimal Solution Found.
 2×23 DataFrame
  Row │ case                    vars   cons   optimization  optimization_modelb ⋯
      │ String                  Int64  Int64  Float64       Float64             ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ pglib_opf_case3_lmbd.m     24     28     0.0761628                4.997 ⋯
-   2 │ pglib_opf_case5_pjm.m      44     53     0.395627                 4.678
+   1 │ pglib_opf_case3_lmbd.m     24     28      0.282001              0.00022 ⋯
+   2 │ pglib_opf_case5_pjm.m      44     53      0.830424              0.00019
                                                               19 columns omitted
 ```
 
@@ -3358,8 +3082,8 @@ EXIT: Optimal Solution Found.
 ```julia
 io = IOBuffer()
 println(io, "```@raw html")
-pretty_table(io, timing_data; backend = Val(:html))
-# show(io, "text/html", pretty_table(timing_data; backend = Val(:html)))
+pretty_table(io, timing_data; backend = :html)
+# show(io, "text/html", pretty_table(timing_data; backend = :html))
 println(io, "```")
 Text(String(take!(io)))
 ```
@@ -3367,32 +3091,32 @@ Text(String(take!(io)))
 ```@raw html
 <table>
   <thead>
-    <tr class = "header">
-      <th style = "text-align: right;">case</th>
-      <th style = "text-align: right;">vars</th>
-      <th style = "text-align: right;">cons</th>
-      <th style = "text-align: right;">optimization</th>
-      <th style = "text-align: right;">optimization_modelbuild</th>
-      <th style = "text-align: right;">optimization_wcompilation</th>
-      <th style = "text-align: right;">optimization_cost</th>
-      <th style = "text-align: right;">mtk</th>
-      <th style = "text-align: right;">mtk_time_modelbuild</th>
-      <th style = "text-align: right;">mtk_time_wcompilation</th>
-      <th style = "text-align: right;">mtk_cost</th>
-      <th style = "text-align: right;">jump</th>
-      <th style = "text-align: right;">jump_modelbuild</th>
-      <th style = "text-align: right;">jump_wcompilation</th>
-      <th style = "text-align: right;">jump_cost</th>
-      <th style = "text-align: right;">nlpmodels</th>
-      <th style = "text-align: right;">nlpmodels_modelbuild</th>
-      <th style = "text-align: right;">nlpmodels_wcompilation</th>
-      <th style = "text-align: right;">nlpmodels_cost</th>
-      <th style = "text-align: right;">optim</th>
-      <th style = "text-align: right;">optim_modelbuild</th>
-      <th style = "text-align: right;">optim_wcompilation</th>
-      <th style = "text-align: right;">optim_cost</th>
+    <tr class = "columnLabelRow">
+      <th style = "font-weight: bold; text-align: right;">case</th>
+      <th style = "font-weight: bold; text-align: right;">vars</th>
+      <th style = "font-weight: bold; text-align: right;">cons</th>
+      <th style = "font-weight: bold; text-align: right;">optimization</th>
+      <th style = "font-weight: bold; text-align: right;">optimization_modelbuild</th>
+      <th style = "font-weight: bold; text-align: right;">optimization_wcompilation</th>
+      <th style = "font-weight: bold; text-align: right;">optimization_cost</th>
+      <th style = "font-weight: bold; text-align: right;">mtk</th>
+      <th style = "font-weight: bold; text-align: right;">mtk_time_modelbuild</th>
+      <th style = "font-weight: bold; text-align: right;">mtk_time_wcompilation</th>
+      <th style = "font-weight: bold; text-align: right;">mtk_cost</th>
+      <th style = "font-weight: bold; text-align: right;">jump</th>
+      <th style = "font-weight: bold; text-align: right;">jump_modelbuild</th>
+      <th style = "font-weight: bold; text-align: right;">jump_wcompilation</th>
+      <th style = "font-weight: bold; text-align: right;">jump_cost</th>
+      <th style = "font-weight: bold; text-align: right;">nlpmodels</th>
+      <th style = "font-weight: bold; text-align: right;">nlpmodels_modelbuild</th>
+      <th style = "font-weight: bold; text-align: right;">nlpmodels_wcompilation</th>
+      <th style = "font-weight: bold; text-align: right;">nlpmodels_cost</th>
+      <th style = "font-weight: bold; text-align: right;">optim</th>
+      <th style = "font-weight: bold; text-align: right;">optim_modelbuild</th>
+      <th style = "font-weight: bold; text-align: right;">optim_wcompilation</th>
+      <th style = "font-weight: bold; text-align: right;">optim_cost</th>
     </tr>
-    <tr class = "subheader headerLastRow">
+    <tr class = "columnLabelRow">
       <th style = "text-align: right;">String</th>
       <th style = "text-align: right;">Int64</th>
       <th style = "text-align: right;">Int64</th>
@@ -3419,55 +3143,55 @@ Text(String(take!(io)))
     </tr>
   </thead>
   <tbody>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">24</td>
       <td style = "text-align: right;">28</td>
-      <td style = "text-align: right;">0.0761628</td>
-      <td style = "text-align: right;">4.9979e-5</td>
-      <td style = "text-align: right;">0.0745601</td>
+      <td style = "text-align: right;">0.282001</td>
+      <td style = "text-align: right;">0.000227748</td>
+      <td style = "text-align: right;">0.215498</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0169464</td>
-      <td style = "text-align: right;">1.25872</td>
-      <td style = "text-align: right;">3.08062</td>
+      <td style = "text-align: right;">0.0389134</td>
+      <td style = "text-align: right;">0.263891</td>
+      <td style = "text-align: right;">4.07625</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.00765398</td>
-      <td style = "text-align: right;">0.00178746</td>
-      <td style = "text-align: right;">0.00805817</td>
+      <td style = "text-align: right;">0.00815264</td>
+      <td style = "text-align: right;">0.00285694</td>
+      <td style = "text-align: right;">0.00924784</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0170089</td>
-      <td style = "text-align: right;">0.0149911</td>
-      <td style = "text-align: right;">0.0178768</td>
+      <td style = "text-align: right;">0.0236723</td>
+      <td style = "text-align: right;">0.00491654</td>
+      <td style = "text-align: right;">0.0236552</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">2.07783</td>
-      <td style = "text-align: right;">0.000258597</td>
-      <td style = "text-align: right;">2.10584</td>
-      <td style = "text-align: right;">6273.63</td>
+      <td style = "text-align: right;">0.605673</td>
+      <td style = "text-align: right;">0.000849274</td>
+      <td style = "text-align: right;">0.549066</td>
+      <td style = "text-align: right;">1.93871e5</td>
     </tr>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case5_pjm.m</td>
       <td style = "text-align: right;">44</td>
       <td style = "text-align: right;">53</td>
-      <td style = "text-align: right;">0.395627</td>
-      <td style = "text-align: right;">4.6789e-5</td>
-      <td style = "text-align: right;">0.426829</td>
+      <td style = "text-align: right;">0.830424</td>
+      <td style = "text-align: right;">0.000195829</td>
+      <td style = "text-align: right;">0.799336</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0319069</td>
-      <td style = "text-align: right;">0.36729</td>
-      <td style = "text-align: right;">2.70288</td>
+      <td style = "text-align: right;">0.0270036</td>
+      <td style = "text-align: right;">0.137459</td>
+      <td style = "text-align: right;">3.41895</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0121948</td>
-      <td style = "text-align: right;">0.00211386</td>
-      <td style = "text-align: right;">0.0125961</td>
+      <td style = "text-align: right;">0.0127802</td>
+      <td style = "text-align: right;">0.00311729</td>
+      <td style = "text-align: right;">0.0138209</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0349266</td>
-      <td style = "text-align: right;">0.0261484</td>
-      <td style = "text-align: right;">0.0355382</td>
+      <td style = "text-align: right;">0.0460711</td>
+      <td style = "text-align: right;">0.00692568</td>
+      <td style = "text-align: right;">0.0510126</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">17.1599</td>
-      <td style = "text-align: right;">0.000399686</td>
-      <td style = "text-align: right;">17.1126</td>
-      <td style = "text-align: right;">77.9548</td>
+      <td style = "text-align: right;">12.6657</td>
+      <td style = "text-align: right;">0.000983783</td>
+      <td style = "text-align: right;">12.5123</td>
+      <td style = "text-align: right;">90.6969</td>
     </tr>
   </tbody>
 </table>
@@ -3485,31 +3209,31 @@ tmpdir = Base.Filesystem.mktempdir()
 LibGit2.clone("https://github.com/power-grid-lib/pglib-opf", tmpdir)
 benchmarkfiles = readdir(tmpdir)
 benchmarkfiles = benchmarkfiles[endswith(".m").(benchmarkfiles)]
-benchmark_datasets = joinpath.((tmpdir,),benchmarkfiles)
+benchmark_datasets = joinpath.((tmpdir,), benchmarkfiles)
 ```
 
 ```
 66-element Vector{String}:
- "/tmp/jl_XPUwWW/pglib_opf_case10000_goc.m"
- "/tmp/jl_XPUwWW/pglib_opf_case10192_epigrids.m"
- "/tmp/jl_XPUwWW/pglib_opf_case10480_goc.m"
- "/tmp/jl_XPUwWW/pglib_opf_case118_ieee.m"
- "/tmp/jl_XPUwWW/pglib_opf_case1354_pegase.m"
- "/tmp/jl_XPUwWW/pglib_opf_case13659_pegase.m"
- "/tmp/jl_XPUwWW/pglib_opf_case14_ieee.m"
- "/tmp/jl_XPUwWW/pglib_opf_case162_ieee_dtc.m"
- "/tmp/jl_XPUwWW/pglib_opf_case179_goc.m"
- "/tmp/jl_XPUwWW/pglib_opf_case1803_snem.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case10000_goc.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case10192_epigrids.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case10480_goc.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case118_ieee.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case1354_pegase.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case13659_pegase.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case14_ieee.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case162_ieee_dtc.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case179_goc.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case1803_snem.m"
  ⋮
- "/tmp/jl_XPUwWW/pglib_opf_case6515_rte.m"
- "/tmp/jl_XPUwWW/pglib_opf_case7336_epigrids.m"
- "/tmp/jl_XPUwWW/pglib_opf_case73_ieee_rts.m"
- "/tmp/jl_XPUwWW/pglib_opf_case78484_epigrids.m"
- "/tmp/jl_XPUwWW/pglib_opf_case793_goc.m"
- "/tmp/jl_XPUwWW/pglib_opf_case8387_pegase.m"
- "/tmp/jl_XPUwWW/pglib_opf_case89_pegase.m"
- "/tmp/jl_XPUwWW/pglib_opf_case9241_pegase.m"
- "/tmp/jl_XPUwWW/pglib_opf_case9591_goc.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case6515_rte.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case7336_epigrids.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case73_ieee_rts.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case78484_epigrids.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case793_goc.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case8387_pegase.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case89_pegase.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case9241_pegase.m"
+ "/tmp/jl_3GWXAw/pglib_opf_case9591_goc.m"
 ```
 
 
@@ -3519,14 +3243,14 @@ timing_data = multidata_multisolver_benchmark(benchmark_datasets)
 ```
 
 ```
-file = "/tmp/jl_XPUwWW/pglib_opf_case10000_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case10192_epigrids.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case10480_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case118_ieee.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case1354_pegase.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case13659_pegase.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case14_ieee.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+file = "/tmp/jl_3GWXAw/pglib_opf_case10000_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case10192_epigrids.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case10480_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case118_ieee.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case1354_pegase.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case13659_pegase.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case14_ieee.m"
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      489
 Number of nonzeros in inequality constraint Jacobian.:      160
@@ -3559,17 +3283,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   12  2.1780805e+03 1.82e-07 1.04e-05  -5.7 1.67e-03    -  1.00e+00 1.00e+00h  1
   13  2.1780804e+03 2.19e-09 2.91e-06  -8.6 1.68e-04    -  1.00e+00 9.99e-01h  1
   14  2.1780804e+03 1.10e-09 1.44e-05  -8.6 2.01e-06    -  1.00e+00 5.00e-01f  2
-  15  2.1780804e+03 6.66e-14 3.85e-12  -8.6 1.01e-06    -  1.00e+00 1.00e+00h  1
+  15  2.1780804e+03 6.57e-14 3.79e-12  -8.6 1.01e-06    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   9.3602396804143993e+01    2.1780804108196480e+03
-Dual infeasibility......:   3.8475889141409425e-12    8.9531447152069183e-11
-Constraint violation....:   6.6613381477509392e-14    6.6613381477509392e-14
+Objective...............:   9.3602396804143893e+01    2.1780804108196457e+03
+Dual infeasibility......:   3.7925218521195347e-12    8.8250064482764413e-11
+Constraint violation....:   6.5725203057809267e-14    6.5725203057809267e-14
 Variable bound violation:   1.0340993394919451e-08    1.0340993394919451e-08
-Complementarity.........:   2.5059040485519189e-09    5.8311119222354586e-08
-Overall NLP error.......:   2.5059040485519189e-09    5.8311119222354586e-08
+Complementarity.........:   2.5059040485519255e-09    5.8311119222354745e-08
+Overall NLP error.......:   2.5059040485519255e-09    5.8311119222354745e-08
 
 
 Number of objective function evaluations             = 18
@@ -3579,10 +3303,10 @@ Number of inequality constraint evaluations          = 18
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 15
-Total seconds in IPOPT                               = 4.395
+Total seconds in IPOPT                               = 14.033
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      489
 Number of nonzeros in inequality constraint Jacobian.:      160
@@ -3615,17 +3339,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   12  2.1780805e+03 1.82e-07 1.04e-05  -5.7 1.67e-03    -  1.00e+00 1.00e+00h  1
   13  2.1780804e+03 2.19e-09 2.91e-06  -8.6 1.68e-04    -  1.00e+00 9.99e-01h  1
   14  2.1780804e+03 1.10e-09 1.44e-05  -8.6 2.01e-06    -  1.00e+00 5.00e-01f  2
-  15  2.1780804e+03 6.66e-14 3.85e-12  -8.6 1.01e-06    -  1.00e+00 1.00e+00h  1
+  15  2.1780804e+03 6.57e-14 3.79e-12  -8.6 1.01e-06    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   9.3602396804143993e+01    2.1780804108196480e+03
-Dual infeasibility......:   3.8475889141409425e-12    8.9531447152069183e-11
-Constraint violation....:   6.6613381477509392e-14    6.6613381477509392e-14
+Objective...............:   9.3602396804143893e+01    2.1780804108196457e+03
+Dual infeasibility......:   3.7925218521195347e-12    8.8250064482764413e-11
+Constraint violation....:   6.5725203057809267e-14    6.5725203057809267e-14
 Variable bound violation:   1.0340993394919451e-08    1.0340993394919451e-08
-Complementarity.........:   2.5059040485519189e-09    5.8311119222354586e-08
-Overall NLP error.......:   2.5059040485519189e-09    5.8311119222354586e-08
+Complementarity.........:   2.5059040485519255e-09    5.8311119222354745e-08
+Overall NLP error.......:   2.5059040485519255e-09    5.8311119222354745e-08
 
 
 Number of objective function evaluations             = 18
@@ -3635,25 +3359,25 @@ Number of inequality constraint evaluations          = 18
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 15
-Total seconds in IPOPT                               = 0.023
+Total seconds in IPOPT                               = 0.024
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_XPUwWW/pglib_opf_case162_ieee_dtc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case179_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case1803_snem.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case1888_rte.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case19402_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case1951_rte.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case197_snem.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2000_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case200_activ.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case20758_epigrids.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2312_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2383wp_k.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case240_pserc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case24464_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case24_ieee_rts.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+file = "/tmp/jl_3GWXAw/pglib_opf_case162_ieee_dtc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case179_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case1803_snem.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case1888_rte.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case19402_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case1951_rte.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case197_snem.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2000_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case200_activ.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case20758_epigrids.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2312_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2383wp_k.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case240_pserc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case24464_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case24_ieee_rts.m"
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      979
 Number of nonzeros in inequality constraint Jacobian.:      304
@@ -3690,17 +3414,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   16  6.3352941e+04 1.86e-06 2.89e-05  -3.8 9.06e-03    -  1.00e+00 1.00e+00h  1
   17  6.3352216e+04 3.36e-07 5.07e-04  -5.7 9.37e-03    -  9.90e-01 9.93e-01h  1
   18  6.3352210e+04 1.17e-09 2.51e-08  -5.7 1.81e-04    -  1.00e+00 1.00e+00h  1
-  19  6.3352201e+04 5.65e-11 8.23e-10  -8.6 1.04e-04    -  1.00e+00 1.00e+00h  1
+  19  6.3352201e+04 5.65e-11 8.24e-10  -8.6 1.04e-04    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 19
 
                                    (scaled)                 (unscaled)
-Objective...............:   4.8732462373895481e+02    6.3352201086064124e+04
-Dual infeasibility......:   8.2331781542267553e-10    1.0703131600494782e-07
-Constraint violation....:   5.6523674629715970e-11    5.6523674629715970e-11
+Objective...............:   4.8732462373895544e+02    6.3352201086064204e+04
+Dual infeasibility......:   8.2365533028260471e-10    1.0707519293673861e-07
+Constraint violation....:   5.6516707980236447e-11    5.6516707980236447e-11
 Variable bound violation:   3.9922449346363464e-08    3.9922449346363464e-08
-Complementarity.........:   3.7502813809752752e-09    4.8753657952678579e-07
-Overall NLP error.......:   3.7502813809752752e-09    4.8753657952678579e-07
+Complementarity.........:   3.7502813811802746e-09    4.8753657955343567e-07
+Overall NLP error.......:   3.7502813811802746e-09    4.8753657955343567e-07
 
 
 Number of objective function evaluations             = 21
@@ -3710,10 +3434,10 @@ Number of inequality constraint evaluations          = 21
 Number of equality constraint Jacobian evaluations   = 20
 Number of inequality constraint Jacobian evaluations = 20
 Number of Lagrangian Hessian evaluations             = 19
-Total seconds in IPOPT                               = 11.453
+Total seconds in IPOPT                               = 67.408
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      979
 Number of nonzeros in inequality constraint Jacobian.:      304
@@ -3750,17 +3474,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   16  6.3352941e+04 1.86e-06 2.89e-05  -3.8 9.06e-03    -  1.00e+00 1.00e+00h  1
   17  6.3352216e+04 3.36e-07 5.07e-04  -5.7 9.37e-03    -  9.90e-01 9.93e-01h  1
   18  6.3352210e+04 1.17e-09 2.51e-08  -5.7 1.81e-04    -  1.00e+00 1.00e+00h  1
-  19  6.3352201e+04 5.65e-11 8.23e-10  -8.6 1.04e-04    -  1.00e+00 1.00e+00h  1
+  19  6.3352201e+04 5.65e-11 8.24e-10  -8.6 1.04e-04    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 19
 
                                    (scaled)                 (unscaled)
-Objective...............:   4.8732462373895481e+02    6.3352201086064124e+04
-Dual infeasibility......:   8.2331781542267553e-10    1.0703131600494782e-07
-Constraint violation....:   5.6523674629715970e-11    5.6523674629715970e-11
+Objective...............:   4.8732462373895544e+02    6.3352201086064204e+04
+Dual infeasibility......:   8.2365533028260471e-10    1.0707519293673861e-07
+Constraint violation....:   5.6516707980236447e-11    5.6516707980236447e-11
 Variable bound violation:   3.9922449346363464e-08    3.9922449346363464e-08
-Complementarity.........:   3.7502813809752752e-09    4.8753657952678579e-07
-Overall NLP error.......:   3.7502813809752752e-09    4.8753657952678579e-07
+Complementarity.........:   3.7502813811802746e-09    4.8753657955343567e-07
+Overall NLP error.......:   3.7502813811802746e-09    4.8753657955343567e-07
 
 
 Number of objective function evaluations             = 21
@@ -3770,24 +3494,24 @@ Number of inequality constraint evaluations          = 21
 Number of equality constraint Jacobian evaluations   = 20
 Number of inequality constraint Jacobian evaluations = 20
 Number of Lagrangian Hessian evaluations             = 19
-Total seconds in IPOPT                               = 0.051
+Total seconds in IPOPT                               = 0.047
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_XPUwWW/pglib_opf_case2736sp_k.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2737sop_k.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2742_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2746wop_k.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2746wp_k.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2848_rte.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2853_sdet.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2868_rte.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case2869_pegase.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case30000_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case300_ieee.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case3012wp_k.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case3022_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case30_as.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+file = "/tmp/jl_3GWXAw/pglib_opf_case2736sp_k.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2737sop_k.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2742_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2746wop_k.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2746wp_k.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2848_rte.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2853_sdet.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2868_rte.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case2869_pegase.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case30000_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case300_ieee.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case3012wp_k.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case3022_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case30_as.m"
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      999
 Number of nonzeros in inequality constraint Jacobian.:      328
@@ -3821,12 +3545,12 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
 Number of Iterations....: 11
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.4711609550316729e+02    8.0312731038529364e+02
-Dual infeasibility......:   1.8152057634779339e-09    5.8994187313032853e-09
-Constraint violation....:   7.1401551338112768e-11    7.1401551338112768e-11
+Objective...............:   2.4711609550316643e+02    8.0312731038529091e+02
+Dual infeasibility......:   1.8152626068967948e-09    5.8996034724145829e-09
+Constraint violation....:   7.1401801138293308e-11    7.1401801138293308e-11
 Variable bound violation:   1.0369035186030828e-08    1.0369035186030828e-08
-Complementarity.........:   3.8105847373601750e-09    1.2384400396420568e-08
-Overall NLP error.......:   3.8105847373601750e-09    1.2384400396420568e-08
+Complementarity.........:   3.8105847358648169e-09    1.2384400391560654e-08
+Overall NLP error.......:   3.8105847358648169e-09    1.2384400391560654e-08
 
 
 Number of objective function evaluations             = 12
@@ -3836,10 +3560,10 @@ Number of inequality constraint evaluations          = 12
 Number of equality constraint Jacobian evaluations   = 12
 Number of inequality constraint Jacobian evaluations = 12
 Number of Lagrangian Hessian evaluations             = 11
-Total seconds in IPOPT                               = 11.386
+Total seconds in IPOPT                               = 93.171
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      999
 Number of nonzeros in inequality constraint Jacobian.:      328
@@ -3873,12 +3597,12 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
 Number of Iterations....: 11
 
                                    (scaled)                 (unscaled)
-Objective...............:   2.4711609550316729e+02    8.0312731038529364e+02
-Dual infeasibility......:   1.8152057634779339e-09    5.8994187313032853e-09
-Constraint violation....:   7.1401551338112768e-11    7.1401551338112768e-11
+Objective...............:   2.4711609550316643e+02    8.0312731038529091e+02
+Dual infeasibility......:   1.8152626068967948e-09    5.8996034724145829e-09
+Constraint violation....:   7.1401801138293308e-11    7.1401801138293308e-11
 Variable bound violation:   1.0369035186030828e-08    1.0369035186030828e-08
-Complementarity.........:   3.8105847373601750e-09    1.2384400396420568e-08
-Overall NLP error.......:   3.8105847373601750e-09    1.2384400396420568e-08
+Complementarity.........:   3.8105847358648169e-09    1.2384400391560654e-08
+Overall NLP error.......:   3.8105847358648169e-09    1.2384400391560654e-08
 
 
 Number of objective function evaluations             = 12
@@ -3888,11 +3612,11 @@ Number of inequality constraint evaluations          = 12
 Number of equality constraint Jacobian evaluations   = 12
 Number of inequality constraint Jacobian evaluations = 12
 Number of Lagrangian Hessian evaluations             = 11
-Total seconds in IPOPT                               = 0.033
+Total seconds in IPOPT                               = 0.034
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_XPUwWW/pglib_opf_case30_ieee.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+file = "/tmp/jl_3GWXAw/pglib_opf_case30_ieee.m"
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      995
 Number of nonzeros in inequality constraint Jacobian.:      328
@@ -3928,17 +3652,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   15  8.2085154e+03 5.30e-09 2.50e-03  -8.6 8.83e-05    -  9.80e-01 1.00e+00h  1
   16  8.2085154e+03 4.62e-09 2.33e-03  -8.6 1.11e-05    -  1.00e+00 1.25e-01f  4
   17  8.2085154e+03 3.63e-12 1.37e-08  -8.6 9.90e-06    -  1.00e+00 1.00e+00h  1
-  18  8.2085154e+03 1.42e-14 2.54e-12  -9.0 4.10e-08    -  1.00e+00 1.00e+00h  1
+  18  8.2085154e+03 7.11e-15 2.54e-12  -9.0 4.10e-08    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 18
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.5730473122733963e+02    8.2085154403067681e+03
-Dual infeasibility......:   2.5374700336157655e-12    1.3241090581152641e-10
-Constraint violation....:   1.4210854715202004e-14    1.4210854715202004e-14
+Objective...............:   1.5730473122733949e+02    8.2085154403067609e+03
+Dual infeasibility......:   2.5375810559200892e-12    1.3241669920561030e-10
+Constraint violation....:   7.1054273576010019e-15    7.1054273576010019e-15
 Variable bound violation:   1.0549795703695963e-08    1.0549795703695963e-08
-Complementarity.........:   9.0917662089346910e-10    4.7442885362324712e-08
-Overall NLP error.......:   9.0917662089346910e-10    4.7442885362324712e-08
+Complementarity.........:   9.0917662089786050e-10    4.7442885362553868e-08
+Overall NLP error.......:   9.0917662089786050e-10    4.7442885362553868e-08
 
 
 Number of objective function evaluations             = 23
@@ -3948,10 +3672,10 @@ Number of inequality constraint evaluations          = 23
 Number of equality constraint Jacobian evaluations   = 19
 Number of inequality constraint Jacobian evaluations = 19
 Number of Lagrangian Hessian evaluations             = 18
-Total seconds in IPOPT                               = 11.588
+Total seconds in IPOPT                               = 92.976
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      995
 Number of nonzeros in inequality constraint Jacobian.:      328
@@ -3987,17 +3711,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   15  8.2085154e+03 5.30e-09 2.50e-03  -8.6 8.83e-05    -  9.80e-01 1.00e+00h  1
   16  8.2085154e+03 4.62e-09 2.33e-03  -8.6 1.11e-05    -  1.00e+00 1.25e-01f  4
   17  8.2085154e+03 3.63e-12 1.37e-08  -8.6 9.90e-06    -  1.00e+00 1.00e+00h  1
-  18  8.2085154e+03 1.42e-14 2.54e-12  -9.0 4.10e-08    -  1.00e+00 1.00e+00h  1
+  18  8.2085154e+03 7.11e-15 2.54e-12  -9.0 4.10e-08    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 18
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.5730473122733963e+02    8.2085154403067681e+03
-Dual infeasibility......:   2.5374700336157655e-12    1.3241090581152641e-10
-Constraint violation....:   1.4210854715202004e-14    1.4210854715202004e-14
+Objective...............:   1.5730473122733949e+02    8.2085154403067609e+03
+Dual infeasibility......:   2.5375810559200892e-12    1.3241669920561030e-10
+Constraint violation....:   7.1054273576010019e-15    7.1054273576010019e-15
 Variable bound violation:   1.0549795703695963e-08    1.0549795703695963e-08
-Complementarity.........:   9.0917662089346910e-10    4.7442885362324712e-08
-Overall NLP error.......:   9.0917662089346910e-10    4.7442885362324712e-08
+Complementarity.........:   9.0917662089786050e-10    4.7442885362553868e-08
+Overall NLP error.......:   9.0917662089786050e-10    4.7442885362553868e-08
 
 
 Number of objective function evaluations             = 23
@@ -4007,14 +3731,14 @@ Number of inequality constraint evaluations          = 23
 Number of equality constraint Jacobian evaluations   = 19
 Number of inequality constraint Jacobian evaluations = 19
 Number of Lagrangian Hessian evaluations             = 18
-Total seconds in IPOPT                               = 0.052
+Total seconds in IPOPT                               = 0.031
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_XPUwWW/pglib_opf_case3120sp_k.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case3375wp_k.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case3970_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case39_epri.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+file = "/tmp/jl_3GWXAw/pglib_opf_case3120sp_k.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case3375wp_k.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case3970_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case39_epri.m"
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:     1125
 Number of nonzeros in inequality constraint Jacobian.:      368
@@ -4059,17 +3783,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   23  1.3841557e+05 3.47e-06 1.17e-01  -5.7 9.00e-03    -  9.92e-01 9.04e-01h  1
   24  1.3841556e+05 1.69e-07 2.44e-06  -5.7 1.56e-03    -  1.00e+00 1.00e+00h  1
   25  1.3841556e+05 1.86e-10 4.07e-06  -8.6 7.90e-05    -  1.00e+00 1.00e+00h  1
-  26  1.3841556e+05 1.14e-13 1.36e-11  -8.6 5.30e-08    -  1.00e+00 1.00e+00f  1
+  26  1.3841556e+05 5.68e-14 1.61e-11  -8.6 5.30e-08    -  1.00e+00 1.00e+00f  1
 
 Number of Iterations....: 26
 
                                    (scaled)                 (unscaled)
-Objective...............:   3.9723627718148396e+03    1.3841556265037853e+05
-Dual infeasibility......:   1.3577390042013769e-11    4.7309930888572472e-10
-Constraint violation....:   4.9308361011817179e-14    1.1368683772161603e-13
+Objective...............:   3.9723627718148382e+03    1.3841556265037847e+05
+Dual infeasibility......:   1.6144059141495091e-11    5.6253397735628296e-10
+Constraint violation....:   4.4075854077618715e-14    5.6843418860808015e-14
 Variable bound violation:   1.0982981990537155e-07    1.0982981990537155e-07
-Complementarity.........:   2.5059244715281850e-09    8.7318043595363258e-08
-Overall NLP error.......:   2.5059244715281850e-09    8.7318043595363258e-08
+Complementarity.........:   2.5059244715281759e-09    8.7318043595362940e-08
+Overall NLP error.......:   2.5059244715281759e-09    8.7318043595362940e-08
 
 
 Number of objective function evaluations             = 55
@@ -4079,10 +3803,10 @@ Number of inequality constraint evaluations          = 55
 Number of equality constraint Jacobian evaluations   = 27
 Number of inequality constraint Jacobian evaluations = 27
 Number of Lagrangian Hessian evaluations             = 26
-Total seconds in IPOPT                               = 14.936
+Total seconds in IPOPT                               = 133.898
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:     1125
 Number of nonzeros in inequality constraint Jacobian.:      368
@@ -4127,17 +3851,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   23  1.3841557e+05 3.47e-06 1.17e-01  -5.7 9.00e-03    -  9.92e-01 9.04e-01h  1
   24  1.3841556e+05 1.69e-07 2.44e-06  -5.7 1.56e-03    -  1.00e+00 1.00e+00h  1
   25  1.3841556e+05 1.86e-10 4.07e-06  -8.6 7.90e-05    -  1.00e+00 1.00e+00h  1
-  26  1.3841556e+05 1.14e-13 1.36e-11  -8.6 5.30e-08    -  1.00e+00 1.00e+00f  1
+  26  1.3841556e+05 5.68e-14 1.61e-11  -8.6 5.30e-08    -  1.00e+00 1.00e+00f  1
 
 Number of Iterations....: 26
 
                                    (scaled)                 (unscaled)
-Objective...............:   3.9723627718148396e+03    1.3841556265037853e+05
-Dual infeasibility......:   1.3577390042013769e-11    4.7309930888572472e-10
-Constraint violation....:   4.9308361011817179e-14    1.1368683772161603e-13
+Objective...............:   3.9723627718148382e+03    1.3841556265037847e+05
+Dual infeasibility......:   1.6144059141495091e-11    5.6253397735628296e-10
+Constraint violation....:   4.4075854077618715e-14    5.6843418860808015e-14
 Variable bound violation:   1.0982981990537155e-07    1.0982981990537155e-07
-Complementarity.........:   2.5059244715281850e-09    8.7318043595363258e-08
-Overall NLP error.......:   2.5059244715281850e-09    8.7318043595363258e-08
+Complementarity.........:   2.5059244715281759e-09    8.7318043595362940e-08
+Overall NLP error.......:   2.5059244715281759e-09    8.7318043595362940e-08
 
 
 Number of objective function evaluations             = 55
@@ -4147,11 +3871,11 @@ Number of inequality constraint evaluations          = 55
 Number of equality constraint Jacobian evaluations   = 27
 Number of inequality constraint Jacobian evaluations = 27
 Number of Lagrangian Hessian evaluations             = 26
-Total seconds in IPOPT                               = 0.088
+Total seconds in IPOPT                               = 0.062
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_XPUwWW/pglib_opf_case3_lmbd.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+file = "/tmp/jl_3GWXAw/pglib_opf_case3_lmbd.m"
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:       78
 Number of nonzeros in inequality constraint Jacobian.:       24
@@ -4183,17 +3907,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   11  5.8127612e+03 1.60e-05 1.36e-02  -2.5 8.27e-03    -  1.00e+00 1.00e+00f  1
   12  5.8126464e+03 2.60e-07 1.15e-04  -3.8 1.05e-03    -  1.00e+00 1.00e+00f  1
   13  5.8126430e+03 1.32e-10 8.31e-08  -5.7 2.50e-05    -  1.00e+00 1.00e+00h  1
-  14  5.8126429e+03 7.55e-15 6.25e-12  -8.6 1.78e-07    -  1.00e+00 1.00e+00h  1
+  14  5.8126429e+03 7.77e-15 6.25e-12  -8.6 1.78e-07    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 14
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.1625285870072360e+03    5.8126429350361796e+03
-Dual infeasibility......:   6.2541517268298295e-12    3.1270758634149147e-11
-Constraint violation....:   7.5495165674510645e-15    7.5495165674510645e-15
+Objective...............:   1.1625285870072362e+03    5.8126429350361805e+03
+Dual infeasibility......:   6.2541516535614795e-12    3.1270758267807398e-11
+Constraint violation....:   7.7715611723760958e-15    7.7715611723760958e-15
 Variable bound violation:   1.0911841874516881e-08    1.0911841874516881e-08
-Complementarity.........:   2.5102170848799089e-09    1.2551085424399544e-08
-Overall NLP error.......:   2.5102170848799089e-09    1.2551085424399544e-08
+Complementarity.........:   2.5102170848799279e-09    1.2551085424399639e-08
+Overall NLP error.......:   2.5102170848799279e-09    1.2551085424399639e-08
 
 
 Number of objective function evaluations             = 15
@@ -4203,10 +3927,10 @@ Number of inequality constraint evaluations          = 15
 Number of equality constraint Jacobian evaluations   = 15
 Number of inequality constraint Jacobian evaluations = 15
 Number of Lagrangian Hessian evaluations             = 14
-Total seconds in IPOPT                               = 0.010
+Total seconds in IPOPT                               = 0.007
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:       78
 Number of nonzeros in inequality constraint Jacobian.:       24
@@ -4238,17 +3962,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   11  5.8127612e+03 1.60e-05 1.36e-02  -2.5 8.27e-03    -  1.00e+00 1.00e+00f  1
   12  5.8126464e+03 2.60e-07 1.15e-04  -3.8 1.05e-03    -  1.00e+00 1.00e+00f  1
   13  5.8126430e+03 1.32e-10 8.31e-08  -5.7 2.50e-05    -  1.00e+00 1.00e+00h  1
-  14  5.8126429e+03 7.55e-15 6.25e-12  -8.6 1.78e-07    -  1.00e+00 1.00e+00h  1
+  14  5.8126429e+03 7.77e-15 6.25e-12  -8.6 1.78e-07    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 14
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.1625285870072360e+03    5.8126429350361796e+03
-Dual infeasibility......:   6.2541517268298295e-12    3.1270758634149147e-11
-Constraint violation....:   7.5495165674510645e-15    7.5495165674510645e-15
+Objective...............:   1.1625285870072362e+03    5.8126429350361805e+03
+Dual infeasibility......:   6.2541516535614795e-12    3.1270758267807398e-11
+Constraint violation....:   7.7715611723760958e-15    7.7715611723760958e-15
 Variable bound violation:   1.0911841874516881e-08    1.0911841874516881e-08
-Complementarity.........:   2.5102170848799089e-09    1.2551085424399544e-08
-Overall NLP error.......:   2.5102170848799089e-09    1.2551085424399544e-08
+Complementarity.........:   2.5102170848799279e-09    1.2551085424399639e-08
+Overall NLP error.......:   2.5102170848799279e-09    1.2551085424399639e-08
 
 
 Number of objective function evaluations             = 15
@@ -4258,19 +3982,19 @@ Number of inequality constraint evaluations          = 15
 Number of equality constraint Jacobian evaluations   = 15
 Number of inequality constraint Jacobian evaluations = 15
 Number of Lagrangian Hessian evaluations             = 14
-Total seconds in IPOPT                               = 0.009
+Total seconds in IPOPT                               = 0.007
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_XPUwWW/pglib_opf_case4020_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case4601_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case4619_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case4661_sdet.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case4837_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case4917_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case500_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case5658_epigrids.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case57_ieee.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+file = "/tmp/jl_3GWXAw/pglib_opf_case4020_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case4601_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case4619_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case4661_sdet.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case4837_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case4917_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case500_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case5658_epigrids.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case57_ieee.m"
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:     1935
 Number of nonzeros in inequality constraint Jacobian.:      640
@@ -4303,17 +4027,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   12  3.7589396e+04 2.20e-06 1.90e-02  -3.8 4.24e-02    -  9.89e-01 1.00e+00h  1
   13  3.7589383e+04 8.07e-09 2.05e-06  -3.8 5.69e-04    -  1.00e+00 1.00e+00h  1
   14  3.7589339e+04 7.59e-09 1.23e-06  -5.7 2.32e-03    -  1.00e+00 1.00e+00h  1
-  15  3.7589338e+04 1.86e-12 2.72e-10  -8.6 2.92e-05    -  1.00e+00 1.00e+00h  1
+  15  3.7589338e+04 1.85e-12 2.72e-10  -8.6 2.92e-05    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.0107655336327775e+03    3.7589338204193162e+04
-Dual infeasibility......:   2.7159293080629876e-10    1.0100263800303899e-08
-Constraint violation....:   1.8649361568923162e-12    1.8649361568923162e-12
+Objective...............:   1.0107655336327783e+03    3.7589338204193191e+04
+Dual infeasibility......:   2.7150766440745813e-10    1.0097092829988010e-08
+Constraint violation....:   1.8545165403338615e-12    1.8545165403338615e-12
 Variable bound violation:   2.4448082225347889e-08    2.4448082225347889e-08
-Complementarity.........:   2.6288227592950274e-09    9.7763234390144846e-08
-Overall NLP error.......:   2.6288227592950274e-09    9.7763234390144846e-08
+Complementarity.........:   2.6288227592952003e-09    9.7763234390151265e-08
+Overall NLP error.......:   2.6288227592952003e-09    9.7763234390151265e-08
 
 
 Number of objective function evaluations             = 16
@@ -4323,10 +4047,10 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 15
-Total seconds in IPOPT                               = 35.324
+Total seconds in IPOPT                               = 540.553
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:     1935
 Number of nonzeros in inequality constraint Jacobian.:      640
@@ -4359,17 +4083,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   12  3.7589396e+04 2.20e-06 1.90e-02  -3.8 4.24e-02    -  9.89e-01 1.00e+00h  1
   13  3.7589383e+04 8.07e-09 2.05e-06  -3.8 5.69e-04    -  1.00e+00 1.00e+00h  1
   14  3.7589339e+04 7.59e-09 1.23e-06  -5.7 2.32e-03    -  1.00e+00 1.00e+00h  1
-  15  3.7589338e+04 1.86e-12 2.72e-10  -8.6 2.92e-05    -  1.00e+00 1.00e+00h  1
+  15  3.7589338e+04 1.85e-12 2.72e-10  -8.6 2.92e-05    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 15
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.0107655336327775e+03    3.7589338204193162e+04
-Dual infeasibility......:   2.7159293080629876e-10    1.0100263800303899e-08
-Constraint violation....:   1.8649361568923162e-12    1.8649361568923162e-12
+Objective...............:   1.0107655336327783e+03    3.7589338204193191e+04
+Dual infeasibility......:   2.7150766440745813e-10    1.0097092829988010e-08
+Constraint violation....:   1.8545165403338615e-12    1.8545165403338615e-12
 Variable bound violation:   2.4448082225347889e-08    2.4448082225347889e-08
-Complementarity.........:   2.6288227592950274e-09    9.7763234390144846e-08
-Overall NLP error.......:   2.6288227592950274e-09    9.7763234390144846e-08
+Complementarity.........:   2.6288227592952003e-09    9.7763234390151265e-08
+Overall NLP error.......:   2.6288227592952003e-09    9.7763234390151265e-08
 
 
 Number of objective function evaluations             = 16
@@ -4379,12 +4103,12 @@ Number of inequality constraint evaluations          = 16
 Number of equality constraint Jacobian evaluations   = 16
 Number of inequality constraint Jacobian evaluations = 16
 Number of Lagrangian Hessian evaluations             = 15
-Total seconds in IPOPT                               = 0.084
+Total seconds in IPOPT                               = 0.085
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_XPUwWW/pglib_opf_case588_sdet.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case5_pjm.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+file = "/tmp/jl_3GWXAw/pglib_opf_case588_sdet.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case5_pjm.m"
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      155
 Number of nonzeros in inequality constraint Jacobian.:       48
@@ -4421,20 +4145,20 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   16  1.7551940e+04 2.35e-10 2.06e-04  -3.8 3.83e-04    -  1.00e+00 1.00e+00h  1
   17  1.7551893e+04 1.75e-07 2.10e-01  -5.7 2.49e-03    -  1.00e+00 9.68e-01f  1
   18  1.7551891e+04 6.80e-11 3.09e-05  -5.7 2.38e-04    -  1.00e+00 1.00e+00f  1
-  19  1.7551891e+04 5.68e-14 6.47e-10  -5.7 5.17e-07    -  1.00e+00 1.00e+00h  1
+  19  1.7551891e+04 3.06e-14 6.47e-10  -5.7 5.17e-07    -  1.00e+00 1.00e+00h  1
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   20  1.7551891e+04 6.26e-12 3.03e-07  -8.6 3.52e-05    -  1.00e+00 1.00e+00f  1
-  21  1.7551891e+04 5.68e-14 3.38e-12  -8.6 3.33e-08    -  1.00e+00 1.00e+00h  1
+  21  1.7551891e+04 2.92e-14 3.65e-12  -8.6 3.33e-08    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 21
 
                                    (scaled)                 (unscaled)
-Objective...............:   4.3879727248486898e+02    1.7551890899394759e+04
-Dual infeasibility......:   3.3822003142280486e-12    1.3528801256912194e-10
-Constraint violation....:   3.6743585951626306e-14    5.6843418860808015e-14
+Objective...............:   4.3879727248486864e+02    1.7551890899394744e+04
+Dual infeasibility......:   3.6484809026628434e-12    1.4593923610651373e-10
+Constraint violation....:   1.8856205485917602e-14    2.9171109972025988e-14
 Variable bound violation:   2.9463905093507492e-08    2.9463905093507492e-08
-Complementarity.........:   2.5059076126917168e-09    1.0023630450766867e-07
-Overall NLP error.......:   2.5059076126917168e-09    1.0023630450766867e-07
+Complementarity.........:   2.5059076126554735e-09    1.0023630450621893e-07
+Overall NLP error.......:   2.5059076126554735e-09    1.0023630450621893e-07
 
 
 Number of objective function evaluations             = 28
@@ -4444,10 +4168,10 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 22
 Number of inequality constraint Jacobian evaluations = 22
 Number of Lagrangian Hessian evaluations             = 21
-Total seconds in IPOPT                               = 0.019
+Total seconds in IPOPT                               = 0.012
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:      155
 Number of nonzeros in inequality constraint Jacobian.:       48
@@ -4484,20 +4208,20 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   16  1.7551940e+04 2.35e-10 2.06e-04  -3.8 3.83e-04    -  1.00e+00 1.00e+00h  1
   17  1.7551893e+04 1.75e-07 2.10e-01  -5.7 2.49e-03    -  1.00e+00 9.68e-01f  1
   18  1.7551891e+04 6.80e-11 3.09e-05  -5.7 2.38e-04    -  1.00e+00 1.00e+00f  1
-  19  1.7551891e+04 5.68e-14 6.47e-10  -5.7 5.17e-07    -  1.00e+00 1.00e+00h  1
+  19  1.7551891e+04 3.06e-14 6.47e-10  -5.7 5.17e-07    -  1.00e+00 1.00e+00h  1
 iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   20  1.7551891e+04 6.26e-12 3.03e-07  -8.6 3.52e-05    -  1.00e+00 1.00e+00f  1
-  21  1.7551891e+04 5.68e-14 3.38e-12  -8.6 3.33e-08    -  1.00e+00 1.00e+00h  1
+  21  1.7551891e+04 2.92e-14 3.65e-12  -8.6 3.33e-08    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 21
 
                                    (scaled)                 (unscaled)
-Objective...............:   4.3879727248486898e+02    1.7551890899394759e+04
-Dual infeasibility......:   3.3822003142280486e-12    1.3528801256912194e-10
-Constraint violation....:   3.6743585951626306e-14    5.6843418860808015e-14
+Objective...............:   4.3879727248486864e+02    1.7551890899394744e+04
+Dual infeasibility......:   3.6484809026628434e-12    1.4593923610651373e-10
+Constraint violation....:   1.8856205485917602e-14    2.9171109972025988e-14
 Variable bound violation:   2.9463905093507492e-08    2.9463905093507492e-08
-Complementarity.........:   2.5059076126917168e-09    1.0023630450766867e-07
-Overall NLP error.......:   2.5059076126917168e-09    1.0023630450766867e-07
+Complementarity.........:   2.5059076126554735e-09    1.0023630450621893e-07
+Overall NLP error.......:   2.5059076126554735e-09    1.0023630450621893e-07
 
 
 Number of objective function evaluations             = 28
@@ -4507,11 +4231,11 @@ Number of inequality constraint evaluations          = 28
 Number of equality constraint Jacobian evaluations   = 22
 Number of inequality constraint Jacobian evaluations = 22
 Number of Lagrangian Hessian evaluations             = 21
-Total seconds in IPOPT                               = 0.018
+Total seconds in IPOPT                               = 0.011
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_XPUwWW/pglib_opf_case60_c.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+file = "/tmp/jl_3GWXAw/pglib_opf_case60_c.m"
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:     2170
 Number of nonzeros in inequality constraint Jacobian.:      704
@@ -4557,17 +4281,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   24  9.2693671e+04 8.19e-07 9.01e-06  -5.7 1.39e-02    -  1.00e+00 1.00e+00h  1
   25  9.2693670e+04 1.48e-07 8.95e-04  -8.6 3.09e-03    -  1.00e+00 9.48e-01h  1
   26  9.2693670e+04 5.13e-09 5.45e-08  -8.6 3.72e-04    -  1.00e+00 1.00e+00f  1
-  27  9.2693670e+04 6.00e-10 3.72e-11  -8.6 2.53e-04    -  1.00e+00 1.00e+00h  1
+  27  9.2693670e+04 6.00e-10 3.72e-11  -8.6 2.54e-04    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 27
 
                                    (scaled)                 (unscaled)
 Objective...............:   3.0897889867007520e+03    9.2693669601022557e+04
-Dual infeasibility......:   3.7179050873715082e-11    1.1153715262114524e-09
-Constraint violation....:   6.0020255432391423e-10    6.0020255432391423e-10
+Dual infeasibility......:   3.7191041282897194e-11    1.1157312384869158e-09
+Constraint violation....:   6.0031624116163584e-10    6.0031624116163584e-10
 Variable bound violation:   7.6218864109023343e-08    7.6218864109023343e-08
-Complementarity.........:   2.5423138023358464e-09    7.6269414070075392e-08
-Overall NLP error.......:   2.5423138023358464e-09    7.6269414070075392e-08
+Complementarity.........:   2.5423138023180662e-09    7.6269414069541986e-08
+Overall NLP error.......:   2.5423138023180662e-09    7.6269414069541986e-08
 
 
 Number of objective function evaluations             = 35
@@ -4577,10 +4301,10 @@ Number of inequality constraint evaluations          = 35
 Number of equality constraint Jacobian evaluations   = 28
 Number of inequality constraint Jacobian evaluations = 28
 Number of Lagrangian Hessian evaluations             = 27
-Total seconds in IPOPT                               = 38.884
+Total seconds in IPOPT                               = 715.313
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:     2170
 Number of nonzeros in inequality constraint Jacobian.:      704
@@ -4626,17 +4350,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   24  9.2693671e+04 8.19e-07 9.01e-06  -5.7 1.39e-02    -  1.00e+00 1.00e+00h  1
   25  9.2693670e+04 1.48e-07 8.95e-04  -8.6 3.09e-03    -  1.00e+00 9.48e-01h  1
   26  9.2693670e+04 5.13e-09 5.45e-08  -8.6 3.72e-04    -  1.00e+00 1.00e+00f  1
-  27  9.2693670e+04 6.00e-10 3.72e-11  -8.6 2.53e-04    -  1.00e+00 1.00e+00h  1
+  27  9.2693670e+04 6.00e-10 3.72e-11  -8.6 2.54e-04    -  1.00e+00 1.00e+00h  1
 
 Number of Iterations....: 27
 
                                    (scaled)                 (unscaled)
 Objective...............:   3.0897889867007520e+03    9.2693669601022557e+04
-Dual infeasibility......:   3.7179050873715082e-11    1.1153715262114524e-09
-Constraint violation....:   6.0020255432391423e-10    6.0020255432391423e-10
+Dual infeasibility......:   3.7191041282897194e-11    1.1157312384869158e-09
+Constraint violation....:   6.0031624116163584e-10    6.0031624116163584e-10
 Variable bound violation:   7.6218864109023343e-08    7.6218864109023343e-08
-Complementarity.........:   2.5423138023358464e-09    7.6269414070075392e-08
-Overall NLP error.......:   2.5423138023358464e-09    7.6269414070075392e-08
+Complementarity.........:   2.5423138023180662e-09    7.6269414069541986e-08
+Overall NLP error.......:   2.5423138023180662e-09    7.6269414069541986e-08
 
 
 Number of objective function evaluations             = 35
@@ -4646,16 +4370,16 @@ Number of inequality constraint evaluations          = 35
 Number of equality constraint Jacobian evaluations   = 28
 Number of inequality constraint Jacobian evaluations = 28
 Number of Lagrangian Hessian evaluations             = 27
-Total seconds in IPOPT                               = 0.165
+Total seconds in IPOPT                               = 0.174
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_XPUwWW/pglib_opf_case6468_rte.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case6470_rte.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case6495_rte.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case6515_rte.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case7336_epigrids.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case73_ieee_rts.m"
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+file = "/tmp/jl_3GWXAw/pglib_opf_case6468_rte.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case6470_rte.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case6495_rte.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case6515_rte.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case7336_epigrids.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case73_ieee_rts.m"
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:     3079
 Number of nonzeros in inequality constraint Jacobian.:      960
@@ -4698,17 +4422,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   21  1.8976428e+05 8.44e-07 4.71e-02  -5.7 1.03e-02    -  9.81e-01 9.21e-01h  1
   22  1.8976410e+05 4.22e-08 9.88e-07  -5.7 9.91e-04    -  1.00e+00 1.00e+00h  1
   23  1.8976408e+05 3.98e-10 4.49e-07  -8.6 1.35e-04    -  1.00e+00 1.00e+00h  1
-  24  1.8976408e+05 2.84e-14 1.42e-12  -8.6 6.22e-05    -  1.00e+00 1.00e+00f  1
+  24  1.8976408e+05 3.32e-14 1.47e-12  -8.6 6.22e-05    -  1.00e+00 1.00e+00f  1
 
 Number of Iterations....: 24
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.4597236705182570e+03    1.8976407716737341e+05
-Dual infeasibility......:   1.4208530936394057e-12    1.8471090217312274e-10
-Constraint violation....:   2.8421709430404007e-14    2.8421709430404007e-14
+Objective...............:   1.4597236705182579e+03    1.8976407716737353e+05
+Dual infeasibility......:   1.4733067281826849e-12    1.9152987466374903e-10
+Constraint violation....:   2.9872979090406202e-14    3.3192198989340227e-14
 Variable bound violation:   3.9923579997491743e-08    3.9923579997491743e-08
-Complementarity.........:   2.5067203665655705e-09    3.2587364765352413e-07
-Overall NLP error.......:   2.5067203665655705e-09    3.2587364765352413e-07
+Complementarity.........:   2.5067203665822374e-09    3.2587364765569084e-07
+Overall NLP error.......:   2.5067203665822374e-09    3.2587364765569084e-07
 
 
 Number of objective function evaluations             = 25
@@ -4718,10 +4442,10 @@ Number of inequality constraint evaluations          = 25
 Number of equality constraint Jacobian evaluations   = 25
 Number of inequality constraint Jacobian evaluations = 25
 Number of Lagrangian Hessian evaluations             = 24
-Total seconds in IPOPT                               = 94.252
+Total seconds in IPOPT                               = 1194.567
 
 EXIT: Optimal Solution Found.
-This is Ipopt version 3.14.14, running with linear solver MUMPS 5.6.2.
+This is Ipopt version 3.14.19, running with linear solver MUMPS 5.9.0.
 
 Number of nonzeros in equality constraint Jacobian...:     3079
 Number of nonzeros in inequality constraint Jacobian.:      960
@@ -4764,17 +4488,17 @@ iter    objective    inf_pr   inf_du lg(mu)  ||d||  lg(rg) alpha_du alpha_pr  ls
   21  1.8976428e+05 8.44e-07 4.71e-02  -5.7 1.03e-02    -  9.81e-01 9.21e-01h  1
   22  1.8976410e+05 4.22e-08 9.88e-07  -5.7 9.91e-04    -  1.00e+00 1.00e+00h  1
   23  1.8976408e+05 3.98e-10 4.49e-07  -8.6 1.35e-04    -  1.00e+00 1.00e+00h  1
-  24  1.8976408e+05 2.84e-14 1.42e-12  -8.6 6.22e-05    -  1.00e+00 1.00e+00f  1
+  24  1.8976408e+05 3.32e-14 1.47e-12  -8.6 6.22e-05    -  1.00e+00 1.00e+00f  1
 
 Number of Iterations....: 24
 
                                    (scaled)                 (unscaled)
-Objective...............:   1.4597236705182570e+03    1.8976407716737341e+05
-Dual infeasibility......:   1.4208530936394057e-12    1.8471090217312274e-10
-Constraint violation....:   2.8421709430404007e-14    2.8421709430404007e-14
+Objective...............:   1.4597236705182579e+03    1.8976407716737353e+05
+Dual infeasibility......:   1.4733067281826849e-12    1.9152987466374903e-10
+Constraint violation....:   2.9872979090406202e-14    3.3192198989340227e-14
 Variable bound violation:   3.9923579997491743e-08    3.9923579997491743e-08
-Complementarity.........:   2.5067203665655705e-09    3.2587364765352413e-07
-Overall NLP error.......:   2.5067203665655705e-09    3.2587364765352413e-07
+Complementarity.........:   2.5067203665822374e-09    3.2587364765569084e-07
+Overall NLP error.......:   2.5067203665822374e-09    3.2587364765569084e-07
 
 
 Number of objective function evaluations             = 25
@@ -4784,29 +4508,29 @@ Number of inequality constraint evaluations          = 25
 Number of equality constraint Jacobian evaluations   = 25
 Number of inequality constraint Jacobian evaluations = 25
 Number of Lagrangian Hessian evaluations             = 24
-Total seconds in IPOPT                               = 0.233
+Total seconds in IPOPT                               = 0.288
 
 EXIT: Optimal Solution Found.
-file = "/tmp/jl_XPUwWW/pglib_opf_case78484_epigrids.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case793_goc.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case8387_pegase.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case89_pegase.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case9241_pegase.m"
-file = "/tmp/jl_XPUwWW/pglib_opf_case9591_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case78484_epigrids.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case793_goc.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case8387_pegase.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case89_pegase.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case9241_pegase.m"
+file = "/tmp/jl_3GWXAw/pglib_opf_case9591_goc.m"
 10×23 DataFrame
  Row │ case                         vars   cons   optimization  optimization_m ⋯
      │ String                       Int64  Int64  Float64       Float64        ⋯
 ─────┼──────────────────────────────────────────────────────────────────────────
-   1 │ pglib_opf_case14_ieee.m        118    169     5.74188                0. ⋯
-   2 │ pglib_opf_case24_ieee_rts.m    266    315    48.4005                 0.
-   3 │ pglib_opf_case30_as.m          236    348    28.6904                 0.
-   4 │ pglib_opf_case30_ieee.m        236    348    43.4783                 0.
-   5 │ pglib_opf_case39_epri.m        282    401    96.5703                 0. ⋯
-   6 │ pglib_opf_case3_lmbd.m          24     28     0.0779732              4.
-   7 │ pglib_opf_case57_ieee.m        448    675   156.559                  0.
-   8 │ pglib_opf_case5_pjm.m           44     53     0.427148               5.
-   9 │ pglib_opf_case60_c.m           518    737   159.878                  0. ⋯
-  10 │ pglib_opf_case73_ieee_rts.m    824    987   326.898                  0.
+   1 │ pglib_opf_case14_ieee.m        118    169      2.45458               0. ⋯
+   2 │ pglib_opf_case24_ieee_rts.m    266    315      6.68505               0.
+   3 │ pglib_opf_case30_as.m          236    348      5.04651               0.
+   4 │ pglib_opf_case30_ieee.m        236    348      8.46107               0.
+   5 │ pglib_opf_case39_epri.m        282    401     11.4254                0. ⋯
+   6 │ pglib_opf_case3_lmbd.m          24     28      0.228645              0.
+   7 │ pglib_opf_case57_ieee.m        448    675     14.5332                0.
+   8 │ pglib_opf_case5_pjm.m           44     53      0.854507              0.
+   9 │ pglib_opf_case60_c.m           518    737     15.7333                0. ⋯
+  10 │ pglib_opf_case73_ieee_rts.m    824    987     13.6797                0.
                                                               19 columns omitted
 ```
 
@@ -4815,8 +4539,8 @@ file = "/tmp/jl_XPUwWW/pglib_opf_case9591_goc.m"
 ```julia
 io = IOBuffer()
 println(io, "```@raw html")
-pretty_table(io, timing_data; backend = Val(:html))
-# show(io, "text/html", pretty_table(timing_data; backend = Val(:html)))
+pretty_table(io, timing_data; backend = :html)
+# show(io, "text/html", pretty_table(timing_data; backend = :html))
 println(io, "```")
 Text(String(take!(io)))
 ```
@@ -4824,32 +4548,32 @@ Text(String(take!(io)))
 ```@raw html
 <table>
   <thead>
-    <tr class = "header">
-      <th style = "text-align: right;">case</th>
-      <th style = "text-align: right;">vars</th>
-      <th style = "text-align: right;">cons</th>
-      <th style = "text-align: right;">optimization</th>
-      <th style = "text-align: right;">optimization_modelbuild</th>
-      <th style = "text-align: right;">optimization_wcompilation</th>
-      <th style = "text-align: right;">optimization_cost</th>
-      <th style = "text-align: right;">mtk</th>
-      <th style = "text-align: right;">mtk_time_modelbuild</th>
-      <th style = "text-align: right;">mtk_time_wcompilation</th>
-      <th style = "text-align: right;">mtk_cost</th>
-      <th style = "text-align: right;">jump</th>
-      <th style = "text-align: right;">jump_modelbuild</th>
-      <th style = "text-align: right;">jump_wcompilation</th>
-      <th style = "text-align: right;">jump_cost</th>
-      <th style = "text-align: right;">nlpmodels</th>
-      <th style = "text-align: right;">nlpmodels_modelbuild</th>
-      <th style = "text-align: right;">nlpmodels_wcompilation</th>
-      <th style = "text-align: right;">nlpmodels_cost</th>
-      <th style = "text-align: right;">optim</th>
-      <th style = "text-align: right;">optim_modelbuild</th>
-      <th style = "text-align: right;">optim_wcompilation</th>
-      <th style = "text-align: right;">optim_cost</th>
+    <tr class = "columnLabelRow">
+      <th style = "font-weight: bold; text-align: right;">case</th>
+      <th style = "font-weight: bold; text-align: right;">vars</th>
+      <th style = "font-weight: bold; text-align: right;">cons</th>
+      <th style = "font-weight: bold; text-align: right;">optimization</th>
+      <th style = "font-weight: bold; text-align: right;">optimization_modelbuild</th>
+      <th style = "font-weight: bold; text-align: right;">optimization_wcompilation</th>
+      <th style = "font-weight: bold; text-align: right;">optimization_cost</th>
+      <th style = "font-weight: bold; text-align: right;">mtk</th>
+      <th style = "font-weight: bold; text-align: right;">mtk_time_modelbuild</th>
+      <th style = "font-weight: bold; text-align: right;">mtk_time_wcompilation</th>
+      <th style = "font-weight: bold; text-align: right;">mtk_cost</th>
+      <th style = "font-weight: bold; text-align: right;">jump</th>
+      <th style = "font-weight: bold; text-align: right;">jump_modelbuild</th>
+      <th style = "font-weight: bold; text-align: right;">jump_wcompilation</th>
+      <th style = "font-weight: bold; text-align: right;">jump_cost</th>
+      <th style = "font-weight: bold; text-align: right;">nlpmodels</th>
+      <th style = "font-weight: bold; text-align: right;">nlpmodels_modelbuild</th>
+      <th style = "font-weight: bold; text-align: right;">nlpmodels_wcompilation</th>
+      <th style = "font-weight: bold; text-align: right;">nlpmodels_cost</th>
+      <th style = "font-weight: bold; text-align: right;">optim</th>
+      <th style = "font-weight: bold; text-align: right;">optim_modelbuild</th>
+      <th style = "font-weight: bold; text-align: right;">optim_wcompilation</th>
+      <th style = "font-weight: bold; text-align: right;">optim_cost</th>
     </tr>
-    <tr class = "subheader headerLastRow">
+    <tr class = "columnLabelRow">
       <th style = "text-align: right;">String</th>
       <th style = "text-align: right;">Int64</th>
       <th style = "text-align: right;">Int64</th>
@@ -4876,250 +4600,250 @@ Text(String(take!(io)))
     </tr>
   </thead>
   <tbody>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case14_ieee.m</td>
       <td style = "text-align: right;">118</td>
       <td style = "text-align: right;">169</td>
-      <td style = "text-align: right;">5.74188</td>
-      <td style = "text-align: right;">0.000104979</td>
-      <td style = "text-align: right;">5.63988</td>
+      <td style = "text-align: right;">2.45458</td>
+      <td style = "text-align: right;">0.000281848</td>
+      <td style = "text-align: right;">2.38896</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">0.07549</td>
-      <td style = "text-align: right;">1.64429</td>
-      <td style = "text-align: right;">5.79364</td>
+      <td style = "text-align: right;">0.21121</td>
+      <td style = "text-align: right;">1.15172</td>
+      <td style = "text-align: right;">15.8506</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">0.015382</td>
-      <td style = "text-align: right;">0.244083</td>
-      <td style = "text-align: right;">0.0488776</td>
+      <td style = "text-align: right;">0.018768</td>
+      <td style = "text-align: right;">0.366525</td>
+      <td style = "text-align: right;">0.359803</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">0.0784789</td>
-      <td style = "text-align: right;">0.13727</td>
-      <td style = "text-align: right;">0.0779019</td>
+      <td style = "text-align: right;">0.112615</td>
+      <td style = "text-align: right;">0.116976</td>
+      <td style = "text-align: right;">0.105085</td>
       <td style = "text-align: right;">2178.08</td>
-      <td style = "text-align: right;">126.724</td>
-      <td style = "text-align: right;">0.0651057</td>
-      <td style = "text-align: right;">125.78</td>
-      <td style = "text-align: right;">1658.7</td>
+      <td style = "text-align: right;">117.887</td>
+      <td style = "text-align: right;">0.10918</td>
+      <td style = "text-align: right;">118.243</td>
+      <td style = "text-align: right;">1678.58</td>
     </tr>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case24_ieee_rts.m</td>
       <td style = "text-align: right;">266</td>
       <td style = "text-align: right;">315</td>
-      <td style = "text-align: right;">48.4005</td>
-      <td style = "text-align: right;">0.000140389</td>
-      <td style = "text-align: right;">47.9654</td>
+      <td style = "text-align: right;">6.68505</td>
+      <td style = "text-align: right;">0.000356688</td>
+      <td style = "text-align: right;">7.06892</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">0.183388</td>
-      <td style = "text-align: right;">3.8984</td>
-      <td style = "text-align: right;">12.9557</td>
+      <td style = "text-align: right;">0.216824</td>
+      <td style = "text-align: right;">3.12687</td>
+      <td style = "text-align: right;">69.209</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">0.0302247</td>
-      <td style = "text-align: right;">0.030845</td>
-      <td style = "text-align: right;">0.0311659</td>
+      <td style = "text-align: right;">0.0364183</td>
+      <td style = "text-align: right;">0.00628918</td>
+      <td style = "text-align: right;">0.0379707</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">0.216706</td>
-      <td style = "text-align: right;">0.160922</td>
-      <td style = "text-align: right;">0.205827</td>
+      <td style = "text-align: right;">0.307031</td>
+      <td style = "text-align: right;">0.025349</td>
+      <td style = "text-align: right;">0.402922</td>
       <td style = "text-align: right;">63352.2</td>
-      <td style = "text-align: right;">384.308</td>
-      <td style = "text-align: right;">0.159995</td>
-      <td style = "text-align: right;">385.39</td>
-      <td style = "text-align: right;">63741.2</td>
+      <td style = "text-align: right;">273.716</td>
+      <td style = "text-align: right;">0.00251542</td>
+      <td style = "text-align: right;">273.574</td>
+      <td style = "text-align: right;">52954.1</td>
     </tr>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case30_as.m</td>
       <td style = "text-align: right;">236</td>
       <td style = "text-align: right;">348</td>
-      <td style = "text-align: right;">28.6904</td>
-      <td style = "text-align: right;">0.000171728</td>
-      <td style = "text-align: right;">27.4957</td>
+      <td style = "text-align: right;">5.04651</td>
+      <td style = "text-align: right;">0.000421428</td>
+      <td style = "text-align: right;">5.40984</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.172819</td>
-      <td style = "text-align: right;">3.34265</td>
-      <td style = "text-align: right;">12.8841</td>
+      <td style = "text-align: right;">0.44024</td>
+      <td style = "text-align: right;">4.77129</td>
+      <td style = "text-align: right;">95.3473</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.0210139</td>
-      <td style = "text-align: right;">0.00510361</td>
-      <td style = "text-align: right;">0.0219404</td>
+      <td style = "text-align: right;">0.029549</td>
+      <td style = "text-align: right;">0.0110926</td>
+      <td style = "text-align: right;">0.0318049</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">0.139637</td>
-      <td style = "text-align: right;">0.173657</td>
-      <td style = "text-align: right;">0.140331</td>
+      <td style = "text-align: right;">0.187083</td>
+      <td style = "text-align: right;">0.0368243</td>
+      <td style = "text-align: right;">0.19091</td>
       <td style = "text-align: right;">803.127</td>
-      <td style = "text-align: right;">294.567</td>
-      <td style = "text-align: right;">0.0401112</td>
-      <td style = "text-align: right;">293.27</td>
-      <td style = "text-align: right;">772.093</td>
+      <td style = "text-align: right;">214.84</td>
+      <td style = "text-align: right;">0.00373024</td>
+      <td style = "text-align: right;">216.152</td>
+      <td style = "text-align: right;">751.912</td>
     </tr>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case30_ieee.m</td>
       <td style = "text-align: right;">236</td>
       <td style = "text-align: right;">348</td>
-      <td style = "text-align: right;">43.4783</td>
-      <td style = "text-align: right;">0.000190889</td>
-      <td style = "text-align: right;">43.1774</td>
+      <td style = "text-align: right;">8.46107</td>
+      <td style = "text-align: right;">0.000541947</td>
+      <td style = "text-align: right;">8.28266</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">0.187162</td>
-      <td style = "text-align: right;">3.27919</td>
-      <td style = "text-align: right;">13.1114</td>
+      <td style = "text-align: right;">0.446932</td>
+      <td style = "text-align: right;">2.75631</td>
+      <td style = "text-align: right;">94.8594</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">0.0299482</td>
-      <td style = "text-align: right;">0.00495531</td>
-      <td style = "text-align: right;">0.0307215</td>
+      <td style = "text-align: right;">0.0355397</td>
+      <td style = "text-align: right;">0.00659812</td>
+      <td style = "text-align: right;">0.0375584</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">0.212489</td>
-      <td style = "text-align: right;">0.304633</td>
-      <td style = "text-align: right;">0.214642</td>
+      <td style = "text-align: right;">0.4182</td>
+      <td style = "text-align: right;">0.0261503</td>
+      <td style = "text-align: right;">0.257021</td>
       <td style = "text-align: right;">8208.52</td>
-      <td style = "text-align: right;">293.066</td>
-      <td style = "text-align: right;">0.0445731</td>
-      <td style = "text-align: right;">292.631</td>
-      <td style = "text-align: right;">4244.05</td>
+      <td style = "text-align: right;">223.166</td>
+      <td style = "text-align: right;">0.00256886</td>
+      <td style = "text-align: right;">223.653</td>
+      <td style = "text-align: right;">4176.94</td>
     </tr>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case39_epri.m</td>
       <td style = "text-align: right;">282</td>
       <td style = "text-align: right;">401</td>
-      <td style = "text-align: right;">96.5703</td>
-      <td style = "text-align: right;">0.000178499</td>
-      <td style = "text-align: right;">93.867</td>
+      <td style = "text-align: right;">11.4254</td>
+      <td style = "text-align: right;">0.000741305</td>
+      <td style = "text-align: right;">11.5374</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">0.25493</td>
-      <td style = "text-align: right;">4.23422</td>
-      <td style = "text-align: right;">16.4849</td>
+      <td style = "text-align: right;">0.531149</td>
+      <td style = "text-align: right;">8.95899</td>
+      <td style = "text-align: right;">136.173</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">0.0507258</td>
-      <td style = "text-align: right;">0.00515369</td>
-      <td style = "text-align: right;">0.0513258</td>
+      <td style = "text-align: right;">0.0606446</td>
+      <td style = "text-align: right;">0.00763029</td>
+      <td style = "text-align: right;">0.0611031</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">0.310656</td>
-      <td style = "text-align: right;">0.188602</td>
-      <td style = "text-align: right;">0.288098</td>
+      <td style = "text-align: right;">0.544048</td>
+      <td style = "text-align: right;">0.030644</td>
+      <td style = "text-align: right;">0.384359</td>
       <td style = "text-align: right;">1.38416e5</td>
-      <td style = "text-align: right;">363.644</td>
-      <td style = "text-align: right;">0.0661765</td>
-      <td style = "text-align: right;">363.456</td>
-      <td style = "text-align: right;">78346.0</td>
+      <td style = "text-align: right;">361.615</td>
+      <td style = "text-align: right;">0.00240675</td>
+      <td style = "text-align: right;">365.475</td>
+      <td style = "text-align: right;">66167.6</td>
     </tr>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case3_lmbd.m</td>
       <td style = "text-align: right;">24</td>
       <td style = "text-align: right;">28</td>
-      <td style = "text-align: right;">0.0779732</td>
-      <td style = "text-align: right;">4.618e-5</td>
-      <td style = "text-align: right;">0.105845</td>
+      <td style = "text-align: right;">0.228645</td>
+      <td style = "text-align: right;">0.000420627</td>
+      <td style = "text-align: right;">0.22658</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0178909</td>
-      <td style = "text-align: right;">0.175923</td>
-      <td style = "text-align: right;">0.0195717</td>
+      <td style = "text-align: right;">0.0294599</td>
+      <td style = "text-align: right;">0.0984284</td>
+      <td style = "text-align: right;">0.0298745</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0091549</td>
-      <td style = "text-align: right;">0.00478162</td>
-      <td style = "text-align: right;">0.00972831</td>
+      <td style = "text-align: right;">0.0099276</td>
+      <td style = "text-align: right;">0.0081074</td>
+      <td style = "text-align: right;">0.0112228</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">0.0186829</td>
-      <td style = "text-align: right;">0.0160607</td>
-      <td style = "text-align: right;">0.0197536</td>
+      <td style = "text-align: right;">0.0319618</td>
+      <td style = "text-align: right;">0.00777174</td>
+      <td style = "text-align: right;">0.0290948</td>
       <td style = "text-align: right;">5812.64</td>
-      <td style = "text-align: right;">2.29765</td>
-      <td style = "text-align: right;">0.000448636</td>
-      <td style = "text-align: right;">2.29684</td>
-      <td style = "text-align: right;">6273.63</td>
+      <td style = "text-align: right;">0.509969</td>
+      <td style = "text-align: right;">0.00126595</td>
+      <td style = "text-align: right;">0.709406</td>
+      <td style = "text-align: right;">1.93871e5</td>
     </tr>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case57_ieee.m</td>
       <td style = "text-align: right;">448</td>
       <td style = "text-align: right;">675</td>
-      <td style = "text-align: right;">156.559</td>
-      <td style = "text-align: right;">0.000274488</td>
-      <td style = "text-align: right;">152.2</td>
-      <td style = "text-align: right;">37555.3</td>
-      <td style = "text-align: right;">0.42469</td>
-      <td style = "text-align: right;">12.1244</td>
-      <td style = "text-align: right;">37.0462</td>
+      <td style = "text-align: right;">14.5332</td>
+      <td style = "text-align: right;">0.000471187</td>
+      <td style = "text-align: right;">14.3833</td>
       <td style = "text-align: right;">37589.3</td>
-      <td style = "text-align: right;">0.0442181</td>
-      <td style = "text-align: right;">0.00775402</td>
-      <td style = "text-align: right;">0.0450932</td>
+      <td style = "text-align: right;">0.895462</td>
+      <td style = "text-align: right;">33.0129</td>
+      <td style = "text-align: right;">542.746</td>
       <td style = "text-align: right;">37589.3</td>
-      <td style = "text-align: right;">0.306254</td>
-      <td style = "text-align: right;">0.477642</td>
-      <td style = "text-align: right;">0.30959</td>
+      <td style = "text-align: right;">0.0582366</td>
+      <td style = "text-align: right;">0.0178887</td>
+      <td style = "text-align: right;">0.0704561</td>
+      <td style = "text-align: right;">37589.3</td>
+      <td style = "text-align: right;">0.639283</td>
+      <td style = "text-align: right;">0.0631642</td>
+      <td style = "text-align: right;">0.445055</td>
       <td style = "text-align: right;">37589.3</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
     </tr>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case5_pjm.m</td>
       <td style = "text-align: right;">44</td>
       <td style = "text-align: right;">53</td>
-      <td style = "text-align: right;">0.427148</td>
-      <td style = "text-align: right;">5.5219e-5</td>
-      <td style = "text-align: right;">0.371297</td>
+      <td style = "text-align: right;">0.854507</td>
+      <td style = "text-align: right;">0.000247408</td>
+      <td style = "text-align: right;">0.71495</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.124084</td>
-      <td style = "text-align: right;">0.359544</td>
-      <td style = "text-align: right;">0.0360806</td>
+      <td style = "text-align: right;">0.026184</td>
+      <td style = "text-align: right;">0.146326</td>
+      <td style = "text-align: right;">0.0412655</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.01432</td>
-      <td style = "text-align: right;">0.0046479</td>
-      <td style = "text-align: right;">0.014778</td>
+      <td style = "text-align: right;">0.0134011</td>
+      <td style = "text-align: right;">0.00355177</td>
+      <td style = "text-align: right;">0.0142558</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">0.0367502</td>
-      <td style = "text-align: right;">0.0267777</td>
-      <td style = "text-align: right;">0.0378028</td>
+      <td style = "text-align: right;">0.0475236</td>
+      <td style = "text-align: right;">0.00724887</td>
+      <td style = "text-align: right;">0.0625621</td>
       <td style = "text-align: right;">17551.9</td>
-      <td style = "text-align: right;">19.1386</td>
-      <td style = "text-align: right;">0.000638655</td>
-      <td style = "text-align: right;">18.8175</td>
-      <td style = "text-align: right;">77.9548</td>
+      <td style = "text-align: right;">13.4214</td>
+      <td style = "text-align: right;">0.00118493</td>
+      <td style = "text-align: right;">13.6729</td>
+      <td style = "text-align: right;">90.6969</td>
     </tr>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case60_c.m</td>
       <td style = "text-align: right;">518</td>
       <td style = "text-align: right;">737</td>
-      <td style = "text-align: right;">159.878</td>
-      <td style = "text-align: right;">0.000257608</td>
-      <td style = "text-align: right;">139.885</td>
-      <td style = "text-align: right;">35648.5</td>
-      <td style = "text-align: right;">0.560815</td>
-      <td style = "text-align: right;">14.2151</td>
-      <td style = "text-align: right;">40.6548</td>
+      <td style = "text-align: right;">15.7333</td>
+      <td style = "text-align: right;">0.000929014</td>
+      <td style = "text-align: right;">15.4897</td>
+      <td style = "text-align: right;">92718.2</td>
+      <td style = "text-align: right;">1.14394</td>
+      <td style = "text-align: right;">41.7418</td>
+      <td style = "text-align: right;">717.683</td>
       <td style = "text-align: right;">92693.7</td>
-      <td style = "text-align: right;">0.0796966</td>
-      <td style = "text-align: right;">0.0286964</td>
-      <td style = "text-align: right;">0.0813441</td>
+      <td style = "text-align: right;">0.0974842</td>
+      <td style = "text-align: right;">0.0229023</td>
+      <td style = "text-align: right;">0.0996278</td>
       <td style = "text-align: right;">92693.7</td>
-      <td style = "text-align: right;">0.649169</td>
-      <td style = "text-align: right;">0.484268</td>
-      <td style = "text-align: right;">0.575294</td>
+      <td style = "text-align: right;">1.11326</td>
+      <td style = "text-align: right;">0.0568903</td>
+      <td style = "text-align: right;">1.25174</td>
       <td style = "text-align: right;">92693.7</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
     </tr>
-    <tr>
+    <tr class = "dataRow">
       <td style = "text-align: right;">pglib_opf_case73_ieee_rts.m</td>
       <td style = "text-align: right;">824</td>
       <td style = "text-align: right;">987</td>
-      <td style = "text-align: right;">326.898</td>
-      <td style = "text-align: right;">0.000343018</td>
-      <td style = "text-align: right;">319.089</td>
-      <td style = "text-align: right;">1.5864e5</td>
-      <td style = "text-align: right;">1.02645</td>
-      <td style = "text-align: right;">27.3773</td>
-      <td style = "text-align: right;">96.5115</td>
+      <td style = "text-align: right;">13.6797</td>
+      <td style = "text-align: right;">0.000755224</td>
+      <td style = "text-align: right;">13.6153</td>
+      <td style = "text-align: right;">1.75043e5</td>
+      <td style = "text-align: right;">1.29954</td>
+      <td style = "text-align: right;">1507.88</td>
+      <td style = "text-align: right;">1200.42</td>
       <td style = "text-align: right;">1.89764e5</td>
-      <td style = "text-align: right;">0.0997913</td>
-      <td style = "text-align: right;">0.0136383</td>
-      <td style = "text-align: right;">0.102478</td>
+      <td style = "text-align: right;">0.136446</td>
+      <td style = "text-align: right;">0.0283401</td>
+      <td style = "text-align: right;">0.141398</td>
       <td style = "text-align: right;">1.89764e5</td>
-      <td style = "text-align: right;">0.944354</td>
-      <td style = "text-align: right;">0.851503</td>
-      <td style = "text-align: right;">0.81381</td>
+      <td style = "text-align: right;">9.86316</td>
+      <td style = "text-align: right;">0.100453</td>
+      <td style = "text-align: right;">1.2991</td>
       <td style = "text-align: right;">1.89764e5</td>
       <td style = "text-align: right;">NaN</td>
       <td style = "text-align: right;">NaN</td>
@@ -5136,11 +4860,438 @@ Text(String(take!(io)))
 
 ## Appendix
 
+
+## Appendix
+
+These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: [https://github.com/SciML/SciMLBenchmarks.jl](https://github.com/SciML/SciMLBenchmarks.jl). For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization [https://sciml.ai](https://sciml.ai).
+
+To locally run this benchmark, do the following commands:
 ```
-Error: ArgumentError: Package SciMLBenchmarks not found in current path, ma
-ybe you meant `import/using ..SciMLBenchmarks`.
-- Otherwise, run `import Pkg; Pkg.add("SciMLBenchmarks")` to install the Sc
-iMLBenchmarks package.
+using SciMLBenchmarks
+SciMLBenchmarks.weave_file("benchmarks/OptimizationFrameworks","optimal_powerflow.jmd")
 ```
 
+Computer Information:
+
+```
+Julia Version 1.11.9
+Commit 53a02c0720c (2026-02-06 00:27 UTC)
+Build Info:
+  Official https://julialang.org/ release
+Platform Info:
+  OS: Linux (x86_64-linux-gnu)
+  CPU: 128 × AMD EPYC 7502 32-Core Processor
+  WORD_SIZE: 64
+  LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
+Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+Environment:
+  JULIA_NUM_THREADS = auto
+
+```
+
+Package Information:
+
+```
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/OptimizationFrameworks/Project.toml`
+  [54578032] ADNLPModels v0.8.13
+  [6e4b80f9] BenchmarkTools v1.8.0
+  [2569d6c7] ConcreteStructs v0.2.8
+⌃ [992eb4ea] CondaPkg v0.2.33
+  [a93c6f00] DataFrames v1.8.2
+⌃ [7da242da] Enzyme v0.13.203
+  [f6369f11] ForwardDiff v1.4.6
+  [b6b21f68] Ipopt v1.16.0
+  [4076af6c] JuMP v1.31.2
+  [961ee093] ModelingToolkit v11.43.1
+  [f4238b75] NLPModelsIpopt v0.11.3
+⌅ [429524aa] Optim v1.13.3
+  [7f7a1694] Optimization v5.9.1
+  [bca83a33] OptimizationBase v5.6.1
+  [fd9f6733] OptimizationMOI v1.4.1
+  [91a5bcdd] Plots v1.41.7
+⌃ [c36e90e8] PowerModels v0.21.5
+  [08abe8d2] PrettyTables v3.4.8
+  [6099a3de] PythonCall v0.9.35
+  [37e2e3b7] ReverseDiff v1.17.0
+  [31c91b34] SciMLBenchmarks v0.2.1
+  [860ef19b] StableRNGs v1.0.4
+  [2efcf032] SymbolicIndexingInterface v0.3.55
+  [0c5d862f] Symbolics v7.39.2
+  [76f85450] LibGit2 v1.11.0
+  [8dfed614] Test v1.11.0
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+```
+
+And the full manifest:
+
+```
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/OptimizationFrameworks/Manifest.toml`
+  [54578032] ADNLPModels v0.8.13
+  [47edcb42] ADTypes v1.24.0
+  [14f7f29c] AMD v0.5.4
+  [6e696c72] AbstractPlutoDingetjes v1.4.1
+  [1520ce14] AbstractTrees v0.4.5
+  [7d9f7c33] Accessors v0.1.45
+  [79e6a3ab] Adapt v4.7.0
+  [66dad0bd] AliasTables v1.1.3
+  [ec485272] ArnoldiMethod v0.4.0
+⌃ [4fba245c] ArrayInterface v7.30.1
+  [4c555306] ArrayLayouts v1.12.2
+  [aae01518] BandedMatrices v1.12.0
+  [6e4b80f9] BenchmarkTools v1.8.0
+  [e2ed5e7c] Bijections v0.2.2
+  [b2a6c25c] BinaryHeaps v1.1.0
+  [caf10ac8] BipartiteGraphs v0.1.14
+  [8e7c35d0] BlockArrays v1.10.0
+  [70df07ce] BracketingNonlinearSolve v1.12.7
+  [fa961155] CEnum v0.5.0
+  [d360d2e6] ChainRulesCore v1.26.1
+  [523fee87] CodecBzip2 v0.8.5
+  [944b1d66] CodecZlib v0.7.9
+  [35d6a980] ColorSchemes v3.31.0
+  [3da002f7] ColorTypes v0.12.1
+  [c3611d14] ColorVectorSpace v0.11.0
+  [5ae59095] Colors v0.13.1
+⌅ [861a8166] Combinatorics v1.0.2
+  [38540f10] CommonSolve v0.2.14
+  [bbf7d656] CommonSubexpressions v0.3.1
+  [f70d9fcc] CommonWorldInvalidations v1.2.2
+  [34da2185] Compat v4.18.1
+  [b152e2b5] CompositeTypes v0.1.4
+  [a33af91c] CompositionsBase v0.1.2
+  [2569d6c7] ConcreteStructs v0.2.8
+⌃ [992eb4ea] CondaPkg v0.2.33
+  [88cd18e8] ConsoleProgressMonitor v0.1.2
+  [187b0558] ConstructionBase v1.6.0
+  [d38c429a] Contour v0.6.3
+  [a8cc5b0e] Crayons v4.2.0
+  [9a962f9c] DataAPI v1.16.0
+  [a93c6f00] DataFrames v1.8.2
+  [864edb3b] DataStructures v0.19.6
+  [e2d170a0] DataValueInterfaces v1.0.0
+  [8bb1440f] DelimitedFiles v1.9.1
+  [2b5f629d] DiffEqBase v7.21.1
+  [459566f4] DiffEqCallbacks v4.19.4
+  [163ba53b] DiffResults v1.1.0
+  [b552c78f] DiffRules v1.16.0
+  [a0c0ee7d] DifferentiationInterface v0.7.21
+  [b4f34e82] Distances v0.10.12
+  [ffbed154] DocStringExtensions v0.9.5
+  [5b8099bc] DomainSets v0.8.1
+  [7c1d4256] DynamicPolynomials v0.6.8
+  [4e289a0a] EnumX v1.0.7
+⌃ [7da242da] Enzyme v0.13.203
+  [f151be2c] EnzymeCore v0.8.21
+  [e2ba6199] ExprTools v0.1.11
+  [55351af7] ExproniconLite v0.10.14
+  [c87230d0] FFMPEG v0.4.5
+  [7034ab61] FastBroadcast v1.4.0
+  [9aa1b823] FastClosures v0.3.2
+  [a4df4552] FastPower v1.5.0
+  [1a297f60] FillArrays v1.17.0
+  [64ca27bc] FindFirstFunctions v3.2.1
+  [6a86dc24] FiniteDiff v2.33.0
+⌅ [53c48c17] FixedPointNumbers v0.8.6
+  [1fa38f19] Format v1.3.7
+  [f6369f11] ForwardDiff v1.4.6
+  [a85aefff] FunctionMaps v0.1.2
+  [069b7b12] FunctionWrappers v1.1.3
+  [77dc65aa] FunctionWrappersWrappers v1.13.0
+  [46192b85] GPUArraysCore v0.2.0
+⌅ [61eb1bfa] GPUCompiler v1.23.0
+  [28b8d3ca] GR v0.73.27
+  [86223c79] Graphs v1.15.0
+  [076d061b] HashArrayMappedTries v0.2.0
+⌅ [eafb193a] Highlights v0.5.3
+  [3263718b] ImplicitDiscreteSolve v2.3.0
+  [d25df0c9] Inflate v0.1.5
+  [2030c09a] InfrastructureModels v0.7.9
+⌅ [842dd82b] InlineStrings v1.4.6
+  [18e54dd8] IntegerMathUtils v0.1.4
+  [8197267c] IntervalSets v0.7.14
+  [3587e190] InverseFunctions v0.1.17
+  [41ab1584] InvertedIndices v1.3.1
+  [b6b21f68] Ipopt v1.16.0
+  [92d709cd] IrrationalConstants v0.2.6
+  [82899510] IteratorInterfaceExtensions v1.0.0
+  [1019f520] JLFzf v0.1.11
+  [692b3bcd] JLLWrappers v1.8.0
+⌅ [682c06a0] JSON v0.21.4
+  [0f8b85d8] JSON3 v1.14.3
+  [ae98c720] Jieko v0.2.1
+  [4076af6c] JuMP v1.31.2
+⌃ [ccbc3e58] JumpProcesses v9.32.3
+  [ba0b0d4f] Krylov v0.10.10
+  [2faa5264] LHLFactorization v2.2.2
+  [929cbde3] LLVM v9.13.1
+  [b964fa9f] LaTeXStrings v1.4.1
+  [23fbe1c1] Latexify v0.16.12
+  [1d6d02ad] LeftChildRightSiblingTrees v0.3.0
+  [87fe0de2] LineSearch v0.1.18
+⌃ [d3d80556] LineSearches v7.5.1
+  [5c8ed15e] LinearOperators v2.14.2
+⌃ [7ed4a6bd] LinearSolve v5.17.3
+  [2ab3a3ac] LogExpFunctions v1.0.1
+  [e6f89c97] LoggingExtras v1.2.0
+  [1914dd2f] MacroTools v0.5.16
+  [b8f27783] MathOptInterface v1.53.0
+  [bb5d69b7] MaybeInplace v0.1.8
+  [442fdcdd] Measures v0.3.3
+  [f28f55f0] Memento v1.5.0
+  [0b3b1443] MicroMamba v0.1.15
+  [e1d29d7a] Missings v1.2.0
+  [961ee093] ModelingToolkit v11.43.1
+⌃ [7771a370] ModelingToolkitBase v1.70.0
+  [6bb917b9] ModelingToolkitTearing v1.20.6
+⌅ [2e0e35c7] Moshi v0.3.9
+  [46d2c3a1] MuladdMacro v0.2.7
+  [102ac46a] MultivariatePolynomials v0.5.19
+  [ffc61752] Mustache v1.0.21
+  [d8a4904e] MutableArithmetics v1.8.0
+  [a4795742] NLPModels v0.21.12
+  [f4238b75] NLPModelsIpopt v0.11.3
+  [e01155f1] NLPModelsModifiers v0.8.0
+⌅ [d41bc354] NLSolversBase v7.10.0
+⌅ [2774e3e8] NLsolve v4.5.1
+  [77ba4419] NaNMath v1.1.4
+⌃ [be0214bd] NonlinearSolveBase v2.48.0
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
+  [d8793406] ObjectFile v0.5.1
+  [6fe1bfb0] OffsetArrays v1.17.0
+⌅ [429524aa] Optim v1.13.3
+  [7f7a1694] Optimization v5.9.1
+  [bca83a33] OptimizationBase v5.6.1
+  [fd9f6733] OptimizationMOI v1.4.1
+  [bac558e1] OrderedCollections v2.0.1
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
+⌅ [69de0a69] Parsers v2.8.8
+  [fa939f87] Pidfile v1.3.0
+  [ccf2f8ad] PlotThemes v3.3.0
+  [995b91a9] PlotUtils v1.4.4
+  [91a5bcdd] Plots v1.41.7
+  [e409e4f3] PoissonRandom v0.4.13
+  [2dfb63ee] PooledArrays v1.4.3
+  [85a6dd25] PositiveFactorizations v0.2.4
+⌃ [c36e90e8] PowerModels v0.21.5
+  [d236fae5] PreallocationTools v1.7.1
+⌅ [aea7be01] PrecompileTools v1.2.1
+  [21216c6a] Preferences v1.6.0
+  [08abe8d2] PrettyTables v3.4.8
+  [27ebfcd6] Primes v0.5.7
+  [33c8b6b6] ProgressLogging v0.1.6
+  [92933f4c] ProgressMeter v1.11.0
+  [43287f4e] PtrArrays v1.4.0
+  [0c0d3e7f] PureKLU v1.5.0
+  [6099a3de] PythonCall v0.9.35
+  [988b38a3] ReadOnlyArrays v0.2.0
+  [795d4caa] ReadOnlyDicts v1.0.1
+  [3cdcf5f2] RecipesBase v1.3.4
+  [01d81517] RecipesPipeline v0.6.12
+  [731186ca] RecursiveArrayTools v4.5.1
+  [189a3867] Reexport v1.2.2
+  [05181044] RelocatableFolders v1.0.1
+  [ae029012] Requires v1.3.1
+  [9fe22ead] RespecializeParams v1.3.0
+  [37e2e3b7] ReverseDiff v1.17.0
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+  [9dfe8606] SCCNonlinearSolve v1.15.3
+⌃ [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1
+  [19f34311] SciMLJacobianOperators v0.1.19
+  [a6db7da4] SciMLLogging v2.1.0
+⌃ [c0aeaf25] SciMLOperators v1.30.0
+  [431bcebd] SciMLPublic v1.3.0
+  [53ae85a6] SciMLStructures v1.10.5
+  [7e506255] ScopedValues v1.6.2
+  [6c6a2e73] Scratch v1.3.0
+  [91c51154] SentinelArrays v1.4.10
+  [efcf1570] Setfield v1.1.2
+  [992d4aef] Showoff v1.1.1
+  [727e6d20] SimpleNonlinearSolve v2.14.5
+  [699a6c99] SimpleTraits v0.9.6
+  [ff4d7338] SolverCore v0.3.10
+  [a2af1166] SortingAlgorithms v1.2.3
+  [a57abbd0] SparseColumnPivotedQR v2.1.8
+  [9f842d2f] SparseConnectivityTracer v1.2.3
+  [0a514795] SparseMatrixColorings v0.4.28
+  [276daf66] SpecialFunctions v2.9.0
+  [860ef19b] StableRNGs v1.0.4
+  [0c0c59c1] StarAlgebras v0.3.0
+  [64909d44] StateSelection v1.11.1
+  [90137ffa] StaticArrays v1.9.20
+  [1e83bf80] StaticArraysCore v1.4.4
+  [10745b16] Statistics v1.11.5
+  [82ae8749] StatsAPI v1.8.0
+  [2913bbd2] StatsBase v0.34.13
+  [69024149] StringEncodings v0.3.7
+⌅ [892a3eda] StringManipulation v0.5.0
+  [53d494c1] StructIO v0.3.1
+  [856f2bd8] StructTypes v1.11.0
+  [2efcf032] SymbolicIndexingInterface v0.3.55
+  [19f23fe9] SymbolicLimits v1.2.1
+  [d1185830] SymbolicUtils v4.46.6
+  [0c5d862f] Symbolics v7.39.2
+  [3783bdb8] TableTraits v1.0.1
+  [bd369af6] Tables v1.14.0
+  [ed4db957] TaskLocalValues v0.1.3
+  [62fd8b95] TensorCore v0.1.1
+  [8ea1fca8] TermInterface v2.0.0
+  [5d786b92] TerminalLoggers v0.1.8
+⌅ [a759f4b9] TimerOutputs v0.5.29
+  [e689c965] Tracy v0.1.6
+  [3bb67fe8] TranscodingStreams v0.11.3
+  [781d530d] TruncatedStacktraces v1.4.0
+  [3a884ed6] UnPack v1.0.2
+  [1cfade01] UnicodeFun v0.4.1
+  [e17b2a0c] UnsafePointers v1.0.0
+  [41fe7b60] Unzip v0.2.0
+  [d30d5f5c] WeakCacheSets v0.1.0
+  [44d3d7a6] Weave v0.10.12
+  [ddb6d928] YAML v0.4.16
+  [ae81ac8f] ASL_jll v0.1.5+0
+  [6e34b625] Bzip2_jll v1.0.9+0
+  [83423d85] Cairo_jll v1.18.7+0
+  [ee1fde0b] Dbus_jll v1.16.2+0
+  [7cc45869] Enzyme_jll v0.0.293+0
+  [2702e6a9] EpollShim_jll v0.0.20230411+1
+  [2e619515] Expat_jll v2.8.4+0
+⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
+  [a3f928ae] Fontconfig_jll v2.17.1+0
+  [d7e528f0] FreeType2_jll v2.14.3+1
+  [559328eb] FriBidi_jll v1.0.17+0
+  [0656b61e] GLFW_jll v3.5.1+0
+  [d2c73de3] GR_jll v0.73.27+0
+⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
+  [61579ee1] Ghostscript_jll v9.55.1+0
+  [7746bdde] Glib_jll v2.88.3+0
+  [3b182d85] Graphite2_jll v1.3.16+0
+  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
+  [e33a78d0] Hwloc_jll v2.14.0+0
+  [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
+⌅ [9cc047cb] Ipopt_jll v300.1400.1902+0
+  [aacddb02] JpegTurbo_jll v3.2.0+1
+  [c1c5ebd0] LAME_jll v3.100.3+0
+  [88015f11] LERC_jll v4.2.0+0
+  [dad2f222] LLVMExtra_jll v0.0.47+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
+  [ad6e5548] LibTracyClient_jll v0.13.1+0
+⌅ [e9f186c6] Libffi_jll v3.4.7+0
+  [7e76a0d4] Libglvnd_jll v1.7.1+1
+  [94ce4f54] Libiconv_jll v1.18.0+0
+  [4b2f31a3] Libmount_jll v2.42.0+0
+  [89763e89] Libtiff_jll v4.7.3+0
+  [38a345b3] Libuuid_jll v2.42.0+0
+  [d00139f3] METIS_jll v5.1.4+0
+  [856f044c] MKL_jll v2025.2.0+0
+  [d7ed1dd3] MUMPS_seq_jll v500.900.100+0
+  [e7412a2a] Ogg_jll v1.3.6+0
+  [656ef2d0] OpenBLAS32_jll v0.3.34+0
+  [458c3c95] OpenSSL_jll v3.5.8+0
+  [efe28fd5] OpenSpecFun_jll v0.5.6+0
+  [91d4177d] Opus_jll v1.6.1+0
+  [36c8627f] Pango_jll v1.58.2+0
+  [30392449] Pixman_jll v0.46.4+0
+  [c0090381] Qt6Base_jll v6.10.2+2
+  [629bc702] Qt6Declarative_jll v6.10.2+2
+  [ce943373] Qt6ShaderTools_jll v6.10.2+1
+  [6de9746b] Qt6Svg_jll v6.10.2+0
+  [e99dba38] Qt6Wayland_jll v6.10.2+1
+  [319450e9] SPRAL_jll v2025.9.18+1
+  [a44049a8] Vulkan_Loader_jll v1.3.243+0
+  [a2964d1f] Wayland_jll v1.24.0+0
+⌅ [02c8fc9c] XML2_jll v2.13.9+0
+  [ffd25f8a] XZ_jll v5.8.4+0
+  [f67eecfb] Xorg_libICE_jll v1.1.2+0
+  [c834827a] Xorg_libSM_jll v1.2.6+0
+  [4f6342f7] Xorg_libX11_jll v1.8.13+0
+  [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
+  [935fb764] Xorg_libXcursor_jll v1.2.4+0
+  [a3789734] Xorg_libXdmcp_jll v1.1.6+0
+  [1082639a] Xorg_libXext_jll v1.3.8+0
+  [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
+  [a51aa0fd] Xorg_libXi_jll v1.8.4+0
+  [d1454406] Xorg_libXinerama_jll v1.1.7+0
+  [ec84b674] Xorg_libXrandr_jll v1.5.6+0
+  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+  [a65dc6b1] Xorg_libpciaccess_jll v0.19.0+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
+  [cc61e674] Xorg_libxkbfile_jll v1.2.0+0
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.6+0
+  [12413925] Xorg_xcb_util_image_jll v0.4.1+0
+  [2def613f] Xorg_xcb_util_jll v0.4.1+0
+  [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
+  [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
+  [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
+  [35661453] Xorg_xkbcomp_jll v1.4.7+0
+  [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
+  [c5fb5394] Xorg_xtrans_jll v1.6.0+0
+  [3161d3a3] Zstd_jll v1.5.7+1
+  [35ca27e7] eudev_jll v3.2.14+0
+⌅ [214eeab7] fzf_jll v0.61.1+0
+  [a4ae2306] libaom_jll v3.14.1+0
+  [0ac62f75] libass_jll v0.17.5+0
+  [1183f4f0] libdecor_jll v0.2.2+0
+  [8e53e030] libdrm_jll v2.4.134+0
+  [2db6ffa8] libevdev_jll v1.13.4+0
+  [f638f0a6] libfdk_aac_jll v2.0.4+0
+  [36db933b] libinput_jll v1.28.1+0
+  [b53b4c65] libpng_jll v1.6.58+0
+  [9a156e7d] libva_jll v2.23.0+0
+  [f27f6e37] libvorbis_jll v1.3.8+0
+  [f8abcde7] micromamba_jll v2.3.1+0
+  [009596ad] mtdev_jll v1.1.7+0
+  [1317d2d5] oneTBB_jll v2022.3.0+0
+  [4d7b5844] pixi_jll v0.76.2+0
+⌅ [1270edf5] x264_jll v10164.0.1+0
+  [dfaa095f] x265_jll v4.1.0+0
+  [d8fb68d0] xkbcommon_jll v1.13.0+0
+  [0dad84c5] ArgTools v1.1.2
+  [56f22d72] Artifacts v1.11.0
+  [2a0f44e3] Base64 v1.11.0
+  [ade2ca70] Dates v1.11.0
+  [8ba89e20] Distributed v1.11.0
+  [f43a241f] Downloads v1.6.0
+  [7b1f6079] FileWatching v1.11.0
+  [9fa8497b] Future v1.11.0
+  [b77e0a4c] InteractiveUtils v1.11.0
+  [4af54fe1] LazyArtifacts v1.11.0
+  [b27032c2] LibCURL v0.6.4
+  [76f85450] LibGit2 v1.11.0
+  [8f399da3] Libdl v1.11.0
+  [37e2e46d] LinearAlgebra v1.11.0
+  [56ddb016] Logging v1.11.0
+  [d6f4376e] Markdown v1.11.0
+  [a63ad114] Mmap v1.11.0
+  [ca575930] NetworkOptions v1.2.0
+  [44cfe95a] Pkg v1.11.0
+  [de0858da] Printf v1.11.0
+  [9abbd945] Profile v1.11.0
+  [3fa0cd96] REPL v1.11.0
+  [9a3f8284] Random v1.11.0
+  [ea8e919c] SHA v0.7.0
+  [9e88b42a] Serialization v1.11.0
+  [6462fe0b] Sockets v1.11.0
+  [2f01184e] SparseArrays v1.11.0
+  [f489334b] StyledStrings v1.11.0
+  [fa267f1f] TOML v1.0.3
+  [a4e569a6] Tar v1.10.0
+  [8dfed614] Test v1.11.0
+  [cf7118a7] UUIDs v1.11.0
+  [4ec0a83e] Unicode v1.11.0
+  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
+  [deac9b47] LibCURL_jll v8.6.0+0
+  [e37daf67] LibGit2_jll v1.7.2+0
+  [29816b5a] LibSSH2_jll v1.11.0+1
+  [c8ffd9c3] MbedTLS_jll v2.28.6+0
+  [14a3606d] MozillaCACerts_jll v2023.12.12
+  [4536629a] OpenBLAS_jll v0.3.27+1
+  [05823500] OpenLibm_jll v0.8.5+0
+  [efcefdf7] PCRE2_jll v10.42.0+1
+  [bea87d4a] SuiteSparse_jll v7.7.0+0
+  [83775a58] Zlib_jll v1.2.13+1
+  [8e850b90] libblastrampoline_jll v5.11.0+0
+  [8e850ede] nghttp2_jll v1.59.0+0
+  [3f19e933] p7zip_jll v17.4.0+2
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+```
 
