@@ -200,3 +200,7 @@ wp = WorkPrecisionSet(
 
 plot(wp, label = reduce(hcat, names), markershape = :auto, title = "Spring Block PDE work precision set")
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+

@@ -899,26 +899,26 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [e4b2fa32] GaussianRandomFields v2.2.7
   [7073ff75] IJulia v1.34.4
   [7f56f5a3] LSODA v1.2.0
-⌃ [7ed4a6bd] LinearSolve v5.16.0
-  [961ee093] ModelingToolkit v11.42.0
-  [8913a72c] NonlinearSolve v4.29.2
+⌃ [7ed4a6bd] LinearSolve v5.17.3
+  [961ee093] ModelingToolkit v11.43.1
+⌃ [8913a72c] NonlinearSolve v4.30.0
 ⌅ [09606e27] ODEInterfaceDiffEq v4.1.0
   [1dea7af3] OrdinaryDiffEq v7.8.1
-  [6ad6398a] OrdinaryDiffEqBDF v2.4.6
-  [e0540318] OrdinaryDiffEqExponentialRK v2.3.1
-  [becaefa8] OrdinaryDiffEqExtrapolation v2.6.1
-  [5960d6e9] OrdinaryDiffEqFIRK v2.8.4
+⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
+  [e0540318] OrdinaryDiffEqExponentialRK v2.4.0
+  [becaefa8] OrdinaryDiffEqExtrapolation v2.6.3
+  [5960d6e9] OrdinaryDiffEqFIRK v2.8.7
   [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.1
-  [2d112036] OrdinaryDiffEqSDIRK v2.9.2
-  [358294b1] OrdinaryDiffEqStabilizedRK v2.6.0
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.3
+  [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
   [91a5bcdd] Plots v1.41.7
   [f2c3362d] RecursiveFactorization v0.2.30
-⌃ [31c91b34] SciMLBenchmarks v0.1.3
+  [31c91b34] SciMLBenchmarks v0.2.1
   [a6db7da4] SciMLLogging v2.1.0
   [860ef19b] StableRNGs v1.0.4
-⌃ [c3572dad] Sundials v6.7.0
-⌃ [0c5d862f] Symbolics v7.39.0
+  [c3572dad] Sundials v6.7.1
+  [0c5d862f] Symbolics v7.39.2
   [2f01184e] SparseArrays v1.11.0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
 ```
@@ -937,7 +937,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
   [7d9fca2a] Arpack v0.5.4
-  [4fba245c] ArrayInterface v7.30.1
+⌃ [4fba245c] ArrayInterface v7.30.1
   [4c555306] ArrayLayouts v1.12.2
   [aae01518] BandedMatrices v1.12.0
   [e2ed5e7c] Bijections v0.2.2
@@ -945,7 +945,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [caf10ac8] BipartiteGraphs v0.1.14
   [62783981] BitTwiddlingConvenienceFunctions v0.1.6
   [8e7c35d0] BlockArrays v1.10.0
-  [70df07ce] BracketingNonlinearSolve v1.12.6
+  [70df07ce] BracketingNonlinearSolve v1.12.7
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.7
   [fb6a15b2] CloseOpenIntervals v0.1.13
@@ -970,10 +970,10 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v7.20.1
-  [459566f4] DiffEqCallbacks v4.19.3
+  [2b5f629d] DiffEqBase v7.21.1
+  [459566f4] DiffEqCallbacks v4.19.4
   [f3b72e0c] DiffEqDevTools v3.6.3
-  [77a26b50] DiffEqNoiseProcess v5.36.2
+  [77a26b50] DiffEqNoiseProcess v5.36.3
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
@@ -983,7 +983,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [7c1d4256] DynamicPolynomials v0.6.8
   [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.21
-  [d4d017d3] ExponentialUtilities v1.35.2
+  [d4d017d3] ExponentialUtilities v1.35.3
   [e2ba6199] ExprTools v0.1.11
   [55351af7] ExproniconLite v0.10.14
   [c87230d0] FFMPEG v0.4.5
@@ -997,7 +997,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+  [f6369f11] ForwardDiff v1.4.6
   [a85aefff] FunctionMaps v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v1.13.0
@@ -1006,7 +1006,6 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [a0844989] Gamma v1.2.0
   [e4b2fa32] GaussianRandomFields v2.2.7
   [c145ed77] GenericSchur v0.5.8
-  [d7ba0133] Git v1.5.0
   [86223c79] Graphs v1.15.0
 ⌅ [eafb193a] Highlights v0.5.3
   [3e5b6fbb] HostCPUFeatures v0.1.18
@@ -1024,15 +1023,15 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-  [ccbc3e58] JumpProcesses v9.32.2
-  [ba0b0d4f] Krylov v0.10.9
+⌃ [ccbc3e58] JumpProcesses v9.32.3
+  [ba0b0d4f] Krylov v0.10.10
   [2faa5264] LHLFactorization v2.2.2
   [7f56f5a3] LSODA v1.2.0
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [10f19ff3] LayoutPointers v0.1.17
-  [87fe0de2] LineSearch v0.1.16
-⌃ [7ed4a6bd] LinearSolve v5.16.0
+  [87fe0de2] LineSearch v0.1.18
+⌃ [7ed4a6bd] LinearSolve v5.17.3
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [bdcacae8] LoopVectorization v0.12.174
@@ -1042,38 +1041,38 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
-  [961ee093] ModelingToolkit v11.42.0
-  [7771a370] ModelingToolkitBase v1.69.0
+  [961ee093] ModelingToolkit v11.43.1
+⌃ [7771a370] ModelingToolkitBase v1.71.1
   [6bb917b9] ModelingToolkitTearing v1.20.6
-  [2e0e35c7] Moshi v0.3.12
+⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
   [102ac46a] MultivariatePolynomials v0.5.19
   [ffc61752] Mustache v1.0.21
   [d8a4904e] MutableArithmetics v1.8.0
   [77ba4419] NaNMath v1.1.4
-  [8913a72c] NonlinearSolve v4.29.2
-  [be0214bd] NonlinearSolveBase v2.49.4
-  [5959db7a] NonlinearSolveFirstOrder v2.5.1
+⌃ [8913a72c] NonlinearSolve v4.30.0
+⌃ [be0214bd] NonlinearSolveBase v2.49.5
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
   [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3
-  [26075421] NonlinearSolveSpectralMethods v1.8.2
+  [26075421] NonlinearSolveSpectralMethods v1.8.3
   [54ca160b] ODEInterface v0.5.2
 ⌅ [09606e27] ODEInterfaceDiffEq v4.1.0
   [6fe1bfb0] OffsetArrays v1.17.0
 ⌅ [bac558e1] OrderedCollections v1.8.2
   [1dea7af3] OrdinaryDiffEq v7.8.1
-  [6ad6398a] OrdinaryDiffEqBDF v2.4.6
-  [bbf590c4] OrdinaryDiffEqCore v4.17.0
-  [50262376] OrdinaryDiffEqDefault v2.6.0
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.11.5
-  [e0540318] OrdinaryDiffEqExponentialRK v2.3.1
-  [becaefa8] OrdinaryDiffEqExtrapolation v2.6.1
-  [5960d6e9] OrdinaryDiffEqFIRK v2.8.4
+⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
+  [50262376] OrdinaryDiffEqDefault v2.6.2
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
+  [e0540318] OrdinaryDiffEqExponentialRK v2.4.0
+  [becaefa8] OrdinaryDiffEqExtrapolation v2.6.3
+  [5960d6e9] OrdinaryDiffEqFIRK v2.8.7
   [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
-  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.5
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.1
+  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
-  [2d112036] OrdinaryDiffEqSDIRK v2.9.2
-  [358294b1] OrdinaryDiffEqStabilizedRK v2.6.0
+⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.3
+  [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
   [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
@@ -1087,12 +1086,12 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [1d0040c9] PolyesterWeave v0.2.2
   [d236fae5] PreallocationTools v1.7.1
 ⌅ [aea7be01] PrecompileTools v1.2.1
-  [21216c6a] Preferences v1.5.2
+  [21216c6a] Preferences v1.6.0
   [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [43287f4e] PtrArrays v1.4.0
   [78ab2635] PureGebal v1.1.0
-  [0c0d3e7f] PureKLU v1.4.1
+  [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
   [988b38a3] ReadOnlyArrays v0.2.0
   [795d4caa] ReadOnlyDicts v1.0.1
@@ -1109,20 +1108,20 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [47965b36] RootedTrees v2.27.0
   [f2b01f46] Roots v3.0.8
   [7e49a35a] RuntimeGeneratedFunctions v0.5.26
-  [9dfe8606] SCCNonlinearSolve v1.15.2
+  [9dfe8606] SCCNonlinearSolve v1.15.3
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.46
-  [0bca4576] SciMLBase v3.53.1
-⌃ [31c91b34] SciMLBenchmarks v0.1.3
+⌃ [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1
   [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
-  [c0aeaf25] SciMLOperators v1.30.0
+⌃ [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
   [53ae85a6] SciMLStructures v1.10.5
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
   [992d4aef] Showoff v1.1.1
-  [727e6d20] SimpleNonlinearSolve v2.14.2
+  [727e6d20] SimpleNonlinearSolve v2.14.5
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
   [bd59d7e1] SparseBandedMatrices v1.4.0
@@ -1144,11 +1143,11 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [69024149] StringEncodings v0.3.7
 ⌅ [892a3eda] StringManipulation v0.5.0
   [09ab397b] StructArrays v0.7.3
-⌃ [c3572dad] Sundials v6.7.0
+  [c3572dad] Sundials v6.7.1
   [2efcf032] SymbolicIndexingInterface v0.3.55
   [19f23fe9] SymbolicLimits v1.2.1
-⌃ [d1185830] SymbolicUtils v4.46.1
-⌃ [0c5d862f] Symbolics v7.39.0
+  [d1185830] SymbolicUtils v4.46.6
+  [0c5d862f] Symbolics v7.39.2
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [ed4db957] TaskLocalValues v0.1.3
@@ -1183,8 +1182,6 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [d2c73de3] GR_jll v0.73.27+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
-  [020c3dae] Git_LFS_jll v3.7.1+0
-  [f8c6e375] Git_jll v2.55.0+0
   [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
   [2e76f6c2] HarfBuzz_jll v100.14004.0+0
@@ -1192,7 +1189,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
   [88015f11] LERC_jll v4.2.0+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
   [aae0fff6] LSODA_jll v0.1.2+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
@@ -1204,7 +1201,6 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [c771fb93] ODEInterface_jll v0.0.2+0
   [e7412a2a] Ogg_jll v1.3.6+0
   [656ef2d0] OpenBLAS32_jll v0.3.34+0
-  [9bd350c2] OpenSSH_jll v10.5.1+0
   [458c3c95] OpenSSL_jll v3.5.8+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
@@ -1220,7 +1216,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [fb77eaff] Sundials_jll v7.5.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+  [ffd25f8a] XZ_jll v5.8.4+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0
