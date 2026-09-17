@@ -71,7 +71,7 @@ plot(wp, label=labels, markershape=:auto, title=&quot;Work-Precision Diagram, Hi
 CNAB2
 CNLF2
 SBDF2
-125.725928 seconds (61.18 M allocations: 20.617 GiB, 8.96% gc time, 25.81% 
+118.938464 seconds (61.19 M allocations: 20.618 GiB, 6.77% gc time, 26.89% 
 compilation time)</code></pre><p><img src="../figures/burgers_fdm_wpd_4_1.png" alt/></p><h4 id="Exponential-Integrators"><a class="docs-heading-anchor" href="#Exponential-Integrators">Exponential Integrators</a><a id="Exponential-Integrators-1"></a><a class="docs-heading-anchor-permalink" href="#Exponential-Integrators" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (5:8) # all fixed dt methods so these don&#39;t matter much
 reltols = 0.1 .^ (1:4)
 multipliers = 0.5 .^ (0:3)
@@ -81,7 +81,11 @@ setups = [
     Dict(:alg =&gt; NorsettEuler(krylov=true, m=20), :dts =&gt; 1e-4 * multipliers),
     Dict(:alg =&gt; ETDRK2(), :dts =&gt; 1e-3 * multipliers),
     Dict(:alg =&gt; ETDRK2(krylov=true, m=5), :dts =&gt; 1e-3 * multipliers),
-    Dict(:alg =&gt; ETDRK2(krylov=true, m=20), :dts =&gt; 1e-3 * multipliers)
+    Dict(:alg =&gt; ETDRK2(krylov=true, m=20), :dts =&gt; 1e-3 * multipliers),
+    Dict(:alg =&gt; HochOst4(), :dts =&gt; 1e-3 * multipliers),
+    Dict(:alg =&gt; HochOst4(krylov=true, m=20), :dts =&gt; 1e-3 * multipliers),
+    Dict(:alg =&gt; Friedli(), :dts =&gt; 1e-3 * multipliers),
+    Dict(:alg =&gt; Friedli(krylov=true, m=20), :dts =&gt; 1e-3 * multipliers)
 ]
 labels = hcat(
     &quot;NorsettEuler (caching)&quot;, 
@@ -89,7 +93,11 @@ labels = hcat(
     &quot;NorsettEuler (m=20)&quot;,
     &quot;ETDRK2 (caching)&quot;, 
     &quot;ETDRK2 (m=5)&quot;, 
-    &quot;ETDRK2 (m=20)&quot;
+    &quot;ETDRK2 (m=20)&quot;,
+    &quot;HochOst4 (caching)&quot;,
+    &quot;HochOst4 (m=20)&quot;,
+    &quot;Friedli (caching)&quot;,
+    &quot;Friedli (m=20)&quot;
 )
 @time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
     print_names=true, names=labels, numruns=5, error_estimate=:l2,
@@ -101,7 +109,11 @@ NorsettEuler (m=20)
 ETDRK2 (caching)
 ETDRK2 (m=5)
 ETDRK2 (m=20)
-161.459424 seconds (70.39 M allocations: 35.237 GiB, 8.01% gc time, 10.22% 
+HochOst4 (caching)
+HochOst4 (m=20)
+Friedli (caching)
+Friedli (m=20)
+307.067568 seconds (110.30 M allocations: 66.170 GiB, 5.62% gc time, 9.22% 
 compilation time)</code></pre><p><img src="../figures/burgers_fdm_wpd_5_1.png" alt/></p><h4 id="Multirate-Methods"><a class="docs-heading-anchor" href="#Multirate-Methods">Multirate Methods</a><a id="Multirate-Methods-1"></a><a class="docs-heading-anchor-permalink" href="#Multirate-Methods" title="Permalink"></a></h4><p>The methods from OrdinaryDiffEqMultirate.jl consume the same <code>SplitODEProblem</code>: the first component (the stiff linear diffusion) is advanced with <code>m</code> explicit substeps inside every macro step, while the second component (the nonlinear convection) is evaluated only at the macro rate. Multirate integration pays off when the slow component is expensive relative to the fast one. That is not the case here, since both terms cost a sparse matrix-vector product, so the substeps buy stability for the diffusion term without saving any slow work, and the comparison against <code>CNAB2</code> and <code>ETDRK2</code> from the sections above measures the price of buying stability this way rather than implicitly or exactly.</p><p>The linear operator has spectral radius about 161 and the macro steps below go up to <code>2e-2</code>, so <code>m = 4</code> puts the largest micro step at <code>2e-2 * 161 / 4</code>, about 0.8, half of the explicit micro stability bound. In a scan from <code>m = 2</code> to <code>m = 8</code> the errors changed by under two percent at every step size, so the macro error dominates and larger <code>m</code> only adds micro work. The multirate methods are adaptive by default but are run at fixed macro steps here, matching how the other fixed step methods in this file are measured. The implicit members of the family (<code>MRIGARKIRK21a</code>, <code>MRIGARKESDIRK34a</code>, <code>MRIGARKESDIRK46a</code>) treat the slow component implicitly and target a stiff slow part; the diffusion here is only mildly stiff, so they are benchmarked on the Kuramoto-Sivashinsky problem instead, where the linear operator is stiff enough for the implicit treatment to matter.</p><p>For cross family context the same five reference methods appear in every multirate figure of this folder: adaptive <code>Tsit5</code>, <code>Rodas5P</code>, and <code>FBDF</code> on the joined right hand side (<code>FBDF</code> cannot consume the split form), <code>KenCarp4</code> on the split problem, and fixed step <code>ETDRK4</code> at the step sizes this file uses for it elsewhere. <code>CNAB2</code> and <code>ETDRK2</code> from the sections above stay in as local references.</p><pre><code class="language-julia hljs">abstols = 0.1 .^ (5:8) # all fixed dt methods so these don&#39;t matter much
 reltols = 0.1 .^ (1:4)
 multipliers = 0.5 .^ (0:3)
@@ -165,7 +177,7 @@ Tsit5
 Rodas5P
 FBDF
 NordsieckBDF
-134.460674 seconds (58.44 M allocations: 25.241 GiB, 4.87% gc time, 41.10% 
+135.922375 seconds (58.03 M allocations: 25.213 GiB, 4.34% gc time, 39.03% 
 compilation time)</code></pre><p><img src="../figures/burgers_fdm_wpd_6_1.png" alt/></p><p>The cross family view narrows the earlier reading of this figure. Adaptive <code>Tsit5</code> on the joined problem is the fastest method in the practical middle of the range: it holds a near constant 0.4 to 0.5 milliseconds per solve while its error falls from <code>9e-3</code> to <code>1.3e-7</code>, because the mild diffusion caps its step at the stability limit and tightening the tolerance costs it nothing until error control takes over. <code>FBDF</code> runs a clean curve to <code>2e-6</code> at about 3 milliseconds and <code>Rodas5P</code> to <code>1.2e-7</code> at about 12 milliseconds. The multirate members&#39; real estate is the tight end: <code>MREEF</code> reaches <code>2.2e-10</code> in about 10 milliseconds and <code>MRIGARKERK45a</code> matches it at twice the cost, errors that no adaptive reference here touches, with fixed step <code>ETDRK4</code> the only method going deeper (<code>1.1e-11</code> at a quarter of a second, 25 times slower than <code>MREEF</code> at matched <code>2e-10</code>). That tight end margin is still a statement about step economics rather than multirate structure: the macro steps are 200 times larger than the fixed steps the older references run at, and four cheap substeps keep the diffusion stable, so any stabilized explicit treatment of this split would do as well. <code>KenCarp4</code> only reaches <code>1e-4</code> at these pairs and is slower than every multirate member at matched error. <code>MRAB</code> remains the weak member: freezing the slow rate over the macro step caps it at first order and holds its error above <code>7e-4</code> across the sweep.</p><h4 id="Comparisons-Between-Families"><a class="docs-heading-anchor" href="#Comparisons-Between-Families">Comparisons Between Families</a><a id="Comparisons-Between-Families-1"></a><a class="docs-heading-anchor-permalink" href="#Comparisons-Between-Families" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (5:8) # all fixed dt methods so these don&#39;t matter much
 reltols = 0.1 .^ (1:4)
 multipliers = 0.5 .^ (0:3)
@@ -186,7 +198,7 @@ labels = hcat(
 plot(wp, label=labels, markershape=:auto, title=&quot;Between Families, High Tolerances&quot;)</code></pre><pre><code class="nohighlight hljs">CNAB2 (dense linsolve)
 CNAB2 (Krylov linsolve)
 ETDRK2 (caching)
- 74.483515 seconds (31.58 M allocations: 29.724 GiB, 15.86% gc time, 4.93% 
+ 80.695674 seconds (31.59 M allocations: 29.724 GiB, 15.75% gc time, 4.25% 
 compilation time)</code></pre><p><img src="../figures/burgers_fdm_wpd_7_1.png" alt/></p><h3 id="Low-Tolerances"><a class="docs-heading-anchor" href="#Low-Tolerances">Low Tolerances</a><a id="Low-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#Low-Tolerances" title="Permalink"></a></h3><h4 id="Implicit-Explicit-Methods-2"><a class="docs-heading-anchor" href="#Implicit-Explicit-Methods-2">Implicit-Explicit Methods</a><a class="docs-heading-anchor-permalink" href="#Implicit-Explicit-Methods-2" title="Permalink"></a></h4><p>Dense/banded linear solvers.</p><pre><code class="language-julia hljs">abstols = 0.1 .^ (7:13)
 reltols = 0.1 .^ (4:10)
 setups = [
@@ -215,7 +227,7 @@ KenCarp5
 ARKODE3
 ARKODE4
 ARKODE5
- 37.868302 seconds (30.78 M allocations: 4.037 GiB, 5.39% gc time, 79.53% c
+ 37.088320 seconds (30.72 M allocations: 4.033 GiB, 5.18% gc time, 79.59% c
 ompilation time)</code></pre><p><img src="../figures/burgers_fdm_wpd_8_1.png" alt/></p><p>Krylov linear solvers.</p><pre><code class="language-julia hljs">abstols = 0.1 .^ (7:13)
 reltols = 0.1 .^ (4:10)
 setups = [
@@ -244,7 +256,7 @@ KenCarp5
 ARKODE3
 ARKODE4
 ARKODE5
- 51.251613 seconds (34.68 M allocations: 4.559 GiB, 5.59% gc time, 78.78% c
+ 49.934165 seconds (34.62 M allocations: 4.554 GiB, 4.69% gc time, 79.24% c
 ompilation time)</code></pre><p><img src="../figures/burgers_fdm_wpd_9_1.png" alt/></p><p>Krylov solvers with preconditioners.</p><pre><code class="language-julia hljs"># Weighted diagonal preconditioner
 import LinearAlgebra as LA
 Base.@kwdef struct WeightedDiagonalPreconBuilder
@@ -350,7 +362,7 @@ KenCarp5 (AMG-Jacobi)
 KenCarp3 (Identity)
 KenCarp4 (Identity)
 KenCarp5 (Identity)
-208.140725 seconds (134.59 M allocations: 23.468 GiB, 4.06% gc time, 76.87%
+205.803528 seconds (134.55 M allocations: 23.465 GiB, 4.65% gc time, 76.07%
  compilation time)</code></pre><p><img src="../figures/burgers_fdm_wpd_10_1.png" alt/></p><h4 id="Exponential-Integrators-2"><a class="docs-heading-anchor" href="#Exponential-Integrators-2">Exponential Integrators</a><a class="docs-heading-anchor-permalink" href="#Exponential-Integrators-2" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (7:11) # all fixed dt methods so these don&#39;t matter much
 reltols = 0.1 .^ (4:8)
 multipliers = 0.5 .^ (0:4)
@@ -371,7 +383,7 @@ labels = hcat(
 plot(wp, label=labels, markershape=:auto, title=&quot;ExpRK Methods, Low Tolerances&quot;)</code></pre><pre><code class="nohighlight hljs">ETDRK3 (caching)
 ETDRK4 (caching)
 HochOst4 (caching)
-155.340237 seconds (9.56 M allocations: 36.763 GiB, 1.33% gc time, 4.38% co
+121.044644 seconds (6.13 M allocations: 36.525 GiB, 1.21% gc time, 2.77% co
 mpilation time)</code></pre><p><img src="../figures/burgers_fdm_wpd_11_1.png" alt/></p><h4 id="Comparisons-Between-Families-2"><a class="docs-heading-anchor" href="#Comparisons-Between-Families-2">Comparisons Between Families</a><a class="docs-heading-anchor-permalink" href="#Comparisons-Between-Families-2" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (7:11)
 reltols = 0.1 .^ (4:8)
 multipliers = 0.5 .^ (0:4)
@@ -392,7 +404,7 @@ labels = hcat(
 plot(wp, label=labels, markershape=:auto, title=&quot;Between Families, Low Tolerances&quot;)</code></pre><pre><code class="nohighlight hljs">ARKODE (Band linsolve)
 ETDRK3 (caching)
 ETDRK4 (caching)
- 96.321972 seconds (2.08 M allocations: 24.034 GiB, 1.16% gc time)</code></pre><p><img src="../figures/burgers_fdm_wpd_12_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+101.362850 seconds (2.08 M allocations: 24.034 GiB, 0.84% gc time)</code></pre><p><img src="../figures/burgers_fdm_wpd_12_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/SimpleHandwrittenPDE&quot;,&quot;burgers_fdm_wpd.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.12
 Commit d93beab124c (2026-08-15 10:29 UTC)
 Build Info:
@@ -406,10 +418,10 @@ Platform Info:
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_NUM_THREADS = auto
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Project.toml`
   [47edcb42] ADTypes v1.24.0
   [2169fc97] AlgebraicMultigrid v2.0.2
-  [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
+⌃ [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
   [f3b72e0c] DiffEqDevTools v3.6.3
   [40713840] IncompleteLU v0.2.1
   [7f56f5a3] LSODA v1.2.0
@@ -422,9 +434,9 @@ Environment:
   [d28bc4f8] OrdinaryDiffEqHighOrderRK v2.2.1
   [9f002381] OrdinaryDiffEqIMEXMultistep v2.3.0
 ⌅ [d4b830b4] OrdinaryDiffEqMultirate v2.7.0
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
-  [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
+⌃ [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
   [91a5bcdd] Plots v1.41.7
   [31c91b34] SciMLBenchmarks v0.2.1
 ⌃ [c0aeaf25] SciMLOperators v1.30.0
@@ -434,12 +446,12 @@ Environment:
   [c3572dad] Sundials v6.7.1
   [37e2e46d] LinearAlgebra
   [2f01184e] SparseArrays v1.10.0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Manifest.toml`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
   [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [2169fc97] AlgebraicMultigrid v2.0.2
   [66dad0bd] AliasTables v1.1.3
   [dce04be8] ArgCheck v2.5.0
@@ -455,7 +467,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [70df07ce] BracketingNonlinearSolve v1.12.7
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.7
-  [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
+⌃ [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [35d6a980] ColorSchemes v3.31.0
   [3da002f7] ColorTypes v0.12.1
@@ -469,7 +481,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.8
   [187b0558] ConstructionBase v1.6.0
-  [7ae1f121] ContinuumArrays v0.20.10
+⌅ [7ae1f121] ContinuumArrays v0.20.10
   [d38c429a] Contour v0.6.3
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.2.0
@@ -486,7 +498,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [31c24e10] Distributions v0.25.131
   [ffbed154] DocStringExtensions v0.9.5
-  [5b8099bc] DomainSets v0.8.1
+⌃ [5b8099bc] DomainSets v0.8.1
   [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.21
   [d4d017d3] ExponentialUtilities v1.35.3
@@ -499,7 +511,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [a4df4552] FastPower v1.5.0
   [057dd010] FastTransforms v0.17.2
   [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
@@ -534,7 +546,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [10f19ff3] LayoutPointers v0.1.17
-  [5078a376] LazyArrays v2.13.0
+⌃ [5078a376] LazyArrays v2.13.0
   [d7e5e226] LazyBandedMatrices v0.11.10
   [87fe0de2] LineSearch v0.1.18
 ⌃ [7ed4a6bd] LinearSolve v5.17.3
@@ -561,7 +573,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
   [50262376] OrdinaryDiffEqDefault v2.6.2
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
   [e0540318] OrdinaryDiffEqExponentialRK v2.4.0
   [5960d6e9] OrdinaryDiffEqFIRK v2.8.7
   [d28bc4f8] OrdinaryDiffEqHighOrderRK v2.2.1
@@ -569,17 +581,17 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
 ⌅ [d4b830b4] OrdinaryDiffEqMultirate v2.7.0
   [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
-  [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
+⌃ [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
   [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
 ⌅ [d96e819e] Parameters v0.12.3
 ⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [e409e4f3] PoissonRandom v0.4.13
   [f517fe37] Polyester v0.7.19
@@ -594,7 +606,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [78ab2635] PureGebal v1.1.0
   [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
-  [c4ea9172] QuasiArrays v0.13.11
+⌃ [c4ea9172] QuasiArrays v0.13.11
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
   [b889d2dc] RecurrenceRelationshipArrays v0.1.5
@@ -611,7 +623,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [7e49a35a] RuntimeGeneratedFunctions v0.5.26
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.46
-  [0bca4576] SciMLBase v3.54.0
+⌃ [0bca4576] SciMLBase v3.54.0
   [31c91b34] SciMLBenchmarks v0.2.1
   [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
@@ -632,7 +644,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [860ef19b] StableRNGs v1.0.4
   [aedffcd0] Static v1.4.6
   [0d7ed370] StaticArrayInterface v1.10.0
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.13
@@ -648,7 +660,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [bd369af6] Tables v1.14.0
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.6
-  [a759f4b9] TimerOutputs v1.2.1
+⌃ [a759f4b9] TimerOutputs v1.2.1
   [c751599d] ToeplitzMatrices v0.8.5
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
@@ -657,7 +669,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [41fe7b60] Unzip v0.2.0
   [3d5dd08c] VectorizationBase v0.21.74
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.16
+⌃ [ddb6d928] YAML v0.4.16
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
@@ -798,4 +810,4 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../allen_cahn_spectral_wpd/">« Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 08:19">Thursday 17 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../allen_cahn_spectral_wpd/">« Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 08:37">Thursday 17 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
