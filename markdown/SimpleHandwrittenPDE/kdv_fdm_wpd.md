@@ -89,7 +89,7 @@ plt = heatmap(xs, tslices, ys', xlabel="x", ylabel="t")
 ```
 
 ```
-9.661308 seconds (10.39 M allocations: 1.089 GiB, 5.94% gc time, 94.72% c
+9.703998 seconds (10.40 M allocations: 1.089 GiB, 5.91% gc time, 95.22% c
 ompilation time)
 ```
 
@@ -132,7 +132,7 @@ IMEXEuler
 CNAB2
 CNLF2
 SBDF2
-165.200648 seconds (60.38 M allocations: 19.670 GiB, 6.27% gc time, 19.10% 
+164.522830 seconds (61.50 M allocations: 20.651 GiB, 3.56% gc time, 19.30% 
 compilation time)
 ```
 
@@ -153,7 +153,11 @@ setups = [
     Dict(:alg => NorsettEuler(krylov=true, m=20), :dts => 1e-4 * multipliers),
     Dict(:alg => ETDRK2(), :dts => 1e-4 * multipliers),
     Dict(:alg => ETDRK2(krylov=true, m=5), :dts => 1e-4 * multipliers),
-    Dict(:alg => ETDRK2(krylov=true, m=20), :dts => 1e-4 * multipliers)
+    Dict(:alg => ETDRK2(krylov=true, m=20), :dts => 1e-4 * multipliers),
+    Dict(:alg => HochOst4(), :dts => 1e-4 * multipliers),
+    Dict(:alg => HochOst4(krylov=true, m=20), :dts => 1e-4 * multipliers),
+    Dict(:alg => Friedli(), :dts => 1e-4 * multipliers),
+    Dict(:alg => Friedli(krylov=true, m=20), :dts => 1e-4 * multipliers)
 ]
 labels = hcat(
     "NorsettEuler (caching)", 
@@ -161,7 +165,11 @@ labels = hcat(
     "NorsettEuler (m=20)",
     "ETDRK2 (caching)", 
     "ETDRK2 (m=5)", 
-    "ETDRK2 (m=20)"
+    "ETDRK2 (m=20)",
+    "HochOst4 (caching)",
+    "HochOst4 (m=20)",
+    "Friedli (caching)",
+    "Friedli (m=20)"
 )
 @time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
     print_names=true, names=labels, numruns=5, error_estimate=:l2,
@@ -177,8 +185,12 @@ NorsettEuler (m=20)
 ETDRK2 (caching)
 ETDRK2 (m=5)
 ETDRK2 (m=20)
-230.297441 seconds (123.79 M allocations: 62.360 GiB, 5.82% gc time, 6.93% 
-compilation time)
+HochOst4 (caching)
+HochOst4 (m=20)
+Friedli (caching)
+Friedli (m=20)
+777.108105 seconds (299.95 M allocations: 153.817 GiB, 4.06% gc time, 3.63%
+ compilation time)
 ```
 
 
@@ -214,7 +226,7 @@ plot(wp, label=labels, markershape=:auto, title="Between Families, High Toleranc
 CNAB2 (dense)
 CNAB2 (Krylov)
 ETDRK2 (caching)
- 92.752242 seconds (37.84 M allocations: 36.569 GiB, 10.77% gc time, 3.69% 
+ 91.408996 seconds (32.06 M allocations: 30.080 GiB, 10.19% gc time, 3.79% 
 compilation time)
 ```
 
@@ -262,7 +274,7 @@ KenCarp5 (default)
 ARKODE3 (Krylov)
 ARKODE4 (Krylov)
 ARKODE5 (Krylov)
- 97.844741 seconds (117.50 M allocations: 17.904 GiB, 5.52% gc time, 44.37%
+ 97.549647 seconds (117.42 M allocations: 17.898 GiB, 5.26% gc time, 43.99%
  compilation time)
 ```
 
@@ -296,7 +308,7 @@ plot(wp, label=labels, markershape=:auto, title="ExpRK Methods, Low Tolerances")
 ETDRK3 (caching)
 ETDRK4 (caching)
 HochOst4 (caching)
-168.382015 seconds (25.15 M allocations: 47.969 GiB, 3.83% gc time, 5.89% c
+172.991406 seconds (21.42 M allocations: 47.712 GiB, 3.63% gc time, 3.75% c
 ompilation time)
 ```
 
@@ -332,7 +344,7 @@ plot(wp, label=labels, markershape=:auto, title="Between Families, Low Tolerance
 ARKODE5 (Krylov)
 ETDRK3 (caching)
 ETDRK4 (caching)
-108.897738 seconds (17.02 M allocations: 22.990 GiB, 1.53% gc time, 0.02% c
+105.349616 seconds (17.07 M allocations: 24.312 GiB, 1.59% gc time, 0.02% c
 ompilation time)
 ```
 
@@ -372,10 +384,10 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Project.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Project.toml`
   [47edcb42] ADTypes v1.24.0
   [2169fc97] AlgebraicMultigrid v2.0.2
-  [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
+⌃ [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
   [f3b72e0c] DiffEqDevTools v3.6.3
   [40713840] IncompleteLU v0.2.1
   [7f56f5a3] LSODA v1.2.0
@@ -388,9 +400,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d28bc4f8] OrdinaryDiffEqHighOrderRK v2.2.1
   [9f002381] OrdinaryDiffEqIMEXMultistep v2.3.0
 ⌅ [d4b830b4] OrdinaryDiffEqMultirate v2.7.0
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
-  [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
+⌃ [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
   [91a5bcdd] Plots v1.41.7
   [31c91b34] SciMLBenchmarks v0.2.1
 ⌃ [c0aeaf25] SciMLOperators v1.30.0
@@ -406,12 +418,12 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Manifest.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
   [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [2169fc97] AlgebraicMultigrid v2.0.2
   [66dad0bd] AliasTables v1.1.3
   [dce04be8] ArgCheck v2.5.0
@@ -427,7 +439,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [70df07ce] BracketingNonlinearSolve v1.12.7
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.7
-  [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
+⌃ [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [35d6a980] ColorSchemes v3.31.0
   [3da002f7] ColorTypes v0.12.1
@@ -441,7 +453,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.8
   [187b0558] ConstructionBase v1.6.0
-  [7ae1f121] ContinuumArrays v0.20.10
+⌅ [7ae1f121] ContinuumArrays v0.20.10
   [d38c429a] Contour v0.6.3
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.2.0
@@ -458,7 +470,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [31c24e10] Distributions v0.25.131
   [ffbed154] DocStringExtensions v0.9.5
-  [5b8099bc] DomainSets v0.8.1
+⌃ [5b8099bc] DomainSets v0.8.1
   [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.21
   [d4d017d3] ExponentialUtilities v1.35.3
@@ -471,7 +483,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a4df4552] FastPower v1.5.0
   [057dd010] FastTransforms v0.17.2
   [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
@@ -506,7 +518,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [10f19ff3] LayoutPointers v0.1.17
-  [5078a376] LazyArrays v2.13.0
+⌃ [5078a376] LazyArrays v2.13.0
   [d7e5e226] LazyBandedMatrices v0.11.10
   [87fe0de2] LineSearch v0.1.18
 ⌃ [7ed4a6bd] LinearSolve v5.17.3
@@ -533,7 +545,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
   [50262376] OrdinaryDiffEqDefault v2.6.2
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
   [e0540318] OrdinaryDiffEqExponentialRK v2.4.0
   [5960d6e9] OrdinaryDiffEqFIRK v2.8.7
   [d28bc4f8] OrdinaryDiffEqHighOrderRK v2.2.1
@@ -541,17 +553,17 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
 ⌅ [d4b830b4] OrdinaryDiffEqMultirate v2.7.0
   [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
-  [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
+⌃ [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
   [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
 ⌅ [d96e819e] Parameters v0.12.3
 ⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [e409e4f3] PoissonRandom v0.4.13
   [f517fe37] Polyester v0.7.19
@@ -566,7 +578,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [78ab2635] PureGebal v1.1.0
   [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
-  [c4ea9172] QuasiArrays v0.13.11
+⌃ [c4ea9172] QuasiArrays v0.13.11
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
   [b889d2dc] RecurrenceRelationshipArrays v0.1.5
@@ -583,7 +595,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [7e49a35a] RuntimeGeneratedFunctions v0.5.26
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.46
-  [0bca4576] SciMLBase v3.54.0
+⌃ [0bca4576] SciMLBase v3.54.0
   [31c91b34] SciMLBenchmarks v0.2.1
   [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
@@ -604,7 +616,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [860ef19b] StableRNGs v1.0.4
   [aedffcd0] Static v1.4.6
   [0d7ed370] StaticArrayInterface v1.10.0
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.13
@@ -620,7 +632,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [bd369af6] Tables v1.14.0
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.6
-  [a759f4b9] TimerOutputs v1.2.1
+⌃ [a759f4b9] TimerOutputs v1.2.1
   [c751599d] ToeplitzMatrices v0.8.5
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
@@ -629,7 +641,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [41fe7b60] Unzip v0.2.0
   [3d5dd08c] VectorizationBase v0.21.74
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.16
+⌃ [ddb6d928] YAML v0.4.16
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
