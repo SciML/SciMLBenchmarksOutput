@@ -50,7 +50,7 @@ test_sol = TestSolution(sol);
 
 tslices = LinRange(prob.tspan..., 50)
 ys = mapreduce(sol, hcat, tslices)
-plt = heatmap(xs, tslices, ys&#39;, xlabel=&quot;x&quot;, ylabel=&quot;t&quot;)</code></pre><pre><code class="nohighlight hljs">19.111821 seconds (17.86 M allocations: 1.269 GiB, 3.73% gc time, 63.75% c
+plt = heatmap(xs, tslices, ys&#39;, xlabel=&quot;x&quot;, ylabel=&quot;t&quot;)</code></pre><pre><code class="nohighlight hljs">19.101998 seconds (17.84 M allocations: 1.268 GiB, 4.97% gc time, 63.12% c
 ompilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_3_1.png" alt/></p><h2 id="Work-Precision-Diagrams"><a class="docs-heading-anchor" href="#Work-Precision-Diagrams">Work-Precision Diagrams</a><a id="Work-Precision-Diagrams-1"></a><a class="docs-heading-anchor-permalink" href="#Work-Precision-Diagrams" title="Permalink"></a></h2><h3 id="High-Tolerances"><a class="docs-heading-anchor" href="#High-Tolerances">High Tolerances</a><a id="High-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#High-Tolerances" title="Permalink"></a></h3><h4 id="Implicit-Explicit-Methods"><a class="docs-heading-anchor" href="#Implicit-Explicit-Methods">Implicit-Explicit Methods</a><a id="Implicit-Explicit-Methods-1"></a><a class="docs-heading-anchor-permalink" href="#Implicit-Explicit-Methods" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (3:6) # all fixed dt methods so these don&#39;t matter much
 reltols = 0.1 .^ (3:6)
 multipliers = 0.3 .^ (0:3)
@@ -74,7 +74,7 @@ plot(wp, label=labels, markershape=:auto, title=&quot;IMEX Methods, High Toleran
 CNAB2
 CNLF2
 SBDF2
-165.251951 seconds (60.77 M allocations: 20.205 GiB, 3.87% gc time, 19.01% 
+167.190075 seconds (60.77 M allocations: 20.205 GiB, 4.28% gc time, 19.03% 
 compilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_4_1.png" alt/></p><h4 id="Exponential-Integrators"><a class="docs-heading-anchor" href="#Exponential-Integrators">Exponential Integrators</a><a id="Exponential-Integrators-1"></a><a class="docs-heading-anchor-permalink" href="#Exponential-Integrators" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (3:6) # all fixed dt methods so these don&#39;t matter much
 reltols = 0.1 .^ (3:6)
 multipliers = 0.3 .^ (0:3)
@@ -84,7 +84,11 @@ setups = [
     Dict(:alg =&gt; NorsettEuler(krylov=true, m=20), :dts =&gt; 1e-4 * multipliers),
     Dict(:alg =&gt; ETDRK2(), :dts =&gt; 1e-3 * multipliers),
     Dict(:alg =&gt; ETDRK2(krylov=true, m=5), :dts =&gt; 1e-3 * multipliers),
-    Dict(:alg =&gt; ETDRK2(krylov=true, m=20), :dts =&gt; 1e-3 * multipliers)
+    Dict(:alg =&gt; ETDRK2(krylov=true, m=20), :dts =&gt; 1e-3 * multipliers),
+    Dict(:alg =&gt; HochOst4(), :dts =&gt; 1e-3 * multipliers),
+    Dict(:alg =&gt; HochOst4(krylov=true, m=20), :dts =&gt; 1e-3 * multipliers),
+    Dict(:alg =&gt; Friedli(), :dts =&gt; 1e-3 * multipliers),
+    Dict(:alg =&gt; Friedli(krylov=true, m=20), :dts =&gt; 1e-3 * multipliers)
 ]
 labels = hcat(
     &quot;NorsettEuler (caching)&quot;, 
@@ -92,7 +96,11 @@ labels = hcat(
     &quot;NorsettEuler (m=20)&quot;,
     &quot;ETDRK2 (caching)&quot;, 
     &quot;ETDRK2 (m=5)&quot;, 
-    &quot;ETDRK2 (m=20)&quot;
+    &quot;ETDRK2 (m=20)&quot;,
+    &quot;HochOst4 (caching)&quot;,
+    &quot;HochOst4 (m=20)&quot;,
+    &quot;Friedli (caching)&quot;,
+    &quot;Friedli (m=20)&quot;
 )
 @time wp = WorkPrecisionSet(prob, abstols, reltols, setups;
     print_names=true, names=labels, numruns=5, error_estimate=:l2,
@@ -104,8 +112,12 @@ NorsettEuler (m=20)
 ETDRK2 (caching)
 ETDRK2 (m=5)
 ETDRK2 (m=20)
-274.545680 seconds (138.78 M allocations: 67.724 GiB, 7.35% gc time, 6.05% 
-compilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_5_1.png" alt/></p><h4 id="Stabilized-Integrators"><a class="docs-heading-anchor" href="#Stabilized-Integrators">Stabilized Integrators</a><a id="Stabilized-Integrators-1"></a><a class="docs-heading-anchor-permalink" href="#Stabilized-Integrators" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (3:6)
+HochOst4 (caching)
+HochOst4 (m=20)
+Friedli (caching)
+Friedli (m=20)
+522.625460 seconds (218.35 M allocations: 115.889 GiB, 5.55% gc time, 5.34%
+ compilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_5_1.png" alt/></p><h4 id="Stabilized-Integrators"><a class="docs-heading-anchor" href="#Stabilized-Integrators">Stabilized Integrators</a><a id="Stabilized-Integrators-1"></a><a class="docs-heading-anchor-permalink" href="#Stabilized-Integrators" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (3:6)
 reltols = 0.1 .^ (3:6)
 
 setups = [
@@ -128,8 +140,8 @@ plot(wp, label=labels, markershape=:auto, title=&quot;Stabilized Methods, High T
 TSRKC3
 RKC
 ROCK2
- 19.396961 seconds (14.22 M allocations: 3.777 GiB, 9.67% gc time, 81.31% c
-ompilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_6_1.png" alt/></p><h4 id="Multirate-Methods"><a class="docs-heading-anchor" href="#Multirate-Methods">Multirate Methods</a><a id="Multirate-Methods-1"></a><a class="docs-heading-anchor-permalink" href="#Multirate-Methods" title="Permalink"></a></h4><p>The methods from OrdinaryDiffEqMultirate.jl consume the same <code>SplitODEProblem</code>: the first component (the linear term containing the fourth derivative operator) is advanced with <code>m</code> explicit substeps inside every macro step, while the nonlinear convection is evaluated only at the macro rate. Multirate integration is built for problems whose slow component is expensive per evaluation. Here the slow component costs two sparse matrix-vector products, no more than the fast one, so the substeps buy stability on a genuinely stiff operator without saving any slow work, and the comparison against <code>CNAB2</code> and <code>ETDRK2</code> measures what that costs relative to treating the stiff term implicitly or exactly.</p><p>The linear operator has spectral radius about <code>1.4e4</code>. With macro steps up to <code>2e-3</code>, the choice <code>m = 32</code> puts the largest micro step at <code>2e-3 * 1.4e4 / 32</code>, about 0.9, inside the explicit micro stability bound of 2 with a factor of two margin. A scan from <code>m = 32</code> to <code>m = 128</code> left every error essentially unchanged, so the macro error dominates and larger <code>m</code> is pure cost. The methods are run at fixed macro steps, matching the other fixed step methods in this file.</p><p>For cross family context the same five reference methods appear in every multirate figure of this folder: adaptive <code>Tsit5</code>, <code>Rodas5P</code>, and <code>FBDF</code> on the joined right hand side (<code>FBDF</code> cannot consume the split form), <code>KenCarp4</code> on the split problem, and fixed step <code>ETDRK4</code> at the step sizes this file uses for it elsewhere. On this problem <code>KenCarp4</code> gets the Krylov linear solver: its dense default spends minutes per solve even at loose tolerances here, the same cost problem the implicit block below documents. The adaptive sweep runs at <code>1e-4</code> to <code>1e-7</code> rather than this file&#39;s usual <code>1e-3</code> start because the Krylov <code>KenCarp4</code> solve stalls into a singular factorization at <code>1e-3</code> on this problem; the fixed step methods are unaffected by the tolerance values.</p><pre><code class="language-julia hljs">abstols = 0.1 .^ (4:7) # all fixed dt methods so these don&#39;t matter much
+ 19.154229 seconds (14.17 M allocations: 3.773 GiB, 10.03% gc time, 81.53% 
+compilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_6_1.png" alt/></p><h4 id="Multirate-Methods"><a class="docs-heading-anchor" href="#Multirate-Methods">Multirate Methods</a><a id="Multirate-Methods-1"></a><a class="docs-heading-anchor-permalink" href="#Multirate-Methods" title="Permalink"></a></h4><p>The methods from OrdinaryDiffEqMultirate.jl consume the same <code>SplitODEProblem</code>: the first component (the linear term containing the fourth derivative operator) is advanced with <code>m</code> explicit substeps inside every macro step, while the nonlinear convection is evaluated only at the macro rate. Multirate integration is built for problems whose slow component is expensive per evaluation. Here the slow component costs two sparse matrix-vector products, no more than the fast one, so the substeps buy stability on a genuinely stiff operator without saving any slow work, and the comparison against <code>CNAB2</code> and <code>ETDRK2</code> measures what that costs relative to treating the stiff term implicitly or exactly.</p><p>The linear operator has spectral radius about <code>1.4e4</code>. With macro steps up to <code>2e-3</code>, the choice <code>m = 32</code> puts the largest micro step at <code>2e-3 * 1.4e4 / 32</code>, about 0.9, inside the explicit micro stability bound of 2 with a factor of two margin. A scan from <code>m = 32</code> to <code>m = 128</code> left every error essentially unchanged, so the macro error dominates and larger <code>m</code> is pure cost. The methods are run at fixed macro steps, matching the other fixed step methods in this file.</p><p>For cross family context the same five reference methods appear in every multirate figure of this folder: adaptive <code>Tsit5</code>, <code>Rodas5P</code>, and <code>FBDF</code> on the joined right hand side (<code>FBDF</code> cannot consume the split form), <code>KenCarp4</code> on the split problem, and fixed step <code>ETDRK4</code> at the step sizes this file uses for it elsewhere. On this problem <code>KenCarp4</code> gets the Krylov linear solver: its dense default spends minutes per solve even at loose tolerances here, the same cost problem the implicit block below documents. The adaptive sweep runs at <code>1e-4</code> to <code>1e-7</code> rather than this file&#39;s usual <code>1e-3</code> start because the Krylov <code>KenCarp4</code> solve stalls into a singular factorization at <code>1e-3</code> on this problem; the fixed step methods are unaffected by the tolerance values.</p><pre><code class="language-julia hljs">abstols = 0.1 .^ (4:7) # all fixed dt methods so these don&#39;t matter much
 reltols = 0.1 .^ (4:7)
 multipliers = 0.5 .^ (0:3)
 # The joined problem calls f1 and f2 through its own buffer: a direct call of the
@@ -192,7 +204,7 @@ Tsit5
 Rodas5P
 FBDF
 NordsieckBDF
-201.540682 seconds (79.13 M allocations: 35.687 GiB, 6.17% gc time, 26.71% 
+203.459661 seconds (79.12 M allocations: 38.579 GiB, 5.65% gc time, 26.18% 
 compilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_7_1.png" alt/></p><p>The measured curves make this a much harder problem for the explicit multirate members than Burgers, and the cross family references decide it. <code>FBDF</code> dominates the figure outright: 7 to 9 milliseconds per solve across the whole sweep with errors from <code>6e-4</code> down to <code>1.4e-7</code>, one to two orders of magnitude cheaper than any other method at matched error. <code>Tsit5</code> on the joined problem runs at a stability capped, nearly constant 0.07 seconds while its error falls from <code>6e-6</code> to <code>1.1e-8</code> for free, and <code>Rodas5P</code> reaches <code>7.9e-8</code> in 0.16 seconds. Against that, the explicit multirate members are not competitive: <code>MREEF</code> needs 0.78 seconds for <code>1.1e-8</code>, eleven times <code>Tsit5</code>&#39;s cost at the same error, and every decade carries the <code>m = 32</code> micro stepping tax. Within the fixed step family the old reading still holds (<code>MRIGARKERK33a</code> and <code>CNAB2</code> tie near <code>1e-4</code>, the multirate members extend below the references&#39; <code>2.4e-5</code> floor), <code>MRAB</code> is unusable here since the convection it freezes is not slow, and <code>MRIGARKERK45a</code> loses order at the loose end. With both components equally cheap there is nothing for the multirate structure to amortize; what these curves document is that the explicit members hold stability and order on a strongly stiff fast operator, and that adaptive single rate stiff solvers own this problem.</p><p>The implicit multirate members treat the slow component implicitly, so for them the split is used in the reverse orientation: the stiff linear term becomes the implicitly handled slow part and the nonlinear convection is micro stepped explicitly. In this orientation the methods act as IMEX integrators whose explicit part is subdivided <code>m</code> times per stage; the convection is not fast, the substeps resolve nothing, and <code>m = 2</code> is kept at the smallest useful value. <code>KenCarp3</code> and <code>KenCarp4</code> on the original problem make the same implicit and explicit assignment of the two terms, which makes them the natural single rate references; they are given the Krylov linear solver here because their dense default costs minutes per solve on this problem at the tighter tolerances, as the low tolerance section below also shows. The cross family references from the figure above run here as well over this tolerance range. These methods are adaptive apart from <code>ETDRK4</code>, which keeps its fixed step convention.</p><pre><code class="language-julia hljs">Astiff = convert(AbstractMatrix, prob.f.f1.f)
 p_stiff = (; D1 = prob.p.D1, alpha = prob.p.alpha, A = Astiff)
 stiff_linear!(du, u, p, t) = mul!(du, p.A, u)
@@ -238,8 +250,8 @@ Tsit5
 Rodas5P
 FBDF
 NordsieckBDF
-253.980654 seconds (161.55 M allocations: 138.103 GiB, 27.51% gc time, 10.7
-0% compilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_8_1.png" alt/></p><p>Within the split constrained comparison the reversed orientation works: <code>MRIGARKIRK21a</code> and <code>MRIGARKESDIRK34a</code> run clean order lines (the second order member from <code>3.8e-4</code> in 24 milliseconds to <code>3.1e-8</code> in 2.6 seconds, the third order member to <code>6.1e-10</code> at about 10 seconds), and against the <code>KenCarp</code> references making the same term assignment they come out 30 to 300 times faster at matched error, for example <code>MRIGARKESDIRK34a</code> at <code>3.3e-5</code> in 0.11 seconds against <code>KenCarp4</code> at <code>4.4e-5</code> in 2.3 seconds. <code>MRIGARKESDIRK46a</code> is the cheapest member at mid accuracies (<code>1.8e-6</code> in a quarter of a second) but its error stops responding at the tightest pairs, rising back toward <code>1e-6</code>, so its tolerance is not a trustworthy control knob at that end. The cross family references cap the claim, though: <code>FBDF</code> on the joined problem reaches <code>1.2e-7</code> in under 15 milliseconds and <code>Tsit5</code> reaches <code>9.3e-10</code> in 0.074 seconds, so at matched error the free choice single rate methods beat the best multirate member by one to two orders of magnitude. The reading these curves support is narrow: among methods constrained to treat this split implicitly and explicitly by term, the solve decoupled members are much cheaper than the IMEX family in this range; once that constraint is dropped, an adaptive BDF or a stability capped explicit method solves the problem faster than any of them.</p><h4 id="Comparisons-Between-Families"><a class="docs-heading-anchor" href="#Comparisons-Between-Families">Comparisons Between Families</a><a id="Comparisons-Between-Families-1"></a><a class="docs-heading-anchor-permalink" href="#Comparisons-Between-Families" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (3:6)
+224.605399 seconds (159.13 M allocations: 133.140 GiB, 23.47% gc time, 12.1
+1% compilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_8_1.png" alt/></p><p>Within the split constrained comparison the reversed orientation works: <code>MRIGARKIRK21a</code> and <code>MRIGARKESDIRK34a</code> run clean order lines (the second order member from <code>3.8e-4</code> in 24 milliseconds to <code>3.1e-8</code> in 2.6 seconds, the third order member to <code>6.1e-10</code> at about 10 seconds), and against the <code>KenCarp</code> references making the same term assignment they come out 30 to 300 times faster at matched error, for example <code>MRIGARKESDIRK34a</code> at <code>3.3e-5</code> in 0.11 seconds against <code>KenCarp4</code> at <code>4.4e-5</code> in 2.3 seconds. <code>MRIGARKESDIRK46a</code> is the cheapest member at mid accuracies (<code>1.8e-6</code> in a quarter of a second) but its error stops responding at the tightest pairs, rising back toward <code>1e-6</code>, so its tolerance is not a trustworthy control knob at that end. The cross family references cap the claim, though: <code>FBDF</code> on the joined problem reaches <code>1.2e-7</code> in under 15 milliseconds and <code>Tsit5</code> reaches <code>9.3e-10</code> in 0.074 seconds, so at matched error the free choice single rate methods beat the best multirate member by one to two orders of magnitude. The reading these curves support is narrow: among methods constrained to treat this split implicitly and explicitly by term, the solve decoupled members are much cheaper than the IMEX family in this range; once that constraint is dropped, an adaptive BDF or a stability capped explicit method solves the problem faster than any of them.</p><h4 id="Comparisons-Between-Families"><a class="docs-heading-anchor" href="#Comparisons-Between-Families">Comparisons Between Families</a><a id="Comparisons-Between-Families-1"></a><a class="docs-heading-anchor-permalink" href="#Comparisons-Between-Families" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (3:6)
 reltols = 0.1 .^ (3:6)
 multipliers = 0.3 .^ (0:3)
 setups = [
@@ -265,8 +277,8 @@ CNAB2 (Krylov)
 ETDRK2 (caching)
 ROCK4
 TSRKC3
- 66.646041 seconds (16.88 M allocations: 17.997 GiB, 10.64% gc time, 4.42% 
-compilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_9_1.png" alt/></p><h3 id="Low-Tolerances"><a class="docs-heading-anchor" href="#Low-Tolerances">Low Tolerances</a><a id="Low-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#Low-Tolerances" title="Permalink"></a></h3><h4 id="Implicit-Explicit-Methods-2"><a class="docs-heading-anchor" href="#Implicit-Explicit-Methods-2">Implicit-Explicit Methods</a><a class="docs-heading-anchor-permalink" href="#Implicit-Explicit-Methods-2" title="Permalink"></a></h4><p>Default and explicit Krylov linear solvers.</p><pre><code class="language-julia hljs">abstols = 0.1 .^ (7:11)
+ 71.594630 seconds (16.88 M allocations: 17.998 GiB, 9.20% gc time, 4.02% c
+ompilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_9_1.png" alt/></p><h3 id="Low-Tolerances"><a class="docs-heading-anchor" href="#Low-Tolerances">Low Tolerances</a><a id="Low-Tolerances-1"></a><a class="docs-heading-anchor-permalink" href="#Low-Tolerances" title="Permalink"></a></h3><h4 id="Implicit-Explicit-Methods-2"><a class="docs-heading-anchor" href="#Implicit-Explicit-Methods-2">Implicit-Explicit Methods</a><a class="docs-heading-anchor-permalink" href="#Implicit-Explicit-Methods-2" title="Permalink"></a></h4><p>Default and explicit Krylov linear solvers.</p><pre><code class="language-julia hljs">abstols = 0.1 .^ (7:11)
 reltols = 0.1 .^ (7:11)
 setups = [
     Dict(:alg =&gt; KenCarp3()),
@@ -303,7 +315,7 @@ KenCarp5 (Krylov)
 ARKODE3 (Krylov)
 ARKODE4 (Krylov)
 ARKODE5 (Krylov)
-247.669381 seconds (259.65 M allocations: 43.852 GiB, 8.24% gc time, 22.82%
+246.764599 seconds (259.58 M allocations: 43.847 GiB, 8.06% gc time, 22.67%
  compilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_10_1.png" alt/></p><h4 id="Exponential-Integrators-2"><a class="docs-heading-anchor" href="#Exponential-Integrators-2">Exponential Integrators</a><a class="docs-heading-anchor-permalink" href="#Exponential-Integrators-2" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (7:11) # all fixed dt methods so these don&#39;t matter much
 reltols = 0.1 .^ (4:8)
 multipliers = 0.5 .^ (0:4)
@@ -324,7 +336,7 @@ labels = hcat(
 plot(wp, label=labels, markershape=:auto, title=&quot;ExpRK Methods, Low Tolerances&quot;)</code></pre><pre><code class="nohighlight hljs">ETDRK3 (caching)
 ETDRK4 (caching)
 HochOst4 (caching)
-162.383450 seconds (34.76 M allocations: 54.613 GiB, 9.44% gc time, 4.13% c
+176.725715 seconds (30.42 M allocations: 52.160 GiB, 8.65% gc time, 1.86% c
 ompilation time)</code></pre><p><img src="../figures/ks_fdm_wpd_11_1.png" alt/></p><h4 id="Comparisons-Between-Families-2"><a class="docs-heading-anchor" href="#Comparisons-Between-Families-2">Comparisons Between Families</a><a class="docs-heading-anchor-permalink" href="#Comparisons-Between-Families-2" title="Permalink"></a></h4><pre><code class="language-julia hljs">abstols = 0.1 .^ (7:11)
 reltols = 0.1 .^ (4:8)
 multipliers = 0.5 .^ (0:4)
@@ -351,7 +363,7 @@ ETDRK3 (caching)
 ETDRK4 (caching)
 ROCK4
 TSRKC3
-160.697806 seconds (77.34 M allocations: 55.564 GiB, 12.07% gc time)</code></pre><p><img src="../figures/ks_fdm_wpd_12_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+147.687544 seconds (74.16 M allocations: 48.516 GiB, 9.54% gc time)</code></pre><p><img src="../figures/ks_fdm_wpd_12_1.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/SimpleHandwrittenPDE&quot;,&quot;ks_fdm_wpd.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.10.12
 Commit d93beab124c (2026-08-15 10:29 UTC)
 Build Info:
@@ -365,10 +377,10 @@ Platform Info:
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
   JULIA_NUM_THREADS = auto
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Project.toml`
   [47edcb42] ADTypes v1.24.0
   [2169fc97] AlgebraicMultigrid v2.0.2
-  [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
+⌃ [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
   [f3b72e0c] DiffEqDevTools v3.6.3
   [40713840] IncompleteLU v0.2.1
   [7f56f5a3] LSODA v1.2.0
@@ -381,9 +393,9 @@ Environment:
   [d28bc4f8] OrdinaryDiffEqHighOrderRK v2.2.1
   [9f002381] OrdinaryDiffEqIMEXMultistep v2.3.0
 ⌅ [d4b830b4] OrdinaryDiffEqMultirate v2.7.0
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
-  [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
+⌃ [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
   [91a5bcdd] Plots v1.41.7
   [31c91b34] SciMLBenchmarks v0.2.1
 ⌃ [c0aeaf25] SciMLOperators v1.30.0
@@ -393,12 +405,12 @@ Environment:
   [c3572dad] Sundials v6.7.1
   [37e2e46d] LinearAlgebra
   [2f01184e] SparseArrays v1.10.0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Manifest.toml`
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/SimpleHandwrittenPDE/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
   [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [2169fc97] AlgebraicMultigrid v2.0.2
   [66dad0bd] AliasTables v1.1.3
   [dce04be8] ArgCheck v2.5.0
@@ -414,7 +426,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [70df07ce] BracketingNonlinearSolve v1.12.7
   [fa961155] CEnum v0.5.0
   [2a0fbf3d] CPUSummary v0.2.7
-  [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
+⌃ [b30e2e7b] ClassicalOrthogonalPolynomials v0.15.20
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [35d6a980] ColorSchemes v3.31.0
   [3da002f7] ColorTypes v0.12.1
@@ -428,7 +440,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.8
   [187b0558] ConstructionBase v1.6.0
-  [7ae1f121] ContinuumArrays v0.20.10
+⌅ [7ae1f121] ContinuumArrays v0.20.10
   [d38c429a] Contour v0.6.3
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.2.0
@@ -445,7 +457,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [31c24e10] Distributions v0.25.131
   [ffbed154] DocStringExtensions v0.9.5
-  [5b8099bc] DomainSets v0.8.1
+⌃ [5b8099bc] DomainSets v0.8.1
   [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.21
   [d4d017d3] ExponentialUtilities v1.35.3
@@ -458,7 +470,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [a4df4552] FastPower v1.5.0
   [057dd010] FastTransforms v0.17.2
   [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
@@ -493,7 +505,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [10f19ff3] LayoutPointers v0.1.17
-  [5078a376] LazyArrays v2.13.0
+⌃ [5078a376] LazyArrays v2.13.0
   [d7e5e226] LazyBandedMatrices v0.11.10
   [87fe0de2] LineSearch v0.1.18
 ⌃ [7ed4a6bd] LinearSolve v5.17.3
@@ -520,7 +532,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
   [50262376] OrdinaryDiffEqDefault v2.6.2
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
   [e0540318] OrdinaryDiffEqExponentialRK v2.4.0
   [5960d6e9] OrdinaryDiffEqFIRK v2.8.7
   [d28bc4f8] OrdinaryDiffEqHighOrderRK v2.2.1
@@ -528,17 +540,17 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
 ⌅ [d4b830b4] OrdinaryDiffEqMultirate v2.7.0
   [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
-  [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
+⌃ [358294b1] OrdinaryDiffEqStabilizedRK v2.7.0
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
   [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
 ⌅ [d96e819e] Parameters v0.12.3
 ⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [e409e4f3] PoissonRandom v0.4.13
   [f517fe37] Polyester v0.7.19
@@ -553,7 +565,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [78ab2635] PureGebal v1.1.0
   [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
-  [c4ea9172] QuasiArrays v0.13.11
+⌃ [c4ea9172] QuasiArrays v0.13.11
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
   [b889d2dc] RecurrenceRelationshipArrays v0.1.5
@@ -570,7 +582,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [7e49a35a] RuntimeGeneratedFunctions v0.5.26
   [94e857df] SIMDTypes v0.1.0
   [476501e8] SLEEFPirates v0.6.46
-  [0bca4576] SciMLBase v3.54.0
+⌃ [0bca4576] SciMLBase v3.54.0
   [31c91b34] SciMLBenchmarks v0.2.1
   [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
@@ -591,7 +603,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [860ef19b] StableRNGs v1.0.4
   [aedffcd0] Static v1.4.6
   [0d7ed370] StaticArrayInterface v1.10.0
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.13
@@ -607,7 +619,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [bd369af6] Tables v1.14.0
   [62fd8b95] TensorCore v0.1.1
   [8290d209] ThreadingUtilities v0.5.6
-  [a759f4b9] TimerOutputs v1.2.1
+⌃ [a759f4b9] TimerOutputs v1.2.1
   [c751599d] ToeplitzMatrices v0.8.5
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
@@ -616,7 +628,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [41fe7b60] Unzip v0.2.0
   [3d5dd08c] VectorizationBase v0.21.74
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.16
+⌃ [ddb6d928] YAML v0.4.16
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
@@ -757,4 +769,4 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [8e850b90] libblastrampoline_jll v5.11.0+0
   [8e850ede] nghttp2_jll v1.52.0+1
   [3f19e933] p7zip_jll v17.4.0+2
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../kdv_spectral_wpd/">« Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Tuesday 15 September 2026 09:14">Tuesday 15 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../kdv_spectral_wpd/">« Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a><a class="docs-footer-nextpage" href="../ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Thursday 17 September 2026 08:19">Thursday 17 September 2026</span>. Using Julia version 1.13.0.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
