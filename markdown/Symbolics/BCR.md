@@ -1,6 +1,6 @@
 ---
-author: "Aayush Sabharwal, Bowen Zhu, Chris Rackauckas"
 title: "BCR Symbolic Jacobian"
+author: "Aayush Sabharwal, Bowen Zhu, Chris Rackauckas"
 ---
 
 
@@ -57,7 +57,7 @@ Parsing and adding reactions...done
 ────────────────────────────────────────────────────────────────────
                            Time                    Allocations      
                   ───────────────────────   ────────────────────────
-Tot / % measured:      30.4s /   0.0%           1.98GiB /   0.0%    
+Tot / % measured:      26.3s /   0.0%           1.55GiB /   0.0%    
 
 Section   ncalls     time    %tot     avg     alloc    %tot      avg
 ────────────────────────────────────────────────────────────────────
@@ -127,26 +127,26 @@ show(to)
 cations      
                                       ───────────────────────   ───────────
 ─────────────
-          Tot / % measured:                 403s /  78.2%           21.8GiB
- /  73.2%    
+          Tot / % measured:                 384s /  79.5%           17.3GiB
+ /  72.8%    
 
 Section                       ncalls     time    %tot     avg     alloc    
 %tot      avg
 ───────────────────────────────────────────────────────────────────────────
 ─────────────
-Compile jacobian - no CSE          1     175s   55.6%    175s   8.81GiB   5
-5.1%  8.81GiB
-Compile jacobian - CSE             1    96.2s   30.5%   96.2s   2.55GiB   1
-5.9%  2.55GiB
-Calculate symbolic jacobian        1    29.6s    9.4%   29.6s   3.00GiB   1
-8.8%  3.00GiB
-Build jacobian - no CSE            1    13.5s    4.3%   13.5s   1.51GiB    
-9.4%  1.51GiB
-Build jacobian - CSE               1    633ms    0.2%   633ms    133MiB    
-0.8%   133MiB
-Compute jacobian - CSE             1    352μs    0.0%   352μs      176B    
+Compile jacobian - no CSE          1     171s   55.9%    171s   6.60GiB   5
+2.3%  6.60GiB
+Compile jacobian - CSE             1    94.4s   30.9%   94.4s   1.88GiB   1
+4.9%  1.88GiB
+Calculate symbolic jacobian        1    28.3s    9.3%   28.3s   2.93GiB   2
+3.2%  2.93GiB
+Build jacobian - no CSE            1    11.1s    3.6%   11.1s   1.09GiB    
+8.6%  1.09GiB
+Build jacobian - CSE               1    654ms    0.2%   654ms    125MiB    
+1.0%   125MiB
+Compute jacobian - no CSE          1    183μs    0.0%   183μs      176B    
 0.0%     176B
-Compute jacobian - no CSE          1    139μs    0.0%   139μs      176B    
+Compute jacobian - CSE             1   80.5μs    0.0%  80.5μs      176B    
 0.0%     176B
 ───────────────────────────────────────────────────────────────────────────
 ─────────────
@@ -274,69 +274,69 @@ pretty_table(tabledata; column_labels = header, backend = :html)
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">10.0</td>
-      <td style = "text-align: right;">3.38281</td>
-      <td style = "text-align: right;">4.20619e8</td>
-      <td style = "text-align: right;">0.0243948</td>
-      <td style = "text-align: right;">0.0308411</td>
-      <td style = "text-align: right;">9.88339</td>
-      <td style = "text-align: right;">6.79179</td>
-      <td style = "text-align: right;">3.53238e-6</td>
-      <td style = "text-align: right;">2.985e-6</td>
+      <td style = "text-align: right;">3.18885</td>
+      <td style = "text-align: right;">4.2047e8</td>
+      <td style = "text-align: right;">0.0245617</td>
+      <td style = "text-align: right;">0.0311531</td>
+      <td style = "text-align: right;">9.65231</td>
+      <td style = "text-align: right;">6.34166</td>
+      <td style = "text-align: right;">3.55363e-6</td>
+      <td style = "text-align: right;">2.9439e-6</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">20.0</td>
-      <td style = "text-align: right;">4.27333</td>
-      <td style = "text-align: right;">5.48153e8</td>
-      <td style = "text-align: right;">0.0357731</td>
-      <td style = "text-align: right;">0.0477382</td>
-      <td style = "text-align: right;">15.8071</td>
-      <td style = "text-align: right;">9.86309</td>
-      <td style = "text-align: right;">6.60725e-6</td>
-      <td style = "text-align: right;">4.56817e-6</td>
+      <td style = "text-align: right;">4.28213</td>
+      <td style = "text-align: right;">5.47698e8</td>
+      <td style = "text-align: right;">0.0366498</td>
+      <td style = "text-align: right;">0.0473515</td>
+      <td style = "text-align: right;">14.9811</td>
+      <td style = "text-align: right;">8.93726</td>
+      <td style = "text-align: right;">7.11975e-6</td>
+      <td style = "text-align: right;">4.49667e-6</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">40.0</td>
-      <td style = "text-align: right;">5.7377</td>
-      <td style = "text-align: right;">7.20165e8</td>
-      <td style = "text-align: right;">0.0608344</td>
-      <td style = "text-align: right;">0.0677983</td>
-      <td style = "text-align: right;">27.2673</td>
-      <td style = "text-align: right;">14.2296</td>
-      <td style = "text-align: right;">1.23245e-5</td>
-      <td style = "text-align: right;">6.9e-6</td>
+      <td style = "text-align: right;">5.64052</td>
+      <td style = "text-align: right;">7.19497e8</td>
+      <td style = "text-align: right;">0.0591457</td>
+      <td style = "text-align: right;">0.0687831</td>
+      <td style = "text-align: right;">25.1312</td>
+      <td style = "text-align: right;">14.1411</td>
+      <td style = "text-align: right;">1.29245e-5</td>
+      <td style = "text-align: right;">6.955e-6</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">80.0</td>
-      <td style = "text-align: right;">9.6927</td>
-      <td style = "text-align: right;">1.10843e9</td>
-      <td style = "text-align: right;">0.105526</td>
-      <td style = "text-align: right;">0.105164</td>
-      <td style = "text-align: right;">49.2481</td>
-      <td style = "text-align: right;">23.9356</td>
-      <td style = "text-align: right;">2.606e-5</td>
-      <td style = "text-align: right;">1.191e-5</td>
+      <td style = "text-align: right;">9.30943</td>
+      <td style = "text-align: right;">1.10733e9</td>
+      <td style = "text-align: right;">0.108699</td>
+      <td style = "text-align: right;">0.105643</td>
+      <td style = "text-align: right;">47.6296</td>
+      <td style = "text-align: right;">22.9037</td>
+      <td style = "text-align: right;">2.546e-5</td>
+      <td style = "text-align: right;">1.16395e-5</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">160.0</td>
-      <td style = "text-align: right;">11.2907</td>
-      <td style = "text-align: right;">1.26794e9</td>
-      <td style = "text-align: right;">0.142386</td>
-      <td style = "text-align: right;">0.135525</td>
-      <td style = "text-align: right;">63.8619</td>
-      <td style = "text-align: right;">31.7433</td>
-      <td style = "text-align: right;">3.104e-5</td>
-      <td style = "text-align: right;">1.4835e-5</td>
+      <td style = "text-align: right;">10.9206</td>
+      <td style = "text-align: right;">1.2665e9</td>
+      <td style = "text-align: right;">0.141835</td>
+      <td style = "text-align: right;">0.143031</td>
+      <td style = "text-align: right;">62.6152</td>
+      <td style = "text-align: right;">29.6462</td>
+      <td style = "text-align: right;">3.7879e-5</td>
+      <td style = "text-align: right;">1.5319e-5</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">320.0</td>
-      <td style = "text-align: right;">12.7004</td>
-      <td style = "text-align: right;">1.43622e9</td>
-      <td style = "text-align: right;">0.18174</td>
-      <td style = "text-align: right;">0.175954</td>
-      <td style = "text-align: right;">81.8532</td>
-      <td style = "text-align: right;">45.6009</td>
-      <td style = "text-align: right;">3.8009e-5</td>
-      <td style = "text-align: right;">1.838e-5</td>
+      <td style = "text-align: right;">12.6784</td>
+      <td style = "text-align: right;">1.43459e9</td>
+      <td style = "text-align: right;">0.188567</td>
+      <td style = "text-align: right;">0.187348</td>
+      <td style = "text-align: right;">79.3665</td>
+      <td style = "text-align: right;">41.6618</td>
+      <td style = "text-align: right;">4.107e-5</td>
+      <td style = "text-align: right;">2.163e-5</td>
     </tr>
   </tbody>
 </table>
@@ -409,15 +409,15 @@ SciMLBenchmarks.weave_file("benchmarks/Symbolics","BCR.jmd")
 Computer Information:
 
 ```
-Julia Version 1.12.7
-Commit 6d172b025e4 (2026-08-15 08:05 UTC)
+Julia Version 1.13.0
+Commit d1c37793dd2 (2026-09-09 19:00 UTC)
 Build Info:
   Official https://julialang.org release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
   CPU: 128 × AMD EPYC 7502 32-Core Processor
   WORD_SIZE: 64
-  LLVM: libLLVM-18.1.7 (ORCJIT, znver2)
+  LLVM: libLLVM-20.1.8 (ORCJIT, znver2)
   GC: Built with stock GC
 Threads: 128 default, 1 interactive, 128 GC (on 128 virtual cores)
 Environment:
@@ -433,24 +433,28 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [13f3f980] CairoMakie v0.15.14
   [479239e8] Catalyst v16.4.3
   [0ca39b1e] Chairmarks v1.3.1
+⌃ [992eb4ea] CondaPkg v0.2.33
   [864edb3b] DataStructures v0.19.6
 ⌃ [7ed4a6bd] LinearSolve v5.17.3
-  [961ee093] ModelingToolkit v11.43.1
+⌃ [961ee093] ModelingToolkit v11.43.1
 ⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.1]
   [1dea7af3] OrdinaryDiffEq v7.8.1
   [91a5bcdd] Plots v1.41.7
   [f27b6e38] Polynomials v4.1.3
   [08abe8d2] PrettyTables v3.4.8
+⌃ [6099a3de] PythonCall v0.9.35
   [b4db0fb7] ReactionNetworkImporters v1.5.0
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
   [10745b16] Statistics v1.11.5
+  [123dc426] SymEngine v0.13.2
   [2efcf032] SymbolicIndexingInterface v0.3.55
-  [d1185830] SymbolicUtils v4.46.6
-  [0c5d862f] Symbolics v7.39.2
+⌃ [d1185830] SymbolicUtils v4.46.6
+⌃ [0c5d862f] Symbolics v7.39.2
 ⌅ [a759f4b9] TimerOutputs v0.5.29
   [95ff35a0] XSteam v0.3.0
-  [37e2e46d] LinearAlgebra v1.12.0
-  [2f01184e] SparseArrays v1.12.0
+  [37e2e46d] LinearAlgebra v1.13.0
+  [9a3f8284] Random v1.11.0
+  [2f01184e] SparseArrays v1.13.0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
 ```
 
@@ -464,7 +468,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6e696c72] AbstractPlutoDingetjes v1.4.1
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [35492f91] AdaptivePredicates v1.2.0
   [66dad0bd] AliasTables v1.1.3
   [27a7e980] Animations v0.4.2
@@ -504,6 +508,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a33af91c] CompositionsBase v0.1.2
   [95dc2771] ComputePipeline v0.1.8
   [2569d6c7] ConcreteStructs v0.2.8
+⌃ [992eb4ea] CondaPkg v0.2.33
   [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
   [b7a15901] CoreMath v0.1.0
@@ -513,15 +518,15 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e2d170a0] DataValueInterfaces v1.0.0
   [927a84f5] DelaunayTriangulation v1.6.7
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.21.1
+⌃ [2b5f629d] DiffEqBase v7.21.1
   [459566f4] DiffEqCallbacks v4.19.4
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
-  [8d63f2c5] DispatchDoctor v0.4.28
+⌃ [8d63f2c5] DispatchDoctor v0.4.28
   [31c24e10] Distributions v0.25.131
   [ffbed154] DocStringExtensions v0.9.5
-  [5b8099bc] DomainSets v0.8.1
+⌃ [5b8099bc] DomainSets v0.8.1
   [7c1d4256] DynamicPolynomials v0.6.8
   [06fc5a27] DynamicQuantities v1.13.0
   [4e289a0a] EnumX v1.0.7
@@ -538,7 +543,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8fc22ac5] FilePaths v0.9.0
   [48062228] FilePathsBase v0.9.24
   [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
@@ -551,7 +556,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [46192b85] GPUArraysCore v0.2.0
   [28b8d3ca] GR v0.73.27
   [a0844989] Gamma v1.2.0
-  [5c1252a2] GeometryBasics v0.5.12
+⌃ [5c1252a2] GeometryBasics v0.5.12
   [a2bd30eb] Graphics v1.1.3
   [86223c79] Graphs v1.15.0
   [3955a311] GridLayoutBase v0.11.3
@@ -577,6 +582,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [1019f520] JLFzf v0.1.11
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
+  [0f8b85d8] JSON3 v1.14.3 [deprecated]
   [ae98c720] Jieko v0.2.1
   [b835a17e] JpegTurbo v0.1.6
 ⌃ [ccbc3e58] JumpProcesses v9.32.3
@@ -596,8 +602,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [0a4f8689] MathTeXEngine v0.6.9
   [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
+  [0b3b1443] MicroMamba v0.1.15
   [e1d29d7a] Missings v1.2.0
-  [961ee093] ModelingToolkit v11.43.1
+⌃ [961ee093] ModelingToolkit v11.43.1
 ⌃ [7771a370] ModelingToolkitBase v1.70.0
   [6bb917b9] ModelingToolkitTearing v1.20.6
   [e94cdb99] MosaicViews v0.3.4
@@ -621,9 +628,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
   [50262376] OrdinaryDiffEqDefault v2.6.2
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
   [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
@@ -634,9 +641,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [5432bcbf] PaddedViews v0.5.12
   [d96e819e] Parameters v0.13.1
 ⌅ [69de0a69] Parsers v2.8.8
+  [fa939f87] Pidfile v1.3.0
   [eebad327] PkgVersion v0.3.3
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [e409e4f3] PoissonRandom v0.4.13
   [647866c9] PolygonOps v0.1.2
@@ -649,6 +657,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
   [0c0d3e7f] PureKLU v1.5.0
+⌃ [6099a3de] PythonCall v0.9.35
   [4b34888f] QOI v1.0.2
   [1fd47b50] QuadGK v2.11.3
   [b3c3ace0] RangeArrays v0.3.2
@@ -669,7 +678,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [7e49a35a] RuntimeGeneratedFunctions v0.5.26
   [9dfe8606] SCCNonlinearSolve v1.15.3
   [fdea26ae] SIMD v3.7.2
-  [0bca4576] SciMLBase v3.54.0
+⌃ [0bca4576] SciMLBase v3.54.0
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
   [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
@@ -678,7 +687,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [53ae85a6] SciMLStructures v1.10.5
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [65257c39] ShaderAbstractions v0.5.0
+⌃ [65257c39] ShaderAbstractions v0.5.0
   [992d4aef] Showoff v1.1.1
   [73760f76] SignedDistanceFields v0.4.1
   [727e6d20] SimpleNonlinearSolve v2.14.5
@@ -692,7 +701,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [cae243ae] StackViews v0.1.2
   [0c0c59c1] StarAlgebras v0.3.0
   [64909d44] StateSelection v1.11.1
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
   [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
@@ -701,10 +710,12 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [69024149] StringEncodings v0.3.7
 ⌅ [892a3eda] StringManipulation v0.5.0
   [09ab397b] StructArrays v0.7.3
+  [856f2bd8] StructTypes v1.11.0
+  [123dc426] SymEngine v0.13.2
   [2efcf032] SymbolicIndexingInterface v0.3.55
   [19f23fe9] SymbolicLimits v1.2.1
-  [d1185830] SymbolicUtils v4.46.6
-  [0c5d862f] Symbolics v7.39.2
+⌃ [d1185830] SymbolicUtils v4.46.6
+⌃ [0c5d862f] Symbolics v7.39.2
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [ed4db957] TaskLocalValues v0.1.3
@@ -720,13 +731,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
   [1986cc42] Unitful v1.29.0
+  [e17b2a0c] UnsafePointers v1.0.0
   [41fe7b60] Unzip v0.2.0
   [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
   [e3aaa7dc] WebP v0.1.3
   [efce3f68] WoodburyMatrices v1.1.0
   [95ff35a0] XSteam v0.3.0
-  [ddb6d928] YAML v0.4.16
+⌃ [ddb6d928] YAML v0.4.16 [loaded: v0.4.17]
   [6e34b625] Bzip2_jll v1.0.9+0
   [4e9b3aee] CRlibm_jll v1.0.1+0
   [83423d85] Cairo_jll v1.18.7+0
@@ -760,6 +772,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [89763e89] Libtiff_jll v4.7.3+0
   [38a345b3] Libuuid_jll v2.42.0+0
   [856f044c] MKL_jll v2025.2.0+0
+  [2ce0c516] MPC_jll v1.4.1+0
   [e7412a2a] Ogg_jll v1.3.6+0
   [6cdc7f73] OpenBLASConsistentFPCSR_jll v0.3.34+0
   [18a262bb] OpenEXR_jll v3.4.15+0
@@ -773,6 +786,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6de9746b] Qt6Svg_jll v6.10.2+0
   [e99dba38] Qt6Wayland_jll v6.10.2+1
   [f50d1b31] Rmath_jll v0.5.2+0
+  [3428059b] SymEngine_jll v0.12.0+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
   [ffd25f8a] XZ_jll v5.8.4+0
@@ -800,7 +814,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [35661453] Xorg_xkbcomp_jll v1.4.7+0
   [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
-  [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
   [9a68df92] isoband_jll v0.2.3+0
@@ -816,8 +829,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [c5f90fcd] libwebp_jll v1.6.0+0
+  [f8abcde7] micromamba_jll v2.3.1+0
   [009596ad] mtdev_jll v1.1.7+0
   [1317d2d5] oneTBB_jll v2022.3.0+0
+  [4d7b5844] pixi_jll v0.76.2+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
   [dfaa095f] x265_jll v4.1.0+0
   [d8fb68d0] xkbcommon_jll v1.13.0+0
@@ -833,24 +848,24 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [b77e0a4c] InteractiveUtils v1.11.0
   [ac6e5ff7] JuliaSyntaxHighlighting v1.12.0
   [4af54fe1] LazyArtifacts v1.11.0
-  [b27032c2] LibCURL v0.6.4
+  [b27032c2] LibCURL v1.0.0
   [76f85450] LibGit2 v1.11.0
   [8f399da3] Libdl v1.11.0
-  [37e2e46d] LinearAlgebra v1.12.0
+  [37e2e46d] LinearAlgebra v1.13.0
   [56ddb016] Logging v1.11.0
   [d6f4376e] Markdown v1.11.0
   [a63ad114] Mmap v1.11.0
   [ca575930] NetworkOptions v1.3.0
-  [44cfe95a] Pkg v1.12.1
+  [44cfe95a] Pkg v1.13.0
   [de0858da] Printf v1.11.0
   [9abbd945] Profile v1.11.0
   [3fa0cd96] REPL v1.11.0
   [9a3f8284] Random v1.11.0
-  [ea8e919c] SHA v0.7.0
+  [ea8e919c] SHA v1.0.0
   [9e88b42a] Serialization v1.11.0
   [1a1011a3] SharedArrays v1.11.0
   [6462fe0b] Sockets v1.11.0
-  [2f01184e] SparseArrays v1.12.0
+  [2f01184e] SparseArrays v1.13.0
   [f489334b] StyledStrings v1.11.0
   [4607b0f0] SuiteSparse
   [fa267f1f] TOML v1.0.3
@@ -858,20 +873,24 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8dfed614] Test v1.11.0
   [cf7118a7] UUIDs v1.11.0
   [4ec0a83e] Unicode v1.11.0
-  [e66e0078] CompilerSupportLibraries_jll v1.3.1+2
-  [deac9b47] LibCURL_jll v8.15.0+0
-  [e37daf67] LibGit2_jll v1.9.0+0
-  [29816b5a] LibSSH2_jll v1.11.3+1
-  [14a3606d] MozillaCACerts_jll v2025.11.4
-  [4536629a] OpenBLAS_jll v0.3.29+0
+  [e66e0078] CompilerSupportLibraries_jll v1.5.5+2
+  [781609d7] GMP_jll v6.3.0+2
+  [deac9b47] LibCURL_jll v8.18.0+1
+  [e37daf67] LibGit2_jll v1.9.1+0
+  [29816b5a] LibSSH2_jll v1.11.103+0
+  [3a97d323] MPFR_jll v4.2.2+0
+  [14a3606d] MozillaCACerts_jll v2026.8.13
+  [4536629a] OpenBLAS_jll v0.3.30+0
   [05823500] OpenLibm_jll v0.8.7+0
   [458c3c95] OpenSSL_jll v3.5.6+0
-  [efcefdf7] PCRE2_jll v10.44.0+1
-  [bea87d4a] SuiteSparse_jll v7.8.3+2
+  [efcefdf7] PCRE2_jll v10.46.0+0
+  [bea87d4a] SuiteSparse_jll v7.10.1+0
   [83775a58] Zlib_jll v1.3.1+2
+  [3161d3a3] Zstd_jll v1.5.7+1
   [8e850b90] libblastrampoline_jll v5.15.0+0
-  [8e850ede] nghttp2_jll v1.64.0+1
-  [3f19e933] p7zip_jll v17.7.0+0
+  [8e850ede] nghttp2_jll v1.67.1+0
+  [3f19e933] p7zip_jll v17.8.2+0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Info Packages marked with [deprecated] are no longer maintained. Use `status --deprecated -m` to see more information.
 ```
 
