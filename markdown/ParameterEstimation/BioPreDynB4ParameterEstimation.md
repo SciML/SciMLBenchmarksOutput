@@ -484,9 +484,9 @@ biopredyn_b4_cost (generic function with 1 method)
 ```
 
 ```
-4.445714 seconds (8.51 M allocations: 444.963 MiB, 5.59% gc time, 95.83% 
+4.481824 seconds (8.51 M allocations: 445.007 MiB, 5.89% gc time, 96.56% 
 compilation time)
-  0.113636 seconds (883.88 k allocations: 53.430 MiB, 23.57% gc time)
+  0.116649 seconds (883.88 k allocations: 53.430 MiB, 28.03% gc time)
 1.0213152934777013e11
 ```
 
@@ -566,9 +566,9 @@ res_bbo.objective
 ```
 
 ```
-2676.126785 seconds (17.98 G allocations: 1.034 TiB, 30.28% gc time, 0.16% 
-compilation time: 2% of which was recompilation)
-416221.77394569863
+2194.130392 seconds (14.70 G allocations: 866.028 GiB, 31.07% gc time, 0.19
+% compilation time: 2% of which was recompilation)
+124525.9374347846
 ```
 
 
@@ -584,9 +584,9 @@ res_nlopt.objective
 ```
 
 ```
-2330.117770 seconds (15.77 G allocations: 929.177 GiB, 29.99% gc time, 0.03
+2060.654299 seconds (13.83 G allocations: 814.987 GiB, 31.16% gc time, 0.04
 % compilation time)
-39335.1247398095
+41955.65492908892
 ```
 
 
@@ -598,9 +598,9 @@ res_pso.objective
 ```
 
 ```
-721.447994 seconds (7.10 G allocations: 418.732 GiB, 84.61% gc time, 10.96%
- compilation time)
-136826.75803694568
+779.092874 seconds (7.51 G allocations: 442.803 GiB, 82.53% gc time, 7.69% 
+compilation time)
+186837.41319842328
 ```
 
 
@@ -635,27 +635,28 @@ res_pso_polish, losses_pso_polish, times_pso_polish = polish(
 ```
 
 ```
-BBO -> LN_BOBYQA: 12615.610941542198 (428.191357277s)
-GN_CRS2_LM -> LN_BOBYQA: 4860.8469565104615 (455.279459094s)
-ParallelPSOArray -> LN_BOBYQA: 100279.91314284371 (386.276424977s)
+BBO -> LN_BOBYQA: 10301.503185220978 (413.629028475s)
+GN_CRS2_LM -> LN_BOBYQA: 20580.80066763163 (476.470871553s)
+ParallelPSOArray -> LN_BOBYQA: 18512.299814061877 (433.030706792s)
 (retcode: MaxIters
-u: [4706.8004136385025, 4945.694312351054, 4983.078034136756, 1098.10274765
-061, 4997.962864262581, 234.341548623231, 4997.022292338094, 4997.938512223
-3425, 0.20071027792368218, 0.2548123861169181  …  3.496416766630741, 0.2058
-10615722599, 3.499177145892805, 0.2, 1.9062474132873313, 0.4, 0.4, 1.252412
-2015803727, 0.9891796104611845, 0.9949569752183459]
-Final objective value:     100279.91314284371
-, [136826.7580369613, 136827.92973035385, 136825.94458907383, 136829.863608
-84225, 136874.3455165289, 136346.56288110005, 136193.38652244065, 136994.37
-927781133, 136800.59737792515, 136854.64424323558  …  100288.42808982394, 1
-00284.82422417466, 100283.43297178067, 100282.7248328378, 100282.0054609959
-9, 100281.57543325916, 100282.06654246867, 100281.42066129575, 100280.08050
-171129, 100279.91314284371], [0.05196690559387207, 0.1610708236694336, 0.21
-457695960998535, 0.26717185974121094, 0.3773989677429199, 0.428752899169921
-9, 0.49375295639038086, 0.6182918548583984, 0.67026686668396, 0.78568696975
-70801  …  385.57228994369507, 385.6192820072174, 385.6777958869934, 385.815
-3009414673, 385.8627099990845, 385.9155328273773, 386.05540585517883, 386.1
-042559146881, 386.15128993988037, 386.2749660015106])
+u: [2076.5886379011627, 3015.8860909025793, 201.45628316848436, 292.0196970
+1784486, 243.116873574594, 804.5835920125427, 4185.032329542567, 624.788322
+6808742, 4.984184892557448, 4.013195774957875  …  0.4114165980962092, 0.212
+1341905820356, 0.18970539729079933, 0.20167656418067784, 2.3316899384372523
+, 0.6181521169126012, 3.546100305319167, 3.4110303470698686, 0.937166321951
+3118, 0.17158601488876454]
+Final objective value:     18512.299814061877
+, [186837.413198329, 177475.05014608652, 160033.32471855124, 187000.6857946
+16, 206225.24963917249, 197727.7658584077, 170638.4308345303, 219322.956366
+66156, 189327.35938378258, 184039.16005845548  …  18517.717453439414, 18517
+.690229428106, 18516.486234334727, 18515.817430177674, 18515.439177586366, 
+18514.731477746933, 18514.036619624087, 18513.54724383885, 18513.2327526083
+46, 18512.299814061877], [0.05199289321899414, 0.11403703689575195, 0.25628
+39984893799, 0.3081789016723633, 0.3703129291534424, 0.48830389976501465, 0
+.5403289794921875, 0.6619210243225098, 0.7135510444641113, 0.77004098892211
+91  …  432.25626397132874, 432.31095004081726, 432.368124961853, 432.514177
+0839691, 432.56809186935425, 432.62765192985535, 432.77205300331116, 432.82
+542085647583, 432.8865878582001, 433.02934193611145])
 ```
 
 
@@ -678,12 +679,12 @@ df = DataFrame(
 ─────┼───────────────────────────────────────────────────
    1 │ Nominal (true params)                 39.0675
    2 │ Starting guess (no fit)                1.02132e11
-   3 │ BBO_adaptive_de_rand_1_bin             4.16222e5
-   4 │ GN_CRS2_LM                         39335.1
-   5 │ ParallelPSOArray                       1.36827e5
-   6 │ LN_BOBYQA polish (from BBO)        12615.6
-   7 │ LN_BOBYQA polish (from GN_CRS2_L…   4860.85
-   8 │ LN_BOBYQA polish (from ParallelP…      1.0028e5
+   3 │ BBO_adaptive_de_rand_1_bin             1.24526e5
+   4 │ GN_CRS2_LM                         41955.7
+   5 │ ParallelPSOArray                       1.86837e5
+   6 │ LN_BOBYQA polish (from BBO)        10301.5
+   7 │ LN_BOBYQA polish (from GN_CRS2_L…  20580.8
+   8 │ LN_BOBYQA polish (from ParallelP…  18512.3
 ```
 
 
@@ -787,7 +788,7 @@ Environment:
 Package Information:
 
 ```
-Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Project.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
   [a134a8b2] BlackBoxOptim v0.6.12
   [a93c6f00] DataFrames v1.8.2
@@ -806,14 +807,14 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [91a5bcdd] Plots v1.41.7
   [731186ca] RecursiveArrayTools v4.5.1
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
-  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
 Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
 
 ```
-Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
   [14f7f29c] AMD v0.5.4
   [6e696c72] AbstractPlutoDingetjes v1.4.1
@@ -857,7 +858,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
   [39dd38d3] Dierckx v0.5.4
-  [2b5f629d] DiffEqBase v7.21.1
+⌃ [2b5f629d] DiffEqBase v7.21.1
 ⌃ [459566f4] DiffEqCallbacks v4.19.3
 ⌃ [071ae1c0] DiffEqGPU v3.21.0
 ⌃ [1130ab10] DiffEqParamEstim v2.6.1
@@ -995,7 +996,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [9dfe8606] SCCNonlinearSolve v1.15.3
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
 ⌃ [0bca4576] SciMLBase v3.53.3
-  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
   [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
 ⌃ [c0aeaf25] SciMLOperators v1.30.0
@@ -1031,7 +1032,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [2efcf032] SymbolicIndexingInterface v0.3.55
   [19f23fe9] SymbolicLimits v1.2.1
 ⌃ [d1185830] SymbolicUtils v4.46.5
-  [0c5d862f] Symbolics v7.39.2
+⌃ [0c5d862f] Symbolics v7.39.2
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [ed4db957] TaskLocalValues v0.1.3
