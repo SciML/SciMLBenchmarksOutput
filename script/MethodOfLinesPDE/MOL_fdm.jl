@@ -116,3 +116,7 @@ wp = WorkPrecisionSet(probs2, abstols, reltols, setups; names = names,
     numruns = 10, wrap = Val(false))
 plot(wp)
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
