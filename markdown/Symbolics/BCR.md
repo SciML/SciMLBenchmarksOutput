@@ -4,7 +4,7 @@ author: "Aayush Sabharwal, Bowen Zhu, Chris Rackauckas"
 ---
 
 
-The following benchmark is of 1122 ODEs with 24388 terms that describe a stiff
+The following benchmark is of 1122 ODEs, generated from 24388 reactions, that describe a stiff
 chemical reaction network modeling the BCR signaling network from [Barua et
 al.](https://doi.org/10.4049/jimmunol.1102003). We use
 [`ReactionNetworkImporters`](https://github.com/isaacsas/ReactionNetworkImporters.jl)
@@ -14,7 +14,7 @@ to load the BioNetGen model files as a
 Catalyst network model to ODEs.
 
 The resultant large model is used to benchmark the time taken to compute a symbolic
-jacobian, generate a function to calculate it and call the function.
+Jacobian, generate a function to calculate it and call the function.
 
 Jacobian construction uses the current `Symbolics.sparsejacobian` implementation, with
 derivative caches cleared before each sample. CSE is a `build_function` code-generation
@@ -57,7 +57,7 @@ Parsing and adding reactions...done
 ────────────────────────────────────────────────────────────────────
                            Time                    Allocations      
                   ───────────────────────   ────────────────────────
-Tot / % measured:      26.3s /   0.0%           1.55GiB /   0.0%    
+Tot / % measured:      26.5s /   0.0%           1.55GiB /   0.0%    
 
 Section   ncalls     time    %tot     avg     alloc    %tot      avg
 ────────────────────────────────────────────────────────────────────
@@ -127,26 +127,26 @@ show(to)
 cations      
                                       ───────────────────────   ───────────
 ─────────────
-          Tot / % measured:                 384s /  79.5%           17.3GiB
+          Tot / % measured:                 383s /  78.8%           17.3GiB
  /  72.8%    
 
 Section                       ncalls     time    %tot     avg     alloc    
 %tot      avg
 ───────────────────────────────────────────────────────────────────────────
 ─────────────
-Compile jacobian - no CSE          1     171s   55.9%    171s   6.60GiB   5
+Compile jacobian - no CSE          1     167s   55.5%    167s   6.60GiB   5
 2.3%  6.60GiB
-Compile jacobian - CSE             1    94.4s   30.9%   94.4s   1.88GiB   1
+Compile jacobian - CSE             1    94.4s   31.3%   94.4s   1.88GiB   1
 4.9%  1.88GiB
-Calculate symbolic jacobian        1    28.3s    9.3%   28.3s   2.93GiB   2
+Calculate symbolic jacobian        1    28.6s    9.5%   28.6s   2.93GiB   2
 3.2%  2.93GiB
-Build jacobian - no CSE            1    11.1s    3.6%   11.1s   1.09GiB    
+Build jacobian - no CSE            1    10.7s    3.5%   10.7s   1.09GiB    
 8.6%  1.09GiB
-Build jacobian - CSE               1    654ms    0.2%   654ms    125MiB    
+Build jacobian - CSE               1    528ms    0.2%   528ms    125MiB    
 1.0%   125MiB
-Compute jacobian - no CSE          1    183μs    0.0%   183μs      176B    
+Compute jacobian - no CSE          1    116μs    0.0%   116μs      176B    
 0.0%     176B
-Compute jacobian - CSE             1   80.5μs    0.0%  80.5μs      176B    
+Compute jacobian - CSE             1   86.1μs    0.0%  86.1μs      176B    
 0.0%     176B
 ───────────────────────────────────────────────────────────────────────────
 ─────────────
@@ -274,69 +274,69 @@ pretty_table(tabledata; column_labels = header, backend = :html)
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">10.0</td>
-      <td style = "text-align: right;">3.18885</td>
-      <td style = "text-align: right;">4.2047e8</td>
-      <td style = "text-align: right;">0.0245617</td>
-      <td style = "text-align: right;">0.0311531</td>
-      <td style = "text-align: right;">9.65231</td>
-      <td style = "text-align: right;">6.34166</td>
-      <td style = "text-align: right;">3.55363e-6</td>
-      <td style = "text-align: right;">2.9439e-6</td>
+      <td style = "text-align: right;">3.16736</td>
+      <td style = "text-align: right;">4.20466e8</td>
+      <td style = "text-align: right;">0.0255317</td>
+      <td style = "text-align: right;">0.0320239</td>
+      <td style = "text-align: right;">9.56757</td>
+      <td style = "text-align: right;">6.37553</td>
+      <td style = "text-align: right;">3.55863e-6</td>
+      <td style = "text-align: right;">2.755e-6</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">20.0</td>
-      <td style = "text-align: right;">4.28213</td>
-      <td style = "text-align: right;">5.47698e8</td>
-      <td style = "text-align: right;">0.0366498</td>
-      <td style = "text-align: right;">0.0473515</td>
-      <td style = "text-align: right;">14.9811</td>
-      <td style = "text-align: right;">8.93726</td>
-      <td style = "text-align: right;">7.11975e-6</td>
-      <td style = "text-align: right;">4.49667e-6</td>
+      <td style = "text-align: right;">4.29438</td>
+      <td style = "text-align: right;">5.47666e8</td>
+      <td style = "text-align: right;">0.0374857</td>
+      <td style = "text-align: right;">0.04865</td>
+      <td style = "text-align: right;">14.6549</td>
+      <td style = "text-align: right;">8.83144</td>
+      <td style = "text-align: right;">6.92225e-6</td>
+      <td style = "text-align: right;">4.34317e-6</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">40.0</td>
-      <td style = "text-align: right;">5.64052</td>
-      <td style = "text-align: right;">7.19497e8</td>
-      <td style = "text-align: right;">0.0591457</td>
-      <td style = "text-align: right;">0.0687831</td>
-      <td style = "text-align: right;">25.1312</td>
-      <td style = "text-align: right;">14.1411</td>
-      <td style = "text-align: right;">1.29245e-5</td>
-      <td style = "text-align: right;">6.955e-6</td>
+      <td style = "text-align: right;">5.60156</td>
+      <td style = "text-align: right;">7.19478e8</td>
+      <td style = "text-align: right;">0.062568</td>
+      <td style = "text-align: right;">0.0698242</td>
+      <td style = "text-align: right;">25.682</td>
+      <td style = "text-align: right;">14.1961</td>
+      <td style = "text-align: right;">1.25245e-5</td>
+      <td style = "text-align: right;">6.9525e-6</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">80.0</td>
-      <td style = "text-align: right;">9.30943</td>
-      <td style = "text-align: right;">1.10733e9</td>
-      <td style = "text-align: right;">0.108699</td>
-      <td style = "text-align: right;">0.105643</td>
-      <td style = "text-align: right;">47.6296</td>
-      <td style = "text-align: right;">22.9037</td>
-      <td style = "text-align: right;">2.546e-5</td>
-      <td style = "text-align: right;">1.16395e-5</td>
+      <td style = "text-align: right;">9.40649</td>
+      <td style = "text-align: right;">1.10723e9</td>
+      <td style = "text-align: right;">0.112693</td>
+      <td style = "text-align: right;">0.113199</td>
+      <td style = "text-align: right;">46.2921</td>
+      <td style = "text-align: right;">22.4312</td>
+      <td style = "text-align: right;">2.8309e-5</td>
+      <td style = "text-align: right;">1.1585e-5</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">160.0</td>
-      <td style = "text-align: right;">10.9206</td>
-      <td style = "text-align: right;">1.2665e9</td>
-      <td style = "text-align: right;">0.141835</td>
-      <td style = "text-align: right;">0.143031</td>
-      <td style = "text-align: right;">62.6152</td>
-      <td style = "text-align: right;">29.6462</td>
-      <td style = "text-align: right;">3.7879e-5</td>
-      <td style = "text-align: right;">1.5319e-5</td>
+      <td style = "text-align: right;">11.0426</td>
+      <td style = "text-align: right;">1.26649e9</td>
+      <td style = "text-align: right;">0.149005</td>
+      <td style = "text-align: right;">0.142292</td>
+      <td style = "text-align: right;">61.4989</td>
+      <td style = "text-align: right;">30.6344</td>
+      <td style = "text-align: right;">3.21e-5</td>
+      <td style = "text-align: right;">1.541e-5</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">320.0</td>
-      <td style = "text-align: right;">12.6784</td>
-      <td style = "text-align: right;">1.43459e9</td>
-      <td style = "text-align: right;">0.188567</td>
-      <td style = "text-align: right;">0.187348</td>
-      <td style = "text-align: right;">79.3665</td>
-      <td style = "text-align: right;">41.6618</td>
-      <td style = "text-align: right;">4.107e-5</td>
-      <td style = "text-align: right;">2.163e-5</td>
+      <td style = "text-align: right;">12.7192</td>
+      <td style = "text-align: right;">1.43458e9</td>
+      <td style = "text-align: right;">0.197624</td>
+      <td style = "text-align: right;">0.182199</td>
+      <td style = "text-align: right;">79.0555</td>
+      <td style = "text-align: right;">42.2992</td>
+      <td style = "text-align: right;">3.6749e-5</td>
+      <td style = "text-align: right;">1.991e-5</td>
     </tr>
   </tbody>
 </table>
@@ -428,9 +428,9 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Project.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
-  [13f3f980] CairoMakie v0.15.14
+⌃ [13f3f980] CairoMakie v0.15.14
   [479239e8] Catalyst v16.4.3
   [0ca39b1e] Chairmarks v1.3.1
 ⌃ [992eb4ea] CondaPkg v0.2.33
@@ -444,7 +444,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [08abe8d2] PrettyTables v3.4.8
 ⌃ [6099a3de] PythonCall v0.9.35
   [b4db0fb7] ReactionNetworkImporters v1.5.0
-  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
   [10745b16] Statistics v1.11.5
   [123dc426] SymEngine v0.13.2
   [2efcf032] SymbolicIndexingInterface v0.3.55
@@ -461,7 +461,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Manifest.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
   [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
@@ -474,11 +474,11 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [27a7e980] Animations v0.4.2
   [ec485272] ArnoldiMethod v0.4.0
 ⌃ [4fba245c] ArrayInterface v7.30.1
-  [4c555306] ArrayLayouts v1.12.2
+⌃ [4c555306] ArrayLayouts v1.12.2
   [67c07d97] Automa v1.2.0
   [13072b0f] AxisAlgorithms v1.1.0
   [39de3d68] AxisArrays v0.4.8
-  [aae01518] BandedMatrices v1.12.0
+⌃ [aae01518] BandedMatrices v1.12.0
   [18cc8868] BaseDirs v1.4.0
   [6e4b80f9] BenchmarkTools v1.8.0
   [e2ed5e7c] Bijections v0.2.2
@@ -489,14 +489,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [fa961155] CEnum v0.5.0
   [96374032] CRlibm v1.0.2
   [159f3aea] Cairo v1.1.1
-  [13f3f980] CairoMakie v0.15.14
+⌃ [13f3f980] CairoMakie v0.15.14
   [479239e8] Catalyst v16.4.3
   [d360d2e6] ChainRulesCore v1.26.1
   [0ca39b1e] Chairmarks v1.3.1
   [6b39b394] CodecZstd v0.8.7
   [a2cac450] ColorBrewer v0.4.2
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
 ⌅ [861a8166] Combinatorics v1.0.2
@@ -597,7 +597,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
-  [ee78f7c6] Makie v0.24.14
+⌅ [ee78f7c6] Makie v0.24.14
   [dbb5928d] MappedArrays v0.4.3
   [0a4f8689] MathTeXEngine v0.6.9
   [bb5d69b7] MaybeInplace v0.1.8
@@ -610,9 +610,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e94cdb99] MosaicViews v0.3.4
 ⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
-  [102ac46a] MultivariatePolynomials v0.5.19
+⌃ [102ac46a] MultivariatePolynomials v0.5.19
   [ffc61752] Mustache v1.0.21
-  [d8a4904e] MutableArithmetics v1.8.0
+⌃ [d8a4904e] MutableArithmetics v1.8.0
   [77ba4419] NaNMath v1.1.4
   [f09324ee] Netpbm v1.1.1
 ⌃ [8913a72c] NonlinearSolve v4.30.0
@@ -656,7 +656,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [27ebfcd6] Primes v0.5.7
   [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.5.0
+⌃ [0c0d3e7f] PureKLU v1.5.0
 ⌃ [6099a3de] PythonCall v0.9.35
   [4b34888f] QOI v1.0.2
   [1fd47b50] QuadGK v2.11.3
@@ -667,7 +667,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [795d4caa] ReadOnlyDicts v1.0.1
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v4.5.1
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
@@ -679,7 +679,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9dfe8606] SCCNonlinearSolve v1.15.3
   [fdea26ae] SIMD v3.7.2
 ⌃ [0bca4576] SciMLBase v3.54.0
-  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
   [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
 ⌃ [c0aeaf25] SciMLOperators v1.30.0
@@ -828,7 +828,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [075b6546] libsixel_jll v1.10.5+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
-  [c5f90fcd] libwebp_jll v1.6.0+0
+⌃ [c5f90fcd] libwebp_jll v1.6.0+0
   [f8abcde7] micromamba_jll v2.3.1+0
   [009596ad] mtdev_jll v1.1.7+0
   [1317d2d5] oneTBB_jll v2022.3.0+0
