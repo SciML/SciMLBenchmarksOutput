@@ -1,19 +1,19 @@
 ---
 author: "Sebastian Micluța-Câmpeanu, Mikhail Vaganov"
-title: "Acceleration function benchmarks"
+title: "Acceleration Function Benchmarks"
 ---
 
 
-Solving the equations of notions for an N-body problem implies solving a (large)
+Solving the equations of motion for an N-body problem implies solving a (large)
 system of differential equations. In `DifferentialEquations.jl` these are represented
 through ODE or SDE problems. To build the problem we need a function that
-describe the equations. In the case of N-body problems, this function
+describes the equations. In the case of N-body problems, this function
 gives the accelerations for the particles in the system.
 
 Here we will test the performance of several acceleration functions used
 in N-body simulations. The systems that will be used are not necessarily realistic
-as we are not solving the problem, we just time how fast is an acceleration
-function call.
+as we are not solving the problem, we just time how fast an acceleration
+function call is.
 
 ```julia
 using BenchmarkTools, NBodySimulator
@@ -323,7 +323,7 @@ Benchmark(evals=1, seconds=5.0, samples=10000)
 
 
 
-Here are the results of the benchmarks
+Here are the results of the benchmarks:
 
 ```julia
 r = run(SUITE)
@@ -334,11 +334,11 @@ minimum(r)
 ```
 5-element BenchmarkTools.BenchmarkGroup:
   tags: []
-  "gravitational" => TrialEstimate(14.544 ms)
-  "coulomb" => TrialEstimate(908.996 μs)
-  "lennard_jones" => TrialEstimate(643.426 μs)
-  "water_spcfw" => TrialEstimate(9.927 ms)
-  "magnetic_dipole" => TrialEstimate(40.696 ms)
+  "gravitational" => TrialEstimate(14.463 ms)
+  "coulomb" => TrialEstimate(907.155 μs)
+  "lennard_jones" => TrialEstimate(642.317 μs)
+  "water_spcfw" => TrialEstimate(10.010 ms)
+  "magnetic_dipole" => TrialEstimate(41.644 ms)
 ```
 
 
@@ -405,8 +405,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [91a5bcdd] Plots v1.41.7
   [33c8b6b6] ProgressLogging v0.1.6
   [31c91b34] SciMLBenchmarks v0.2.1
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [f3b207a7] StatsPlots v0.15.8
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
@@ -418,7 +419,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [7d9fca2a] Arpack v0.5.4
   [4fba245c] ArrayInterface v7.30.2
@@ -429,7 +430,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d360d2e6] ChainRulesCore v1.26.1
   [aaaa29a8] Clustering v0.15.8
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
   [38540f10] CommonSolve v0.2.14
@@ -445,7 +446,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.21.1
+⌃ [2b5f629d] DiffEqBase v7.21.1
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
@@ -462,14 +463,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a4df4552] FastPower v1.5.0
   [5789e2e9] FileIO v1.20.0
   [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
   [f6369f11] ForwardDiff v1.4.6
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v1.13.0
-  [46192b85] GPUArraysCore v0.2.0
+⌃ [46192b85] GPUArraysCore v0.2.0
   [28b8d3ca] GR v0.73.27
   [a0844989] Gamma v1.2.0
 ⌅ [eafb193a] Highlights v0.5.3
@@ -499,7 +500,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e1d29d7a] Missings v1.2.0
   [46d2c3a1] MuladdMacro v0.2.7
   [6f286f6a] MultivariateStats v0.10.5
-  [ffc61752] Mustache v1.0.21
+⌃ [ffc61752] Mustache v1.0.21
   [0e6f8da7] NBodySimulator v1.16.0
   [77ba4419] NaNMath v1.1.4
   [b8a86587] NearestNeighbors v0.4.29
@@ -527,7 +528,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [90014a1f] PDMats v0.11.41
 ⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.7.1
@@ -537,12 +538,12 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [27ebfcd6] Primes v0.5.7
   [33c8b6b6] ProgressLogging v0.1.6
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.5.0
+⌃ [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v4.5.1
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
@@ -567,7 +568,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
   [860ef19b] StableRNGs v1.0.4
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
   [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
@@ -581,14 +582,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [62fd8b95] TensorCore v0.1.1
-  [a759f4b9] TimerOutputs v1.2.1
+⌃ [a759f4b9] TimerOutputs v1.2.1
   [781d530d] TruncatedStacktraces v1.4.0
   [1cfade01] UnicodeFun v0.4.1
   [41fe7b60] Unzip v0.2.0
   [44d3d7a6] Weave v0.10.12
   [cc8bc4a8] Widgets v0.6.8
   [efce3f68] WoodburyMatrices v1.1.0
-  [ddb6d928] YAML v0.4.16
+⌃ [ddb6d928] YAML v0.4.16
 ⌅ [68821587] Arpack_jll v3.5.2+0
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.7+0
@@ -660,7 +661,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
-  [a4ae2306] libaom_jll v3.14.1+0
+⌃ [a4ae2306] libaom_jll v3.14.1+0
   [0ac62f75] libass_jll v0.17.5+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
