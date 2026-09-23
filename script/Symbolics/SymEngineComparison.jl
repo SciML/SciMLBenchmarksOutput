@@ -329,14 +329,14 @@ su_sub_dense_ref_t = tmin(@be sub_call($sub_dense_ref, $rt_su))
 su_sub_dense_ir_t = tmin(@be sub_call($sub_dense_ir, $rt_su))
 sp_sub_dense_t = pytime(PYNS["sp_sub_dense"]())
 RESULTS["substitute 10^5-draw random expr (dense rule)"] =
-    (se_sub_dense_t, su_sub_dense_ref_t, sp_sub_dense_t)
+    (se_sub_dense_t, min(su_sub_dense_ref_t, su_sub_dense_ir_t), sp_sub_dense_t)
 
 se_sub_sparse_t = tmin(@be SymEngine.subs($rt_se, $sparse_se))
 su_sub_sparse_ref_t = tmin(@be sub_call($sub_sparse_ref, $rt_su))
 su_sub_sparse_ir_t = tmin(@be sub_call($sub_sparse_ir, $rt_su))
 sp_sub_sparse_t = pytime(PYNS["sp_sub_sparse"]())
 RESULTS["substitute 10^5-draw random expr (sparse rule)"] =
-    (se_sub_sparse_t, su_sub_sparse_ir_t, sp_sub_sparse_t)
+    (se_sub_sparse_t, min(su_sub_sparse_ref_t, su_sub_sparse_ir_t), sp_sub_sparse_t)
 
 pretty_table(
     hcat(["SymEngine", "SymbolicUtils", "SymPy"],
@@ -434,14 +434,14 @@ su_sv_common_ref_t = tmin(@be su_search_ref!($su_buf, $common_su))
 su_sv_common_ir_t = tmin(@be su_search_ir!($su_buf, $ir_common, $common_su))
 sp_sv_common_t = pytime(PYNS["sp_sv_common"]())
 RESULTS["variable search (common subtrees)"] =
-    (se_sv_common_t, su_sv_common_ir_t, sp_sv_common_t)
+    (se_sv_common_t, min(su_sv_common_ref_t, su_sv_common_ir_t), sp_sv_common_t)
 
 se_sv_dissim_t = tmin(@be se_search!($se_buf, $dissim_se))
 su_sv_dissim_ref_t = tmin(@be su_search_ref!($su_buf, $dissim_su))
 su_sv_dissim_ir_t = tmin(@be su_search_ir!($su_buf, $ir_dissim, $dissim_su))
 sp_sv_dissim_t = pytime(PYNS["sp_sv_dissim"]())
 RESULTS["variable search (dissimilar exprs)"] =
-    (se_sv_dissim_t, su_sv_dissim_ir_t, sp_sv_dissim_t)
+    (se_sv_dissim_t, min(su_sv_dissim_ref_t, su_sv_dissim_ir_t), sp_sv_dissim_t)
 
 pretty_table(
     hcat(["common subtree", "dissimilar"],

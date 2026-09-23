@@ -319,27 +319,27 @@ pretty_table(hcat(expand_ns, se_expand_t, su_expand_t, sp_expand_t);
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">8.0</td>
-      <td style = "text-align: right;">0.000297098</td>
-      <td style = "text-align: right;">0.012471</td>
-      <td style = "text-align: right;">0.05616</td>
+      <td style = "text-align: right;">0.000296388</td>
+      <td style = "text-align: right;">0.0122883</td>
+      <td style = "text-align: right;">0.0586848</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">16.0</td>
-      <td style = "text-align: right;">0.00250378</td>
-      <td style = "text-align: right;">0.422143</td>
-      <td style = "text-align: right;">0.465623</td>
+      <td style = "text-align: right;">0.00250846</td>
+      <td style = "text-align: right;">0.142657</td>
+      <td style = "text-align: right;">0.486796</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">24.0</td>
-      <td style = "text-align: right;">0.00794064</td>
-      <td style = "text-align: right;">0.945023</td>
-      <td style = "text-align: right;">1.468</td>
+      <td style = "text-align: right;">0.00799805</td>
+      <td style = "text-align: right;">1.02624</td>
+      <td style = "text-align: right;">1.5064</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">32.0</td>
-      <td style = "text-align: right;">0.0151071</td>
-      <td style = "text-align: right;">5.48002</td>
-      <td style = "text-align: right;">3.34991</td>
+      <td style = "text-align: right;">0.0153014</td>
+      <td style = "text-align: right;">5.5225</td>
+      <td style = "text-align: right;">3.46449</td>
     </tr>
   </tbody>
 </table>
@@ -400,9 +400,9 @@ pretty_table(hcat(["d/dx expand((x^y+y^z+z^x)^50)"], se_diff_t, su_diff_t, sp_di
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">d/dx expand((x^y+y^z+z^x)^50)</td>
-      <td style = "text-align: right;">0.00688236</td>
-      <td style = "text-align: right;">0.31743</td>
-      <td style = "text-align: right;">6.79617</td>
+      <td style = "text-align: right;">0.00695691</td>
+      <td style = "text-align: right;">0.332787</td>
+      <td style = "text-align: right;">6.9837</td>
     </tr>
   </tbody>
 </table>
@@ -452,9 +452,9 @@ pretty_table(hcat(["series(sin(cos(1+x)), x=0, 15)"], se_series_t, su_series_t,
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">series(sin(cos(1+x)), x=0, 15)</td>
-      <td style = "text-align: right;">0.00200192</td>
-      <td style = "text-align: right;">0.0202974</td>
-      <td style = "text-align: right;">1.37955</td>
+      <td style = "text-align: right;">0.00199123</td>
+      <td style = "text-align: right;">0.0198982</td>
+      <td style = "text-align: right;">1.43102</td>
     </tr>
   </tbody>
 </table>
@@ -505,9 +505,9 @@ pretty_table(hcat(["{a,b,c} -> {1,2,3} in trig product"], se_trig_t, su_trig_t,
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">{a,b,c} -&gt; {1,2,3} in trig product</td>
-      <td style = "text-align: right;">1.461e-5</td>
-      <td style = "text-align: right;">6.186e-5</td>
-      <td style = "text-align: right;">0.00634618</td>
+      <td style = "text-align: right;">1.478e-5</td>
+      <td style = "text-align: right;">6.0009e-5</td>
+      <td style = "text-align: right;">0.00656879</td>
     </tr>
   </tbody>
 </table>
@@ -568,14 +568,14 @@ su_sub_dense_ref_t = tmin(@be sub_call($sub_dense_ref, $rt_su))
 su_sub_dense_ir_t = tmin(@be sub_call($sub_dense_ir, $rt_su))
 sp_sub_dense_t = pytime(PYNS["sp_sub_dense"]())
 RESULTS["substitute 10^5-draw random expr (dense rule)"] =
-    (se_sub_dense_t, su_sub_dense_ref_t, sp_sub_dense_t)
+    (se_sub_dense_t, min(su_sub_dense_ref_t, su_sub_dense_ir_t), sp_sub_dense_t)
 
 se_sub_sparse_t = tmin(@be SymEngine.subs($rt_se, $sparse_se))
 su_sub_sparse_ref_t = tmin(@be sub_call($sub_sparse_ref, $rt_su))
 su_sub_sparse_ir_t = tmin(@be sub_call($sub_sparse_ir, $rt_su))
 sp_sub_sparse_t = pytime(PYNS["sp_sub_sparse"]())
 RESULTS["substitute 10^5-draw random expr (sparse rule)"] =
-    (se_sub_sparse_t, su_sub_sparse_ir_t, sp_sub_sparse_t)
+    (se_sub_sparse_t, min(su_sub_sparse_ref_t, su_sub_sparse_ir_t), sp_sub_sparse_t)
 
 pretty_table(
     hcat(["SymEngine", "SymbolicUtils", "SymPy"],
@@ -630,17 +630,17 @@ pretty_table(
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">dense rule</td>
-      <td style = "text-align: right;">0.0011342</td>
-      <td style = "text-align: right;">0.0040689</td>
-      <td style = "text-align: right;">0.00366066</td>
-      <td style = "text-align: right;">2.20271</td>
+      <td style = "text-align: right;">0.00113195</td>
+      <td style = "text-align: right;">0.00397411</td>
+      <td style = "text-align: right;">0.00395472</td>
+      <td style = "text-align: right;">2.30004</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">sparse rule</td>
-      <td style = "text-align: right;">0.00109328</td>
-      <td style = "text-align: right;">0.000865515</td>
-      <td style = "text-align: right;">0.000605856</td>
-      <td style = "text-align: right;">1.01643</td>
+      <td style = "text-align: right;">0.00110077</td>
+      <td style = "text-align: right;">0.000861063</td>
+      <td style = "text-align: right;">0.000592595</td>
+      <td style = "text-align: right;">1.07112</td>
     </tr>
   </tbody>
 </table>
@@ -742,14 +742,14 @@ su_sv_common_ref_t = tmin(@be su_search_ref!($su_buf, $common_su))
 su_sv_common_ir_t = tmin(@be su_search_ir!($su_buf, $ir_common, $common_su))
 sp_sv_common_t = pytime(PYNS["sp_sv_common"]())
 RESULTS["variable search (common subtrees)"] =
-    (se_sv_common_t, su_sv_common_ir_t, sp_sv_common_t)
+    (se_sv_common_t, min(su_sv_common_ref_t, su_sv_common_ir_t), sp_sv_common_t)
 
 se_sv_dissim_t = tmin(@be se_search!($se_buf, $dissim_se))
 su_sv_dissim_ref_t = tmin(@be su_search_ref!($su_buf, $dissim_su))
 su_sv_dissim_ir_t = tmin(@be su_search_ir!($su_buf, $ir_dissim, $dissim_su))
 sp_sv_dissim_t = pytime(PYNS["sp_sv_dissim"]())
 RESULTS["variable search (dissimilar exprs)"] =
-    (se_sv_dissim_t, su_sv_dissim_ir_t, sp_sv_dissim_t)
+    (se_sv_dissim_t, min(su_sv_dissim_ref_t, su_sv_dissim_ir_t), sp_sv_dissim_t)
 
 pretty_table(
     hcat(["common subtree", "dissimilar"],
@@ -777,17 +777,17 @@ pretty_table(
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">common subtree</td>
-      <td style = "text-align: right;">0.0010097</td>
-      <td style = "text-align: right;">0.00138805</td>
-      <td style = "text-align: right;">0.000510827</td>
-      <td style = "text-align: right;">0.014175</td>
+      <td style = "text-align: right;">0.00102663</td>
+      <td style = "text-align: right;">0.00137841</td>
+      <td style = "text-align: right;">0.000489876</td>
+      <td style = "text-align: right;">0.0149025</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">dissimilar</td>
-      <td style = "text-align: right;">0.000466417</td>
-      <td style = "text-align: right;">0.000565366</td>
-      <td style = "text-align: right;">0.000221428</td>
-      <td style = "text-align: right;">0.00485524</td>
+      <td style = "text-align: right;">0.000467036</td>
+      <td style = "text-align: right;">0.000597345</td>
+      <td style = "text-align: right;">0.000213078</td>
+      <td style = "text-align: right;">0.00508373</td>
     </tr>
   </tbody>
 </table>
@@ -822,8 +822,9 @@ repeatedly to `sin(1)`) to double precision. SymEngine evaluates the tree in
 C++. The other two packages cannot use their built-in evaluators here:
 SymbolicUtils' recursive `evaluate` overflows the stack, and SymPy's `evalf`
 re-evaluates each `Pow`'s base at increasing working precision, which makes
-it exponential in the nesting depth (~4x slower per level on this
-expression: 0.04 s at depth 5, 2.6 s at depth 8). Both therefore use the
+it exponential in the nesting depth (roughly 4x slower per level on this
+expression, measured separately when this benchmark was written). Both
+therefore use the
 same bottom-up postorder-traversal approach -- `su_eval_double` on the
 Julia side, `eval_double` in Python -- so this measures the practical cost
 of deep-tree evaluation in each system.
@@ -898,9 +899,9 @@ pretty_table(hcat(["eval_double(10000-deep nest)"], se_eval_t, su_eval_t, sp_eva
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">eval_double(10000-deep nest)</td>
-      <td style = "text-align: right;">0.011808</td>
-      <td style = "text-align: right;">0.252506</td>
-      <td style = "text-align: right;">31.0587</td>
+      <td style = "text-align: right;">0.0116745</td>
+      <td style = "text-align: right;">0.331982</td>
+      <td style = "text-align: right;">31.0648</td>
     </tr>
   </tbody>
 </table>
@@ -1044,27 +1045,27 @@ pretty_table(
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">init (no CSE)</td>
-      <td style = "text-align: right;">0.00113635</td>
-      <td style = "text-align: right;">0.013558</td>
-      <td style = "text-align: right;">0.0493009</td>
+      <td style = "text-align: right;">0.00115092</td>
+      <td style = "text-align: right;">0.0134645</td>
+      <td style = "text-align: right;">0.0514297</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">init (CSE)</td>
-      <td style = "text-align: right;">0.000167459</td>
-      <td style = "text-align: right;">0.00334975</td>
-      <td style = "text-align: right;">0.0352891</td>
+      <td style = "text-align: right;">0.000166448</td>
+      <td style = "text-align: right;">0.00334998</td>
+      <td style = "text-align: right;">0.036391</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">call (no CSE)</td>
-      <td style = "text-align: right;">1.0605e-5</td>
-      <td style = "text-align: right;">2.55e-6</td>
-      <td style = "text-align: right;">0.000118477</td>
+      <td style = "text-align: right;">1.0665e-5</td>
+      <td style = "text-align: right;">2.559e-6</td>
+      <td style = "text-align: right;">0.00012234</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">call (CSE)</td>
-      <td style = "text-align: right;">6.89976e-7</td>
-      <td style = "text-align: right;">3.12529e-7</td>
-      <td style = "text-align: right;">8.35024e-6</td>
+      <td style = "text-align: right;">6.93256e-7</td>
+      <td style = "text-align: right;">3.13135e-7</td>
+      <td style = "text-align: right;">8.40798e-6</td>
     </tr>
   </tbody>
 </table>
@@ -1075,9 +1076,9 @@ pretty_table(
 # Summary
 
 For the substitution and search workloads, the SymbolicUtils column reports
-the better of the two measured variants (`Substituter`/`search_variables!`
-vs their `IRStructure`-backed counterparts): `Substituter` for the dense
-rule, `IRStructure` for the sparse rule and both searches.
+the faster of the two measured variants (`Substituter`/`search_variables!`
+vs their `IRStructure`-backed counterparts) in this run; the per-variant
+times are in the tables above.
 
 ```julia
 names = collect(keys(RESULTS))
@@ -1102,63 +1103,63 @@ pretty_table(hcat(names, se_t, su_t, sp_t);
   <tbody>
     <tr class = "dataRow">
       <td style = "text-align: right;">diff of expand((x^y+y^z+z^x)^50)</td>
-      <td style = "text-align: right;">0.00688236</td>
-      <td style = "text-align: right;">0.31743</td>
-      <td style = "text-align: right;">6.79617</td>
+      <td style = "text-align: right;">0.00695691</td>
+      <td style = "text-align: right;">0.332787</td>
+      <td style = "text-align: right;">6.9837</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">series(sin(cos(1+x)), 15 terms)</td>
-      <td style = "text-align: right;">0.00200192</td>
-      <td style = "text-align: right;">0.0202974</td>
-      <td style = "text-align: right;">1.37955</td>
+      <td style = "text-align: right;">0.00199123</td>
+      <td style = "text-align: right;">0.0198982</td>
+      <td style = "text-align: right;">1.43102</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">substitute trig product {a,b,c}</td>
-      <td style = "text-align: right;">1.461e-5</td>
-      <td style = "text-align: right;">6.186e-5</td>
-      <td style = "text-align: right;">0.00634618</td>
+      <td style = "text-align: right;">1.478e-5</td>
+      <td style = "text-align: right;">6.0009e-5</td>
+      <td style = "text-align: right;">0.00656879</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">substitute 10^5-draw random expr (dense rule)</td>
-      <td style = "text-align: right;">0.0011342</td>
-      <td style = "text-align: right;">0.0040689</td>
-      <td style = "text-align: right;">2.20271</td>
+      <td style = "text-align: right;">0.00113195</td>
+      <td style = "text-align: right;">0.00395472</td>
+      <td style = "text-align: right;">2.30004</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">substitute 10^5-draw random expr (sparse rule)</td>
-      <td style = "text-align: right;">0.00109328</td>
-      <td style = "text-align: right;">0.000605856</td>
-      <td style = "text-align: right;">1.01643</td>
+      <td style = "text-align: right;">0.00110077</td>
+      <td style = "text-align: right;">0.000592595</td>
+      <td style = "text-align: right;">1.07112</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">variable search (common subtrees)</td>
-      <td style = "text-align: right;">0.0010097</td>
-      <td style = "text-align: right;">0.000510827</td>
-      <td style = "text-align: right;">0.014175</td>
+      <td style = "text-align: right;">0.00102663</td>
+      <td style = "text-align: right;">0.000489876</td>
+      <td style = "text-align: right;">0.0149025</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">variable search (dissimilar exprs)</td>
-      <td style = "text-align: right;">0.000466417</td>
-      <td style = "text-align: right;">0.000221428</td>
-      <td style = "text-align: right;">0.00485524</td>
+      <td style = "text-align: right;">0.000467036</td>
+      <td style = "text-align: right;">0.000213078</td>
+      <td style = "text-align: right;">0.00508373</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">eval_double of 10000-deep expr</td>
-      <td style = "text-align: right;">0.011808</td>
-      <td style = "text-align: right;">0.252506</td>
-      <td style = "text-align: right;">31.0587</td>
+      <td style = "text-align: right;">0.0116745</td>
+      <td style = "text-align: right;">0.331982</td>
+      <td style = "text-align: right;">31.0648</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">codegen init (no CSE)</td>
-      <td style = "text-align: right;">0.00113635</td>
-      <td style = "text-align: right;">0.013558</td>
-      <td style = "text-align: right;">0.0493009</td>
+      <td style = "text-align: right;">0.00115092</td>
+      <td style = "text-align: right;">0.0134645</td>
+      <td style = "text-align: right;">0.0514297</td>
     </tr>
     <tr class = "dataRow">
       <td style = "text-align: right;">compiled call (CSE)</td>
-      <td style = "text-align: right;">6.89976e-7</td>
-      <td style = "text-align: right;">3.12529e-7</td>
-      <td style = "text-align: right;">8.35024e-6</td>
+      <td style = "text-align: right;">6.93256e-7</td>
+      <td style = "text-align: right;">3.13135e-7</td>
+      <td style = "text-align: right;">8.40798e-6</td>
     </tr>
   </tbody>
 </table>
@@ -1218,16 +1219,16 @@ Platform Info:
 Threads: 128 default, 1 interactive, 128 GC (on 128 virtual cores)
 Environment:
   JULIA_NUM_THREADS = auto
-  JULIA_PYTHONCALL_EXE = /home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/.CondaPkg/.pixi/envs/default/bin/python
+  JULIA_PYTHONCALL_EXE = /julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/.CondaPkg/.pixi/envs/default/bin/python
 
 ```
 
 Package Information:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Project.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
-  [13f3f980] CairoMakie v0.15.14
+⌃ [13f3f980] CairoMakie v0.15.14
   [479239e8] Catalyst v16.4.3
   [0ca39b1e] Chairmarks v1.3.1
 ⌃ [992eb4ea] CondaPkg v0.2.33
@@ -1241,7 +1242,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [08abe8d2] PrettyTables v3.4.8
 ⌃ [6099a3de] PythonCall v0.9.35
   [b4db0fb7] ReactionNetworkImporters v1.5.0
-  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
   [10745b16] Statistics v1.11.5
   [123dc426] SymEngine v0.13.2
   [2efcf032] SymbolicIndexingInterface v0.3.55
@@ -1258,7 +1259,7 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Manifest.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/Symbolics/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
   [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
@@ -1271,11 +1272,11 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [27a7e980] Animations v0.4.2
   [ec485272] ArnoldiMethod v0.4.0
 ⌃ [4fba245c] ArrayInterface v7.30.1
-  [4c555306] ArrayLayouts v1.12.2
+⌃ [4c555306] ArrayLayouts v1.12.2
   [67c07d97] Automa v1.2.0
   [13072b0f] AxisAlgorithms v1.1.0
   [39de3d68] AxisArrays v0.4.8
-  [aae01518] BandedMatrices v1.12.0
+⌃ [aae01518] BandedMatrices v1.12.0
   [18cc8868] BaseDirs v1.4.0
   [6e4b80f9] BenchmarkTools v1.8.0
   [e2ed5e7c] Bijections v0.2.2
@@ -1286,14 +1287,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [fa961155] CEnum v0.5.0
   [96374032] CRlibm v1.0.2
   [159f3aea] Cairo v1.1.1
-  [13f3f980] CairoMakie v0.15.14
+⌃ [13f3f980] CairoMakie v0.15.14
   [479239e8] Catalyst v16.4.3
   [d360d2e6] ChainRulesCore v1.26.1
   [0ca39b1e] Chairmarks v1.3.1
   [6b39b394] CodecZstd v0.8.7
   [a2cac450] ColorBrewer v0.4.2
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
 ⌅ [861a8166] Combinatorics v1.0.2
@@ -1394,7 +1395,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
-  [ee78f7c6] Makie v0.24.14
+⌅ [ee78f7c6] Makie v0.24.14
   [dbb5928d] MappedArrays v0.4.3
   [0a4f8689] MathTeXEngine v0.6.9
   [bb5d69b7] MaybeInplace v0.1.8
@@ -1407,9 +1408,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e94cdb99] MosaicViews v0.3.4
 ⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
-  [102ac46a] MultivariatePolynomials v0.5.19
+⌃ [102ac46a] MultivariatePolynomials v0.5.19
   [ffc61752] Mustache v1.0.21
-  [d8a4904e] MutableArithmetics v1.8.0
+⌃ [d8a4904e] MutableArithmetics v1.8.0
   [77ba4419] NaNMath v1.1.4
   [f09324ee] Netpbm v1.1.1
 ⌃ [8913a72c] NonlinearSolve v4.30.0
@@ -1453,7 +1454,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [27ebfcd6] Primes v0.5.7
   [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.5.0
+⌃ [0c0d3e7f] PureKLU v1.5.0
 ⌃ [6099a3de] PythonCall v0.9.35
   [4b34888f] QOI v1.0.2
   [1fd47b50] QuadGK v2.11.3
@@ -1464,7 +1465,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [795d4caa] ReadOnlyDicts v1.0.1
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v4.5.1
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
@@ -1476,7 +1477,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9dfe8606] SCCNonlinearSolve v1.15.3
   [fdea26ae] SIMD v3.7.2
 ⌃ [0bca4576] SciMLBase v3.54.0
-  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
   [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
 ⌃ [c0aeaf25] SciMLOperators v1.30.0
@@ -1625,7 +1626,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [075b6546] libsixel_jll v1.10.5+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
-  [c5f90fcd] libwebp_jll v1.6.0+0
+⌃ [c5f90fcd] libwebp_jll v1.6.0+0
   [f8abcde7] micromamba_jll v2.3.1+0
   [009596ad] mtdev_jll v1.1.7+0
   [1317d2d5] oneTBB_jll v2022.3.0+0
