@@ -1,11 +1,11 @@
 ---
 author: "Sebastian Micluța-Câmpeanu, Mikhail Vaganov"
-title: "Liquid argon benchmarks"
+title: "Liquid Argon Benchmarks"
 ---
 
 
 The purpose of these benchmarks is to compare several integrators for use in
-molecular dynamics simulation. We will use a simulation of liquid argon form the
+molecular dynamics simulation. We will use a simulation of liquid argon from the
 examples of NBodySimulator as test case.
 
 ```julia
@@ -118,7 +118,7 @@ run_benchmark! (generic function with 1 method)
 
 
 
-We will consider symplectic integrators first
+We will consider symplectic integrators first.
 
 ```julia
 symplectic_integrators = [
@@ -216,27 +216,27 @@ tim ⋯
 Int ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ OrdinaryDiffEqSymplecticRK.Veloc…   80.3723  0.0001     0.00232702  
+   1 │ OrdinaryDiffEqSymplecticRK.Veloc…   79.9009  0.0001     0.00232702  
     ⋯
-   2 │ OrdinaryDiffEqSymplecticRK.Verle…   76.9088  0.000105   0.00213909
-   3 │ OrdinaryDiffEqSymplecticRK.Pseud…  162.264   9.8e-5     0.00335772
-   4 │ OrdinaryDiffEqSymplecticRK.McAte2  247.88    0.000102   0.00334536
-   5 │ OrdinaryDiffEqSymplecticRK.Calvo…  169.424   0.000238   0.00415235  
+   2 │ OrdinaryDiffEqSymplecticRK.Verle…   76.7446  0.000105   0.00213909
+   3 │ OrdinaryDiffEqSymplecticRK.Pseud…  162.123   9.8e-5     0.00335772
+   4 │ OrdinaryDiffEqSymplecticRK.McAte2  238.328   0.000102   0.00334536
+   5 │ OrdinaryDiffEqSymplecticRK.Calvo…  168.881   0.000238   0.00415235  
     ⋯
-   6 │ OrdinaryDiffEqSymplecticRK.McAte5  192.22    0.000292   7.96513e-5
-   7 │ OrdinaryDiffEqSymplecticRK.Yoshi…  171.385   0.000374   0.00135281
-   8 │ OrdinaryDiffEqSymplecticRK.Kahan…  171.292   0.000844   0.025281
+   6 │ OrdinaryDiffEqSymplecticRK.McAte5  192.604   0.000292   7.96513e-5
+   7 │ OrdinaryDiffEqSymplecticRK.Yoshi…  171.179   0.000374   0.00135281
+   8 │ OrdinaryDiffEqSymplecticRK.Kahan…  171.357   0.000844   0.025281
   ⋮  │                 ⋮                     ⋮         ⋮           ⋮       
     ⋱
-  84 │ OrdinaryDiffEqSymplecticRK.Pseud…   16.6453  0.00098    0.0960019   
+  84 │ OrdinaryDiffEqSymplecticRK.Pseud…   16.6409  0.00098    0.0960019   
     ⋯
-  85 │ OrdinaryDiffEqSymplecticRK.McAte2   23.9764  0.00102    0.0326157
-  86 │ OrdinaryDiffEqSymplecticRK.Calvo…   16.9732  0.00238    0.011096
-  87 │ OrdinaryDiffEqSymplecticRK.McAte5   19.3989  0.00292    0.0648294
-  88 │ OrdinaryDiffEqSymplecticRK.Yoshi…   17.4655  0.00374    0.0583815   
+  85 │ OrdinaryDiffEqSymplecticRK.McAte2   23.8836  0.00102    0.0326157
+  86 │ OrdinaryDiffEqSymplecticRK.Calvo…   16.9337  0.00238    0.011096
+  87 │ OrdinaryDiffEqSymplecticRK.McAte5   19.3898  0.00292    0.0648294
+  88 │ OrdinaryDiffEqSymplecticRK.Yoshi…   17.4704  0.00374    0.0583815   
     ⋯
-  89 │ OrdinaryDiffEqSymplecticRK.Kahan…   17.0136  0.00844    0.0647342
-  90 │ OrdinaryDiffEqSymplecticRK.SofSp…   18.6609  0.01576    2.26617
+  89 │ OrdinaryDiffEqSymplecticRK.Kahan…   17.0153  0.00844    0.0647342
+  90 │ OrdinaryDiffEqSymplecticRK.SofSp…   18.6608  0.01576    2.26617
                                                    3 columns and 75 rows om
 itted
 ```
@@ -256,9 +256,10 @@ The energy error as a function of runtime is given by
 
 
 
-Looking at the runtime as a function of timesteps, we can observe that we have
-a linear dependency for each method, and the slope is the previously computed
-cost per step.
+Looking at the runtime as a function of the number of timesteps, the runtime of
+each method is proportional to the number of steps (in the table above, a 10x
+larger `τ` gives a roughly 10x shorter runtime), with the constant of
+proportionality set by the cost per step estimated above.
 
 ```julia
 @df results plot(:timesteps, :runtime, group = :integrator,
@@ -305,7 +306,7 @@ plt
 
 
 
-Now, let us compare some adaptive methods
+Now, let us compare some adaptive methods.
 
 ```julia
 adaptive_integrators=[
@@ -332,7 +333,8 @@ discontinuous every time a pair of particles crosses the cutoff radius. An
 adaptive error controller cannot integrate through those jumps: below roughly
 `reltol = 1e-7` the majority of the proposed steps are rejected at cutoff
 crossings, the accepted step size collapses, and the cost diverges. Measured
-here (N=128, t=10, one solve of `Tsit5`, extrapolated from a step-capped run):
+separately when this grid was chosen (not by this page; N=128, t=10, one solve
+of `Tsit5`, extrapolated from a step-capped run):
 
 | `reltol` | runtime for `t = 10` |
 |---|---|
@@ -422,37 +424,37 @@ rgy ⋯
 at6 ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ OrdinaryDiffEqTsit5.Tsit5   308.613    1.17127e-8   1.17127e-8     0
+   1 │ OrdinaryDiffEqTsit5.Tsit5   308.624    1.17127e-8   1.17127e-8     0
 .20 ⋯
-   2 │ OrdinaryDiffEqVerner.Vern7  235.224    2.29126e-7   2.29126e-7     0
+   2 │ OrdinaryDiffEqVerner.Vern7  236.531    2.29126e-7   2.29126e-7     0
 .00
-   3 │ OrdinaryDiffEqVerner.Vern9  319.748    2.66515e-6   2.66515e-6     0
+   3 │ OrdinaryDiffEqVerner.Vern9  321.024    2.66515e-6   2.66515e-6     0
 .00
-   4 │ OrdinaryDiffEqRKN.DPRKN6    919.038    1.17942e-8   1.17942e-8     0
+   4 │ OrdinaryDiffEqRKN.DPRKN6    916.101    1.17942e-8   1.17942e-8     0
 .03
-   5 │ OrdinaryDiffEqRKN.DPRKN8    985.563    3.42968e-8   3.42968e-8     0
+   5 │ OrdinaryDiffEqRKN.DPRKN8    984.309    3.42968e-8   3.42968e-8     0
 .00 ⋯
-   6 │ OrdinaryDiffEqRKN.DPRKN12   439.331    4.6144e-7    4.6144e-7      0
+   6 │ OrdinaryDiffEqRKN.DPRKN12   437.56     4.6144e-7    4.6144e-7      0
 .00
-   7 │ OrdinaryDiffEqTsit5.Tsit5   107.79     1.17127e-7   1.17127e-7     0
+   7 │ OrdinaryDiffEqTsit5.Tsit5   107.867    1.17127e-7   1.17127e-7     0
 .50
-   8 │ OrdinaryDiffEqVerner.Vern7   59.7784   2.29126e-6   2.29126e-6     0
+   8 │ OrdinaryDiffEqVerner.Vern7   59.9182   2.29126e-6   2.29126e-6     0
 .00
   ⋮  │             ⋮                   ⋮           ⋮            ⋮          
   ⋮ ⋱
-  24 │ OrdinaryDiffEqRKN.DPRKN12    11.9511   0.00046144   0.00046144     0
+  24 │ OrdinaryDiffEqRKN.DPRKN12    11.9699   0.00046144   0.00046144     0
 .10 ⋯
-  25 │ OrdinaryDiffEqTsit5.Tsit5     7.30041  0.000117127  0.000117127   38
+  25 │ OrdinaryDiffEqTsit5.Tsit5     7.30912  0.000117127  0.000117127   38
 .27
-  26 │ OrdinaryDiffEqVerner.Vern7    7.61191  0.00229126   0.00229126    61
+  26 │ OrdinaryDiffEqVerner.Vern7    7.65728  0.00229126   0.00229126    61
 .42
-  27 │ OrdinaryDiffEqVerner.Vern9    9.1775   0.0266515    0.0266515    960
+  27 │ OrdinaryDiffEqVerner.Vern9    9.19155  0.0266515    0.0266515    960
 .91
-  28 │ OrdinaryDiffEqRKN.DPRKN6      8.26469  0.000117942  0.000117942    0
+  28 │ OrdinaryDiffEqRKN.DPRKN6      8.27101  0.000117942  0.000117942    0
 .85 ⋯
-  29 │ OrdinaryDiffEqRKN.DPRKN8      7.48072  0.000342968  0.000342968    0
+  29 │ OrdinaryDiffEqRKN.DPRKN8      7.48399  0.000342968  0.000342968    0
 .12
-  30 │ OrdinaryDiffEqRKN.DPRKN12     5.66509  0.0046144    0.0046144    194
+  30 │ OrdinaryDiffEqRKN.DPRKN12     5.6808   0.0046144    0.0046144    194
 .54
                                                    4 columns and 15 rows om
 itted
@@ -537,37 +539,37 @@ rgy ⋯
 at6 ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ OrdinaryDiffEqSymplecticRK.Veloc…   80.3642         0.0001         0
+   1 │ OrdinaryDiffEqSymplecticRK.Veloc…   80.5142         0.0001         0
 .00 ⋯
-   2 │ OrdinaryDiffEqSymplecticRK.Verle…   77.0029         0.000105       0
+   2 │ OrdinaryDiffEqSymplecticRK.Verle…   76.9356         0.000105       0
 .00
-   3 │ OrdinaryDiffEqSymplecticRK.Pseud…  162.236          9.8e-5         0
+   3 │ OrdinaryDiffEqSymplecticRK.Pseud…  162.009          9.8e-5         0
 .00
-   4 │ OrdinaryDiffEqSymplecticRK.McAte2  239.195          0.000102       0
+   4 │ OrdinaryDiffEqSymplecticRK.McAte2  238.624          0.000102       0
 .00
-   5 │ OrdinaryDiffEqSymplecticRK.Calvo…  169.543          0.000238       0
+   5 │ OrdinaryDiffEqSymplecticRK.Calvo…  169.451          0.000238       0
 .00 ⋯
-   6 │ OrdinaryDiffEqSymplecticRK.Veloc…   62.6565         0.000129155    0
+   6 │ OrdinaryDiffEqSymplecticRK.Veloc…   62.6855         0.000129155    0
 .00
-   7 │ OrdinaryDiffEqSymplecticRK.Verle…   58.7186         0.000135613    0
+   7 │ OrdinaryDiffEqSymplecticRK.Verle…   58.836          0.000135613    0
 .00
-   8 │ OrdinaryDiffEqSymplecticRK.Pseud…  124.796          0.000126572    0
+   8 │ OrdinaryDiffEqSymplecticRK.Pseud…  125.237          0.000126572    0
 .00
   ⋮  │                 ⋮                      ⋮              ⋮             
   ⋮ ⋱
-  59 │ OrdinaryDiffEqRKN.DPRKN12           56.8295   missing              0
+  59 │ OrdinaryDiffEqRKN.DPRKN12           56.6258   missing              0
 .00 ⋯
-  60 │ OrdinaryDiffEqRKN.DPRKN6            16.2365   missing              0
+  60 │ OrdinaryDiffEqRKN.DPRKN6            16.2221   missing              0
 .00
-  61 │ OrdinaryDiffEqRKN.DPRKN8            18.8125   missing              0
+  61 │ OrdinaryDiffEqRKN.DPRKN8            18.779    missing              0
 .02
-  62 │ OrdinaryDiffEqRKN.DPRKN12           11.9432   missing              0
+  62 │ OrdinaryDiffEqRKN.DPRKN12           11.9506   missing              0
 .10
-  63 │ OrdinaryDiffEqRKN.DPRKN6             8.26727  missing              0
+  63 │ OrdinaryDiffEqRKN.DPRKN6             8.27401  missing              0
 .85 ⋯
-  64 │ OrdinaryDiffEqRKN.DPRKN8             7.48844  missing              0
+  64 │ OrdinaryDiffEqRKN.DPRKN8             7.48376  missing              0
 .12
-  65 │ OrdinaryDiffEqRKN.DPRKN12            5.66998  missing            194
+  65 │ OrdinaryDiffEqRKN.DPRKN12            5.67077  missing            194
 .54
                                                    6 columns and 50 rows om
 itted
@@ -628,8 +630,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [91a5bcdd] Plots v1.41.7
   [33c8b6b6] ProgressLogging v0.1.6
   [31c91b34] SciMLBenchmarks v0.2.1
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [f3b207a7] StatsPlots v0.15.8
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
@@ -641,7 +644,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [621f4979] AbstractFFTs v1.5.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [7d9fca2a] Arpack v0.5.4
   [4fba245c] ArrayInterface v7.30.2
@@ -652,7 +655,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d360d2e6] ChainRulesCore v1.26.1
   [aaaa29a8] Clustering v0.15.8
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
   [38540f10] CommonSolve v0.2.14
@@ -668,7 +671,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.21.1
+⌃ [2b5f629d] DiffEqBase v7.21.1
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
@@ -685,7 +688,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a4df4552] FastPower v1.5.0
   [5789e2e9] FileIO v1.20.0
   [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
@@ -722,7 +725,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e1d29d7a] Missings v1.2.0
   [46d2c3a1] MuladdMacro v0.2.7
   [6f286f6a] MultivariateStats v0.10.5
-  [ffc61752] Mustache v1.0.21
+⌃ [ffc61752] Mustache v1.0.21
   [0e6f8da7] NBodySimulator v1.16.0
   [77ba4419] NaNMath v1.1.4
   [b8a86587] NearestNeighbors v0.4.29
@@ -750,7 +753,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [90014a1f] PDMats v0.11.41
 ⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.7.1
@@ -760,12 +763,12 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [27ebfcd6] Primes v0.5.7
   [33c8b6b6] ProgressLogging v0.1.6
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.5.0
+⌃ [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
   [c84ed2f1] Ratios v0.4.5
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v4.5.1
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
@@ -790,7 +793,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
   [860ef19b] StableRNGs v1.0.4
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
   [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
@@ -804,14 +807,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [62fd8b95] TensorCore v0.1.1
-  [a759f4b9] TimerOutputs v1.2.1
+⌃ [a759f4b9] TimerOutputs v1.2.1
   [781d530d] TruncatedStacktraces v1.4.0
   [1cfade01] UnicodeFun v0.4.1
   [41fe7b60] Unzip v0.2.0
   [44d3d7a6] Weave v0.10.12
   [cc8bc4a8] Widgets v0.6.8
   [efce3f68] WoodburyMatrices v1.1.0
-  [ddb6d928] YAML v0.4.16
+⌃ [ddb6d928] YAML v0.4.16
 ⌅ [68821587] Arpack_jll v3.5.2+0
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.7+0
@@ -883,7 +886,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
-  [a4ae2306] libaom_jll v3.14.1+0
+⌃ [a4ae2306] libaom_jll v3.14.1+0
   [0ac62f75] libass_jll v0.17.5+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
