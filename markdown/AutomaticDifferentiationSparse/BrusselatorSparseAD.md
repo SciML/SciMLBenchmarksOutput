@@ -1,6 +1,6 @@
 ---
 author: "Guillaume Dalle"
-title: "Brusselator sparse AD benchmarks"
+title: "Brusselator Sparse AD Benchmarks"
 ---
 ```julia
 using ADTypes
@@ -403,7 +403,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌃ [6e696c72] AbstractPlutoDingetjes v1.4.0
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [9b6a8646] AllocCheck v0.2.6
   [ec485272] ArnoldiMethod v0.4.0
@@ -415,7 +415,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [d360d2e6] ChainRulesCore v1.26.1
   [0ca39b1e] Chairmarks v1.3.1
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
   [5ae59095] Colors v0.13.1
 ⌅ [861a8166] Combinatorics v1.0.2
@@ -436,9 +436,9 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [a82114a7] DifferentiationInterfaceTest v0.11.0
-  [8d63f2c5] DispatchDoctor v0.4.28
+⌃ [8d63f2c5] DispatchDoctor v0.4.28
   [ffbed154] DocStringExtensions v0.9.5
-  [5b8099bc] DomainSets v0.8.1
+⌃ [5b8099bc] DomainSets v0.8.1
 ⌃ [7c1d4256] DynamicPolynomials v0.6.7
   [4e289a0a] EnumX v1.0.7
 ⌃ [7da242da] Enzyme v0.13.199
@@ -480,15 +480,15 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [dbe65cb8] MistyClosures v2.1.0
 ⌃ [da2b9cff] Mooncake v0.5.48
   [2e0e35c7] Moshi v0.3.12
-  [102ac46a] MultivariatePolynomials v0.5.19
+⌃ [102ac46a] MultivariatePolynomials v0.5.19
   [ffc61752] Mustache v1.0.21
-  [d8a4904e] MutableArithmetics v1.8.0
+⌃ [d8a4904e] MutableArithmetics v1.8.0
   [77ba4419] NaNMath v1.1.4
   [d8793406] ObjectFile v0.5.1
   [bac558e1] OrderedCollections v2.0.1
 ⌅ [69de0a69] Parsers v2.8.7 [loaded: v2.8.8]
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.7.1
@@ -543,7 +543,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [41fe7b60] Unzip v0.2.0
   [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.16
+⌃ [ddb6d928] YAML v0.4.16 [loaded: v0.4.17]
 ⌃ [e88e6eb3] Zygote v0.7.12
   [700de1a5] ZygoteRules v0.2.8
   [6e34b625] Bzip2_jll v1.0.9+0
