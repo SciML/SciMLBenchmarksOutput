@@ -1,13 +1,10 @@
 
 using ParameterizedFunctions, OrdinaryDiffEq, DiffEqParamEstim, Optimization
 using OptimizationBBO, OptimizationNLopt, ForwardDiff, Plots, BenchmarkTools
-import ModelingToolkit
+using ModelingToolkit
+using ModelingToolkitBase
+using SciCompDSL
 using ModelingToolkit: @mtkbuild, D_nounits as D, t_nounits as t
-@static if isdefined(ModelingToolkit, Symbol("@mtkmodel"))
-    using ModelingToolkit: @mtkmodel
-else
-    using SciCompDSL: @mtkmodel
-end
 gr(fmt = :png)
 
 

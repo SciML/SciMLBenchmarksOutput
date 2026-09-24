@@ -9,13 +9,10 @@ title: "FitzHugh-Nagumo Parameter Estimation Benchmarks"
 ```julia
 using ParameterizedFunctions, OrdinaryDiffEq, DiffEqParamEstim, Optimization
 using OptimizationBBO, OptimizationNLopt, ForwardDiff, Plots, BenchmarkTools
-import ModelingToolkit
+using ModelingToolkit
+using ModelingToolkitBase
+using SciCompDSL
 using ModelingToolkit: @mtkbuild, D_nounits as D, t_nounits as t
-@static if isdefined(ModelingToolkit, Symbol("@mtkmodel"))
-    using ModelingToolkit: @mtkmodel
-else
-    using SciCompDSL: @mtkmodel
-end
 gr(fmt = :png)
 ```
 
@@ -70,13 +67,13 @@ Model fitz:
 Equations (2):
   2 standard: see equations(fitz)
 Unknowns (2): see unknowns(fitz)
-  v(t) [defaults to 1.0]
-  w(t) [defaults to 1.0]
+  w(t)
+  v(t)
 Parameters (4): see parameters(fitz)
-  a [defaults to 0.7]
-  l [defaults to 0.5]
-  b [defaults to 0.8]
-  τinv [defaults to 0.08]
+  a
+  b
+  τinv
+  l
 ```
 
 
@@ -92,6 +89,8 @@ prob_short = ODEProblem(fitz, r0, tspan2, p)
 
 ```
 ODEProblem with uType Vector{Float64} and tType Float64. In-place: true
+Initialization status: FULLY_DETERMINED
+Non-trivial mass matrix: false
 timespan: (0.0, 3.0)
 u0: 2-element Vector{Float64}:
  1.0
@@ -178,9 +177,10 @@ data = convert(Array, data_sol)
 
 ```
 2×3001 Matrix{Float64}:
- 1.0  1.00463  1.00917  1.01363  1.01801  …  -1.15284   -1.14922   -1.1456
- 1.0  1.00811  1.01624  1.02439  1.03256     -0.203468  -0.205642  -0.20779
-6
+ 1.0  1.00072  1.00144  1.00216  1.00289  …  -0.229157  -0.228976  -0.22879
+3
+ 1.0  1.00166  1.00332  1.00497  1.00661     -0.65759   -0.655923  -0.65424
+8
 ```
 
 
@@ -219,13 +219,13 @@ optprob = OptimizationProblem(obj_short, glo_init, lb = first.(glo_bounds), ub =
 ```
 
 ```
-1.755 s (2619481 allocations: 365.99 MiB)
+3.099 s (21033773 allocations: 802.07 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.7003779957264482
- 0.7996867419647152
- 0.08028113148322967
- 0.49981889384931144
+ 0.8623890659022275
+ 0.945443097620465
+ 0.08046129398832738
+ 0.5018245184440051
 ```
 
 
@@ -239,13 +239,13 @@ optprob = OptimizationProblem(obj_short, glo_init, lb = first.(glo_bounds), ub =
 ```
 
 ```
-1.744 s (2622088 allocations: 366.35 MiB)
+3.055 s (21099793 allocations: 804.50 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.6721211770923089
- 0.7991104127198553
- 0.07128243078538998
- 0.5043226932275758
+ 0.06991926488354389
+ 0.5790622633799525
+ 0.1363129877223006
+ 0.498734308432895
 ```
 
 
@@ -259,13 +259,13 @@ optprob = OptimizationProblem(obj_short, glo_init, lb = first.(glo_bounds), ub =
 ```
 
 ```
-2.534 s (2653090 allocations: 369.91 MiB)
+4.822 s (42399916 allocations: 1.11 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.8906119496477232
- 0.8031703431693116
- 0.14749871834445383
- 0.4770009384750567
+ 1.647558880873813
+ 1.3622621889272057
+ 0.05904444862101246
+ 0.5006967270480334
 ```
 
 
@@ -282,31 +282,441 @@ obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short
 ```
 
 ```
-(::SciMLBase.OptimizationFunction{true, SciMLBase.NoAD, DiffEqParamEstim.va
-r"#29#30"{Nothing, typeof(DiffEqParamEstim.STANDARD_PROB_GENERATOR), Base.P
-airs{Symbol, Any, Tuple{Symbol, Symbol, Symbol}, @NamedTuple{tstops::Vector
-{Float64}, reltol::Float64, abstol::Float64}}, SciMLBase.ODEProblem{Vector{
-Float64}, Tuple{Float64, Float64}, true, ModelingToolkit.MTKParameters{Vect
-or{Float64}, Tuple{}, Tuple{}, Tuple{}, Tuple{}}, SciMLBase.ODEFunction{tru
-e, SciMLBase.AutoSpecialize, ModelingToolkit.var"#f#1091"{RuntimeGeneratedF
-unctions.RuntimeGeneratedFunction{(:ˍ₋arg1, :ˍ₋arg2, :t), ModelingToolkit.v
-ar"#_RGF_ModTag", ModelingToolkit.var"#_RGF_ModTag", (0x3b95c30e, 0x865cb06
-f, 0x6bb99b8f, 0x99b33ff9, 0x704c42e5), Nothing}, RuntimeGeneratedFunctions
-.RuntimeGeneratedFunction{(:ˍ₋out, :ˍ₋arg1, :ˍ₋arg2, :t), ModelingToolkit.v
-ar"#_RGF_ModTag", ModelingToolkit.var"#_RGF_ModTag", (0x539c4e4e, 0xab6932f
-4, 0x7b1041d1, 0x7941373c, 0x63ed1648), Nothing}}, LinearAlgebra.UniformSca
-ling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, 
-Nothing, Nothing, Nothing, Nothing, ModelingToolkit.ObservedFunctionCache{M
-odelingToolkit.ODESystem}, Nothing, ModelingToolkit.ODESystem, Nothing, Not
-hing}, Base.Pairs{Symbol, Union{}, Tuple{}, @NamedTuple{}}, SciMLBase.Stand
-ardODEProblem}, OrdinaryDiffEqVerner.Vern9{typeof(OrdinaryDiffEqCore.trivia
-l_limiter!), typeof(OrdinaryDiffEqCore.trivial_limiter!), Static.False}, Di
-ffEqParamEstim.L2Loss{Vector{Float64}, Matrix{Float64}, Nothing, Nothing, N
-othing}, Nothing, Tuple{}}, Nothing, Nothing, Nothing, Nothing, Nothing, No
-thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeo
-f(SciMLBase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing, Nothing, Nothing, 
-Nothing, Nothing, Nothing, Nothing, Nothing, Nothing}) (generic function wi
-th 1 method)
+SciMLBase.OptimizationFunction{true, SciMLBase.NoAD, DiffEqParamEstim.var"#
+37#38"{Nothing, typeof(DiffEqParamEstim.STANDARD_PROB_GENERATOR), Base.Pair
+s{Symbol, Any, Nothing, @NamedTuple{tstops::Vector{Float64}, reltol::Float6
+4, abstol::Float64}}, SciMLBase.ODEProblem{Vector{Float64}, Tuple{Float64, 
+Float64}, true, ModelingToolkitBase.MTKParameters{Vector{Float64}, Vector{F
+loat64}, Tuple{}, Tuple{}, Tuple{}, Tuple{}}, SciMLBase.ODEFunction{true, S
+ciMLBase.AutoDespecialize, ModelingToolkitBase.GeneratedFunctionWrapper{Tup
+le{2, 3, true}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:___mtk
+unknowns___, :___mtkparameters___, :__argₛᵧₘ12968198168038750593), Modeling
+ToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xb4
+dec7fc, 0x0eef51a9, 0xe6d646f8, 0xd5b37c85, 0x7ae33bfd), Nothing}, RuntimeG
+eneratedFunctions.RuntimeGeneratedFunction{(:__argₛᵧₘ1401282876548370056, :
+___mtkunknowns___, :___mtkparameters___, :__argₛᵧₘ12968198168038750593), Mo
+delingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag",
+ (0xcc4caf47, 0xa22b65af, 0xd2ae4f08, 0x45b5d405, 0xd97af149), Nothing}}, L
+inearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Noth
+ing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Modelin
+gToolkitBase.ObservedFunctionCache{ModelingToolkitBase.System, Nothing}, No
+thing, ModelingToolkitBase.System, Union{Nothing, SciMLBase.OverrideInitDat
+a}, Union{Nothing, SciMLBase.ODENLStepData}}, Base.Pairs{Symbol, Union{}, N
+othing, @NamedTuple{}}, SciMLBase.StandardODEProblem}, OrdinaryDiffEqVerner
+.Vern9{typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(OrdinaryDiffEqCo
+re.trivial_limiter!), FastBroadcast.Serial, Val{true}}, DiffEqParamEstim.L2
+Loss{Vector{Float64}, Matrix{Float64}, Nothing, Nothing, Nothing, Nothing},
+ Nothing, Tuple{}}, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
+othing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, typeof(SciMLB
+ase.DEFAULT_OBSERVED_NO_TIME), Nothing, Nothing, Nothing, Nothing, Nothing,
+ Nothing, Nothing, Nothing, Nothing, Nothing}(DiffEqParamEstim.var"#37#38"{
+Nothing, typeof(DiffEqParamEstim.STANDARD_PROB_GENERATOR), Base.Pairs{Symbo
+l, Any, Nothing, @NamedTuple{tstops::Vector{Float64}, reltol::Float64, abst
+ol::Float64}}, SciMLBase.ODEProblem{Vector{Float64}, Tuple{Float64, Float64
+}, true, ModelingToolkitBase.MTKParameters{Vector{Float64}, Vector{Float64}
+, Tuple{}, Tuple{}, Tuple{}, Tuple{}}, SciMLBase.ODEFunction{true, SciMLBas
+e.AutoDespecialize, ModelingToolkitBase.GeneratedFunctionWrapper{Tuple{2, 3
+, true}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:___mtkunknown
+s___, :___mtkparameters___, :__argₛᵧₘ12968198168038750593), ModelingToolkit
+Base.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xb4dec7fc,
+ 0x0eef51a9, 0xe6d646f8, 0xd5b37c85, 0x7ae33bfd), Nothing}, RuntimeGenerate
+dFunctions.RuntimeGeneratedFunction{(:__argₛᵧₘ1401282876548370056, :___mtku
+nknowns___, :___mtkparameters___, :__argₛᵧₘ12968198168038750593), ModelingT
+oolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xcc4
+caf47, 0xa22b65af, 0xd2ae4f08, 0x45b5d405, 0xd97af149), Nothing}}, LinearAl
+gebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Nothing, No
+thing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, ModelingToolki
+tBase.ObservedFunctionCache{ModelingToolkitBase.System, Nothing}, Nothing, 
+ModelingToolkitBase.System, Union{Nothing, SciMLBase.OverrideInitData}, Uni
+on{Nothing, SciMLBase.ODENLStepData}}, Base.Pairs{Symbol, Union{}, Nothing,
+ @NamedTuple{}}, SciMLBase.StandardODEProblem}, OrdinaryDiffEqVerner.Vern9{
+typeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(OrdinaryDiffEqCore.triv
+ial_limiter!), FastBroadcast.Serial, Val{true}}, DiffEqParamEstim.L2Loss{Ve
+ctor{Float64}, Matrix{Float64}, Nothing, Nothing, Nothing, Nothing}, Nothin
+g, Tuple{}}(nothing, DiffEqParamEstim.STANDARD_PROB_GENERATOR, Base.Pairs{S
+ymbol, Any, Nothing, @NamedTuple{tstops::Vector{Float64}, reltol::Float64, 
+abstol::Float64}}(:tstops => [0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07
+, 0.08, 0.09  …  2.91, 2.92, 2.93, 2.94, 2.95, 2.96, 2.97, 2.98, 2.99, 3.0]
+, :reltol => 1.0e-9, :abstol => 1.0e-9), SciMLBase.ODEProblem{Vector{Float6
+4}, Tuple{Float64, Float64}, true, ModelingToolkitBase.MTKParameters{Vector
+{Float64}, Vector{Float64}, Tuple{}, Tuple{}, Tuple{}, Tuple{}}, SciMLBase.
+ODEFunction{true, SciMLBase.AutoDespecialize, ModelingToolkitBase.Generated
+FunctionWrapper{Tuple{2, 3, true}, RuntimeGeneratedFunctions.RuntimeGenerat
+edFunction{(:___mtkunknowns___, :___mtkparameters___, :__argₛᵧₘ129681981680
+38750593), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#
+_RGF_ModTag", (0xb4dec7fc, 0x0eef51a9, 0xe6d646f8, 0xd5b37c85, 0x7ae33bfd),
+ Nothing}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:__argₛᵧₘ140
+1282876548370056, :___mtkunknowns___, :___mtkparameters___, :__argₛᵧₘ129681
+98168038750593), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase
+.var"#_RGF_ModTag", (0xcc4caf47, 0xa22b65af, 0xd2ae4f08, 0x45b5d405, 0xd97a
+f149), Nothing}}, LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothin
+g, Nothing, ModelingToolkitBase.ObservedFunctionCache{ModelingToolkitBase.S
+ystem, Nothing}, Nothing, ModelingToolkitBase.System, Union{Nothing, SciMLB
+ase.OverrideInitData}, Union{Nothing, SciMLBase.ODENLStepData}}, Base.Pairs
+{Symbol, Union{}, Nothing, @NamedTuple{}}, SciMLBase.StandardODEProblem}(Sc
+iMLBase.ODEFunction{true, SciMLBase.AutoDespecialize, ModelingToolkitBase.G
+eneratedFunctionWrapper{Tuple{2, 3, true}, RuntimeGeneratedFunctions.Runtim
+eGeneratedFunction{(:___mtkunknowns___, :___mtkparameters___, :__argₛᵧₘ1296
+8198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBa
+se.var"#_RGF_ModTag", (0xb4dec7fc, 0x0eef51a9, 0xe6d646f8, 0xd5b37c85, 0x7a
+e33bfd), Nothing}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:__a
+rgₛᵧₘ1401282876548370056, :___mtkunknowns___, :___mtkparameters___, :__argₛ
+ᵧₘ12968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToo
+lkitBase.var"#_RGF_ModTag", (0xcc4caf47, 0xa22b65af, 0xd2ae4f08, 0x45b5d405
+, 0xd97af149), Nothing}}, LinearAlgebra.UniformScaling{Bool}, Nothing, Noth
+ing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing
+, Nothing, Nothing, ModelingToolkitBase.ObservedFunctionCache{ModelingToolk
+itBase.System, Nothing}, Nothing, ModelingToolkitBase.System, Union{Nothing
+, SciMLBase.OverrideInitData}, Union{Nothing, SciMLBase.ODENLStepData}}(Mod
+elingToolkitBase.GeneratedFunctionWrapper{Tuple{2, 3, true}, RuntimeGenerat
+edFunctions.RuntimeGeneratedFunction{(:___mtkunknowns___, :___mtkparameters
+___, :__argₛᵧₘ12968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag",
+ ModelingToolkitBase.var"#_RGF_ModTag", (0xb4dec7fc, 0x0eef51a9, 0xe6d646f8
+, 0xd5b37c85, 0x7ae33bfd), Nothing}, RuntimeGeneratedFunctions.RuntimeGener
+atedFunction{(:__argₛᵧₘ1401282876548370056, :___mtkunknowns___, :___mtkpara
+meters___, :__argₛᵧₘ12968198168038750593), ModelingToolkitBase.var"#_RGF_Mo
+dTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xcc4caf47, 0xa22b65af, 0xd2
+ae4f08, 0x45b5d405, 0xd97af149), Nothing}}(RuntimeGeneratedFunctions.Runtim
+eGeneratedFunction{(:___mtkunknowns___, :___mtkparameters___, :__argₛᵧₘ1296
+8198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBa
+se.var"#_RGF_ModTag", (0xb4dec7fc, 0x0eef51a9, 0xe6d646f8, 0xd5b37c85, 0x7a
+e33bfd), Nothing}(nothing), RuntimeGeneratedFunctions.RuntimeGeneratedFunct
+ion{(:__argₛᵧₘ1401282876548370056, :___mtkunknowns___, :___mtkparameters___
+, :__argₛᵧₘ12968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", Mo
+delingToolkitBase.var"#_RGF_ModTag", (0xcc4caf47, 0xa22b65af, 0xd2ae4f08, 0
+x45b5d405, 0xd97af149), Nothing}(nothing)), LinearAlgebra.UniformScaling{Bo
+ol}(true), nothing, nothing, nothing, nothing, nothing, nothing, nothing, n
+othing, nothing, nothing, nothing, nothing, ModelingToolkitBase.ObservedFun
+ctionCache{ModelingToolkitBase.System, Nothing}(Model fitz:
+Equations (2):
+  2 standard: see equations(fitz)
+Unknowns (2): see unknowns(fitz)
+  w(t)
+  v(t)
+Parameters (4): see parameters(fitz)
+  a
+  b
+  τinv
+  l, Dict{Any, Any}(), false, false, ModelingToolkitBase, false, nothing), 
+nothing, Model fitz:
+Equations (2):
+  2 standard: see equations(fitz)
+Unknowns (2): see unknowns(fitz)
+  w(t)
+  v(t)
+Parameters (4): see parameters(fitz)
+  a
+  b
+  τinv
+  l, SciMLBase.OverrideInitData{SciMLBase.NonlinearProblem{Nothing, true, M
+odelingToolkitBase.MTKParameters{Vector{Float64}, StaticArraysCore.SVector{
+0, Float64}, Tuple{}, Tuple{}, Tuple{}, Tuple{}}, SciMLBase.NonlinearFuncti
+on{true, SciMLBase.AutoDespecialize, ModelingToolkitBase.GeneratedFunctionW
+rapper{Tuple{2, 2, true}, RuntimeGeneratedFunctions.RuntimeGeneratedFunctio
+n{(:___mtkunknowns___, :___mtkparameters___), ModelingToolkitBase.var"#_RGF
+_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xe0a7f55e, 0xcb0f8c13, 0
+x5afbe72e, 0x825c4ce9, 0x3418c4a5), Nothing}, RuntimeGeneratedFunctions.Run
+timeGeneratedFunction{(:__argₛᵧₘ1401282876548370056, :___mtkunknowns___, :_
+__mtkparameters___), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkit
+Base.var"#_RGF_ModTag", (0xac9dd6f8, 0xf3d8414c, 0x01f2cade, 0x451b4ee8, 0x
+29c649f2), Nothing}}, LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing,
+ Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Mo
+delingToolkitBase.ObservedFunctionCache{ModelingToolkitBase.System, Nothing
+}, Nothing, ModelingToolkitBase.System, Nothing, Nothing}, Base.Pairs{Symbo
+l, Union{}, Nothing, @NamedTuple{}}, SciMLBase.StandardNonlinearProblem, No
+thing, Nothing}, typeof(ModelingToolkitBase.update_initializeprob!), Modeli
+ngToolkitBase.InitializationMap{true, typeof(identity), ModelingToolkitBase
+.PromoteToTunableEltype{ModelingToolkitBase.CopyParamsByTemplate{true, Tupl
+e{ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunable, UnitRange{Int
+64}}, ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunable, UnitRange
+{Int64}}}, 1, Nothing}, Float64}}, ModelingToolkitBase.var"#initprobpmap_sp
+lit#770"{ModelingToolkitBase.MTKParametersReconstructor{ComposedFunction{Mo
+delingToolkitBase.PConstructorApplicator{typeof(identity)}, ModelingToolkit
+Base.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase.ParameterIndex{Sc
+iMLStructures.Tunable, UnitRange{Int64}}}, 1, Nothing}}, ComposedFunction{M
+odelingToolkitBase.PConstructorApplicator{typeof(identity)}, ModelingToolki
+tBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase.ParameterIndex{S
+ciMLStructures.Tunable, UnitRange{Int64}}}, 1, Nothing}}, Returns{Tuple{}},
+ Returns{Tuple{}}, Returns{Tuple{}}}}, ModelingToolkitBase.InitializationMe
+tadata{ModelingToolkitBase.ReconstructInitializeprob{ModelingToolkitBase.MT
+KParametersReconstructor{ComposedFunction{ModelingToolkitBase.PConstructorA
+pplicator{typeof(identity)}, ModelingToolkitBase.CopyParamsByTemplate{true,
+ Tuple{ModelingToolkitBase.IndepVarTemplate, ModelingToolkitBase.ParameterI
+ndex{SciMLStructures.Tunable, UnitRange{Int64}}, ModelingToolkitBase.Parame
+terIndex{SciMLStructures.Initials, UnitRange{Int64}}}, 1, Nothing}}, Return
+s{StaticArraysCore.SVector{0, Float64}}, Returns{Tuple{}}, Returns{Tuple{}}
+, Returns{Tuple{}}}, ComposedFunction{typeof(identity), ModelingToolkitBase
+.ObservedWrapper{true, ModelingToolkitBase.GeneratedFunctionWrapper{Tuple{2
+, 3, true}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:__mtk_arg_
+1, :___mtkparameters___, :__argₛᵧₘ12968198168038750593), ModelingToolkitBas
+e.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0x05e7e591, 0x
+9a09c886, 0x0267af3f, 0x585cfe8b, 0x75f79d7b), Nothing}, RuntimeGeneratedFu
+nctions.RuntimeGeneratedFunction{(:x1, :x2, :x3, :x4), ModelingToolkitBase.
+var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xb896e553, 0xa1
+18fcf5, 0xbfeb9719, 0xa096e58a, 0x357542a4), Nothing}}}}}, ModelingToolkitB
+ase.GetUpdatedU0{Nothing, SymbolicIndexingInterface.MultipleParametersGette
+r{SymbolicIndexingInterface.IndexerNotTimeseries, Vector{SymbolicIndexingIn
+terface.GetParameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructure
+s.Initials, Int64}}}, Nothing}}, ModelingToolkitBase.SetInitialUnknowns{Sym
+bolicIndexingInterface.MultipleSetters{Vector{SymbolicIndexingInterface.Par
+ameterHookWrapper{SymbolicIndexingInterface.SetParameterIndex{ModelingToolk
+itBase.ParameterIndex{SciMLStructures.Initials, Int64}}, SymbolicUtils.Basi
+cSymbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}}}}, V
+al{true}}(SciMLBase.NonlinearProblem{Nothing, true, ModelingToolkitBase.MTK
+Parameters{Vector{Float64}, StaticArraysCore.SVector{0, Float64}, Tuple{}, 
+Tuple{}, Tuple{}, Tuple{}}, SciMLBase.NonlinearFunction{true, SciMLBase.Aut
+oDespecialize, ModelingToolkitBase.GeneratedFunctionWrapper{Tuple{2, 2, tru
+e}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:___mtkunknowns___,
+ :___mtkparameters___), ModelingToolkitBase.var"#_RGF_ModTag", ModelingTool
+kitBase.var"#_RGF_ModTag", (0xe0a7f55e, 0xcb0f8c13, 0x5afbe72e, 0x825c4ce9,
+ 0x3418c4a5), Nothing}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{
+(:__argₛᵧₘ1401282876548370056, :___mtkunknowns___, :___mtkparameters___), M
+odelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag"
+, (0xac9dd6f8, 0xf3d8414c, 0x01f2cade, 0x451b4ee8, 0x29c649f2), Nothing}}, 
+LinearAlgebra.UniformScaling{Bool}, Nothing, Nothing, Nothing, Nothing, Not
+hing, Nothing, Nothing, Nothing, Nothing, Nothing, ModelingToolkitBase.Obse
+rvedFunctionCache{ModelingToolkitBase.System, Nothing}, Nothing, ModelingTo
+olkitBase.System, Nothing, Nothing}, Base.Pairs{Symbol, Union{}, Nothing, @
+NamedTuple{}}, SciMLBase.StandardNonlinearProblem, Nothing, Nothing}(SciMLB
+ase.NonlinearFunction{true, SciMLBase.AutoDespecialize, ModelingToolkitBase
+.GeneratedFunctionWrapper{Tuple{2, 2, true}, RuntimeGeneratedFunctions.Runt
+imeGeneratedFunction{(:___mtkunknowns___, :___mtkparameters___), ModelingTo
+olkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xe0a7
+f55e, 0xcb0f8c13, 0x5afbe72e, 0x825c4ce9, 0x3418c4a5), Nothing}, RuntimeGen
+eratedFunctions.RuntimeGeneratedFunction{(:__argₛᵧₘ1401282876548370056, :__
+_mtkunknowns___, :___mtkparameters___), ModelingToolkitBase.var"#_RGF_ModTa
+g", ModelingToolkitBase.var"#_RGF_ModTag", (0xac9dd6f8, 0xf3d8414c, 0x01f2c
+ade, 0x451b4ee8, 0x29c649f2), Nothing}}, LinearAlgebra.UniformScaling{Bool}
+, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, Nothing, N
+othing, Nothing, ModelingToolkitBase.ObservedFunctionCache{ModelingToolkitB
+ase.System, Nothing}, Nothing, ModelingToolkitBase.System, Nothing, Nothing
+}(ModelingToolkitBase.GeneratedFunctionWrapper{Tuple{2, 2, true}, RuntimeGe
+neratedFunctions.RuntimeGeneratedFunction{(:___mtkunknowns___, :___mtkparam
+eters___), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#
+_RGF_ModTag", (0xe0a7f55e, 0xcb0f8c13, 0x5afbe72e, 0x825c4ce9, 0x3418c4a5),
+ Nothing}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:__argₛᵧₘ140
+1282876548370056, :___mtkunknowns___, :___mtkparameters___), ModelingToolki
+tBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xac9dd6f8
+, 0xf3d8414c, 0x01f2cade, 0x451b4ee8, 0x29c649f2), Nothing}}(RuntimeGenerat
+edFunctions.RuntimeGeneratedFunction{(:___mtkunknowns___, :___mtkparameters
+___), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_
+ModTag", (0xe0a7f55e, 0xcb0f8c13, 0x5afbe72e, 0x825c4ce9, 0x3418c4a5), Noth
+ing}(nothing), RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:__argₛᵧ
+ₘ1401282876548370056, :___mtkunknowns___, :___mtkparameters___), ModelingTo
+olkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xac9d
+d6f8, 0xf3d8414c, 0x01f2cade, 0x451b4ee8, 0x29c649f2), Nothing}(nothing)), 
+LinearAlgebra.UniformScaling{Bool}(true), nothing, nothing, nothing, nothin
+g, nothing, nothing, nothing, nothing, nothing, nothing, ModelingToolkitBas
+e.ObservedFunctionCache{ModelingToolkitBase.System, Nothing}(Model fitz:
+Parameters (9): see parameters(fitz)
+  t
+  a
+  b
+  τinv
+  ⋮
+Observed (4): see observed(fitz), Dict{Any, Any}(), false, false, ModelingT
+oolkitBase, false, nothing), nothing, Model fitz:
+Parameters (9): see parameters(fitz)
+  t
+  a
+  b
+  τinv
+  ⋮
+Observed (4): see observed(fitz), nothing, nothing), nothing, ModelingToolk
+itBase.MTKParameters{Vector{Float64}, StaticArraysCore.SVector{0, Float64},
+ Tuple{}, Tuple{}, Tuple{}, Tuple{}}([0.0, 0.7, 0.8, 0.08, 0.5, 1.0, 0.0, 0
+.0, 1.0], Float64[], (), (), (), ()), SciMLBase.StandardNonlinearProblem(),
+ nothing, nothing, Base.Pairs{Symbol, Union{}, Nothing, @NamedTuple{}}()), 
+ModelingToolkitBase.update_initializeprob!, ModelingToolkitBase.Initializat
+ionMap{true, typeof(identity), ModelingToolkitBase.PromoteToTunableEltype{M
+odelingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase.Par
+ameterIndex{SciMLStructures.Tunable, UnitRange{Int64}}, ModelingToolkitBase
+.ParameterIndex{SciMLStructures.Tunable, UnitRange{Int64}}}, 1, Nothing}, F
+loat64}}(identity, ModelingToolkitBase.PromoteToTunableEltype{ModelingToolk
+itBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase.ParameterIndex{
+SciMLStructures.Tunable, UnitRange{Int64}}, ModelingToolkitBase.ParameterIn
+dex{SciMLStructures.Tunable, UnitRange{Int64}}}, 1, Nothing}, Float64}(Mode
+lingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase.Parame
+terIndex{SciMLStructures.Tunable, UnitRange{Int64}}, ModelingToolkitBase.Pa
+rameterIndex{SciMLStructures.Tunable, UnitRange{Int64}}}, 1, Nothing}((Mode
+lingToolkitBase.ParameterIndex{SciMLStructures.Tunable, UnitRange{Int64}}(S
+ciMLStructures.Tunable(), 9:9, false), ModelingToolkitBase.ParameterIndex{S
+ciMLStructures.Tunable, UnitRange{Int64}}(SciMLStructures.Tunable(), 6:6, f
+alse)), (2,), nothing))), ModelingToolkitBase.var"#initprobpmap_split#770"{
+ModelingToolkitBase.MTKParametersReconstructor{ComposedFunction{ModelingToo
+lkitBase.PConstructorApplicator{typeof(identity)}, ModelingToolkitBase.Copy
+ParamsByTemplate{true, Tuple{ModelingToolkitBase.ParameterIndex{SciMLStruct
+ures.Tunable, UnitRange{Int64}}}, 1, Nothing}}, ComposedFunction{ModelingTo
+olkitBase.PConstructorApplicator{typeof(identity)}, ModelingToolkitBase.Cop
+yParamsByTemplate{true, Tuple{ModelingToolkitBase.ParameterIndex{SciMLStruc
+tures.Tunable, UnitRange{Int64}}}, 1, Nothing}}, Returns{Tuple{}}, Returns{
+Tuple{}}, Returns{Tuple{}}}}(ModelingToolkitBase.MTKParametersReconstructor
+{ComposedFunction{ModelingToolkitBase.PConstructorApplicator{typeof(identit
+y)}, ModelingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBa
+se.ParameterIndex{SciMLStructures.Tunable, UnitRange{Int64}}}, 1, Nothing}}
+, ComposedFunction{ModelingToolkitBase.PConstructorApplicator{typeof(identi
+ty)}, ModelingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitB
+ase.ParameterIndex{SciMLStructures.Tunable, UnitRange{Int64}}}, 1, Nothing}
+}, Returns{Tuple{}}, Returns{Tuple{}}, Returns{Tuple{}}}(ModelingToolkitBas
+e.PConstructorApplicator{typeof(identity)}(identity) ∘ ModelingToolkitBase.
+CopyParamsByTemplate{true, Tuple{ModelingToolkitBase.ParameterIndex{SciMLSt
+ructures.Tunable, UnitRange{Int64}}}, 1, Nothing}((ModelingToolkitBase.Para
+meterIndex{SciMLStructures.Tunable, UnitRange{Int64}}(SciMLStructures.Tunab
+le(), 2:5, false),), (4,), nothing), ModelingToolkitBase.PConstructorApplic
+ator{typeof(identity)}(identity) ∘ ModelingToolkitBase.CopyParamsByTemplate
+{true, Tuple{ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunable, Un
+itRange{Int64}}}, 1, Nothing}((ModelingToolkitBase.ParameterIndex{SciMLStru
+ctures.Tunable, UnitRange{Int64}}(SciMLStructures.Tunable(), 6:9, false),),
+ (4,), nothing), Returns{Tuple{}}(()), Returns{Tuple{}}(()), Returns{Tuple{
+}}(()), 0)), ModelingToolkitBase.InitializationMetadata{ModelingToolkitBase
+.ReconstructInitializeprob{ModelingToolkitBase.MTKParametersReconstructor{C
+omposedFunction{ModelingToolkitBase.PConstructorApplicator{typeof(identity)
+}, ModelingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase
+.IndepVarTemplate, ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunab
+le, UnitRange{Int64}}, ModelingToolkitBase.ParameterIndex{SciMLStructures.I
+nitials, UnitRange{Int64}}}, 1, Nothing}}, Returns{StaticArraysCore.SVector
+{0, Float64}}, Returns{Tuple{}}, Returns{Tuple{}}, Returns{Tuple{}}}, Compo
+sedFunction{typeof(identity), ModelingToolkitBase.ObservedWrapper{true, Mod
+elingToolkitBase.GeneratedFunctionWrapper{Tuple{2, 3, true}, RuntimeGenerat
+edFunctions.RuntimeGeneratedFunction{(:__mtk_arg_1, :___mtkparameters___, :
+__argₛᵧₘ12968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", Model
+ingToolkitBase.var"#_RGF_ModTag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 0x58
+5cfe8b, 0x75f79d7b), Nothing}, RuntimeGeneratedFunctions.RuntimeGeneratedFu
+nction{(:x1, :x2, :x3, :x4), ModelingToolkitBase.var"#_RGF_ModTag", Modelin
+gToolkitBase.var"#_RGF_ModTag", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0xa096
+e58a, 0x357542a4), Nothing}}}}}, ModelingToolkitBase.GetUpdatedU0{Nothing, 
+SymbolicIndexingInterface.MultipleParametersGetter{SymbolicIndexingInterfac
+e.IndexerNotTimeseries, Vector{SymbolicIndexingInterface.GetParameterIndex{
+ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, Int64}}}, Noth
+ing}}, ModelingToolkitBase.SetInitialUnknowns{SymbolicIndexingInterface.Mul
+tipleSetters{Vector{SymbolicIndexingInterface.ParameterHookWrapper{Symbolic
+IndexingInterface.SetParameterIndex{ModelingToolkitBase.ParameterIndex{SciM
+LStructures.Initials, Int64}}, SymbolicUtils.BasicSymbolicImpl.var"typeof(B
+asicSymbolicImpl)"{SymbolicUtils.SymReal}}}}}}(ModelingToolkitBase.AtomicAr
+rayDict{SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{Symb
+olicUtils.SymReal}, Dict{SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSy
+mbolicImpl)"{SymbolicUtils.SymReal}, SymbolicUtils.BasicSymbolicImpl.var"ty
+peof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}(v(t) => 1.0, Initial(v(t)
+) => false, Initial(vˍt(t)) => false, b => 0.8, a => 0.7, τinv => 0.08, l =
+> 0.5, Initial(wˍt(t)) => false, w(t) => 1.0, Initial(w(t)) => false…), Mod
+elingToolkitBase.AtomicArrayDict{SymbolicUtils.BasicSymbolicImpl.var"typeof
+(BasicSymbolicImpl)"{SymbolicUtils.SymReal}, Dict{SymbolicUtils.BasicSymbol
+icImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}, SymbolicUtils
+.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}(
+), Symbolics.Equation[], true, true, ModelingToolkitBase.ReconstructInitial
+izeprob{ModelingToolkitBase.MTKParametersReconstructor{ComposedFunction{Mod
+elingToolkitBase.PConstructorApplicator{typeof(identity)}, ModelingToolkitB
+ase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase.IndepVarTemplate, 
+ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunable, UnitRange{Int64
+}}, ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, UnitRange{
+Int64}}}, 1, Nothing}}, Returns{StaticArraysCore.SVector{0, Float64}}, Retu
+rns{Tuple{}}, Returns{Tuple{}}, Returns{Tuple{}}}, ComposedFunction{typeof(
+identity), ModelingToolkitBase.ObservedWrapper{true, ModelingToolkitBase.Ge
+neratedFunctionWrapper{Tuple{2, 3, true}, RuntimeGeneratedFunctions.Runtime
+GeneratedFunction{(:__mtk_arg_1, :___mtkparameters___, :__argₛᵧₘ12968198168
+038750593), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"
+#_RGF_ModTag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 0x585cfe8b, 0x75f79d7b)
+, Nothing}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:x1, :x2, :
+x3, :x4), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_
+RGF_ModTag", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0xa096e58a, 0x357542a4), 
+Nothing}}}}}(ModelingToolkitBase.MTKParametersReconstructor{ComposedFunctio
+n{ModelingToolkitBase.PConstructorApplicator{typeof(identity)}, ModelingToo
+lkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase.IndepVarTempl
+ate, ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunable, UnitRange{
+Int64}}, ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, UnitR
+ange{Int64}}}, 1, Nothing}}, Returns{StaticArraysCore.SVector{0, Float64}},
+ Returns{Tuple{}}, Returns{Tuple{}}, Returns{Tuple{}}}(ModelingToolkitBase.
+PConstructorApplicator{typeof(identity)}(identity) ∘ ModelingToolkitBase.Co
+pyParamsByTemplate{true, Tuple{ModelingToolkitBase.IndepVarTemplate, Modeli
+ngToolkitBase.ParameterIndex{SciMLStructures.Tunable, UnitRange{Int64}}, Mo
+delingToolkitBase.ParameterIndex{SciMLStructures.Initials, UnitRange{Int64}
+}}, 1, Nothing}((ModelingToolkitBase.IndepVarTemplate(), ModelingToolkitBas
+e.ParameterIndex{SciMLStructures.Tunable, UnitRange{Int64}}(SciMLStructures
+.Tunable(), 1:4, false), ModelingToolkitBase.ParameterIndex{SciMLStructures
+.Initials, UnitRange{Int64}}(SciMLStructures.Initials(), 1:4, false)), (9,)
+, nothing), Returns{StaticArraysCore.SVector{0, Float64}}(Float64[]), Retur
+ns{Tuple{}}(()), Returns{Tuple{}}(()), Returns{Tuple{}}(()), 0), identity ∘
+ ModelingToolkitBase.ObservedWrapper{true, ModelingToolkitBase.GeneratedFun
+ctionWrapper{Tuple{2, 3, true}, RuntimeGeneratedFunctions.RuntimeGeneratedF
+unction{(:__mtk_arg_1, :___mtkparameters___, :__argₛᵧₘ12968198168038750593)
+, ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModT
+ag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 0x585cfe8b, 0x75f79d7b), Nothing}
+, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:x1, :x2, :x3, :x4), 
+ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag
+", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0xa096e58a, 0x357542a4), Nothing}}}
+(ModelingToolkitBase.GeneratedFunctionWrapper{Tuple{2, 3, true}, RuntimeGen
+eratedFunctions.RuntimeGeneratedFunction{(:__mtk_arg_1, :___mtkparameters__
+_, :__argₛᵧₘ12968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", M
+odelingToolkitBase.var"#_RGF_ModTag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 
+0x585cfe8b, 0x75f79d7b), Nothing}, RuntimeGeneratedFunctions.RuntimeGenerat
+edFunction{(:x1, :x2, :x3, :x4), ModelingToolkitBase.var"#_RGF_ModTag", Mod
+elingToolkitBase.var"#_RGF_ModTag", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0x
+a096e58a, 0x357542a4), Nothing}}(RuntimeGeneratedFunctions.RuntimeGenerated
+Function{(:__mtk_arg_1, :___mtkparameters___, :__argₛᵧₘ12968198168038750593
+), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_Mod
+Tag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 0x585cfe8b, 0x75f79d7b), Nothing
+}(nothing), RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:x1, :x2, :
+x3, :x4), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitBase.var"#_
+RGF_ModTag", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0xa096e58a, 0x357542a4), 
+Nothing}(nothing)))), ModelingToolkitBase.GetUpdatedU0{Nothing, SymbolicInd
+exingInterface.MultipleParametersGetter{SymbolicIndexingInterface.IndexerNo
+tTimeseries, Vector{SymbolicIndexingInterface.GetParameterIndex{ModelingToo
+lkitBase.ParameterIndex{SciMLStructures.Initials, Int64}}}, Nothing}}(Bool[
+0, 0], nothing, SymbolicIndexingInterface.MultipleParametersGetter{Symbolic
+IndexingInterface.IndexerNotTimeseries, Vector{SymbolicIndexingInterface.Ge
+tParameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials
+, Int64}}}, Nothing}(SymbolicIndexingInterface.GetParameterIndex{ModelingTo
+olkitBase.ParameterIndex{SciMLStructures.Initials, Int64}}[SymbolicIndexing
+Interface.GetParameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructu
+res.Initials, Int64}}(ModelingToolkitBase.ParameterIndex{SciMLStructures.In
+itials, Int64}(SciMLStructures.Initials(), 4, false)), SymbolicIndexingInte
+rface.GetParameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.
+Initials, Int64}}(ModelingToolkitBase.ParameterIndex{SciMLStructures.Initia
+ls, Int64}(SciMLStructures.Initials(), 1, false))], nothing)), ModelingTool
+kitBase.SetInitialUnknowns{SymbolicIndexingInterface.MultipleSetters{Vector
+{SymbolicIndexingInterface.ParameterHookWrapper{SymbolicIndexingInterface.S
+etParameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initial
+s, Int64}}, SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{
+SymbolicUtils.SymReal}}}}}(SymbolicIndexingInterface.MultipleSetters{Vector
+{SymbolicIndexingInterface.ParameterHookWrapper{SymbolicIndexingInterface.S
+etParameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initial
+s, Int64}}, SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{
+SymbolicUtils.SymReal}}}}(SymbolicIndexingInterface.ParameterHookWrapper{Sy
+mbolicIndexingInterface.SetParameterIndex{ModelingToolkitBase.ParameterInde
+x{SciMLStructures.Initials, Int64}}, SymbolicUtils.BasicSymbolicImpl.var"ty
+peof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}[SymbolicIndexingInterface.
+ParameterHookWrapper{SymbolicIndexingInterface.SetParameterIndex{ModelingTo
+olkitBase.ParameterIndex{SciMLStructures.Initials, Int64}}, SymbolicUtils.B
+asicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}(Sym
+bolicIndexingInterface.SetParameterIndex{ModelingToolkitBase.ParameterIndex
+{SciMLStructures.Initials, Int64}}(ModelingToolkitBase.ParameterIndex{SciML
+Structures.Initials, Int64}(SciMLStructures.Initials(), 4, false)), Initial
+(w(t))), SymbolicIndexingInterface.ParameterHookWrapper{SymbolicIndexingInt
+erface.SetParameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures
+.Initials, Int64}}, SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymboli
+cImpl)"{SymbolicUtils.SymReal}}(SymbolicIndexingInterface.SetParameterIndex
+{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, Int64}}(Model
+ingToolkitBase.ParameterIndex{SciMLStructures.Initials, Int64}(SciMLStructu
+res.Initials(), 1, false)), Initial(v(t)))]), [4, 1]), ModelingToolkitBase.
+MissingGuessValue.var"typeof(MissingGuessValue)"(ModelingToolkitBase.Missin
+gGuessValue.var"##Storage#HashedRandom"())), Val{true}()), nothing), [1.0, 
+1.0], (0.0, 3.0), ModelingToolkitBase.MTKParameters{Vector{Float64}, Vector
+{Float64}, Tuple{}, Tuple{}, Tuple{}, Tuple{}}([0.7, 0.8, 0.08, 0.5], [1.0,
+ 0.0, 0.0, 1.0], (), (), (), ()), Base.Pairs{Symbol, Union{}, Nothing, @Nam
+edTuple{}}(), SciMLBase.StandardODEProblem()), OrdinaryDiffEqVerner.Vern9{t
+ypeof(OrdinaryDiffEqCore.trivial_limiter!), typeof(OrdinaryDiffEqCore.trivi
+al_limiter!), FastBroadcast.Serial, Val{true}}(OrdinaryDiffEqCore.trivial_l
+imiter!, OrdinaryDiffEqCore.trivial_limiter!, FastBroadcast.Serial(), Val{t
+rue}()), DiffEqParamEstim.L2Loss{Vector{Float64}, Matrix{Float64}, Nothing,
+ Nothing, Nothing, Nothing}([0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07,
+ 0.08, 0.09  …  2.91, 2.92, 2.93, 2.94, 2.95, 2.96, 2.97, 2.98, 2.99, 3.0],
+ [1.0 1.000720435211627 … 1.22193331177933 1.222601511669354; 1.0 1.0016630
+55982029 … 1.1134077677576417 1.11271910687873], nothing, nothing, nothing,
+ nothing, nothing), nothing, ()), SciMLBase.NoAD(), nothing, nothing, nothi
+ng, nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing,
+ nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, nothing, no
+thing, nothing, nothing, nothing, nothing, nothing, nothing, nothing)
 ```
 
 
@@ -318,13 +728,13 @@ optprob = OptimizationProblem(obj_short, glo_init, lb = first.(glo_bounds), ub =
 ```
 
 ```
-2.143 s (2239359 allocations: 307.97 MiB)
-retcode: Failure
+6.877 s (59865528 allocations: 1.56 GiB)
+retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.45724737082466743
- 0.8075821752015804
- 0.02057613169019351
- 0.5555555555565391
+ 0.1920438957477088
+ 1.1316872427984634
+ 1.1111111111112206
+ 0.509577685189625
 ```
 
 
@@ -335,13 +745,13 @@ opt = Opt(:GN_CRS2_LM, 4)
 ```
 
 ```
-3.563 s (3760138 allocations: 517.13 MiB)
+6.948 s (59740224 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.7000000005883558
- 0.8000000000281178
- 0.08000000021928746
- 0.49999999992357474
+ 0.7000158274590738
+ 0.8000037121454004
+ 0.07999900099049384
+ 0.4999999938833638
 ```
 
 
@@ -352,13 +762,13 @@ opt = Opt(:GN_ISRES, 4)
 ```
 
 ```
-3.571 s (3760130 allocations: 517.13 MiB)
+6.883 s (59770053 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.6095667411588588
- 0.793961749868249
- 0.4004654837743708
- 0.3980345386925816
+ 2.9665737298595722
+ 3.110863912158915
+ 0.1109935572070363
+ 0.5061357357751198
 ```
 
 
@@ -369,20 +779,20 @@ opt = Opt(:GN_ESCH, 4)
 ```
 
 ```
-3.563 s (3760130 allocations: 517.13 MiB)
+6.844 s (59770053 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 2.870952323211343
- 0.8785244574068284
- 1.0108868029962597
- 0.3942824260063215
+ 2.796365322417901
+ 3.2957972086799545
+ 0.23476463032736128
+ 0.5122121745258533
 ```
 
 
 
 
 
-Now local optimization algorithms are used to check the global ones, these use the local constraints, different initial values and time step
+Now local optimization algorithms are used to check the global ones. These use the local bounds (`loc_bounds`) and initial values (`loc_init`).
 
 ```julia
 obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short),
@@ -407,13 +817,13 @@ opt = Opt(:LN_BOBYQA, 4)
 ```
 
 ```
-109.471 ms (119101 allocations: 16.36 MiB)
-retcode: Failure
+1.261 s (11028088 allocations: 294.58 MiB)
+retcode: Success
 u: 4-element Vector{Float64}:
- 0.7000000002743006
- 0.8000000000189882
- 0.08000000009650775
- 0.49999999996040245
+ 0.7000000000188623
+ 0.8000000000060236
+ 0.07999999999893552
+ 0.5000000000000322
 ```
 
 
@@ -424,13 +834,13 @@ opt = Opt(:LN_NELDERMEAD, 4)
 ```
 
 ```
-216.769 ms (237541 allocations: 32.65 MiB)
-retcode: Failure
+636.335 ms (5748224 allocations: 153.55 MiB)
+retcode: Success
 u: 4-element Vector{Float64}:
- 0.7000000002744104
- 0.8000000000190401
- 0.0800000000966486
- 0.49999999996046435
+ 1.0
+ 1.0
+ 0.07355092571547887
+ 0.5004047023109518
 ```
 
 
@@ -441,13 +851,13 @@ opt = Opt(:LD_SLSQP, 4)
 ```
 
 ```
-38.746 ms (31765 allocations: 5.14 MiB)
-retcode: Failure
+8.731 s (71095530 allocations: 1.90 GiB)
+retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.7000000002745831
- 0.8000000000190192
- 0.08000000009662883
- 0.49999999996039124
+ 0.700000000015133
+ 0.8000000000055394
+ 0.07999999999920873
+ 0.5000000000000321
 ```
 
 
@@ -458,13 +868,13 @@ opt = Opt(:LN_COBYLA, 4)
 ```
 
 ```
-3.578 s (3760144 allocations: 517.13 MiB)
+6.986 s (59740084 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.8450409658220658
- 0.801672031871045
- 0.13138401586977574
- 0.48194764012305213
+ 0.1829436856114406
+ 0.8339606715478033
+ 0.19453032306019252
+ 0.5003613601073567
 ```
 
 
@@ -475,13 +885,13 @@ opt = Opt(:LN_NEWUOA_BOUND, 4)
 ```
 
 ```
-359.790 ms (147912 allocations: 20.33 MiB)
+636.408 ms (4325260 allocations: 115.54 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
- 0.7006462276521443
- 0.8000018393871775
- 0.08021541141988033
- 0.4999060384063265
+ 0.24815174877228105
+ 0.4389927966494055
+ 0.08539344966317435
+ 0.49911205692389365
 ```
 
 
@@ -492,13 +902,13 @@ opt = Opt(:LN_PRAXIS, 4)
 ```
 
 ```
-29.204 ms (36666 allocations: 5.21 MiB)
+618.394 ms (5240323 allocations: 139.98 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
- 0.7000000002745912
- 0.8000000000190207
- 0.08000000009663276
- 0.4999999999603915
+ 0.7000000000149571
+ 0.8000000000049527
+ 0.0799999999991689
+ 0.5000000000000281
 ```
 
 
@@ -509,13 +919,13 @@ opt = Opt(:LN_SBPLX, 4)
 ```
 
 ```
-3.555 s (3760136 allocations: 517.13 MiB)
+7.021 s (59740066 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.6884688704363328
- 0.79987818745252
- 0.07595186517600398
- 0.5015220699439452
+ 0.7000016809870933
+ 0.8000002415243684
+ 0.07999987937160621
+ 0.5000000003805862
 ```
 
 
@@ -526,13 +936,13 @@ opt = Opt(:LD_MMA, 4)
 ```
 
 ```
-9.567 s (7390355 allocations: 1.20 GiB)
+16.155 s (119380443 allocations: 3.39 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.701543355241287
- 0.800018049143175
- 0.0805449557119587
- 0.49979898909434256
+ 0.2194953414908776
+ 0.7035126977082891
+ 0.13312823531746235
+ 0.499708318694746
 ```
 
 
@@ -552,13 +962,13 @@ optprob = OptimizationProblem(obj, glo_init, lb = first.(glo_bounds), ub = last.
 ```
 
 ```
-14.660 s (12649604 allocations: 1.65 GiB)
+23.444 s (225237319 allocations: 4.66 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.7013012469904306
- 0.7782253926876727
- 0.08942123652508982
- 0.49751565110869916
+ 0.6865401331545059
+ 0.9939645934178983
+ 0.07931450130001025
+ 0.4335805119868802
 ```
 
 
@@ -569,13 +979,13 @@ opt = Opt(:GN_ORIG_DIRECT_L, 4)
 ```
 
 ```
-6.404 s (5578165 allocations: 742.84 MiB)
-retcode: Failure
+56.862 s (546202158 allocations: 11.28 GiB)
+retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.8001828989453803
- 0.8024691357995184
- 0.7757963725071425
- 0.7407407407417246
+ 1.1111111111111116
+ 1.1111111111111107
+ 0.10059442158207468
+ 0.5761316872427985
 ```
 
 
@@ -586,13 +996,13 @@ opt = Opt(:GN_CRS2_LM, 4)
 ```
 
 ```
-26.495 s (23075645 allocations: 3.00 GiB)
-retcode: Failure
+114.323 s (1091640234 allocations: 22.55 GiB)
+retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.6999999999991512
- 0.8000000000066395
- 0.0799999999947598
- 0.49999999999129385
+ 0.6999999999966071
+ 0.800000000002869
+ 0.08000000000031732
+ 0.4999999999984082
 ```
 
 
@@ -603,13 +1013,13 @@ opt = Opt(:GN_ISRES, 4)
 ```
 
 ```
-176.064 s (154000136 allocations: 20.03 GiB)
+287.367 s (2729250063 allocations: 56.38 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.6999999998308142
- 0.799999999871599
- 0.079999999948865
- 0.4999999999276087
+ 0.7000000007202216
+ 0.8000000006791047
+ 0.08000000004505972
+ 0.5000000001610417
 ```
 
 
@@ -620,13 +1030,13 @@ opt = Opt(:GN_ESCH, 4)
 ```
 
 ```
-70.523 s (61600136 allocations: 8.01 GiB)
+114.861 s (1091700060 allocations: 22.55 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.6838156730466743
- 0.8336271266998949
- 0.009818653982842318
- 0.5130528463908323
+ 1.1211843185550265
+ 1.1856120302656863
+ 0.1160631914179038
+ 0.590580527999131
 ```
 
 
@@ -652,13 +1062,13 @@ opt = Opt(:LN_BOBYQA, 4)
 ```
 
 ```
-109.724 ms (119101 allocations: 16.36 MiB)
-retcode: Failure
+1.259 s (11028088 allocations: 294.58 MiB)
+retcode: Success
 u: 4-element Vector{Float64}:
- 0.7000000002743006
- 0.8000000000189882
- 0.08000000009650775
- 0.49999999996040245
+ 0.7000000000188623
+ 0.8000000000060236
+ 0.07999999999893552
+ 0.5000000000000322
 ```
 
 
@@ -669,13 +1079,13 @@ opt = Opt(:LN_NELDERMEAD, 4)
 ```
 
 ```
-181.715 ms (198437 allocations: 27.27 MiB)
-retcode: Failure
+644.622 ms (5748224 allocations: 153.55 MiB)
+retcode: Success
 u: 4-element Vector{Float64}:
- 0.7000000009461755
- 0.8000000000299927
- 0.08000000030969899
- 0.49999999985914045
+ 1.0
+ 1.0
+ 0.07355092571547887
+ 0.5004047023109518
 ```
 
 
@@ -686,13 +1096,13 @@ opt = Opt(:LD_SLSQP, 4)
 ```
 
 ```
-38.791 ms (31765 allocations: 5.14 MiB)
-retcode: Failure
+8.745 s (71095530 allocations: 1.90 GiB)
+retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.7000000002745831
- 0.8000000000190192
- 0.08000000009662883
- 0.49999999996039124
+ 0.700000000015133
+ 0.8000000000055394
+ 0.07999999999920873
+ 0.5000000000000321
 ```
 
 
@@ -701,8 +1111,17 @@ u: 4-element Vector{Float64}:
 
 # Conclusion
 
-As expected from other problems the longer sample proves to be extremely challenging for some of the global optimizers. A few give the accurate values, while others seem to struggle with accuracy a lot.
-It is observed that lower tolerance lead to higher accuracy but too low tolerance could affect the convergence time drastically. Also fitting a shorter timespan seems to be easier in comparison (quite intuitively). NLOpt methods seem to give great accuracy in the shorter problem with a lot of the algorithms giving 0 fitness, BBO performs very well on it with marginal change with tol values. In case of global optimization of the longer problem there is some difference in the performance amongst the algorithms with :LN_BOBYQA giving accurate results for the local optimization and :GN_ISRES :GN_CRS2_LM in case of the global give the highest accuracy. BBO also fails to perform too well in the case of the longer problem. QuadDIRECT performs well in case of the shorter problem but fails to give good results in the longer version.
+The parameters used to generate the data are `[0.7, 0.8, 0.08, 0.5]`. In the latest run:
+
+  - On the short (300-observation) problem, `GN_CRS2_LM` and the local methods `LN_BOBYQA`, `LN_NELDERMEAD`, `LD_SLSQP`
+    and `LN_PRAXIS` recover these values to within about `1e-9`, and `LN_NEWUOA_BOUND` and `LD_MMA` get close.
+    `GN_ORIG_DIRECT_L`, `GN_ISRES`, `GN_ESCH`, `LN_COBYLA` and `LN_SBPLX` do not.
+  - BBO gets close on the short problem with the default `Tsit5` tolerances, but tightening the ODE solver tolerances
+    (`reltol = 1e-9`, then `Vern9` at `1e-9`) moved its estimate further from the true values and made the run slower.
+  - On the longer (3000-observation) problem, `GN_CRS2_LM` and `GN_ISRES` recover the true values, BBO only gets close,
+    and `GN_ORIG_DIRECT_L` and `GN_ESCH` do not. Every global run takes considerably longer than on the short problem.
+  - The local optimizers in the longer-problem section are run on the short objective `obj_short`, so they repeat the
+    short-problem results rather than testing the longer problem.
 
 
 ## Appendix
@@ -718,17 +1137,17 @@ SciMLBenchmarks.weave_file("benchmarks/ParameterEstimation","FitzHughNagumoParam
 Computer Information:
 
 ```
-Julia Version 1.10.12
-Commit d93beab124c (2026-08-15 10:29 UTC)
+Julia Version 1.12.7
+Commit 6d172b025e4 (2026-08-15 08:05 UTC)
 Build Info:
-  Official https://julialang.org/ release
+  Official https://julialang.org release
 Platform Info:
   OS: Linux (x86_64-linux-gnu)
   CPU: 128 × AMD EPYC 7502 32-Core Processor
   WORD_SIZE: 64
-  LIBM: libopenlibm
-  LLVM: libLLVM-15.0.7 (ORCJIT, znver2)
-Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
+  LLVM: libLLVM-18.1.7 (ORCJIT, znver2)
+  GC: Built with stock GC
+Threads: 128 default, 1 interactive, 128 GC (on 128 virtual cores)
 Environment:
   JULIA_NUM_THREADS = auto
 
@@ -738,450 +1157,406 @@ Package Information:
 
 ```
 Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Project.toml`
-⌃ [6e4b80f9] BenchmarkTools v1.6.0
-⌃ [a134a8b2] BlackBoxOptim v0.6.3
-⌃ [1130ab10] DiffEqParamEstim v2.2.0
-⌃ [31c24e10] Distributions v0.25.117
-⌅ [f6369f11] ForwardDiff v0.10.38
-⌅ [961ee093] ModelingToolkit v9.61.0
-⌃ [76087f3c] NLopt v1.1.2
-⌅ [7f7a1694] Optimization v4.1.0
-⌃ [3e6eede4] OptimizationBBO v0.4.0
-⌃ [4e6fcdb7] OptimizationNLopt v0.3.2
-⌃ [1dea7af3] OrdinaryDiffEq v6.90.1
-⌃ [65888b18] ParameterizedFunctions v5.17.2
-⌃ [91a5bcdd] Plots v1.40.9
-⌅ [731186ca] RecursiveArrayTools v3.27.4
-⌃ [31c91b34] SciMLBenchmarks v0.1.3
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
+  [6e4b80f9] BenchmarkTools v1.8.0
+  [a134a8b2] BlackBoxOptim v0.6.12
+  [a93c6f00] DataFrames v1.8.2
+⌃ [1130ab10] DiffEqParamEstim v2.6.1
+  [31c24e10] Distributions v0.25.131
+  [f6369f11] ForwardDiff v1.4.6
+⌃ [961ee093] ModelingToolkit v11.43.0
+⌃ [7771a370] ModelingToolkitBase v1.70.0
+  [76087f3c] NLopt v1.2.1
+⌃ [7f7a1694] Optimization v5.9.0
+  [3e6eede4] OptimizationBBO v0.4.12
+  [4e6fcdb7] OptimizationNLopt v0.3.18
+  [1dea7af3] OrdinaryDiffEq v7.8.1
+  [ab63da0c] ParallelParticleSwarms v1.6.2
+  [65888b18] ParameterizedFunctions v5.27.0
+  [91a5bcdd] Plots v1.41.7
+⌃ [731186ca] RecursiveArrayTools v4.5.1
+⌃ [91a8cdf1] SciCompDSL v1.0.3
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
 
 ```
 Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Manifest.toml`
-⌃ [47edcb42] ADTypes v1.12.1
+  [47edcb42] ADTypes v1.24.0
+  [14f7f29c] AMD v0.5.4
+  [6e696c72] AbstractPlutoDingetjes v1.4.1
   [1520ce14] AbstractTrees v0.4.5
-⌃ [7d9f7c33] Accessors v0.1.41
-⌃ [79e6a3ab] Adapt v4.1.1
+  [7d9f7c33] Accessors v0.1.45
+⌃ [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
-⌃ [4fba245c] ArrayInterface v7.18.0
-⌃ [4c555306] ArrayLayouts v1.11.0
-⌃ [6e4b80f9] BenchmarkTools v1.6.0
-⌅ [e2ed5e7c] Bijections v0.1.9
-⌃ [d1d4a3ce] BitFlags v0.1.9
-  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
-⌃ [a134a8b2] BlackBoxOptim v0.6.3
-⌃ [8e7c35d0] BlockArrays v1.3.0
-⌃ [70df07ce] BracketingNonlinearSolve v1.1.0
+⌃ [4fba245c] ArrayInterface v7.30.1
+⌃ [4c555306] ArrayLayouts v1.12.2
+  [a9b6321e] Atomix v1.2.1
+⌃ [aae01518] BandedMatrices v1.12.0
+  [6e4b80f9] BenchmarkTools v1.8.0
+  [e2ed5e7c] Bijections v0.2.2
+  [b2a6c25c] BinaryHeaps v1.1.0
+  [caf10ac8] BipartiteGraphs v0.1.14
+  [a134a8b2] BlackBoxOptim v0.6.12
+  [8e7c35d0] BlockArrays v1.10.0
+  [70df07ce] BracketingNonlinearSolve v1.12.7
   [fa961155] CEnum v0.5.0
-⌃ [2a0fbf3d] CPUSummary v0.2.6
-  [a9c8d775] CPUTime v1.0.0
-⌃ [00ebfdb7] CSTParser v3.4.3
-  [49dc2e85] Calculus v0.5.2
-⌃ [d360d2e6] ChainRulesCore v1.25.1
-  [fb6a15b2] CloseOpenIntervals v0.1.13
-⌃ [944b1d66] CodecZlib v0.7.6
-⌃ [35d6a980] ColorSchemes v3.28.0
-⌃ [3da002f7] ColorTypes v0.12.0
+  [d360d2e6] ChainRulesCore v1.26.1
+  [35d6a980] ColorSchemes v3.31.0
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
-⌃ [5ae59095] Colors v0.13.0
-⌃ [861a8166] Combinatorics v1.0.2
-⌅ [a80b9123] CommonMark v0.8.15
-⌃ [38540f10] CommonSolve v0.2.4
+  [5ae59095] Colors v0.13.1
+⌅ [861a8166] Combinatorics v1.0.2
+  [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
-⌃ [f70d9fcc] CommonWorldInvalidations v1.0.0
-⌃ [34da2185] Compat v4.16.0
+  [f70d9fcc] CommonWorldInvalidations v1.2.2
+  [34da2185] Compat v4.18.1
   [b152e2b5] CompositeTypes v0.1.4
   [a33af91c] CompositionsBase v0.1.2
-⌃ [2569d6c7] ConcreteStructs v0.2.3
-⌃ [f0e56b4a] ConcurrentUtilities v2.4.3
-⌃ [8f4d0f93] Conda v1.10.2
+  [2569d6c7] ConcreteStructs v0.2.8
   [88cd18e8] ConsoleProgressMonitor v0.1.2
-⌃ [187b0558] ConstructionBase v1.5.8
+  [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
-  [adafc99b] CpuId v0.3.1
-⌃ [a8cc5b0e] Crayons v4.1.1
+  [a8cc5b0e] Crayons v4.2.0
   [9a962f9c] DataAPI v1.16.0
-⌅ [864edb3b] DataStructures v0.18.20
+  [a93c6f00] DataFrames v1.8.2
+  [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
   [39dd38d3] Dierckx v0.5.4
-⌅ [2b5f629d] DiffEqBase v6.161.0
-⌃ [459566f4] DiffEqCallbacks v4.2.2
-⌃ [77a26b50] DiffEqNoiseProcess v5.24.1
-⌃ [1130ab10] DiffEqParamEstim v2.2.0
+⌃ [2b5f629d] DiffEqBase v7.21.1
+⌃ [459566f4] DiffEqCallbacks v4.19.3
+⌃ [071ae1c0] DiffEqGPU v3.21.0
+⌃ [1130ab10] DiffEqParamEstim v2.6.1
   [163ba53b] DiffResults v1.1.0
-⌃ [b552c78f] DiffRules v1.15.1
-⌅ [a0c0ee7d] DifferentiationInterface v0.6.32
-⌃ [8d63f2c5] DispatchDoctor v0.4.19
-⌃ [31c24e10] Distributions v0.25.117
-⌃ [ffbed154] DocStringExtensions v0.9.3
-⌅ [5b8099bc] DomainSets v0.7.15
-⌃ [7c1d4256] DynamicPolynomials v0.6.1
-⌃ [06fc5a27] DynamicQuantities v1.4.0
-⌃ [4e289a0a] EnumX v1.0.4
-⌃ [f151be2c] EnzymeCore v0.8.8
-  [460bff9d] ExceptionUnwrapping v0.1.11
-⌃ [d4d017d3] ExponentialUtilities v1.27.0
-⌃ [e2ba6199] ExprTools v0.1.10
-⌅ [6b7a57c9] Expronicon v0.8.5
-⌃ [c87230d0] FFMPEG v0.4.2
-⌅ [7034ab61] FastBroadcast v0.3.5
+  [b552c78f] DiffRules v1.16.0
+  [a0c0ee7d] DifferentiationInterface v0.7.21
+  [31c24e10] Distributions v0.25.131
+  [ffbed154] DocStringExtensions v0.9.5
+⌃ [5b8099bc] DomainSets v0.8.1
+  [7c1d4256] DynamicPolynomials v0.6.8
+  [4e289a0a] EnumX v1.0.7
+⌃ [7da242da] Enzyme v0.13.203
+  [f151be2c] EnzymeCore v0.8.21
+  [e2ba6199] ExprTools v0.1.11
+  [55351af7] ExproniconLite v0.10.14
+  [c87230d0] FFMPEG v0.4.5
+  [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
-⌃ [442a2c76] FastGaussQuadrature v1.0.2
-⌃ [29a986be] FastLapackInterface v2.0.4
-⌃ [a4df4552] FastPower v1.1.1
-⌃ [1a297f60] FillArrays v1.13.0
-⌅ [64ca27bc] FindFirstFunctions v1.4.1
-⌃ [6a86dc24] FiniteDiff v2.26.2
-⌅ [53c48c17] FixedPointNumbers v0.8.5
+  [a4df4552] FastPower v1.5.0
+  [1a297f60] FillArrays v1.17.0
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
+  [6a86dc24] FiniteDiff v2.33.0
+⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-⌅ [f6369f11] ForwardDiff v0.10.38
+  [f6369f11] ForwardDiff v1.4.6
+  [a85aefff] FunctionMaps v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
-⌅ [77dc65aa] FunctionWrappersWrappers v0.1.3
-⌃ [d9f16b24] Functors v0.5.2
-  [46192b85] GPUArraysCore v0.2.0
-⌃ [28b8d3ca] GR v0.73.12
-⌃ [c145ed77] GenericSchur v0.5.4
-⌃ [d7ba0133] Git v1.3.1
-⌃ [c27321d9] Glob v1.3.1
-⌃ [86223c79] Graphs v1.12.0
-  [42e2da0e] Grisu v1.0.2
-⌅ [cd3eb016] HTTP v1.10.15
+  [77dc65aa] FunctionWrappersWrappers v1.13.0
+⌃ [46192b85] GPUArraysCore v0.2.0
+⌅ [61eb1bfa] GPUCompiler v1.23.0
+  [28b8d3ca] GR v0.73.27
+⌃ [a0844989] Gamma v1.1.0
+  [86223c79] Graphs v1.15.0
+  [076d061b] HashArrayMappedTries v0.2.0
 ⌅ [eafb193a] Highlights v0.5.3
-⌃ [3e5b6fbb] HostCPUFeatures v0.1.17
-⌃ [34004b35] HypergeometricFunctions v0.3.27
-⌃ [7073ff75] IJulia v1.26.0
-  [615f187c] IfElse v0.1.1
+  [34004b35] HypergeometricFunctions v0.3.30
+  [3263718b] ImplicitDiscreteSolve v2.3.0
   [d25df0c9] Inflate v0.1.5
-⌃ [18e54dd8] IntegerMathUtils v0.1.2
-⌃ [8197267c] IntervalSets v0.7.10
+⌅ [842dd82b] InlineStrings v1.4.6
+  [18e54dd8] IntegerMathUtils v0.1.4
+  [8197267c] IntervalSets v0.7.14
   [3587e190] InverseFunctions v0.1.17
-⌃ [92d709cd] IrrationalConstants v0.2.2
+  [41ab1584] InvertedIndices v1.3.1
+  [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
-⌃ [1019f520] JLFzf v0.1.9
-⌃ [692b3bcd] JLLWrappers v1.7.0
+  [1019f520] JLFzf v0.1.11
+  [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
-⌅ [98e50ef6] JuliaFormatter v1.0.62
-⌃ [ccbc3e58] JumpProcesses v9.14.1
-  [ef3ab10e] KLU v0.6.0
-⌅ [ba0b0d4f] Krylov v0.9.9
-  [5be7bae1] LBFGSB v0.4.1
-⌃ [b964fa9f] LaTeXStrings v1.4.0
-⌃ [23fbe1c1] Latexify v0.16.5
-  [10f19ff3] LayoutPointers v0.1.17
-⌃ [5078a376] LazyArrays v2.4.0
-⌅ [1d6d02ad] LeftChildRightSiblingTrees v0.2.0
-⌃ [87fe0de2] LineSearch v0.1.4
-⌃ [d3d80556] LineSearches v7.3.0
-⌅ [7ed4a6bd] LinearSolve v2.38.0
-⌅ [2ab3a3ac] LogExpFunctions v0.3.29
-⌃ [e6f89c97] LoggingExtras v1.1.0
-⌃ [bdcacae8] LoopVectorization v0.12.171
+  [ae98c720] Jieko v0.2.1
+⌃ [ccbc3e58] JumpProcesses v9.32.3
+  [63c18a36] KernelAbstractions v0.9.42
+⌃ [ba0b0d4f] Krylov v0.10.9
+  [2faa5264] LHLFactorization v2.2.2
+  [929cbde3] LLVM v9.13.1
+  [b964fa9f] LaTeXStrings v1.4.1
+  [23fbe1c1] Latexify v0.16.12
+  [73f95e8e] LatticeRules v0.0.2
+  [1d6d02ad] LeftChildRightSiblingTrees v0.3.0
+⌃ [87fe0de2] LineSearch v0.1.17
+⌃ [7ed4a6bd] LinearSolve v5.17.2
+⌃ [2ab3a3ac] LogExpFunctions v0.3.29
+  [e6f89c97] LoggingExtras v1.2.0
   [d8e11817] MLStyle v0.4.17
-⌃ [1914dd2f] MacroTools v0.5.15
-  [d125e4d3] ManualMemory v0.1.8
-⌃ [bb5d69b7] MaybeInplace v0.1.4
-⌃ [739be429] MbedTLS v1.1.9
-⌃ [442fdcdd] Measures v0.3.2
+  [1914dd2f] MacroTools v0.5.16
+  [bb5d69b7] MaybeInplace v0.1.8
+  [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
-⌅ [961ee093] ModelingToolkit v9.61.0
-⌃ [46d2c3a1] MuladdMacro v0.2.4
-⌃ [102ac46a] MultivariatePolynomials v0.5.7
-⌃ [ffc61752] Mustache v1.0.20
-⌃ [d8a4904e] MutableArithmetics v1.6.2
-⌅ [d41bc354] NLSolversBase v7.8.3
-⌃ [76087f3c] NLopt v1.1.2
-⌃ [77ba4419] NaNMath v1.1.1
-⌃ [8913a72c] NonlinearSolve v4.3.0
-⌅ [be0214bd] NonlinearSolveBase v1.4.0
-⌅ [5959db7a] NonlinearSolveFirstOrder v1.2.0
-⌃ [9a2c21bd] NonlinearSolveQuasiNewton v1.1.0
-⌃ [26075421] NonlinearSolveSpectralMethods v1.1.0
-⌃ [6fe1bfb0] OffsetArrays v1.15.0
-⌃ [4d8831e6] OpenSSL v1.4.3
-⌅ [429524aa] Optim v1.11.0
-⌅ [7f7a1694] Optimization v4.1.0
-⌃ [3e6eede4] OptimizationBBO v0.4.0
-⌅ [bca83a33] OptimizationBase v2.4.0
-⌃ [4e6fcdb7] OptimizationNLopt v0.3.2
-⌅ [bac558e1] OrderedCollections v1.7.0
-⌃ [1dea7af3] OrdinaryDiffEq v6.90.1
-⌅ [89bda076] OrdinaryDiffEqAdamsBashforthMoulton v1.1.0
-⌅ [6ad6398a] OrdinaryDiffEqBDF v1.2.0
-⌅ [bbf590c4] OrdinaryDiffEqCore v1.15.1
-⌅ [50262376] OrdinaryDiffEqDefault v1.2.0
-⌅ [4302a76b] OrdinaryDiffEqDifferentiation v1.3.0
-⌅ [9286f039] OrdinaryDiffEqExplicitRK v1.1.0
-⌅ [e0540318] OrdinaryDiffEqExponentialRK v1.2.0
-⌅ [becaefa8] OrdinaryDiffEqExtrapolation v1.3.0
-⌅ [5960d6e9] OrdinaryDiffEqFIRK v1.6.0
-⌅ [101fe9f7] OrdinaryDiffEqFeagin v1.1.0
-⌅ [d3585ca7] OrdinaryDiffEqFunctionMap v1.1.1
-⌅ [d28bc4f8] OrdinaryDiffEqHighOrderRK v1.1.0
-⌅ [9f002381] OrdinaryDiffEqIMEXMultistep v1.2.0
-⌅ [521117fe] OrdinaryDiffEqLinear v1.1.0
-⌅ [1344f307] OrdinaryDiffEqLowOrderRK v1.2.0
-⌅ [b0944070] OrdinaryDiffEqLowStorageRK v1.2.1
-⌅ [127b3ac7] OrdinaryDiffEqNonlinearSolve v1.3.0
-⌅ [c9986a66] OrdinaryDiffEqNordsieck v1.1.0
-⌅ [5dd0a6cf] OrdinaryDiffEqPDIRK v1.2.0
-⌅ [5b33eab2] OrdinaryDiffEqPRK v1.1.0
-⌅ [04162be5] OrdinaryDiffEqQPRK v1.1.0
-⌅ [af6ede74] OrdinaryDiffEqRKN v1.1.0
-⌅ [43230ef6] OrdinaryDiffEqRosenbrock v1.4.0
-⌅ [2d112036] OrdinaryDiffEqSDIRK v1.2.0
-⌅ [669c94d9] OrdinaryDiffEqSSPRK v1.2.0
-⌅ [e3e12d00] OrdinaryDiffEqStabilizedIRK v1.2.0
-⌅ [358294b1] OrdinaryDiffEqStabilizedRK v1.1.0
-⌅ [fa646aed] OrdinaryDiffEqSymplecticRK v1.1.0
-⌅ [b1df2697] OrdinaryDiffEqTsit5 v1.1.0
-⌅ [79d7bb75] OrdinaryDiffEqVerner v1.1.1
-⌃ [90014a1f] PDMats v0.11.32
-  [65ce6f38] PackageExtensionCompat v1.0.2
-⌃ [65888b18] ParameterizedFunctions v5.17.2
-⌅ [d96e819e] Parameters v0.12.3
-⌅ [69de0a69] Parsers v2.8.1
+⌃ [961ee093] ModelingToolkit v11.43.0
+⌃ [7771a370] ModelingToolkitBase v1.70.0
+  [6bb917b9] ModelingToolkitTearing v1.20.6
+⌅ [2e0e35c7] Moshi v0.3.9
+  [46d2c3a1] MuladdMacro v0.2.7
+⌃ [102ac46a] MultivariatePolynomials v0.5.19
+⌃ [ffc61752] Mustache v1.0.21 [loaded: v1.1.0]
+⌃ [d8a4904e] MutableArithmetics v1.8.0
+  [76087f3c] NLopt v1.2.1
+  [77ba4419] NaNMath v1.1.4
+⌃ [8913a72c] NonlinearSolve v4.30.0
+⌃ [be0214bd] NonlinearSolveBase v2.49.5
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
+  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3
+  [26075421] NonlinearSolveSpectralMethods v1.8.3
+  [d8793406] ObjectFile v0.5.1
+  [6fe1bfb0] OffsetArrays v1.17.0
+⌃ [7f7a1694] Optimization v5.9.0
+  [3e6eede4] OptimizationBBO v0.4.12
+⌃ [bca83a33] OptimizationBase v5.5.3
+  [4e6fcdb7] OptimizationNLopt v0.3.18
+⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.1]
+  [1dea7af3] OrdinaryDiffEq v7.8.1
+⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.8
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.1
+  [50262376] OrdinaryDiffEqDefault v2.6.2
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.11.5
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.6
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+  [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
+⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.2
+  [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
+  [79d7bb75] OrdinaryDiffEqVerner v2.4.1
+  [90014a1f] PDMats v0.11.41
+  [ab63da0c] ParallelParticleSwarms v1.6.2
+  [65888b18] ParameterizedFunctions v5.27.0
+  [d96e819e] Parameters v0.13.1
+⌅ [69de0a69] Parsers v2.8.8
   [06bb1623] PenaltyFunctions v0.3.0
-  [b98c9c47] Pipe v1.3.0
   [ccf2f8ad] PlotThemes v3.3.0
-⌃ [995b91a9] PlotUtils v1.4.3
-⌃ [91a5bcdd] Plots v1.40.9
-⌃ [e409e4f3] PoissonRandom v0.4.4
-⌃ [f517fe37] Polyester v0.7.16
-  [1d0040c9] PolyesterWeave v0.2.2
-  [85a6dd25] PositiveFactorizations v0.2.4
-⌅ [d236fae5] PreallocationTools v0.4.24
-⌅ [aea7be01] PrecompileTools v1.2.1
-⌃ [21216c6a] Preferences v1.4.3
-⌃ [27ebfcd6] Primes v0.5.6
-⌃ [33c8b6b6] ProgressLogging v0.1.4
-⌃ [92933f4c] ProgressMeter v1.10.2
-⌃ [43287f4e] PtrArrays v1.3.0
-⌃ [1fd47b50] QuadGK v2.11.1
-⌃ [74087812] Random123 v1.7.0
-  [e6cf234a] RandomNumbers v1.6.0
+⌃ [995b91a9] PlotUtils v1.4.4
+  [91a5bcdd] Plots v1.41.7
+  [e409e4f3] PoissonRandom v0.4.13
+  [2dfb63ee] PooledArrays v1.4.3
+  [d236fae5] PreallocationTools v1.7.1
+  [aea7be01] PrecompileTools v1.3.4
+⌃ [21216c6a] Preferences v1.5.2 [loaded: v1.6.0]
+  [08abe8d2] PrettyTables v3.4.8
+  [27ebfcd6] Primes v0.5.7
+  [33c8b6b6] ProgressLogging v0.1.6
+  [92933f4c] ProgressMeter v1.11.0
+  [43287f4e] PtrArrays v1.4.0
+⌃ [0c0d3e7f] PureKLU v1.4.2
+  [1fd47b50] QuadGK v2.11.3
+  [8a4e6c94] QuasiMonteCarlo v0.4.4
+  [988b38a3] ReadOnlyArrays v0.2.0
+  [795d4caa] ReadOnlyDicts v1.0.1
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-⌅ [731186ca] RecursiveArrayTools v3.27.4
-⌃ [f2c3362d] RecursiveFactorization v0.2.23
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
-⌃ [ae029012] Requires v1.3.0
-⌃ [ae5879a3] ResettableStacks v1.1.1
-⌅ [79098fc4] Rmath v0.8.0
-⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.13
-⌃ [9dfe8606] SCCNonlinearSolve v1.0.0
-  [94e857df] SIMDTypes v0.1.0
-⌃ [476501e8] SLEEFPirates v0.6.43
-⌅ [0bca4576] SciMLBase v2.72.1
-⌃ [31c91b34] SciMLBenchmarks v0.1.3
-⌃ [19f34311] SciMLJacobianOperators v0.1.1
-⌅ [c0aeaf25] SciMLOperators v0.3.12
-⌃ [53ae85a6] SciMLStructures v1.6.1
-⌃ [6c6a2e73] Scratch v1.2.1
-⌃ [efcf1570] Setfield v1.1.1
-⌃ [992d4aef] Showoff v1.0.3
-  [777ac1f9] SimpleBufferStream v1.2.0
-⌃ [727e6d20] SimpleNonlinearSolve v2.1.0
-⌃ [699a6c99] SimpleTraits v0.9.4
-  [ce78b400] SimpleUnPack v1.1.0
-  [b85f4697] SoftGlobalScope v1.1.0
-⌃ [a2af1166] SortingAlgorithms v1.2.1
-⌅ [9f842d2f] SparseConnectivityTracer v0.6.10
-⌃ [47a9eef4] SparseDiffTools v2.23.1
-⌃ [0a514795] SparseMatrixColorings v0.4.12
-⌃ [e56a9233] Sparspak v0.3.9
-  [d4ead438] SpatialIndexing v0.1.6
-⌃ [276daf66] SpecialFunctions v2.5.0
-⌃ [860ef19b] StableRNGs v1.0.2
-⌃ [aedffcd0] Static v1.1.1
-⌃ [0d7ed370] StaticArrayInterface v1.8.0
-⌃ [90137ffa] StaticArrays v1.9.10
-⌃ [1e83bf80] StaticArraysCore v1.4.3
-⌃ [82ae8749] StatsAPI v1.7.0
-⌃ [2913bbd2] StatsBase v0.34.4
-⌅ [4c63d2b9] StatsFuns v1.3.2
-⌃ [7792a7ef] StrideArraysCore v0.5.7
+  [ae029012] Requires v1.3.1
+  [9fe22ead] RespecializeParams v1.3.0
+  [79098fc4] Rmath v0.9.0
+  [f2b01f46] Roots v3.0.8
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+  [9dfe8606] SCCNonlinearSolve v1.15.3
+⌃ [91a8cdf1] SciCompDSL v1.0.3
+⌃ [0bca4576] SciMLBase v3.53.3
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [19f34311] SciMLJacobianOperators v0.1.19
+  [a6db7da4] SciMLLogging v2.1.0
+⌃ [c0aeaf25] SciMLOperators v1.30.0
+  [431bcebd] SciMLPublic v1.3.0
+  [53ae85a6] SciMLStructures v1.10.5
+  [7e506255] ScopedValues v1.6.2
+  [6c6a2e73] Scratch v1.3.0
+  [91c51154] SentinelArrays v1.4.10
+  [efcf1570] Setfield v1.1.2
+  [992d4aef] Showoff v1.1.1
+  [05bca326] SimpleDiffEq v1.18.0
+⌃ [727e6d20] SimpleNonlinearSolve v2.14.3
+  [510db2f7] SimpleOptimization v2.0.1
+  [699a6c99] SimpleTraits v0.9.6
+  [ed01d8cd] Sobol v1.5.0
+  [a2af1166] SortingAlgorithms v1.2.3
+  [a57abbd0] SparseColumnPivotedQR v2.1.8
+  [9f842d2f] SparseConnectivityTracer v1.2.3
+  [0a514795] SparseMatrixColorings v0.4.28
+  [276daf66] SpecialFunctions v2.9.0
+  [860ef19b] StableRNGs v1.0.4
+  [0c0c59c1] StarAlgebras v0.3.0
+  [64909d44] StateSelection v1.11.1
+⌃ [90137ffa] StaticArrays v1.9.20
+  [1e83bf80] StaticArraysCore v1.4.4
+  [10745b16] Statistics v1.11.5
+  [82ae8749] StatsAPI v1.8.0
+  [2913bbd2] StatsBase v0.34.13
+  [4c63d2b9] StatsFuns v2.2.1
   [69024149] StringEncodings v0.3.7
-⌃ [2efcf032] SymbolicIndexingInterface v0.3.37
-⌅ [19f23fe9] SymbolicLimits v0.2.2
-⌅ [d1185830] SymbolicUtils v3.11.0
-⌅ [0c5d862f] Symbolics v6.25.0
+⌅ [892a3eda] StringManipulation v0.5.0
+  [53d494c1] StructIO v0.3.1
+  [2efcf032] SymbolicIndexingInterface v0.3.55
+  [19f23fe9] SymbolicLimits v1.2.1
+⌃ [d1185830] SymbolicUtils v4.46.5
+⌃ [0c5d862f] Symbolics v7.39.2
   [3783bdb8] TableTraits v1.0.1
-⌃ [bd369af6] Tables v1.12.0
+  [bd369af6] Tables v1.14.0
+  [ed4db957] TaskLocalValues v0.1.3
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
-⌃ [5d786b92] TerminalLoggers v0.1.7
-⌃ [1c621080] TestItems v1.0.0
-⌃ [8290d209] ThreadingUtilities v0.5.2
-⌅ [a759f4b9] TimerOutputs v0.5.26
-  [0796e94c] Tokenize v0.5.29
-  [3bb67fe8] TranscodingStreams v0.11.3
-⌃ [d5829a12] TriangularSolve v0.2.1
-⌃ [410a4b4d] Tricks v0.1.10
+  [5d786b92] TerminalLoggers v0.1.8
+⌃ [a759f4b9] TimerOutputs v1.2.1
+  [e689c965] Tracy v0.1.6
   [781d530d] TruncatedStacktraces v1.4.0
-⌃ [5c2747f8] URIs v1.5.1
+  [5c2747f8] URIs v1.7.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-⌅ [1986cc42] Unitful v1.22.0
-⌃ [45397f5d] UnitfulLatexify v1.6.4
-  [a7c27f48] Unityper v0.1.6
+  [013be700] UnsafeAtomics v0.3.2
   [41fe7b60] Unzip v0.2.0
-⌃ [3d5dd08c] VectorizationBase v0.21.71
-  [81def892] VersionParsing v1.3.0
-  [19fa3120] VertexSafeGraphs v0.2.0
-  [897b6980] WeakValueDicts v0.1.0
+  [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
-⌃ [ddb6d928] YAML v0.4.12
-⌃ [c2297ded] ZMQ v1.4.0
-⌃ [6e34b625] Bzip2_jll v1.0.8+4
-⌃ [83423d85] Cairo_jll v1.18.2+1
-⌃ [ee1fde0b] Dbus_jll v1.14.10+0
+⌃ [ddb6d928] YAML v0.4.16 [loaded: v0.4.17]
+  [700de1a5] ZygoteRules v0.2.8
+  [6e34b625] Bzip2_jll v1.0.9+0
+  [83423d85] Cairo_jll v1.18.7+0
+  [ee1fde0b] Dbus_jll v1.16.2+0
   [cd4c43a9] Dierckx_jll v0.2.0+0
+⌅ [7cc45869] Enzyme_jll v0.0.293+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-⌃ [2e619515] Expat_jll v2.6.4+3
-⌅ [b22a6f82] FFMPEG_jll v4.4.4+1
-⌃ [a3f928ae] Fontconfig_jll v2.15.0+0
-⌃ [d7e528f0] FreeType2_jll v2.13.3+1
-⌃ [559328eb] FriBidi_jll v1.0.16+0
-⌃ [0656b61e] GLFW_jll v3.4.0+2
-⌅ [d2c73de3] GR_jll v0.73.12+0
-⌅ [78b55507] Gettext_jll v0.21.0+0
-⌃ [f8c6e375] Git_jll v2.47.1+0
-⌃ [7746bdde] Glib_jll v2.82.4+0
-⌃ [3b182d85] Graphite2_jll v1.3.14+1
-⌅ [2e76f6c2] HarfBuzz_jll v8.5.0+0
-⌃ [1d5cc7b8] IntelOpenMP_jll v2025.0.4+0
-⌃ [aacddb02] JpegTurbo_jll v3.1.1+0
-⌃ [c1c5ebd0] LAME_jll v3.100.2+0
-⌃ [88015f11] LERC_jll v4.0.1+0
-⌃ [1d63c593] LLVMOpenMP_jll v18.1.7+0
-  [dd4b983a] LZO_jll v2.10.3+0
-  [81d17ec3] L_BFGS_B_jll v3.0.1+0
-⌅ [e9f186c6] Libffi_jll v3.2.2+2
-⌃ [d4300ac3] Libgcrypt_jll v1.11.0+0
-⌃ [7e76a0d4] Libglvnd_jll v1.7.0+0
-⌃ [7add5ba3] Libgpg_error_jll v1.51.1+0
+  [2e619515] Expat_jll v2.8.4+0
+⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
+  [a3f928ae] Fontconfig_jll v2.17.1+0
+  [d7e528f0] FreeType2_jll v2.14.3+1
+  [559328eb] FriBidi_jll v1.0.17+0
+  [0656b61e] GLFW_jll v3.5.1+0
+  [d2c73de3] GR_jll v0.73.27+0
+⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
+  [61579ee1] Ghostscript_jll v9.55.1+0
+  [7746bdde] Glib_jll v2.88.3+0
+  [3b182d85] Graphite2_jll v1.3.16+0
+  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
+  [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
+  [aacddb02] JpegTurbo_jll v3.2.0+1
+  [c1c5ebd0] LAME_jll v3.100.3+0
+  [88015f11] LERC_jll v4.2.0+0
+  [dad2f222] LLVMExtra_jll v0.0.47+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
+  [ad6e5548] LibTracyClient_jll v0.13.1+0
+⌅ [e9f186c6] Libffi_jll v3.4.7+0
+  [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
-⌃ [4b2f31a3] Libmount_jll v2.40.3+0
-⌃ [89763e89] Libtiff_jll v4.7.1+0
-⌃ [38a345b3] Libuuid_jll v2.40.3+0
-⌃ [856f044c] MKL_jll v2025.0.1+1
-⌃ [079eb43e] NLopt_jll v2.9.0+0
-⌃ [e7412a2a] Ogg_jll v1.3.5+1
-⌃ [458c3c95] OpenSSL_jll v3.0.15+3
+  [4b2f31a3] Libmount_jll v2.42.0+0
+  [89763e89] Libtiff_jll v4.7.3+0
+  [38a345b3] Libuuid_jll v2.42.0+0
+  [856f044c] MKL_jll v2025.2.0+0
+  [079eb43e] NLopt_jll v2.11.0+0
+  [e7412a2a] Ogg_jll v1.3.6+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
-⌃ [91d4177d] Opus_jll v1.3.3+0
-⌃ [36c8627f] Pango_jll v1.55.5+0
-⌅ [30392449] Pixman_jll v0.43.4+0
-⌅ [c0090381] Qt6Base_jll v6.7.1+1
-⌅ [629bc702] Qt6Declarative_jll v6.7.1+2
-⌅ [ce943373] Qt6ShaderTools_jll v6.7.1+1
-⌃ [e99dba38] Qt6Wayland_jll v6.7.1+1
-⌃ [f50d1b31] Rmath_jll v0.5.1+0
+  [91d4177d] Opus_jll v1.6.1+0
+  [36c8627f] Pango_jll v1.58.2+0
+  [30392449] Pixman_jll v0.46.4+0
+  [c0090381] Qt6Base_jll v6.10.2+2
+  [629bc702] Qt6Declarative_jll v6.10.2+2
+  [ce943373] Qt6ShaderTools_jll v6.10.2+1
+  [6de9746b] Qt6Svg_jll v6.10.2+0
+  [e99dba38] Qt6Wayland_jll v6.10.2+1
+  [f50d1b31] Rmath_jll v0.5.2+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
-⌃ [a2964d1f] Wayland_jll v1.21.0+2
-⌃ [2381bf8a] Wayland_protocols_jll v1.36.0+0
-⌅ [02c8fc9c] XML2_jll v2.13.5+0
-⌃ [aed1982a] XSLT_jll v1.1.42+0
-⌃ [ffd25f8a] XZ_jll v5.6.4+1
-⌃ [f67eecfb] Xorg_libICE_jll v1.1.1+0
-⌃ [c834827a] Xorg_libSM_jll v1.2.4+0
-⌃ [4f6342f7] Xorg_libX11_jll v1.8.6+3
-⌃ [0c0b7dd1] Xorg_libXau_jll v1.0.12+0
-⌃ [935fb764] Xorg_libXcursor_jll v1.2.3+0
-⌃ [a3789734] Xorg_libXdmcp_jll v1.1.5+0
-⌃ [1082639a] Xorg_libXext_jll v1.3.6+3
-⌃ [d091e8ba] Xorg_libXfixes_jll v6.0.0+0
-⌃ [a51aa0fd] Xorg_libXi_jll v1.8.2+0
-⌃ [d1454406] Xorg_libXinerama_jll v1.1.5+0
-⌃ [ec84b674] Xorg_libXrandr_jll v1.5.4+0
-⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.11+1
-⌃ [14d82f49] Xorg_libpthread_stubs_jll v0.1.2+0
-⌃ [c7cfdc94] Xorg_libxcb_jll v1.17.0+3
-⌃ [cc61e674] Xorg_libxkbfile_jll v1.1.2+1
-⌃ [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.4+0
-⌃ [12413925] Xorg_xcb_util_image_jll v0.4.0+1
-⌃ [2def613f] Xorg_xcb_util_jll v0.4.0+1
-⌃ [975044d2] Xorg_xcb_util_keysyms_jll v0.4.0+1
-⌃ [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.9+1
-⌃ [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.1+1
-⌃ [35661453] Xorg_xkbcomp_jll v1.4.6+1
-⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.39.0+0
-⌃ [c5fb5394] Xorg_xtrans_jll v1.5.1+0
-⌃ [8f1865be] ZeroMQ_jll v4.3.5+3
-⌃ [3161d3a3] Zstd_jll v1.5.7+0
-⌃ [35ca27e7] eudev_jll v3.2.9+0
-⌅ [214eeab7] fzf_jll v0.56.3+0
-⌃ [1a1c6b14] gperf_jll v3.1.1+1
-⌃ [a4ae2306] libaom_jll v3.11.0+0
-⌅ [0ac62f75] libass_jll v0.15.2+0
+  [a2964d1f] Wayland_jll v1.24.0+0
+  [ffd25f8a] XZ_jll v5.8.4+0
+  [f67eecfb] Xorg_libICE_jll v1.1.2+0
+  [c834827a] Xorg_libSM_jll v1.2.6+0
+  [4f6342f7] Xorg_libX11_jll v1.8.13+0
+  [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
+  [935fb764] Xorg_libXcursor_jll v1.2.4+0
+  [a3789734] Xorg_libXdmcp_jll v1.1.6+0
+  [1082639a] Xorg_libXext_jll v1.3.8+0
+  [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
+  [a51aa0fd] Xorg_libXi_jll v1.8.4+0
+  [d1454406] Xorg_libXinerama_jll v1.1.7+0
+  [ec84b674] Xorg_libXrandr_jll v1.5.6+0
+  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+  [a65dc6b1] Xorg_libpciaccess_jll v0.19.0+0
+  [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
+  [cc61e674] Xorg_libxkbfile_jll v1.2.0+0
+  [e920d4aa] Xorg_xcb_util_cursor_jll v0.1.6+0
+  [12413925] Xorg_xcb_util_image_jll v0.4.1+0
+  [2def613f] Xorg_xcb_util_jll v0.4.1+0
+  [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
+  [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
+  [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
+  [35661453] Xorg_xkbcomp_jll v1.4.7+0
+  [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
+  [c5fb5394] Xorg_xtrans_jll v1.6.0+0
+  [3161d3a3] Zstd_jll v1.5.7+1
+  [35ca27e7] eudev_jll v3.2.14+0
+⌅ [214eeab7] fzf_jll v0.61.1+0
+⌃ [a4ae2306] libaom_jll v3.14.1+0
+  [0ac62f75] libass_jll v0.17.5+0
   [1183f4f0] libdecor_jll v0.2.2+0
-⌃ [2db6ffa8] libevdev_jll v1.11.0+0
-⌃ [f638f0a6] libfdk_aac_jll v2.0.3+0
-⌃ [36db933b] libinput_jll v1.18.0+0
-⌃ [b53b4c65] libpng_jll v1.6.45+1
-⌃ [a9144af2] libsodium_jll v1.0.20+3
-⌃ [f27f6e37] libvorbis_jll v1.3.7+2
-⌃ [009596ad] mtdev_jll v1.1.6+0
-⌃ [1317d2d5] oneTBB_jll v2021.12.0+0
-⌅ [1270edf5] x264_jll v2021.5.5+0
-⌅ [dfaa095f] x265_jll v3.5.0+0
-⌃ [d8fb68d0] xkbcommon_jll v1.4.1+2
-  [0dad84c5] ArgTools v1.1.1
-  [56f22d72] Artifacts
-  [2a0f44e3] Base64
-  [ade2ca70] Dates
-  [8ba89e20] Distributed
-  [f43a241f] Downloads v1.6.0
-  [7b1f6079] FileWatching
-  [9fa8497b] Future
-  [b77e0a4c] InteractiveUtils
-  [4af54fe1] LazyArtifacts
+  [8e53e030] libdrm_jll v2.4.134+0
+  [2db6ffa8] libevdev_jll v1.13.4+0
+  [f638f0a6] libfdk_aac_jll v2.0.4+0
+  [36db933b] libinput_jll v1.28.1+0
+  [b53b4c65] libpng_jll v1.6.58+0
+  [9a156e7d] libva_jll v2.23.0+0
+  [f27f6e37] libvorbis_jll v1.3.8+0
+  [009596ad] mtdev_jll v1.1.7+0
+  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌅ [1270edf5] x264_jll v10164.0.1+0
+  [dfaa095f] x265_jll v4.1.0+0
+  [d8fb68d0] xkbcommon_jll v1.13.0+0
+  [0dad84c5] ArgTools v1.1.2
+  [56f22d72] Artifacts v1.11.0
+  [2a0f44e3] Base64 v1.11.0
+  [ade2ca70] Dates v1.11.0
+  [8ba89e20] Distributed v1.11.0
+  [f43a241f] Downloads v1.7.0
+  [7b1f6079] FileWatching v1.11.0
+  [9fa8497b] Future v1.11.0
+  [b77e0a4c] InteractiveUtils v1.11.0
+  [ac6e5ff7] JuliaSyntaxHighlighting v1.12.0
+  [4af54fe1] LazyArtifacts v1.11.0
   [b27032c2] LibCURL v0.6.4
-  [76f85450] LibGit2
-  [8f399da3] Libdl
-  [37e2e46d] LinearAlgebra
-  [56ddb016] Logging
-  [d6f4376e] Markdown
-  [a63ad114] Mmap
-  [ca575930] NetworkOptions v1.2.0
-  [44cfe95a] Pkg v1.10.0
-  [de0858da] Printf
-  [9abbd945] Profile
-  [3fa0cd96] REPL
-  [9a3f8284] Random
+  [76f85450] LibGit2 v1.11.0
+  [8f399da3] Libdl v1.11.0
+  [37e2e46d] LinearAlgebra v1.12.0
+  [56ddb016] Logging v1.11.0
+  [d6f4376e] Markdown v1.11.0
+  [a63ad114] Mmap v1.11.0
+  [ca575930] NetworkOptions v1.3.0
+  [44cfe95a] Pkg v1.12.1
+  [de0858da] Printf v1.11.0
+  [9abbd945] Profile v1.11.0
+  [3fa0cd96] REPL v1.11.0
+  [9a3f8284] Random v1.11.0
   [ea8e919c] SHA v0.7.0
-  [9e88b42a] Serialization
-  [1a1011a3] SharedArrays
-  [6462fe0b] Sockets
-  [2f01184e] SparseArrays v1.10.0
-  [10745b16] Statistics v1.10.0
+  [9e88b42a] Serialization v1.11.0
+  [6462fe0b] Sockets v1.11.0
+  [2f01184e] SparseArrays v1.12.0
+  [f489334b] StyledStrings v1.11.0
   [4607b0f0] SuiteSparse
   [fa267f1f] TOML v1.0.3
   [a4e569a6] Tar v1.10.0
-  [8dfed614] Test
-  [cf7118a7] UUIDs
-  [4ec0a83e] Unicode
-  [e66e0078] CompilerSupportLibraries_jll v1.1.1+0
-  [deac9b47] LibCURL_jll v8.4.0+0
-  [e37daf67] LibGit2_jll v1.6.4+0
-  [29816b5a] LibSSH2_jll v1.11.0+1
-  [c8ffd9c3] MbedTLS_jll v2.28.2+1
-  [14a3606d] MozillaCACerts_jll v2023.1.10
-  [4536629a] OpenBLAS_jll v0.3.23+4
-  [05823500] OpenLibm_jll v0.8.1+2
-  [efcefdf7] PCRE2_jll v10.42.0+1
-  [bea87d4a] SuiteSparse_jll v7.2.1+1
-  [83775a58] Zlib_jll v1.2.13+1
-  [8e850b90] libblastrampoline_jll v5.11.0+0
-  [8e850ede] nghttp2_jll v1.52.0+1
-  [3f19e933] p7zip_jll v17.4.0+2
+  [8dfed614] Test v1.11.0
+  [cf7118a7] UUIDs v1.11.0
+  [4ec0a83e] Unicode v1.11.0
+  [e66e0078] CompilerSupportLibraries_jll v1.3.1+2
+  [deac9b47] LibCURL_jll v8.15.0+0
+  [e37daf67] LibGit2_jll v1.9.0+0
+  [29816b5a] LibSSH2_jll v1.11.3+1
+  [14a3606d] MozillaCACerts_jll v2025.11.4
+  [4536629a] OpenBLAS_jll v0.3.29+0
+  [05823500] OpenLibm_jll v0.8.7+0
+  [458c3c95] OpenSSL_jll v3.5.6+0
+  [efcefdf7] PCRE2_jll v10.44.0+1
+  [bea87d4a] SuiteSparse_jll v7.8.3+2
+  [83775a58] Zlib_jll v1.3.1+2
+  [8e850b90] libblastrampoline_jll v5.15.0+0
+  [8e850ede] nghttp2_jll v1.64.0+1
+  [3f19e933] p7zip_jll v17.7.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
-Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
