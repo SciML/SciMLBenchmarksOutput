@@ -1,13 +1,10 @@
 
 using ParameterizedFunctions, OrdinaryDiffEq, DiffEqParamEstim, Optimization
 using OptimizationBBO, OptimizationNLopt, Plots, ForwardDiff, BenchmarkTools
-import ModelingToolkit
+using ModelingToolkit
+using ModelingToolkitBase
+using SciCompDSL
 using ModelingToolkit: @mtkbuild, D_nounits as D, t_nounits as t
-@static if isdefined(ModelingToolkit, Symbol("@mtkmodel"))
-    using ModelingToolkit: @mtkmodel
-else
-    using SciCompDSL: @mtkmodel
-end
 gr(fmt = :png)
 
 
@@ -96,7 +93,7 @@ plot(plot(xyzt, xyz), plot(xy, xz, yz, layout = (1, 3), w = 1), layout = (2, 1),
 obj_short = build_loss_objective(prob_short, Tsit5(), L2Loss(t_short, data_short), tstops = t_short)
 optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
 @btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
-# Tolernace is still too high to get close enough
+# Tolerance is still too high to get close enough
 
 
 obj_short = build_loss_objective(
