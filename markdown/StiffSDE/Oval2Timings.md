@@ -30,6 +30,15 @@ times = fill(NaN, length(dts), 3)
 
 
 
+This page times 1000 trajectories of the Oval2 model on $t \in [0, 1]$. A trajectory counts
+as failed if its final state contains `NaN` or it stops before $t = 1$. The adaptive runs
+use several Rössler SRI methods. The fixed-step runs set `adaptive = false`
+and sweep $\Delta t = 2^{-16}, \dots, 2^{-21}$ ($2^{-17}, \dots, 2^{-21}$ for the implicit
+methods, $2^{-16}, \dots, 2^{-19}$ for `SRIW1`). The final plot shows the elapsed time of the
+explicit fixed-step methods against $\Delta t$, the fastest adaptive run without failures
+(dashed), and red dots at the largest $\Delta t$ at which each fixed-step method has no
+failed trajectories.
+
 ## Timing Runs
 
 ```julia
@@ -41,7 +50,7 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 1.414995273
+The number of Adaptive Fails is 0. Elapsed time was 2.012135613
 ```
 
 
@@ -50,12 +59,12 @@ The number of Adaptive Fails is 0. Elapsed time was 1.414995273
 sol = solve(prob,SRI(error_terms=2),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-7),maxiters=Int(1e11), controller=PIController(SRI(error_terms=2); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SRI(error_terms=2),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-7),maxiters=Int(1e11), controller=PIController(SRI(error_terms=2); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 1.413461571
+The number of Adaptive Fails is 0. Elapsed time was 2.610441682
 ```
 
 
@@ -64,12 +73,12 @@ The number of Adaptive Fails is 0. Elapsed time was 1.413461571
 sol = solve(prob,SRI(),EnsembleThreads(),abstol=2.0^(-14),reltol=2.0^(-18),maxiters=Int(1e11), controller=PIController(SRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SRI(),EnsembleThreads(),abstol=2.0^(-14),reltol=2.0^(-18),maxiters=Int(1e11), controller=PIController(SRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 11.798118036
+The number of Adaptive Fails is 0. Elapsed time was 15.285509036
 ```
 
 
@@ -78,12 +87,12 @@ The number of Adaptive Fails is 0. Elapsed time was 11.798118036
 sol = solve(prob,SRI(tableau=StochasticDiffEq.constructSRIOpt1()),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-4),maxiters=Int(1e11), controller=PIController(SRI(tableau=StochasticDiffEq.constructSRIOpt1()); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SRI(tableau=StochasticDiffEq.constructSRIOpt1()),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-4),maxiters=Int(1e11), controller=PIController(SRI(tableau=StochasticDiffEq.constructSRIOpt1()); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.155726578
+The number of Adaptive Fails is 0. Elapsed time was 0.344245804
 ```
 
 
@@ -92,12 +101,12 @@ The number of Adaptive Fails is 0. Elapsed time was 0.155726578
 sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-4),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-4),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.086083294
+The number of Adaptive Fails is 0. Elapsed time was 0.122152328
 ```
 
 
@@ -106,12 +115,12 @@ The number of Adaptive Fails is 0. Elapsed time was 0.086083294
 sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-6),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-6),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.191174831
+The number of Adaptive Fails is 0. Elapsed time was 0.194258523
 ```
 
 
@@ -120,12 +129,12 @@ The number of Adaptive Fails is 0. Elapsed time was 0.191174831
 sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 1.034539642
+The number of Adaptive Fails is 0. Elapsed time was 1.319223633
 ```
 
 
@@ -134,12 +143,12 @@ The number of Adaptive Fails is 0. Elapsed time was 1.034539642
 sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-7),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-7),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.211252473
+The number of Adaptive Fails is 0. Elapsed time was 0.148400432
 ```
 
 
@@ -148,12 +157,12 @@ The number of Adaptive Fails is 0. Elapsed time was 0.211252473
 sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 1.125136985
+The number of Adaptive Fails is 0. Elapsed time was 1.266465787
 ```
 
 
@@ -162,12 +171,12 @@ The number of Adaptive Fails is 0. Elapsed time was 1.125136985
 sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 1.333631523
+The number of Adaptive Fails is 0. Elapsed time was 1.28377593
 ```
 
 
@@ -176,12 +185,12 @@ The number of Adaptive Fails is 0. Elapsed time was 1.333631523
 sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-11),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-11),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.524695957
+The number of Adaptive Fails is 0. Elapsed time was 0.620237262
 ```
 
 
@@ -190,12 +199,12 @@ The number of Adaptive Fails is 0. Elapsed time was 0.524695957
 sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-11),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-11),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 ```
 
 ```
-The number of Adaptive Fails is 0. Elapsed time was 0.54175756
+The number of Adaptive Fails is 0. Elapsed time was 0.53356855
 ```
 
 
@@ -214,17 +223,17 @@ end
 
 ```
 j = 1
-The number of Euler-Maruyama Fails is 10. Elapsed time was 0.535252403
+The number of Euler-Maruyama Fails is 10. Elapsed time was 0.633276961
 j = 2
-The number of Euler-Maruyama Fails is 1. Elapsed time was 1.186223178
+The number of Euler-Maruyama Fails is 1. Elapsed time was 1.08619304
 j = 3
-The number of Euler-Maruyama Fails is 1. Elapsed time was 1.973320553
+The number of Euler-Maruyama Fails is 1. Elapsed time was 2.01433507
 j = 4
-The number of Euler-Maruyama Fails is 0. Elapsed time was 3.996241751
+The number of Euler-Maruyama Fails is 0. Elapsed time was 4.030039675
 j = 5
-The number of Euler-Maruyama Fails is 0. Elapsed time was 7.780787142
+The number of Euler-Maruyama Fails is 0. Elapsed time was 7.628622838
 j = 6
-The number of Euler-Maruyama Fails is 0. Elapsed time was 14.519602612
+The number of Euler-Maruyama Fails is 0. Elapsed time was 15.155387504
 ```
 
 
@@ -232,8 +241,8 @@ The number of Euler-Maruyama Fails is 0. Elapsed time was 14.519602612
 ```julia
 for j in 1:4
   println("j = $j")
-  sol =solve(prob,SRIW1(),EnsembleThreads(),dt=dts[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
-  t1 = @elapsed sol = solve(prob,SRIW1(),EnsembleThreads(),dt=dts[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
+  sol =solve(prob,SRIW1(),EnsembleThreads(),dt=dts[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
+  t1 = @elapsed sol = solve(prob,SRIW1(),EnsembleThreads(),dt=dts[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
   numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
   println("The number of SRIW1 Fails is $numfails. Elapsed time was $t1")
   fails[j,3] = numfails
@@ -243,13 +252,13 @@ end
 
 ```
 j = 1
-The number of SRIW1 Fails is 984. Elapsed time was 0.186887579
+The number of SRIW1 Fails is 8. Elapsed time was 1.036354435
 j = 2
-The number of SRIW1 Fails is 975. Elapsed time was 0.50833916
+The number of SRIW1 Fails is 4. Elapsed time was 2.060052761
 j = 3
-The number of SRIW1 Fails is 978. Elapsed time was 0.414168658
+The number of SRIW1 Fails is 2. Elapsed time was 4.114597771
 j = 4
-The number of SRIW1 Fails is 975. Elapsed time was 0.495289084
+The number of SRIW1 Fails is 0. Elapsed time was 8.783841894
 ```
 
 
@@ -259,8 +268,8 @@ js_imp = 17:21
 dts_imp = 1.0 ./ 2.0 .^ (js_imp)
 for j in eachindex(dts_imp)
   println("j = $j")
-  sol =solve(prob,ImplicitEM(),EnsembleThreads(),dt=dts_imp[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
-  t1 = @elapsed sol = solve(prob,ImplicitEM(),EnsembleThreads(),dt=dts_imp[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
+  sol =solve(prob,ImplicitEM(),EnsembleThreads(),dt=dts_imp[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
+  t1 = @elapsed sol = solve(prob,ImplicitEM(),EnsembleThreads(),dt=dts_imp[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
   numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
   println("The number of Implicit-EM Fails is $numfails. Elapsed time was $t1")
 end
@@ -268,15 +277,15 @@ end
 
 ```
 j = 1
-The number of Implicit-EM Fails is 0. Elapsed time was 11.056715721
+The number of Implicit-EM Fails is 0. Elapsed time was 10.711856218
 j = 2
-The number of Implicit-EM Fails is 0. Elapsed time was 10.879338335
+The number of Implicit-EM Fails is 0. Elapsed time was 21.154694582
 j = 3
-The number of Implicit-EM Fails is 0. Elapsed time was 10.982118101
+The number of Implicit-EM Fails is 0. Elapsed time was 42.688374583
 j = 4
-The number of Implicit-EM Fails is 0. Elapsed time was 10.925827093
+The number of Implicit-EM Fails is 0. Elapsed time was 83.801006584
 j = 5
-The number of Implicit-EM Fails is 0. Elapsed time was 11.173264094
+The number of Implicit-EM Fails is 0. Elapsed time was 166.852625881
 ```
 
 
@@ -284,8 +293,8 @@ The number of Implicit-EM Fails is 0. Elapsed time was 11.173264094
 ```julia
 for j in eachindex(dts_imp)
   println("j = $j")
-  sol =solve(prob,ImplicitRKMil(),EnsembleThreads(),dt=dts_imp[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
-  t1 = @elapsed sol = solve(prob,ImplicitRKMil(),EnsembleThreads(),dt=dts_imp[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
+  sol =solve(prob,ImplicitRKMil(),EnsembleThreads(),dt=dts_imp[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
+  t1 = @elapsed sol = solve(prob,ImplicitRKMil(),EnsembleThreads(),dt=dts_imp[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
   numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
   println("The number of Implicit-RKMil Fails is $numfails. Elapsed time was $t1")
 end
@@ -293,15 +302,15 @@ end
 
 ```
 j = 1
-The number of Implicit-RKMil Fails is 0. Elapsed time was 20.666996013
+The number of Implicit-RKMil Fails is 0. Elapsed time was 10.665254272
 j = 2
-The number of Implicit-RKMil Fails is 0. Elapsed time was 21.069603791
+The number of Implicit-RKMil Fails is 0. Elapsed time was 21.231285575
 j = 3
-The number of Implicit-RKMil Fails is 0. Elapsed time was 20.660373685
+The number of Implicit-RKMil Fails is 0. Elapsed time was 43.497842073
 j = 4
-The number of Implicit-RKMil Fails is 0. Elapsed time was 20.62144341
+The number of Implicit-RKMil Fails is 0. Elapsed time was 86.982487849
 j = 5
-The number of Implicit-RKMil Fails is 0. Elapsed time was 20.414338358
+The number of Implicit-RKMil Fails is 0. Elapsed time was 180.302330708
 ```
 
 
@@ -309,8 +318,8 @@ The number of Implicit-RKMil Fails is 0. Elapsed time was 20.414338358
 ```julia
 for j in eachindex(dts)
   println("j = $j")
-  sol =solve(prob,RKMil(),EnsembleThreads(),dt=dts[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
-  t1 = @elapsed sol = solve(prob,RKMil(),EnsembleThreads(),dt=dts[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
+  sol =solve(prob,RKMil(),EnsembleThreads(),dt=dts[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
+  t1 = @elapsed sol = solve(prob,RKMil(),EnsembleThreads(),dt=dts[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
   numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
   println("The number of RKMil Fails is $numfails. Elapsed time was $t1")
   fails[j,2] = numfails
@@ -320,17 +329,17 @@ end
 
 ```
 j = 1
-The number of RKMil Fails is 5. Elapsed time was 0.221908897
+The number of RKMil Fails is 10. Elapsed time was 0.608926355
 j = 2
-The number of RKMil Fails is 3. Elapsed time was 0.308504936
+The number of RKMil Fails is 1. Elapsed time was 1.138232103
 j = 3
-The number of RKMil Fails is 6. Elapsed time was 0.262556099
+The number of RKMil Fails is 1. Elapsed time was 2.311607662
 j = 4
-The number of RKMil Fails is 7. Elapsed time was 0.237720559
+The number of RKMil Fails is 0. Elapsed time was 4.603748217
 j = 5
-The number of RKMil Fails is 7. Elapsed time was 0.222163033
+The number of RKMil Fails is 0. Elapsed time was 8.355420456
 j = 6
-The number of RKMil Fails is 6. Elapsed time was 0.245782284
+The number of RKMil Fails is 0. Elapsed time was 18.557083522
 ```
 
 
@@ -340,11 +349,25 @@ using Plots, LaTeXStrings
 lw = 3
 p2 = plot(dts,times,xscale=:log2,yscale=:log2,guidefont=font(16),tickfont=font(14),yguide="Elapsed Time (s)",xguide=L"Chosen $\Delta t$",linewidth=lw,lab=["Euler-Maruyama" "RK-Mil" "RosslerSRI"],legendfont=font(14))
 plot!(dts,fill(best_adaptive_time, length(dts)),linewidth=lw,line=:dash,lab="ESRK+RSwM3")
-scatter!([2.0^(-20);2.0^(-20);2.0^(-18)],[times[5,1];times[5,2];times[3,3]],markersize=20,c=:red,lab="")
+stable = [findfirst(==(0), fails[:,i]) for i in 1:3]
+stable_idxs = [(j,i) for (i,j) in enumerate(stable) if j !== nothing]
+scatter!([dts[j] for (j,i) in stable_idxs],[times[j,i] for (j,i) in stable_idxs],markersize=20,c=:red,lab="")
 plot(p2,size=(800,800))
 ```
 
 ![](figures/Oval2Timings_19_1.png)
+
+
+
+## Conclusion
+
+In the latest run, Euler-Maruyama, `RKMil`, and `SRIW1` all have failed trajectories for
+$\Delta t \geq 2^{-18}$ and first complete all 1000 trajectories at $\Delta t = 2^{-19}$.
+The implicit methods have no failures at any tested $\Delta t$, but are substantially
+slower than those cheapest stable fixed-step runs. Absolute wall-clock times vary with
+machine load; the qualitative ranking does not. The fastest adaptive run
+(`SOSRI` with `abstol = 2^-7`, `reltol = 2^-4`) completes all trajectories more than an
+order of magnitude faster than the cheapest fixed-step run without failures.
 
 
 ## Appendix
@@ -371,7 +394,6 @@ Platform Info:
   LLVM: libLLVM-16.0.6 (ORCJIT, znver2)
 Threads: 128 default, 0 interactive, 64 GC (on 128 virtual cores)
 Environment:
-  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
 
 ```
@@ -379,49 +401,45 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/StiffSDE/Project.toml`
-⌃ [f3b72e0c] DiffEqDevTools v3.2.0
-⌃ [77a26b50] DiffEqNoiseProcess v5.34.0
-⌃ [b964fa9f] LaTeXStrings v1.4.0
-⌃ [bbf590c4] OrdinaryDiffEqCore v4.13.0
-⌃ [91a5bcdd] Plots v1.41.6
-⌃ [c72e72a9] SDEProblemLibrary v1.2.3
-⌅ [0bca4576] SciMLBase v3.43.0
-⌃ [31c91b34] SciMLBenchmarks v0.1.3
-⌃ [a6db7da4] SciMLLogging v2.0.4
-⌃ [10745b16] Statistics v1.11.1
-⌃ [789caeaf] StochasticDiffEq v7.1.4
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/StiffSDE/Project.toml`
+  [f3b72e0c] DiffEqDevTools v3.6.3
+  [77a26b50] DiffEqNoiseProcess v5.36.3
+  [b964fa9f] LaTeXStrings v1.4.1
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
+  [91a5bcdd] Plots v1.41.7
+  [c72e72a9] SDEProblemLibrary v1.2.4
+⌃ [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1
+  [a6db7da4] SciMLLogging v2.1.0
+  [10745b16] Statistics v1.11.5
+  [789caeaf] StochasticDiffEq v7.2.0
   [37e2e46d] LinearAlgebra v1.11.0
   [9a3f8284] Random v1.11.0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
+Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/StiffSDE/Manifest.toml`
-⌃ [47edcb42] ADTypes v1.22.4
-⌃ [14f7f29c] AMD v0.5.3
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/StiffSDE/Manifest.toml`
+  [47edcb42] ADTypes v1.24.0
+  [14f7f29c] AMD v0.5.4
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
-⌃ [4fba245c] ArrayInterface v7.28.1
-⌃ [b2a6c25c] BinaryHeaps v1.0.4
-  [d1d4a3ce] BitFlags v0.1.10
-⌃ [70df07ce] BracketingNonlinearSolve v1.12.4
-⌃ [944b1d66] CodecZlib v0.7.8
+  [4fba245c] ArrayInterface v7.30.2
+  [b2a6c25c] BinaryHeaps v1.1.0
+  [70df07ce] BracketingNonlinearSolve v1.12.7
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
-  [5ae59095] Colors v0.13.1
-⌃ [38540f10] CommonSolve v0.2.13
+⌃ [5ae59095] Colors v0.13.1
+  [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
   [34da2185] Compat v4.18.1
   [a33af91c] CompositionsBase v0.1.2
-⌃ [2569d6c7] ConcreteStructs v0.2.7
-  [f0e56b4a] ConcurrentUtilities v2.6.0
-  [8f4d0f93] Conda v1.10.3
+  [2569d6c7] ConcreteStructs v0.2.8
   [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
   [a8cc5b0e] Crayons v4.2.0
@@ -429,41 +447,36 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-⌃ [2b5f629d] DiffEqBase v7.12.0
-⌃ [459566f4] DiffEqCallbacks v4.19.1
-⌃ [f3b72e0c] DiffEqDevTools v3.2.0
-⌃ [77a26b50] DiffEqNoiseProcess v5.34.0
+⌃ [2b5f629d] DiffEqBase v7.21.1
+  [459566f4] DiffEqCallbacks v4.19.4
+  [f3b72e0c] DiffEqDevTools v3.6.3
+  [77a26b50] DiffEqNoiseProcess v5.36.3
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
-⌃ [a0c0ee7d] DifferentiationInterface v0.7.20
-⌃ [31c24e10] Distributions v0.25.130
+  [a0c0ee7d] DifferentiationInterface v0.7.21
+  [31c24e10] Distributions v0.25.131
   [ffbed154] DocStringExtensions v0.9.5
   [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.21
-  [460bff9d] ExceptionUnwrapping v0.1.11
   [e2ba6199] ExprTools v0.1.11
   [c87230d0] FFMPEG v0.4.5
-⌃ [7034ab61] FastBroadcast v1.3.6
+  [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
-⌃ [a4df4552] FastPower v1.4.1
-  [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
-⌃ [6a86dc24] FiniteDiff v2.32.1
+  [a4df4552] FastPower v1.5.0
+⌃ [1a297f60] FillArrays v1.17.0
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
+  [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+  [f6369f11] ForwardDiff v1.4.6
   [069b7b12] FunctionWrappers v1.1.3
-⌃ [77dc65aa] FunctionWrappersWrappers v1.12.1
-  [46192b85] GPUArraysCore v0.2.0
-⌃ [28b8d3ca] GR v0.73.26
-⌃ [a0844989] Gamma v1.1.0
-  [d7ba0133] Git v1.5.0
-  [86223c79] Graphs v1.14.0
-  [42e2da0e] Grisu v1.0.2
-⌅ [cd3eb016] HTTP v1.11.0
+  [77dc65aa] FunctionWrappersWrappers v1.13.0
+⌃ [46192b85] GPUArraysCore v0.2.0
+  [28b8d3ca] GR v0.73.27
+  [a0844989] Gamma v1.2.0
+  [86223c79] Graphs v1.15.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.30
-  [7073ff75] IJulia v1.34.4
   [d25df0c9] Inflate v0.1.5
   [3587e190] InverseFunctions v0.1.17
   [92d709cd] IrrationalConstants v0.2.6
@@ -471,134 +484,126 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [1019f520] JLFzf v0.1.11
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
-⌃ [ccbc3e58] JumpProcesses v9.29.2
-  [ba0b0d4f] Krylov v0.10.9
-⌃ [b964fa9f] LaTeXStrings v1.4.0
-⌃ [23fbe1c1] Latexify v0.16.11
-⌃ [87fe0de2] LineSearch v0.1.13
-⌃ [7ed4a6bd] LinearSolve v5.5.0
-  [2ab3a3ac] LogExpFunctions v1.0.1
+⌃ [ccbc3e58] JumpProcesses v9.32.3
+  [ba0b0d4f] Krylov v0.10.10
+  [2faa5264] LHLFactorization v2.2.2
+  [b964fa9f] LaTeXStrings v1.4.1
+  [23fbe1c1] Latexify v0.16.12
+  [87fe0de2] LineSearch v0.1.18
+⌃ [7ed4a6bd] LinearSolve v5.17.3
+⌃ [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
-⌃ [bb5d69b7] MaybeInplace v0.1.7
-  [739be429] MbedTLS v1.1.10
+  [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
   [46d2c3a1] MuladdMacro v0.2.7
-  [ffc61752] Mustache v1.0.21
+⌃ [ffc61752] Mustache v1.0.21
   [77ba4419] NaNMath v1.1.4
-⌃ [8913a72c] NonlinearSolve v4.25.0
-⌃ [be0214bd] NonlinearSolveBase v2.41.0
-⌃ [5959db7a] NonlinearSolveFirstOrder v2.3.0
-⌃ [9a2c21bd] NonlinearSolveQuasiNewton v1.15.0
-⌃ [26075421] NonlinearSolveSpectralMethods v1.8.0
-  [4d8831e6] OpenSSL v1.6.1
-⌅ [bac558e1] OrderedCollections v1.8.2
-⌃ [bbf590c4] OrdinaryDiffEqCore v4.13.0
-⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.7.0
-⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.6.1
+⌃ [8913a72c] NonlinearSolve v4.30.0
+⌃ [be0214bd] NonlinearSolveBase v2.49.5
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
+  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3
+  [26075421] NonlinearSolveSpectralMethods v1.8.3
+  [bac558e1] OrderedCollections v2.0.1
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
+  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
   [90014a1f] PDMats v0.11.41
-⌅ [69de0a69] Parsers v2.8.7
+⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
-⌃ [91a5bcdd] Plots v1.41.6
+⌃ [995b91a9] PlotUtils v1.4.4
+  [91a5bcdd] Plots v1.41.7
   [e409e4f3] PoissonRandom v0.4.13
-⌃ [d236fae5] PreallocationTools v1.4.1
+  [d236fae5] PreallocationTools v1.7.1
 ⌅ [aea7be01] PrecompileTools v1.2.1
-  [21216c6a] Preferences v1.5.2
-⌃ [08abe8d2] PrettyTables v3.4.5
+  [21216c6a] Preferences v1.6.0
+  [08abe8d2] PrettyTables v3.4.8
   [43287f4e] PtrArrays v1.4.0
-⌃ [0c0d3e7f] PureKLU v1.4.0
+⌃ [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-⌃ [731186ca] RecursiveArrayTools v4.3.6
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
-⌃ [ae5879a3] ResettableStacks v1.3.0
-⌃ [9fe22ead] RespecializeParams v1.2.0
+  [ae5879a3] ResettableStacks v1.4.0
+  [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
-⌃ [47965b36] RootedTrees v2.25.4
-⌃ [f2b01f46] Roots v3.0.6
-⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.24
-⌃ [c72e72a9] SDEProblemLibrary v1.2.3
-⌅ [0bca4576] SciMLBase v3.43.0
-⌃ [31c91b34] SciMLBenchmarks v0.1.3
-⌃ [19f34311] SciMLJacobianOperators v0.1.16
-⌃ [a6db7da4] SciMLLogging v2.0.4
-⌃ [c0aeaf25] SciMLOperators v1.26.0
-⌃ [431bcebd] SciMLPublic v1.2.4
-⌃ [53ae85a6] SciMLStructures v1.10.4
+  [47965b36] RootedTrees v2.27.0
+  [f2b01f46] Roots v3.0.8
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+  [c72e72a9] SDEProblemLibrary v1.2.4
+⌃ [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1
+  [19f34311] SciMLJacobianOperators v0.1.19
+  [a6db7da4] SciMLLogging v2.1.0
+⌃ [c0aeaf25] SciMLOperators v1.30.0
+  [431bcebd] SciMLPublic v1.3.0
+  [53ae85a6] SciMLStructures v1.10.5
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-⌃ [992d4aef] Showoff v1.0.3
-  [777ac1f9] SimpleBufferStream v1.2.0
-⌃ [727e6d20] SimpleNonlinearSolve v2.14.0
+  [992d4aef] Showoff v1.1.1
+  [727e6d20] SimpleNonlinearSolve v2.14.5
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
-⌃ [a57abbd0] SparseColumnPivotedQR v2.1.6
-⌃ [0a514795] SparseMatrixColorings v0.4.27
-⌃ [276daf66] SpecialFunctions v2.8.3
+  [a57abbd0] SparseColumnPivotedQR v2.1.8
+  [0a514795] SparseMatrixColorings v0.4.28
+  [276daf66] SpecialFunctions v2.9.0
   [860ef19b] StableRNGs v1.0.4
-⌃ [90137ffa] StaticArrays v1.9.18
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
-⌃ [10745b16] Statistics v1.11.1
+  [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
-⌃ [2913bbd2] StatsBase v0.34.12
+  [2913bbd2] StatsBase v0.34.13
   [4c63d2b9] StatsFuns v2.2.1
-⌃ [789caeaf] StochasticDiffEq v7.1.4
-⌃ [19c5a474] StochasticDiffEqCore v2.0.5
-⌃ [0520c28c] StochasticDiffEqHighOrder v2.1.3
-⌃ [ebf54054] StochasticDiffEqIIF v2.0.3
-⌃ [5080b986] StochasticDiffEqImplicit v2.1.3
-⌃ [aefaaa88] StochasticDiffEqLeaping v2.0.3
-⌃ [90dbc90e] StochasticDiffEqLevyArea v2.0.3
-⌃ [d15fe365] StochasticDiffEqLowOrder v2.0.3
-⌃ [8c95a807] StochasticDiffEqMilstein v2.0.3
-⌃ [db241ea8] StochasticDiffEqROCK v2.0.3
-⌃ [49714585] StochasticDiffEqRODE v2.0.3
-⌃ [af2a2fcd] StochasticDiffEqWeak v2.1.3
+  [789caeaf] StochasticDiffEq v7.2.0
+  [19c5a474] StochasticDiffEqCore v2.2.3
+  [0520c28c] StochasticDiffEqHighOrder v2.2.0
+  [ebf54054] StochasticDiffEqIIF v2.1.0
+  [5080b986] StochasticDiffEqImplicit v2.2.1
+  [aefaaa88] StochasticDiffEqLeaping v2.1.0
+  [90dbc90e] StochasticDiffEqLevyArea v2.1.1
+  [d15fe365] StochasticDiffEqLowOrder v2.0.5
+  [8c95a807] StochasticDiffEqMilstein v2.1.1
+  [db241ea8] StochasticDiffEqROCK v2.1.1
+⌃ [49714585] StochasticDiffEqRODE v2.1.0
+  [af2a2fcd] StochasticDiffEqWeak v2.2.1
   [69024149] StringEncodings v0.3.7
-⌅ [892a3eda] StringManipulation v0.4.7
+⌅ [892a3eda] StringManipulation v0.5.0
   [09ab397b] StructArrays v0.7.3
-⌃ [2efcf032] SymbolicIndexingInterface v0.3.53
+  [2efcf032] SymbolicIndexingInterface v0.3.55
   [3783bdb8] TableTraits v1.0.1
-⌃ [bd369af6] Tables v1.13.0
+  [bd369af6] Tables v1.14.0
   [62fd8b95] TensorCore v0.1.1
-⌃ [a759f4b9] TimerOutputs v1.1.0
-  [3bb67fe8] TranscodingStreams v0.11.3
+⌃ [a759f4b9] TimerOutputs v1.2.1
   [781d530d] TruncatedStacktraces v1.4.0
-⌃ [5c2747f8] URIs v1.6.2
   [1cfade01] UnicodeFun v0.4.1
   [41fe7b60] Unzip v0.2.0
-  [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.16
-  [c2297ded] ZMQ v1.5.1
+⌃ [ddb6d928] YAML v0.4.16
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-⌃ [2e619515] Expat_jll v2.8.2+0
+  [2e619515] Expat_jll v2.8.4+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
   [559328eb] FriBidi_jll v1.0.17+0
-⌃ [0656b61e] GLFW_jll v3.4.1+1
-⌅ [d2c73de3] GR_jll v0.73.26+0
+  [0656b61e] GLFW_jll v3.5.1+0
+  [d2c73de3] GR_jll v0.73.27+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
-  [020c3dae] Git_LFS_jll v3.7.1+0
-  [f8c6e375] Git_jll v2.55.0+0
   [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
-⌅ [2e76f6c2] HarfBuzz_jll v8.5.1+0
+  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
-⌃ [aacddb02] JpegTurbo_jll v3.2.0+0
+  [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-  [88015f11] LERC_jll v4.1.0+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+  [88015f11] LERC_jll v4.2.0+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
@@ -607,11 +612,10 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [38a345b3] Libuuid_jll v2.42.0+0
   [856f044c] MKL_jll v2025.2.0+0
   [e7412a2a] Ogg_jll v1.3.6+0
-⌃ [9bd350c2] OpenSSH_jll v10.4.1+0
-⌃ [458c3c95] OpenSSL_jll v3.5.7+0
+  [458c3c95] OpenSSL_jll v3.5.8+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
-⌃ [36c8627f] Pango_jll v1.58.0+0
+  [36c8627f] Pango_jll v1.58.2+0
   [30392449] Pixman_jll v0.46.4+0
   [c0090381] Qt6Base_jll v6.10.2+2
   [629bc702] Qt6Declarative_jll v6.10.2+2
@@ -621,7 +625,7 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [f50d1b31] Rmath_jll v0.5.2+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+  [ffd25f8a] XZ_jll v5.8.4+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0
@@ -646,19 +650,17 @@ Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [35661453] Xorg_xkbcomp_jll v1.4.7+0
   [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
-  [8f1865be] ZeroMQ_jll v4.3.6+0
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
-⌃ [a4ae2306] libaom_jll v3.13.3+0
-⌃ [0ac62f75] libass_jll v0.17.4+0
+⌃ [a4ae2306] libaom_jll v3.14.1+0
+  [0ac62f75] libass_jll v0.17.5+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
   [2db6ffa8] libevdev_jll v1.13.4+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
   [b53b4c65] libpng_jll v1.6.58+0
-  [a9144af2] libsodium_jll v1.0.21+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0

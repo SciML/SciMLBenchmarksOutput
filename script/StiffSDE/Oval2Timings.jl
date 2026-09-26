@@ -22,77 +22,77 @@ println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_t
 sol = solve(prob,SRI(error_terms=2),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-7),maxiters=Int(1e11), controller=PIController(SRI(error_terms=2); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SRI(error_terms=2),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-7),maxiters=Int(1e11), controller=PIController(SRI(error_terms=2); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
 sol = solve(prob,SRI(),EnsembleThreads(),abstol=2.0^(-14),reltol=2.0^(-18),maxiters=Int(1e11), controller=PIController(SRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SRI(),EnsembleThreads(),abstol=2.0^(-14),reltol=2.0^(-18),maxiters=Int(1e11), controller=PIController(SRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
 sol = solve(prob,SRI(tableau=StochasticDiffEq.constructSRIOpt1()),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-4),maxiters=Int(1e11), controller=PIController(SRI(tableau=StochasticDiffEq.constructSRIOpt1()); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SRI(tableau=StochasticDiffEq.constructSRIOpt1()),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-4),maxiters=Int(1e11), controller=PIController(SRI(tableau=StochasticDiffEq.constructSRIOpt1()); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
 sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-4),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-4),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
 sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-6),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-7),reltol=2.0^(-6),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
 sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
 sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-7),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-7),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
 sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
 sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-12),reltol=2.0^(-15),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
 sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-11),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-11),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
 sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-11),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=Threads.nthreads())
 adaptive_time = @elapsed sol = solve(prob,SOSRI2(),EnsembleThreads(),abstol=2.0^(-13),reltol=2.0^(-11),maxiters=Int(1e11), controller=PIController(SOSRI2(); qmax=1.125),save_everystep=false,trajectories=trajectories)
 numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
-best_adaptive_time = numfails != 0 ? adaptive_time : min(best_adaptive_time,adaptive_time)
+best_adaptive_time = numfails != 0 ? best_adaptive_time : min(best_adaptive_time,adaptive_time)
 println("The number of Adaptive Fails is $numfails. Elapsed time was $adaptive_time")
 
 
@@ -109,8 +109,8 @@ end
 
 for j in 1:4
   println("j = $j")
-  sol =solve(prob,SRIW1(),EnsembleThreads(),dt=dts[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
-  t1 = @elapsed sol = solve(prob,SRIW1(),EnsembleThreads(),dt=dts[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
+  sol =solve(prob,SRIW1(),EnsembleThreads(),dt=dts[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
+  t1 = @elapsed sol = solve(prob,SRIW1(),EnsembleThreads(),dt=dts[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
   numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
   println("The number of SRIW1 Fails is $numfails. Elapsed time was $t1")
   fails[j,3] = numfails
@@ -122,8 +122,8 @@ js_imp = 17:21
 dts_imp = 1.0 ./ 2.0 .^ (js_imp)
 for j in eachindex(dts_imp)
   println("j = $j")
-  sol =solve(prob,ImplicitEM(),EnsembleThreads(),dt=dts_imp[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
-  t1 = @elapsed sol = solve(prob,ImplicitEM(),EnsembleThreads(),dt=dts_imp[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
+  sol =solve(prob,ImplicitEM(),EnsembleThreads(),dt=dts_imp[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
+  t1 = @elapsed sol = solve(prob,ImplicitEM(),EnsembleThreads(),dt=dts_imp[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
   numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
   println("The number of Implicit-EM Fails is $numfails. Elapsed time was $t1")
 end
@@ -131,8 +131,8 @@ end
 
 for j in eachindex(dts_imp)
   println("j = $j")
-  sol =solve(prob,ImplicitRKMil(),EnsembleThreads(),dt=dts_imp[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
-  t1 = @elapsed sol = solve(prob,ImplicitRKMil(),EnsembleThreads(),dt=dts_imp[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
+  sol =solve(prob,ImplicitRKMil(),EnsembleThreads(),dt=dts_imp[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
+  t1 = @elapsed sol = solve(prob,ImplicitRKMil(),EnsembleThreads(),dt=dts_imp[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
   numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
   println("The number of Implicit-RKMil Fails is $numfails. Elapsed time was $t1")
 end
@@ -140,8 +140,8 @@ end
 
 for j in eachindex(dts)
   println("j = $j")
-  sol =solve(prob,RKMil(),EnsembleThreads(),dt=dts[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
-  t1 = @elapsed sol = solve(prob,RKMil(),EnsembleThreads(),dt=dts[j],maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
+  sol =solve(prob,RKMil(),EnsembleThreads(),dt=dts[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=Threads.nthreads())
+  t1 = @elapsed sol = solve(prob,RKMil(),EnsembleThreads(),dt=dts[j],adaptive=false,maxiters=Int(1e11),save_everystep=false,verbose=SciMLLogging.None(),trajectories=trajectories)
   numfails = sum([Int(any(isnan,sol.u[i]) || sol.u[i].t[end] != 1) for i in 1:trajectories])
   println("The number of RKMil Fails is $numfails. Elapsed time was $t1")
   fails[j,2] = numfails
@@ -153,7 +153,9 @@ using Plots, LaTeXStrings
 lw = 3
 p2 = plot(dts,times,xscale=:log2,yscale=:log2,guidefont=font(16),tickfont=font(14),yguide="Elapsed Time (s)",xguide=L"Chosen $\Delta t$",linewidth=lw,lab=["Euler-Maruyama" "RK-Mil" "RosslerSRI"],legendfont=font(14))
 plot!(dts,fill(best_adaptive_time, length(dts)),linewidth=lw,line=:dash,lab="ESRK+RSwM3")
-scatter!([2.0^(-20);2.0^(-20);2.0^(-18)],[times[5,1];times[5,2];times[3,3]],markersize=20,c=:red,lab="")
+stable = [findfirst(==(0), fails[:,i]) for i in 1:3]
+stable_idxs = [(j,i) for (i,j) in enumerate(stable) if j !== nothing]
+scatter!([dts[j] for (j,i) in stable_idxs],[times[j,i] for (j,i) in stable_idxs],markersize=20,c=:red,lab="")
 plot(p2,size=(800,800))
 
 
