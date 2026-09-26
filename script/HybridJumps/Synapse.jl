@@ -2334,7 +2334,7 @@ for algo in algorithms
 end
 
 
-fig = plot(xlabel = "Voltage", ylabel = "Time");
+fig = plot(xlabel = "Time", ylabel = "Voltage");
 for (i, algo) in enumerate(algorithms)
     res = results[i]
     plot!(res.t, res.Vsp, label = algo.label)
@@ -2342,7 +2342,7 @@ end
 title!("Vsp")
 
 
-fig = plot(xlabel = "N", ylabel = "Time");
+fig = plot(xlabel = "Time", ylabel = "N");
 for (i, algo) in enumerate(algorithms)
     res = results[i]
     xd_arr = Array(res.XD)
@@ -2395,4 +2395,8 @@ relmedmem = Float64[median(b).memory for b in bs]
 relmedmem ./= relmedmem[1]
 bar(labels, relmedmem, markeralpha = 0, series_annotation = medmem, fmt = fmt)
 title!("evolveSynapse (Median memory)")
+
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
 
