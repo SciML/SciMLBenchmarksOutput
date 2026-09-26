@@ -39,16 +39,16 @@ prob = generate_stiff_stoch_heat(1.0,1.0)
 @time sol = solve(generate_stiff_stoch_heat(1.0,1.0),EM(),progress=true,adaptive=false,dt=0.00005);
 
 
-@time sol = solve(generate_stiff_stoch_heat(1.0,1.0),ImplicitRKMil(),progress=true,dt=0.1);
+@time sol = solve(generate_stiff_stoch_heat(1.0,1.0),ImplicitRKMil(),progress=true,adaptive=false,dt=0.1);
 
 
-@time sol = solve(generate_stiff_stoch_heat(1.0,1.0),ImplicitRKMil(),progress=true,dt=0.01);
+@time sol = solve(generate_stiff_stoch_heat(1.0,1.0),ImplicitRKMil(),progress=true,adaptive=false,dt=0.01);
 
 
-@time sol = solve(generate_stiff_stoch_heat(1.0,1.0),ImplicitRKMil(),progress=true,dt=0.001);
+@time sol = solve(generate_stiff_stoch_heat(1.0,1.0),ImplicitRKMil(),progress=true,adaptive=false,dt=0.001);
 
 
-@time sol = solve(generate_stiff_stoch_heat(1.0,1.0),ImplicitEM(),progress=true,dt=0.001);
+@time sol = solve(generate_stiff_stoch_heat(1.0,1.0),ImplicitEM(),progress=true,adaptive=false,dt=0.001);
 
 
 function simple_error(alg;kwargs...)
@@ -61,22 +61,22 @@ end
 mean(simple_error(EulerHeun(),dt=0.00005) for i in 1:400)
 
 
-mean(simple_error(ImplicitRKMil(interpretation=SciMLBase.AlgorithmInterpretation.Stratonovich),dt=0.1) for i in 1:400)
+mean(simple_error(ImplicitRKMil(interpretation=SciMLBase.AlgorithmInterpretation.Stratonovich),adaptive=false,dt=0.1) for i in 1:400)
 
 
-mean(simple_error(ImplicitRKMil(interpretation=SciMLBase.AlgorithmInterpretation.Stratonovich),dt=0.01) for i in 1:400)
+mean(simple_error(ImplicitRKMil(interpretation=SciMLBase.AlgorithmInterpretation.Stratonovich),adaptive=false,dt=0.01) for i in 1:400)
 
 
-mean(simple_error(ImplicitRKMil(interpretation=SciMLBase.AlgorithmInterpretation.Stratonovich),dt=0.001) for i in 1:400)
+mean(simple_error(ImplicitRKMil(interpretation=SciMLBase.AlgorithmInterpretation.Stratonovich),adaptive=false,dt=0.001) for i in 1:400)
 
 
-mean(simple_error(ImplicitEulerHeun(),dt=0.001) for i in 1:400)
+mean(simple_error(ImplicitEulerHeun(),adaptive=false,dt=0.001) for i in 1:400)
 
 
-mean(simple_error(ImplicitEulerHeun(),dt=0.01) for i in 1:400)
+mean(simple_error(ImplicitEulerHeun(),adaptive=false,dt=0.01) for i in 1:400)
 
 
-mean(simple_error(ImplicitEulerHeun(),dt=0.1) for i in 1:400)
+mean(simple_error(ImplicitEulerHeun(),adaptive=false,dt=0.1) for i in 1:400)
 
 
 sol = solve(generate_stiff_stoch_heat(1.0,1.0,adaptivealg=:RSwM1),SRIW1());
