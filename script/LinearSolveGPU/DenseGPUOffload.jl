@@ -3,7 +3,9 @@ using BenchmarkTools, Random, Printf
 using LinearAlgebra, LinearSolve, RecursiveFactorization, MKL_jll
 using CUDA
 
-BenchmarkTools.DEFAULT_PARAMETERS.seconds = 0.5
+# `samples`, not `seconds`, must be the binding limit, so every reported time is a
+# minimum over the full sample count rather than a single slow sample.
+BenchmarkTools.DEFAULT_PARAMETERS.seconds = 60
 BenchmarkTools.DEFAULT_PARAMETERS.samples = 5
 
 @assert CUDA.functional() "This benchmark requires a functional CUDA GPU"
@@ -108,14 +110,22 @@ best_gpu = [minimum(filter(!isnan, res_time[i, gpu_idx]); init = Inf) for i in 1
 println()
 for (i, n) in enumerate(ns)
     j = cpu_idx[argmin(replace(res_time[i, cpu_idx], NaN => Inf))]
-    @printf("%6d | best CPU: %-18s %.4g s | best GPU: %.4g s | GPU/CPU: %.2fx\n",
-        n, algs[j][1], best_cpu[i], best_gpu[i], best_cpu[i] / best_gpu[i])
+    @printf(
+        "%6d | best CPU: %-18s %.4g s | best GPU: %.4g s | CPU/GPU: %.2fx\n",
+        n, algs[j][1], best_cpu[i], best_gpu[i], best_cpu[i] / best_gpu[i]
+    )
 end
 cross = findfirst(i -> best_gpu[i] < best_cpu[i], 1:length(ns))
 println()
-println(cross === nothing ?
-    "No crossover in the measured range — the best CPU option wins throughout." :
-    "Crossover: GPU offload first beats the best CPU option at N = $(ns[cross]).")
+println(
+    if cross === nothing
+        "No crossover in the measured range — the best CPU option wins throughout."
+    elseif cross == 1
+        "No crossover in the measured range — GPU offload already beats the best CPU option at the smallest size, N = $(ns[1]), so the crossover lies below it."
+    else
+        "Crossover: GPU offload first beats the best CPU option at N = $(ns[cross]) (the best CPU option still wins at N = $(ns[cross - 1]))."
+    end
+)
 
 
 using SciMLBenchmarks
