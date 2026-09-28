@@ -11,44 +11,49 @@ The **Car Axis Problem** is a stiff Differential-Algebraic Equation (DAE) of ind
 ## Mathematical Description
 
 The problem is of the form:
-$$
+
+```math
 \begin{aligned}
 p' &= q \\
 K q' &= f(t, p, \lambda) \\
 0 &= \phi(t, p)
 \end{aligned}
-$$
+```
 where $p, q \in \mathbb{R}^4$, $\lambda \in \mathbb{R}^2$, and $0 \le t \le 3$.
 The matrix $K = \frac{\epsilon^2 M}{2} I_4$.
 
 The function $f(t, p, \lambda)$ is given by:
-$$
+
+```math
 f(t, p, \lambda) = \begin{pmatrix}
 \frac{L_0 - L_l}{L_l} x_l + \lambda_1 x_b + 2\lambda_2(x_l - x_r) \\
 \frac{L_0 - L_l}{L_l} y_l + \lambda_1 y_b + 2\lambda_2(y_l - y_r) - \frac{\epsilon^2 M}{2} g \\
 \frac{L_0 - L_r}{L_r} (x_r - x_b) - 2\lambda_2(x_l - x_r) \\
 \frac{L_0 - L_r}{L_r} (y_r - y_b) - 2\lambda_2(y_l - y_r) - \frac{\epsilon^2 M}{2} g
 \end{pmatrix}
-$$
+```
 where $p = (x_l, y_l, x_r, y_r)^T$.
 
 The lengths $L_l$ and $L_r$ are:
-$$
+
+```math
 L_l = \sqrt{x_l^2 + y_l^2}, \quad L_r = \sqrt{(x_r - x_b)^2 + (y_r - y_b)^2}
-$$
+```
 
 The road profile is defined by:
-$$
+
+```math
 x_b(t) = \sqrt{L^2 - y_b^2(t)}, \quad y_b(t) = r \sin(\omega t)
-$$
+```
 
 The constraint function $\phi(t, p)$ is:
-$$
+
+```math
 \phi(t, p) = \begin{pmatrix}
 x_l x_b + y_l y_b \\
 (x_l - x_r)^2 + (y_l - y_r)^2 - L^2
 \end{pmatrix}
-$$
+```
 
 ### Parameters
 * $L = 1$
@@ -62,9 +67,10 @@ $$
 
 ### Initial Conditions
 Consistent initial values at $t=0$:
-$$
+
+```math
 p_0 = (0, 0.5, 1, 0.5)^T, \quad q_0 = (-0.5, 0, -0.5, 0)^T, \quad \lambda_0 = (0, 0)^T
-$$
+```
 
 ```julia
 using OrdinaryDiffEq, DiffEqDevTools, Sundials, ModelingToolkit, ODEInterfaceDiffEq,
@@ -109,16 +115,25 @@ u0_mm  = [0.0, 0.5, 1.0, 0.5, -0.5, 0.0, -0.5, 0.0, 0.0, 0.0]
 
 ## 1 · ModelingToolkit Symbolic Form
 
-`@mtkbuild` calls `structural_simplify` (Pantelides) to reduce index 3 → 0/1.
-The algorithm introduces a dummy second-derivative variable (`ylˍtt`) and reduces
-the system from 10 unknowns to **8**.  The initialization system is overdetermined
-(6 equations, 0 unknowns); `ylˍtt(0)` is left as `NaN` and must be patched
-analytically via `fix_nanics` (at $t=0$: $D(dyl)(0)=-g$ from the force equation).
+`@mtkbuild` calls `structural_simplify` (Pantelides) to reduce index 3 → 0/1,
+reducing the system from 10 unknowns to **8**. The two position constraints and
+their time derivatives eliminate $x_l$ and $\dot{x}_l$, and $\dot{x}_r$ enters
+the reduced system only through the dummy derivative `xrˍt`: the torn unknowns
+are $y_l$, $y_r$, $x_r$, $\dot{y}_l$, $\dot{y}_r$, `xrˍt`, and the algebraic
+$\lambda_1$, $\lambda_2$. Only $y_l$, $y_r$, $\dot{y}_l$ and $\dot{y}_r$ are
+therefore given initial conditions; the other variables get guesses and are
+solved for by initialization. Fixing all ten would make the initialization
+system overdetermined.
+
+In the first constraint $x_b x_l + y_b y_l = 0$, the coefficient
+$y_b = r\sin(\omega t)$ vanishes at $t = 0$. Passing it through the
+`maybe_zeros` keyword tells index reduction not to use it as a denominator,
+so the constraint is handled in a form that stays regular at the initial time.
 
 ```julia
-@variables xl(t)=0.0    yl(t)=0.5   xr(t)=1.0    yr(t)=0.5
-@variables dxl(t)=-0.5  dyl(t)=0.0  dxr(t)=-0.5  dyr(t)=0.0
-@variables lam1(t)=0.0  lam2(t)=0.0
+@variables xl(t) [guess = 0.0]   yl(t)    xr(t) [guess = 1.0]    yr(t)
+@variables dxl(t) [guess = -0.5] dyl(t)   dxr(t) [guess = -0.5]  dyr(t)
+@variables lam1(t) [guess = 0.0] lam2(t) [guess = 0.0]
 
 yb_s = r_ca * sin(omega_ca * t)
 xb_s = sqrt(L_ca^2 - yb_s^2)
@@ -138,32 +153,17 @@ eqs = [
     0 ~ (xl - xr)^2 + (yl - yr)^2 - L_ca^2,
 ]
 
-@mtkbuild sys = ODESystem(eqs, t)
+@mtkbuild sys = ODESystem(eqs, t; maybe_zeros = [yb_s])
 tspan = (0.0, 3.0)
 
-mtkprob  = ODEProblem(sys, [], tspan)                             # prob_choice = 1
-
-function fix_nanics(prob)
-    u0f = [isnan(v) ? -g_ca : v for v in prob.u0]
-    remake(prob; u0 = u0f)
-end
-mtkprob  = fix_nanics(mtkprob)
+mtkprob  = ODEProblem(sys, [yl => 0.5, yr => 0.5, dyl => 0.0, dyr => 0.0], tspan) # prob_choice = 1
+println("MTK u0 all finite: ", all(isfinite, mtkprob.u0))
+println("MTK RHS at t = 0 all finite: ", all(isfinite, mtkprob.f(mtkprob.u0, mtkprob.p, tspan[1])))
 ```
 
 ```
-ODEProblem with uType Vector{Float64} and tType Float64. In-place: true
-Initialization status: OVERDETERMINED
-Non-trivial mass matrix: true
-timespan: (0.0, 3.0)
-u0: 8-element Vector{Float64}:
-  0.5
-  0.5
-  1.0
-  0.0
-  0.0
-  0.0
-  0.0
- -0.0
+MTK u0 all finite: true
+MTK RHS at t = 0 all finite: true
 ```
 
 
@@ -345,8 +345,9 @@ u0: 10-element Vector{Float64}:
 
 ## Reference Solution
 
-High-accuracy reference computed using RADAU5 with tight tolerances and
-Hessenberg index hints `(4,4,2)`.
+High-accuracy reference computed using RADAU5 at `abstol = reltol = 1e-12` with
+Hessenberg index hints `(4,4,2)`. The work-precision sweeps stop at `1e-11` so that
+no run is compared against a reference computed with the same solver and tolerance.
 
 ```julia
 const radau5_alg = radau5(DIMOFIND1VAR=4, DIMOFIND2VAR=4, DIMOFIND3VAR=2)
@@ -365,11 +366,38 @@ NaN in reference? false
 
 
 
+The MTK-reduced system has a different state vector, so it gets its own reference.
+Both are checked against the positions at $t = 3$ from the IVP Test Set.
+
+```julia
+mtk_ref = solve(mtkprob, Rodas5P(); abstol=1e-12, reltol=1e-12)
+println("MTK reference retcode: ", mtk_ref.retcode)
+
+testset_pos = [0.493455784275402809e-1, 0.496989460230171153,
+               0.104174252488542151e1, 0.373911027265361256]
+relerr(u) = maximum(abs.(u .- testset_pos) ./ abs.(testset_pos))
+println("RADAU5 reference, max rel. error in positions at t = 3: ", relerr(ref_sol.u[end][1:4]))
+println("MTK reference,    max rel. error in positions at t = 3: ",
+        relerr(mtk_ref[[xl, yl, xr, yr]][end]))
+```
+
+```
+MTK reference retcode: Success
+RADAU5 reference, max rel. error in positions at t = 3: 5.054373155937124e-
+9
+MTK reference,    max rel. error in positions at t = 3: 4.5191484611666224e
+-13
+```
+
+
+
+
+
 ## Problem Collection
 
 ```julia
 probs = [mtkprob, daeprob, mmprob, rscprob]
-refs  = [ref_sol, ref_sol, ref_sol, ref_sol];
+refs  = [mtk_ref, ref_sol, ref_sol, ref_sol];
 ```
 
 
@@ -383,14 +411,14 @@ plot(ref_sol; idxs=[1,2,3,4],
      xlabel="t", ylabel="position", layout=(2,2), size=(900,600))
 ```
 
-![](figures/caraxis_8_1.png)
+![](figures/caraxis_9_1.png)
 
 ```julia
 plot(ref_sol; idxs=[9,10],
      label=["λ₁" "λ₂"], title="Lagrange multipliers", xlabel="t")
 ```
 
-![](figures/caraxis_9_1.png)
+![](figures/caraxis_10_1.png)
 
 
 
@@ -404,31 +432,39 @@ plot(ref_sol; idxs=[9,10],
 abstols = 1.0 ./ 10.0 .^ (4:8)
 reltols = 1.0 ./ 10.0 .^ (4:8)
 
-setups = [Dict(:prob_choice => 4, :alg => radau5_alg)]
+setups = [Dict(:prob_choice => 4, :alg => radau5_alg),
+          Dict(:prob_choice => 1, :alg => Rodas5P()),
+          Dict(:prob_choice => 1, :alg => RadauIIA5()),
+          Dict(:prob_choice => 1, :alg => FBDF()),
+          Dict(:prob_choice => 1, :alg => QNDF())]
+labels = ["RADAU5 (index-3 form)" "MTK + Rodas5P" "MTK + RadauIIA5" "MTK + FBDF" "MTK + QNDF"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 3)
+    names = vec(labels), save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 3)
 plot(wp; title = "Car Axis WPD — High Tolerances")
 ```
 
-![](figures/caraxis_10_1.png)
+![](figures/caraxis_11_1.png)
 
 
 
 ### Low Tolerances
 
 ```julia
-abstols = 1.0 ./ 10.0 .^ (7:12)
-reltols = 1.0 ./ 10.0 .^ (7:12)
+abstols = 1.0 ./ 10.0 .^ (7:11)
+reltols = 1.0 ./ 10.0 .^ (7:11)
 
-setups = [Dict(:prob_choice => 4, :alg => radau5_alg)]
+setups = [Dict(:prob_choice => 4, :alg => radau5_alg),
+          Dict(:prob_choice => 1, :alg => Rodas5P()),
+          Dict(:prob_choice => 1, :alg => RadauIIA5())]
+labels = ["RADAU5 (index-3 form)" "MTK + Rodas5P" "MTK + RadauIIA5"]
 
 wp = WorkPrecisionSet(probs, abstols, reltols, setups;
-    save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 3)
+    names = vec(labels), save_everystep = false, appxsol = refs, maxiters = Int(1e5), numruns = 3)
 plot(wp; title = "Car Axis WPD — Low Tolerances")
 ```
 
-![](figures/caraxis_11_1.png)
+![](figures/caraxis_12_1.png)
 
 
 
@@ -436,9 +472,10 @@ plot(wp; title = "Car Axis WPD — Low Tolerances")
 
 ## Index-3 Solver Limitations
 
-This section documents why most solver–formulation combinations fail on this
-problem.  The Car Axis index-3 structure ($\partial\phi/\partial\lambda \equiv 0$)
-is the root cause.
+Without index reduction, the index-3 structure ($\partial\phi/\partial\lambda \equiv 0$)
+defeats the standard solvers: RADAU5 handles it with the Hessenberg index hints,
+but the solvers below fail on the unreduced forms. The MTK-reduced system above
+is the index-reduced alternative that the standard solvers can integrate.
 
 ### Standard Julia solvers on the raw mass-matrix form
 
@@ -459,30 +496,6 @@ Standard Julia solvers on the raw mass-matrix form:
   FBDF         → Unstable
   QNDF         → Unstable
   NordsieckBDF → Unstable
-```
-
-
-
-
-
-### Standard solvers on the Pantelides-reduced system (MTK)
-
-```julia
-println("Standard Julia solvers on the MTK Pantelides-reduced system:")
-for (name, alg) in [("Rodas5P", Rodas5P()), ("RadauIIA5", RadauIIA5()),
-                     ("FBDF", FBDF()), ("QNDF", QNDF()), ("NordsieckBDF", NordsieckBDF())]
-    sol = solve(mtkprob, alg; reltol=1e-8, abstol=1e-8, maxiters=Int(1e3))
-    println("  ", rpad(name, 12), " → ", sol.retcode)
-end
-```
-
-```
-Standard Julia solvers on the MTK Pantelides-reduced system:
-  Rodas5P      → InitialFailure
-  RadauIIA5    → InitialFailure
-  FBDF         → InitialFailure
-  QNDF         → InitialFailure
-  NordsieckBDF → InitialFailure
 ```
 
 
@@ -584,41 +597,43 @@ Environment:
 Package Information:
 
 ```
-Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Project.toml`
-  [165a45c3] DASKR v3.2.0
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Project.toml`
+⌃ [165a45c3] DASKR v3.2.0
   [e993076c] DASSL v3.2.0
   [f3b72e0c] DiffEqDevTools v3.6.3
-  [961ee093] ModelingToolkit v11.43.1
+⌃ [961ee093] ModelingToolkit v11.43.1
 ⌅ [09606e27] ODEInterfaceDiffEq v4.1.0
   [1dea7af3] OrdinaryDiffEq v7.8.1
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
   [5960d6e9] OrdinaryDiffEqFIRK v2.8.7
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
   [91a5bcdd] Plots v1.41.7
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [31c91b34] SciMLBenchmarks v0.2.1
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [10745b16] Statistics v1.11.5
   [c3572dad] Sundials v6.7.1
-  [0c5d862f] Symbolics v7.39.2
+  [2efcf032] SymbolicIndexingInterface v0.3.55
+⌃ [0c5d862f] Symbolics v7.39.2
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`
 ```
 
 And the full manifest:
 
 ```
-Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Manifest.toml`
+Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DAE/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
   [14f7f29c] AMD v0.5.4
   [6e696c72] AbstractPlutoDingetjes v1.4.1
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
 ⌃ [4fba245c] ArrayInterface v7.30.1
-  [4c555306] ArrayLayouts v1.12.2
-  [aae01518] BandedMatrices v1.12.0
+⌃ [4c555306] ArrayLayouts v1.12.2
+⌃ [aae01518] BandedMatrices v1.12.0
   [e2ed5e7c] Bijections v0.2.2
   [b2a6c25c] BinaryHeaps v1.1.0
   [caf10ac8] BipartiteGraphs v0.1.14
@@ -629,9 +644,9 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [2a0fbf3d] CPUSummary v0.2.7
   [fb6a15b2] CloseOpenIntervals v0.1.13
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
-  [5ae59095] Colors v0.13.1
+⌃ [5ae59095] Colors v0.13.1
 ⌅ [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
@@ -644,22 +659,22 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [d38c429a] Contour v0.6.3
   [adafc99b] CpuId v0.3.1
   [a8cc5b0e] Crayons v4.2.0
-  [165a45c3] DASKR v3.2.0
+⌃ [165a45c3] DASKR v3.2.0
   [e993076c] DASSL v3.2.0
   [9a962f9c] DataAPI v1.16.0
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.21.1
+⌃ [2b5f629d] DiffEqBase v7.21.1
   [459566f4] DiffEqCallbacks v4.19.4
   [f3b72e0c] DiffEqDevTools v3.6.3
-  [77a26b50] DiffEqNoiseProcess v5.36.3
+⌃ [77a26b50] DiffEqNoiseProcess v5.36.3
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [31c24e10] Distributions v0.25.131
   [ffbed154] DocStringExtensions v0.9.5
-  [5b8099bc] DomainSets v0.8.1
+⌃ [5b8099bc] DomainSets v0.8.1
   [7c1d4256] DynamicPolynomials v0.6.8
   [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.21
@@ -670,8 +685,8 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [9aa1b823] FastClosures v0.3.2
   [442a2c76] FastGaussQuadrature v1.3.0
   [a4df4552] FastPower v1.5.0
-  [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
+⌃ [1a297f60] FillArrays v1.17.0
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
@@ -679,7 +694,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [a85aefff] FunctionMaps v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v1.13.0
-  [46192b85] GPUArraysCore v0.2.0
+⌃ [46192b85] GPUArraysCore v0.2.0
   [28b8d3ca] GR v0.73.27
   [a0844989] Gamma v1.2.0
   [86223c79] Graphs v1.15.0
@@ -705,21 +720,21 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [10f19ff3] LayoutPointers v0.1.17
   [87fe0de2] LineSearch v0.1.18
 ⌃ [7ed4a6bd] LinearSolve v5.17.3
-  [2ab3a3ac] LogExpFunctions v1.0.1
+⌃ [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
   [d125e4d3] ManualMemory v0.1.8
   [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
-  [961ee093] ModelingToolkit v11.43.1
+⌃ [961ee093] ModelingToolkit v11.43.1
 ⌃ [7771a370] ModelingToolkitBase v1.71.2
   [6bb917b9] ModelingToolkitTearing v1.20.6
 ⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
-  [102ac46a] MultivariatePolynomials v0.5.19
-  [ffc61752] Mustache v1.0.21
-  [d8a4904e] MutableArithmetics v1.8.0
+⌃ [102ac46a] MultivariatePolynomials v0.5.19
+⌃ [ffc61752] Mustache v1.0.21
+⌃ [d8a4904e] MutableArithmetics v1.8.0
   [77ba4419] NaNMath v1.1.4
 ⌃ [8913a72c] NonlinearSolve v4.30.0
 ⌃ [be0214bd] NonlinearSolveBase v2.49.5
@@ -734,10 +749,10 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
   [50262376] OrdinaryDiffEqDefault v2.6.2
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
   [5960d6e9] OrdinaryDiffEqFIRK v2.8.7
   [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
   [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
@@ -745,7 +760,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [90014a1f] PDMats v0.11.41
 ⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [e409e4f3] PoissonRandom v0.4.13
   [f517fe37] Polyester v0.7.19
@@ -756,13 +771,13 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.5.0
+⌃ [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
   [988b38a3] ReadOnlyArrays v0.2.0
   [795d4caa] ReadOnlyDicts v1.0.1
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v4.5.1
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
@@ -771,10 +786,10 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [79098fc4] Rmath v0.9.0
   [47965b36] RootedTrees v2.27.0
   [f2b01f46] Roots v3.0.8
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
-  [9dfe8606] SCCNonlinearSolve v1.15.3
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+⌃ [9dfe8606] SCCNonlinearSolve v1.15.3
   [94e857df] SIMDTypes v0.1.0
-  [0bca4576] SciMLBase v3.54.0
+⌃ [0bca4576] SciMLBase v3.54.0
   [31c91b34] SciMLBenchmarks v0.2.1
   [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
@@ -795,7 +810,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [64909d44] StateSelection v1.11.1
   [aedffcd0] Static v1.4.6
   [0d7ed370] StaticArrayInterface v1.10.0
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
   [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
@@ -808,22 +823,22 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [c3572dad] Sundials v6.7.1
   [2efcf032] SymbolicIndexingInterface v0.3.55
   [19f23fe9] SymbolicLimits v1.2.1
-  [d1185830] SymbolicUtils v4.46.6
-  [0c5d862f] Symbolics v7.39.2
+⌃ [d1185830] SymbolicUtils v4.46.6
+⌃ [0c5d862f] Symbolics v7.39.2
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [ed4db957] TaskLocalValues v0.1.3
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
   [8290d209] ThreadingUtilities v0.5.6
-  [a759f4b9] TimerOutputs v1.2.1
+⌃ [a759f4b9] TimerOutputs v1.2.1
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
   [41fe7b60] Unzip v0.2.0
   [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.16
+⌃ [ddb6d928] YAML v0.4.16
   [6e34b625] Bzip2_jll v1.0.9+0
   [83423d85] Cairo_jll v1.18.7+0
   [655fdf9c] DASKR_jll v1.0.1+0
@@ -899,7 +914,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
-  [a4ae2306] libaom_jll v3.14.1+0
+⌃ [a4ae2306] libaom_jll v3.14.1+0
   [0ac62f75] libass_jll v0.17.5+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
