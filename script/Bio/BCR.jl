@@ -103,76 +103,69 @@ abstols = 1.0 ./ 10.0 .^ (5:8)
 reltols = 1.0 ./ 10.0 .^ (5:8);
 
 
-try
-    solve(sparsejacprob, CVODE_BDF(linear_solver = :KLU), abstol = 1e-8, reltol = 1e-8);
-catch e
-    println("CVODE_BDF with KLU failed: $e")
-end
-
-
 setups = [
-    Dict(:alg=>lsoda(), :prob_choice => 1),
-    Dict(:alg=>CVODE_BDF(), :prob_choice => 1),
     Dict(
         :alg=>CVODE_BDF(linear_solver = :GMRES, prec = precilu, psetup = psetupilu, prec_side = 1),
-        :prob_choice => 2)
+        :prob_choice => 2),
+    Dict(:alg=>QNDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true),
+        :prob_choice => 3),
+    Dict(:alg=>FBDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true),
+        :prob_choice => 3),
+    Dict(:alg=>NordsieckBDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true),
+        :prob_choice => 3)
 ];
 
 
 wp = WorkPrecisionSet(
     [oprob, oprob_sparse, sparsejacprob], abstols, reltols, setups; error_estimate = :l2,
-    saveat = tf/10000.0, appxsol = [test_sol, test_sol, test_sol], maxiters = Int(1e6), numruns = 1)
+    saveat = tf/1000.0, appxsol = [test_sol, test_sol, test_sol], maxiters = Int(1e6), numruns = 1)
 
-names = ["lsoda" "CVODE_BDF" "CVODE_BDF (GMRES, iLU)"]
+names = ["CVODE_BDF (GMRES, iLU)" "QNDF (GMRES, iLU)" "FBDF (GMRES, iLU)" "NordsieckBDF (GMRES, iLU)"]
 plot(wp; label = names)
 
 
 setups = [
-    Dict(:alg=>TRBDF2(
-        linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true)),
-    Dict(:alg=>QNDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true)),
-    Dict(:alg=>FBDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true)),
-    Dict(:alg=>KenCarp4(
-        linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true))
-];
-
-
-wp = WorkPrecisionSet(sparsejacprob, abstols, reltols, setups; error_estimate = :l2,
-    saveat = tf/10000.0, appxsol = test_sol, maxiters = Int(1e6), numruns = 1)
-
-names = ["TRBDF2 (GMRES, iLU)" "QNDF (GMRES, iLU)" "FBDF (GMRES, iLU)" "KenCarp4 (GMRES, iLU)"]
-plot(wp; label = names)
-
-
-setups = [
-    Dict(:alg=>TRBDF2(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff())),
+    Dict(:alg=>CVODE_BDF(linear_solver = :KLU)),
     Dict(:alg=>QNDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff())),
     Dict(:alg=>FBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff())),
+    Dict(:alg=>NordsieckBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff())),
     Dict(:alg=>KenCarp4(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()))
 ];
 
 
 wp = WorkPrecisionSet(sparsejacprob, abstols, reltols, setups; error_estimate = :l2,
-    saveat = tf/10000.0, appxsol = test_sol, maxiters = Int(1e6), numruns = 1)
+    saveat = tf/1000.0, appxsol = test_sol, maxiters = Int(1e6), numruns = 1)
 
-names = ["TRBDF2 (KLU, sparse jac)" "QNDF (KLU, sparse jac)" "FBDF (KLU, sparse jac)" "KenCarp4 (KLU, sparse jac)"]
+names = ["CVODE_BDF (KLU, sparse jac)" "QNDF (KLU, sparse jac)" "FBDF (KLU, sparse jac)" "NordsieckBDF (KLU, sparse jac)" "KenCarp4 (KLU, sparse jac)"]
 plot(wp; label = names)
 
 
 const _loser_tol = 1e-6
 const _loser_maxiters = Int(1e6)
-_solve_kwargs = (; abstol = _loser_tol, reltol = _loser_tol, maxiters = _loser_maxiters,
-    save_everystep = false)
+const _loser_cap = 180.0   # seconds of wall clock per isolated solve
 
 loser_labels = String[]
 loser_elapsed = Float64[]
 
-function _time_loser!(label, prob, alg)
+# LSODA.jl does not support callbacks, so `lsoda` is the one entry that has to
+# run to completion; everything else is stopped by the wall-clock callback.
+function _time_loser!(label, prob, alg; cap = true)
     println("--- $label ---")
-    t = @elapsed sol = solve(prob, alg; _solve_kwargs...)
+    tstart = time()
+    kw = if cap
+        capcb = DiscreteCallback(
+            (u, t, integrator) -> time() - tstart > _loser_cap,
+            integrator -> terminate!(integrator); save_positions = (false, false))
+        (; callback = capcb)
+    else
+        (;)
+    end
+    t = @elapsed sol = solve(prob, alg; abstol = _loser_tol, reltol = _loser_tol,
+        maxiters = _loser_maxiters, save_everystep = false, kw...)
+    hit_cap = cap && t >= _loser_cap
     @show sol.retcode
-    println("elapsed = ", t, " s")
-    push!(loser_labels, label)
+    println("elapsed = ", t, " s", hit_cap ? " (hit the $(_loser_cap) s cap)" : "")
+    push!(loser_labels, hit_cap ? label * " (>cap)" : label)
     push!(loser_elapsed, t)
     return sol
 end
@@ -181,7 +174,9 @@ end
 _time_loser!("FBDF + KLU (reference)", sparsejacprob,
     FBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()))
 
-# Dense CVODE Lapack
+# Multistep dense direct solvers
+_time_loser!("lsoda", oprob, lsoda(); cap = false)
+_time_loser!("CVODE_BDF (dense)", oprob, CVODE_BDF())
 _time_loser!("CVODE_BDF LapackDense", oprob, CVODE_BDF(linear_solver = :LapackDense))
 
 # Bare CVODE GMRES (no preconditioner)
@@ -203,12 +198,22 @@ _time_loser!("FBDF GMRES (no prec)", oprob,
 _time_loser!("KenCarp4 GMRES (no prec)", oprob,
     KenCarp4(linsolve = KrylovJL_GMRES(), autodiff = AutoFiniteDiff()))
 
+# Slow methods with the *good* linear solvers, dropped from the panels above
+_time_loser!("TRBDF2 (GMRES, iLU)", sparsejacprob,
+    TRBDF2(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(),
+        concrete_jac = true))
+_time_loser!("KenCarp4 (GMRES, iLU)", sparsejacprob,
+    KenCarp4(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(),
+        concrete_jac = true))
+_time_loser!("TRBDF2 (KLU, sparse jac)", sparsejacprob,
+    TRBDF2(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()))
+
 
 # Relative cost vs the sparse KLU reference (first entry)
 ref_t = loser_elapsed[1]
 bar(loser_labels, loser_elapsed ./ ref_t; xrotation = 45, legend = false,
     ylabel = "wall time / (FBDF+KLU reference)",
-    title = "BCR loser isolation (tol=$_loser_tol, one solve each)",
+    title = "BCR loser isolation (tol=$_loser_tol, one capped solve each)",
     size = (900, 500), left_margin = 5Plots.mm, bottom_margin = 15Plots.mm)
 
 
@@ -222,19 +227,24 @@ setups = [
     Dict(
         :alg=>FBDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true),
         :prob_choice => 3),
+    Dict(
+        :alg=>NordsieckBDF(linsolve = KrylovJL_GMRES(; precs = incompletelu), autodiff = AutoFiniteDiff(), concrete_jac = true),
+        :prob_choice => 3),
+    Dict(:alg=>CVODE_BDF(linear_solver = :KLU), :prob_choice => 3),
     Dict(:alg=>QNDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()), :prob_choice => 3),
     Dict(:alg=>FBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()), :prob_choice => 3),
+    Dict(:alg=>NordsieckBDF(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()), :prob_choice => 3),
     Dict(:alg=>KenCarp4(linsolve = KLUFactorization(), autodiff = AutoFiniteDiff()), :prob_choice => 3)
 ];
 
 
 wp = WorkPrecisionSet(
     [oprob, oprob_sparse, sparsejacprob], abstols, reltols, setups; error_estimate = :l2,
-    saveat = tf/10000.0, appxsol = [test_sol, test_sol, test_sol], maxiters = Int(1e9), numruns = 200)
+    saveat = tf/1000.0, appxsol = [test_sol, test_sol, test_sol], maxiters = Int(1e9), numruns = 200)
 
-names = ["CVODE_BDF (GMRES, iLU)" "QNDF (GMRES, iLU)" "FBDF (GMRES, iLU)" "QNDF (KLU, sparse jac)" "FBDF (KLU, sparse jac)" "KenCarp4 (KLU, sparse jac)"]
-colors = [:green :deepskyblue1 :dodgerblue2 :royalblue2 :slateblue3 :lightskyblue]
-markershapes = [:octagon :hexagon :rtriangle :pentagon :ltriangle :star5]
+names = ["CVODE_BDF (GMRES, iLU)" "QNDF (GMRES, iLU)" "FBDF (GMRES, iLU)" "NordsieckBDF (GMRES, iLU)" "CVODE_BDF (KLU, sparse jac)" "QNDF (KLU, sparse jac)" "FBDF (KLU, sparse jac)" "NordsieckBDF (KLU, sparse jac)" "KenCarp4 (KLU, sparse jac)"]
+colors = [:green :deepskyblue1 :dodgerblue2 :mediumorchid :seagreen :royalblue2 :slateblue3 :orchid :lightskyblue]
+markershapes = [:octagon :hexagon :rtriangle :diamond :circle :pentagon :ltriangle :dtriangle :star5]
 plot(wp; label = names, left_margin = 10Plots.mm, right_margin = 10Plots.mm,
     xticks = [1e-3, 1e-2, 1e-1, 1e0, 1e1, 1e2, 1e3], yticks = [1e0, 1e1, 1e2, 1e3],
     color = colors, markershape = markershapes, legendfontsize = 15,
