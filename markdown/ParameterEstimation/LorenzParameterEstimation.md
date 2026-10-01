@@ -219,11 +219,11 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-3.019 s (20976846 allocations: 801.28 MiB)
+3.086 s (21009708 allocations: 802.51 MiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 10.356198877990868
- 20.856034435675856
+ 10.861340140600596
+ 21.080261914890254
   2.659999999998153
 ```
 
@@ -238,11 +238,11 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-3.014 s (21011664 allocations: 802.81 MiB)
+3.055 s (21005731 allocations: 802.56 MiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 10.81080421815381
- 27.3431772871645
+  9.415982700989291
+ 23.891995020793818
   2.659999999998153
 ```
 
@@ -259,11 +259,11 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-4.857 s (42285937 allocations: 1.11 GiB)
+4.963 s (42321731 allocations: 1.11 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 10.869557925640716
- 21.58732010527126
+ 10.896394438425084
+ 27.013828131937856
   2.659999999996381
 ```
 
@@ -597,10 +597,10 @@ peof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}}}}(ModelingToolkitBase.At
 omicArrayDict{SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)
 "{SymbolicUtils.SymReal}, Dict{SymbolicUtils.BasicSymbolicImpl.var"typeof(B
 asicSymbolicImpl)"{SymbolicUtils.SymReal}, SymbolicUtils.BasicSymbolicImpl.
-var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}(Initial(z(t)) => fa
-lse, z(t) => 1.0, Initial(yˍt(t)) => false, Initial(y(t)) => false, σ => 10
-.0, y(t) => 0.0, Initial(zˍt(t)) => false, ρ => 28.0, β => 2.66, Initial(xˍ
-t(t)) => false…), ModelingToolkitBase.AtomicArrayDict{SymbolicUtils.BasicSy
+var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}(Initial(zˍt(t)) => 
+false, Initial(x(t)) => false, z(t) => 1.0, Initial(yˍt(t)) => false, Initi
+al(y(t)) => false, σ => 10.0, y(t) => 0.0, ρ => 28.0, Initial(xˍt(t)) => fa
+lse, β => 2.66…), ModelingToolkitBase.AtomicArrayDict{SymbolicUtils.BasicSy
 mbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}, Dict{Symb
 olicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.Sy
 mReal}, SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{Symb
@@ -738,7 +738,7 @@ optprob = OptimizationProblem(obj_short, GloIniPar, lb = first.(LooserBounds), u
 ```
 
 ```
-6.926 s (59781902 allocations: 1.56 GiB)
+7.005 s (59781902 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
  11.0
@@ -754,12 +754,12 @@ opt = Opt(:GN_CRS2_LM, 3)
 ```
 
 ```
-6.922 s (59740252 allocations: 1.56 GiB)
+7.023 s (59740204 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 0.0
- 0.15156691982311876
- 2.659999999996381
+ 12.071942040405391
+  0.0
+  2.659999999996381
 ```
 
 
@@ -770,12 +770,12 @@ opt = Opt(:GN_ISRES, 3)
 ```
 
 ```
-6.978 s (59770063 allocations: 1.56 GiB)
+7.122 s (59770063 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  8.400146464587648
- 15.091533402049839
-  2.660000110964821
+ 7.847508528844752
+ 8.325805111337884
+ 2.660000021234901
 ```
 
 
@@ -786,12 +786,12 @@ opt = Opt(:GN_ESCH, 3)
 ```
 
 ```
-6.924 s (59770063 allocations: 1.56 GiB)
+7.006 s (59770060 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 11.851176306829196
- 12.491740138753231
-  2.6649057992914766
+ 11.0572358763727
+ 11.95480457626751
+  2.7157809519850042
 ```
 
 
@@ -807,7 +807,7 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-200.754 ms (1953579 allocations: 52.24 MiB)
+204.971 ms (1953579 allocations: 52.24 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
   9.130040191911204
@@ -823,7 +823,7 @@ opt = Opt(:LN_NELDERMEAD, 3)
 ```
 
 ```
-147.862 ms (1451796 allocations: 38.82 MiB)
+151.384 ms (1451796 allocations: 38.82 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
   9.527596774490174
@@ -839,7 +839,7 @@ opt = Opt(:LD_SLSQP, 3)
 ```
 
 ```
-8.416 s (69944478 allocations: 1.88 GiB)
+8.544 s (69944478 allocations: 1.88 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
   9.0
@@ -855,7 +855,7 @@ opt = Opt(:LN_COBYLA, 3)
 ```
 
 ```
-685.139 ms (6105512 allocations: 163.26 MiB)
+703.030 ms (6105512 allocations: 163.26 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
   9.000020177662323
@@ -871,7 +871,7 @@ opt = Opt(:LN_NEWUOA_BOUND, 3)
 ```
 
 ```
-338.573 ms (2670462 allocations: 71.41 MiB)
+344.037 ms (2670462 allocations: 71.41 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
   9.159250339525014
@@ -887,10 +887,10 @@ opt = Opt(:LN_PRAXIS, 3)
 ```
 
 ```
-135.863 ms (1326318 allocations: 35.47 MiB)
+155.751 ms (1409957 allocations: 37.71 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
-  9.0
+  9.00000000628297
  20.0
   2.659999999996381
 ```
@@ -903,7 +903,7 @@ opt = Opt(:LN_SBPLX, 3)
 ```
 
 ```
-238.455 ms (2335900 allocations: 62.46 MiB)
+247.466 ms (2335900 allocations: 62.46 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
   9.116431257586372
@@ -919,7 +919,7 @@ opt = Opt(:LD_MMA, 3)
 ```
 
 ```
-15.393 s (119380437 allocations: 3.42 GiB)
+15.682 s (119380437 allocations: 3.42 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
   9.0
@@ -935,7 +935,7 @@ opt = Opt(:LD_LBFGS, 3)
 ```
 
 ```
-10.512 ms (95581 allocations: 2.80 MiB)
+10.597 ms (95581 allocations: 2.80 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
   9.0
@@ -951,7 +951,7 @@ opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 3)
 ```
 
 ```
-10.719 ms (95950 allocations: 2.85 MiB)
+10.783 ms (95950 allocations: 2.85 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
   9.0
@@ -982,12 +982,12 @@ optprob = OptimizationProblem(obj, GloIniPar, lb = first.(LooserBounds), ub = la
 ```
 
 ```
-22.965 s (222995661 allocations: 4.61 GiB)
+22.978 s (222886726 allocations: 4.61 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  7.233259258788937
- 11.311941705645653
-  2.66000000022766
+ 18.561617554876392
+ 20.013049918149314
+  2.660000000015612
 ```
 
 
@@ -1005,7 +1005,7 @@ opt = Opt(:GN_ORIG_DIRECT_L, 3)
 ```
 
 ```
-56.186 s (546202148 allocations: 11.29 GiB)
+56.061 s (546202148 allocations: 11.29 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
  11.0
@@ -1021,11 +1021,11 @@ opt = Opt(:GN_CRS2_LM, 3)
 ```
 
 ```
-112.540 s (1091640226 allocations: 22.56 GiB)
+111.836 s (1091640242 allocations: 22.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  0.0
- 12.115583636621988
+  1.665717254137125
+ 60.0
   2.659999999996381
 ```
 
@@ -1037,11 +1037,11 @@ opt = Opt(:GN_ISRES, 3)
 ```
 
 ```
-282.165 s (2729250053 allocations: 56.39 GiB)
+280.096 s (2729250053 allocations: 56.39 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  1.110737247962145
- 59.62846972299275
+  9.528749822381185
+ 14.507827623897384
   2.659999999996381
 ```
 
@@ -1053,12 +1053,12 @@ opt = Opt(:GN_ESCH, 3)
 ```
 
 ```
-113.242 s (1091700050 allocations: 22.56 GiB)
+112.324 s (1091700053 allocations: 22.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  3.869570453923305
- 38.6483535792006
-  2.6515379409748228
+ 12.183041564276689
+ 44.7513474693917
+  2.6493627658105074
 ```
 
 
@@ -1074,7 +1074,7 @@ optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh
 ```
 
 ```
-204.492 ms (1953579 allocations: 52.24 MiB)
+203.636 ms (1953579 allocations: 52.24 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
   9.130040191911204
@@ -1090,7 +1090,7 @@ opt = Opt(:LN_NELDERMEAD, 3)
 ```
 
 ```
-148.735 ms (1451796 allocations: 38.82 MiB)
+149.282 ms (1451796 allocations: 38.82 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
   9.527596774490174
@@ -1106,7 +1106,7 @@ opt = Opt(:LD_SLSQP, 3)
 ```
 
 ```
-8.394 s (69944478 allocations: 1.88 GiB)
+8.435 s (69944478 allocations: 1.88 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
   9.0
@@ -1165,6 +1165,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6e4b80f9] BenchmarkTools v1.8.0
   [a134a8b2] BlackBoxOptim v0.6.12
   [a93c6f00] DataFrames v1.8.2
+  [bcd4f6db] DelayDiffEq v6.4.1
 ⌃ [1130ab10] DiffEqParamEstim v2.6.1
   [31c24e10] Distributions v0.25.131
   [f6369f11] ForwardDiff v1.4.6
@@ -1182,6 +1183,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -1212,7 +1214,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [35d6a980] ColorSchemes v3.31.0
 ⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
-  [5ae59095] Colors v0.13.1
+⌃ [5ae59095] Colors v0.13.1
 ⌅ [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
@@ -1229,6 +1231,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a93c6f00] DataFrames v1.8.2
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
+  [bcd4f6db] DelayDiffEq v6.4.1
   [8bb1440f] DelimitedFiles v1.9.1
   [39dd38d3] Dierckx v0.5.4
 ⌃ [2b5f629d] DiffEqBase v7.21.1
@@ -1251,7 +1254,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
   [a4df4552] FastPower v1.5.0
-  [1a297f60] FillArrays v1.17.0
+⌃ [1a297f60] FillArrays v1.17.0
 ⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
@@ -1282,10 +1285,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
 ⌃ [ccbc3e58] JumpProcesses v9.32.3
-  [63c18a36] KernelAbstractions v0.9.42
+⌃ [63c18a36] KernelAbstractions v0.9.42
 ⌃ [ba0b0d4f] Krylov v0.10.9
   [2faa5264] LHLFactorization v2.2.2
-  [929cbde3] LLVM v9.13.1
+⌃ [929cbde3] LLVM v9.13.1
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [73f95e8e] LatticeRules v0.0.2
@@ -1326,6 +1329,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.1
   [50262376] OrdinaryDiffEqDefault v2.6.2
 ⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.11.5
+  [d3585ca7] OrdinaryDiffEqFunctionMap v2.3.0
 ⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.6
 ⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
@@ -1365,8 +1369,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
   [f2b01f46] Roots v3.0.8
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
-  [9dfe8606] SCCNonlinearSolve v1.15.3
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+⌃ [9dfe8606] SCCNonlinearSolve v1.15.3
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
 ⌃ [0bca4576] SciMLBase v3.53.3
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
@@ -1563,5 +1567,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8e850ede] nghttp2_jll v1.64.0+1
   [3f19e933] p7zip_jll v17.7.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

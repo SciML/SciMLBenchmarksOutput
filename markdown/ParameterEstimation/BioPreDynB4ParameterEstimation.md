@@ -484,9 +484,9 @@ biopredyn_b4_cost (generic function with 1 method)
 ```
 
 ```
-4.481824 seconds (8.51 M allocations: 445.007 MiB, 5.89% gc time, 96.56% 
+4.514904 seconds (8.51 M allocations: 444.960 MiB, 6.22% gc time, 95.76% 
 compilation time)
-  0.116649 seconds (883.88 k allocations: 53.430 MiB, 28.03% gc time)
+  0.136151 seconds (883.88 k allocations: 53.430 MiB, 31.21% gc time)
 1.0213152934777013e11
 ```
 
@@ -566,9 +566,9 @@ res_bbo.objective
 ```
 
 ```
-2194.130392 seconds (14.70 G allocations: 866.028 GiB, 31.07% gc time, 0.19
-% compilation time: 2% of which was recompilation)
-124525.9374347846
+2562.823823 seconds (17.06 G allocations: 1004.869 GiB, 30.58% gc time, 0.1
+7% compilation time: 2% of which was recompilation)
+51287.19500911605
 ```
 
 
@@ -584,9 +584,9 @@ res_nlopt.objective
 ```
 
 ```
-2060.654299 seconds (13.83 G allocations: 814.987 GiB, 31.16% gc time, 0.04
-% compilation time)
-41955.65492908892
+2555.194803 seconds (17.07 G allocations: 1004.999 GiB, 30.36% gc time, 0.0
+3% compilation time)
+103836.8717525192
 ```
 
 
@@ -598,9 +598,9 @@ res_pso.objective
 ```
 
 ```
-779.092874 seconds (7.51 G allocations: 442.803 GiB, 82.53% gc time, 7.69% 
+731.749729 seconds (7.23 G allocations: 426.578 GiB, 86.00% gc time, 9.54% 
 compilation time)
-186837.41319842328
+17691.998784247957
 ```
 
 
@@ -635,28 +635,28 @@ res_pso_polish, losses_pso_polish, times_pso_polish = polish(
 ```
 
 ```
-BBO -> LN_BOBYQA: 10301.503185220978 (413.629028475s)
-GN_CRS2_LM -> LN_BOBYQA: 20580.80066763163 (476.470871553s)
-ParallelPSOArray -> LN_BOBYQA: 18512.299814061877 (433.030706792s)
+BBO -> LN_BOBYQA: 15282.088047830552 (429.830848659s)
+GN_CRS2_LM -> LN_BOBYQA: 10378.468931779233 (442.154259714s)
+ParallelPSOArray -> LN_BOBYQA: 9635.01877811365 (437.731983901s)
 (retcode: MaxIters
-u: [2076.5886379011627, 3015.8860909025793, 201.45628316848436, 292.0196970
-1784486, 243.116873574594, 804.5835920125427, 4185.032329542567, 624.788322
-6808742, 4.984184892557448, 4.013195774957875  …  0.4114165980962092, 0.212
-1341905820356, 0.18970539729079933, 0.20167656418067784, 2.3316899384372523
-, 0.6181521169126012, 3.546100305319167, 3.4110303470698686, 0.937166321951
-3118, 0.17158601488876454]
-Final objective value:     18512.299814061877
-, [186837.413198329, 177475.05014608652, 160033.32471855124, 187000.6857946
-16, 206225.24963917249, 197727.7658584077, 170638.4308345303, 219322.956366
-66156, 189327.35938378258, 184039.16005845548  …  18517.717453439414, 18517
-.690229428106, 18516.486234334727, 18515.817430177674, 18515.439177586366, 
-18514.731477746933, 18514.036619624087, 18513.54724383885, 18513.2327526083
-46, 18512.299814061877], [0.05199289321899414, 0.11403703689575195, 0.25628
-39984893799, 0.3081789016723633, 0.3703129291534424, 0.48830389976501465, 0
-.5403289794921875, 0.6619210243225098, 0.7135510444641113, 0.77004098892211
-91  …  432.25626397132874, 432.31095004081726, 432.368124961853, 432.514177
-0839691, 432.56809186935425, 432.62765192985535, 432.77205300331116, 432.82
-542085647583, 432.8865878582001, 433.02934193611145])
+u: [395.2891037811692, 3798.2364852715314, 1584.574240186407, 3197.16938498
+8792, 2659.761151164636, 2359.1865426210616, 4565.50080357526, 1034.1437314
+11202, 4.768919929483372, 4.113498737394485  …  1.3648135242416108, 3.34711
+0425190124, 2.20928077593473, 4.8670632883345935, 2.772057513768671, 9.1888
+8068767669, 3.726261074320229, 1.1007227563137774, 0.9973739789191163, 0.34
+252724314933414]
+Final objective value:     9635.01877811365
+, [17691.998784245723, 17836.02761081142, 19280.93877668375, 88128.71275023
+786, 47932.61919037025, 71866.93692332832, 18055.43831992974, 21054.1060873
+59873, 17764.42972553297, 30836.374729130388  …  9637.859903932735, 9637.59
+8150772083, 9636.379749929883, 9638.863267622979, 9635.954611540585, 9636.4
+7066922749, 9635.63987399651, 9635.901191911498, 9635.583262863516, 9635.01
+877811365], [0.15700697898864746, 0.21116995811462402, 0.26622796058654785,
+ 0.4209630489349365, 0.47442102432250977, 0.5317709445953369, 0.68467998504
+63867, 0.737130880355835, 0.7962679862976074, 0.9425468444824219  …  436.88
+992404937744, 437.033833026886, 437.08739399909973, 437.15221405029297, 437
+.2675380706787, 437.32113885879517, 437.46668887138367, 437.52061200141907,
+ 437.5789589881897, 437.730721950531])
 ```
 
 
@@ -679,12 +679,12 @@ df = DataFrame(
 ─────┼───────────────────────────────────────────────────
    1 │ Nominal (true params)                 39.0675
    2 │ Starting guess (no fit)                1.02132e11
-   3 │ BBO_adaptive_de_rand_1_bin             1.24526e5
-   4 │ GN_CRS2_LM                         41955.7
-   5 │ ParallelPSOArray                       1.86837e5
-   6 │ LN_BOBYQA polish (from BBO)        10301.5
-   7 │ LN_BOBYQA polish (from GN_CRS2_L…  20580.8
-   8 │ LN_BOBYQA polish (from ParallelP…  18512.3
+   3 │ BBO_adaptive_de_rand_1_bin         51287.2
+   4 │ GN_CRS2_LM                             1.03837e5
+   5 │ ParallelPSOArray                   17692.0
+   6 │ LN_BOBYQA polish (from BBO)        15282.1
+   7 │ LN_BOBYQA polish (from GN_CRS2_L…  10378.5
+   8 │ LN_BOBYQA polish (from ParallelP…   9635.02
 ```
 
 
@@ -792,6 +792,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6e4b80f9] BenchmarkTools v1.8.0
   [a134a8b2] BlackBoxOptim v0.6.12
   [a93c6f00] DataFrames v1.8.2
+  [bcd4f6db] DelayDiffEq v6.4.1
 ⌃ [1130ab10] DiffEqParamEstim v2.6.1
   [31c24e10] Distributions v0.25.131
   [f6369f11] ForwardDiff v1.4.6
@@ -805,10 +806,11 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ab63da0c] ParallelParticleSwarms v1.6.2
   [65888b18] ParameterizedFunctions v5.27.0
   [91a5bcdd] Plots v1.41.7
-  [731186ca] RecursiveArrayTools v4.5.1
+⌃ [731186ca] RecursiveArrayTools v4.5.1
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -824,9 +826,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
 ⌃ [4fba245c] ArrayInterface v7.30.1
-  [4c555306] ArrayLayouts v1.12.2
+⌃ [4c555306] ArrayLayouts v1.12.2
   [a9b6321e] Atomix v1.2.1
-  [aae01518] BandedMatrices v1.12.0
+⌃ [aae01518] BandedMatrices v1.12.0
   [6e4b80f9] BenchmarkTools v1.8.0
   [e2ed5e7c] Bijections v0.2.2
   [b2a6c25c] BinaryHeaps v1.1.0
@@ -837,9 +839,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [fa961155] CEnum v0.5.0
   [d360d2e6] ChainRulesCore v1.26.1
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
-  [5ae59095] Colors v0.13.1
+⌃ [5ae59095] Colors v0.13.1
 ⌅ [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
@@ -856,6 +858,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a93c6f00] DataFrames v1.8.2
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
+  [bcd4f6db] DelayDiffEq v6.4.1
   [8bb1440f] DelimitedFiles v1.9.1
   [39dd38d3] Dierckx v0.5.4
 ⌃ [2b5f629d] DiffEqBase v7.21.1
@@ -878,7 +881,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
   [a4df4552] FastPower v1.5.0
-  [1a297f60] FillArrays v1.17.0
+⌃ [1a297f60] FillArrays v1.17.0
 ⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
@@ -887,7 +890,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a85aefff] FunctionMaps v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v1.13.0
-  [46192b85] GPUArraysCore v0.2.0
+⌃ [46192b85] GPUArraysCore v0.2.0
 ⌅ [61eb1bfa] GPUCompiler v1.23.0
   [28b8d3ca] GR v0.73.27
 ⌃ [a0844989] Gamma v1.1.0
@@ -909,10 +912,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
 ⌃ [ccbc3e58] JumpProcesses v9.32.3
-  [63c18a36] KernelAbstractions v0.9.42
+⌃ [63c18a36] KernelAbstractions v0.9.42
 ⌃ [ba0b0d4f] Krylov v0.10.9
   [2faa5264] LHLFactorization v2.2.2
-  [929cbde3] LLVM v9.13.1
+⌃ [929cbde3] LLVM v9.13.1
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [73f95e8e] LatticeRules v0.0.2
@@ -931,9 +934,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6bb917b9] ModelingToolkitTearing v1.20.6
 ⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
-  [102ac46a] MultivariatePolynomials v0.5.19
-  [ffc61752] Mustache v1.0.21
-  [d8a4904e] MutableArithmetics v1.8.0
+⌃ [102ac46a] MultivariatePolynomials v0.5.19
+⌃ [ffc61752] Mustache v1.0.21 [loaded: v1.1.0]
+⌃ [d8a4904e] MutableArithmetics v1.8.0
   [76087f3c] NLopt v1.2.1
   [77ba4419] NaNMath v1.1.4
 ⌃ [8913a72c] NonlinearSolve v4.30.0
@@ -953,6 +956,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.1
   [50262376] OrdinaryDiffEqDefault v2.6.2
 ⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.11.5
+  [d3585ca7] OrdinaryDiffEqFunctionMap v2.3.0
 ⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.6
 ⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
@@ -985,15 +989,15 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [795d4caa] ReadOnlyDicts v1.0.1
   [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v4.5.1
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
   [f2b01f46] Roots v3.0.8
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
-  [9dfe8606] SCCNonlinearSolve v1.15.3
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+⌃ [9dfe8606] SCCNonlinearSolve v1.15.3
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
 ⌃ [0bca4576] SciMLBase v3.53.3
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
@@ -1055,7 +1059,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [cd4c43a9] Dierckx_jll v0.2.0+0
-  [7cc45869] Enzyme_jll v0.0.293+0
+⌅ [7cc45869] Enzyme_jll v0.0.293+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
   [2e619515] Expat_jll v2.8.4+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
@@ -1125,7 +1129,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
-  [a4ae2306] libaom_jll v3.14.1+0
+⌃ [a4ae2306] libaom_jll v3.14.1+0
   [0ac62f75] libass_jll v0.17.5+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
@@ -1190,5 +1194,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8e850ede] nghttp2_jll v1.64.0+1
   [3f19e933] p7zip_jll v17.7.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 

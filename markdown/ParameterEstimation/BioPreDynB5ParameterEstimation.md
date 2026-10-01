@@ -532,9 +532,9 @@ biopredyn_b5_cost (generic function with 1 method)
 ```
 
 ```
-6.309385 seconds (7.31 M allocations: 346.868 MiB, 2.22% gc time, 98.23% 
+6.393996 seconds (7.31 M allocations: 346.866 MiB, 2.22% gc time, 98.30% 
 compilation time)
-  0.172148 seconds (13.34 k allocations: 8.070 MiB, 62.22% gc time)
+  0.150197 seconds (13.34 k allocations: 8.070 MiB, 73.21% gc time)
 31477.21426675107
 ```
 
@@ -625,9 +625,9 @@ res_bbo.objective
 ```
 
 ```
-2034.421679 seconds (630.38 M allocations: 394.519 GiB, 10.65% gc time, 0.2
-0% compilation time)
-4802.671752284122
+1569.652340 seconds (497.73 M allocations: 305.875 GiB, 11.08% gc time, 0.2
+8% compilation time)
+4076.154510391465
 ```
 
 
@@ -643,9 +643,9 @@ res_nlopt.objective
 ```
 
 ```
-2394.991622 seconds (807.52 M allocations: 518.554 GiB, 13.68% gc time, 0.0
-3% compilation time)
-8150.83198406026
+1177.576634 seconds (418.42 M allocations: 258.490 GiB, 14.65% gc time, 0.0
+6% compilation time)
+5954.0986965976
 ```
 
 
@@ -658,9 +658,9 @@ res_pso.objective
 ```
 
 ```
-599.511519 seconds (453.69 M allocations: 288.288 GiB, 85.81% gc time, 11.4
-9% compilation time)
-7668.00348548213
+226.591037 seconds (193.36 M allocations: 114.301 GiB, 82.47% gc time, 31.4
+2% compilation time)
+5945.59272467208
 ```
 
 
@@ -696,9 +696,9 @@ nothing
 ```
 
 ```
-BBO -> LN_BOBYQA: 3850.573213971517 (247.941782513s)
-GN_CRS2_LM -> LN_BOBYQA: 6693.408572817273 (878.436117216s)
-ParallelPSOArray -> LN_BOBYQA: 7628.424726352127 (501.948281218s)
+BBO -> LN_BOBYQA: 3103.5836275645083 (298.907080462s)
+GN_CRS2_LM -> LN_BOBYQA: 5217.449612378842 (304.092867755s)
+ParallelPSOArray -> LN_BOBYQA: 5463.167915179782 (229.744607029s)
 ```
 
 
@@ -721,12 +721,12 @@ df = DataFrame(
 ─────┼─────────────────────────────────────────────
    1 │ Reference nominal parameters        4276.21
    2 │ Starting guess (no fit)            31477.2
-   3 │ BBO_adaptive_de_rand_1_bin          4802.67
-   4 │ GN_CRS2_LM                          8150.83
-   5 │ ParallelPSOArray                    7668.0
-   6 │ LN_BOBYQA polish (from BBO)         3850.57
-   7 │ LN_BOBYQA polish (from GN_CRS2_L…   6693.41
-   8 │ LN_BOBYQA polish (from ParallelP…   7628.42
+   3 │ BBO_adaptive_de_rand_1_bin          4076.15
+   4 │ GN_CRS2_LM                          5954.1
+   5 │ ParallelPSOArray                    5945.59
+   6 │ LN_BOBYQA polish (from BBO)         3103.58
+   7 │ LN_BOBYQA polish (from GN_CRS2_L…   5217.45
+   8 │ LN_BOBYQA polish (from ParallelP…   5463.17
 ```
 
 
@@ -844,6 +844,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6e4b80f9] BenchmarkTools v1.8.0
   [a134a8b2] BlackBoxOptim v0.6.12
   [a93c6f00] DataFrames v1.8.2
+  [bcd4f6db] DelayDiffEq v6.4.1
 ⌃ [1130ab10] DiffEqParamEstim v2.6.1
   [31c24e10] Distributions v0.25.131
   [f6369f11] ForwardDiff v1.4.6
@@ -861,6 +862,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
 Info Packages marked with ⌃ have new versions available and may be upgradable.
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
 And the full manifest:
@@ -908,6 +910,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a93c6f00] DataFrames v1.8.2
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
+  [bcd4f6db] DelayDiffEq v6.4.1
   [8bb1440f] DelimitedFiles v1.9.1
   [39dd38d3] Dierckx v0.5.4
 ⌃ [2b5f629d] DiffEqBase v7.21.1
@@ -961,7 +964,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
 ⌃ [ccbc3e58] JumpProcesses v9.32.3
-  [63c18a36] KernelAbstractions v0.9.42
+⌃ [63c18a36] KernelAbstractions v0.9.42
 ⌃ [ba0b0d4f] Krylov v0.10.9
   [2faa5264] LHLFactorization v2.2.2
 ⌃ [929cbde3] LLVM v9.13.1
@@ -1005,6 +1008,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.1
   [50262376] OrdinaryDiffEqDefault v2.6.2
 ⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.11.5
+  [d3585ca7] OrdinaryDiffEqFunctionMap v2.3.0
 ⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.6
 ⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
@@ -1242,5 +1246,6 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8e850ede] nghttp2_jll v1.64.0+1
   [3f19e933] p7zip_jll v17.7.0+0
 Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`
+Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
 
