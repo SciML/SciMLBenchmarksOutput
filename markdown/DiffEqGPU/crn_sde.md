@@ -198,8 +198,8 @@ end
 ```
 CRN SDE (ms)
      N       traj          GPU          CPU
-     2       6720      117.296      378.649
-     4      26880      364.196     1191.786
+     2       6720      109.229      280.442
+     4      26880      306.885     1141.677
 ```
 
 
@@ -241,14 +241,18 @@ Package Information:
 Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Project.toml`
 ⌃ [052768ef] CUDA v6.2.2
 ⌃ [992eb4ea] CondaPkg v0.2.33
-  [071ae1c0] DiffEqGPU v3.21.1
+  [071ae1c0] DiffEqGPU v3.21.4
+  [46d2c3a1] MuladdMacro v0.2.7
   [1dea7af3] OrdinaryDiffEq v7.8.1
-  [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
+  [1344f307] OrdinaryDiffEqLowOrderRK v2.2.6
+  [79d7bb75] OrdinaryDiffEqVerner v2.4.2
   [91a5bcdd] Plots v1.41.7
-  [6099a3de] PythonCall v0.9.35
+  [6099a3de] PythonCall v0.9.36
+  [0bca4576] SciMLBase v3.57.0
   [31c91b34] SciMLBenchmarks v0.2.1
-  [90137ffa] StaticArrays v1.9.20
+  [90137ffa] StaticArrays v1.9.22
   [789caeaf] StochasticDiffEq v7.2.0
+  [37e2e46d] LinearAlgebra v1.11.0
   [de0858da] Printf v1.11.0
 Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
@@ -261,14 +265,14 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+  [79e6a3ab] Adapt v4.7.1
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
-⌃ [4fba245c] ArrayInterface v7.30.1
+  [4fba245c] ArrayInterface v7.30.2
   [a9b6321e] Atomix v1.2.1
-  [ab4f0b2a] BFloat16s v0.6.1
+  [ab4f0b2a] BFloat16s v0.6.2
   [b2a6c25c] BinaryHeaps v1.1.0
-  [70df07ce] BracketingNonlinearSolve v1.12.7
+  [70df07ce] BracketingNonlinearSolve v1.12.8
   [fa961155] CEnum v0.5.0
 ⌃ [052768ef] CUDA v6.2.2
 ⌅ [bd0ed864] CUDACore v6.2.2
@@ -277,9 +281,9 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
 ⌅ [9e67e8f6] CUPTI v6.2.2
   [d360d2e6] ChainRulesCore v1.26.1
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+  [3da002f7] ColorTypes v0.12.3
   [c3611d14] ColorVectorSpace v0.11.0
-  [5ae59095] Colors v0.13.1
+  [5ae59095] Colors v0.13.2
   [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
   [34da2185] Compat v4.18.1
@@ -290,13 +294,14 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [d38c429a] Contour v0.6.3
   [a8cc5b0e] Crayons v4.2.0
   [9a962f9c] DataAPI v1.16.0
+  [a93c6f00] DataFrames v1.8.2
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.21.1
+  [2b5f629d] DiffEqBase v7.21.3
   [459566f4] DiffEqCallbacks v4.19.4
-  [071ae1c0] DiffEqGPU v3.21.1
-  [77a26b50] DiffEqNoiseProcess v5.36.3
+  [071ae1c0] DiffEqGPU v3.21.4
+  [77a26b50] DiffEqNoiseProcess v5.36.4
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
@@ -305,22 +310,22 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [4e289a0a] EnumX v1.0.7
   [f151be2c] EnzymeCore v0.8.21
   [e2ba6199] ExprTools v0.1.11
-  [c87230d0] FFMPEG v0.4.5
+  [c87230d0] FFMPEG v0.4.6
   [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
   [a4df4552] FastPower v1.5.0
-  [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
+  [1a297f60] FillArrays v1.17.1
+  [64ca27bc] FindFirstFunctions v3.4.0
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
   [f6369f11] ForwardDiff v1.4.6
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v1.13.0
-  [0c68f7d7] GPUArrays v11.5.14
-  [46192b85] GPUArraysCore v0.2.0
+  [0c68f7d7] GPUArrays v11.5.15
+  [46192b85] GPUArraysCore v0.2.1
 ⌅ [61eb1bfa] GPUCompiler v1.23.0
-  [096a3bc2] GPUToolbox v3.0.0
+  [096a3bc2] GPUToolbox v3.3.2
   [28b8d3ca] GR v0.73.27
   [a0844989] Gamma v1.2.0
   [86223c79] Graphs v1.15.0
@@ -328,24 +333,26 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.30
   [d25df0c9] Inflate v0.1.5
+⌅ [842dd82b] InlineStrings v1.4.6
   [3587e190] InverseFunctions v0.1.17
+  [41ab1584] InvertedIndices v1.3.1
   [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
   [1019f520] JLFzf v0.1.11
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
   [0f8b85d8] JSON3 v1.14.3
-⌃ [ccbc3e58] JumpProcesses v9.32.3
-  [63c18a36] KernelAbstractions v0.9.42
+  [ccbc3e58] JumpProcesses v9.33.1
+  [63c18a36] KernelAbstractions v0.9.43
   [ba0b0d4f] Krylov v0.10.10
   [2faa5264] LHLFactorization v2.2.2
-  [929cbde3] LLVM v9.13.1
+  [929cbde3] LLVM v9.13.2
   [8b046642] LLVMLoopInfo v1.0.0
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
-  [87fe0de2] LineSearch v0.1.18
-⌃ [7ed4a6bd] LinearSolve v5.17.3
-  [2ab3a3ac] LogExpFunctions v1.0.1
+  [87fe0de2] LineSearch v0.1.19
+  [7ed4a6bd] LinearSolve v5.18.2
+  [2ab3a3ac] LogExpFunctions v1.0.2
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
   [bb5d69b7] MaybeInplace v0.1.8
@@ -353,77 +360,79 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [0b3b1443] MicroMamba v0.1.15
   [e1d29d7a] Missings v1.2.0
   [46d2c3a1] MuladdMacro v0.2.7
-  [ffc61752] Mustache v1.0.21
+  [ffc61752] Mustache v1.1.0
 ⌅ [611af6d1] NVML v6.2.2
   [5da4648a] NVTX v1.0.3
   [77ba4419] NaNMath v1.1.4
-⌃ [8913a72c] NonlinearSolve v4.30.0
-⌃ [be0214bd] NonlinearSolveBase v2.49.5
-⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
+  [8913a72c] NonlinearSolve v4.32.0
+  [be0214bd] NonlinearSolveBase v2.54.1
+  [5959db7a] NonlinearSolveFirstOrder v2.10.0
   [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3
   [26075421] NonlinearSolveSpectralMethods v1.8.3
   [bac558e1] OrderedCollections v2.0.1
   [1dea7af3] OrdinaryDiffEq v7.8.1
-⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
-⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
+  [6ad6398a] OrdinaryDiffEqBDF v2.4.12
+  [bbf590c4] OrdinaryDiffEqCore v4.18.1
   [50262376] OrdinaryDiffEqDefault v2.6.2
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
-  [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
-  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+  [4302a76b] OrdinaryDiffEqDifferentiation v3.12.4
+  [1344f307] OrdinaryDiffEqLowOrderRK v2.2.6
+  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.9
+  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.5
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
-⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
-  [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
-  [79d7bb75] OrdinaryDiffEqVerner v2.4.1
+  [2d112036] OrdinaryDiffEqSDIRK v2.9.7
+  [b1df2697] OrdinaryDiffEqTsit5 v2.1.5
+  [79d7bb75] OrdinaryDiffEqVerner v2.4.2
   [90014a1f] PDMats v0.11.41
   [d96e819e] Parameters v0.13.1
 ⌅ [69de0a69] Parsers v2.8.8
   [fa939f87] Pidfile v1.3.0
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+  [995b91a9] PlotUtils v1.5.0
   [91a5bcdd] Plots v1.41.7
   [e409e4f3] PoissonRandom v0.4.13
+  [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.7.1
 ⌅ [aea7be01] PrecompileTools v1.2.1
   [21216c6a] Preferences v1.6.0
-  [08abe8d2] PrettyTables v3.4.8
+  [08abe8d2] PrettyTables v3.5.0
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.5.0
-  [6099a3de] PythonCall v0.9.35
+  [0c0d3e7f] PureKLU v1.6.0
+  [6099a3de] PythonCall v0.9.36
   [1fd47b50] QuadGK v2.11.3
   [74087812] Random123 v1.7.1
   [e6cf234a] RandomNumbers v1.6.0
-  [3cdcf5f2] RecipesBase v1.3.4
+⌅ [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v4.5.1
+  [731186ca] RecursiveArrayTools v4.5.3
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
   [ae5879a3] ResettableStacks v1.4.0
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
-  [f2b01f46] Roots v3.0.8
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
-  [0bca4576] SciMLBase v3.54.0
+  [f2b01f46] Roots v3.0.9
+  [7e49a35a] RuntimeGeneratedFunctions v0.5.27
+  [0bca4576] SciMLBase v3.57.0
   [31c91b34] SciMLBenchmarks v0.2.1
   [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
-⌃ [c0aeaf25] SciMLOperators v1.30.0
+  [c0aeaf25] SciMLOperators v1.30.2
   [431bcebd] SciMLPublic v1.3.0
   [53ae85a6] SciMLStructures v1.10.5
   [7e506255] ScopedValues v1.6.2
   [6c6a2e73] Scratch v1.3.0
+  [91c51154] SentinelArrays v1.4.10
   [efcf1570] Setfield v1.1.2
   [992d4aef] Showoff v1.1.1
   [05bca326] SimpleDiffEq v1.18.0
-  [727e6d20] SimpleNonlinearSolve v2.14.5
+  [727e6d20] SimpleNonlinearSolve v2.14.6
   [699a6c99] SimpleTraits v0.9.6
+  [ed01d8cd] Sobol v1.5.0
   [a2af1166] SortingAlgorithms v1.2.3
   [a57abbd0] SparseColumnPivotedQR v2.1.8
   [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
-  [860ef19b] StableRNGs v1.0.4
-  [90137ffa] StaticArrays v1.9.20
+  [90137ffa] StaticArrays v1.9.22
   [1e83bf80] StaticArraysCore v1.4.4
   [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
@@ -439,16 +448,16 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [d15fe365] StochasticDiffEqLowOrder v2.0.5
   [8c95a807] StochasticDiffEqMilstein v2.1.1
   [db241ea8] StochasticDiffEqROCK v2.1.1
-  [49714585] StochasticDiffEqRODE v2.1.0
+  [49714585] StochasticDiffEqRODE v2.2.0
   [af2a2fcd] StochasticDiffEqWeak v2.2.1
   [69024149] StringEncodings v0.3.7
-⌅ [892a3eda] StringManipulation v0.5.0
+  [892a3eda] StringManipulation v0.6.1
   [856f2bd8] StructTypes v1.11.0
   [2efcf032] SymbolicIndexingInterface v0.3.55
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [62fd8b95] TensorCore v0.1.1
-  [a759f4b9] TimerOutputs v1.2.1
+  [a759f4b9] TimerOutputs v1.2.2
   [e689c965] Tracy v0.1.6
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
@@ -457,7 +466,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [e17b2a0c] UnsafePointers v1.0.0
   [41fe7b60] Unzip v0.2.0
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.16
+  [ddb6d928] YAML v0.4.17
   [700de1a5] ZygoteRules v0.2.8
 ⌅ [182d3088] cuBLAS v6.2.2
 ⌅ [533571aa] cuFFT v6.2.2
@@ -468,11 +477,11 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
 ⌅ [d1e2174e] CUDA_Compiler_jll v0.4.4+1
 ⌅ [4ee394cb] CUDA_Driver_jll v13.3.1+0
 ⌅ [76a88914] CUDA_Runtime_jll v0.23.0+1
-  [83423d85] Cairo_jll v1.18.7+0
+  [83423d85] Cairo_jll v1.18.8+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
   [2e619515] Expat_jll v2.8.4+0
-⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
+  [b22a6f82] FFMPEG_jll v9.0.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
   [559328eb] FriBidi_jll v1.0.17+0
@@ -488,7 +497,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [9c1d0b0a] JuliaNVTXCallbacks_jll v0.2.1+0
   [c1c5ebd0] LAME_jll v3.100.3+0
   [88015f11] LERC_jll v4.2.0+0
-  [dad2f222] LLVMExtra_jll v0.0.47+0
+⌅ [dad2f222] LLVMExtra_jll v0.0.47+0
   [1d63c593] LLVMOpenMP_jll v23.1.1+0
   [ad6e5548] LibTracyClient_jll v0.13.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
@@ -501,7 +510,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
 ⌅ [ef6e0fe3] NVPTX_LLVM_Backend_jll v22.1.7+1
   [e98f9f5b] NVTX_jll v3.2.2+0
   [e7412a2a] Ogg_jll v1.3.6+0
-  [458c3c95] OpenSSL_jll v3.5.8+0
+  [458c3c95] OpenSSL_jll v3.5.9+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
   [36c8627f] Pango_jll v1.58.2+0
@@ -543,14 +552,14 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [1e29f10c] demumble_jll v1.3.0+0
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
-  [a4ae2306] libaom_jll v3.14.1+0
+  [a4ae2306] libaom_jll v3.15.1+0
   [0ac62f75] libass_jll v0.17.5+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
   [2db6ffa8] libevdev_jll v1.13.4+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
-  [b53b4c65] libpng_jll v1.6.58+0
+  [b53b4c65] libpng_jll v1.6.59+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [f8abcde7] micromamba_jll v2.3.1+0
