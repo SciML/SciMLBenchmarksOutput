@@ -7,12 +7,12 @@ gr()
 
 
 sol = solve(prob_dde_RADAR5_oregonator, MethodOfSteps(Rodas5P());
-    reltol = 1e-14, abstol = 1e-14)
+    reltol = 1e-14, abstol = 1e-21)
 test_sol = TestSolution(sol)
 plot(sol; title = "RADAR5 Oregonator Solution")
 
 
-abstols = 1.0 ./ 10.0 .^ (4:7)
+abstols = 1.0 ./ 10.0 .^ (10:13)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
 setups = [Dict(:alg => MethodOfSteps(Rosenbrock23())),
@@ -69,7 +69,7 @@ wp = WorkPrecisionSet(prob_dde_RADAR5_oregonator, abstols, reltols, setups;
 plot(wp; title = "Oregonator: Stiff vs Non-Stiff (final error)")
 
 
-abstols = 1.0 ./ 10.0 .^ (8:11)
+abstols = 1.0 ./ 10.0 .^ (14:17)
 reltols = 1.0 ./ 10.0 .^ (5:8)
 
 setups = [Dict(:alg => MethodOfSteps(Rosenbrock23())),
@@ -80,12 +80,12 @@ setups = [Dict(:alg => MethodOfSteps(Rosenbrock23())),
     Dict(:alg => MethodOfSteps(KenCarp4()))]
 names = ["Rosenbrock23", "Rodas4", "Rodas5", "Rodas5P", "TRBDF2", "KenCarp4"]
 wp = WorkPrecisionSet(prob_dde_RADAR5_oregonator, abstols, reltols, setups;
-    names = names, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
+    names = names, appxsol = test_sol, maxiters = Int(1e7), error_estimate = :final)
 plot(wp; title = "Oregonator: Low Tolerances (final error)")
 
 
 wp = WorkPrecisionSet(prob_dde_RADAR5_oregonator, abstols, reltols, setups;
-    names = names, appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
+    names = names, appxsol = test_sol, maxiters = Int(1e7), error_estimate = :L2)
 plot(wp; title = "Oregonator: Low Tolerances (L2 error)")
 
 
