@@ -15,7 +15,7 @@ of signal transduction downstream of EGF and TNFα stimulation: 26 states, each 
 normalized (0-1) protein activity level, connected by 26 Hill-function-gated edges (some
 combined pairwise with AND/OR logic), with 86 unknown parameters (Hill coefficients `n`,
 half-activation constants `k`, and activation/deactivation time constants `τ`). Like
-[B4](BioPreDynB4ParameterEstimation.html) and unlike
+[B4](BioPreDynB4ParameterEstimation.md) and unlike
 [B2](https://github.com/SciML/SciMLBenchmarks.jl/blob/master/benchmarks/ParameterEstimation/BioPreDynB2ParameterEstimation.jmd),
 B5 fits simulated pseudo-data rather than real measurements: 10 *in silico* experiments
 combining different stimuli (EGF, TNFα) and inhibitors (of PI3K, Raf1), with 6 observed
@@ -532,9 +532,9 @@ biopredyn_b5_cost (generic function with 1 method)
 ```
 
 ```
-6.393996 seconds (7.31 M allocations: 346.866 MiB, 2.22% gc time, 98.30% 
+6.401871 seconds (7.31 M allocations: 346.871 MiB, 3.27% gc time, 98.35% 
 compilation time)
-  0.150197 seconds (13.34 k allocations: 8.070 MiB, 73.21% gc time)
+  0.041093 seconds (13.34 k allocations: 8.070 MiB)
 31477.21426675107
 ```
 
@@ -625,9 +625,9 @@ res_bbo.objective
 ```
 
 ```
-1569.652340 seconds (497.73 M allocations: 305.875 GiB, 11.08% gc time, 0.2
-8% compilation time)
-4076.154510391465
+2184.381109 seconds (671.09 M allocations: 421.718 GiB, 10.79% gc time, 0.1
+9% compilation time)
+6387.503471897512
 ```
 
 
@@ -643,9 +643,9 @@ res_nlopt.objective
 ```
 
 ```
-1177.576634 seconds (418.42 M allocations: 258.490 GiB, 14.65% gc time, 0.0
-6% compilation time)
-5954.0986965976
+2140.638211 seconds (716.94 M allocations: 457.940 GiB, 13.96% gc time, 0.0
+3% compilation time)
+7188.6166592091495
 ```
 
 
@@ -658,9 +658,9 @@ res_pso.objective
 ```
 
 ```
-226.591037 seconds (193.36 M allocations: 114.301 GiB, 82.47% gc time, 31.4
+299.625734 seconds (251.01 M allocations: 152.797 GiB, 83.71% gc time, 17.6
 2% compilation time)
-5945.59272467208
+7439.292056734032
 ```
 
 
@@ -696,9 +696,9 @@ nothing
 ```
 
 ```
-BBO -> LN_BOBYQA: 3103.5836275645083 (298.907080462s)
-GN_CRS2_LM -> LN_BOBYQA: 5217.449612378842 (304.092867755s)
-ParallelPSOArray -> LN_BOBYQA: 5463.167915179782 (229.744607029s)
+BBO -> LN_BOBYQA: 3763.0944394480157 (215.351015288s)
+GN_CRS2_LM -> LN_BOBYQA: 6933.506544556334 (519.349076969s)
+ParallelPSOArray -> LN_BOBYQA: 7278.780883788539 (321.405114764s)
 ```
 
 
@@ -721,12 +721,12 @@ df = DataFrame(
 ─────┼─────────────────────────────────────────────
    1 │ Reference nominal parameters        4276.21
    2 │ Starting guess (no fit)            31477.2
-   3 │ BBO_adaptive_de_rand_1_bin          4076.15
-   4 │ GN_CRS2_LM                          5954.1
-   5 │ ParallelPSOArray                    5945.59
-   6 │ LN_BOBYQA polish (from BBO)         3103.58
-   7 │ LN_BOBYQA polish (from GN_CRS2_L…   5217.45
-   8 │ LN_BOBYQA polish (from ParallelP…   5463.17
+   3 │ BBO_adaptive_de_rand_1_bin          6387.5
+   4 │ GN_CRS2_LM                          7188.62
+   5 │ ParallelPSOArray                    7439.29
+   6 │ LN_BOBYQA polish (from BBO)         3763.09
+   7 │ LN_BOBYQA polish (from GN_CRS2_L…   6933.51
+   8 │ LN_BOBYQA polish (from ParallelP…   7278.78
 ```
 
 
@@ -798,7 +798,7 @@ This benchmark demonstrates SciML's parameter estimation stack (`OrdinaryDiffEq`
 signal transduction spanning 10 simultaneous *in silico* experiments -- a different flavor
 of parameter estimation problem from
 [B2](https://github.com/SciML/SciMLBenchmarks.jl/blob/master/benchmarks/ParameterEstimation/BioPreDynB2ParameterEstimation.jmd)
-and [B4](BioPreDynB4ParameterEstimation.html) in this folder: smaller and non-stiff, but
+and [B4](BioPreDynB4ParameterEstimation.md) in this folder: smaller and non-stiff, but
 with multiple experimental conditions (differing stimuli, inhibitors, and initial
 conditions) that must all be fit simultaneously by a single shared parameter vector. The
 target is a low cost against the shared pseudo-data, with the literature reference of
@@ -844,7 +844,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6e4b80f9] BenchmarkTools v1.8.0
   [a134a8b2] BlackBoxOptim v0.6.12
   [a93c6f00] DataFrames v1.8.2
-  [bcd4f6db] DelayDiffEq v6.4.1
+⌃ [bcd4f6db] DelayDiffEq v6.4.1
 ⌃ [1130ab10] DiffEqParamEstim v2.6.1
   [31c24e10] Distributions v0.25.131
   [f6369f11] ForwardDiff v1.4.6
@@ -855,7 +855,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [3e6eede4] OptimizationBBO v0.4.12
   [4e6fcdb7] OptimizationNLopt v0.3.18
   [1dea7af3] OrdinaryDiffEq v7.8.1
-  [ab63da0c] ParallelParticleSwarms v1.6.2
+⌃ [ab63da0c] ParallelParticleSwarms v1.6.2
   [65888b18] ParameterizedFunctions v5.27.0
   [91a5bcdd] Plots v1.41.7
 ⌃ [731186ca] RecursiveArrayTools v4.5.1
@@ -886,8 +886,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [b2a6c25c] BinaryHeaps v1.1.0
   [caf10ac8] BipartiteGraphs v0.1.14
   [a134a8b2] BlackBoxOptim v0.6.12
-  [8e7c35d0] BlockArrays v1.10.0
-  [70df07ce] BracketingNonlinearSolve v1.12.7
+⌃ [8e7c35d0] BlockArrays v1.10.0
+⌃ [70df07ce] BracketingNonlinearSolve v1.12.7
   [fa961155] CEnum v0.5.0
   [d360d2e6] ChainRulesCore v1.26.1
   [35d6a980] ColorSchemes v3.31.0
@@ -910,7 +910,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a93c6f00] DataFrames v1.8.2
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
-  [bcd4f6db] DelayDiffEq v6.4.1
+⌃ [bcd4f6db] DelayDiffEq v6.4.1
   [8bb1440f] DelimitedFiles v1.9.1
   [39dd38d3] Dierckx v0.5.4
 ⌃ [2b5f629d] DiffEqBase v7.21.1
@@ -926,10 +926,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [7c1d4256] DynamicPolynomials v0.6.8
   [4e289a0a] EnumX v1.0.7
 ⌃ [7da242da] Enzyme v0.13.203
-  [f151be2c] EnzymeCore v0.8.21
+⌃ [f151be2c] EnzymeCore v0.8.21
   [e2ba6199] ExprTools v0.1.11
   [55351af7] ExproniconLite v0.10.14
-  [c87230d0] FFMPEG v0.4.5
+⌃ [c87230d0] FFMPEG v0.4.5
   [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
   [a4df4552] FastPower v1.5.0
@@ -954,7 +954,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d25df0c9] Inflate v0.1.5
 ⌅ [842dd82b] InlineStrings v1.4.6
   [18e54dd8] IntegerMathUtils v0.1.4
-  [8197267c] IntervalSets v0.7.14
+⌃ [8197267c] IntervalSets v0.7.14
   [3587e190] InverseFunctions v0.1.17
   [41ab1584] InvertedIndices v1.3.1
   [92d709cd] IrrationalConstants v0.2.6
@@ -967,7 +967,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [63c18a36] KernelAbstractions v0.9.42
 ⌃ [ba0b0d4f] Krylov v0.10.9
   [2faa5264] LHLFactorization v2.2.2
-⌃ [929cbde3] LLVM v9.13.1
+⌅ [929cbde3] LLVM v9.13.1
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [73f95e8e] LatticeRules v0.0.2
@@ -983,7 +983,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e1d29d7a] Missings v1.2.0
 ⌃ [961ee093] ModelingToolkit v11.43.0
 ⌃ [7771a370] ModelingToolkitBase v1.70.0
-  [6bb917b9] ModelingToolkitTearing v1.20.6
+⌃ [6bb917b9] ModelingToolkitTearing v1.20.6
 ⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
 ⌃ [102ac46a] MultivariatePolynomials v0.5.19
@@ -1002,7 +1002,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [3e6eede4] OptimizationBBO v0.4.12
 ⌃ [bca83a33] OptimizationBase v5.5.3
   [4e6fcdb7] OptimizationNLopt v0.3.18
-⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.1]
+⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.2]
   [1dea7af3] OrdinaryDiffEq v7.8.1
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.8
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.1
@@ -1013,10 +1013,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.2
-  [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
-  [79d7bb75] OrdinaryDiffEqVerner v2.4.1
+⌃ [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
+⌃ [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
-  [ab63da0c] ParallelParticleSwarms v1.6.2
+⌃ [ab63da0c] ParallelParticleSwarms v1.6.2
   [65888b18] ParameterizedFunctions v5.27.0
   [d96e819e] Parameters v0.13.1
 ⌅ [69de0a69] Parsers v2.8.8
@@ -1029,7 +1029,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
 ⌃ [21216c6a] Preferences v1.5.2 [loaded: v1.6.0]
-  [08abe8d2] PrettyTables v3.4.8
+⌃ [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [33c8b6b6] ProgressLogging v0.1.6
   [92933f4c] ProgressMeter v1.11.0
@@ -1039,7 +1039,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8a4e6c94] QuasiMonteCarlo v0.4.4
   [988b38a3] ReadOnlyArrays v0.2.0
   [795d4caa] ReadOnlyDicts v1.0.1
-  [3cdcf5f2] RecipesBase v1.3.4
+⌃ [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
 ⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
@@ -1047,7 +1047,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ae029012] Requires v1.3.1
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
-  [f2b01f46] Roots v3.0.8
+⌃ [f2b01f46] Roots v3.0.8
 ⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.26
 ⌃ [9dfe8606] SCCNonlinearSolve v1.15.3
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
@@ -1101,14 +1101,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [5c2747f8] URIs v1.7.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [013be700] UnsafeAtomics v0.3.2
+⌃ [013be700] UnsafeAtomics v0.3.2
   [41fe7b60] Unzip v0.2.0
   [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
 ⌃ [ddb6d928] YAML v0.4.16 [loaded: v0.4.17]
   [700de1a5] ZygoteRules v0.2.8
   [6e34b625] Bzip2_jll v1.0.9+0
-  [83423d85] Cairo_jll v1.18.7+0
+⌃ [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [cd4c43a9] Dierckx_jll v0.2.0+0
 ⌅ [7cc45869] Enzyme_jll v0.0.293+0
@@ -1129,7 +1129,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
   [88015f11] LERC_jll v4.2.0+0
-  [dad2f222] LLVMExtra_jll v0.0.47+0
+⌅ [dad2f222] LLVMExtra_jll v0.0.47+0
   [1d63c593] LLVMOpenMP_jll v23.1.1+0
   [ad6e5548] LibTracyClient_jll v0.13.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
@@ -1188,7 +1188,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [2db6ffa8] libevdev_jll v1.13.4+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
-  [b53b4c65] libpng_jll v1.6.58+0
+⌃ [b53b4c65] libpng_jll v1.6.58+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
