@@ -29,7 +29,7 @@ Compared:
 
 `cpu_offload` is `0` so the GPU numbers are GPU-only.
 
-The [work-precision comparison](lorenz_workprecision.html) adds
+The [work-precision comparison](lorenz_workprecision.md) adds
 `GPUTsit5IController` and GRADSOLVE, explicit Float32/Float64 comparisons, and
 scaling at common achieved-error ceilings. The Julia code below uses
 `beta=2.666` while the Python definitions use `8/3`; the work-precision
@@ -274,17 +274,17 @@ end
 ```
 Fixed step (ms)
          N       Kernel        Array          CPU          JAX      PyTorch
-         8        0.360       61.810        0.355      140.635      280.573
-        32        0.428       63.402        0.535      142.188      281.360
-       128        0.719       63.380        0.805      144.702      286.170
-       512        1.870       63.992        2.095      144.950      287.823
-      2048        6.081       68.454        7.357      143.832      287.269
-      8192       23.648       87.365       28.345      189.405      286.674
-     32768       94.127      173.521       98.146      199.642      292.030
-    131072      415.138      708.874      402.714      500.527      283.833
-    524288     1622.980     3163.906     1667.663     1759.027      961.380
-   2097152     6625.030    13230.151          NaN     6514.047          NaN
-   8388608    26033.322          NaN          NaN          NaN          NaN
+         8        0.346       63.413        0.456      139.934      275.907
+        32        0.412       63.361        0.696      140.840      278.477
+       128        0.673       63.730        1.074      141.663      282.709
+       512        1.716       64.757        3.087      141.570      282.907
+      2048        6.113       69.974        8.505      142.342      282.415
+      8192       23.921       88.690       25.875      187.604      286.382
+     32768       97.795      173.011       88.987      200.105      285.865
+    131072      404.445      703.471      419.289      498.821      279.689
+    524288     1625.546     3188.002     1650.110     1753.128      962.300
+   2097152     6724.383    13228.375          NaN     6511.080          NaN
+   8388608    26401.413          NaN          NaN          NaN          NaN
 ```
 
 
@@ -346,17 +346,17 @@ end
 ```
 Adaptive (ms)
          N       Kernel        Array          CPU          JAX
-         8        0.501       33.737        0.441       24.074
-        32        0.565       35.814        0.452       23.098
-       128        0.823       36.869        0.660       24.795
-       512        1.872       41.269        1.224       26.358
-      2048        5.997       45.718        3.354       26.307
-      8192       23.118       64.927        8.946       35.491
-     32768       90.127      139.382       34.880       37.600
-    131072      390.708      608.089       97.960       97.739
-    524288     1596.695     2575.420      961.899      339.863
-   2097152     6558.603    10768.491          NaN     1309.664
-   8388608    26776.255          NaN          NaN          NaN
+         8        0.507       38.142        0.428       23.085
+        32        0.571       35.453        0.454       22.874
+       128        0.835       38.306        0.608       24.558
+       512        1.894       41.084        0.867       26.161
+      2048        6.188       46.244        3.262       25.674
+      8192       22.245       70.597       11.160       35.408
+     32768       88.315      150.313       32.283       37.731
+    131072      408.965      573.604      245.071       98.220
+    524288     1737.762     2591.298      832.470      339.540
+   2097152     7064.281    11331.141          NaN     1309.186
+   8388608    28516.164          NaN          NaN          NaN
 ```
 
 
@@ -466,7 +466,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [31c24e10] Distributions v0.25.131
   [ffbed154] DocStringExtensions v0.9.5
   [4e289a0a] EnumX v1.0.7
-  [f151be2c] EnzymeCore v0.8.21
+⌃ [f151be2c] EnzymeCore v0.8.21
   [e2ba6199] ExprTools v0.1.11
   [c87230d0] FFMPEG v0.4.6
   [7034ab61] FastBroadcast v1.4.0
@@ -480,10 +480,10 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [f6369f11] ForwardDiff v1.4.6
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v1.13.0
-  [0c68f7d7] GPUArrays v11.5.15
+⌃ [0c68f7d7] GPUArrays v11.5.15
   [46192b85] GPUArraysCore v0.2.1
 ⌅ [61eb1bfa] GPUCompiler v1.23.0
-  [096a3bc2] GPUToolbox v3.3.2
+⌃ [096a3bc2] GPUToolbox v3.3.2
   [28b8d3ca] GR v0.73.27
   [a0844989] Gamma v1.2.0
   [86223c79] Graphs v1.15.0
@@ -504,7 +504,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [63c18a36] KernelAbstractions v0.9.43
   [ba0b0d4f] Krylov v0.10.10
   [2faa5264] LHLFactorization v2.2.2
-  [929cbde3] LLVM v9.13.2
+⌅ [929cbde3] LLVM v9.13.2
   [8b046642] LLVMLoopInfo v1.0.0
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
@@ -527,7 +527,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [5959db7a] NonlinearSolveFirstOrder v2.10.0
   [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3
   [26075421] NonlinearSolveSpectralMethods v1.8.3
-  [bac558e1] OrderedCollections v2.0.1
+⌃ [bac558e1] OrderedCollections v2.0.1
   [1dea7af3] OrdinaryDiffEq v7.8.1
   [6ad6398a] OrdinaryDiffEqBDF v2.4.12
   [bbf590c4] OrdinaryDiffEqCore v4.18.1
@@ -620,7 +620,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/DiffEqGPU/Manif
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [013be700] UnsafeAtomics v0.3.2
+⌃ [013be700] UnsafeAtomics v0.3.2
   [e17b2a0c] UnsafePointers v1.0.0
   [41fe7b60] Unzip v0.2.0
   [44d3d7a6] Weave v0.10.12
