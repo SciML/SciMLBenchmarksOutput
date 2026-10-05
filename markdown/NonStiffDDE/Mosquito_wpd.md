@@ -60,7 +60,7 @@ parvec = @SLVector (
     :beta_P, # BETA
     # predation on pupae
     :p0,
-    :p1,
+    :p1
 )
 
 # Parameter values
@@ -121,10 +121,10 @@ function temperature(t, pars)
 
     if t < 0.0
         temp = (mu - lambda) +
-            lambda * 2.0 * (0.5 * (1.0 + cos(2.0 * pi * (0.0 - phi) / 365.0)))^gamma
+               lambda * 2.0 * (0.5 * (1.0 + cos(2.0 * pi * (0.0 - phi) / 365.0)))^gamma
     else
         temp = (mu - lambda) +
-            lambda * 2.0 * (0.5 * (1.0 + cos(2.0 * pi * (t - phi) / 365.0)))^gamma
+               lambda * 2.0 * (0.5 * (1.0 + cos(2.0 * pi * (t - phi) / 365.0)))^gamma
     end
 
     return temp
@@ -135,7 +135,7 @@ function daylight(t, pars)
     L = pars.L # latitude (51 in thesis)
 
     # define photoperiod values
-    EPS = asin(0.39795 * cos(0.2163108 + 2 * atan(0.9671396 * tan(0.0086 * (t - 3.5)))))
+    EPS = asin(0.39795 * cos(0.2163108 + 2 * atan(0.9671396 * tan(0.00860 * (t - 3.5)))))
     NUM = sin(0.8333 * pi / 180.0) + (sin(L * pi / 180.0) * sin(EPS))
     DEN = cos(L * pi / 180.0) * cos(EPS)
     DAYLIGHT = 24.0 - (24.0 / pi) * acos(NUM / DEN)
@@ -146,11 +146,11 @@ end
 # Diapause functions
 # pp: photoperiod
 function diapause_spring(pp)
-    return 1.0 / (1.0 + exp(5.0 * (14.0 - pp)))
+    1.0 / (1.0 + exp(5.0 * (14.0 - pp)))
 end
 
 function diapause_autumn(pp)
-    return 1.0 / (1.0 + exp(5.0 * (13.0 - pp)))
+    1.0 / (1.0 + exp(5.0 * (13.0 - pp)))
 end
 
 # Per-capita oviposition rate
@@ -205,7 +205,7 @@ function death_pupae_rate(temp, pars)
     nu_2P = pars.nu_2P # U5
 
     # calculate pupae death rate
-    pupal_d = nu_0P * exp(((temp - nu_1P) / nu_2P)^2)
+    pupal_d = nu_0P * exp(((temp - nu_1P)/nu_2P)^2)
 
     if pupal_d > death_max
         pupal_d = death_max
@@ -238,7 +238,7 @@ function gonotrophic(temp, pars)
     if temp < 0.0
         grate = 0.0333
     else
-        grate = q1 / (1 + q2 * exp(-q3 * temp))
+        grate = q1 / (1 + q2*exp(-q3*temp))
     end
 
     if grate < gon_min
@@ -327,7 +327,7 @@ function h(p, t; idxs = nothing)
 
     Y[13] = 1.0 / egg_maturation_rate(temp_LP, p) # tau_E(t - tau_P(t) - tau_L(t - tau_P(t)))
 
-    return idxs === nothing ? Y : Y[idxs]
+    idxs === nothing ? Y : Y[idxs]
 end
 
 # Initial condition calculation
@@ -458,19 +458,19 @@ function ewing_dde(du, u, h, p, t)
     pupae_maturation_P = pupae_maturation_rate(temp_P, p)
 
     # DDEs describing change in state duration
-    dDEdt = 1 - egg_maturation / egg_maturation_E
-    dDLdt = 1 - larvae_maturation / larvae_maturation_L
-    dDPdt = 1 - pupae_maturation / pupae_maturation_P
-    dDELdt = (1 - dDLdt) * (1 - egg_maturation_L / egg_maturation_EL)
-    dDLPdt = (1 - dDPdt) * (1 - larvae_maturation_P / larvae_maturation_LP)
-    dDELPdt = (1 - dDPdt - dDLPdt) * (1 - egg_maturation_LP / egg_maturation_ELP)
+    dDEdt = 1 - egg_maturation/egg_maturation_E
+    dDLdt = 1 - larvae_maturation/larvae_maturation_L
+    dDPdt = 1 - pupae_maturation/pupae_maturation_P
+    dDELdt = (1 - dDLdt) * (1 - egg_maturation_L/egg_maturation_EL)
+    dDLPdt = (1 - dDPdt) * (1 - larvae_maturation_P/larvae_maturation_LP)
+    dDELPdt = (1 - dDPdt - dDLPdt) * (1 - egg_maturation_LP/egg_maturation_ELP)
 
     # stage recruitment
     R_E = birth * ADU
-    R_L = birth_E * Z1 * SE * egg_maturation / egg_maturation_E
-    R_P = birth_EL * Z2 * Z4[5] * SL * larvae_maturation / larvae_maturation_L * (1 - dDELdt)
-    R_A = birth_ELP * Z3 * Z5[5] * Z6[6] * SP * pupae_maturation / pupae_maturation_P *
-        (1 - dDLPdt) * (1 - dDELPdt)
+    R_L = birth_E * Z1 * SE * egg_maturation/egg_maturation_E
+    R_P = birth_EL * Z2 * Z4[5] * SL * larvae_maturation/larvae_maturation_L * (1 - dDELdt)
+    R_A = birth_ELP * Z3 * Z5[5] * Z6[6] * SP * pupae_maturation/pupae_maturation_P *
+          (1 - dDLPdt) * (1 - dDELPdt)
 
     # maturation rates
     M_E = R_L
@@ -479,7 +479,7 @@ function ewing_dde(du, u, h, p, t)
 
     # death rates
     D_E = death_egg * E
-    D_L = ((p0 * LAR / (p1 + LAR)) + death_larvae) * LAR
+    D_L = ((p0*LAR/(p1+LAR)) + death_larvae) * LAR
     D_P = death_pupae * PUP
     D_A = death_adult * ADU
 
@@ -491,10 +491,8 @@ function ewing_dde(du, u, h, p, t)
 
     du_5 = SE * ((egg_maturation * death_egg_E / egg_maturation_E) - death_egg)
     du_6 = SL *
-        (
-        ((p0 * Z4[2] / (p1 + Z4[2])) + death_larvae_L) * (1 - dDLdt) - (p0 * LAR / (p1 + LAR)) -
-            death_larvae
-    )
+           (((p0*Z4[2] / (p1+Z4[2])) + death_larvae_L) * (1-dDLdt) - (p0*LAR / (p1+LAR)) -
+            death_larvae)
     du_7 = SP * ((pupae_maturation * death_pupae_P / pupae_maturation_P) - death_pupae)
 
     du_8 = dDEdt # tau_E(t)
@@ -516,7 +514,7 @@ function ewing_dde(du, u, h, p, t)
     du[10] = du_10
     du[11] = du_11
     du[12] = du_12
-    return du[13] = du_13
+    du[13] = du_13
 end
 
 # Dependent lag functions
@@ -537,26 +535,90 @@ u0 = calculate_IC(A0, temp0, parameters)
 t0 = 0.0
 times = (t0, t0 + 365.0 * 5)  # 2 year simulation for benchmarking
 
-prob = DDEProblem{true}(
-    ewing_dde, u0, h, times, parameters;
-    dependent_lags = (deplag_1, deplag_2, deplag_3, deplag_4, deplag_5, deplag_6)
-)
+prob = DDEProblem{true}(ewing_dde, u0, h, times, parameters;
+    dependent_lags = (deplag_1, deplag_2, deplag_3, deplag_4, deplag_5, deplag_6))
 
 # Reference solution
-sol = solve(
-    prob, MethodOfSteps(Vern9());
-    reltol = 1.0e-12, abstol = 1.0e-12, maxiters = Int(1.0e7)
-)
+sol = solve(prob, MethodOfSteps(Vern9());
+    reltol = 1e-12, abstol = 1e-12, maxiters = Int(1e7))
 test_sol = TestSolution(sol)
 
 # Plot the reference solution - life stages
-plot(
-    sol, vars = [1, 2, 3, 4], title = "Life Stages",
-    legend = :topleft, labels = ["E" "L" "P" "A"]
-)
+plot(sol, vars = [1, 2, 3, 4], title = "Life Stages",
+    legend = :topleft, labels = ["E" "L" "P" "A"])
 ```
 
 ![](figures/Mosquito_wpd_1_1.png)
+
+
+
+Each diagram is followed by a summary computed from its runs. It lists the tolerances at which a method produced no finite error and time (the solve failed, timed out or diverged), the smallest error each method reached, and each method's unbeaten runs with their errors and times. A run is beaten when another run on the same diagram is at least as accurate, comparing errors as printed to 3 significant digits, and more than 1.2× faster; the factor keeps timing noise from deciding a comparison, so two methods within it of each other both keep their runs. In the smallest-error list, ≈ marks an error within 1.2× of the one listed before it and < one further away.
+
+```julia
+function wp_verdict(wp; estimate = wp.error_estimate, margin = 1.2)
+    fmt(x) = string(round(x; sigdigits = 3))
+    println("Summary computed from the $estimate errors and times above:")
+    if !all(w -> hasproperty(w.errors, estimate), wp.wps)
+        println("  No $estimate errors were recorded, so nothing is compared.")
+        return nothing
+    end
+    runs = map(wp.wps) do w
+        errors = getproperty(w.errors, estimate)
+        bad = [i for i in eachindex(w.times) if !(isfinite(errors[i]) && isfinite(w.times[i]))]
+        good = setdiff(eachindex(w.times), bad)
+        steps = w.dts === nothing ? ("abstol", w.abstols) : ("dt", w.dts)
+        (; name = w.name, errors = errors[good], times = w.times[good], bad = steps[2][bad], label = steps[1])
+    end
+    allunique(r.name for r in runs) ||
+        println("  Note: several setups share a legend name, so their lines below cannot be told apart.")
+    failed = [r for r in runs if !isempty(r.bad)]
+    println(
+        "  Runs without a finite error and time (failed, timed out or diverged): ",
+        isempty(failed) ? "none" :
+            join(("$(r.name) at $(r.label) $(join(fmt.(r.bad), ", "))" for r in failed), "; ")
+    )
+    ok = [r for r in runs if !isempty(r.errors)]
+    if length(ok) < 2
+        who = isempty(ok) ? "No method" : "Only $(only(ok).name)"
+        println("  $who produced a usable run, so nothing is compared.")
+        return nothing
+    end
+    best = sort!([(r.name, minimum(r.errors)) for r in ok]; by = last)
+    parts = String[]
+    for (i, (name, e)) in enumerate(best)
+        i > 1 && push!(parts, e <= margin * best[i - 1][2] ? "≈" : "<")
+        push!(parts, "$name ($(fmt(e)))")
+    end
+    println("  Smallest error reached, most accurate first: ", join(parts, " "))
+    points = [(e, t) for r in ok for (e, t) in zip(r.errors, r.times)]
+    shown(x) = round(x; sigdigits = 3)
+    beaten(e, t) = any(p -> shown(p[1]) <= shown(e) && margin * p[2] < t, points)
+    front = map(ok) do r
+        kept = sort!([(e, t) for (e, t) in zip(r.errors, r.times) if !beaten(e, t)]; by = first)
+        (; r.name, kept, n = length(r.errors))
+    end
+    sort!(front; by = f -> isempty(f.kept) ? Inf : first(f.kept[1]))
+    println(
+        "  Unbeaten runs by method, as error (time); a run is beaten when another run",
+        " is at least as accurate (as printed) and more than $(margin)x faster:"
+    )
+    for f in front
+        runs_of = "of $(f.n) usable $(f.n == 1 ? "run" : "runs")"
+        println(
+            "    $(f.name): ",
+            isempty(f.kept) ? "none $runs_of (every run is beaten)" :
+                "$(length(f.kept)) $runs_of: " * join(("$(fmt(e)) ($(fmt(t)) s)" for (e, t) in f.kept), ", ")
+        )
+    end
+    return nothing
+end
+```
+
+```
+wp_verdict (generic function with 1 method)
+```
+
+
 
 
 
@@ -570,25 +632,42 @@ We test various explicit Runge-Kutta methods suitable for non-stiff problems wit
 abstols = 1.0 ./ 10.0 .^ (8:10)
 reltols = 1.0 ./ 10.0 .^ (5:7)
 
-setups = [
-    Dict(:alg => MethodOfSteps(BS3())),
-    Dict(:alg => MethodOfSteps(RK4())),
-    Dict(:alg => MethodOfSteps(Tsit5())),
-    Dict(:alg => MethodOfSteps(DP5())),
-    Dict(:alg => MethodOfSteps(OwrenZen4())),
-    Dict(:alg => MethodOfSteps(OwrenZen5())),
-    Dict(:alg => MethodOfSteps(Vern6())),
-    Dict(:alg => MethodOfSteps(Vern7())),
-]
+setups = [Dict(:alg=>MethodOfSteps(BS3())),
+    Dict(:alg=>MethodOfSteps(RK4())),
+    Dict(:alg=>MethodOfSteps(Tsit5())),
+    Dict(:alg=>MethodOfSteps(DP5())),
+    Dict(:alg=>MethodOfSteps(OwrenZen4())),
+    Dict(:alg=>MethodOfSteps(OwrenZen5())),
+    Dict(:alg=>MethodOfSteps(Vern6())),
+    Dict(:alg=>MethodOfSteps(Vern7()))]
 
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final
-)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
 plot(wp)
 ```
 
-![](figures/Mosquito_wpd_2_1.png)
+![](figures/Mosquito_wpd_3_1.png)
+
+```julia
+wp_verdict(wp)
+```
+
+```
+Summary computed from the final errors and times above:
+  Runs without a finite error and time (failed, timed out or diverged): RK4 at abstol 1.0e-8, 1.0e-10
+  Smallest error reached, most accurate first: Vern7 (29.8) < Vern6 (62.4) < OwrenZen5 (848.0) < OwrenZen4 (1030.0) < Tsit5 (1410.0) < DP5 (5430.0) < RK4 (16200.0) < BS3 (29400.0)
+  Unbeaten runs by method, as error (time); a run is beaten when another run is at least as accurate (as printed) and more than 1.2x faster:
+    Vern7: 3 of 3 usable runs: 29.8 (1.8 s), 85.7 (0.669 s), 3580.0 (0.357 s)
+    OwrenZen5: 3 of 3 usable runs: 848.0 (0.537 s), 7340.0 (0.279 s), 45300.0 (0.137 s)
+    OwrenZen4: 2 of 3 usable runs: 1030.0 (0.608 s), 45700.0 (0.118 s)
+    Vern6: 1 of 3 usable runs: 14200.0 (0.327 s)
+    BS3: none of 3 usable runs (every run is beaten)
+    RK4: none of 1 usable run (every run is beaten)
+    Tsit5: none of 3 usable runs (every run is beaten)
+    DP5: none of 3 usable runs (every run is beaten)
+```
+
+
 
 
 
@@ -597,14 +676,33 @@ plot(wp)
 We also examine the interpolation errors which are important for accurate delay evaluation:
 
 ```julia
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2
-)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
 plot(wp)
 ```
 
-![](figures/Mosquito_wpd_3_1.png)
+![](figures/Mosquito_wpd_5_1.png)
+
+```julia
+wp_verdict(wp)
+```
+
+```
+Summary computed from the L2 errors and times above:
+  Runs without a finite error and time (failed, timed out or diverged): RK4 at abstol 1.0e-8, 1.0e-10
+  Smallest error reached, most accurate first: Vern7 (28.1) < Vern6 (85.4) < OwrenZen5 (788.0) ≈ OwrenZen4 (851.0) < Tsit5 (1340.0) < DP5 (5100.0) < RK4 (14500.0) < BS3 (24800.0)
+  Unbeaten runs by method, as error (time); a run is beaten when another run is at least as accurate (as printed) and more than 1.2x faster:
+    Vern7: 3 of 3 usable runs: 28.1 (1.74 s), 63.9 (0.655 s), 3460.0 (0.327 s)
+    OwrenZen5: 3 of 3 usable runs: 788.0 (0.533 s), 7010.0 (0.281 s), 45800.0 (0.156 s)
+    OwrenZen4: 3 of 3 usable runs: 851.0 (0.604 s), 9090.0 (0.335 s), 57100.0 (0.12 s)
+    Vern6: 1 of 3 usable runs: 13000.0 (0.326 s)
+    BS3: none of 3 usable runs (every run is beaten)
+    RK4: none of 1 usable run (every run is beaten)
+    Tsit5: none of 3 usable runs (every run is beaten)
+    DP5: none of 3 usable runs (every run is beaten)
+```
+
+
 
 
 
@@ -616,32 +714,62 @@ Testing at more stringent tolerances:
 abstols = 1.0 ./ 10.0 .^ (10:13)
 reltols = 1.0 ./ 10.0 .^ (7:10)
 
-setups = [
-    Dict(:alg => MethodOfSteps(DP5())),
-    Dict(:alg => MethodOfSteps(OwrenZen5())),
-    Dict(:alg => MethodOfSteps(Vern7())),
-    Dict(:alg => MethodOfSteps(Vern8())),
-    Dict(:alg => MethodOfSteps(Vern9())),
-]
+setups = [Dict(:alg=>MethodOfSteps(DP5())),
+    Dict(:alg=>MethodOfSteps(OwrenZen5())),
+    Dict(:alg=>MethodOfSteps(Vern7())),
+    Dict(:alg=>MethodOfSteps(Vern8())),
+    Dict(:alg=>MethodOfSteps(Vern9()))]
 
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e6), error_estimate = :final
-)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e6), error_estimate = :final)
 plot(wp)
 ```
 
-![](figures/Mosquito_wpd_4_1.png)
+![](figures/Mosquito_wpd_7_1.png)
 
 ```julia
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e6), error_estimate = :L2
-)
+wp_verdict(wp)
+```
+
+```
+Summary computed from the final errors and times above:
+  Runs without a finite error and time (failed, timed out or diverged): none
+  Smallest error reached, most accurate first: Vern9 (7.76) < Vern7 (10.8) ≈ OwrenZen5 (12.1) < DP5 (15.1) < Vern8 (23.6)
+  Unbeaten runs by method, as error (time); a run is beaten when another run is at least as accurate (as printed) and more than 1.2x faster:
+    Vern9: 2 of 4 usable runs: 7.76 (26.6 s), 9.15 (15.1 s)
+    Vern7: 2 of 4 usable runs: 10.8 (9.19 s), 29.8 (1.65 s)
+    OwrenZen5: 4 of 4 usable runs: 12.1 (2.66 s), 14.1 (1.64 s), 123.0 (1.17 s), 848.0 (0.528 s)
+    Vern8: 1 of 4 usable runs: 363.0 (1.04 s)
+    DP5: none of 4 usable runs (every run is beaten)
+```
+
+
+
+```julia
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e6), error_estimate = :L2)
 plot(wp)
 ```
 
-![](figures/Mosquito_wpd_5_1.png)
+![](figures/Mosquito_wpd_9_1.png)
+
+```julia
+wp_verdict(wp)
+```
+
+```
+Summary computed from the L2 errors and times above:
+  Runs without a finite error and time (failed, timed out or diverged): none
+  Smallest error reached, most accurate first: Vern9 (15.0) < Vern7 (18.3) ≈ DP5 (18.8) < OwrenZen5 (24.2) ≈ Vern8 (27.7)
+  Unbeaten runs by method, as error (time); a run is beaten when another run is at least as accurate (as printed) and more than 1.2x faster:
+    Vern9: 1 of 4 usable runs: 15.0 (15.2 s)
+    Vern7: 3 of 4 usable runs: 18.3 (9.2 s), 22.0 (5.95 s), 28.1 (1.73 s)
+    DP5: 1 of 4 usable runs: 18.8 (5.46 s)
+    OwrenZen5: 4 of 4 usable runs: 24.2 (2.51 s), 28.0 (1.62 s), 127.0 (1.15 s), 788.0 (0.615 s)
+    Vern8: none of 4 usable runs (every run is beaten)
+```
+
+
 
 
 ## Appendix
@@ -676,17 +804,17 @@ Package Information:
 
 ```
 Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffDDE/Project.toml`
-  [f42792ee] DDEProblemLibrary v0.1.9
-  [bcd4f6db] DelayDiffEq v6.2.0
-  [f3b72e0c] DiffEqDevTools v3.4.0
-  [2ee39098] LabelledArrays v1.20.3
-  [1344f307] OrdinaryDiffEqLowOrderRK v2.2.4
-  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.0
-  [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
-  [79d7bb75] OrdinaryDiffEqVerner v2.4.0
+⌃ [f42792ee] DDEProblemLibrary v0.1.9
+⌃ [bcd4f6db] DelayDiffEq v6.4.0
+  [f3b72e0c] DiffEqDevTools v3.6.3
+  [2ee39098] LabelledArrays v1.20.5
+⌃ [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
+⌃ [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
+⌃ [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [91a5bcdd] Plots v1.41.7
-⌃ [31c91b34] SciMLBenchmarks v0.1.3
-  [90137ffa] StaticArrays v1.9.19
+  [31c91b34] SciMLBenchmarks v0.2.1
+⌃ [90137ffa] StaticArrays v1.9.20
 Info Packages marked with ⌃ have new versions available and may be upgradable.
 ```
 
@@ -695,120 +823,116 @@ And the full manifest:
 ```
 Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/NonStiffDDE/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
-  [14f7f29c] AMD v0.5.3
+  [14f7f29c] AMD v0.5.4
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
-  [4fba245c] ArrayInterface v7.30.0
+  [4fba245c] ArrayInterface v7.30.2
   [b2a6c25c] BinaryHeaps v1.1.0
-  [70df07ce] BracketingNonlinearSolve v1.12.6
+⌃ [70df07ce] BracketingNonlinearSolve v1.12.7
   [d360d2e6] ChainRulesCore v1.26.1
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
-  [5ae59095] Colors v0.13.1
+⌃ [5ae59095] Colors v0.13.1
   [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
   [34da2185] Compat v4.18.1
   [a33af91c] CompositionsBase v0.1.2
   [2569d6c7] ConcreteStructs v0.2.8
-  [8f4d0f93] Conda v1.10.3
   [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
   [a8cc5b0e] Crayons v4.2.0
-  [f42792ee] DDEProblemLibrary v0.1.9
+⌃ [f42792ee] DDEProblemLibrary v0.1.9
   [9a962f9c] DataAPI v1.16.0
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
-  [bcd4f6db] DelayDiffEq v6.2.0
+⌃ [bcd4f6db] DelayDiffEq v6.4.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.18.2
-  [f3b72e0c] DiffEqDevTools v3.4.0
-⌃ [77a26b50] DiffEqNoiseProcess v5.36.0
+⌃ [2b5f629d] DiffEqBase v7.21.1
+  [f3b72e0c] DiffEqDevTools v3.6.3
+⌃ [77a26b50] DiffEqNoiseProcess v5.36.3
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [31c24e10] Distributions v0.25.131
   [ffbed154] DocStringExtensions v0.9.5
   [4e289a0a] EnumX v1.0.7
-  [f151be2c] EnzymeCore v0.8.21
+⌃ [f151be2c] EnzymeCore v0.8.21
   [e2ba6199] ExprTools v0.1.11
-  [c87230d0] FFMPEG v0.4.5
+⌃ [c87230d0] FFMPEG v0.4.5
   [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
   [a4df4552] FastPower v1.5.0
-  [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
+⌃ [1a297f60] FillArrays v1.17.0
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-  [f6369f11] ForwardDiff v1.4.5
+  [f6369f11] ForwardDiff v1.4.6
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v1.13.0
-  [46192b85] GPUArraysCore v0.2.0
+⌃ [46192b85] GPUArraysCore v0.2.0
   [28b8d3ca] GR v0.73.27
   [a0844989] Gamma v1.2.0
-  [d7ba0133] Git v1.5.0
-  [42e2da0e] Grisu v1.0.2
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.30
-  [7073ff75] IJulia v1.34.4
   [3587e190] InverseFunctions v0.1.17
   [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
   [1019f520] JLFzf v0.1.11
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
-  [ba0b0d4f] Krylov v0.10.9
-  [2faa5264] LHLFactorization v2.2.0
+  [ba0b0d4f] Krylov v0.10.10
+  [2faa5264] LHLFactorization v2.2.2
   [b964fa9f] LaTeXStrings v1.4.1
-  [2ee39098] LabelledArrays v1.20.3
+  [2ee39098] LabelledArrays v1.20.5
   [23fbe1c1] Latexify v0.16.12
-  [87fe0de2] LineSearch v0.1.16
-⌃ [7ed4a6bd] LinearSolve v5.13.1
-  [2ab3a3ac] LogExpFunctions v1.0.1
+⌃ [87fe0de2] LineSearch v0.1.18
+⌃ [7ed4a6bd] LinearSolve v5.17.3
+⌃ [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
   [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
   [46d2c3a1] MuladdMacro v0.2.7
-  [ffc61752] Mustache v1.0.21
+⌃ [ffc61752] Mustache v1.0.21
   [77ba4419] NaNMath v1.1.4
-⌃ [8913a72c] NonlinearSolve v4.28.0
-  [be0214bd] NonlinearSolveBase v2.48.0
-  [5959db7a] NonlinearSolveFirstOrder v2.4.1
-  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.2
-  [26075421] NonlinearSolveSpectralMethods v1.8.1
-  [bac558e1] OrderedCollections v2.0.1
-  [6ad6398a] OrdinaryDiffEqBDF v2.4.5
-  [bbf590c4] OrdinaryDiffEqCore v4.15.1
-⌃ [50262376] OrdinaryDiffEqDefault v2.5.0
-  [4302a76b] OrdinaryDiffEqDifferentiation v3.10.0
-⌃ [d3585ca7] OrdinaryDiffEqFunctionMap v2.2.1
-  [1344f307] OrdinaryDiffEqLowOrderRK v2.2.4
-  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.0
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.0
+⌃ [8913a72c] NonlinearSolve v4.30.0
+⌃ [be0214bd] NonlinearSolveBase v2.49.5
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
+  [9a2c21bd] NonlinearSolveQuasiNewton v1.15.3
+  [26075421] NonlinearSolveSpectralMethods v1.8.3
+⌃ [bac558e1] OrderedCollections v2.0.1
+⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
+  [50262376] OrdinaryDiffEqDefault v2.6.2
+⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
+  [d3585ca7] OrdinaryDiffEqFunctionMap v2.3.0
+⌃ [1344f307] OrdinaryDiffEqLowOrderRK v2.2.5
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
-  [2d112036] OrdinaryDiffEqSDIRK v2.9.1
-  [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
-  [79d7bb75] OrdinaryDiffEqVerner v2.4.0
+⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.4
+⌃ [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
+⌃ [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
-⌅ [69de0a69] Parsers v2.8.7
+⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [e409e4f3] PoissonRandom v0.4.13
-⌃ [d236fae5] PreallocationTools v1.6.0
+  [d236fae5] PreallocationTools v1.7.1
 ⌅ [aea7be01] PrecompileTools v1.2.1
-  [21216c6a] Preferences v1.5.2
-  [08abe8d2] PrettyTables v3.4.8
+  [21216c6a] Preferences v1.6.0
+⌃ [08abe8d2] PrettyTables v3.4.8
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.4.1
+⌃ [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
-  [3cdcf5f2] RecipesBase v1.3.4
+⌅ [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-⌃ [731186ca] RecursiveArrayTools v4.5.0
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
@@ -816,50 +940,48 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
   [47965b36] RootedTrees v2.27.0
-  [f2b01f46] Roots v3.0.7
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.25
-  [0bca4576] SciMLBase v3.49.2
-⌃ [31c91b34] SciMLBenchmarks v0.1.3
-  [19f34311] SciMLJacobianOperators v0.1.18
+⌃ [f2b01f46] Roots v3.0.8
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+⌃ [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1
+  [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
-⌃ [c0aeaf25] SciMLOperators v1.29.0
+⌃ [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
   [53ae85a6] SciMLStructures v1.10.5
   [6c6a2e73] Scratch v1.3.0
   [efcf1570] Setfield v1.1.2
-  [992d4aef] Showoff v1.0.3
-  [727e6d20] SimpleNonlinearSolve v2.14.1
+  [992d4aef] Showoff v1.1.1
+⌃ [727e6d20] SimpleNonlinearSolve v2.14.5
   [a2af1166] SortingAlgorithms v1.2.3
-  [a57abbd0] SparseColumnPivotedQR v2.1.7
-  [0a514795] SparseMatrixColorings v0.4.27
+  [a57abbd0] SparseColumnPivotedQR v2.1.8
+  [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
   [860ef19b] StableRNGs v1.0.4
-  [90137ffa] StaticArrays v1.9.19
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
-  [10745b16] Statistics v1.11.1
+  [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
   [2913bbd2] StatsBase v0.34.13
   [4c63d2b9] StatsFuns v2.2.1
   [69024149] StringEncodings v0.3.7
-  [892a3eda] StringManipulation v0.5.0
+⌅ [892a3eda] StringManipulation v0.5.0
   [09ab397b] StructArrays v0.7.3
   [2efcf032] SymbolicIndexingInterface v0.3.55
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [62fd8b95] TensorCore v0.1.1
-  [a759f4b9] TimerOutputs v1.2.0
+⌃ [a759f4b9] TimerOutputs v1.2.1
   [781d530d] TruncatedStacktraces v1.4.0
   [1cfade01] UnicodeFun v0.4.1
   [41fe7b60] Unzip v0.2.0
-  [81def892] VersionParsing v1.3.0
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.16
-  [c2297ded] ZMQ v1.5.1
+⌃ [ddb6d928] YAML v0.4.16
   [6e34b625] Bzip2_jll v1.0.9+0
-  [83423d85] Cairo_jll v1.18.7+0
+⌃ [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-  [2e619515] Expat_jll v2.8.3+0
+  [2e619515] Expat_jll v2.8.4+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
@@ -868,16 +990,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d2c73de3] GR_jll v0.73.27+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
-  [020c3dae] Git_LFS_jll v3.7.1+0
-  [f8c6e375] Git_jll v2.55.0+0
   [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
-⌅ [2e76f6c2] HarfBuzz_jll v8.5.1+0
+  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-  [88015f11] LERC_jll v4.1.0+0
-  [1d63c593] LLVMOpenMP_jll v22.1.7+0
+  [88015f11] LERC_jll v4.2.0+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
@@ -886,11 +1006,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [38a345b3] Libuuid_jll v2.42.0+0
   [856f044c] MKL_jll v2025.2.0+0
   [e7412a2a] Ogg_jll v1.3.6+0
-  [9bd350c2] OpenSSH_jll v10.5.1+0
-⌃ [458c3c95] OpenSSL_jll v3.5.7+0
+⌃ [458c3c95] OpenSSL_jll v3.5.8+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
-  [36c8627f] Pango_jll v1.58.0+0
+  [36c8627f] Pango_jll v1.58.2+0
   [30392449] Pixman_jll v0.46.4+0
   [c0090381] Qt6Base_jll v6.10.2+2
   [629bc702] Qt6Declarative_jll v6.10.2+2
@@ -900,7 +1019,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [f50d1b31] Rmath_jll v0.5.2+0
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+  [ffd25f8a] XZ_jll v5.8.4+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
   [4f6342f7] Xorg_libX11_jll v1.8.13+0
@@ -925,19 +1044,17 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [35661453] Xorg_xkbcomp_jll v1.4.7+0
   [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
-  [8f1865be] ZeroMQ_jll v4.3.6+0
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
-  [a4ae2306] libaom_jll v3.14.1+0
-  [0ac62f75] libass_jll v0.17.4+0
+⌃ [a4ae2306] libaom_jll v3.14.1+0
+  [0ac62f75] libass_jll v0.17.5+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
   [2db6ffa8] libevdev_jll v1.13.4+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
-  [b53b4c65] libpng_jll v1.6.58+0
-  [a9144af2] libsodium_jll v1.0.21+0
+⌃ [b53b4c65] libpng_jll v1.6.58+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0

@@ -1,3 +1,4 @@
+
 using DelayDiffEq, DiffEqDevTools, Plots
 using OrdinaryDiffEqLowOrderRK, OrdinaryDiffEqTsit5, OrdinaryDiffEqVerner
 using LabelledArrays, StaticArrays
@@ -49,7 +50,7 @@ parvec = @SLVector (
     :beta_P, # BETA
     # predation on pupae
     :p0,
-    :p1,
+    :p1
 )
 
 # Parameter values
@@ -110,10 +111,10 @@ function temperature(t, pars)
 
     if t < 0.0
         temp = (mu - lambda) +
-            lambda * 2.0 * (0.5 * (1.0 + cos(2.0 * pi * (0.0 - phi) / 365.0)))^gamma
+               lambda * 2.0 * (0.5 * (1.0 + cos(2.0 * pi * (0.0 - phi) / 365.0)))^gamma
     else
         temp = (mu - lambda) +
-            lambda * 2.0 * (0.5 * (1.0 + cos(2.0 * pi * (t - phi) / 365.0)))^gamma
+               lambda * 2.0 * (0.5 * (1.0 + cos(2.0 * pi * (t - phi) / 365.0)))^gamma
     end
 
     return temp
@@ -124,7 +125,7 @@ function daylight(t, pars)
     L = pars.L # latitude (51 in thesis)
 
     # define photoperiod values
-    EPS = asin(0.39795 * cos(0.2163108 + 2 * atan(0.9671396 * tan(0.0086 * (t - 3.5)))))
+    EPS = asin(0.39795 * cos(0.2163108 + 2 * atan(0.9671396 * tan(0.00860 * (t - 3.5)))))
     NUM = sin(0.8333 * pi / 180.0) + (sin(L * pi / 180.0) * sin(EPS))
     DEN = cos(L * pi / 180.0) * cos(EPS)
     DAYLIGHT = 24.0 - (24.0 / pi) * acos(NUM / DEN)
@@ -135,11 +136,11 @@ end
 # Diapause functions
 # pp: photoperiod
 function diapause_spring(pp)
-    return 1.0 / (1.0 + exp(5.0 * (14.0 - pp)))
+    1.0 / (1.0 + exp(5.0 * (14.0 - pp)))
 end
 
 function diapause_autumn(pp)
-    return 1.0 / (1.0 + exp(5.0 * (13.0 - pp)))
+    1.0 / (1.0 + exp(5.0 * (13.0 - pp)))
 end
 
 # Per-capita oviposition rate
@@ -194,7 +195,7 @@ function death_pupae_rate(temp, pars)
     nu_2P = pars.nu_2P # U5
 
     # calculate pupae death rate
-    pupal_d = nu_0P * exp(((temp - nu_1P) / nu_2P)^2)
+    pupal_d = nu_0P * exp(((temp - nu_1P)/nu_2P)^2)
 
     if pupal_d > death_max
         pupal_d = death_max
@@ -227,7 +228,7 @@ function gonotrophic(temp, pars)
     if temp < 0.0
         grate = 0.0333
     else
-        grate = q1 / (1 + q2 * exp(-q3 * temp))
+        grate = q1 / (1 + q2*exp(-q3*temp))
     end
 
     if grate < gon_min
@@ -316,7 +317,7 @@ function h(p, t; idxs = nothing)
 
     Y[13] = 1.0 / egg_maturation_rate(temp_LP, p) # tau_E(t - tau_P(t) - tau_L(t - tau_P(t)))
 
-    return idxs === nothing ? Y : Y[idxs]
+    idxs === nothing ? Y : Y[idxs]
 end
 
 # Initial condition calculation
@@ -447,19 +448,19 @@ function ewing_dde(du, u, h, p, t)
     pupae_maturation_P = pupae_maturation_rate(temp_P, p)
 
     # DDEs describing change in state duration
-    dDEdt = 1 - egg_maturation / egg_maturation_E
-    dDLdt = 1 - larvae_maturation / larvae_maturation_L
-    dDPdt = 1 - pupae_maturation / pupae_maturation_P
-    dDELdt = (1 - dDLdt) * (1 - egg_maturation_L / egg_maturation_EL)
-    dDLPdt = (1 - dDPdt) * (1 - larvae_maturation_P / larvae_maturation_LP)
-    dDELPdt = (1 - dDPdt - dDLPdt) * (1 - egg_maturation_LP / egg_maturation_ELP)
+    dDEdt = 1 - egg_maturation/egg_maturation_E
+    dDLdt = 1 - larvae_maturation/larvae_maturation_L
+    dDPdt = 1 - pupae_maturation/pupae_maturation_P
+    dDELdt = (1 - dDLdt) * (1 - egg_maturation_L/egg_maturation_EL)
+    dDLPdt = (1 - dDPdt) * (1 - larvae_maturation_P/larvae_maturation_LP)
+    dDELPdt = (1 - dDPdt - dDLPdt) * (1 - egg_maturation_LP/egg_maturation_ELP)
 
     # stage recruitment
     R_E = birth * ADU
-    R_L = birth_E * Z1 * SE * egg_maturation / egg_maturation_E
-    R_P = birth_EL * Z2 * Z4[5] * SL * larvae_maturation / larvae_maturation_L * (1 - dDELdt)
-    R_A = birth_ELP * Z3 * Z5[5] * Z6[6] * SP * pupae_maturation / pupae_maturation_P *
-        (1 - dDLPdt) * (1 - dDELPdt)
+    R_L = birth_E * Z1 * SE * egg_maturation/egg_maturation_E
+    R_P = birth_EL * Z2 * Z4[5] * SL * larvae_maturation/larvae_maturation_L * (1 - dDELdt)
+    R_A = birth_ELP * Z3 * Z5[5] * Z6[6] * SP * pupae_maturation/pupae_maturation_P *
+          (1 - dDLPdt) * (1 - dDELPdt)
 
     # maturation rates
     M_E = R_L
@@ -468,7 +469,7 @@ function ewing_dde(du, u, h, p, t)
 
     # death rates
     D_E = death_egg * E
-    D_L = ((p0 * LAR / (p1 + LAR)) + death_larvae) * LAR
+    D_L = ((p0*LAR/(p1+LAR)) + death_larvae) * LAR
     D_P = death_pupae * PUP
     D_A = death_adult * ADU
 
@@ -480,10 +481,8 @@ function ewing_dde(du, u, h, p, t)
 
     du_5 = SE * ((egg_maturation * death_egg_E / egg_maturation_E) - death_egg)
     du_6 = SL *
-        (
-        ((p0 * Z4[2] / (p1 + Z4[2])) + death_larvae_L) * (1 - dDLdt) - (p0 * LAR / (p1 + LAR)) -
-            death_larvae
-    )
+           (((p0*Z4[2] / (p1+Z4[2])) + death_larvae_L) * (1-dDLdt) - (p0*LAR / (p1+LAR)) -
+            death_larvae)
     du_7 = SP * ((pupae_maturation * death_pupae_P / pupae_maturation_P) - death_pupae)
 
     du_8 = dDEdt # tau_E(t)
@@ -505,7 +504,7 @@ function ewing_dde(du, u, h, p, t)
     du[10] = du_10
     du[11] = du_11
     du[12] = du_12
-    return du[13] = du_13
+    du[13] = du_13
 end
 
 # Dependent lag functions
@@ -526,77 +525,131 @@ u0 = calculate_IC(A0, temp0, parameters)
 t0 = 0.0
 times = (t0, t0 + 365.0 * 5)  # 2 year simulation for benchmarking
 
-prob = DDEProblem{true}(
-    ewing_dde, u0, h, times, parameters;
-    dependent_lags = (deplag_1, deplag_2, deplag_3, deplag_4, deplag_5, deplag_6)
-)
+prob = DDEProblem{true}(ewing_dde, u0, h, times, parameters;
+    dependent_lags = (deplag_1, deplag_2, deplag_3, deplag_4, deplag_5, deplag_6))
 
 # Reference solution
-sol = solve(
-    prob, MethodOfSteps(Vern9());
-    reltol = 1.0e-12, abstol = 1.0e-12, maxiters = Int(1.0e7)
-)
+sol = solve(prob, MethodOfSteps(Vern9());
+    reltol = 1e-12, abstol = 1e-12, maxiters = Int(1e7))
 test_sol = TestSolution(sol)
 
 # Plot the reference solution - life stages
-plot(
-    sol, vars = [1, 2, 3, 4], title = "Life Stages",
-    legend = :topleft, labels = ["E" "L" "P" "A"]
-)
+plot(sol, vars = [1, 2, 3, 4], title = "Life Stages",
+    legend = :topleft, labels = ["E" "L" "P" "A"])
+
+
+function wp_verdict(wp; estimate = wp.error_estimate, margin = 1.2)
+    fmt(x) = string(round(x; sigdigits = 3))
+    println("Summary computed from the $estimate errors and times above:")
+    if !all(w -> hasproperty(w.errors, estimate), wp.wps)
+        println("  No $estimate errors were recorded, so nothing is compared.")
+        return nothing
+    end
+    runs = map(wp.wps) do w
+        errors = getproperty(w.errors, estimate)
+        bad = [i for i in eachindex(w.times) if !(isfinite(errors[i]) && isfinite(w.times[i]))]
+        good = setdiff(eachindex(w.times), bad)
+        steps = w.dts === nothing ? ("abstol", w.abstols) : ("dt", w.dts)
+        (; name = w.name, errors = errors[good], times = w.times[good], bad = steps[2][bad], label = steps[1])
+    end
+    allunique(r.name for r in runs) ||
+        println("  Note: several setups share a legend name, so their lines below cannot be told apart.")
+    failed = [r for r in runs if !isempty(r.bad)]
+    println(
+        "  Runs without a finite error and time (failed, timed out or diverged): ",
+        isempty(failed) ? "none" :
+            join(("$(r.name) at $(r.label) $(join(fmt.(r.bad), ", "))" for r in failed), "; ")
+    )
+    ok = [r for r in runs if !isempty(r.errors)]
+    if length(ok) < 2
+        who = isempty(ok) ? "No method" : "Only $(only(ok).name)"
+        println("  $who produced a usable run, so nothing is compared.")
+        return nothing
+    end
+    best = sort!([(r.name, minimum(r.errors)) for r in ok]; by = last)
+    parts = String[]
+    for (i, (name, e)) in enumerate(best)
+        i > 1 && push!(parts, e <= margin * best[i - 1][2] ? "≈" : "<")
+        push!(parts, "$name ($(fmt(e)))")
+    end
+    println("  Smallest error reached, most accurate first: ", join(parts, " "))
+    points = [(e, t) for r in ok for (e, t) in zip(r.errors, r.times)]
+    shown(x) = round(x; sigdigits = 3)
+    beaten(e, t) = any(p -> shown(p[1]) <= shown(e) && margin * p[2] < t, points)
+    front = map(ok) do r
+        kept = sort!([(e, t) for (e, t) in zip(r.errors, r.times) if !beaten(e, t)]; by = first)
+        (; r.name, kept, n = length(r.errors))
+    end
+    sort!(front; by = f -> isempty(f.kept) ? Inf : first(f.kept[1]))
+    println(
+        "  Unbeaten runs by method, as error (time); a run is beaten when another run",
+        " is at least as accurate (as printed) and more than $(margin)x faster:"
+    )
+    for f in front
+        runs_of = "of $(f.n) usable $(f.n == 1 ? "run" : "runs")"
+        println(
+            "    $(f.name): ",
+            isempty(f.kept) ? "none $runs_of (every run is beaten)" :
+                "$(length(f.kept)) $runs_of: " * join(("$(fmt(e)) ($(fmt(t)) s)" for (e, t) in f.kept), ", ")
+        )
+    end
+    return nothing
+end
 
 
 abstols = 1.0 ./ 10.0 .^ (8:10)
 reltols = 1.0 ./ 10.0 .^ (5:7)
 
-setups = [
-    Dict(:alg => MethodOfSteps(BS3())),
-    Dict(:alg => MethodOfSteps(RK4())),
-    Dict(:alg => MethodOfSteps(Tsit5())),
-    Dict(:alg => MethodOfSteps(DP5())),
-    Dict(:alg => MethodOfSteps(OwrenZen4())),
-    Dict(:alg => MethodOfSteps(OwrenZen5())),
-    Dict(:alg => MethodOfSteps(Vern6())),
-    Dict(:alg => MethodOfSteps(Vern7())),
-]
+setups = [Dict(:alg=>MethodOfSteps(BS3())),
+    Dict(:alg=>MethodOfSteps(RK4())),
+    Dict(:alg=>MethodOfSteps(Tsit5())),
+    Dict(:alg=>MethodOfSteps(DP5())),
+    Dict(:alg=>MethodOfSteps(OwrenZen4())),
+    Dict(:alg=>MethodOfSteps(OwrenZen5())),
+    Dict(:alg=>MethodOfSteps(Vern6())),
+    Dict(:alg=>MethodOfSteps(Vern7()))]
 
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final
-)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
 plot(wp)
 
 
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2
-)
+wp_verdict(wp)
+
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
 plot(wp)
+
+
+wp_verdict(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (10:13)
 reltols = 1.0 ./ 10.0 .^ (7:10)
 
-setups = [
-    Dict(:alg => MethodOfSteps(DP5())),
-    Dict(:alg => MethodOfSteps(OwrenZen5())),
-    Dict(:alg => MethodOfSteps(Vern7())),
-    Dict(:alg => MethodOfSteps(Vern8())),
-    Dict(:alg => MethodOfSteps(Vern9())),
-]
+setups = [Dict(:alg=>MethodOfSteps(DP5())),
+    Dict(:alg=>MethodOfSteps(OwrenZen5())),
+    Dict(:alg=>MethodOfSteps(Vern7())),
+    Dict(:alg=>MethodOfSteps(Vern8())),
+    Dict(:alg=>MethodOfSteps(Vern9()))]
 
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e6), error_estimate = :final
-)
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e6), error_estimate = :final)
 plot(wp)
 
 
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e6), error_estimate = :L2
-)
+wp_verdict(wp)
+
+
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e6), error_estimate = :L2)
 plot(wp)
+
+
+wp_verdict(wp)
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
