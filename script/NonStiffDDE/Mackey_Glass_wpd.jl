@@ -1,160 +1,211 @@
+
 using DelayDiffEq, DiffEqDevTools, Plots
 using OrdinaryDiffEqLowOrderRK, OrdinaryDiffEqTsit5, OrdinaryDiffEqVerner
 using OrdinaryDiffEqNonlinearSolve: NLFunctional
 using DDEProblemLibrary: prob_dde_DDETST_A1 as prob
 gr()
 
-sol = solve(
-    prob, MethodOfSteps(Vern9(); fpsolve = NLFunctional(; max_iter = 1000));
-    reltol = 1.0e-14, abstol = 1.0e-14
-)
+sol = solve(prob, MethodOfSteps(Vern9(); fpsolve = NLFunctional(; max_iter = 1000));
+    reltol = 1e-14, abstol = 1e-14)
 test_sol = TestSolution(sol)
 plot(sol)
 
 
-abstols = 1.0 ./ 10.0 .^ (4:7)
-reltols = 1.0 ./ 10.0 .^ (1:4)
-
-setups = [
-    Dict(:alg => MethodOfSteps(BS3())),
-    Dict(:alg => MethodOfSteps(Tsit5())),
-    Dict(:alg => MethodOfSteps(RK4())),
-    Dict(:alg => MethodOfSteps(DP5())),
-    Dict(:alg => MethodOfSteps(OwrenZen3())),
-    Dict(:alg => MethodOfSteps(OwrenZen4())),
-    Dict(:alg => MethodOfSteps(OwrenZen5())),
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final
-)
-plot(wp)
-
-
-abstols = 1.0 ./ 10.0 .^ (4:7)
-reltols = 1.0 ./ 10.0 .^ (1:4)
-
-setups = [
-    Dict(:alg => MethodOfSteps(BS3())),
-    Dict(:alg => MethodOfSteps(Tsit5())),
-    Dict(:alg => MethodOfSteps(RK4())),
-    Dict(:alg => MethodOfSteps(DP5())),
-    Dict(:alg => MethodOfSteps(OwrenZen3())),
-    Dict(:alg => MethodOfSteps(OwrenZen4())),
-    Dict(:alg => MethodOfSteps(OwrenZen5())),
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2
-)
-plot(wp)
-
-
-abstols = 1.0 ./ 10.0 .^ (8:11)
-reltols = 1.0 ./ 10.0 .^ (5:8)
-
-setups = [
-    Dict(:alg => MethodOfSteps(BS3())),
-    Dict(:alg => MethodOfSteps(Tsit5())),
-    Dict(:alg => MethodOfSteps(RK4())),
-    Dict(:alg => MethodOfSteps(DP5())),
-    Dict(:alg => MethodOfSteps(OwrenZen3())),
-    Dict(:alg => MethodOfSteps(OwrenZen4())),
-    Dict(:alg => MethodOfSteps(OwrenZen5())),
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final
-)
-plot(wp)
-
-
-abstols = 1.0 ./ 10.0 .^ (8:11)
-reltols = 1.0 ./ 10.0 .^ (5:8)
-
-setups = [
-    Dict(:alg => MethodOfSteps(BS3())),
-    Dict(:alg => MethodOfSteps(Tsit5())),
-    Dict(:alg => MethodOfSteps(RK4())),
-    Dict(:alg => MethodOfSteps(DP5())),
-    Dict(:alg => MethodOfSteps(OwrenZen3())),
-    Dict(:alg => MethodOfSteps(OwrenZen4())),
-    Dict(:alg => MethodOfSteps(OwrenZen5())),
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2
-)
-plot(wp)
+function wp_verdict(wp; estimate = wp.error_estimate, margin = 1.2)
+    fmt(x) = string(round(x; sigdigits = 3))
+    println("Summary computed from the $estimate errors and times above:")
+    if !all(w -> hasproperty(w.errors, estimate), wp.wps)
+        println("  No $estimate errors were recorded, so nothing is compared.")
+        return nothing
+    end
+    runs = map(wp.wps) do w
+        errors = getproperty(w.errors, estimate)
+        bad = [i for i in eachindex(w.times) if !(isfinite(errors[i]) && isfinite(w.times[i]))]
+        good = setdiff(eachindex(w.times), bad)
+        steps = w.dts === nothing ? ("abstol", w.abstols) : ("dt", w.dts)
+        (; name = w.name, errors = errors[good], times = w.times[good], bad = steps[2][bad], label = steps[1])
+    end
+    allunique(r.name for r in runs) ||
+        println("  Note: several setups share a legend name, so their lines below cannot be told apart.")
+    failed = [r for r in runs if !isempty(r.bad)]
+    println(
+        "  Runs without a finite error and time (failed, timed out or diverged): ",
+        isempty(failed) ? "none" :
+            join(("$(r.name) at $(r.label) $(join(fmt.(r.bad), ", "))" for r in failed), "; ")
+    )
+    ok = [r for r in runs if !isempty(r.errors)]
+    if length(ok) < 2
+        who = isempty(ok) ? "No method" : "Only $(only(ok).name)"
+        println("  $who produced a usable run, so nothing is compared.")
+        return nothing
+    end
+    best = sort!([(r.name, minimum(r.errors)) for r in ok]; by = last)
+    parts = String[]
+    for (i, (name, e)) in enumerate(best)
+        i > 1 && push!(parts, e <= margin * best[i - 1][2] ? "≈" : "<")
+        push!(parts, "$name ($(fmt(e)))")
+    end
+    println("  Smallest error reached, most accurate first: ", join(parts, " "))
+    points = [(e, t) for r in ok for (e, t) in zip(r.errors, r.times)]
+    shown(x) = round(x; sigdigits = 3)
+    beaten(e, t) = any(p -> shown(p[1]) <= shown(e) && margin * p[2] < t, points)
+    front = map(ok) do r
+        kept = sort!([(e, t) for (e, t) in zip(r.errors, r.times) if !beaten(e, t)]; by = first)
+        (; r.name, kept, n = length(r.errors))
+    end
+    sort!(front; by = f -> isempty(f.kept) ? Inf : first(f.kept[1]))
+    println(
+        "  Unbeaten runs by method, as error (time); a run is beaten when another run",
+        " is at least as accurate (as printed) and more than $(margin)x faster:"
+    )
+    for f in front
+        runs_of = "of $(f.n) usable $(f.n == 1 ? "run" : "runs")"
+        println(
+            "    $(f.name): ",
+            isempty(f.kept) ? "none $runs_of (every run is beaten)" :
+                "$(length(f.kept)) $runs_of: " * join(("$(fmt(e)) ($(fmt(t)) s)" for (e, t) in f.kept), ", ")
+        )
+    end
+    return nothing
+end
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [
-    Dict(:alg => MethodOfSteps(Vern6())),
-    Dict(:alg => MethodOfSteps(Vern7())),
-    Dict(:alg => MethodOfSteps(Vern8())),
-    Dict(:alg => MethodOfSteps(Vern9())),
-    Dict(:alg => MethodOfSteps(OwrenZen4())),
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final
-)
+setups = [Dict(:alg=>MethodOfSteps(BS3())),
+    Dict(:alg=>MethodOfSteps(Tsit5())),
+    Dict(:alg=>MethodOfSteps(RK4())),
+    Dict(:alg=>MethodOfSteps(DP5())),
+    Dict(:alg=>MethodOfSteps(OwrenZen3())),
+    Dict(:alg=>MethodOfSteps(OwrenZen4())),
+    Dict(:alg=>MethodOfSteps(OwrenZen5()))]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
 plot(wp)
+
+
+wp_verdict(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (4:7)
 reltols = 1.0 ./ 10.0 .^ (1:4)
 
-setups = [
-    Dict(:alg => MethodOfSteps(Vern6())),
-    Dict(:alg => MethodOfSteps(Vern7())),
-    Dict(:alg => MethodOfSteps(Vern8())),
-    Dict(:alg => MethodOfSteps(Vern9())),
-    Dict(:alg => MethodOfSteps(OwrenZen4())),
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2
-)
+setups = [Dict(:alg=>MethodOfSteps(BS3())),
+    Dict(:alg=>MethodOfSteps(Tsit5())),
+    Dict(:alg=>MethodOfSteps(RK4())),
+    Dict(:alg=>MethodOfSteps(DP5())),
+    Dict(:alg=>MethodOfSteps(OwrenZen3())),
+    Dict(:alg=>MethodOfSteps(OwrenZen4())),
+    Dict(:alg=>MethodOfSteps(OwrenZen5()))]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
 plot(wp)
+
+
+wp_verdict(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (8:11)
 reltols = 1.0 ./ 10.0 .^ (5:8)
 
-setups = [
-    Dict(:alg => MethodOfSteps(Vern6())),
-    Dict(:alg => MethodOfSteps(Vern7())),
-    Dict(:alg => MethodOfSteps(Vern8())),
-    Dict(:alg => MethodOfSteps(Vern9())),
-    Dict(:alg => MethodOfSteps(OwrenZen4())),
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :final
-)
+setups = [Dict(:alg=>MethodOfSteps(BS3())),
+    Dict(:alg=>MethodOfSteps(Tsit5())),
+    Dict(:alg=>MethodOfSteps(RK4())),
+    Dict(:alg=>MethodOfSteps(DP5())),
+    Dict(:alg=>MethodOfSteps(OwrenZen3())),
+    Dict(:alg=>MethodOfSteps(OwrenZen4())),
+    Dict(:alg=>MethodOfSteps(OwrenZen5()))]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
 plot(wp)
+
+
+wp_verdict(wp)
 
 
 abstols = 1.0 ./ 10.0 .^ (8:11)
 reltols = 1.0 ./ 10.0 .^ (5:8)
 
-setups = [
-    Dict(:alg => MethodOfSteps(Vern6())),
-    Dict(:alg => MethodOfSteps(Vern7())),
-    Dict(:alg => MethodOfSteps(Vern8())),
-    Dict(:alg => MethodOfSteps(Vern9())),
-    Dict(:alg => MethodOfSteps(OwrenZen4())),
-]
-wp = WorkPrecisionSet(
-    prob, abstols, reltols, setups;
-    appxsol = test_sol, maxiters = Int(1.0e5), error_estimate = :L2
-)
+setups = [Dict(:alg=>MethodOfSteps(BS3())),
+    Dict(:alg=>MethodOfSteps(Tsit5())),
+    Dict(:alg=>MethodOfSteps(RK4())),
+    Dict(:alg=>MethodOfSteps(DP5())),
+    Dict(:alg=>MethodOfSteps(OwrenZen3())),
+    Dict(:alg=>MethodOfSteps(OwrenZen4())),
+    Dict(:alg=>MethodOfSteps(OwrenZen5()))]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
 plot(wp)
+
+
+wp_verdict(wp)
+
+
+abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=>MethodOfSteps(Vern6())),
+    Dict(:alg=>MethodOfSteps(Vern7())),
+    Dict(:alg=>MethodOfSteps(Vern8())),
+    Dict(:alg=>MethodOfSteps(Vern9())),
+    Dict(:alg=>MethodOfSteps(OwrenZen4()))]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
+plot(wp)
+
+
+wp_verdict(wp)
+
+
+abstols = 1.0 ./ 10.0 .^ (4:7)
+reltols = 1.0 ./ 10.0 .^ (1:4)
+
+setups = [Dict(:alg=>MethodOfSteps(Vern6())),
+    Dict(:alg=>MethodOfSteps(Vern7())),
+    Dict(:alg=>MethodOfSteps(Vern8())),
+    Dict(:alg=>MethodOfSteps(Vern9())),
+    Dict(:alg=>MethodOfSteps(OwrenZen4()))]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
+plot(wp)
+
+
+wp_verdict(wp)
+
+
+abstols = 1.0 ./ 10.0 .^ (8:11)
+reltols = 1.0 ./ 10.0 .^ (5:8)
+
+setups = [Dict(:alg=>MethodOfSteps(Vern6())),
+    Dict(:alg=>MethodOfSteps(Vern7())),
+    Dict(:alg=>MethodOfSteps(Vern8())),
+    Dict(:alg=>MethodOfSteps(Vern9())),
+    Dict(:alg=>MethodOfSteps(OwrenZen4()))]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :final)
+plot(wp)
+
+
+wp_verdict(wp)
+
+
+abstols = 1.0 ./ 10.0 .^ (8:11)
+reltols = 1.0 ./ 10.0 .^ (5:8)
+
+setups = [Dict(:alg=>MethodOfSteps(Vern6())),
+    Dict(:alg=>MethodOfSteps(Vern7())),
+    Dict(:alg=>MethodOfSteps(Vern8())),
+    Dict(:alg=>MethodOfSteps(Vern9())),
+    Dict(:alg=>MethodOfSteps(OwrenZen4()))]
+wp = WorkPrecisionSet(prob, abstols, reltols, setups;
+    appxsol = test_sol, maxiters = Int(1e5), error_estimate = :L2)
+plot(wp)
+
+
+wp_verdict(wp)
 
 
 using SciMLBenchmarks
 SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
