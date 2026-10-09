@@ -436,3 +436,7 @@ let
     display(plot(fig, layout=(1, 1), format=fmt, size=(width_px, height_px)))
 end
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+

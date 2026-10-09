@@ -792,3 +792,7 @@ let fig = plot(
     title!("Variable Rate Simulations, 50 samples: nodes × time")
 end
 
+
+using SciMLBenchmarks
+SciMLBenchmarks.bench_footer(WEAVE_ARGS[:folder], WEAVE_ARGS[:file])
+
