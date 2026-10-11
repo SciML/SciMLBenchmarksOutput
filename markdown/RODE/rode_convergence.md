@@ -22,7 +22,8 @@ semimartingale noise ([arXiv:2306.15418](https://arxiv.org/abs/2306.15418), ESAI
 2025), where the Hölder exponent alone would suggest $1/2$.
 
 This page measures both halves of that statement: the rate the dedicated RODE solvers reach,
-and the rate a nominally 5th and 9th order ODE method reaches on the same problem.
+and the rate a nominally 5th and 9th order ODE method reaches on the same problem. It then
+measures a method that does get past order 1, by using the path between the step endpoints.
 
 ```julia
 using StochasticDiffEq, DiffEqNoiseProcess, OrdinaryDiffEqLowOrderRK, OrdinaryDiffEqTsit5,
@@ -35,11 +36,12 @@ const FINE = 2^18
 const FDT = TEND / FINE
 const GRID = collect(range(0.0, TEND; length = FINE + 1))
 const STEPS = [16, 32, 64, 128, 256]
-const PATHS = 16
+const WP_STEPS = [16, 64, 256, 1024, 4096]
+const PATHS = 256
 ```
 
 ```
-16
+256
 ```
 
 
@@ -52,22 +54,23 @@ The problem is scalar and linear in $u$, which is what makes an accurate referen
 
 $$\frac{du}{dt} = -u \cos(5 W(t)), \qquad u(0) = 1,$$
 
-whose solution is $u(t) = \exp\left(-\int_0^t \cos(5W(s))\,ds\right)$. The reference is that
-quadrature on the fine grid, so it is only as good as the grid. Every convergence study below
-reports a *reference floor*: the change in the reference when the fine grid is coarsened by
-four. Measured errors must stay well above that floor, otherwise the fitted slope is describing
-the reference rather than the method.
+whose solution is $u(t) = \exp\left(-\int_0^t \cos(5W(s))\,ds\right)$. The path is stored on
+a fine grid, and every solver below sees it as the piecewise linear function through those
+points: the RODE solvers through `NoiseGrid`, the ODE solvers through the interpolant `make_W`.
+On each grid interval the integral of $\cos(5W)$ then has a closed form, so the reference is
+exact for that path up to rounding and no measured error below is limited by it.
 
 ```julia
 wiener_path(rng) = (W = zeros(FINE + 1); W[2:end] .= cumsum(sqrt(FDT) .* randn(rng, FINE)); W)
 
-function cumulative_trapezoid(g, dt)
-    I = zeros(length(g)); acc = zero(eltype(g))
-    @inbounds for k in 1:(length(g) - 1)
-        acc += dt * (g[k] + g[k + 1]) / 2
-        I[k + 1] = acc
+function exact_solution(path)
+    u = ones(length(path)); acc = 0.0
+    @inbounds for k in 1:(length(path) - 1)
+        a = 5 * path[k]; b = 5 * path[k + 1]
+        acc += abs(b - a) < 1.0e-8 ? FDT * cos((a + b) / 2) : FDT * (sin(b) - sin(a)) / (b - a)
+        u[k + 1] = exp(-acc)
     end
-    return I
+    return u
 end
 
 function fitted_slope(ns, errs)
@@ -99,27 +102,24 @@ make_W (generic function with 1 method)
 
 ## Strong convergence of the RODE solvers
 
-`RandomEM`, `RandomHeun` and `RandomTamedEM` are measured against the exact pathwise solution,
-the error being the maximum over the saved steps, reported as a root-mean-square over
-independent paths.
+`RandomEM`, `RandomHeun` and `RandomTamedEM` read $W$ at the step endpoints only. They are
+measured against the exact pathwise solution, the error being the maximum over the saved steps,
+reported as a root-mean-square over independent paths.
 
 ```julia
 function strong_errors(solve_one)
     rng = MersenneTwister(SEED)
     E = zeros(PATHS, length(STEPS))
-    floors = zeros(PATHS)
     for m in 1:PATHS
         path = wiener_path(rng)
-        g = cos.(5 .* path)
-        exact = exp.(-cumulative_trapezoid(g, FDT))
-        floors[m] = maximum(abs, exp.(-cumulative_trapezoid(g[1:4:end], 4FDT)) .- exact[1:4:end])
+        exact = exact_solution(path)
         for (j, n) in enumerate(STEPS)
             u = solve_one(path, n)
             stride = FINE ÷ n
             E[m, j] = maximum(abs(u[k + 1] - exact[k * stride + 1]) for k in 0:n)
         end
     end
-    return [sqrt(mean(E[:, j] .^ 2)) for j in eachindex(STEPS)], maximum(floors)
+    return [sqrt(mean(E[:, j] .^ 2)) for j in eachindex(STEPS)]
 end
 
 rode_solver(alg) = (path, n) -> solve(
@@ -131,16 +131,16 @@ rode_algs = ["RandomEM" => RandomEM(), "RandomHeun" => RandomHeun(),
 rode_results = Dict(name => strong_errors(rode_solver(alg)) for (name, alg) in rode_algs)
 
 for (name, _) in rode_algs
-    errs, fl = rode_results[name]
-    @printf("%-16s slope %.3f   floor margin %.1fx\n", name,
-            fitted_slope(STEPS, errs), minimum(errs) / fl)
+    errs = rode_results[name]
+    @printf("%-16s slope %.3f   error at dt=1/256 %.3g\n", name,
+            fitted_slope(STEPS, errs), errs[end])
 end
 ```
 
 ```
-RandomEM         slope 0.948   floor margin 157.6x
-RandomHeun       slope 1.056   floor margin 103.8x
-RandomTamedEM    slope 0.916   floor margin 162.0x
+RandomEM         slope 0.973   error at dt=1/256 0.0068
+RandomHeun       slope 0.973   error at dt=1/256 0.00478
+RandomTamedEM    slope 0.954   error at dt=1/256 0.00711
 ```
 
 
@@ -156,9 +156,9 @@ dts = TEND ./ STEPS
 plt = plot(xscale = :log10, yscale = :log10, xlabel = "dt", ylabel = "strong error",
            title = "RODE solvers on a Wiener-driven RODE", legend = :bottomright)
 for (name, _) in rode_algs
-    plot!(plt, dts, rode_results[name][1], marker = :circle, label = name)
+    plot!(plt, dts, rode_results[name], marker = :circle, label = name)
 end
-plot!(plt, dts, dts .* (rode_results["RandomEM"][1][end] / dts[end]),
+plot!(plt, dts, dts .* (rode_results["RandomEM"][end] / dts[end]),
       linestyle = :dash, color = :black, label = "slope 1")
 plt
 ```
@@ -186,21 +186,21 @@ ode_algs = ["Euler (order 1)" => Euler(), "Tsit5 (order 5)" => Tsit5(),
 ode_results = Dict(name => strong_errors(ode_solver(alg)) for (name, alg) in ode_algs)
 
 for (name, _) in ode_algs
-    errs, fl = ode_results[name]
+    errs = ode_results[name]
     @printf("%-16s slope %.3f   error at dt=1/256 %.3g\n", name,
             fitted_slope(STEPS, errs), errs[end])
 end
 
 @printf("\nmax |Euler - RandomEM| over the step counts: %.3g\n",
-        maximum(abs, ode_results["Euler (order 1)"][1] .- rode_results["RandomEM"][1]))
+        maximum(abs, ode_results["Euler (order 1)"] .- rode_results["RandomEM"]))
 ```
 
 ```
-Euler (order 1)  slope 0.948   error at dt=1/256 0.00659
-Tsit5 (order 5)  slope 1.048   error at dt=1/256 0.00698
-Vern9 (order 9)  slope 0.978   error at dt=1/256 0.0013
+Euler (order 1)  slope 0.973   error at dt=1/256 0.0068
+Tsit5 (order 5)  slope 1.009   error at dt=1/256 0.00764
+Vern9 (order 9)  slope 0.966   error at dt=1/256 0.00131
 
-max |Euler - RandomEM| over the step counts: 1.39e-17
+max |Euler - RandomEM| over the step counts: 6.94e-18
 ```
 
 
@@ -216,11 +216,11 @@ order 1 the two formulations coincide.
 plt = plot(xscale = :log10, yscale = :log10, xlabel = "dt", ylabel = "strong error",
            title = "Classical Runge-Kutta on the same RODE", legend = :bottomright)
 for (name, _) in ode_algs
-    plot!(plt, dts, ode_results[name][1], marker = :square, label = name)
+    plot!(plt, dts, ode_results[name], marker = :square, label = name)
 end
-plot!(plt, dts, rode_results["RandomEM"][1], marker = :circle, linestyle = :dot,
+plot!(plt, dts, rode_results["RandomEM"], marker = :circle, linestyle = :dot,
       label = "RandomEM")
-plot!(plt, dts, dts .* (ode_results["Euler (order 1)"][1][end] / dts[end]),
+plot!(plt, dts, dts .* (ode_results["Euler (order 1)"][end] / dts[end]),
       linestyle = :dash, color = :black, label = "slope 1")
 plt
 ```
@@ -229,15 +229,74 @@ plt
 
 
 
+## Using the path between the step endpoints
+
+Every method so far reads $W$ at points and treats the path between them as if it were smooth.
+Getting past order 1 requires the step to use what the path does between its endpoints, through
+integrals such as $\int_t^{t+h}(W_s - W_t)\,ds$, which are not functions of the increment
+alone. `RandomTaylor15` does this. It is a derivative-free form of the order 1.5 RODE-Taylor
+scheme (Han and Kloeden, *Random Ordinary Differential Equations and Their Numerical Solution*,
+Springer 2017, Chapter 12) that computes those integrals from the grid points of the stored
+path inside each step, so it needs the path on a grid finer than the solver steps, as it is
+here.
+
+```julia
+taylor_algs = ["RandomTaylor15" => RandomTaylor15()]
+taylor_results = Dict(name => strong_errors(rode_solver(alg)) for (name, alg) in taylor_algs)
+
+for (name, _) in taylor_algs
+    errs = taylor_results[name]
+    @printf("%-16s slope %.3f   error at dt=1/256 %.3g\n", name,
+            fitted_slope(STEPS, errs), errs[end])
+end
+@printf("\nRandomEM error / RandomTaylor15 error at dt=1/256: %.0f\n",
+        rode_results["RandomEM"][end] / taylor_results["RandomTaylor15"][end])
+```
+
+```
+RandomTaylor15   slope 1.900   error at dt=1/256 0.000219
+
+RandomEM error / RandomTaylor15 error at dt=1/256: 31
+```
+
+
+
+```julia
+plt = plot(xscale = :log10, yscale = :log10, xlabel = "dt", ylabel = "strong error",
+           title = "Reading the path inside the step", legend = :bottomright)
+plot!(plt, dts, rode_results["RandomEM"], marker = :circle, label = "RandomEM")
+plot!(plt, dts, ode_results["Vern9 (order 9)"], marker = :square, label = "Vern9 (order 9)")
+plot!(plt, dts, taylor_results["RandomTaylor15"], marker = :diamond, label = "RandomTaylor15")
+plot!(plt, dts, dts .* (rode_results["RandomEM"][end] / dts[end]),
+      linestyle = :dash, color = :black, label = "slope 1")
+plot!(plt, dts, dts .^ 2 .* (taylor_results["RandomTaylor15"][end] / dts[end]^2),
+      linestyle = :dashdot, color = :black, label = "slope 2")
+plt
+```
+
+![](figures/rode_convergence_8_1.png)
+
+
+
+`RandomTaylor15` measures close to order 2, with four right-hand side evaluations per step. That is half
+an order above the pathwise order 1.5 of the scheme, the same gain that takes the Euler scheme
+from pathwise order $1/2$ to strong order 1. `Vern9` starts ahead on its smaller constant and is
+overtaken within the range shown, since its error only falls at order 1.
+
 ## Work-precision
 
 Rate is not the whole story: a method with the same rate and a smaller constant can still be
-the right choice. This measures error against wall-clock time for one path, so the question
-becomes whether `Vern9`'s smaller constant pays for its stages. Each problem is built once,
-outside the timer, and the time is the minimum over BenchmarkTools samples. The RODE solvers
-read the path from a `NoiseGrid` of $2^{18}$ points; with DiffEqNoiseProcess 5.36.4, which this
-page pins, a solve shares that grid rather than copying it, so their times reflect stepping and
-not the length of the stored path.
+the right choice, and a higher rate has to pay for what it costs per step. This measures error
+against wall-clock time for one path. Each problem is built once, outside the timer, and the
+time is the minimum over BenchmarkTools samples. The RODE solvers read the path from a
+`NoiseGrid` of $2^{18}$ points; with DiffEqNoiseProcess 5.36.4, which this page pins, a solve
+shares that grid rather than copying it, so the times of the three order-1 RODE solvers reflect
+stepping and not the length of the stored path.
+
+`RandomTaylor15` is different by construction. Its step integrals use every stored point of the
+path, so each solve reads all $2^{18}$ points once whatever the step size, and that sets a floor
+under its time. The step counts here therefore run to 4096, further than in the convergence
+studies, so that the order-1 methods spend comparable time.
 
 ```julia
 rode_problem(alg) = path -> (
@@ -251,10 +310,9 @@ end
 function timed_errors(build)
     rng = MersenneTwister(SEED)
     path = wiener_path(rng)
-    g = cos.(5 .* path)
-    exact = exp.(-cumulative_trapezoid(g, FDT))
-    errs = zeros(length(STEPS)); times = zeros(length(STEPS))
-    for (j, n) in enumerate(STEPS)
+    exact = exact_solution(path)
+    errs = zeros(length(WP_STEPS)); times = zeros(length(WP_STEPS))
+    for (j, n) in enumerate(WP_STEPS)
         prob, alg = build(path)
         dt = TEND / n
         u = solve(prob, alg, dt = dt, adaptive = false, save_everystep = true).u
@@ -267,22 +325,27 @@ function timed_errors(build)
 end
 
 wp = Dict{String, Tuple{Vector{Float64}, Vector{Float64}}}()
-for (name, alg) in rode_algs
+for (name, alg) in vcat(rode_algs, taylor_algs)
     wp[name] = timed_errors(rode_problem(alg))
 end
 for (name, alg) in ode_algs
     wp[name] = timed_errors(ode_problem(alg))
 end
 
-@printf("%-16s %-14s %-12s\n", "method", "time at dt=1/256", "error")
-for (name, _) in vcat(rode_algs, ode_algs)
-    @printf("%-16s %-14.3g %-12.3g\n", name, wp[name][2][end], wp[name][1][end])
+for (j, n) in enumerate(WP_STEPS)
+    @printf("\ndt = 1/%d\n%-16s %-10s %-10s\n", n, "method", "time (s)", "error")
+    for (name, _) in vcat(rode_algs, taylor_algs, ode_algs)
+        @printf("%-16s %-10.3g %-10.3g\n", name, wp[name][2][j], wp[name][1][j])
+    end
 end
 
 plt = plot(xscale = :log10, yscale = :log10, xlabel = "time (s)", ylabel = "error",
            title = "Work-precision, single path", legend = :bottomleft)
 for (name, _) in rode_algs
     plot!(plt, wp[name][2], wp[name][1], marker = :circle, label = name)
+end
+for (name, _) in taylor_algs
+    plot!(plt, wp[name][2], wp[name][1], marker = :diamond, label = name)
 end
 for (name, _) in ode_algs
     plot!(plt, wp[name][2], wp[name][1], marker = :square, linestyle = :dash, label = name)
@@ -291,34 +354,80 @@ plt
 ```
 
 ```
-method           time at dt=1/256 error       
-RandomEM         6.17e-05       0.0048      
-RandomHeun       6.68e-05       0.00627     
-RandomTamedEM    6.6e-05        0.00499     
-Euler (order 1)  4.55e-05       0.0048      
-Tsit5 (order 5)  9.33e-05       0.0042      
-Vern9 (order 9)  0.000159       0.000694
+dt = 1/16
+method           time (s)   error     
+RandomEM         9.43e-06   0.091     
+RandomHeun       9.65e-06   0.0736    
+RandomTamedEM    9.72e-06   0.0802    
+RandomTaylor15   0.000729   0.0141    
+Euler (order 1)  4.76e-06   0.091     
+Tsit5 (order 5)  7.07e-06   0.123     
+Vern9 (order 9)  1.14e-05   0.0124    
+
+dt = 1/64
+method           time (s)   error     
+RandomEM         1.9e-05    0.025     
+RandomHeun       1.99e-05   0.0152    
+RandomTamedEM    2.01e-05   0.0229    
+RandomTaylor15   0.00075    0.00291   
+Euler (order 1)  1.43e-05   0.025     
+Tsit5 (order 5)  2.37e-05   0.0186    
+Vern9 (order 9)  4.04e-05   0.0045    
+
+dt = 1/256
+method           time (s)   error     
+RandomEM         6.16e-05   0.0048    
+RandomHeun       6.58e-05   0.00627   
+RandomTamedEM    6.75e-05   0.00499   
+RandomTaylor15   0.000842   9.74e-05  
+Euler (order 1)  4.91e-05   0.0048    
+Tsit5 (order 5)  8.96e-05   0.0042    
+Vern9 (order 9)  0.000159   0.000693  
+
+dt = 1/1024
+method           time (s)   error     
+RandomEM         0.00024    0.00123   
+RandomHeun       0.000254   0.00147   
+RandomTamedEM    0.00026    0.0013    
+RandomTaylor15   0.00127    1.23e-05  
+Euler (order 1)  0.000187   0.00123   
+Tsit5 (order 5)  0.000319   0.00287   
+Vern9 (order 9)  0.000585   0.0002    
+
+dt = 1/4096
+method           time (s)   error     
+RandomEM         0.000925   0.000192  
+RandomHeun       0.00098    0.000249  
+RandomTamedEM    0.00102    0.000207  
+RandomTaylor15   0.00278    1.22e-06  
+Euler (order 1)  0.000727   0.000192  
+Tsit5 (order 5)  0.00121    0.000264  
+Vern9 (order 9)  0.0022     0.000153
 ```
 
 
-![](figures/rode_convergence_7_1.png)
+![](figures/rode_convergence_9_1.png)
 
 
+
+Below its floor `RandomTaylor15` is not an option, and for coarse answers the order-1 methods
+are cheaper. By `dt = 1/4096` they cost about as much as `RandomTaylor15` does at `dt = 1/1024`,
+and its error there is below all of theirs; from that point on each halving of the step divides
+its error by four and theirs by two.
 
 ## What this means for choosing a solver
 
-Throwing classical order at a RODE does not raise the rate. Every method above converges at
-about order 1, and the differences between them are constants. The three classical tableaus
-measured here, of nominal order 1, 5 and 9, all land at order 1 alongside the three RODE
-methods: evaluating $W$ at more points inside the step did not raise the rate for any of them.
+Throwing classical order at a RODE does not raise the rate. The three classical tableaus
+measured here, of nominal order 1, 5 and 9, all land at order 1 alongside `RandomEM`,
+`RandomHeun` and `RandomTamedEM`, and the differences between those six are constants:
+evaluating $W$ at more points inside the step did not raise the rate for any of them.
 
-Getting past order 1 requires the step to use information about $W$ *between* its endpoints,
-for example the integral $\int_t^{t+h}(W_s - W_t)\,ds$, which is not a function of the
-increment alone. That integral can be recovered when the path is supplied on a grid finer than
-the solver steps, which is the case in most applications where the noise is measured data or
-generated once at high resolution. Methods of that kind are omitted here because they are not
-in a released version of StochasticDiffEq.jl at the time of writing; this page should be
-extended when they are.
+Getting past order 1 takes a step that uses the path *between* its endpoints, and that needs
+the path on a grid finer than the solver steps, which is the case in most applications where
+the noise is measured data or generated once at high resolution. `RandomTaylor15` gets close to
+order 2 that way. Its price is a time floor proportional to the length of the stored path, so
+it is the method to use when the error wanted is below what the order-1 methods reach in that
+time, as the tables above show, and `RandomEM` or `Vern9` remain cheaper for coarse answers.
 
 
 ## Appendix
@@ -363,6 +472,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
   [10745b16] Statistics v1.11.5
   [789caeaf] StochasticDiffEq v7.2.0
+  [49714585] StochasticDiffEqRODE v2.2.0
   [de0858da] Printf v1.11.0
   [9a3f8284] Random v1.11.0
 ```
@@ -413,7 +523,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
   [a4df4552] FastPower v1.5.0
-  [1a297f60] FillArrays v1.17.1
+⌃ [1a297f60] FillArrays v1.17.1
   [64ca27bc] FindFirstFunctions v3.4.0
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
@@ -437,7 +547,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
   [ccbc3e58] JumpProcesses v9.33.1
-  [ba0b0d4f] Krylov v0.10.10
+⌃ [ba0b0d4f] Krylov v0.10.10
   [2faa5264] LHLFactorization v2.2.2
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
@@ -617,7 +727,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
-  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌃ [1317d2d5] oneTBB_jll v2022.3.0+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
   [dfaa095f] x265_jll v4.1.0+0
   [d8fb68d0] xkbcommon_jll v1.13.0+0
