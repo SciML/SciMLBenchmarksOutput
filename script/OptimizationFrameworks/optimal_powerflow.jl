@@ -1710,6 +1710,7 @@ println(sort(abs.(test_cons)))
 
 
 import Optim
+import ForwardDiff
 
 function build_opf_optim_prob(dataset)
     (; data, ref) = dataset
@@ -1996,9 +1997,21 @@ function build_opf_optim_prob(dataset)
         push!(con_ubs, branch["rate_a"]^2)
     end
 
+    ncons = length(con_lbs)
+    function opf_constraints_jacobian!(J, x)
+        ForwardDiff.jacobian!(J, opf_constraints, zeros(eltype(x), ncons), x)
+        return J
+    end
+    # IPNewton expects the constraint Hessian callback to add sum(λ .* ∇²c) to H
+    function opf_constraints_hessian!(H, x, λ)
+        H .+= ForwardDiff.hessian(y -> sum(λ .* opf_constraints(zeros(eltype(y), ncons), y)), x)
+        return H
+    end
+
     df = Optim.TwiceDifferentiable(opf_objective, var_init)
     dfc = Optim.TwiceDifferentiableConstraints(
-        opf_constraints, var_lb, var_ub, con_lbs, con_ubs)
+        opf_constraints, opf_constraints_jacobian!, opf_constraints_hessian!,
+        var_lb, var_ub, con_lbs, con_ubs)
     df, dfc, var_init, con_lbs, con_ubs
 end
 
