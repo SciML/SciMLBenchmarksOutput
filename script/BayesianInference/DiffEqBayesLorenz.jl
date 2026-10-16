@@ -6,9 +6,10 @@ using OrdinaryDiffEq, RecursiveArrayTools, ParameterizedFunctions, DiffEqCallbac
 using Plots, LinearAlgebra
 
 
-"""Print elapsed sampling time and the Turing chain."""
-function display_ess_per_sec(chain, elapsed)
-    println("Elapsed time: $(round(elapsed; digits=2)) seconds")
+"""Print elapsed sampling time, allocated bytes, and the Turing chain."""
+function display_ess_per_sec(chain, timed)
+    println("Elapsed time: $(round(timed.time; digits=2)) seconds")
+    println("Allocated: $(round(timed.bytes / 2^30; digits=3)) GiB ($(timed.bytes) bytes)")
     display(chain)
 end
 
@@ -121,7 +122,7 @@ display_stan_timing(bayesian_result_stan)
     # Simulate Lorenz model.
     p = SA[σ_param, ρ, β]
     _prob = remake(prob, p = p)
-    predicted = solve(_prob, Vern9(); saveat = t)
+    predicted = solve(_prob, Vern9(); saveat = t, reltol = 1e-8, abstol = 1e-8)
 
     # Observations.
     for i in axes(data, 2)
@@ -136,19 +137,42 @@ model = fitlorenz(data, sprob)
 # Warmup run to compile all code paths before timing
 sample(model, Turing.NUTS(0.85), 10; progress = false)
 
-elapsed_turing_direct = @elapsed chain = sample(model, Turing.NUTS(0.85), 10_000; progress = false)
+timed_turing_direct = @timed chain = sample(model, Turing.NUTS(0.85), 10_000; progress = false)
 chain
 
 
-display_ess_per_sec(chain, elapsed_turing_direct)
+display_ess_per_sec(chain, timed_turing_direct)
 
 
-@time bayesian_result_turing = turing_inference(
-    prob, Vern9(), t, data, priors;
+# DiffEqBayes captures `likelihood` inside its Turing model, so both calls below
+# must pass the same callable for the warmup to compile the timed specialization.
+lorenz_likelihood(u, p, t, σ) = _mvn(u, σ)
+
+# Warmup run to compile all code paths before timing, matching the direct model above
+turing_inference(
+    sprob, Vern9(), t, data, priors;
+    sample_args = (sampler = Turing.NUTS(0.85), num_samples = 10),
+    solve_kwargs = Dict(:reltol => 1e-8, :abstol => 1e-8),
+    likelihood = lorenz_likelihood,
+    likelihood_dist_priors = [InverseGamma(2, 3), InverseGamma(2, 3), InverseGamma(2, 3)])
+
+timed_turing_backend = @timed bayesian_result_turing = turing_inference(
+    sprob, Vern9(), t, data, priors;
     sample_args = (sampler = Turing.NUTS(0.85), num_samples = 10_000),
     solve_kwargs = Dict(:reltol => 1e-8, :abstol => 1e-8),
-    likelihood = (u, p, t, σ) -> _mvn(u, σ),
+    likelihood = lorenz_likelihood,
     likelihood_dist_priors = [InverseGamma(2, 3), InverseGamma(2, 3), InverseGamma(2, 3)])
+bayesian_result_turing
+
+
+println("Direct Turing model: $(round(timed_turing_direct.time; digits=2)) s, ",
+    "$(round(timed_turing_direct.bytes / 2^30; digits=3)) GiB allocated, ",
+    sum(chain[:numerical_error]), " divergent transitions")
+println("DiffEqBayes backend: $(round(timed_turing_backend.time; digits=2)) s, ",
+    "$(round(timed_turing_backend.bytes / 2^30; digits=3)) GiB allocated, ",
+    sum(bayesian_result_turing[:numerical_error]), " divergent transitions")
+println("Backend / direct: $(round(timed_turing_backend.time / timed_turing_direct.time; sigdigits=2))x time, ",
+    "$(round(timed_turing_backend.bytes / timed_turing_direct.bytes; sigdigits=2))x allocated")
 
 
 @time bayesian_result_dynamichmc = dynamichmc_inference(
