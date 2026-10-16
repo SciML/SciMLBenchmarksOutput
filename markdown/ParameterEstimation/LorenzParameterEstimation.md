@@ -66,10 +66,13 @@ end
 @mtkbuild g1 = LorenzExample()
 p = [10.0, 28.0, 2.66] # Parameters used to construct the dataset
 r0 = [1.0; 0.0; 0.0]                #[-11.8,-5.1,37.5] PODES Initial values of the system in space # [0.1, 0.0, 0.0]
+# unknowns(g1) is ordered [z, y, x] rather than in declaration order, so the
+# initial condition and parameters are keyed by name instead of positionally.
+varmap = merge(Dict([g1.x, g1.y, g1.z] .=> r0), Dict([g1.σ, g1.ρ, g1.β] .=> p))
 tspan = (0.0, 30.0)                 # PODES sample of 3000 observations over the (0,30) timespan
-prob = ODEProblem(g1, r0, tspan, p)
+prob = ODEProblem(g1, varmap, tspan)
 tspan2 = (0.0, 3.0)                 # Xiang test sample of 300 observations with a timestep of 0.01
-prob_short = ODEProblem(g1, r0, tspan2, p)
+prob_short = ODEProblem(g1, varmap, tspan2)
 ```
 
 ```
@@ -78,9 +81,9 @@ Initialization status: FULLY_DETERMINED
 Non-trivial mass matrix: false
 timespan: (0.0, 3.0)
 u0: 3-element Vector{Float64}:
+ 0.0
+ 0.0
  1.0
- 0.0
- 0.0
 ```
 
 
@@ -163,9 +166,9 @@ data = convert(Array, data_sol)
 
 ```
 3×3001 Matrix{Float64}:
- 1.0  0.973751  0.94819  0.923301  0.899065  …  5.76475e-13  5.61371e-13
- 0.0  0.0       0.0      0.0       0.0          0.0          0.0
- 0.0  0.0       0.0      0.0       0.0          0.0          0.0
+ 0.0  0.00126393  0.00465567  0.00983655  …  39.19     39.1699  38.904
+ 0.0  0.26634     0.51174     0.744654        8.31875   6.7199   5.22868
+ 1.0  0.917924    0.867919    0.84536        13.8987   13.2896  12.5913
 ```
 
 
@@ -214,17 +217,18 @@ plot(plot(xyzt, xyz), plot(xy, xz, yz, layout = (1, 3), w = 1), layout = (2, 1),
 ```julia
 obj_short = build_loss_objective(prob_short, Tsit5(), L2Loss(t_short, data_short), tstops = t_short)
 optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
-# Tolerance is still too high to get close enough
+short_solutions = Dict{String, Any}()
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
+short_solutions["BBO (Tsit5 default tol)"] = res1
 ```
 
 ```
-3.086 s (21009708 allocations: 802.51 MiB)
+3.104 s (21422265 allocations: 810.09 MiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 10.861340140600596
- 21.080261914890254
-  2.659999999998153
+  9.99999958167166
+ 28.000000184610723
+  2.6599999509502785
 ```
 
 
@@ -233,17 +237,17 @@ u: 3-element Vector{Float64}:
 obj_short = build_loss_objective(
     prob_short, Tsit5(), L2Loss(t_short, data_short), tstops = t_short, reltol = 1e-9)
 optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
-# With the tolerance lower, it achieves the correct solution in 3.5 seconds.
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
+short_solutions["BBO (Tsit5 reltol=1e-9)"] = res1
 ```
 
 ```
-3.055 s (21005731 allocations: 802.56 MiB)
+4.555 s (33941941 allocations: 1002.75 MiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  9.415982700989291
- 23.891995020793818
-  2.659999999998153
+  9.999999950185428
+ 28.00000001810664
+  2.6599999942497954
 ```
 
 
@@ -252,19 +256,17 @@ u: 3-element Vector{Float64}:
 obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short),
     tstops = t_short, reltol = 1e-9, abstol = 1e-9)
 optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
-# With the more accurate solver Vern9 in the solution of the ODE, the convergence is less efficient!
-
-# Fastest BlackBoxOptim: 3.5 seconds
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
+short_solutions["BBO (Vern9 1e-9)"] = res1
 ```
 
 ```
-4.963 s (42321731 allocations: 1.11 GiB)
+4.896 s (42398262 allocations: 1.11 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 10.896394438425084
- 27.013828131937856
-  2.659999999996381
+ 10.000000015152246
+ 27.999999997843137
+  2.659999966370605
 ```
 
 
@@ -525,8 +527,8 @@ Parameters (10): see parameters(g1)
   ⋮
 Observed (6): see observed(g1), nothing, nothing), nothing, ModelingToolkit
 Base.MTKParameters{Vector{Float64}, StaticArraysCore.SVector{0, Float64}, T
-uple{}, Tuple{}, Tuple{}, Tuple{}}([0.0, 10.0, 28.0, 2.66, 0.0, 1.0, 0.0, 0
-.0, 0.0, 0.0], Float64[], (), (), (), ()), SciMLBase.StandardNonlinearProbl
+uple{}, Tuple{}, Tuple{}, Tuple{}}([0.0, 10.0, 28.0, 2.66, 0.0, 0.0, 0.0, 0
+.0, 1.0, 0.0], Float64[], (), (), (), ()), SciMLBase.StandardNonlinearProbl
 em(), nothing, nothing, Base.Pairs{Symbol, Union{}, Nothing, @NamedTuple{}}
 ()), ModelingToolkitBase.update_initializeprob!, ModelingToolkitBase.Initia
 lizationMap{true, typeof(identity), ModelingToolkitBase.PromoteToTunableElt
@@ -597,136 +599,137 @@ peof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}}}}(ModelingToolkitBase.At
 omicArrayDict{SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)
 "{SymbolicUtils.SymReal}, Dict{SymbolicUtils.BasicSymbolicImpl.var"typeof(B
 asicSymbolicImpl)"{SymbolicUtils.SymReal}, SymbolicUtils.BasicSymbolicImpl.
-var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}(Initial(zˍt(t)) => 
-false, Initial(x(t)) => false, z(t) => 1.0, Initial(yˍt(t)) => false, Initi
-al(y(t)) => false, σ => 10.0, y(t) => 0.0, ρ => 28.0, Initial(xˍt(t)) => fa
-lse, β => 2.66…), ModelingToolkitBase.AtomicArrayDict{SymbolicUtils.BasicSy
-mbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}, Dict{Symb
-olicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.Sy
-mReal}, SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{Symb
-olicUtils.SymReal}}}(), Symbolics.Equation[], true, true, ModelingToolkitBa
-se.ReconstructInitializeprob{ModelingToolkitBase.MTKParametersReconstructor
-{ComposedFunction{ModelingToolkitBase.PConstructorApplicator{typeof(identit
-y)}, ModelingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBa
-se.IndepVarTemplate, ModelingToolkitBase.ParameterIndex{SciMLStructures.Tun
-able, UnitRange{Int64}}, ModelingToolkitBase.ParameterIndex{SciMLStructures
-.Initials, UnitRange{Int64}}}, 1, Nothing}}, Returns{StaticArraysCore.SVect
-or{0, Float64}}, Returns{Tuple{}}, Returns{Tuple{}}, Returns{Tuple{}}}, Com
-posedFunction{typeof(identity), ModelingToolkitBase.ObservedWrapper{true, M
-odelingToolkitBase.GeneratedFunctionWrapper{Tuple{2, 3, true}, RuntimeGener
-atedFunctions.RuntimeGeneratedFunction{(:__mtk_arg_1, :___mtkparameters___,
- :__argₛᵧₘ12968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", Mod
-elingToolkitBase.var"#_RGF_ModTag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 0x
-585cfe8b, 0x75f79d7b), Nothing}, RuntimeGeneratedFunctions.RuntimeGenerated
-Function{(:x1, :x2, :x3, :x4), ModelingToolkitBase.var"#_RGF_ModTag", Model
-ingToolkitBase.var"#_RGF_ModTag", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0xa0
-96e58a, 0x357542a4), Nothing}}}}}(ModelingToolkitBase.MTKParametersReconstr
-uctor{ComposedFunction{ModelingToolkitBase.PConstructorApplicator{typeof(id
-entity)}, ModelingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingTool
-kitBase.IndepVarTemplate, ModelingToolkitBase.ParameterIndex{SciMLStructure
-s.Tunable, UnitRange{Int64}}, ModelingToolkitBase.ParameterIndex{SciMLStruc
-tures.Initials, UnitRange{Int64}}}, 1, Nothing}}, Returns{StaticArraysCore.
-SVector{0, Float64}}, Returns{Tuple{}}, Returns{Tuple{}}, Returns{Tuple{}}}
-(ModelingToolkitBase.PConstructorApplicator{typeof(identity)}(identity) ∘ M
-odelingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase.Ind
-epVarTemplate, ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunable, 
-UnitRange{Int64}}, ModelingToolkitBase.ParameterIndex{SciMLStructures.Initi
-als, UnitRange{Int64}}}, 1, Nothing}((ModelingToolkitBase.IndepVarTemplate(
-), ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunable, UnitRange{In
-t64}}(SciMLStructures.Tunable(), 1:3, false), ModelingToolkitBase.Parameter
-Index{SciMLStructures.Initials, UnitRange{Int64}}(SciMLStructures.Initials(
-), 1:6, false)), (10,), nothing), Returns{StaticArraysCore.SVector{0, Float
-64}}(Float64[]), Returns{Tuple{}}(()), Returns{Tuple{}}(()), Returns{Tuple{
-}}(()), 0), identity ∘ ModelingToolkitBase.ObservedWrapper{true, ModelingTo
-olkitBase.GeneratedFunctionWrapper{Tuple{2, 3, true}, RuntimeGeneratedFunct
-ions.RuntimeGeneratedFunction{(:__mtk_arg_1, :___mtkparameters___, :__argₛᵧ
-ₘ12968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", ModelingTool
-kitBase.var"#_RGF_ModTag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 0x585cfe8b,
- 0x75f79d7b), Nothing}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{
-(:x1, :x2, :x3, :x4), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolki
-tBase.var"#_RGF_ModTag", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0xa096e58a, 0
-x357542a4), Nothing}}}(ModelingToolkitBase.GeneratedFunctionWrapper{Tuple{2
-, 3, true}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:__mtk_arg_
-1, :___mtkparameters___, :__argₛᵧₘ12968198168038750593), ModelingToolkitBas
-e.var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0x05e7e591, 0x
-9a09c886, 0x0267af3f, 0x585cfe8b, 0x75f79d7b), Nothing}, RuntimeGeneratedFu
-nctions.RuntimeGeneratedFunction{(:x1, :x2, :x3, :x4), ModelingToolkitBase.
-var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xb896e553, 0xa1
-18fcf5, 0xbfeb9719, 0xa096e58a, 0x357542a4), Nothing}}(RuntimeGeneratedFunc
-tions.RuntimeGeneratedFunction{(:__mtk_arg_1, :___mtkparameters___, :__argₛ
-ᵧₘ12968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToo
-lkitBase.var"#_RGF_ModTag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 0x585cfe8b
-, 0x75f79d7b), Nothing}(nothing), RuntimeGeneratedFunctions.RuntimeGenerate
-dFunction{(:x1, :x2, :x3, :x4), ModelingToolkitBase.var"#_RGF_ModTag", Mode
-lingToolkitBase.var"#_RGF_ModTag", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0xa
-096e58a, 0x357542a4), Nothing}(nothing)))), ModelingToolkitBase.GetUpdatedU
-0{Nothing, SymbolicIndexingInterface.MultipleParametersGetter{SymbolicIndex
-ingInterface.IndexerNotTimeseries, Vector{SymbolicIndexingInterface.GetPara
-meterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, Int
-64}}}, Nothing}}(Bool[0, 0, 0], nothing, SymbolicIndexingInterface.Multiple
-ParametersGetter{SymbolicIndexingInterface.IndexerNotTimeseries, Vector{Sym
-bolicIndexingInterface.GetParameterIndex{ModelingToolkitBase.ParameterIndex
-{SciMLStructures.Initials, Int64}}}, Nothing}(SymbolicIndexingInterface.Get
-ParameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials,
- Int64}}[SymbolicIndexingInterface.GetParameterIndex{ModelingToolkitBase.Pa
-rameterIndex{SciMLStructures.Initials, Int64}}(ModelingToolkitBase.Paramete
-rIndex{SciMLStructures.Initials, Int64}(SciMLStructures.Initials(), 2, fals
-e)), SymbolicIndexingInterface.GetParameterIndex{ModelingToolkitBase.Parame
-terIndex{SciMLStructures.Initials, Int64}}(ModelingToolkitBase.ParameterInd
-ex{SciMLStructures.Initials, Int64}(SciMLStructures.Initials(), 4, false)),
- SymbolicIndexingInterface.GetParameterIndex{ModelingToolkitBase.ParameterI
-ndex{SciMLStructures.Initials, Int64}}(ModelingToolkitBase.ParameterIndex{S
-ciMLStructures.Initials, Int64}(SciMLStructures.Initials(), 5, false))], no
-thing)), ModelingToolkitBase.SetInitialUnknowns{SymbolicIndexingInterface.M
-ultipleSetters{Vector{SymbolicIndexingInterface.ParameterHookWrapper{Symbol
-icIndexingInterface.SetParameterIndex{ModelingToolkitBase.ParameterIndex{Sc
-iMLStructures.Initials, Int64}}, SymbolicUtils.BasicSymbolicImpl.var"typeof
-(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}}}(SymbolicIndexingInterface.M
-ultipleSetters{Vector{SymbolicIndexingInterface.ParameterHookWrapper{Symbol
-icIndexingInterface.SetParameterIndex{ModelingToolkitBase.ParameterIndex{Sc
-iMLStructures.Initials, Int64}}, SymbolicUtils.BasicSymbolicImpl.var"typeof
-(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}}(SymbolicIndexingInterface.Pa
-rameterHookWrapper{SymbolicIndexingInterface.SetParameterIndex{ModelingTool
-kitBase.ParameterIndex{SciMLStructures.Initials, Int64}}, SymbolicUtils.Bas
-icSymbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}[Symbo
-licIndexingInterface.ParameterHookWrapper{SymbolicIndexingInterface.SetPara
-meterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, Int
-64}}, SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{Symbol
-icUtils.SymReal}}(SymbolicIndexingInterface.SetParameterIndex{ModelingToolk
-itBase.ParameterIndex{SciMLStructures.Initials, Int64}}(ModelingToolkitBase
-.ParameterIndex{SciMLStructures.Initials, Int64}(SciMLStructures.Initials()
-, 2, false)), Initial(z(t))), SymbolicIndexingInterface.ParameterHookWrappe
-r{SymbolicIndexingInterface.SetParameterIndex{ModelingToolkitBase.Parameter
-Index{SciMLStructures.Initials, Int64}}, SymbolicUtils.BasicSymbolicImpl.va
-r"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}(SymbolicIndexingInterf
-ace.SetParameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.In
-itials, Int64}}(ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials
-, Int64}(SciMLStructures.Initials(), 4, false)), Initial(y(t))), SymbolicIn
-dexingInterface.ParameterHookWrapper{SymbolicIndexingInterface.SetParameter
-Index{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, Int64}},
- SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUti
-ls.SymReal}}(SymbolicIndexingInterface.SetParameterIndex{ModelingToolkitBas
-e.ParameterIndex{SciMLStructures.Initials, Int64}}(ModelingToolkitBase.Para
-meterIndex{SciMLStructures.Initials, Int64}(SciMLStructures.Initials(), 5, 
-false)), Initial(x(t)))]), [2, 4, 5]), ModelingToolkitBase.MissingGuessValu
-e.var"typeof(MissingGuessValue)"(ModelingToolkitBase.MissingGuessValue.var"
-##Storage#HashedRandom"())), Val{true}()), nothing), [1.0, 0.0, 0.0], (0.0,
- 3.0), ModelingToolkitBase.MTKParameters{Vector{Float64}, Vector{Float64}, 
-Tuple{}, Tuple{}, Tuple{}, Tuple{}}([10.0, 28.0, 2.66], [0.0, 1.0, 0.0, 0.0
-, 0.0, 0.0], (), (), (), ()), Base.Pairs{Symbol, Union{}, Nothing, @NamedTu
-ple{}}(), SciMLBase.StandardODEProblem()), OrdinaryDiffEqVerner.Vern9{typeo
-f(OrdinaryDiffEqCore.trivial_limiter!), typeof(OrdinaryDiffEqCore.trivial_l
-imiter!), FastBroadcast.Serial, Val{true}}(OrdinaryDiffEqCore.trivial_limit
-er!, OrdinaryDiffEqCore.trivial_limiter!, FastBroadcast.Serial(), Val{true}
-()), DiffEqParamEstim.L2Loss{Vector{Float64}, Matrix{Float64}, Nothing, Not
-hing, Nothing, Nothing}([0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.0
-8, 0.09  …  2.91, 2.92, 2.93, 2.94, 2.95, 2.96, 2.97, 2.98, 2.99, 3.0], [1.
-0 0.9737506639002295 … 0.00035146514921996795 0.0003422394223906871; 0.0 0.
-0 … 0.0 0.0; 0.0 0.0 … 0.0 0.0], nothing, nothing, nothing, nothing, nothin
-g), nothing, ()), ADTypes.AutoForwardDiff(), nothing, nothing, nothing, not
-hing, nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothin
-g, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, nothing, nothing, 
-nothing, nothing, nothing, nothing, nothing, nothing, nothing)
+var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}(Initial(xˍt(t)) => 
+false, Initial(x(t)) => false, z(t) => 0.0, Initial(z(t)) => false, σ => 10
+.0, y(t) => 0.0, Initial(yˍt(t)) => false, Initial(y(t)) => false, ρ => 28.
+0, β => 2.66…), ModelingToolkitBase.AtomicArrayDict{SymbolicUtils.BasicSymb
+olicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}, Dict{Symbol
+icUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymR
+eal}, SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{Symbol
+icUtils.SymReal}}}(), Symbolics.Equation[], true, true, ModelingToolkitBase
+.ReconstructInitializeprob{ModelingToolkitBase.MTKParametersReconstructor{C
+omposedFunction{ModelingToolkitBase.PConstructorApplicator{typeof(identity)
+}, ModelingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase
+.IndepVarTemplate, ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunab
+le, UnitRange{Int64}}, ModelingToolkitBase.ParameterIndex{SciMLStructures.I
+nitials, UnitRange{Int64}}}, 1, Nothing}}, Returns{StaticArraysCore.SVector
+{0, Float64}}, Returns{Tuple{}}, Returns{Tuple{}}, Returns{Tuple{}}}, Compo
+sedFunction{typeof(identity), ModelingToolkitBase.ObservedWrapper{true, Mod
+elingToolkitBase.GeneratedFunctionWrapper{Tuple{2, 3, true}, RuntimeGenerat
+edFunctions.RuntimeGeneratedFunction{(:__mtk_arg_1, :___mtkparameters___, :
+__argₛᵧₘ12968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", Model
+ingToolkitBase.var"#_RGF_ModTag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 0x58
+5cfe8b, 0x75f79d7b), Nothing}, RuntimeGeneratedFunctions.RuntimeGeneratedFu
+nction{(:x1, :x2, :x3, :x4), ModelingToolkitBase.var"#_RGF_ModTag", Modelin
+gToolkitBase.var"#_RGF_ModTag", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0xa096
+e58a, 0x357542a4), Nothing}}}}}(ModelingToolkitBase.MTKParametersReconstruc
+tor{ComposedFunction{ModelingToolkitBase.PConstructorApplicator{typeof(iden
+tity)}, ModelingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolki
+tBase.IndepVarTemplate, ModelingToolkitBase.ParameterIndex{SciMLStructures.
+Tunable, UnitRange{Int64}}, ModelingToolkitBase.ParameterIndex{SciMLStructu
+res.Initials, UnitRange{Int64}}}, 1, Nothing}}, Returns{StaticArraysCore.SV
+ector{0, Float64}}, Returns{Tuple{}}, Returns{Tuple{}}, Returns{Tuple{}}}(M
+odelingToolkitBase.PConstructorApplicator{typeof(identity)}(identity) ∘ Mod
+elingToolkitBase.CopyParamsByTemplate{true, Tuple{ModelingToolkitBase.Indep
+VarTemplate, ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunable, Un
+itRange{Int64}}, ModelingToolkitBase.ParameterIndex{SciMLStructures.Initial
+s, UnitRange{Int64}}}, 1, Nothing}((ModelingToolkitBase.IndepVarTemplate(),
+ ModelingToolkitBase.ParameterIndex{SciMLStructures.Tunable, UnitRange{Int6
+4}}(SciMLStructures.Tunable(), 1:3, false), ModelingToolkitBase.ParameterIn
+dex{SciMLStructures.Initials, UnitRange{Int64}}(SciMLStructures.Initials(),
+ 1:6, false)), (10,), nothing), Returns{StaticArraysCore.SVector{0, Float64
+}}(Float64[]), Returns{Tuple{}}(()), Returns{Tuple{}}(()), Returns{Tuple{}}
+(()), 0), identity ∘ ModelingToolkitBase.ObservedWrapper{true, ModelingTool
+kitBase.GeneratedFunctionWrapper{Tuple{2, 3, true}, RuntimeGeneratedFunctio
+ns.RuntimeGeneratedFunction{(:__mtk_arg_1, :___mtkparameters___, :__argₛᵧₘ1
+2968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolki
+tBase.var"#_RGF_ModTag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 0x585cfe8b, 0
+x75f79d7b), Nothing}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:
+x1, :x2, :x3, :x4), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolkitB
+ase.var"#_RGF_ModTag", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0xa096e58a, 0x3
+57542a4), Nothing}}}(ModelingToolkitBase.GeneratedFunctionWrapper{Tuple{2, 
+3, true}, RuntimeGeneratedFunctions.RuntimeGeneratedFunction{(:__mtk_arg_1,
+ :___mtkparameters___, :__argₛᵧₘ12968198168038750593), ModelingToolkitBase.
+var"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0x05e7e591, 0x9a
+09c886, 0x0267af3f, 0x585cfe8b, 0x75f79d7b), Nothing}, RuntimeGeneratedFunc
+tions.RuntimeGeneratedFunction{(:x1, :x2, :x3, :x4), ModelingToolkitBase.va
+r"#_RGF_ModTag", ModelingToolkitBase.var"#_RGF_ModTag", (0xb896e553, 0xa118
+fcf5, 0xbfeb9719, 0xa096e58a, 0x357542a4), Nothing}}(RuntimeGeneratedFuncti
+ons.RuntimeGeneratedFunction{(:__mtk_arg_1, :___mtkparameters___, :__argₛᵧₘ
+12968198168038750593), ModelingToolkitBase.var"#_RGF_ModTag", ModelingToolk
+itBase.var"#_RGF_ModTag", (0x05e7e591, 0x9a09c886, 0x0267af3f, 0x585cfe8b, 
+0x75f79d7b), Nothing}(nothing), RuntimeGeneratedFunctions.RuntimeGeneratedF
+unction{(:x1, :x2, :x3, :x4), ModelingToolkitBase.var"#_RGF_ModTag", Modeli
+ngToolkitBase.var"#_RGF_ModTag", (0xb896e553, 0xa118fcf5, 0xbfeb9719, 0xa09
+6e58a, 0x357542a4), Nothing}(nothing)))), ModelingToolkitBase.GetUpdatedU0{
+Nothing, SymbolicIndexingInterface.MultipleParametersGetter{SymbolicIndexin
+gInterface.IndexerNotTimeseries, Vector{SymbolicIndexingInterface.GetParame
+terIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, Int64
+}}}, Nothing}}(Bool[0, 0, 0], nothing, SymbolicIndexingInterface.MultiplePa
+rametersGetter{SymbolicIndexingInterface.IndexerNotTimeseries, Vector{Symbo
+licIndexingInterface.GetParameterIndex{ModelingToolkitBase.ParameterIndex{S
+ciMLStructures.Initials, Int64}}}, Nothing}(SymbolicIndexingInterface.GetPa
+rameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, I
+nt64}}[SymbolicIndexingInterface.GetParameterIndex{ModelingToolkitBase.Para
+meterIndex{SciMLStructures.Initials, Int64}}(ModelingToolkitBase.ParameterI
+ndex{SciMLStructures.Initials, Int64}(SciMLStructures.Initials(), 2, false)
+), SymbolicIndexingInterface.GetParameterIndex{ModelingToolkitBase.Paramete
+rIndex{SciMLStructures.Initials, Int64}}(ModelingToolkitBase.ParameterIndex
+{SciMLStructures.Initials, Int64}(SciMLStructures.Initials(), 4, false)), S
+ymbolicIndexingInterface.GetParameterIndex{ModelingToolkitBase.ParameterInd
+ex{SciMLStructures.Initials, Int64}}(ModelingToolkitBase.ParameterIndex{Sci
+MLStructures.Initials, Int64}(SciMLStructures.Initials(), 5, false))], noth
+ing)), ModelingToolkitBase.SetInitialUnknowns{SymbolicIndexingInterface.Mul
+tipleSetters{Vector{SymbolicIndexingInterface.ParameterHookWrapper{Symbolic
+IndexingInterface.SetParameterIndex{ModelingToolkitBase.ParameterIndex{SciM
+LStructures.Initials, Int64}}, SymbolicUtils.BasicSymbolicImpl.var"typeof(B
+asicSymbolicImpl)"{SymbolicUtils.SymReal}}}}}(SymbolicIndexingInterface.Mul
+tipleSetters{Vector{SymbolicIndexingInterface.ParameterHookWrapper{Symbolic
+IndexingInterface.SetParameterIndex{ModelingToolkitBase.ParameterIndex{SciM
+LStructures.Initials, Int64}}, SymbolicUtils.BasicSymbolicImpl.var"typeof(B
+asicSymbolicImpl)"{SymbolicUtils.SymReal}}}}(SymbolicIndexingInterface.Para
+meterHookWrapper{SymbolicIndexingInterface.SetParameterIndex{ModelingToolki
+tBase.ParameterIndex{SciMLStructures.Initials, Int64}}, SymbolicUtils.Basic
+SymbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}[Symboli
+cIndexingInterface.ParameterHookWrapper{SymbolicIndexingInterface.SetParame
+terIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, Int64
+}}, SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{Symbolic
+Utils.SymReal}}(SymbolicIndexingInterface.SetParameterIndex{ModelingToolkit
+Base.ParameterIndex{SciMLStructures.Initials, Int64}}(ModelingToolkitBase.P
+arameterIndex{SciMLStructures.Initials, Int64}(SciMLStructures.Initials(), 
+2, false)), Initial(z(t))), SymbolicIndexingInterface.ParameterHookWrapper{
+SymbolicIndexingInterface.SetParameterIndex{ModelingToolkitBase.ParameterIn
+dex{SciMLStructures.Initials, Int64}}, SymbolicUtils.BasicSymbolicImpl.var"
+typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}(SymbolicIndexingInterfac
+e.SetParameterIndex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Init
+ials, Int64}}(ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, 
+Int64}(SciMLStructures.Initials(), 4, false)), Initial(y(t))), SymbolicInde
+xingInterface.ParameterHookWrapper{SymbolicIndexingInterface.SetParameterIn
+dex{ModelingToolkitBase.ParameterIndex{SciMLStructures.Initials, Int64}}, S
+ymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils
+.SymReal}}(SymbolicIndexingInterface.SetParameterIndex{ModelingToolkitBase.
+ParameterIndex{SciMLStructures.Initials, Int64}}(ModelingToolkitBase.Parame
+terIndex{SciMLStructures.Initials, Int64}(SciMLStructures.Initials(), 5, fa
+lse)), Initial(x(t)))]), [2, 4, 5]), ModelingToolkitBase.MissingGuessValue.
+var"typeof(MissingGuessValue)"(ModelingToolkitBase.MissingGuessValue.var"##
+Storage#HashedRandom"())), Val{true}()), nothing), [0.0, 0.0, 1.0], (0.0, 3
+.0), ModelingToolkitBase.MTKParameters{Vector{Float64}, Vector{Float64}, Tu
+ple{}, Tuple{}, Tuple{}, Tuple{}}([10.0, 28.0, 2.66], [0.0, 0.0, 0.0, 0.0, 
+1.0, 0.0], (), (), (), ()), Base.Pairs{Symbol, Union{}, Nothing, @NamedTupl
+e{}}(), SciMLBase.StandardODEProblem()), OrdinaryDiffEqVerner.Vern9{typeof(
+OrdinaryDiffEqCore.trivial_limiter!), typeof(OrdinaryDiffEqCore.trivial_lim
+iter!), FastBroadcast.Serial, Val{true}}(OrdinaryDiffEqCore.trivial_limiter
+!, OrdinaryDiffEqCore.trivial_limiter!, FastBroadcast.Serial(), Val{true}()
+), DiffEqParamEstim.L2Loss{Vector{Float64}, Matrix{Float64}, Nothing, Nothi
+ng, Nothing, Nothing}([0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08,
+ 0.09  …  2.91, 2.92, 2.93, 2.94, 2.95, 2.96, 2.97, 2.98, 2.99, 3.0], [0.0 
+0.0012639260967322993 … 28.337036460460194 28.165930892029362; 0.0 0.266339
+98088990296 … -7.0863707672554055 -6.9951453942460375; 1.0 0.91792445412835
+03 … -8.30544480108837 -8.18490008750312], nothing, nothing, nothing, nothi
+ng, nothing), nothing, ()), ADTypes.AutoForwardDiff(), nothing, nothing, no
+thing, nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothi
+ng, nothing, nothing, SciMLBase.DEFAULT_OBSERVED_NO_TIME, nothing, nothing,
+ nothing, nothing, nothing, nothing, nothing, nothing, nothing, nothing)
 ```
 
 
@@ -734,64 +737,68 @@ nothing, nothing, nothing, nothing, nothing, nothing, nothing)
 ```julia
 opt = Opt(:GN_ORIG_DIRECT_L, 3)
 optprob = OptimizationProblem(obj_short, GloIniPar, lb = first.(LooserBounds), ub = last.(LooserBounds))
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_ORIG_DIRECT_L"] = res1
 ```
 
 ```
-7.005 s (59781902 allocations: 1.56 GiB)
+7.040 s (59821214 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 11.0
- 33.33333333333335
-  2.6666666666666674
+ 10.00000000005247
+ 28.000000000022816
+  2.6600000000080746
 ```
 
 
 
 ```julia
 opt = Opt(:GN_CRS2_LM, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_CRS2_LM"] = res1
 ```
 
 ```
-7.023 s (59740204 allocations: 1.56 GiB)
+7.362 s (59752428 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 12.071942040405391
-  0.0
-  2.659999999996381
+ 10.000000000051847
+ 28.00000000002288
+  2.66000000000799
 ```
 
 
 
 ```julia
 opt = Opt(:GN_ISRES, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Accurate to single precision 8.2 seconds
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_ISRES"] = res1
 ```
 
 ```
-7.122 s (59770063 allocations: 1.56 GiB)
+6.972 s (59957967 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 7.847508528844752
- 8.325805111337884
- 2.660000021234901
+ 10.003186894839686
+ 27.998505062411514
+  2.661060418177894
 ```
 
 
 
 ```julia
 opt = Opt(:GN_ESCH, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Approximately accurate, good starting values for local optimization
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_ESCH"] = res1
 ```
 
 ```
-7.006 s (59770060 allocations: 1.56 GiB)
+7.290 s (59809471 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 11.0572358763727
- 11.95480457626751
-  2.7157809519850042
+  9.814194109317777
+ 28.040475206432863
+  2.6694805140464988
 ```
 
 
@@ -803,160 +810,230 @@ Next, the local optimization algorithms that could be used after the global algo
 ```julia
 opt = Opt(:LN_BOBYQA, 3)
 optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_BOBYQA"] = res1
 ```
 
 ```
-204.971 ms (1953579 allocations: 52.24 MiB)
+202.557 ms (1911761 allocations: 51.12 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
-  9.130040191911204
- 20.000000450221577
-  2.6599999999963853
+ 10.000000000051081
+ 28.000000000023142
+  2.660000000007931
 ```
 
 
 
 ```julia
 opt = Opt(:LN_NELDERMEAD, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_NELDERMEAD"] = res1
 ```
 
 ```
-151.384 ms (1451796 allocations: 38.82 MiB)
+208.670 ms (2013496 allocations: 53.84 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
-  9.527596774490174
- 25.49333593749173
-  2.659999999996502
+ 10.000000000053411
+ 28.0000000000238
+  2.6600000000081927
 ```
 
 
 
 ```julia
 opt = Opt(:LD_SLSQP, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_SLSQP"] = res1
 ```
 
 ```
-8.544 s (69944478 allocations: 1.88 GiB)
+8.676 s (70719798 allocations: 1.90 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  9.0
- 20.0
-  2.659999999996381
+ 10.000000000051806
+ 28.000000000022776
+  2.660000000007988
 ```
 
 
 
 ```julia
 opt = Opt(:LN_COBYLA, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_COBYLA"] = res1
 ```
 
 ```
-703.030 ms (6105512 allocations: 163.26 MiB)
+2.699 s (22438865 allocations: 602.30 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
-  9.000020177662323
- 20.000115846351765
-  2.6599999999963995
+ 10.000000000040231
+ 28.000000000025903
+  2.660000000007147
 ```
 
 
 
 ```julia
 opt = Opt(:LN_NEWUOA_BOUND, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_NEWUOA_BOUND"] = res1
 ```
 
 ```
-344.037 ms (2670462 allocations: 71.41 MiB)
+451.927 ms (3208122 allocations: 85.79 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
-  9.159250339525014
- 20.001528181179328
-  2.6599989273311575
+  9.999992747331307
+ 27.999996979392797
+  2.659999334666021
 ```
 
 
 
 ```julia
 opt = Opt(:LN_PRAXIS, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_PRAXIS"] = res1
 ```
 
 ```
-155.751 ms (1409957 allocations: 37.71 MiB)
+196.640 ms (1529443 allocations: 40.90 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
-  9.00000000628297
- 20.0
-  2.659999999996381
+  9.0
+ 28.31067230326584
+  2.579310946262273
 ```
 
 
 
 ```julia
 opt = Opt(:LN_SBPLX, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_SBPLX"] = res1
 ```
 
 ```
-247.466 ms (2335900 allocations: 62.46 MiB)
+536.830 ms (4468618 allocations: 119.49 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
-  9.116431257586372
- 21.8618520990359
-  2.6599999999963186
+ 10.000000000058924
+ 28.000000000020663
+  2.660000000008665
 ```
 
 
 
 ```julia
 opt = Opt(:LD_MMA, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_MMA"] = res1
 ```
 
 ```
-15.682 s (119380437 allocations: 3.42 GiB)
+15.679 s (119380437 allocations: 3.42 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  9.0
- 20.0
-  2.6599999999963804
+ 10.000000000051813
+ 28.000000000022446
+  2.6600000000079653
 ```
 
 
 
 ```julia
 opt = Opt(:LD_LBFGS, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_LBFGS"] = res1
 ```
 
 ```
-10.597 ms (95581 allocations: 2.80 MiB)
+23.947 ms (214961 allocations: 6.29 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
-  9.0
- 20.0
-  2.660000000792208
+ 10.000000000052792
+ 28.000000000022634
+  2.6600000000078925
 ```
 
 
 
 ```julia
 opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_TNEWTON_PRECOND_RESTART"] = res1
 ```
 
 ```
-10.783 ms (95950 allocations: 2.85 MiB)
+30.311 ms (275020 allocations: 8.11 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
-  9.0
- 20.0
-  2.6599999999960016
+ 10.000000000051315
+ 28.00000000002281
+  2.6600000000079493
+```
+
+
+
+
+
+Each run's estimate, retcode, loss and largest componentwise distance from the true parameters `[10.0, 28.0, 2.66]`, together with the lowest-loss and closest runs:
+
+```julia
+for (name, sol) in sort!(collect(short_solutions); by = first)
+    println(rpad(name, 28),
+        "estimate=", round.(sol.u; digits = 3),
+        "  retcode=", sol.retcode,
+        "  loss=", sol.objective,
+        "  max|est-true|=", round(maximum(abs.(sol.u .- p)); sigdigits = 3))
+end
+best_loss, best_loss_name = minimum((sol.objective, name) for (name, sol) in short_solutions)
+best_dist, best_dist_name = minimum((maximum(abs.(sol.u .- p)), name) for (name, sol) in short_solutions)
+println("lowest loss: ", best_loss_name, " (loss = ", best_loss, ")")
+println("closest to the true parameters: ", best_dist_name, " (max|est-true| = ", best_dist, ")")
+```
+
+```
+BBO (Tsit5 default tol)     estimate=[10.0, 28.0, 2.66]  retcode=MaxIters  
+loss=4.48840138052368e-11  max|est-true|=4.18e-7
+BBO (Tsit5 reltol=1e-9)     estimate=[10.0, 28.0, 2.66]  retcode=MaxIters  
+loss=4.363880425955739e-13  max|est-true|=4.98e-8
+BBO (Vern9 1e-9)            estimate=[10.0, 28.0, 2.66]  retcode=MaxIters  
+loss=3.1862469014764254e-11  max|est-true|=3.36e-8
+GN_CRS2_LM                  estimate=[10.0, 28.0, 2.66]  retcode=MaxIters  
+loss=2.765663420706971e-18  max|est-true|=5.18e-11
+GN_ESCH                     estimate=[9.814, 28.04, 2.669]  retcode=MaxIter
+s  loss=21.635830041364915  max|est-true|=0.186
+GN_ISRES                    estimate=[10.003, 27.999, 2.661]  retcode=MaxIt
+ers  loss=0.022093839491880075  max|est-true|=0.00319
+GN_ORIG_DIRECT_L            estimate=[10.0, 28.0, 2.66]  retcode=MaxIters  
+loss=2.7661304189470634e-18  max|est-true|=5.25e-11
+LD_LBFGS                    estimate=[10.0, 28.0, 2.66]  retcode=Success  l
+oss=2.767143177838859e-18  max|est-true|=5.28e-11
+LD_MMA                      estimate=[10.0, 28.0, 2.66]  retcode=MaxIters  
+loss=2.7666664170231267e-18  max|est-true|=5.18e-11
+LD_SLSQP                    estimate=[10.0, 28.0, 2.66]  retcode=MaxIters  
+loss=2.765864576836226e-18  max|est-true|=5.18e-11
+LD_TNEWTON_PRECOND_RESTART  estimate=[10.0, 28.0, 2.66]  retcode=Success  l
+oss=2.766826219444564e-18  max|est-true|=5.13e-11
+LN_BOBYQA                   estimate=[10.0, 28.0, 2.66]  retcode=Success  l
+oss=2.7662720882359067e-18  max|est-true|=5.11e-11
+LN_COBYLA                   estimate=[10.0, 28.0, 2.66]  retcode=Success  l
+oss=2.803778105481148e-18  max|est-true|=4.02e-11
+LN_NELDERMEAD               estimate=[10.0, 28.0, 2.66]  retcode=Success  l
+oss=2.769748214192164e-18  max|est-true|=5.34e-11
+LN_NEWUOA_BOUND             estimate=[10.0, 28.0, 2.66]  retcode=Success  l
+oss=3.866807398220735e-8  max|est-true|=7.25e-6
+LN_PRAXIS                   estimate=[9.0, 28.311, 2.579]  retcode=Success 
+ loss=292.75880000812424  max|est-true|=1.0
+LN_SBPLX                    estimate=[10.0, 28.0, 2.66]  retcode=Success  l
+oss=2.782644973352366e-18  max|est-true|=5.89e-11
+lowest loss: GN_CRS2_LM (loss = 2.765663420706971e-18)
+closest to the true parameters: LN_COBYLA (max|est-true| = 4.02309296987368
+7e-11)
 ```
 
 
@@ -966,28 +1043,30 @@ u: 3-element Vector{Float64}:
 ## Now let's solve the longer version for a global solution
 
 Notice from the plotting above that this ODE problem is chaotic and tends to diverge over time. In the longer version of parameter estimation, the dataset is increased to 3000 observations per variable with the same integration time step of 0.01.
-Vern9 solver with reltol=1e-9 and abstol=1e-9 has been established to be accurate on the time interval [0,50]
+Vern9 solver with reltol=1e-9 and abstol=1e-9 has been established to be accurate on the time interval [0,50]. The long objective is built with `Optimization.AutoForwardDiff()` because `LD_SLSQP` below requires a gradient.
 
 ```julia
-# BB with Vern9 converges very slowly. The final values are within the NarrowBounds.
+# BBO is given a smaller iteration budget on the long problem.
 obj = build_loss_objective(prob, Vern9(), L2Loss(time_points, data),
-    tstops = time_points, reltol = 1e-9, abstol = 1e-9)
+    Optimization.AutoForwardDiff(), tstops = time_points, reltol = 1e-9, abstol = 1e-9)
 optprob = OptimizationProblem(obj, GloIniPar, lb = first.(LooserBounds), ub = last.(LooserBounds))
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 4e3) # Default adaptive_de_rand_1_bin_radiuslimited 33 sec [10.2183, 24.6711, 2.28969]
-#@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :adaptive_de_rand_1_bin, MaxSteps = 4e3) # Method 32 sec [13.2222, 25.8589, 2.56176]
-#@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :dxnes, MaxSteps = 2e3) # Method dxnes 119 sec  [16.8648, 24.393, 2.29119]
-#@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :xnes, MaxSteps = 2e3) # Method xnes 304 sec  [19.1647, 24.9479, 2.39467]
-#@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :de_rand_1_bin_radiuslimited, MaxSteps = 2e3) # Method 44 sec  [13.805, 24.6054, 2.37274]
-#@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :generating_set_search, MaxSteps = 2e3) # Method 195 sec [19.1847, 24.9492, 2.39412]
+global_solutions = Dict{String, Any}()
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 4e3)
+global_solutions["BBO_adaptive_de_rand_1_bin"] = res1
+#res1 = @btime bboptimize(obj;SearchRange = LooserBounds, Method = :adaptive_de_rand_1_bin, MaxSteps = 4e3)
+#res1 = @btime bboptimize(obj;SearchRange = LooserBounds, Method = :dxnes, MaxSteps = 2e3)
+#res1 = @btime bboptimize(obj;SearchRange = LooserBounds, Method = :xnes, MaxSteps = 2e3)
+#res1 = @btime bboptimize(obj;SearchRange = LooserBounds, Method = :de_rand_1_bin_radiuslimited, MaxSteps = 2e3)
+#res1 = @btime bboptimize(obj;SearchRange = LooserBounds, Method = :generating_set_search, MaxSteps = 2e3)
 ```
 
 ```
-22.978 s (222886726 allocations: 4.61 GiB)
+23.461 s (227060553 allocations: 4.69 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 18.561617554876392
- 20.013049918149314
-  2.660000000015612
+  7.566414773430441
+ 24.483736497674705
+  2.024286312941135
 ```
 
 
@@ -1001,131 +1080,220 @@ u: 3-element Vector{Float64}:
 
 ```julia
 opt = Opt(:GN_ORIG_DIRECT_L, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12, maxtime = 300)
+global_solutions["GN_ORIG_DIRECT_L"] = res1
 ```
 
 ```
-56.061 s (546202148 allocations: 11.29 GiB)
+56.669 s (547045583 allocations: 11.30 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 11.0
- 33.33333333333335
-  2.6666666666666674
+  8.148148148143822
+ 25.53527675913541
+  2.1353949816278246
 ```
 
 
 
 ```julia
 opt = Opt(:GN_CRS2_LM, 3)
-@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12) # Hit and miss. converge approximately accurate values for local opt.91 seconds
+res1 = @btime solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12, maxtime = 300)
+global_solutions["GN_CRS2_LM"] = res1
 ```
 
 ```
-111.836 s (1091640242 allocations: 22.56 GiB)
+113.583 s (1091660877 allocations: 22.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  1.665717254137125
- 60.0
-  2.659999999996381
+  9.857901067373891
+ 28.085506534550532
+  2.637245105224132
 ```
 
 
 
 ```julia
 opt = Opt(:GN_ISRES, 3)
-@btime res1 = solve(optprob, opt, maxiters = 50000, xtol_rel = 1e-12) # Approximately accurate within local bounds
+res1 = @btime solve(optprob, opt, maxiters = 50000, xtol_rel = 1e-12, maxtime = 300)
+global_solutions["GN_ISRES"] = res1
 ```
 
 ```
-280.096 s (2729250053 allocations: 56.39 GiB)
+283.810 s (2729814672 allocations: 56.40 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
-  9.528749822381185
- 14.507827623897384
-  2.659999999996381
+  8.818071714916293
+ 24.299299781865475
+  2.209287214248194
 ```
 
 
 
 ```julia
 opt = Opt(:GN_ESCH, 3)
-@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12) # Approximately accurate
+res1 = @btime solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12, maxtime = 300)
+global_solutions["GN_ESCH"] = res1
 ```
 
 ```
-112.324 s (1091700053 allocations: 22.56 GiB)
+113.325 s (1091801984 allocations: 22.56 GiB)
 retcode: MaxIters
 u: 3-element Vector{Float64}:
- 12.183041564276689
- 44.7513474693917
-  2.6493627658105074
+ 12.517831352922963
+ 23.160423943678694
+  2.1634855434705367
 ```
 
 
 
 
 
-In the latest run, BlackBoxOptim, `GN_ORIG_DIRECT_L`, `GN_CRS2_LM` and `GN_ISRES` recover the true parameters `[10.0, 28.0, 2.66]` on the longer sample to at least four significant digits, while `GN_ESCH` only gets close. All of the global runs take considerably longer than on the short sample.
+Each global run's estimate, retcode, loss, largest componentwise distance from the true parameters `[10.0, 28.0, 2.66]`, and whether the estimate lies inside the bounds its optimizer searched (`LooserBounds`) and inside the narrower `Xiang2015Bounds` used by the local optimizers below:
+
+```julia
+for (name, sol) in sort!(collect(global_solutions); by = first)
+    println(rpad(name, 28),
+        "estimate=", round.(sol.u; digits = 3),
+        "  retcode=", sol.retcode,
+        "  loss=", sol.objective,
+        "  max|est-true|=", round(maximum(abs.(sol.u .- p)); sigdigits = 3),
+        "  within LooserBounds: ", all(first.(LooserBounds) .<= sol.u .<= last.(LooserBounds)),
+        "  within Xiang2015Bounds: ", all(xlow_bounds .<= sol.u .<= xhigh_bounds))
+end
+best_loss, best_loss_name = minimum((sol.objective, name) for (name, sol) in global_solutions)
+best_dist, best_dist_name = minimum((maximum(abs.(sol.u .- p)), name) for (name, sol) in global_solutions)
+println("lowest loss: ", best_loss_name, " (loss = ", best_loss, ")")
+println("closest to the true parameters: ", best_dist_name, " (max|est-true| = ", best_dist, ")")
+println("loss at the true parameters ", p, ": ", obj(p))
+println("loss with σ shifted by +1e-6: ", obj([10.0 + 1e-6, 28.0, 2.66]))
+println("loss with σ shifted by +1e-4: ", obj([10.0 + 1e-4, 28.0, 2.66]))
+```
+
+```
+BBO_adaptive_de_rand_1_bin  estimate=[7.566, 24.484, 2.024]  retcode=MaxIte
+rs  loss=481918.31171202345  max|est-true|=3.52  within LooserBounds: true 
+ within Xiang2015Bounds: false
+GN_CRS2_LM                  estimate=[9.858, 28.086, 2.637]  retcode=MaxIte
+rs  loss=163548.13951903005  max|est-true|=0.142  within LooserBounds: true
+  within Xiang2015Bounds: true
+GN_ESCH                     estimate=[12.518, 23.16, 2.163]  retcode=MaxIte
+rs  loss=471010.9735330795  max|est-true|=4.84  within LooserBounds: true  
+within Xiang2015Bounds: false
+GN_ISRES                    estimate=[8.818, 24.299, 2.209]  retcode=MaxIte
+rs  loss=467881.6191620816  max|est-true|=3.7  within LooserBounds: true  w
+ithin Xiang2015Bounds: false
+GN_ORIG_DIRECT_L            estimate=[8.148, 25.535, 2.135]  retcode=MaxIte
+rs  loss=461239.58985747735  max|est-true|=2.46  within LooserBounds: true 
+ within Xiang2015Bounds: false
+lowest loss: GN_CRS2_LM (loss = 163548.13951903005)
+closest to the true parameters: GN_CRS2_LM (max|est-true| = 0.1420989326261
+0862)
+loss at the true parameters [10.0, 28.0, 2.66]: 0.0030835739315063656
+loss with σ shifted by +1e-6: 1997.473906162449
+loss with σ shifted by +1e-4: 346569.7397136992
+```
+
+
+
+
+
+The printed table shows where each global run stopped on the longer sample. Each NLopt global run keeps its iteration budget and is additionally capped at 300 seconds of wall time via `maxtime`, so a run that does not converge first reports `MaxTime` or `MaxIters`. The loss at the true parameters, printed above, is small but not zero, because `tstops` at every data point forces the fitting solve onto a slightly different step sequence than the data-generation solve, and the chaotic trajectory amplifies that difference. The perturbation losses printed above are orders of magnitude larger, so the true parameters sit in a deep, narrow minimum on this problem.
 
 ```julia
 opt = Opt(:LN_BOBYQA, 3)
-optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Claims SUCCESS but does not iterate to the true values.
+optprob = OptimizationProblem(obj, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
+local_solutions = Dict{String, Any}()
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+local_solutions["LN_BOBYQA"] = res1
 ```
 
 ```
-203.636 ms (1953579 allocations: 52.24 MiB)
+1.834 s (17630070 allocations: 373.02 MiB)
 retcode: Success
 u: 3-element Vector{Float64}:
-  9.130040191911204
- 20.000000450221577
-  2.6599999999963853
+  9.862590769081075
+ 20.58113390812207
+  2.0
 ```
 
 
 
 ```julia
 opt = Opt(:LN_NELDERMEAD, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Inaccurate final values
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+local_solutions["LN_NELDERMEAD"] = res1
 ```
 
 ```
-149.282 ms (1451796 allocations: 38.82 MiB)
-retcode: Success
+56.390 s (545836014 allocations: 11.28 GiB)
+retcode: MaxIters
 u: 3-element Vector{Float64}:
-  9.527596774490174
- 25.49333593749173
-  2.659999999996502
+  9.678915633380864
+ 23.516765371996325
+  2.161073807096292
 ```
 
 
 
 ```julia
 opt = Opt(:LD_SLSQP, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Inaccurate final values
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+local_solutions["LD_SLSQP"] = res1
 ```
 
 ```
-8.435 s (69944478 allocations: 1.88 GiB)
-retcode: MaxIters
+43.827 ms (436700 allocations: 9.95 MiB)
+retcode: Success
 u: 3-element Vector{Float64}:
-  9.0
- 20.0
-  2.659999999996381
+  9.248030972411785
+ 21.230339600399184
+  2.105344917871357
+```
+
+
+
+```julia
+for (name, sol) in sort!(collect(local_solutions); by = first)
+    println(rpad(name, 28),
+        "estimate=", round.(sol.u; digits = 3),
+        "  retcode=", sol.retcode,
+        "  loss=", sol.objective,
+        "  max|est-true|=", round(maximum(abs.(sol.u .- p)); sigdigits = 3),
+        "  strictly inside Xiang2015Bounds: ", all(xlow_bounds .< sol.u .< xhigh_bounds))
+end
+best_loss, best_loss_name = minimum((sol.objective, name) for (name, sol) in local_solutions)
+best_dist, best_dist_name = minimum((maximum(abs.(sol.u .- p)), name) for (name, sol) in local_solutions)
+println("lowest loss: ", best_loss_name, " (loss = ", best_loss, ")")
+println("closest to the true parameters: ", best_dist_name, " (max|est-true| = ", best_dist, ")")
+```
+
+```
+LD_SLSQP                    estimate=[9.248, 21.23, 2.105]  retcode=Success
+  loss=549175.2002526054  max|est-true|=6.77  strictly inside Xiang2015Boun
+ds: true
+LN_BOBYQA                   estimate=[9.863, 20.581, 2.0]  retcode=Success 
+ loss=588113.2784254166  max|est-true|=7.42  strictly inside Xiang2015Bound
+s: false
+LN_NELDERMEAD               estimate=[9.679, 23.517, 2.161]  retcode=MaxIte
+rs  loss=404754.5095237799  max|est-true|=4.48  strictly inside Xiang2015Bo
+unds: true
+lowest loss: LN_NELDERMEAD (loss = 404754.5095237799)
+closest to the true parameters: LN_NELDERMEAD (max|est-true| = 4.4832346280
+03675)
 ```
 
 
 
 
 
-These local optimizers are run on the short objective `obj_short` from `LocIniPar`, not from the global solutions of the longer problem, so they repeat the short-problem results above, where all three recover the true parameters.
+These local optimizers run on the long objective `obj` from `LocIniPar` inside the narrow bounds. The printed table shows each run's estimate, retcode, loss, distance from the true parameters, and whether the estimate lies strictly inside `Xiang2015Bounds`; on this landscape a `Success` retcode does not by itself mean the run found the true parameters, and a run stopped on its iteration limit may still sit at a wrong point.
 
 # Conclusion
 
- 1. The Lorenz system is extremely sensitive to the initial condition; this page generates its data from `r0 = [1.0, 0.0, 0.0]`. In the latest run, with the short sample of 300 observations, all the global optimizers except `GN_ESCH` (which only gets close) and all the local optimizers except `LN_PRAXIS` recover the true parameters. With the longer sample of 3000 observations, BlackBoxOptim, `GN_ORIG_DIRECT_L`, `GN_CRS2_LM` and `GN_ISRES` still recover them. Other initial conditions, such as `r0 = [-11.8, -5.1, 37.5]` from PODES, are not run on this page.
+ 1. The Lorenz system is extremely sensitive to the initial condition; this page generates its data from `r0 = [1.0, 0.0, 0.0]`. The summary tables above print each run's estimate, retcode, loss and largest componentwise distance from the true parameters `[10.0, 28.0, 2.66]` on both the short (300-observation) and the longer (3000-observation) sample, including which run has the lowest loss and which lands closest; the long-problem global runs are additionally capped at 300 s of wall time via `maxtime`. The global optimizers are stochastic, so the distances and winners differ from run to run. Other initial conditions, such as `r0 = [-11.8, -5.1, 37.5]` from PODES, are not run on this page.
  2. When trying to hit the real data, having a low enough tolerance on the numerical solution is key. If the numerical solution is too rough, then we can never actually hone in on the true parameters since even with the true parameters we will erroneously induce numerical error. Maybe this could be adaptive?
- 3. Tighter tolerances make each objective evaluation more expensive: on the short problem, BBO reached the same estimate with `Vern9` at `reltol = abstol = 1e-9` as with the default `Tsit5` tolerances, but took longer.
- 4. The estimation method and the global versus local optimization make a huge difference in the timings. Here, BBO finds the correct solution in every global optimization setup. For local optimization, several NLopt methods (`LN_BOBYQA`, `LD_SLSQP`, `LD_LBFGS`, `LD_TNEWTON_PRECOND_RESTART`) solve the short problem in under 0.05 seconds. These methods can scale a local optimization, but we are aiming to scale a global optimization.
+ 3. Tighter tolerances make each objective evaluation more expensive: the three BBO runs on the short problem use the default `Tsit5` tolerances, `Tsit5` at `reltol = 1e-9` and `Vern9` at `reltol = abstol = 1e-9`, and the printed timings and the distance column in the summary table show what each setting buys.
+ 4. The estimation method and the global versus local optimization make a huge difference in the timings. The chaotic trajectory makes the loss landscape much rougher on the long problem: the printed perturbation losses show even a `1e-6` shift in σ raising the loss by orders of magnitude. The `LD_*` local methods evaluate a gradient of the objective at every step; the printed timings show the per-run cost on each problem. These methods can scale a local optimization, but we are aiming to scale a global optimization.
  5. Fitting the shorter timespan is much cheaper... maybe this can lead to determining a minimal sample size for the optimizers and the estimator to succeed.
 
 
@@ -1165,7 +1333,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6e4b80f9] BenchmarkTools v1.8.0
   [a134a8b2] BlackBoxOptim v0.6.12
   [a93c6f00] DataFrames v1.8.2
-  [bcd4f6db] DelayDiffEq v6.4.1
+⌃ [bcd4f6db] DelayDiffEq v6.4.1
 ⌃ [1130ab10] DiffEqParamEstim v2.6.1
   [31c24e10] Distributions v0.25.131
   [f6369f11] ForwardDiff v1.4.6
@@ -1174,9 +1342,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [76087f3c] NLopt v1.2.1
 ⌃ [7f7a1694] Optimization v5.9.0
   [3e6eede4] OptimizationBBO v0.4.12
-  [4e6fcdb7] OptimizationNLopt v0.3.18
+⌃ [4e6fcdb7] OptimizationNLopt v0.3.18
   [1dea7af3] OrdinaryDiffEq v7.8.1
-  [ab63da0c] ParallelParticleSwarms v1.6.2
+⌃ [ab63da0c] ParallelParticleSwarms v1.6.2
   [65888b18] ParameterizedFunctions v5.27.0
   [91a5bcdd] Plots v1.41.7
 ⌃ [731186ca] RecursiveArrayTools v4.5.1
@@ -1200,17 +1368,17 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ec485272] ArnoldiMethod v0.4.0
 ⌃ [4fba245c] ArrayInterface v7.30.1
 ⌃ [4c555306] ArrayLayouts v1.12.2
-  [a9b6321e] Atomix v1.2.1
+⌃ [a9b6321e] Atomix v1.2.1
 ⌃ [aae01518] BandedMatrices v1.12.0
   [6e4b80f9] BenchmarkTools v1.8.0
   [e2ed5e7c] Bijections v0.2.2
   [b2a6c25c] BinaryHeaps v1.1.0
   [caf10ac8] BipartiteGraphs v0.1.14
   [a134a8b2] BlackBoxOptim v0.6.12
-  [8e7c35d0] BlockArrays v1.10.0
-  [70df07ce] BracketingNonlinearSolve v1.12.7
-  [fa961155] CEnum v0.5.0
-  [d360d2e6] ChainRulesCore v1.26.1
+⌃ [8e7c35d0] BlockArrays v1.10.0
+⌃ [70df07ce] BracketingNonlinearSolve v1.12.7
+⌅ [fa961155] CEnum v0.5.0
+⌃ [d360d2e6] ChainRulesCore v1.26.1
   [35d6a980] ColorSchemes v3.31.0
 ⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
@@ -1231,7 +1399,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a93c6f00] DataFrames v1.8.2
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
-  [bcd4f6db] DelayDiffEq v6.4.1
+⌃ [bcd4f6db] DelayDiffEq v6.4.1
   [8bb1440f] DelimitedFiles v1.9.1
   [39dd38d3] Dierckx v0.5.4
 ⌃ [2b5f629d] DiffEqBase v7.21.1
@@ -1242,15 +1410,15 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [31c24e10] Distributions v0.25.131
-  [ffbed154] DocStringExtensions v0.9.5
+⌅ [ffbed154] DocStringExtensions v0.9.5
 ⌃ [5b8099bc] DomainSets v0.8.1
   [7c1d4256] DynamicPolynomials v0.6.8
   [4e289a0a] EnumX v1.0.7
 ⌃ [7da242da] Enzyme v0.13.203
-  [f151be2c] EnzymeCore v0.8.21
+⌃ [f151be2c] EnzymeCore v0.8.21
   [e2ba6199] ExprTools v0.1.11
   [55351af7] ExproniconLite v0.10.14
-  [c87230d0] FFMPEG v0.4.5
+⌃ [c87230d0] FFMPEG v0.4.5
   [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
   [a4df4552] FastPower v1.5.0
@@ -1275,7 +1443,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d25df0c9] Inflate v0.1.5
 ⌅ [842dd82b] InlineStrings v1.4.6
   [18e54dd8] IntegerMathUtils v0.1.4
-  [8197267c] IntervalSets v0.7.14
+⌃ [8197267c] IntervalSets v0.7.14
   [3587e190] InverseFunctions v0.1.17
   [41ab1584] InvertedIndices v1.3.1
   [92d709cd] IrrationalConstants v0.2.6
@@ -1284,11 +1452,11 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-⌃ [ccbc3e58] JumpProcesses v9.32.3
-⌃ [63c18a36] KernelAbstractions v0.9.42
+⌅ [ccbc3e58] JumpProcesses v9.32.3
+⌅ [63c18a36] KernelAbstractions v0.9.42
 ⌃ [ba0b0d4f] Krylov v0.10.9
   [2faa5264] LHLFactorization v2.2.2
-⌃ [929cbde3] LLVM v9.13.1
+⌅ [929cbde3] LLVM v9.13.1
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [73f95e8e] LatticeRules v0.0.2
@@ -1304,7 +1472,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e1d29d7a] Missings v1.2.0
 ⌃ [961ee093] ModelingToolkit v11.43.0
 ⌃ [7771a370] ModelingToolkitBase v1.70.0
-  [6bb917b9] ModelingToolkitTearing v1.20.6
+⌃ [6bb917b9] ModelingToolkitTearing v1.20.6
 ⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
 ⌃ [102ac46a] MultivariatePolynomials v0.5.19
@@ -1322,8 +1490,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [7f7a1694] Optimization v5.9.0
   [3e6eede4] OptimizationBBO v0.4.12
 ⌃ [bca83a33] OptimizationBase v5.5.3
-  [4e6fcdb7] OptimizationNLopt v0.3.18
-⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.1]
+⌃ [4e6fcdb7] OptimizationNLopt v0.3.18
+⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.3]
   [1dea7af3] OrdinaryDiffEq v7.8.1
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.8
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.1
@@ -1334,10 +1502,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.2
-  [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
-  [79d7bb75] OrdinaryDiffEqVerner v2.4.1
+⌃ [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
+⌃ [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
-  [ab63da0c] ParallelParticleSwarms v1.6.2
+⌃ [ab63da0c] ParallelParticleSwarms v1.6.2
   [65888b18] ParameterizedFunctions v5.27.0
   [d96e819e] Parameters v0.13.1
 ⌅ [69de0a69] Parsers v2.8.8
@@ -1350,7 +1518,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
 ⌃ [21216c6a] Preferences v1.5.2 [loaded: v1.6.0]
-  [08abe8d2] PrettyTables v3.4.8
+⌃ [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [33c8b6b6] ProgressLogging v0.1.6
   [92933f4c] ProgressMeter v1.11.0
@@ -1360,7 +1528,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8a4e6c94] QuasiMonteCarlo v0.4.4
   [988b38a3] ReadOnlyArrays v0.2.0
   [795d4caa] ReadOnlyDicts v1.0.1
-  [3cdcf5f2] RecipesBase v1.3.4
+⌃ [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
 ⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
@@ -1368,17 +1536,17 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ae029012] Requires v1.3.1
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
-  [f2b01f46] Roots v3.0.8
+⌃ [f2b01f46] Roots v3.0.8
 ⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.26
 ⌃ [9dfe8606] SCCNonlinearSolve v1.15.3
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
 ⌃ [0bca4576] SciMLBase v3.53.3
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
-  [19f34311] SciMLJacobianOperators v0.1.19
+⌃ [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
 ⌃ [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
-  [53ae85a6] SciMLStructures v1.10.5
+⌃ [53ae85a6] SciMLStructures v1.10.5
   [7e506255] ScopedValues v1.6.2
   [6c6a2e73] Scratch v1.3.0
   [91c51154] SentinelArrays v1.4.10
@@ -1386,15 +1554,15 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [992d4aef] Showoff v1.1.1
   [05bca326] SimpleDiffEq v1.18.0
 ⌃ [727e6d20] SimpleNonlinearSolve v2.14.3
-  [510db2f7] SimpleOptimization v2.0.1
+⌃ [510db2f7] SimpleOptimization v2.0.1
   [699a6c99] SimpleTraits v0.9.6
   [ed01d8cd] Sobol v1.5.0
   [a2af1166] SortingAlgorithms v1.2.3
   [a57abbd0] SparseColumnPivotedQR v2.1.8
-  [9f842d2f] SparseConnectivityTracer v1.2.3
-  [0a514795] SparseMatrixColorings v0.4.28
+⌃ [9f842d2f] SparseConnectivityTracer v1.2.3
+⌃ [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
-  [860ef19b] StableRNGs v1.0.4
+⌃ [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
   [64909d44] StateSelection v1.11.1
 ⌃ [90137ffa] StaticArrays v1.9.20
@@ -1407,7 +1575,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [892a3eda] StringManipulation v0.5.0
   [53d494c1] StructIO v0.3.1
   [2efcf032] SymbolicIndexingInterface v0.3.55
-  [19f23fe9] SymbolicLimits v1.2.1
+⌃ [19f23fe9] SymbolicLimits v1.2.1
 ⌃ [d1185830] SymbolicUtils v4.46.5
 ⌃ [0c5d862f] Symbolics v7.39.2
   [3783bdb8] TableTraits v1.0.1
@@ -1419,17 +1587,17 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [a759f4b9] TimerOutputs v1.2.1
   [e689c965] Tracy v0.1.6
   [781d530d] TruncatedStacktraces v1.4.0
-  [5c2747f8] URIs v1.7.0
+⌃ [5c2747f8] URIs v1.7.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [013be700] UnsafeAtomics v0.3.2
+⌅ [013be700] UnsafeAtomics v0.3.2
   [41fe7b60] Unzip v0.2.0
   [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
 ⌃ [ddb6d928] YAML v0.4.16 [loaded: v0.4.17]
   [700de1a5] ZygoteRules v0.2.8
   [6e34b625] Bzip2_jll v1.0.9+0
-  [83423d85] Cairo_jll v1.18.7+0
+⌃ [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [cd4c43a9] Dierckx_jll v0.2.0+0
 ⌅ [7cc45869] Enzyme_jll v0.0.293+0
@@ -1450,13 +1618,13 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
   [88015f11] LERC_jll v4.2.0+0
-  [dad2f222] LLVMExtra_jll v0.0.47+0
+⌅ [dad2f222] LLVMExtra_jll v0.0.47+0
   [1d63c593] LLVMOpenMP_jll v23.1.1+0
   [ad6e5548] LibTracyClient_jll v0.13.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
-  [4b2f31a3] Libmount_jll v2.42.0+0
+⌃ [4b2f31a3] Libmount_jll v2.42.0+0
   [89763e89] Libtiff_jll v4.7.3+0
   [38a345b3] Libuuid_jll v2.42.0+0
   [856f044c] MKL_jll v2025.2.0+0
@@ -1496,8 +1664,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
   [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
   [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
-  [35661453] Xorg_xkbcomp_jll v1.4.7+0
-  [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
+⌃ [35661453] Xorg_xkbcomp_jll v1.4.7+0
+⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
@@ -1509,11 +1677,11 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [2db6ffa8] libevdev_jll v1.13.4+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
-  [b53b4c65] libpng_jll v1.6.58+0
+⌃ [b53b4c65] libpng_jll v1.6.58+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
-  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌃ [1317d2d5] oneTBB_jll v2022.3.0+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
   [dfaa095f] x265_jll v4.1.0+0
   [d8fb68d0] xkbcommon_jll v1.13.0+0

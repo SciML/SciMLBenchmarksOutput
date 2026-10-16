@@ -39,10 +39,13 @@ end
 @mtkbuild g1 = LorenzExample()
 p = [10.0, 28.0, 2.66] # Parameters used to construct the dataset
 r0 = [1.0; 0.0; 0.0]                #[-11.8,-5.1,37.5] PODES Initial values of the system in space # [0.1, 0.0, 0.0]
+# unknowns(g1) is ordered [z, y, x] rather than in declaration order, so the
+# initial condition and parameters are keyed by name instead of positionally.
+varmap = merge(Dict([g1.x, g1.y, g1.z] .=> r0), Dict([g1.σ, g1.ρ, g1.β] .=> p))
 tspan = (0.0, 30.0)                 # PODES sample of 3000 observations over the (0,30) timespan
-prob = ODEProblem(g1, r0, tspan, p)
+prob = ODEProblem(g1, varmap, tspan)
 tspan2 = (0.0, 3.0)                 # Xiang test sample of 300 observations with a timestep of 0.01
-prob_short = ODEProblem(g1, r0, tspan2, p)
+prob_short = ODEProblem(g1, varmap, tspan2)
 
 
 dt = 30.0/3000
@@ -92,24 +95,23 @@ plot(plot(xyzt, xyz), plot(xy, xz, yz, layout = (1, 3), w = 1), layout = (2, 1),
 
 obj_short = build_loss_objective(prob_short, Tsit5(), L2Loss(t_short, data_short), tstops = t_short)
 optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
-# Tolerance is still too high to get close enough
+short_solutions = Dict{String, Any}()
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
+short_solutions["BBO (Tsit5 default tol)"] = res1
 
 
 obj_short = build_loss_objective(
     prob_short, Tsit5(), L2Loss(t_short, data_short), tstops = t_short, reltol = 1e-9)
 optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
-# With the tolerance lower, it achieves the correct solution in 3.5 seconds.
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
+short_solutions["BBO (Tsit5 reltol=1e-9)"] = res1
 
 
 obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short),
     tstops = t_short, reltol = 1e-9, abstol = 1e-9)
 optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
-# With the more accurate solver Vern9 in the solution of the ODE, the convergence is less efficient!
-
-# Fastest BlackBoxOptim: 3.5 seconds
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 7e3)
+short_solutions["BBO (Vern9 1e-9)"] = res1
 
 
 obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short),
@@ -118,72 +120,101 @@ obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short
 
 opt = Opt(:GN_ORIG_DIRECT_L, 3)
 optprob = OptimizationProblem(obj_short, GloIniPar, lb = first.(LooserBounds), ub = last.(LooserBounds))
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_ORIG_DIRECT_L"] = res1
 
 
 opt = Opt(:GN_CRS2_LM, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_CRS2_LM"] = res1
 
 
 opt = Opt(:GN_ISRES, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Accurate to single precision 8.2 seconds
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_ISRES"] = res1
 
 
 opt = Opt(:GN_ESCH, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Approximately accurate, good starting values for local optimization
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_ESCH"] = res1
 
 
 opt = Opt(:LN_BOBYQA, 3)
 optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_BOBYQA"] = res1
 
 
 opt = Opt(:LN_NELDERMEAD, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_NELDERMEAD"] = res1
 
 
 opt = Opt(:LD_SLSQP, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_SLSQP"] = res1
 
 
 opt = Opt(:LN_COBYLA, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_COBYLA"] = res1
 
 
 opt = Opt(:LN_NEWUOA_BOUND, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_NEWUOA_BOUND"] = res1
 
 
 opt = Opt(:LN_PRAXIS, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_PRAXIS"] = res1
 
 
 opt = Opt(:LN_SBPLX, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_SBPLX"] = res1
 
 
 opt = Opt(:LD_MMA, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_MMA"] = res1
 
 
 opt = Opt(:LD_LBFGS, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_LBFGS"] = res1
 
 
 opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_TNEWTON_PRECOND_RESTART"] = res1
 
 
-# BB with Vern9 converges very slowly. The final values are within the NarrowBounds.
+for (name, sol) in sort!(collect(short_solutions); by = first)
+    println(rpad(name, 28),
+        "estimate=", round.(sol.u; digits = 3),
+        "  retcode=", sol.retcode,
+        "  loss=", sol.objective,
+        "  max|est-true|=", round(maximum(abs.(sol.u .- p)); sigdigits = 3))
+end
+best_loss, best_loss_name = minimum((sol.objective, name) for (name, sol) in short_solutions)
+best_dist, best_dist_name = minimum((maximum(abs.(sol.u .- p)), name) for (name, sol) in short_solutions)
+println("lowest loss: ", best_loss_name, " (loss = ", best_loss, ")")
+println("closest to the true parameters: ", best_dist_name, " (max|est-true| = ", best_dist, ")")
+
+
+# BBO is given a smaller iteration budget on the long problem.
 obj = build_loss_objective(prob, Vern9(), L2Loss(time_points, data),
-    tstops = time_points, reltol = 1e-9, abstol = 1e-9)
+    Optimization.AutoForwardDiff(), tstops = time_points, reltol = 1e-9, abstol = 1e-9)
 optprob = OptimizationProblem(obj, GloIniPar, lb = first.(LooserBounds), ub = last.(LooserBounds))
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 4e3) # Default adaptive_de_rand_1_bin_radiuslimited 33 sec [10.2183, 24.6711, 2.28969]
-#@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :adaptive_de_rand_1_bin, MaxSteps = 4e3) # Method 32 sec [13.2222, 25.8589, 2.56176]
-#@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :dxnes, MaxSteps = 2e3) # Method dxnes 119 sec  [16.8648, 24.393, 2.29119]
-#@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :xnes, MaxSteps = 2e3) # Method xnes 304 sec  [19.1647, 24.9479, 2.39467]
-#@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :de_rand_1_bin_radiuslimited, MaxSteps = 2e3) # Method 44 sec  [13.805, 24.6054, 2.37274]
-#@btime res1 = bboptimize(obj;SearchRange = LooserBounds, Method = :generating_set_search, MaxSteps = 2e3) # Method 195 sec [19.1847, 24.9492, 2.39412]
+global_solutions = Dict{String, Any}()
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 4e3)
+global_solutions["BBO_adaptive_de_rand_1_bin"] = res1
+#res1 = @btime bboptimize(obj;SearchRange = LooserBounds, Method = :adaptive_de_rand_1_bin, MaxSteps = 4e3)
+#res1 = @btime bboptimize(obj;SearchRange = LooserBounds, Method = :dxnes, MaxSteps = 2e3)
+#res1 = @btime bboptimize(obj;SearchRange = LooserBounds, Method = :xnes, MaxSteps = 2e3)
+#res1 = @btime bboptimize(obj;SearchRange = LooserBounds, Method = :de_rand_1_bin_radiuslimited, MaxSteps = 2e3)
+#res1 = @btime bboptimize(obj;SearchRange = LooserBounds, Method = :generating_set_search, MaxSteps = 2e3)
 
 
 # using Evolutionary
@@ -192,32 +223,72 @@ optprob = OptimizationProblem(obj, GloIniPar, lb = first.(LooserBounds), ub = la
 
 
 opt = Opt(:GN_ORIG_DIRECT_L, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12, maxtime = 300)
+global_solutions["GN_ORIG_DIRECT_L"] = res1
 
 
 opt = Opt(:GN_CRS2_LM, 3)
-@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12) # Hit and miss. converge approximately accurate values for local opt.91 seconds
+res1 = @btime solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12, maxtime = 300)
+global_solutions["GN_CRS2_LM"] = res1
 
 
 opt = Opt(:GN_ISRES, 3)
-@btime res1 = solve(optprob, opt, maxiters = 50000, xtol_rel = 1e-12) # Approximately accurate within local bounds
+res1 = @btime solve(optprob, opt, maxiters = 50000, xtol_rel = 1e-12, maxtime = 300)
+global_solutions["GN_ISRES"] = res1
 
 
 opt = Opt(:GN_ESCH, 3)
-@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12) # Approximately accurate
+res1 = @btime solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12, maxtime = 300)
+global_solutions["GN_ESCH"] = res1
+
+
+for (name, sol) in sort!(collect(global_solutions); by = first)
+    println(rpad(name, 28),
+        "estimate=", round.(sol.u; digits = 3),
+        "  retcode=", sol.retcode,
+        "  loss=", sol.objective,
+        "  max|est-true|=", round(maximum(abs.(sol.u .- p)); sigdigits = 3),
+        "  within LooserBounds: ", all(first.(LooserBounds) .<= sol.u .<= last.(LooserBounds)),
+        "  within Xiang2015Bounds: ", all(xlow_bounds .<= sol.u .<= xhigh_bounds))
+end
+best_loss, best_loss_name = minimum((sol.objective, name) for (name, sol) in global_solutions)
+best_dist, best_dist_name = minimum((maximum(abs.(sol.u .- p)), name) for (name, sol) in global_solutions)
+println("lowest loss: ", best_loss_name, " (loss = ", best_loss, ")")
+println("closest to the true parameters: ", best_dist_name, " (max|est-true| = ", best_dist, ")")
+println("loss at the true parameters ", p, ": ", obj(p))
+println("loss with σ shifted by +1e-6: ", obj([10.0 + 1e-6, 28.0, 2.66]))
+println("loss with σ shifted by +1e-4: ", obj([10.0 + 1e-4, 28.0, 2.66]))
 
 
 opt = Opt(:LN_BOBYQA, 3)
-optprob = OptimizationProblem(obj_short, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Claims SUCCESS but does not iterate to the true values.
+optprob = OptimizationProblem(obj, LocIniPar, lb = xlow_bounds, ub = xhigh_bounds)
+local_solutions = Dict{String, Any}()
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+local_solutions["LN_BOBYQA"] = res1
 
 
 opt = Opt(:LN_NELDERMEAD, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Inaccurate final values
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+local_solutions["LN_NELDERMEAD"] = res1
 
 
 opt = Opt(:LD_SLSQP, 3)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12) # Inaccurate final values
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+local_solutions["LD_SLSQP"] = res1
+
+
+for (name, sol) in sort!(collect(local_solutions); by = first)
+    println(rpad(name, 28),
+        "estimate=", round.(sol.u; digits = 3),
+        "  retcode=", sol.retcode,
+        "  loss=", sol.objective,
+        "  max|est-true|=", round(maximum(abs.(sol.u .- p)); sigdigits = 3),
+        "  strictly inside Xiang2015Bounds: ", all(xlow_bounds .< sol.u .< xhigh_bounds))
+end
+best_loss, best_loss_name = minimum((sol.objective, name) for (name, sol) in local_solutions)
+best_dist, best_dist_name = minimum((maximum(abs.(sol.u .- p)), name) for (name, sol) in local_solutions)
+println("lowest loss: ", best_loss_name, " (loss = ", best_loss, ")")
+println("closest to the true parameters: ", best_dist_name, " (max|est-true| = ", best_dist, ")")
 
 
 using SciMLBenchmarks
