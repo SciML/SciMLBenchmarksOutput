@@ -572,12 +572,12 @@ end
 
 ```
 6-element Vector{Float64}:
- 9.247e-5
- 4.9449e-5
- 0.000337278
- 0.000406888
- 0.000263599
- 0.000222589
+ 9.4349e-5
+ 4.9729e-5
+ 0.000336308
+ 0.000442108
+ 0.000295269
+ 0.000224449
 ```
 
 
@@ -631,24 +631,24 @@ end
 ```
 
 ```
-8.174516 seconds (12.21 M allocations: 599.617 MiB, 1.08% gc time, 91.43%
+8.133928 seconds (12.21 M allocations: 599.675 MiB, 1.15% gc time, 91.37%
  compilation time)
- 15.712320 seconds (23.75 M allocations: 1.087 GiB, 1.30% gc time, 96.95% c
+ 15.474757 seconds (23.75 M allocations: 1.087 GiB, 1.27% gc time, 96.93% c
 ompilation time)
-166.478800 seconds (13.05 M allocations: 1.179 GiB, 0.31% gc time, 5.36% co
+199.020639 seconds (13.05 M allocations: 1.179 GiB, 0.24% gc time, 4.39% co
 mpilation time)
-183.428857 seconds (18.97 M allocations: 1.630 GiB, 0.72% gc time, 5.39% co
+190.511510 seconds (18.97 M allocations: 1.630 GiB, 0.72% gc time, 5.19% co
 mpilation time)
-130.961613 seconds (7.58 M allocations: 1.073 GiB, 0.89% gc time, 4.58% com
+117.341347 seconds (7.58 M allocations: 1.073 GiB, 1.29% gc time, 5.11% com
 pilation time)
 
 6-element Vector{Float64}:
- 116.473833763
-   0.471914018
- 157.612951462
- 131.167688189
- 138.182257312
-   0.501498223
+ 109.40917914
+   0.472087732
+ 156.494868798
+ 127.725404143
+ 132.951675737
+   0.501379941
 ```
 
 
@@ -688,11 +688,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.012573807
- 0.396159159
- 0.448902043
- 0.377348251
- 0.008658227
+ 0.012122633
+ 0.386854429
+ 0.437882261
+ 0.367713323
+ 0.008604673
 ```
 
 
@@ -736,11 +736,11 @@ end
 ```
 6-element Vector{Float64}:
  0.0
- 0.002270939
- 0.007938731
- 0.006887536
- 0.008387058
- 0.008631497
+ 0.002219708
+ 0.008054995
+ 0.006191666
+ 0.007635368
+ 0.008705342
 ```
 
 
@@ -762,18 +762,18 @@ display(forward_timings)
 t64 ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ Compile-time CSA           9.247e-5     116.474     0.0         0.0 
+   1 │ Compile-time CSA           9.4349e-5    109.409     0.0         0.0 
     ⋯
-   2 │ DSA                        4.9449e-5      0.471914  0.0125738   0.00
-227
-   3 │ CSA user-Jacobian          0.000337278  157.613     0.396159    0.00
-793
-   4 │ AD-Jacobian                0.000406888  131.168     0.448902    0.00
-688
-   5 │ AD-Jv seeding              0.000263599  138.182     0.377348    0.00
-838 ⋯
-   6 │ Numerical Differentiation  0.000222589    0.501498  0.00865823  0.00
-863
+   2 │ DSA                        4.9729e-5      0.472088  0.0121226   0.00
+221
+   3 │ CSA user-Jacobian          0.000336308  156.495     0.386854    0.00
+805
+   4 │ AD-Jacobian                0.000442108  127.725     0.437882    0.00
+619
+   5 │ AD-Jv seeding              0.000295269  132.952     0.367713    0.00
+763 ⋯
+   6 │ Numerical Differentiation  0.000224449    0.50138   0.00860467  0.00
+870
                                                                 1 column om
 itted
 ```
@@ -786,6 +786,30 @@ itted
 
 Adjoint requires a slightly different setup even with forward mode ADs since it requires
 a loss function choice. For that we simply take the L2 norm of the solution.
+
+Every method is timed on every model. Each block also records the relative error
+`maximum(abs, g .- g_ForwardDiff) / maximum(abs, g_ForwardDiff)` of the gradient it
+returns, so a fast but wrong gradient is visible in the error table below. A method that
+throws records `missing` and prints its error.
+
+```julia
+relerr(g_ref, g) = maximum(abs, g_ref .- vec(g)) / maximum(abs, g_ref)
+
+function try_gradient(name, f)
+    try
+        f()
+    catch e
+        println(name, " fails: ", first(split(sprint(showerror, e), '\n')))
+        missing
+    end
+end
+```
+
+```
+try_gradient (generic function with 1 method)
+```
+
+
 
 ```julia
 adjoint_lv = let
@@ -817,32 +841,26 @@ adjoint_lv = let
     end
     t4 = @belapsed numerical_sen_l2(
         $lvdf, $lvu0, $lvtspan, $lvp, $lvt, $(Tsit5()); $tols...);
-    [t1; t2; t3; t4]
+    (times = [t1; t2; t3; t4],
+        errors = [0.0; relerr(lsol1, lsol2); [relerr(lsol1, g) for g in lsol3]; relerr(lsol1, lsol4)])
 end
 ```
 
 ```
-5.622900 seconds (11.69 M allocations: 592.542 MiB, 1.56% gc time, 99.99%
+5.842575 seconds (11.69 M allocations: 592.387 MiB, 2.03% gc time, 99.98%
  compilation time)
-  9.039256 seconds (14.84 M allocations: 734.702 MiB, 1.05% gc time, 99.80%
+  9.254089 seconds (14.84 M allocations: 734.824 MiB, 0.59% gc time, 99.77%
  compilation time)
-140.649327 seconds (185.08 M allocations: 9.492 GiB, 1.59% gc time, 99.96% 
+144.438728 seconds (185.24 M allocations: 9.499 GiB, 1.61% gc time, 99.95% 
 compilation time)
-  1.079961 seconds (2.01 M allocations: 103.985 MiB, 16.44% gc time, 99.81%
- compilation time)
-12-element Vector{Float64}:
- 0.00010804
- 0.01261464
- 0.000589298
- 0.000716627
- 0.000491567
- 0.000890125
- 0.001851421
- 0.001323094
- 0.000908456
- 0.001396213
- 0.000790316
- 0.000667157
+  1.009492 seconds (2.01 M allocations: 103.843 MiB, 5.30% gc time, 99.78% 
+compilation time)
+(times = [0.00011407, 0.01279752, 0.000598186, 0.000709196, 0.000495107, 0.
+000903065, 0.00187022, 0.001353343, 0.000934904, 0.001308063, 0.000807365, 
+0.000667866], errors = [0.0, 3.1671070805216666e-5, 7.841996763568086e-5, 7
+.843598867558353e-5, 7.842564434155313e-5, 7.822254605326835e-5, 7.82225451
+9946229e-5, 7.824921320449566e-5, 0.00010391983183246092, 0.000103925861962
+91771, 0.00010392586261012839, 0.00015700118110521506])
 ```
 
 
@@ -856,9 +874,9 @@ adjoint_bruss = let
     bfun, b_u0, b_p, brusselator_jac, brusselator_comp = makebrusselator(n)
     @time bsol1 = auto_sen_l2(
         bfun, b_u0, tspan, b_p, bt, (Rodas5()); diffalg = (ForwardDiff.gradient), tols...);
-    #@time bsol2 = auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5(autodiff=AutoFiniteDiff())); diffalg=(ReverseDiff.gradient), tols...);
-    #@test maximum(abs, bsol1 .- bsol2)/maximum(abs,  bsol1) < 1e-2
-
+    @time bsol2 = try_gradient("ReverseDiff",
+        () -> auto_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5(autodiff = AutoFiniteDiff()));
+            diffalg = (ReverseDiff.gradient), tols...))
     @time bsol3 = map(ADJOINT_METHODS) do alg
         @info "Running $alg"
         f = SciMLSensitivity.alg_autodiff(alg) ? bfun :
@@ -868,49 +886,50 @@ adjoint_bruss = let
             f, b_u0, tspan, b_p, bt, solver, reltol = 1e-7; sensalg = alg, tols...)
     end
     @time bsol4 = numerical_sen_l2(bfun, b_u0, tspan, b_p, bt, (Rodas5()); tols...);
-    # NOTE: backsolve gives unstable results!!!
     @test all(i->maximum(abs, bsol1 .- bsol3[i]')/maximum(abs, bsol1) < 4e-2,
         eachindex(ADJOINT_METHODS)[1:(2end ÷ 3)])
-    @test all(i->maximum(abs, bsol1 .- bsol3[i]')/maximum(abs, bsol1) >= 4e-2,
-        eachindex(ADJOINT_METHODS)[(2end ÷ 3 + 1):end])
     @test maximum(abs, bsol1 .- bsol4)/maximum(abs, bsol1) < 2e-2
     t1 = @belapsed auto_sen_l2($bfun, $b_u0, $tspan, $b_p, $bt, $(Rodas5());
         diffalg = $(ForwardDiff.gradient), $tols...);
-    #t2 = @belapsed auto_sen_l2($bfun, $b_u0, $tspan, $b_p, $bt, $(Rodas5(autodiff=AutoFiniteDiff())); diffalg=$(ReverseDiff.gradient), $tols...);
-    t2 = NaN
-    t3 = map(ADJOINT_METHODS[1:(2end ÷ 3)]) do alg
+    t2 = ismissing(bsol2) ? missing :
+         @belapsed auto_sen_l2($bfun, $b_u0, $tspan, $b_p, $bt,
+        $(Rodas5(autodiff = AutoFiniteDiff())); diffalg = $(ReverseDiff.gradient), $tols...);
+    t3 = map(ADJOINT_METHODS) do alg
         @info "Running $alg"
         f = SciMLSensitivity.alg_autodiff(alg) ? bfun :
             ODEFunction{true, SciMLBase.FullSpecialize}(bfun, jac = brusselator_jac)
         solver = Rodas5(autodiff = AutoFiniteDiff())
         @elapsed diffeq_sen_l2(f, b_u0, tspan, b_p, bt, solver; sensalg = alg, tols...);
     end
-    t3 = [t3; fill(NaN, length(ADJOINT_METHODS)÷3)]
     t4 = @belapsed numerical_sen_l2($bfun, $b_u0, $tspan, $b_p, $bt, $(Rodas5()); $tols...);
-    [t1; t2; t3; t4]
+    (times = [t1; t2; t3; t4],
+        errors = [0.0; ismissing(bsol2) ? missing : relerr(bsol1, bsol2);
+                  [relerr(bsol1, g) for g in bsol3]; relerr(bsol1, bsol4)])
 end
 ```
 
 ```
-14.365784 seconds (20.44 M allocations: 967.274 MiB, 1.32% gc time, 96.06%
+14.745339 seconds (20.44 M allocations: 967.213 MiB, 1.17% gc time, 96.72%
  compilation time)
-125.753147 seconds (104.86 M allocations: 5.197 GiB, 0.96% gc time, 90.28% 
+ReverseDiff fails: TypeError: in setfield!, expected LinearAlgebra.LU{Rever
+seDiff.TrackedReal{Float64, Float64, Nothing}, Matrix{ReverseDiff.TrackedRe
+al{Float64, Float64, Nothing}}, Vector{Int64}}, got a value of type LinearA
+lgebra.LU{ReverseDiff.TrackedReal{Float64, Float64, ReverseDiff.TrackedArra
+y{Float64, Float64, 1, Vector{Float64}, Vector{Float64}}}, Matrix{ReverseDi
+ff.TrackedReal{Float64, Float64, ReverseDiff.TrackedArray{Float64, Float64,
+ 1, Vector{Float64}, Vector{Float64}}}}, Vector{Int64}}
+ 56.841272 seconds (50.46 M allocations: 2.225 GiB, 1.00% gc time, 99.85% c
+ompilation time)
+129.295436 seconds (104.37 M allocations: 5.174 GiB, 1.14% gc time, 90.46% 
 compilation time: 1% of which was recompilation)
-  7.660379 seconds (6.14 M allocations: 342.099 MiB, 1.61% gc time, 80.71% 
+  7.795861 seconds (6.14 M allocations: 342.070 MiB, 2.53% gc time, 80.75% 
 compilation time: <1% of which was recompilation)
-12-element Vector{Float64}:
-   0.483263727
- NaN
-   3.770427609
-   1.815491956
-   0.529447104
-   0.278322866
-   0.2753519
-   0.172531957
- NaN
- NaN
- NaN
-   1.410942885
+(times = Union{Missing, Float64}[0.483152062, missing, 3.714550184, 1.82053
+4182, 0.514955382, 0.214712596, 0.2799931, 0.178576259, 3.289840651, 1.6650
+24382, 0.475039646, 1.442014437], errors = Union{Missing, Float64}[0.0, mis
+sing, 6.444517350020557e-5, 6.453611222376971e-5, 6.441293929124296e-5, 6.4
+65751184388137e-5, 6.460121948953122e-5, 6.46189269923375e-5, 0.99995701418
+0297, 0.9999623395293984, 0.9999623663249984, 3.836286724647126e-5])
 ```
 
 
@@ -924,8 +943,10 @@ adjoint_pollution = let
     @time psol1 = auto_sen_l2(
         (ODEFunction{true, SciMLBase.FullSpecialize}(pollution.f)), pu0, ptspan, pp,
         pts, (Rodas5(autodiff = AutoFiniteDiff())); diffalg = (ForwardDiff.gradient), tols...);
-    #@time psol2 = auto_sen_l2((ODEFunction{true, SciMLBase.FullSpecialize}(pollution.f)), pu0, ptspan, pp, pts, (Rodas5(autodiff=AutoFiniteDiff())); diffalg=(ReverseDiff.gradient), tols...);
-    #@test maximum(abs, psol1 .- psol2)/maximum(abs,  psol1) < 1e-2
+    @time psol2 = try_gradient("ReverseDiff",
+        () -> auto_sen_l2((ODEFunction{true, SciMLBase.FullSpecialize}(pollution.f)), pu0,
+            ptspan, pp, pts, (Rodas5(autodiff = AutoFiniteDiff()));
+            diffalg = (ReverseDiff.gradient), tols...))
     @time psol3 = map(ADJOINT_METHODS) do alg
         @info "Running $alg"
         f = SciMLSensitivity.alg_autodiff(alg) ? pollution.f :
@@ -936,52 +957,55 @@ adjoint_pollution = let
     @time psol4 = numerical_sen_l2(
         (ODEFunction{true, SciMLBase.FullSpecialize}(pollution.f)),
         pu0, ptspan, pp, pts, (Rodas5(autodiff = AutoFiniteDiff())); tols...);
-    # NOTE: backsolve gives unstable results!!!
     @test all(i->maximum(abs, psol1 .- psol3[i]')/maximum(abs, psol1) < 1e-2,
         eachindex(ADJOINT_METHODS)[1:(2end ÷ 3)])
-    @test all(i->maximum(abs, psol1 .- psol3[i]')/maximum(abs, psol1) >= 1e-2,
-        eachindex(ADJOINT_METHODS)[(2end ÷ 3 + 1):end])
     @test maximum(abs, psol1 .- psol4)/maximum(abs, psol1) < 1e-2
     t1 = @belapsed auto_sen_l2(
         $(ODEFunction{true, SciMLBase.FullSpecialize}(pollution.f)), $pu0, $ptspan, $pp,
         $pts, $(Rodas5(autodiff = AutoFiniteDiff())); diffalg = $(ForwardDiff.gradient), $tols...);
-    #t2 = @belapsed auto_sen_l2($(ODEFunction{true, SciMLBase.FullSpecialize}(pollution.f)), $pu0, $ptspan, $pp, $pts, $(Rodas5(autodiff=AutoFiniteDiff())); diffalg=$(ReverseDiff.gradient), $tols...);
-    t2 = NaN
-    t3 = map(ADJOINT_METHODS[1:(2end ÷ 3)]) do alg
+    t2 = ismissing(psol2) ? missing :
+         @belapsed auto_sen_l2($(ODEFunction{true, SciMLBase.FullSpecialize}(pollution.f)),
+        $pu0, $ptspan, $pp, $pts, $(Rodas5(autodiff = AutoFiniteDiff()));
+        diffalg = $(ReverseDiff.gradient), $tols...);
+    t3 = map(ADJOINT_METHODS) do alg
         @info "Running $alg"
         f = SciMLSensitivity.alg_autodiff(alg) ? pollution.f :
             ODEFunction{true, SciMLBase.FullSpecialize}(pollution.f, jac = pollution.jac)
         solver = Rodas5(autodiff = AutoFiniteDiff())
         @elapsed diffeq_sen_l2(f, pu0, ptspan, pp, pts, solver; sensalg = alg, tols...);
     end
-    t3 = [t3; fill(NaN, length(ADJOINT_METHODS)÷3)]
     t4 = @belapsed numerical_sen_l2(
         $(ODEFunction{true, SciMLBase.FullSpecialize}(pollution.f)),
         $pu0, $ptspan, $pp, $pts, $(Rodas5(autodiff = AutoFiniteDiff())); $tols...);
-    [t1; t2; t3; t4]
+    (times = [t1; t2; t3; t4],
+        errors = [0.0; ismissing(psol2) ? missing : relerr(psol1, psol2);
+                  [relerr(psol1, g) for g in psol3]; relerr(psol1, psol4)])
 end
 ```
 
 ```
-12.693289 seconds (18.00 M allocations: 831.195 MiB, 0.54% gc time, 99.92%
+13.314655 seconds (18.00 M allocations: 831.090 MiB, 1.80% gc time, 99.92%
  compilation time)
-114.711573 seconds (135.99 M allocations: 6.533 GiB, 1.29% gc time, 94.92% 
-compilation time)
- 12.142490 seconds (37.49 M allocations: 1.761 GiB, 4.36% gc time, 99.86% c
+ReverseDiff fails: TypeError: in setfield!, expected LinearAlgebra.LU{Rever
+seDiff.TrackedReal{Float64, Float64, Nothing}, Matrix{ReverseDiff.TrackedRe
+al{Float64, Float64, Nothing}}, Vector{Int64}}, got a value of type LinearA
+lgebra.LU{ReverseDiff.TrackedReal{Float64, Float64, ReverseDiff.TrackedArra
+y{Float64, Float64, 1, Vector{Float64}, Vector{Float64}}}, Matrix{ReverseDi
+ff.TrackedReal{Float64, Float64, ReverseDiff.TrackedArray{Float64, Float64,
+ 1, Vector{Float64}, Vector{Float64}}}}, Vector{Int64}}
+ 40.423709 seconds (63.38 M allocations: 2.936 GiB, 1.97% gc time, 99.95% c
 ompilation time)
-12-element Vector{Float64}:
-   0.009835903
- NaN
-   0.82247867
-   1.493470544
-   0.314696223
-   0.19569788
-   0.656869443
-   0.208692418
- NaN
- NaN
- NaN
-   0.016344651
+107.371677 seconds (81.22 M allocations: 3.854 GiB, 1.04% gc time, 93.96% c
+ompilation time)
+ 12.281647 seconds (37.49 M allocations: 1.761 GiB, 3.01% gc time, 99.86% c
+ompilation time)
+(times = Union{Missing, Float64}[0.009846494, missing, 0.817570512, 1.48441
+8836, 0.31684003, 0.201240643, 0.655918115, 0.208306804, 0.250773893, 1.408
+613862, 0.290207521, 0.016467667], errors = Union{Missing, Float64}[0.0, mi
+ssing, 2.7106933423883584e-7, 2.70906156549398e-7, 2.7118704674945323e-7, 2
+.7237528567472993e-7, 2.7271981103013036e-7, 2.72816733824063e-7, 8.0581678
+35657999e10, 5.190071132135101e186, 7.536953899960696e186, 5.76008812683679
+96e-6])
 ```
 
 
@@ -997,7 +1021,7 @@ adjoint_pkpd = let
     pkpdsol2 = @time auto_sen_l2((pkpdf.f), pkpdu0, pkpdtspan, pkpdp, pts,
         (Tsit5()); callback = pkpdcb, tstops = 0:24:240,
         diffalg = (ReverseDiff.gradient), tols...);
-    pkpdsol3 = @time map(ADJOINT_METHODS[1:(2end ÷ 3)]) do alg
+    pkpdsol3 = @time map(ADJOINT_METHODS) do alg
         f = SciMLSensitivity.alg_autodiff(alg) ? pkpdf.f :
             ODEFunction{true, SciMLBase.FullSpecialize}(pkpdf.f, jac = pkpdf.jac)
         diffeq_sen_l2(f, pkpdu0, pkpdtspan, pkpdp, pts, (Tsit5()); sensalg = alg,
@@ -1017,47 +1041,44 @@ adjoint_pkpd = let
     t2 = @belapsed auto_sen_l2($(pkpdf.f), $pkpdu0, $pkpdtspan, $pkpdp, $pts,
         $(Tsit5()); callback = pkpdcb, tstops = 0:24:240,
         diffalg = $(ReverseDiff.gradient), $tols...);
-    t3 = map(ADJOINT_METHODS[1:(2end ÷ 3)]) do alg
+    t3 = map(ADJOINT_METHODS) do alg
         f = SciMLSensitivity.alg_autodiff(alg) ? pkpdf.f :
             ODEFunction{true, SciMLBase.FullSpecialize}(pkpdf.f, jac = pkpdf.jac)
         @belapsed diffeq_sen_l2(
             $f, $pkpdu0, $pkpdtspan, $pkpdp, $pts, $(Tsit5()); tstops = 0:24:240,
             callback = pkpdcb, sensalg = $alg, tols...);
     end
-    t3 = [t3; fill(NaN, length(ADJOINT_METHODS)÷3)]
     t4 = @belapsed numerical_sen_l2(
         $(ODEFunction{true, SciMLBase.FullSpecialize}(pkpdf.f)), $pkpdu0,
         $pkpdtspan, $pkpdp, $pts, $(Tsit5()); tstops = 0:24:240,
         callback = $pkpdcb, $tols...);
-    [t1; t2; t3; t4]
+    (times = [t1; t2; t3; t4],
+        errors = [0.0; relerr(pkpdsol1, pkpdsol2); [relerr(pkpdsol1, g) for g in pkpdsol3];
+                  relerr(pkpdsol1, pkpdsol4)])
 end
 ```
 
 ```
-5.601187 seconds (11.58 M allocations: 578.902 MiB, 0.87% gc time, 99.92%
+5.889591 seconds (11.58 M allocations: 578.925 MiB, 1.00% gc time, 99.92%
  compilation time)
-  5.879785 seconds (9.90 M allocations: 480.264 MiB, 1.83% gc time, 93.78% 
+  6.230334 seconds (9.79 M allocations: 475.172 MiB, 2.35% gc time, 91.07% 
 compilation time)
- 43.368086 seconds (64.88 M allocations: 3.257 GiB, 1.13% gc time, 99.83% c
+ 59.545163 seconds (85.17 M allocations: 4.293 GiB, 1.44% gc time, 99.74% c
 ompilation time)
-  1.497219 seconds (7.41 M allocations: 382.902 MiB, 3.30% gc time, 97.58% 
+  1.554986 seconds (7.41 M allocations: 382.775 MiB, 3.52% gc time, 97.48% 
 compilation time)
-12-element Vector{Float64}:
-   0.002969746
-   0.308807099
-   0.007800772
-   0.005548123
-   0.002689937
-   0.005610343
-   0.007385174
-   0.005189574
- NaN
- NaN
- NaN
-   0.018134632
+(times = [0.003057042, 0.325527344, 0.007760215, 0.005788147, 0.002665325, 
+0.005515499, 0.00707107, 0.005070201, 0.02629574, 0.018723573, 0.007190309,
+ 0.01760913], errors = [0.0, 3.4138527454101743e-9, 2.019670462196079e-6, 1
+.988438608479686e-6, 1.9183153872667683e-6, 4.495102708891733e-9, 4.4944292
+67231814e-9, 4.570074406696442e-9, NaN, NaN, NaN, 9.799354085583269e-5])
 ```
 
 
+
+
+
+Timings (seconds):
 
 ```julia
 adjoint_methods = ["ForwardDiff", "ReverseDiff",
@@ -1066,8 +1087,8 @@ adjoint_methods = ["ForwardDiff", "ReverseDiff",
     "BacksolveAdjoint User Jac", "BacksolveAdjoint AD Jac", "BacksolveAdjoint v'J",
     "Numerical Differentiation"]
 adjoint_timings = DataFrame(
-    methods = adjoint_methods, LV = adjoint_lv, Bruss = adjoint_bruss,
-    Pollution = adjoint_pollution, PKPD = adjoint_pkpd)
+    methods = adjoint_methods, LV = adjoint_lv.times, Bruss = adjoint_bruss.times,
+    Pollution = adjoint_pollution.times, PKPD = adjoint_pkpd.times)
 Markdown.parse(PrettyTables.pretty_table(
     String, adjoint_timings; backend = :markdown, column_labels = names(adjoint_timings)))
 ```
@@ -1075,18 +1096,47 @@ Markdown.parse(PrettyTables.pretty_table(
 
 |                   **methods** |      **LV** | **Bruss** | **Pollution** |   **PKPD** |
 | -----------------------------:| -----------:| ---------:| -------------:| ----------:|
-|                   ForwardDiff |  0.00010804 |  0.483264 |     0.0098359 | 0.00296975 |
-|                   ReverseDiff |   0.0126146 |       NaN |           NaN |   0.308807 |
-| InterpolatingAdjoint User Jac | 0.000589298 |   3.77043 |      0.822479 | 0.00780077 |
-|   InterpolatingAdjoint AD Jac | 0.000716627 |   1.81549 |       1.49347 | 0.00554812 |
-|      InterpolatingAdjoint v'J | 0.000491567 |  0.529447 |      0.314696 | 0.00268994 |
-|    QuadratureAdjoint User Jac | 0.000890125 |  0.278323 |      0.195698 | 0.00561034 |
-|      QuadratureAdjoint AD Jac |  0.00185142 |  0.275352 |      0.656869 | 0.00738517 |
-|         QuadratureAdjoint v'J |  0.00132309 |  0.172532 |      0.208692 | 0.00518957 |
-|     BacksolveAdjoint User Jac | 0.000908456 |       NaN |           NaN |        NaN |
-|       BacksolveAdjoint AD Jac |  0.00139621 |       NaN |           NaN |        NaN |
-|          BacksolveAdjoint v'J | 0.000790316 |       NaN |           NaN |        NaN |
-|     Numerical Differentiation | 0.000667157 |   1.41094 |     0.0163447 |  0.0181346 |
+|                   ForwardDiff |  0.00011407 |  0.483152 |    0.00984649 | 0.00305704 |
+|                   ReverseDiff |   0.0127975 |   missing |       missing |   0.325527 |
+| InterpolatingAdjoint User Jac | 0.000598186 |   3.71455 |      0.817571 | 0.00776021 |
+|   InterpolatingAdjoint AD Jac | 0.000709196 |   1.82053 |       1.48442 | 0.00578815 |
+|      InterpolatingAdjoint v'J | 0.000495107 |  0.514955 |       0.31684 | 0.00266533 |
+|    QuadratureAdjoint User Jac | 0.000903065 |  0.214713 |      0.201241 |  0.0055155 |
+|      QuadratureAdjoint AD Jac |  0.00187022 |  0.279993 |      0.655918 | 0.00707107 |
+|         QuadratureAdjoint v'J |  0.00135334 |  0.178576 |      0.208307 |  0.0050702 |
+|     BacksolveAdjoint User Jac | 0.000934904 |   3.28984 |      0.250774 |  0.0262957 |
+|       BacksolveAdjoint AD Jac |  0.00130806 |   1.66502 |       1.40861 |  0.0187236 |
+|          BacksolveAdjoint v'J | 0.000807365 |   0.47504 |      0.290208 | 0.00719031 |
+|     Numerical Differentiation | 0.000667866 |   1.44201 |     0.0164677 |  0.0176091 |
+
+
+
+
+Relative error of each gradient against the ForwardDiff gradient:
+
+```julia
+adjoint_errors = DataFrame(
+    methods = adjoint_methods, LV = adjoint_lv.errors, Bruss = adjoint_bruss.errors,
+    Pollution = adjoint_pollution.errors, PKPD = adjoint_pkpd.errors)
+Markdown.parse(PrettyTables.pretty_table(
+    String, adjoint_errors; backend = :markdown, column_labels = names(adjoint_errors)))
+```
+
+
+|                   **methods** |      **LV** |  **Bruss** | **Pollution** |   **PKPD** |
+| -----------------------------:| -----------:| ----------:| -------------:| ----------:|
+|                   ForwardDiff |         0.0 |        0.0 |           0.0 |        0.0 |
+|                   ReverseDiff |  3.16711e-5 |    missing |       missing | 3.41385e-9 |
+| InterpolatingAdjoint User Jac |    7.842e-5 | 6.44452e-5 |    2.71069e-7 | 2.01967e-6 |
+|   InterpolatingAdjoint AD Jac |   7.8436e-5 | 6.45361e-5 |    2.70906e-7 | 1.98844e-6 |
+|      InterpolatingAdjoint v'J |  7.84256e-5 | 6.44129e-5 |    2.71187e-7 | 1.91832e-6 |
+|    QuadratureAdjoint User Jac |  7.82225e-5 | 6.46575e-5 |    2.72375e-7 |  4.4951e-9 |
+|      QuadratureAdjoint AD Jac |  7.82225e-5 | 6.46012e-5 |     2.7272e-7 | 4.49443e-9 |
+|         QuadratureAdjoint v'J |  7.82492e-5 | 6.46189e-5 |    2.72817e-7 | 4.57007e-9 |
+|     BacksolveAdjoint User Jac |  0.00010392 |   0.999957 |    8.05817e10 |        NaN |
+|       BacksolveAdjoint AD Jac | 0.000103926 |   0.999962 |   5.19007e186 |        NaN |
+|          BacksolveAdjoint v'J | 0.000103926 |   0.999962 |   7.53695e186 |        NaN |
+|     Numerical Differentiation | 0.000157001 | 3.83629e-5 |    5.76009e-6 | 9.79935e-5 |
 
 
 
@@ -1139,14 +1189,14 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [7ed4a6bd] LinearSolve v5.17.3
 ⌃ [da2b9cff] Mooncake v0.5.56
   [1dea7af3] OrdinaryDiffEq v7.8.1
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [65888b18] ParameterizedFunctions v5.27.0
   [91a5bcdd] Plots v1.41.7
-  [08abe8d2] PrettyTables v3.4.8
-  [37e2e3b7] ReverseDiff v1.17.0
+⌃ [08abe8d2] PrettyTables v3.4.8
+⌃ [37e2e3b7] ReverseDiff v1.17.0
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
 ⌃ [1ed8b502] SciMLSensitivity v7.119.7
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [c3572dad] Sundials v6.7.1
   [9f7883ad] Tracker v0.2.39
   [e88e6eb3] Zygote v0.7.13
@@ -1167,30 +1217,30 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6e696c72] AbstractPlutoDingetjes v1.4.1
   [1520ce14] AbstractTrees v0.4.5
   [7d9f7c33] Accessors v0.1.45
-  [79e6a3ab] Adapt v4.7.0
+⌃ [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
-  [9b6a8646] AllocCheck v0.2.6
+⌃ [9b6a8646] AllocCheck v0.2.6
   [ec485272] ArnoldiMethod v0.4.0
 ⌃ [4fba245c] ArrayInterface v7.30.1
-  [4c555306] ArrayLayouts v1.12.2
-  [a9b6321e] Atomix v1.2.1
-  [ab4f0b2a] BFloat16s v0.6.1
-  [aae01518] BandedMatrices v1.12.0
+⌃ [4c555306] ArrayLayouts v1.12.2
+⌃ [a9b6321e] Atomix v1.2.1
+⌃ [ab4f0b2a] BFloat16s v0.6.1
+⌃ [aae01518] BandedMatrices v1.12.0
   [6e4b80f9] BenchmarkTools v1.8.0
   [e2ed5e7c] Bijections v0.2.2
   [b2a6c25c] BinaryHeaps v1.1.0
   [caf10ac8] BipartiteGraphs v0.1.14
-  [8e7c35d0] BlockArrays v1.10.0
-  [70df07ce] BracketingNonlinearSolve v1.12.7
-  [fa961155] CEnum v0.5.0
+⌃ [8e7c35d0] BlockArrays v1.10.0
+⌃ [70df07ce] BracketingNonlinearSolve v1.12.7
+⌅ [fa961155] CEnum v0.5.0
   [8be319e6] Chain v1.0.0
-  [082447d4] ChainRules v1.73.0
-  [d360d2e6] ChainRulesCore v1.26.1
+⌃ [082447d4] ChainRules v1.73.0
+⌃ [d360d2e6] ChainRulesCore v1.26.1
   [0ca39b1e] Chairmarks v1.3.1
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
-  [5ae59095] Colors v0.13.1
+⌃ [5ae59095] Colors v0.13.1
 ⌅ [861a8166] Combinatorics v1.0.2
   [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
@@ -1208,29 +1258,29 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-  [2b5f629d] DiffEqBase v7.21.1
-  [459566f4] DiffEqCallbacks v4.19.4
-  [77a26b50] DiffEqNoiseProcess v5.36.3
+⌃ [2b5f629d] DiffEqBase v7.21.1
+⌃ [459566f4] DiffEqCallbacks v4.19.4
+⌃ [77a26b50] DiffEqNoiseProcess v5.36.3
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [a82114a7] DifferentiationInterfaceTest v0.11.0
-  [8d63f2c5] DispatchDoctor v0.4.28
+⌃ [8d63f2c5] DispatchDoctor v0.4.28
   [31c24e10] Distributions v0.25.131
-  [ffbed154] DocStringExtensions v0.9.5
-  [5b8099bc] DomainSets v0.8.1
+⌅ [ffbed154] DocStringExtensions v0.9.5
+⌃ [5b8099bc] DomainSets v0.8.1
   [7c1d4256] DynamicPolynomials v0.6.8
   [4e289a0a] EnumX v1.0.7
 ⌃ [7da242da] Enzyme v0.13.203
-  [f151be2c] EnzymeCore v0.8.21
+⌃ [f151be2c] EnzymeCore v0.8.21
   [e2ba6199] ExprTools v0.1.11
   [55351af7] ExproniconLite v0.10.14
-  [c87230d0] FFMPEG v0.4.5
+⌃ [c87230d0] FFMPEG v0.4.5
   [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
   [a4df4552] FastPower v1.5.0
-  [1a297f60] FillArrays v1.17.0
-  [64ca27bc] FindFirstFunctions v3.2.1
+⌃ [1a297f60] FillArrays v1.17.0
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
 ⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
@@ -1239,8 +1289,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [f62d2435] FunctionProperties v1.2.0
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v1.13.0
-  [d9f16b24] Functors v0.5.3
-  [46192b85] GPUArraysCore v0.2.0
+⌃ [d9f16b24] Functors v0.5.3
+⌃ [46192b85] GPUArraysCore v0.2.0
 ⌅ [61eb1bfa] GPUCompiler v1.23.0
   [28b8d3ca] GR v0.73.27
   [a0844989] Gamma v1.2.0
@@ -1248,12 +1298,12 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [076d061b] HashArrayMappedTries v0.2.0
 ⌅ [eafb193a] Highlights v0.5.3
   [34004b35] HypergeometricFunctions v0.3.30
-  [7869d1d1] IRTools v0.4.20
+⌃ [7869d1d1] IRTools v0.4.20
   [3263718b] ImplicitDiscreteSolve v2.3.0
   [d25df0c9] Inflate v0.1.5
 ⌅ [842dd82b] InlineStrings v1.4.6
   [18e54dd8] IntegerMathUtils v0.1.4
-  [8197267c] IntervalSets v0.7.14
+⌃ [8197267c] IntervalSets v0.7.14
   [3587e190] InverseFunctions v0.1.17
   [41ab1584] InvertedIndices v1.3.1
   [92d709cd] IrrationalConstants v0.2.6
@@ -1262,32 +1312,32 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-⌃ [ccbc3e58] JumpProcesses v9.32.3
-  [63c18a36] KernelAbstractions v0.9.42
-  [ba0b0d4f] Krylov v0.10.10
+⌅ [ccbc3e58] JumpProcesses v9.32.3
+⌅ [63c18a36] KernelAbstractions v0.9.42
+⌃ [ba0b0d4f] Krylov v0.10.10
   [2faa5264] LHLFactorization v2.2.2
-  [929cbde3] LLVM v9.13.1
+⌅ [929cbde3] LLVM v9.13.1
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
-  [87fe0de2] LineSearch v0.1.18
+⌃ [87fe0de2] LineSearch v0.1.18
 ⌃ [7ed4a6bd] LinearSolve v5.17.3
-  [2ab3a3ac] LogExpFunctions v1.0.1
+⌃ [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
   [1914dd2f] MacroTools v0.5.16
   [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
   [dbe65cb8] MistyClosures v2.1.0
-  [961ee093] ModelingToolkit v11.43.1
+⌃ [961ee093] ModelingToolkit v11.43.1
 ⌃ [7771a370] ModelingToolkitBase v1.71.1
-  [6bb917b9] ModelingToolkitTearing v1.20.6
+⌃ [6bb917b9] ModelingToolkitTearing v1.20.6
 ⌃ [da2b9cff] Mooncake v0.5.56
 ⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
-  [102ac46a] MultivariatePolynomials v0.5.19
-  [ffc61752] Mustache v1.0.21
-  [d8a4904e] MutableArithmetics v1.8.0
-  [872c559c] NNlib v0.9.45
+⌃ [102ac46a] MultivariatePolynomials v0.5.19
+⌃ [ffc61752] Mustache v1.0.21 [loaded: v1.1.0]
+⌃ [d8a4904e] MutableArithmetics v1.8.0
+⌃ [872c559c] NNlib v0.9.45
   [77ba4419] NaNMath v1.1.4
 ⌃ [8913a72c] NonlinearSolve v4.30.0
 ⌃ [be0214bd] NonlinearSolveBase v2.49.5
@@ -1297,76 +1347,76 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d8793406] ObjectFile v0.5.1
   [6fe1bfb0] OffsetArrays v1.17.0
   [3bd65402] Optimisers v0.4.9
-⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.1]
+⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.3]
   [1dea7af3] OrdinaryDiffEq v7.8.1
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.9
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
   [50262376] OrdinaryDiffEqDefault v2.6.2
 ⌃ [4302a76b] OrdinaryDiffEqDifferentiation v3.12.0
-  [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
-  [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
+⌃ [127b3ac7] OrdinaryDiffEqNonlinearSolve v2.9.8
+⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.3
-  [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
-  [79d7bb75] OrdinaryDiffEqVerner v2.4.1
+⌃ [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
+⌃ [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
   [65888b18] ParameterizedFunctions v5.27.0
 ⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
+⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
   [e409e4f3] PoissonRandom v0.4.13
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
   [21216c6a] Preferences v1.6.0
-  [08abe8d2] PrettyTables v3.4.8
+⌃ [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
-  [0c0d3e7f] PureKLU v1.5.0
+⌃ [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
   [e6cf234a] RandomNumbers v1.6.0
   [988b38a3] ReadOnlyArrays v0.2.0
   [795d4caa] ReadOnlyDicts v1.0.1
   [c1ae055f] RealDot v0.1.0
-  [3cdcf5f2] RecipesBase v1.3.4
+⌃ [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-  [731186ca] RecursiveArrayTools v4.5.1
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
   [ae5879a3] ResettableStacks v1.4.0
   [9fe22ead] RespecializeParams v1.3.0
-  [37e2e3b7] ReverseDiff v1.17.0
+⌃ [37e2e3b7] ReverseDiff v1.17.0
   [79098fc4] Rmath v0.9.0
-  [f2b01f46] Roots v3.0.8
-  [7e49a35a] RuntimeGeneratedFunctions v0.5.26
-  [9dfe8606] SCCNonlinearSolve v1.15.3
-  [0bca4576] SciMLBase v3.54.0
+⌃ [f2b01f46] Roots v3.0.8
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+⌃ [9dfe8606] SCCNonlinearSolve v1.15.3
+⌃ [0bca4576] SciMLBase v3.54.0
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
-  [19f34311] SciMLJacobianOperators v0.1.19
+⌃ [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
 ⌃ [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
 ⌃ [1ed8b502] SciMLSensitivity v7.119.7
-  [53ae85a6] SciMLStructures v1.10.5
+⌃ [53ae85a6] SciMLStructures v1.10.5
   [7e506255] ScopedValues v1.6.2
   [6c6a2e73] Scratch v1.3.0
   [91c51154] SentinelArrays v1.4.10
   [efcf1570] Setfield v1.1.2
   [992d4aef] Showoff v1.1.1
-  [727e6d20] SimpleNonlinearSolve v2.14.5
+⌃ [727e6d20] SimpleNonlinearSolve v2.14.5
   [699a6c99] SimpleTraits v0.9.6
   [a2af1166] SortingAlgorithms v1.2.3
   [a57abbd0] SparseColumnPivotedQR v2.1.8
   [dc90abb0] SparseInverseSubset v0.1.3
-  [0a514795] SparseMatrixColorings v0.4.28
+⌃ [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
-  [860ef19b] StableRNGs v1.0.4
+⌃ [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
   [64909d44] StateSelection v1.11.1
-  [90137ffa] StaticArrays v1.9.20
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
   [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
@@ -1374,37 +1424,37 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [4c63d2b9] StatsFuns v2.2.1
   [69024149] StringEncodings v0.3.7
 ⌅ [892a3eda] StringManipulation v0.5.0
-  [09ab397b] StructArrays v0.7.3
+⌃ [09ab397b] StructArrays v0.7.3
   [53d494c1] StructIO v0.3.1
   [c3572dad] Sundials v6.7.1
   [2efcf032] SymbolicIndexingInterface v0.3.55
-  [19f23fe9] SymbolicLimits v1.2.1
-  [d1185830] SymbolicUtils v4.46.6
-  [0c5d862f] Symbolics v7.39.2
+⌃ [19f23fe9] SymbolicLimits v1.2.1
+⌃ [d1185830] SymbolicUtils v4.46.6
+⌃ [0c5d862f] Symbolics v7.39.2
   [9ce81f87] TableMetadataTools v0.1.0
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [ed4db957] TaskLocalValues v0.1.3
   [62fd8b95] TensorCore v0.1.1
   [8ea1fca8] TermInterface v2.0.0
-  [a759f4b9] TimerOutputs v1.2.1
+⌃ [a759f4b9] TimerOutputs v1.2.1
   [9f7883ad] Tracker v0.2.39
   [e689c965] Tracy v0.1.6
   [781d530d] TruncatedStacktraces v1.4.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
   [1986cc42] Unitful v1.29.0
-  [013be700] UnsafeAtomics v0.3.2
+⌅ [013be700] UnsafeAtomics v0.3.2
   [41fe7b60] Unzip v0.2.0
   [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
-  [ddb6d928] YAML v0.4.16
+⌃ [ddb6d928] YAML v0.4.16 [loaded: v0.4.17]
   [e88e6eb3] Zygote v0.7.13
   [700de1a5] ZygoteRules v0.2.8
   [6e34b625] Bzip2_jll v1.0.9+0
-  [83423d85] Cairo_jll v1.18.7+0
+⌃ [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
-  [7cc45869] Enzyme_jll v0.0.293+0
+⌅ [7cc45869] Enzyme_jll v0.0.293+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
   [2e619515] Expat_jll v2.8.4+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
@@ -1422,13 +1472,13 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
   [88015f11] LERC_jll v4.2.0+0
-  [dad2f222] LLVMExtra_jll v0.0.47+0
+⌅ [dad2f222] LLVMExtra_jll v0.0.47+0
   [1d63c593] LLVMOpenMP_jll v23.1.1+0
   [ad6e5548] LibTracyClient_jll v0.13.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
-  [4b2f31a3] Libmount_jll v2.42.0+0
+⌃ [4b2f31a3] Libmount_jll v2.42.0+0
   [89763e89] Libtiff_jll v4.7.3+0
   [38a345b3] Libuuid_jll v2.42.0+0
   [856f044c] MKL_jll v2025.2.0+0
@@ -1470,24 +1520,24 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
   [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
   [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
-  [35661453] Xorg_xkbcomp_jll v1.4.7+0
-  [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
+⌃ [35661453] Xorg_xkbcomp_jll v1.4.7+0
+⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
-  [a4ae2306] libaom_jll v3.14.1+0
+⌃ [a4ae2306] libaom_jll v3.14.1+0
   [0ac62f75] libass_jll v0.17.5+0
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
   [2db6ffa8] libevdev_jll v1.13.4+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
-  [b53b4c65] libpng_jll v1.6.58+0
+⌃ [b53b4c65] libpng_jll v1.6.58+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
-  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌃ [1317d2d5] oneTBB_jll v2022.3.0+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
   [dfaa095f] x265_jll v4.1.0+0
   [d8fb68d0] xkbcommon_jll v1.13.0+0
