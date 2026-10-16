@@ -83,9 +83,12 @@ u0 = [1.0, 1.0]                          #initial values
 tspan = (0.0, 10.0)
 p = [1.5, 1.0, 3.0, 1.0]                   #parameters used, these need to be estimated from the data
 tspan = (0.0, 30.0)                     # sample of 3000 observations over the (0,30) timespan
-prob = ODEProblem(f, u0, tspan, p)
-tspan2 = (0.0, 3.0)                     # sample of 3000 observations over the (0,30) timespan
-prob_short = ODEProblem(f, u0, tspan2, p)
+# unknowns(f) is ordered [y, x] rather than in declaration order, so the
+# initial condition and parameters are keyed by name instead of positionally.
+varmap = merge(Dict([f.x, f.y] .=> u0), Dict([f.a, f.b, f.c, f.d] .=> p))
+prob = ODEProblem(f, varmap, tspan)
+tspan2 = (0.0, 3.0)                     # sample of 300 observations over the (0,3) timespan
+prob_short = ODEProblem(f, varmap, tspan2)
 ```
 
 ```
@@ -215,18 +218,19 @@ p2 = plot(data_sol)
 ```julia
 obj_short = build_loss_objective(prob_short, Tsit5(), L2Loss(t_short, data_short), tstops = t_short)
 optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
-# Lower tolerance could lead to smaller fitness (more accuracy)
+short_solutions = Dict{String, Any}()
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
+short_solutions["BBO (Tsit5 default tol)"] = res1
 ```
 
 ```
-2.919 s (21035446 allocations: 794.52 MiB)
+2.882 s (21012268 allocations: 793.65 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.4999016352564527
- 0.9999118341990473
- 2.999657725750994
- 1.0000903934282985
+ 1.4999051249076523
+ 1.002164883956089
+ 3.006514511855068
+ 1.001647932732821
 ```
 
 
@@ -235,18 +239,18 @@ u: 4-element Vector{Float64}:
 obj_short = build_loss_objective(
     prob_short, Tsit5(), L2Loss(t_short, data_short), tstops = t_short, reltol = 1e-9)
 optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
-# Change in tolerance makes it worse
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
+short_solutions["BBO (Tsit5 reltol=1e-9)"] = res1
 ```
 
 ```
-2.899 s (21005451 allocations: 792.96 MiB)
+2.882 s (20977507 allocations: 792.00 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.5000016549670034
- 0.9994044959266404
- 2.9963154465039143
- 0.9990698844011765
+ 1.4997906320696477
+ 0.9998302836439187
+ 3.001838569927878
+ 1.0007072895142448
 ```
 
 
@@ -255,18 +259,18 @@ u: 4-element Vector{Float64}:
 obj_short = build_loss_objective(prob_short, Vern9(), L2Loss(t_short, data_short),
     tstops = t_short, reltol = 1e-9, abstol = 1e-9)
 optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
-# using the more accurate Vern9() reduces the fitness marginally and leads to some increase in time taken
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(); maxiters = 7e3)
+short_solutions["BBO (Vern9 1e-9)"] = res1
 ```
 
 ```
-4.722 s (42519720 allocations: 1.10 GiB)
+4.652 s (42507796 allocations: 1.10 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.4998479842548222
- 1.0005729154962684
- 3.0027718224524893
- 1.0006249995164287
+ 1.5001897862559963
+ 0.9986755910310566
+ 2.9921427064454695
+ 0.9984373298177212
 ```
 
 
@@ -296,11 +300,12 @@ u0: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:GN_ORIG_DIRECT_L, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_ORIG_DIRECT_L"] = res1
 ```
 
 ```
-6.675 s (59570574 allocations: 1.54 GiB)
+6.641 s (59570574 allocations: 1.54 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.3219306476960178
@@ -313,51 +318,54 @@ u: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:GN_CRS2_LM, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_CRS2_LM"] = res1
 ```
 
 ```
-6.712 s (59582494 allocations: 1.54 GiB)
+6.639 s (59607654 allocations: 1.54 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.5000000000702336
- 1.0000000000849065
- 2.999999999508502
- 0.9999999999253821
+ 1.5000000000702722
+ 1.0000000000849543
+ 2.9999999995083915
+ 0.9999999999253644
 ```
 
 
 
 ```julia
 opt = Opt(:GN_ISRES, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_ISRES"] = res1
 ```
 
 ```
-6.599 s (59616799 allocations: 1.54 GiB)
+6.667 s (59617151 allocations: 1.54 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.4615756112088036
- 0.9675121597356009
- 3.1563442999089024
- 1.0450776601948795
+ 1.540295530635045
+ 1.0717962400056278
+ 2.9535285554758284
+ 0.9608690245794508
 ```
 
 
 
 ```julia
 opt = Opt(:GN_ESCH, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["GN_ESCH"] = res1
 ```
 
 ```
-6.689 s (59578425 allocations: 1.54 GiB)
+6.633 s (59578367 allocations: 1.54 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.294922839330214
- 1.032901712343781
- 4.692248015241098
- 1.5436331388375373
+ 1.2983782368741734
+ 0.9952274393320535
+ 4.638150212404566
+ 1.519621163582325
 ```
 
 
@@ -383,11 +391,12 @@ u0: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:LN_BOBYQA, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_BOBYQA"] = res1
 ```
 
 ```
-330.290 ms (3179520 allocations: 84.24 MiB)
+324.972 ms (3179520 allocations: 84.24 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.5000000000703886
@@ -400,11 +409,12 @@ u: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:LN_NELDERMEAD, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_NELDERMEAD"] = res1
 ```
 
 ```
-308.396 ms (3030955 allocations: 80.30 MiB)
+304.389 ms (3030955 allocations: 80.30 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.50000000007048
@@ -417,11 +427,12 @@ u: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:LD_SLSQP, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_SLSQP"] = res1
 ```
 
 ```
-8.159 s (70530530 allocations: 1.87 GiB)
+8.153 s (70530530 allocations: 1.87 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.500000000070235
@@ -434,11 +445,12 @@ u: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:LN_COBYLA, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_COBYLA"] = res1
 ```
 
 ```
-6.737 s (59540084 allocations: 1.54 GiB)
+6.617 s (59540084 allocations: 1.54 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.4999991475913865
@@ -450,13 +462,17 @@ u: 4-element Vector{Float64}:
 
 
 ```julia
+# LN_NEWUOA_BOUND is pathologically slow on this objective with NLopt_jll 2.11
+# (https://github.com/jump-dev/NLopt.jl/issues/280); it is given a 300 s
+# wall-time budget so the page terminates.
 opt = Opt(:LN_NEWUOA_BOUND, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12, maxtime = 300)
+short_solutions["LN_NEWUOA_BOUND"] = res1
 ```
 
 ```
-46493.198 s (10425767 allocations: 276.24 MiB)
-retcode: Failure
+383.492 s (7930813 allocations: 210.14 MiB)
+retcode: MaxTime
 u: 4-element Vector{Float64}:
  1.4999957298677546
  0.9999954574279393
@@ -468,28 +484,30 @@ u: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:LN_PRAXIS, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_PRAXIS"] = res1
 ```
 
 ```
-121.782 ms (1202897 allocations: 31.87 MiB)
+120.961 ms (1202894 allocations: 31.87 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
- 1.5000000000701346
- 1.0000000000849725
- 2.9999999995087285
- 0.999999999925596
+ 1.5000000000699631
+ 1.000000000084824
+ 2.9999999995093436
+ 0.9999999999258158
 ```
 
 
 
 ```julia
 opt = Opt(:LN_SBPLX, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LN_SBPLX"] = res1
 ```
 
 ```
-6.788 s (59540066 allocations: 1.54 GiB)
+6.667 s (59540066 allocations: 1.54 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.4999999301104459
@@ -502,11 +520,12 @@ u: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:LD_MMA, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_MMA"] = res1
 ```
 
 ```
-15.083 s (118980443 allocations: 3.35 GiB)
+14.962 s (118980443 allocations: 3.35 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.5000000000653453
@@ -519,17 +538,76 @@ u: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:LD_TNEWTON_PRECOND_RESTART, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+short_solutions["LD_TNEWTON_PRECOND_RESTART"] = res1
 ```
 
 ```
-52.281 ms (464474 allocations: 13.46 MiB)
+51.873 ms (464474 allocations: 13.46 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.500000000070224
  1.0000000000849025
  2.999999999508518
  0.9999999999254164
+```
+
+
+
+
+
+Each run's estimate, retcode, loss and largest componentwise distance from the true parameters `[1.5, 1.0, 3.0, 1.0]` on the short problem, together with the lowest-loss and closest runs:
+
+```julia
+for (name, sol) in sort!(collect(short_solutions); by = first)
+    println(rpad(name, 28),
+        "estimate=", round.(sol.u; digits = 3),
+        "  retcode=", sol.retcode,
+        "  loss=", sol.objective,
+        "  max|est-true|=", round(maximum(abs.(sol.u .- p)); sigdigits = 3))
+end
+best_loss, best_loss_name = minimum((sol.objective, name) for (name, sol) in short_solutions)
+best_dist, best_dist_name = minimum((maximum(abs.(sol.u .- p)), name) for (name, sol) in short_solutions)
+println("lowest loss: ", best_loss_name, " (loss = ", best_loss, ")")
+println("closest to the true parameters: ", best_dist_name, " (max|est-true| = ", best_dist, ")")
+```
+
+```
+BBO (Tsit5 default tol)     estimate=[1.5, 1.002, 3.007, 1.002]  retcode=Ma
+xIters  loss=0.007525750320717835  max|est-true|=0.00651
+BBO (Tsit5 reltol=1e-9)     estimate=[1.5, 1.0, 3.002, 1.001]  retcode=MaxI
+ters  loss=0.0011315869466765908  max|est-true|=0.00184
+BBO (Vern9 1e-9)            estimate=[1.5, 0.999, 2.992, 0.998]  retcode=Ma
+xIters  loss=0.008235126434335665  max|est-true|=0.00786
+GN_CRS2_LM                  estimate=[1.5, 1.0, 3.0, 1.0]  retcode=MaxIters
+  loss=1.6660903465422662e-16  max|est-true|=4.92e-10
+GN_ESCH                     estimate=[1.298, 0.995, 4.638, 1.52]  retcode=M
+axIters  loss=62.906126732977576  max|est-true|=1.64
+GN_ISRES                    estimate=[1.54, 1.072, 2.954, 0.961]  retcode=M
+axIters  loss=6.41732330239167  max|est-true|=0.0718
+GN_ORIG_DIRECT_L            estimate=[1.322, 1.111, 4.444, 1.481]  retcode=
+MaxIters  loss=73.06637193676285  max|est-true|=1.44
+LD_MMA                      estimate=[1.5, 1.0, 3.0, 1.0]  retcode=MaxIters
+  loss=1.666288300811678e-16  max|est-true|=4.66e-10
+LD_SLSQP                    estimate=[1.5, 1.0, 3.0, 1.0]  retcode=MaxIters
+  loss=1.6660903116233407e-16  max|est-true|=4.92e-10
+LD_TNEWTON_PRECOND_RESTART  estimate=[1.5, 1.0, 3.0, 1.0]  retcode=Success 
+ loss=1.6660913092696734e-16  max|est-true|=4.91e-10
+LN_BOBYQA                   estimate=[1.5, 1.0, 3.0, 1.0]  retcode=Success 
+ loss=1.6660908153090768e-16  max|est-true|=4.92e-10
+LN_COBYLA                   estimate=[1.5, 1.0, 3.0, 1.0]  retcode=MaxIters
+  loss=5.810693336044264e-10  max|est-true|=4.41e-6
+LN_NELDERMEAD               estimate=[1.5, 1.0, 3.0, 1.0]  retcode=Success 
+ loss=1.6660919106479706e-16  max|est-true|=4.93e-10
+LN_NEWUOA_BOUND             estimate=[1.5, 1.0, 3.0, 1.0]  retcode=MaxTime 
+ loss=1.3302718723246076e-7  max|est-true|=7.11e-6
+LN_PRAXIS                   estimate=[1.5, 1.0, 3.0, 1.0]  retcode=Success 
+ loss=1.6660928666759712e-16  max|est-true|=4.91e-10
+LN_SBPLX                    estimate=[1.5, 1.0, 3.0, 1.0]  retcode=MaxIters
+  loss=3.857624352958902e-12  max|est-true|=3.53e-7
+lowest loss: LD_SLSQP (loss = 1.6660903116233407e-16)
+closest to the true parameters: LD_MMA (max|est-true| = 4.6559911481836025e
+-10)
 ```
 
 
@@ -559,28 +637,31 @@ u0: 4-element Vector{Float64}:
 
 
 ```julia
-@btime res1 = solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 4e3)
+long_solutions = Dict{String, Any}()
+res1 = @btime solve(optprob, BBO_adaptive_de_rand_1_bin(), maxiters = 4e3)
+long_solutions["BBO_adaptive_de_rand_1_bin"] = res1
 ```
 
 ```
-22.724 s (223820718 allocations: 4.62 GiB)
+22.672 s (226729910 allocations: 4.68 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.7925743437405783
- 0.9087900394801793
- 2.484636914178089
- 0.7285665525107214
+ 1.3551577464112448
+ 1.351433830905692
+ 3.2796345016710324
+ 1.2111911919282279
 ```
 
 
 
 ```julia
 opt = Opt(:GN_ORIG_DIRECT_L, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+long_solutions["GN_ORIG_DIRECT_L"] = res1
 ```
 
 ```
-55.425 s (547530784 allocations: 11.30 GiB)
+54.892 s (547530784 allocations: 11.30 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  0.5587857860572962
@@ -593,51 +674,90 @@ u: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:GN_CRS2_LM, 4)
-@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12)
+long_solutions["GN_CRS2_LM"] = res1
 ```
 
 ```
-109.807 s (1091253552 allocations: 22.52 GiB)
+109.457 s (1088654405 allocations: 22.46 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.499999999488821
- 1.0000000002357488
- 3.0000000017640938
- 1.0000000007539998
+ 10.0
+  9.111019895945738
+  6.094629643328947
+  2.950814618806064
 ```
 
 
 
 ```julia
 opt = Opt(:GN_ISRES, 4)
-@btime res1 = solve(optprob, opt, maxiters = 50000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 50000, xtol_rel = 1e-12)
+long_solutions["GN_ISRES"] = res1
 ```
 
 ```
-275.070 s (2728863029 allocations: 56.30 GiB)
+273.918 s (2728754549 allocations: 56.30 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 8.246250731107951
- 7.502309056766103
- 0.4259985504081407
- 0.19432511405722597
+ 4.694947158823093
+ 3.2166780019419363
+ 3.4238773550998722
+ 1.624409511889879
 ```
 
 
 
 ```julia
 opt = Opt(:GN_ESCH, 4)
-@btime res1 = solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 20000, xtol_rel = 1e-12)
+long_solutions["GN_ESCH"] = res1
 ```
 
 ```
-110.121 s (1091889349 allocations: 22.53 GiB)
+110.098 s (1091706965 allocations: 22.52 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 5.186779877851043
- 5.050229282400053
- 0.7430140834797861
- 0.2471887095885628
+ 1.2361048284565161
+ 5.633218833740486
+ 5.662253259222494
+ 2.4733319762418167
+```
+
+
+
+
+
+Each global run's estimate, retcode, loss and largest componentwise distance from the true parameters `[1.5, 1.0, 3.0, 1.0]` on the longer problem, together with the lowest-loss and closest runs:
+
+```julia
+for (name, sol) in sort!(collect(long_solutions); by = first)
+    println(rpad(name, 28),
+        "estimate=", round.(sol.u; digits = 3),
+        "  retcode=", sol.retcode,
+        "  loss=", sol.objective,
+        "  max|est-true|=", round(maximum(abs.(sol.u .- p)); sigdigits = 3))
+end
+best_loss, best_loss_name = minimum((sol.objective, name) for (name, sol) in long_solutions)
+best_dist, best_dist_name = minimum((maximum(abs.(sol.u .- p)), name) for (name, sol) in long_solutions)
+println("lowest loss: ", best_loss_name, " (loss = ", best_loss, ")")
+println("closest to the true parameters: ", best_dist_name, " (max|est-true| = ", best_dist, ")")
+```
+
+```
+BBO_adaptive_de_rand_1_bin  estimate=[1.355, 1.351, 3.28, 1.211]  retcode=M
+axIters  loss=3201.0083080039353  max|est-true|=0.351
+GN_CRS2_LM                  estimate=[10.0, 9.111, 6.095, 2.951]  retcode=M
+axIters  loss=23364.367168817356  max|est-true|=8.5
+GN_ESCH                     estimate=[1.236, 5.633, 5.662, 2.473]  retcode=
+MaxIters  loss=18931.630972406478  max|est-true|=4.63
+GN_ISRES                    estimate=[4.695, 3.217, 3.424, 1.624]  retcode=
+MaxIters  loss=21603.7731476875  max|est-true|=3.19
+GN_ORIG_DIRECT_L            estimate=[0.559, 0.37, 7.778, 5.213]  retcode=M
+axIters  loss=14653.110751552666  max|est-true|=4.78
+lowest loss: BBO_adaptive_de_rand_1_bin (loss = 3201.0083080039353)
+closest to the true parameters: BBO_adaptive_de_rand_1_bin (max|est-true| =
+ 0.3514338309056919)
 ```
 
 
@@ -646,10 +766,13 @@ u: 4-element Vector{Float64}:
 
 ## Local problem
 
+Each local solve on the long problem is given a 300 s wall-time budget so the
+page terminates even when an optimizer does not converge.
+
 ```julia
-obj = build_loss_objective(prob, Vern9(), L2Loss(t, data), Optimization.AutoForwardDiff(),
-    tstops = t, reltol = 1e-9, abstol = 1e-9)
-optprob = OptimizationProblem(obj_short, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
+obj = build_loss_objective(prob, Vern9(), L2Loss(time_points, data), Optimization.AutoForwardDiff(),
+    tstops = time_points, reltol = 1e-9, abstol = 1e-9)
+optprob = OptimizationProblem(obj, loc_init, lb = first.(loc_bounds), ub = last.(loc_bounds))
 ```
 
 ```
@@ -665,62 +788,98 @@ u0: 4-element Vector{Float64}:
 
 ```julia
 opt = Opt(:LN_BOBYQA, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+local_solutions = Dict{String, Any}()
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12, maxtime = 300)
+local_solutions["LN_BOBYQA"] = res1
 ```
 
 ```
-323.347 ms (3179520 allocations: 84.24 MiB)
+4.810 s (48069207 allocations: 1015.66 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
- 1.5000000000703886
- 1.0000000000849636
- 2.9999999995077036
- 0.9999999999251571
+ 1.4999999994913764
+ 1.0000000002369105
+ 3.0000000017581714
+ 1.0000000007511933
 ```
 
 
 
 ```julia
 opt = Opt(:LN_NELDERMEAD, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12, maxtime = 300)
+local_solutions["LN_NELDERMEAD"] = res1
 ```
 
 ```
-309.618 ms (3030955 allocations: 80.30 MiB)
+3.111 s (31319069 allocations: 661.74 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
- 1.50000000007048
- 1.0000000000849136
- 2.999999999507337
- 0.9999999999250451
+ 1.4999999994927005
+ 1.0000000002375609
+ 3.000000001754503
+ 1.0000000007499836
 ```
 
 
 
 ```julia
 opt = Opt(:LD_SLSQP, 4)
-@btime res1 = solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12)
+res1 = @btime solve(optprob, opt, maxiters = 10000, xtol_rel = 1e-12, maxtime = 300)
+local_solutions["LD_SLSQP"] = res1
 ```
 
 ```
-8.239 s (70530530 allocations: 1.87 GiB)
+67.081 s (646153924 allocations: 13.68 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.500000000070235
- 1.0000000000849147
- 2.9999999995084474
- 0.9999999999254001
+ 3.2597117225055077
+ 2.7238409647671933
+ 0.8581704906144543
+ 0.40449683944949555
+```
+
+
+
+```julia
+for (name, sol) in sort!(collect(local_solutions); by = first)
+    println(rpad(name, 28),
+        "estimate=", round.(sol.u; digits = 3),
+        "  retcode=", sol.retcode,
+        "  loss=", sol.objective,
+        "  max|est-true|=", round(maximum(abs.(sol.u .- p)); sigdigits = 3),
+        "  strictly inside loc_bounds: ", all(first.(loc_bounds) .< sol.u .< last.(loc_bounds)))
+end
+best_loss, best_loss_name = minimum((sol.objective, name) for (name, sol) in local_solutions)
+best_dist, best_dist_name = minimum((maximum(abs.(sol.u .- p)), name) for (name, sol) in local_solutions)
+println("lowest loss: ", best_loss_name, " (loss = ", best_loss, ")")
+println("closest to the true parameters: ", best_dist_name, " (max|est-true| = ", best_dist, ")")
+```
+
+```
+LD_SLSQP                    estimate=[3.26, 2.724, 0.858, 0.404]  retcode=M
+axIters  loss=21569.713608932525  max|est-true|=2.14  strictly inside loc_b
+ounds: true
+LN_BOBYQA                   estimate=[1.5, 1.0, 3.0, 1.0]  retcode=Success 
+ loss=1.2706803443895793e-14  max|est-true|=1.76e-9  strictly inside loc_bo
+unds: true
+LN_NELDERMEAD               estimate=[1.5, 1.0, 3.0, 1.0]  retcode=Success 
+ loss=1.2706827828703252e-14  max|est-true|=1.75e-9  strictly inside loc_bo
+unds: true
+lowest loss: LN_BOBYQA (loss = 1.2706803443895793e-14)
+closest to the true parameters: LN_NELDERMEAD (max|est-true| = 1.7545032093
+835289e-9)
 ```
 
 
 
 
 
-Parameter estimation on the longer sample proves to be extremely challenging for some of the global optimizers. A few give the accurate values, BlackBoxOptim also performs quite well, while others seem to struggle with accuracy a lot.
+The two tables above summarize the longer-problem runs: each global run's estimate, retcode, loss and distance from the true parameters `[1.5, 1.0, 3.0, 1.0]`, and each local run's estimate, retcode, loss, distance and whether the estimate lies strictly inside `loc_bounds`. `LD_SLSQP` uses the objective's gradient, which is why `obj` is built with `Optimization.AutoForwardDiff()`.
 
 # Conclusion
 
-In general we observe that lower tolerances lead to higher accuracy but too low tolerance could affect the convergence time drastically. Also fitting a shorter timespan seems to be easier in comparison (quite intuitively). NLopt methods seem to give great accuracy in the shorter problem with a lot of the algorithms giving 0 fitness, BBO performs very well on it with marginal change with `tol` values. In the case of global optimization for the longer problem, there is some difference in performance among the algorithms with `LD_SLSQP` `GN_ESCH` `GN_ISRES` `GN_ORIG_DIRECT_L` performing among the worst, BBO also gives a bit high fitness in comparison.
+Tighter ODE solver tolerances make each objective evaluation more expensive: the three BBO runs on the short problem use the default `Tsit5` tolerance, `Tsit5` at `reltol = 1e-9` and `Vern9` at `reltol = abstol = 1e-9`, and the printed timings and the distance column in the summary table show what each setting buys. `LN_NEWUOA_BOUND` on the short problem is given a 300 s wall-time budget because NLopt_jll 2.11's newuoa is pathologically slow on this objective (see the note above). The summary tables print each run's estimate, retcode, loss and distance from the true parameters `[1.5, 1.0, 3.0, 1.0]` on both the short and the longer problem, including which run has the lowest loss and which lands closest; the global optimizers are stochastic, so the distances and winners differ from run to run.
 
 
 ## Appendix
@@ -759,7 +918,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [6e4b80f9] BenchmarkTools v1.8.0
   [a134a8b2] BlackBoxOptim v0.6.12
   [a93c6f00] DataFrames v1.8.2
-  [bcd4f6db] DelayDiffEq v6.4.1
+⌃ [bcd4f6db] DelayDiffEq v6.4.1
 ⌃ [1130ab10] DiffEqParamEstim v2.6.1
   [31c24e10] Distributions v0.25.131
   [f6369f11] ForwardDiff v1.4.6
@@ -768,9 +927,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [76087f3c] NLopt v1.2.1
 ⌃ [7f7a1694] Optimization v5.9.0
   [3e6eede4] OptimizationBBO v0.4.12
-  [4e6fcdb7] OptimizationNLopt v0.3.18
+⌃ [4e6fcdb7] OptimizationNLopt v0.3.18
   [1dea7af3] OrdinaryDiffEq v7.8.1
-  [ab63da0c] ParallelParticleSwarms v1.6.2
+⌃ [ab63da0c] ParallelParticleSwarms v1.6.2
   [65888b18] ParameterizedFunctions v5.27.0
   [91a5bcdd] Plots v1.41.7
 ⌃ [731186ca] RecursiveArrayTools v4.5.1
@@ -794,17 +953,17 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ec485272] ArnoldiMethod v0.4.0
 ⌃ [4fba245c] ArrayInterface v7.30.1
 ⌃ [4c555306] ArrayLayouts v1.12.2
-  [a9b6321e] Atomix v1.2.1
+⌃ [a9b6321e] Atomix v1.2.1
 ⌃ [aae01518] BandedMatrices v1.12.0
   [6e4b80f9] BenchmarkTools v1.8.0
   [e2ed5e7c] Bijections v0.2.2
   [b2a6c25c] BinaryHeaps v1.1.0
   [caf10ac8] BipartiteGraphs v0.1.14
   [a134a8b2] BlackBoxOptim v0.6.12
-  [8e7c35d0] BlockArrays v1.10.0
-  [70df07ce] BracketingNonlinearSolve v1.12.7
-  [fa961155] CEnum v0.5.0
-  [d360d2e6] ChainRulesCore v1.26.1
+⌃ [8e7c35d0] BlockArrays v1.10.0
+⌃ [70df07ce] BracketingNonlinearSolve v1.12.7
+⌅ [fa961155] CEnum v0.5.0
+⌃ [d360d2e6] ChainRulesCore v1.26.1
   [35d6a980] ColorSchemes v3.31.0
 ⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
@@ -825,7 +984,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a93c6f00] DataFrames v1.8.2
   [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
-  [bcd4f6db] DelayDiffEq v6.4.1
+⌃ [bcd4f6db] DelayDiffEq v6.4.1
   [8bb1440f] DelimitedFiles v1.9.1
   [39dd38d3] Dierckx v0.5.4
 ⌃ [2b5f629d] DiffEqBase v7.21.1
@@ -836,15 +995,15 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [31c24e10] Distributions v0.25.131
-  [ffbed154] DocStringExtensions v0.9.5
+⌅ [ffbed154] DocStringExtensions v0.9.5
 ⌃ [5b8099bc] DomainSets v0.8.1
   [7c1d4256] DynamicPolynomials v0.6.8
   [4e289a0a] EnumX v1.0.7
 ⌃ [7da242da] Enzyme v0.13.203
-  [f151be2c] EnzymeCore v0.8.21
+⌃ [f151be2c] EnzymeCore v0.8.21
   [e2ba6199] ExprTools v0.1.11
   [55351af7] ExproniconLite v0.10.14
-  [c87230d0] FFMPEG v0.4.5
+⌃ [c87230d0] FFMPEG v0.4.5
   [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
   [a4df4552] FastPower v1.5.0
@@ -869,7 +1028,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d25df0c9] Inflate v0.1.5
 ⌅ [842dd82b] InlineStrings v1.4.6
   [18e54dd8] IntegerMathUtils v0.1.4
-  [8197267c] IntervalSets v0.7.14
+⌃ [8197267c] IntervalSets v0.7.14
   [3587e190] InverseFunctions v0.1.17
   [41ab1584] InvertedIndices v1.3.1
   [92d709cd] IrrationalConstants v0.2.6
@@ -878,11 +1037,11 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-⌃ [ccbc3e58] JumpProcesses v9.32.3
-⌃ [63c18a36] KernelAbstractions v0.9.42
+⌅ [ccbc3e58] JumpProcesses v9.32.3
+⌅ [63c18a36] KernelAbstractions v0.9.42
 ⌃ [ba0b0d4f] Krylov v0.10.9
   [2faa5264] LHLFactorization v2.2.2
-⌃ [929cbde3] LLVM v9.13.1
+⌅ [929cbde3] LLVM v9.13.1
   [b964fa9f] LaTeXStrings v1.4.1
   [23fbe1c1] Latexify v0.16.12
   [73f95e8e] LatticeRules v0.0.2
@@ -898,7 +1057,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e1d29d7a] Missings v1.2.0
 ⌃ [961ee093] ModelingToolkit v11.43.0
 ⌃ [7771a370] ModelingToolkitBase v1.70.0
-  [6bb917b9] ModelingToolkitTearing v1.20.6
+⌃ [6bb917b9] ModelingToolkitTearing v1.20.6
 ⌅ [2e0e35c7] Moshi v0.3.9
   [46d2c3a1] MuladdMacro v0.2.7
 ⌃ [102ac46a] MultivariatePolynomials v0.5.19
@@ -916,8 +1075,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [7f7a1694] Optimization v5.9.0
   [3e6eede4] OptimizationBBO v0.4.12
 ⌃ [bca83a33] OptimizationBase v5.5.3
-  [4e6fcdb7] OptimizationNLopt v0.3.18
-⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.1]
+⌃ [4e6fcdb7] OptimizationNLopt v0.3.18
+⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.3]
   [1dea7af3] OrdinaryDiffEq v7.8.1
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.8
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.1
@@ -928,10 +1087,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [43230ef6] OrdinaryDiffEqRosenbrock v2.7.3
   [b4bd8bb3] OrdinaryDiffEqRosenbrockTableaus v2.4.2
 ⌃ [2d112036] OrdinaryDiffEqSDIRK v2.9.2
-  [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
-  [79d7bb75] OrdinaryDiffEqVerner v2.4.1
+⌃ [b1df2697] OrdinaryDiffEqTsit5 v2.1.4
+⌃ [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
-  [ab63da0c] ParallelParticleSwarms v1.6.2
+⌃ [ab63da0c] ParallelParticleSwarms v1.6.2
   [65888b18] ParameterizedFunctions v5.27.0
   [d96e819e] Parameters v0.13.1
 ⌅ [69de0a69] Parsers v2.8.8
@@ -944,7 +1103,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
 ⌃ [21216c6a] Preferences v1.5.2 [loaded: v1.6.0]
-  [08abe8d2] PrettyTables v3.4.8
+⌃ [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [33c8b6b6] ProgressLogging v0.1.6
   [92933f4c] ProgressMeter v1.11.0
@@ -954,7 +1113,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [8a4e6c94] QuasiMonteCarlo v0.4.4
   [988b38a3] ReadOnlyArrays v0.2.0
   [795d4caa] ReadOnlyDicts v1.0.1
-  [3cdcf5f2] RecipesBase v1.3.4
+⌃ [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
 ⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
@@ -962,17 +1121,17 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ae029012] Requires v1.3.1
   [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
-  [f2b01f46] Roots v3.0.8
+⌃ [f2b01f46] Roots v3.0.8
 ⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.26
 ⌃ [9dfe8606] SCCNonlinearSolve v1.15.3
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
 ⌃ [0bca4576] SciMLBase v3.53.3
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
-  [19f34311] SciMLJacobianOperators v0.1.19
+⌃ [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
 ⌃ [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
-  [53ae85a6] SciMLStructures v1.10.5
+⌃ [53ae85a6] SciMLStructures v1.10.5
   [7e506255] ScopedValues v1.6.2
   [6c6a2e73] Scratch v1.3.0
   [91c51154] SentinelArrays v1.4.10
@@ -980,15 +1139,15 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [992d4aef] Showoff v1.1.1
   [05bca326] SimpleDiffEq v1.18.0
 ⌃ [727e6d20] SimpleNonlinearSolve v2.14.3
-  [510db2f7] SimpleOptimization v2.0.1
+⌃ [510db2f7] SimpleOptimization v2.0.1
   [699a6c99] SimpleTraits v0.9.6
   [ed01d8cd] Sobol v1.5.0
   [a2af1166] SortingAlgorithms v1.2.3
   [a57abbd0] SparseColumnPivotedQR v2.1.8
-  [9f842d2f] SparseConnectivityTracer v1.2.3
-  [0a514795] SparseMatrixColorings v0.4.28
+⌃ [9f842d2f] SparseConnectivityTracer v1.2.3
+⌃ [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
-  [860ef19b] StableRNGs v1.0.4
+⌃ [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
   [64909d44] StateSelection v1.11.1
 ⌃ [90137ffa] StaticArrays v1.9.20
@@ -1001,7 +1160,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [892a3eda] StringManipulation v0.5.0
   [53d494c1] StructIO v0.3.1
   [2efcf032] SymbolicIndexingInterface v0.3.55
-  [19f23fe9] SymbolicLimits v1.2.1
+⌃ [19f23fe9] SymbolicLimits v1.2.1
 ⌃ [d1185830] SymbolicUtils v4.46.5
 ⌃ [0c5d862f] Symbolics v7.39.2
   [3783bdb8] TableTraits v1.0.1
@@ -1013,17 +1172,17 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [a759f4b9] TimerOutputs v1.2.1
   [e689c965] Tracy v0.1.6
   [781d530d] TruncatedStacktraces v1.4.0
-  [5c2747f8] URIs v1.7.0
+⌃ [5c2747f8] URIs v1.7.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-  [013be700] UnsafeAtomics v0.3.2
+⌅ [013be700] UnsafeAtomics v0.3.2
   [41fe7b60] Unzip v0.2.0
   [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
 ⌃ [ddb6d928] YAML v0.4.16 [loaded: v0.4.17]
   [700de1a5] ZygoteRules v0.2.8
   [6e34b625] Bzip2_jll v1.0.9+0
-  [83423d85] Cairo_jll v1.18.7+0
+⌃ [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [cd4c43a9] Dierckx_jll v0.2.0+0
 ⌅ [7cc45869] Enzyme_jll v0.0.293+0
@@ -1044,13 +1203,13 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
   [88015f11] LERC_jll v4.2.0+0
-  [dad2f222] LLVMExtra_jll v0.0.47+0
+⌅ [dad2f222] LLVMExtra_jll v0.0.47+0
   [1d63c593] LLVMOpenMP_jll v23.1.1+0
   [ad6e5548] LibTracyClient_jll v0.13.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
-  [4b2f31a3] Libmount_jll v2.42.0+0
+⌃ [4b2f31a3] Libmount_jll v2.42.0+0
   [89763e89] Libtiff_jll v4.7.3+0
   [38a345b3] Libuuid_jll v2.42.0+0
   [856f044c] MKL_jll v2025.2.0+0
@@ -1090,8 +1249,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
   [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
   [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
-  [35661453] Xorg_xkbcomp_jll v1.4.7+0
-  [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
+⌃ [35661453] Xorg_xkbcomp_jll v1.4.7+0
+⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
@@ -1103,11 +1262,11 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [2db6ffa8] libevdev_jll v1.13.4+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
-  [b53b4c65] libpng_jll v1.6.58+0
+⌃ [b53b4c65] libpng_jll v1.6.58+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
-  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌃ [1317d2d5] oneTBB_jll v2022.3.0+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
   [dfaa095f] x265_jll v4.1.0+0
   [d8fb68d0] xkbcommon_jll v1.13.0+0
