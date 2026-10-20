@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>CUTEst Bounded Constrained Optimization.jl Benchmarks · The SciML Benchmarks</title><meta name="title" content="CUTEst Bounded Constrained Optimization.jl Benchmarks · The SciML Benchmarks"/><meta property="og:title" content="CUTEst Bounded Constrained Optimization.jl Benchmarks · The SciML Benchmarks"/><meta property="twitter:title" content="CUTEst Bounded Constrained Optimization.jl Benchmarks · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/OptimizationCUTEst/CUTEst_bounded/"/><meta property="twitter:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/OptimizationCUTEst/CUTEst_bounded/"/><link rel="canonical" href="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/OptimizationCUTEst/CUTEst_bounded/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/CacheReuse/">Cache Reuse — What the init/solve! API Buys You</a></li><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparseDirect/">Sparse Direct Solver Comparison — Factorization and Cached Re-solve</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers (GPU)</span><ul><li><a class="tocitem" href="../../LinearSolveGPU/DenseGPUOffload/">Dense GPU Offload — Where Does the GPU Start to Win?</a></li><li><a class="tocitem" href="../../LinearSolveGPU/SparseGPU/">Sparse Direct on GPU — CUDSS vs CPU Factorizations</a></li></ul></li><li><span class="tocitem">Distributed Linear Solvers (MPI)</span><ul><li><a class="tocitem" href="../../LinearSolveDistributed/SerialCrossover/">Distributed Linear Solvers — When Does Distributed Beat Serial?</a></li><li><a class="tocitem" href="../../LinearSolveDistributed/SmokeTest/">Distributed Linear Solvers — Smoke Test</a></li><li><a class="tocitem" href="../../LinearSolveDistributed/StrongScaling/">Distributed Linear Solvers — Strong Scaling</a></li><li><a class="tocitem" href="../../LinearSolveDistributed/WeakScaling/">Distributed Linear Solvers — Weak Scaling</a></li></ul></li><li><span class="tocitem">GPU Ensemble Differential Equations (DiffEqGPU.jl)</span><ul><li><a class="tocitem" href="../../DiffEqGPU/crn_sde/">Bacterial Stress CRN SDE Ensemble</a></li><li><a class="tocitem" href="../../DiffEqGPU/linear_sde/">Linear SDE Ensemble — GPUEM vs EnsembleThreads</a></li><li><a class="tocitem" href="../../DiffEqGPU/lorenz_ensemble/">Lorenz Ensemble — EnsembleGPUKernel, EnsembleGPUArray, CPU, JAX, PyTorch</a></li><li><a class="tocitem" href="../../DiffEqGPU/lorenz_workprecision/">Lorenz — DiffEqGPU PI/I controllers and GRADSOLVE</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/homotopy_continuation/">Homotopy Continuation vs Direct Nonlinear Solvers</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Brusselator Scaling PDE Differentiation Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator Sparse AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion Operator Loop Sparse AD Benchmarks</a></li></ul></li><li><span class="tocitem">Turing.jl Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationTuring/TuringADTests/">Turing.jl Model AD Backend Comparison</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Beam/">Beam Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/EMEP/">EMEP Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/HeatingSystem_wpd/">Heating System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MedAkzoNobel/">Medical Akzo Nobel Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/RingModulator/">Ring Modulator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/andrews_mechanism/">Andrews&#39; Squeezing Mechanism DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/caraxis/">Car Axis DAE Benchmark</a></li><li><a class="tocitem" href="../../DAE/charge_pump/">Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/fekete/">Fekete Problem DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/two_bit_adder/">Two-Bit Adding Unit DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/water_tube/">Water Tube System DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/wheelset/">Wheelset DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/nonlinear_wpd/">Nonlinear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Performance</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/nls_fdm_wpd/">Nonlinear Schrödinger Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/nls_spectral_wpd/">Nonlinear Schrödinger Equation Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration Function Benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid Argon Benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon_long/">Liquid Argon Long-Time Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/HighOrderWeakSDEWorkPrecision/">High-Order Weak SDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Random Ordinary Differential Equations (RODEs)</span><ul><li><a class="tocitem" href="../../RODE/rode_convergence/">RODE Convergence and the Cost of Classical Order</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/Enzyme_wpd/">RADAR5 Enzyme Kinetics Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/Hepatitis_wpd/">RADAR5 Hepatitis B Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/Oregonator_wpd/">RADAR5 Oregonator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/Robertson_wpd/">RADAR5 Robertson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/SIR_GillespieComparison/">SIR Model: JumpProcesses.jl vs Gillespie.jl External Library Comparison</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse Model</a></li><li><a class="tocitem" href="../../HybridJumps/VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimization/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li class="is-active"><a class="tocitem" href>CUTEst Bounded Constrained Optimization.jl Benchmarks</a><ul class="internal"><li><a class="tocitem" href="#Setup"><span>Setup</span></a></li><li><a class="tocitem" href="#Problem-selection"><span>Problem selection</span></a></li><li><a class="tocitem" href="#Solvers"><span>Solvers</span></a></li><li><a class="tocitem" href="#Run"><span>Run</span></a></li><li><a class="tocitem" href="#Summary"><span>Summary</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../CUTEst_quadratic/">CUTEst Quadratic Optimization.jl Benchmarks</a></li><li><a class="tocitem" href="../CUTEst_unbounded/">CUTEst Unbounded Constrained Optimization.jl Benchmarks</a></li><li><a class="tocitem" href="../CUTEst_unconstrained/">CUTEst Unconstrained Optimization.jl Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/BioPreDynB2ParameterEstimation/">BioPreDyn-bench B2 (E. coli Central Metabolism) Parameter Estimation Benchmark</a></li><li><a class="tocitem" href="../../ParameterEstimation/BioPreDynB3ParameterEstimation/">BioPreDyn-bench B3 (E. coli Enzymatic and Transcriptional Regulation) Parameter Estimation Benchmark</a></li><li><a class="tocitem" href="../../ParameterEstimation/BioPreDynB4ParameterEstimation/">BioPreDyn-bench B4 (CHO Cell Metabolism) Parameter Estimation Benchmark</a></li><li><a class="tocitem" href="../../ParameterEstimation/BioPreDynB5ParameterEstimation/">BioPreDyn-bench B5 (EGF/TNFα Signal Transduction Logic Model) Parameter Estimation Benchmark</a></li><li><a class="tocitem" href="../../ParameterEstimation/BioPreDynB6ParameterEstimation/">BioPreDyn-bench B6 (Drosophila Gap Gene Network) Parameter Estimation Benchmark</a></li><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Neural ODE Parameter Estimation with GPU-PSO</span><ul><li><a class="tocitem" href="../../PSONeuralODE/neural_ode_gpu_pso/">Neural ODE Parameter Estimation with GPU-PSO</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">FitzHugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li><li><a class="tocitem" href="../../MethodOfLinesPDE/MOLxPDESystemLibrary/">PDESystemLibrary.jl Work-Precision Diagrams with Various MethodOfLines.jl Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Neural Network Framework Benchmarks</span><ul><li><a class="tocitem" href="../../NeuralNetworks/simple_networks/">Simple Neural Networks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/SymEngineComparison/">Symbolic Engine Comparison: Symbolics.jl vs SymEngine.jl vs SymPy</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li><li><span class="tocitem">PSOGlobalOptimization</span><ul><li><a class="tocitem" href="../../PSOGlobalOptimization/pso_global_optimizers/">PSO Global Optimizer Benchmarks</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">CUTEst Optimization Solver Benchmarks</a></li><li class="is-active"><a href>CUTEst Bounded Constrained Optimization.jl Benchmarks</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>CUTEst Bounded Constrained Optimization.jl Benchmarks</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/OptimizationCUTEst/CUTEst_bounded.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="CUTEst-Bounded-Constrained-Optimization.jl-Benchmarks"><a class="docs-heading-anchor" href="#CUTEst-Bounded-Constrained-Optimization.jl-Benchmarks">CUTEst Bounded Constrained Optimization.jl Benchmarks</a><a id="CUTEst-Bounded-Constrained-Optimization.jl-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#CUTEst-Bounded-Constrained-Optimization.jl-Benchmarks" title="Permalink"></a></h1><p>This benchmark runs constrained problems from the <a href="https://github.com/JuliaSmoothOptimizers/CUTEst.jl">CUTEst</a> test set through the Optimization.jl interface using <code>OptimizationNLPModels</code>. Two candidate pools are used:</p><ul><li>equality constrained: <code>CUTEst.select_sif_problems(min_con = 1, only_equ_con = true, only_free_var = false)</code></li><li>inequality constrained: <code>CUTEst.select_sif_problems(min_con = 1, only_ineq_con = true, only_free_var = false)</code></li></ul><p><code>min_con = 1</code> requires at least one general (linear or nonlinear) constraint, <code>only_equ_con</code> keeps problems whose constraints are all equalities, and <code>only_ineq_con</code> keeps problems with no equality constraints. <code>only_free_var = false</code> is CUTEst&#39;s default and does not restrict variable bounds, so these pools contain problems with and without bounds on the variables; the companion <code>CUTEst_unbounded</code> page is the subset with <code>only_free_var = true</code>. Tightening this page to bounded variables only (<code>only_bnd_var = true</code>) is a selection change tracked in <a href="https://github.com/SciML/SciMLBenchmarks.jl/issues/1857">SciMLBenchmarks#1857</a>.</p><p>All four CUTEst pages in this folder share the harness in <code>cutest_benchmark_utils.jl</code>, which defines the selection constants, the solver constructors, the run loop, and the summary and plotting helpers. The prose below describes the harness as it stands; refinements to the solver sets, solution-quality metrics, performance profiles, problem selection, and timing methodology are tracked in #1857.</p><h2 id="Setup"><a class="docs-heading-anchor" href="#Setup">Setup</a><a id="Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Setup" title="Permalink"></a></h2><pre><code class="language-julia hljs">ENV[&quot;GKSwstype&quot;] = &quot;100&quot;
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>CUTEst Bounded Constrained Optimization.jl Benchmarks · The SciML Benchmarks</title><meta name="title" content="CUTEst Bounded Constrained Optimization.jl Benchmarks · The SciML Benchmarks"/><meta property="og:title" content="CUTEst Bounded Constrained Optimization.jl Benchmarks · The SciML Benchmarks"/><meta property="twitter:title" content="CUTEst Bounded Constrained Optimization.jl Benchmarks · The SciML Benchmarks"/><meta name="description" content="Documentation for The SciML Benchmarks."/><meta property="og:description" content="Documentation for The SciML Benchmarks."/><meta property="twitter:description" content="Documentation for The SciML Benchmarks."/><meta property="og:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/OptimizationCUTEst/CUTEst_bounded/"/><meta property="twitter:url" content="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/OptimizationCUTEst/CUTEst_bounded/"/><link rel="canonical" href="https://docs.sciml.ai/SciMLBenchmarksOutput/stable/OptimizationCUTEst/CUTEst_bounded/"/><script data-outdated-warner src="../../assets/warner.js"></script><link href="https://cdnjs.cloudflare.com/ajax/libs/lato-font/3.0.0/css/lato-font.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/juliamono/0.63.2/juliamono.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.8/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../search_index.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-mocha.css" data-theme-name="catppuccin-mocha"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-macchiato.css" data-theme-name="catppuccin-macchiato"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-frappe.css" data-theme-name="catppuccin-frappe"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/catppuccin-latte.css" data-theme-name="catppuccin-latte"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-dark.css" data-theme-name="documenter-dark" data-theme-primary-dark/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../../assets/themeswap.js"></script><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><div id="documenter"><nav class="docs-sidebar"><a class="docs-logo" href="../../"><img src="../../assets/logo.png" alt="The SciML Benchmarks logo"/></a><div class="docs-package-name"><span class="docs-autofit"><a href="../../">The SciML Benchmarks</a></span></div><button class="docs-search-query input is-rounded is-small is-clickable my-2 mx-auto py-1 px-2" id="documenter-search-query">Search docs (Ctrl + /)</button><ul class="docs-menu"><li><a class="tocitem" href="../../">SciMLBenchmarks.jl: Benchmarks for Scientific Machine Learning (SciML) and Equation Solvers</a></li><li><span class="tocitem">Multi-Language Wrapper Benchmarks</span><ul><li><a class="tocitem" href="../../MultiLanguage/ode_wrapper_packages/">ODE Solver Multi-Language Wrapper Package Work-Precision Benchmarks (MATLAB, SciPy, Julia, deSolve (R))</a></li><li><a class="tocitem" href="../../MultiLanguage/special_benchmarks/">Special Multi-Language Differential Equation Solver Comparison Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers</span><ul><li><a class="tocitem" href="../../LinearSolve/CacheReuse/">Cache Reuse — What the init/solve! API Buys You</a></li><li><a class="tocitem" href="../../LinearSolve/LUFactorization/">LU Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/MatrixDepot/">Suite Sparse Matrix Jacobian Factorization Benchmarks</a></li><li><a class="tocitem" href="../../LinearSolve/SparseDirect/">Sparse Direct Solver Comparison — Factorization and Cached Re-solve</a></li><li><a class="tocitem" href="../../LinearSolve/SparsePDE/">Finite Difference Sparse PDE Jacobian Factorization Benchmarks</a></li></ul></li><li><span class="tocitem">Linear Solvers (GPU)</span><ul><li><a class="tocitem" href="../../LinearSolveGPU/DenseGPUOffload/">Dense GPU Offload — Where Does the GPU Start to Win?</a></li><li><a class="tocitem" href="../../LinearSolveGPU/SparseGPU/">Sparse Direct on GPU — CUDSS vs CPU Factorizations</a></li></ul></li><li><span class="tocitem">Distributed Linear Solvers (MPI)</span><ul><li><a class="tocitem" href="../../LinearSolveDistributed/SerialCrossover/">Distributed Linear Solvers — When Does Distributed Beat Serial?</a></li><li><a class="tocitem" href="../../LinearSolveDistributed/SmokeTest/">Distributed Linear Solvers — Smoke Test</a></li><li><a class="tocitem" href="../../LinearSolveDistributed/StrongScaling/">Distributed Linear Solvers — Strong Scaling</a></li><li><a class="tocitem" href="../../LinearSolveDistributed/WeakScaling/">Distributed Linear Solvers — Weak Scaling</a></li></ul></li><li><span class="tocitem">GPU Ensemble Differential Equations (DiffEqGPU.jl)</span><ul><li><a class="tocitem" href="../../DiffEqGPU/crn_sde/">Bacterial Stress CRN SDE Ensemble</a></li><li><a class="tocitem" href="../../DiffEqGPU/linear_sde/">Linear SDE Ensemble — GPUEM vs EnsembleThreads</a></li><li><a class="tocitem" href="../../DiffEqGPU/lorenz_ensemble/">Lorenz Ensemble — EnsembleGPUKernel, EnsembleGPUArray, CPU, JAX, PyTorch</a></li><li><a class="tocitem" href="../../DiffEqGPU/lorenz_workprecision/">Lorenz — DiffEqGPU PI/I controllers and GRADSOLVE</a></li></ul></li><li><span class="tocitem">Interval Rootfinding</span><ul><li><a class="tocitem" href="../../IntervalNonlinearProblem/simpleintervalrootfind/">Simple Interval Rootfinding (NonlinearSolve.jl vs Roots.jl vs MATLAB)</a></li><li><a class="tocitem" href="../../IntervalNonlinearProblem/suite/">Interval root-finding test suite</a></li></ul></li><li><span class="tocitem">Nonlinear Solvers</span><ul><li><a class="tocitem" href="../../NonlinearProblem/bruss/">Ill-Conditioned Nonlinear System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonlinearProblem/bruss_krylov/">Ill-Conditioned Nonlinear System Work-Precision Diagrams (Krylov Methods)</a></li><li><a class="tocitem" href="../../NonlinearProblem/homotopy_continuation/">Homotopy Continuation vs Direct Nonlinear Solvers</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_battery_problem/">Doyle-Fuller-Newman (DFN) Battery Model Initialization</a></li><li><a class="tocitem" href="../../NonlinearProblem/nonlinear_solver_23_tests/">Nonlinear Solver 23 Test Problems</a></li><li><a class="tocitem" href="../../NonlinearProblem/quadratic_nonlinear/">Quadratic Nonlinear Rootfinding Benchmark</a></li></ul></li><li><span class="tocitem">Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiation/BrussScaling/">Brusselator Scaling PDE Differentiation Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/JuliaAD/">Julia AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiation/SimpleODEAD/">Differentiation of Simple ODE Benchmarks</a></li></ul></li><li><span class="tocitem">Sparse Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/BrusselatorSparseAD/">Brusselator Sparse AD Benchmarks</a></li><li><a class="tocitem" href="../../AutomaticDifferentiationSparse/ManualLoopDiffusionSparseAD/">Diffusion Operator Loop Sparse AD Benchmarks</a></li></ul></li><li><span class="tocitem">Turing.jl Automatic Differentiation</span><ul><li><a class="tocitem" href="../../AutomaticDifferentiationTuring/TuringADTests/">Turing.jl Model AD Backend Comparison</a></li></ul></li><li><span class="tocitem">Non-Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../NonStiffODE/EnrightPryce_wpd/">Enright-Pryce Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/FitzhughNagumo_wpd/">Fitzhugh-Nagumo Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/LotkaVolterra_wpd/">Lotka-Volterra Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/Pleiades_wpd/">Pleiades Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/RigidBody_wpd/">Rigid Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/ThreeBody_wpd/">Three Body Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffODE/linear_wpd/">100 Independent Linear Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Ordinary Differential Equations (ODEs)</span><ul><li><a class="tocitem" href="../../StiffODE/Beam/">Beam Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Bruss/">Brusselator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/E5/">E5 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/EMEP/">EMEP Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/HeatingSystem_wpd/">Heating System Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Hires/">HIRES Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MKMBatteryChemistry_wpd/">Microkinetic Model (MKM) Battery Chemistry Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/MedAkzoNobel/">Medical Akzo Nobel Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Orego/">OREGO Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/Pollution/">POLLU Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/ROBER/">ROBER Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/RingModulator/">Ring Modulator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffODE/VanDerPol/">VanDerPol Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Biological Differential Equations</span><ul><li><a class="tocitem" href="../../Bio/BCR/">BCR Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/Bidkhori2012/">Bidkhori2012 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/egfr_net/">Egfr_net Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/fceri_gamma2/">Fceri_gamma2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multisite2/">Multisite2 Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../Bio/multistate/">Multistate Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Astrochemistry Differential Equations</span><ul><li><a class="tocitem" href="../../AstroChem/astrochem/">AstroChem Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../AstroChem/nelson/">Nelson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Differential-Algebraic Equations (DAEs)</span><ul><li><a class="tocitem" href="../../DAE/ChemicalAkzoNobel/">Chemical Akzo Nobel Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/LinearDAE/">Linear Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/NANDGateProblem/">NAND Gate Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/OregoDAE/">OREGO Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/ROBERDAE/">ROBER Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/TransistorAmplifier/">Transistor Amplifier DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/andrews_mechanism/">Andrews&#39; Squeezing Mechanism DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/caraxis/">Car Axis DAE Benchmark</a></li><li><a class="tocitem" href="../../DAE/charge_pump/">Charge Pump Differential-Algebraic Equation (DAE) Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/fekete/">Fekete Problem DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/slider_crank/">Slider-Crank DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/two_bit_adder/">Two-Bit Adding Unit DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/water_tube/">Water Tube System DAE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../DAE/wheelset/">Wheelset DAE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Non-Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../NonStiffBVP/linear_wpd/">Linear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/nonlinear_wpd/">Nonlinear BVP Benchmarks</a></li><li><a class="tocitem" href="../../NonStiffBVP/orbital/">Orbital Dynamics BVP Benchmark</a></li></ul></li><li><span class="tocitem">Stiff Boundary Value Problems (BVPs)</span><ul><li><a class="tocitem" href="../../StiffBVP/ionic_liquid_dehumidifier/">Ionic Liquid Dehumidifier Benchmarks</a></li></ul></li><li><span class="tocitem">ModelingToolkit Acausal Modeling / Symbolic-Numeric Benchmarks</span><ul><li><a class="tocitem" href="../../ModelingToolkit/RCCircuit/">RC Circuit</a></li><li><a class="tocitem" href="../../ModelingToolkit/ThermalFluid/">Thermal Fluid ODE Compilation and Performance</a></li></ul></li><li><span class="tocitem">Simple Handwritten Partial Differential Equations (PDEs) as ODEs</span><ul><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_fdm_wpd/">Allen-Cahn Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/allen_cahn_spectral_wpd/">Allen-Cahn Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_fdm_wpd/">Burgers&#39; Equation Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/burgers_spectral_wpd/">Burgers&#39; Equation Pseudospectral Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_fdm_wpd/">Kortwrieg-de Vries Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/kdv_spectral_wpd/">Korteweg-De Vries Equation Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_fdm_wpd/">Kuramoto-Sivashinsky Finite-Difference Method Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/ks_spectral_wpd/">Kuramoto-Sivashinsky Pseudospectral Methods Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/nls_fdm_wpd/">Nonlinear Schrödinger Equation FDM Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../SimpleHandwrittenPDE/nls_spectral_wpd/">Nonlinear Schrödinger Equation Pseudospectral Methods Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Complicated Partial Differential Equations (PDEs)</span><ul><li><a class="tocitem" href="../../ComplicatedPDE/Filament/">Filament Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../ComplicatedPDE/SpringBlockNonLinearResistance/">Spring-Block PDE Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Dynamical ODEs (Hamiltonian and Second Order)</span><ul><li><a class="tocitem" href="../../DynamicalODE/Henon-Heiles_energy_conservation_benchmark/">Hénon-Heiles Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/Quadrupole_boson_Hamiltonian_energy_conservation_benchmark/">Quadruple Boson Energy Conservation</a></li><li><a class="tocitem" href="../../DynamicalODE/single_pendulums/">Single Pedulum Comparison</a></li></ul></li><li><span class="tocitem">N-Body Problem Benchmarks</span><ul><li><a class="tocitem" href="../../NBodySimulator/acceleration_functions/">Acceleration Function Benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon/">Liquid Argon Benchmarks</a></li><li><a class="tocitem" href="../../NBodySimulator/liquid_argon_long/">Liquid Argon Long-Time Benchmarks</a></li></ul></li><li><span class="tocitem">Non-Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWeakWorkPrecision/">SDE Basic Weak Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/BasicSDEWorkPrecision/">SDE Basic Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/HighOrderWeakSDEWorkPrecision/">High-Order Weak SDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffSDE/LotkaVolterraSDE/">SDE Lokta-Volterra Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Stochastic Differential Equations (SDEs)</span><ul><li><a class="tocitem" href="../../StiffSDE/Oval2LongRun/">Oval2 Long Run</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2LongTimes/">Oval2 Long Times</a></li><li><a class="tocitem" href="../../StiffSDE/Oval2Timings/">Oval2 Timings</a></li><li><a class="tocitem" href="../../StiffSDE/QuadraticStiffness/">Quadratic Stiffness Benchmarks</a></li><li><a class="tocitem" href="../../StiffSDE/StochasticHeat/">Stochastic Heat Equation Benchmarks</a></li></ul></li><li><span class="tocitem">Random Ordinary Differential Equations (RODEs)</span><ul><li><a class="tocitem" href="../../RODE/rode_convergence/">RODE Convergence and the Cost of Classical Order</a></li></ul></li><li><span class="tocitem">Non-Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../NonStiffDDE/Mackey_Glass_wpd/">Mackey and Glass Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Mosquito_wpd/">Mosquito Population State-Dependent DDE Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../NonStiffDDE/Wheldon_Kirk_Finlay_wpd/">Wheldon, Kirk, and Finlay Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Stiff Delay Differential Equations (DDEs)</span><ul><li><a class="tocitem" href="../../StiffDDE/Enzyme_wpd/">RADAR5 Enzyme Kinetics Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/Hepatitis_wpd/">RADAR5 Hepatitis B Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/Oregonator_wpd/">RADAR5 Oregonator Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/QuorumSensing/">Quorum Sensing Work-Precision Diagrams</a></li><li><a class="tocitem" href="../../StiffDDE/Robertson_wpd/">RADAR5 Robertson Work-Precision Diagrams</a></li></ul></li><li><span class="tocitem">Jump Process Equations (Gillespie Benchmarks)</span><ul><li><a class="tocitem" href="../../Jumps/Diffusion_CTRW/">Diffusion Model</a></li><li><a class="tocitem" href="../../Jumps/EGFR_Benchmark/">EGFR Network Benchmark</a></li><li><a class="tocitem" href="../../Jumps/Mendes_multistate_example/">Mendes Multistate Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr/">Negative Feedback Gene Expression Model</a></li><li><a class="tocitem" href="../../Jumps/NegFeedback_GeneExpr_Marchetti/">Negative Feedback Marchetti Model</a></li><li><a class="tocitem" href="../../Jumps/SIR_GillespieComparison/">SIR Model: JumpProcesses.jl vs Gillespie.jl External Library Comparison</a></li><li><a class="tocitem" href="../../Jumps/Spatial_Signaling_Sanft/">Spatial Signaling Model from Sanft and Othmer (2015)</a></li></ul></li><li><span class="tocitem">Hybrid (Time-Dependent) Jump Processes</span><ul><li><a class="tocitem" href="../../HybridJumps/MultivariateHawkes/">Multivariate Hawkes Model</a></li><li><a class="tocitem" href="../../HybridJumps/Synapse/">Synapse Model</a></li><li><a class="tocitem" href="../../HybridJumps/VR_Aggregator_Benchmark/">Benchmarking Variable Rate Aggregator</a></li></ul></li><li><span class="tocitem">Nonlinear Optimization Solver Benchmarks</span><ul><li><a class="tocitem" href="../../Optimization/2drosenbrock/">2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">CUTEst Optimization Solver Benchmarks</span><ul><li class="is-active"><a class="tocitem" href>CUTEst Bounded Constrained Optimization.jl Benchmarks</a><ul class="internal"><li><a class="tocitem" href="#Setup"><span>Setup</span></a></li><li><a class="tocitem" href="#Problem-selection"><span>Problem selection</span></a></li><li><a class="tocitem" href="#Solvers"><span>Solvers</span></a></li><li><a class="tocitem" href="#Run"><span>Run</span></a></li><li><a class="tocitem" href="#Summary"><span>Summary</span></a></li><li><a class="tocitem" href="#Appendix"><span>Appendix</span></a></li></ul></li><li><a class="tocitem" href="../CUTEst_quadratic/">CUTEst Quadratic Optimization.jl Benchmarks</a></li><li><a class="tocitem" href="../CUTEst_unbounded/">CUTEst Unbounded Constrained Optimization.jl Benchmarks</a></li><li><a class="tocitem" href="../CUTEst_unconstrained/">CUTEst Unconstrained Optimization.jl Benchmarks</a></li></ul></li><li><span class="tocitem">Global Optimization Benchmarks</span><ul><li><a class="tocitem" href="../../GlobalOptimization/blackbox_global_optimizers/">Black-Box Global Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Optimization Framework Benchmarks</span><ul><li><a class="tocitem" href="../../OptimizationFrameworks/clnlbeam/">CLNLBEAM Nonlinear Optimization Benchmark</a></li><li><a class="tocitem" href="../../OptimizationFrameworks/optimal_powerflow/">Optimal Powerflow Nonlinear Optimization Benchmark</a></li></ul></li><li><span class="tocitem">Parameter Estimation and Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../ParameterEstimation/BioPreDynB2ParameterEstimation/">BioPreDyn-bench B2 (E. coli Central Metabolism) Parameter Estimation Benchmark</a></li><li><a class="tocitem" href="../../ParameterEstimation/BioPreDynB3ParameterEstimation/">BioPreDyn-bench B3 (E. coli Enzymatic and Transcriptional Regulation) Parameter Estimation Benchmark</a></li><li><a class="tocitem" href="../../ParameterEstimation/BioPreDynB4ParameterEstimation/">BioPreDyn-bench B4 (CHO Cell Metabolism) Parameter Estimation Benchmark</a></li><li><a class="tocitem" href="../../ParameterEstimation/BioPreDynB5ParameterEstimation/">BioPreDyn-bench B5 (EGF/TNFα Signal Transduction Logic Model) Parameter Estimation Benchmark</a></li><li><a class="tocitem" href="../../ParameterEstimation/BioPreDynB6ParameterEstimation/">BioPreDyn-bench B6 (Drosophila Gap Gene Network) Parameter Estimation Benchmark</a></li><li><a class="tocitem" href="../../ParameterEstimation/FitzHughNagumoParameterEstimation/">FitzHugh-Nagumo Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LorenzParameterEstimation/">Lorenz Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../ParameterEstimation/LotkaVolterraParameterEstimation/">Lotka-Volterra Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">Neural ODE Parameter Estimation with GPU-PSO</span><ul><li><a class="tocitem" href="../../PSONeuralODE/neural_ode_gpu_pso/">Neural ODE Parameter Estimation with GPU-PSO</a></li></ul></li><li><span class="tocitem">Bayesian Inference and Probabilistic Inverse Problem Benchmarks</span><ul><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesFitzHughNagumo/">FitzHugh-Nagumo Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLorenz/">Lorenz Bayesian Parameter Estimation Benchmarks</a></li><li><a class="tocitem" href="../../BayesianInference/DiffEqBayesLotkaVolterra/">Lotka-Volterra Bayesian Parameter Estimation Benchmarks</a></li></ul></li><li><span class="tocitem">MethodOfLines.jl Partial Differential Equation (PDE) Formulations</span><ul><li><a class="tocitem" href="../../MethodOfLinesPDE/MOL_fdm/">Burgers FDM Work-Precision Diagrams with Various MethodOfLines Methods</a></li><li><a class="tocitem" href="../../MethodOfLinesPDE/MOLxPDESystemLibrary/">PDESystemLibrary.jl Work-Precision Diagrams with Various MethodOfLines.jl Methods</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Cost Function Benchmarks</span><ul><li><a class="tocitem" href="../../PINNErrorsVsTime/allen_cahn_et/">Allen-Cahn PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/diffusion_et/">Diffusion PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/hamilton_jacobi_et/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/level_set_et/">Level Set PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li><li><a class="tocitem" href="../../PINNErrorsVsTime/nernst_planck_et/">Nernst-Planck PDE Physics-Informed Neural Network (PINN) Loss Function Error vs Time Benchmarks</a></li></ul></li><li><span class="tocitem">Physics-Informed Neural Network (Neural Network PDE Solver) Optimizer Benchmarks</span><ul><li><a class="tocitem" href="../../PINNOptimizers/1d_diffusion/">Diffusion Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/1d_poisson_nernst_planck/">Nernst-Planck Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/allen_cahn/">Allen-Cahn Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/burgers_equation/">Berger&#39;s Equation Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/hamilton_jacobi/">Hamilton-Jacobi PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li><li><a class="tocitem" href="../../PINNOptimizers/poisson/">Poisson PDE Physics-Informed Neural Network (PINN) Optimizer Benchmarks</a></li></ul></li><li><span class="tocitem">Neural Network Framework Benchmarks</span><ul><li><a class="tocitem" href="../../NeuralNetworks/simple_networks/">Simple Neural Networks</a></li></ul></li><li><span class="tocitem">SDE Adaptivity Benchmarks</span><ul><li><a class="tocitem" href="../../AdaptiveSDE/AdaptiveEfficiencyTests/">Adaptive Efficiency Tests</a></li><li><a class="tocitem" href="../../AdaptiveSDE/qmaxDetermination/">qmax Determination</a></li></ul></li><li><span class="tocitem">Surrogate Benchmarks</span><ul><li><a class="tocitem" href="../../Surrogates/tensor_product/">Tensor Product Function</a></li></ul></li><li><span class="tocitem">Symbolic Manipulation Benchmarks</span><ul><li><a class="tocitem" href="../../Symbolics/BCR/">BCR Symbolic Jacobian</a></li><li><a class="tocitem" href="../../Symbolics/SymEngineComparison/">Symbolic Engine Comparison: Symbolics.jl vs SymEngine.jl vs SymPy</a></li><li><a class="tocitem" href="../../Symbolics/ThermalFluid/">Thermal Fluid Symbolic Jacobian Scaling</a></li></ul></li><li><span class="tocitem">PSOGlobalOptimization</span><ul><li><a class="tocitem" href="../../PSOGlobalOptimization/pso_global_optimizers/">PSO Global Optimizer Benchmarks</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><a class="docs-sidebar-button docs-navbar-link fa-solid fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">CUTEst Optimization Solver Benchmarks</a></li><li class="is-active"><a href>CUTEst Bounded Constrained Optimization.jl Benchmarks</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href>CUTEst Bounded Constrained Optimization.jl Benchmarks</a></li></ul></nav><div class="docs-right"><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput" title="View the repository on GitHub"><span class="docs-icon fa-brands"></span><span class="docs-label is-hidden-touch">GitHub</span></a><a class="docs-navbar-link" href="https://github.com/SciML/SciMLBenchmarksOutput/blob/main/docs/src/OptimizationCUTEst/CUTEst_bounded.md" title="Edit source on GitHub"><span class="docs-icon fa-solid"></span></a><a class="docs-settings-button docs-navbar-link fa-solid fa-gear" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-article-toggle-button fa-solid fa-chevron-up" id="documenter-article-toggle-button" href="javascript:;" title="Collapse all docstrings"></a></div></header><article class="content" id="documenter-page"><h1 id="CUTEst-Bounded-Constrained-Optimization.jl-Benchmarks"><a class="docs-heading-anchor" href="#CUTEst-Bounded-Constrained-Optimization.jl-Benchmarks">CUTEst Bounded Constrained Optimization.jl Benchmarks</a><a id="CUTEst-Bounded-Constrained-Optimization.jl-Benchmarks-1"></a><a class="docs-heading-anchor-permalink" href="#CUTEst-Bounded-Constrained-Optimization.jl-Benchmarks" title="Permalink"></a></h1><p>This benchmark runs constrained problems from the <a href="https://github.com/JuliaSmoothOptimizers/CUTEst.jl">CUTEst</a> test set through the Optimization.jl interface using <code>OptimizationNLPModels</code>. Two candidate pools are used:</p><ul><li>equality constrained: <code>CUTEst.select_sif_problems(min_con = 1, only_equ_con = true)</code></li><li>inequality constrained: <code>CUTEst.select_sif_problems(min_con = 1, only_ineq_con = true)</code></li></ul><p><code>min_con = 1</code> requires at least one general (linear or nonlinear) constraint, <code>only_equ_con</code> keeps problems whose constraints are all equalities, and <code>only_ineq_con</code> keeps problems with no equality constraints. The bounded page includes every problem with at least one variable bound, including problems that also have free variables. The companion <code>CUTEst_unbounded</code> page contains problems whose variables are all free. These categories are disjoint and cover the eligible equality and inequality pools.</p><p>All four CUTEst pages in this folder share the harness in <code>cutest_benchmark_utils.jl</code>, which defines the selection constants, the solver constructors, the run loop, and the summary and plotting helpers. The prose below describes the harness as it stands; refinements to the solver sets, solution-quality metrics, performance profiles, problem selection, and timing methodology are tracked in #1857.</p><h2 id="Setup"><a class="docs-heading-anchor" href="#Setup">Setup</a><a id="Setup-1"></a><a class="docs-heading-anchor-permalink" href="#Setup" title="Permalink"></a></h2><pre><code class="language-julia hljs">ENV[&quot;GKSwstype&quot;] = &quot;100&quot;
 
 using CUTEst
 using DataFrames
@@ -10,22 +10,35 @@ using Statistics
 using Printf
 
 include(joinpath(isdefined(Main, :WEAVE_ARGS) ? WEAVE_ARGS[:folder] : @__DIR__,
-    &quot;cutest_benchmark_utils.jl&quot;))</code></pre><pre><code class="nohighlight hljs">plot_success_rates (generic function with 1 method)</code></pre><h2 id="Problem-selection"><a class="docs-heading-anchor" href="#Problem-selection">Problem selection</a><a id="Problem-selection-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-selection" title="Permalink"></a></h2><p><code>select_safe_problems</code> walks each candidate pool in the order returned by <code>CUTEst.select_sif_problems</code>, skips any name in the hand-maintained <code>KNOWN_BAD_PROBLEMS</code> list, loads each remaining problem once to read its metadata, keeps it only if <code>nvar &lt;= MAX_NVAR</code> and <code>ncon &lt;= MAX_NCON</code>, and stops after <code>MAX_PROBLEMS_PER_CATEGORY</code> problems. Problems whose metadata cannot be loaded are skipped. The values in effect for this run are printed below.</p><pre><code class="language-julia hljs">println(&quot;MAX_PROBLEMS_PER_CATEGORY = &quot;, MAX_PROBLEMS_PER_CATEGORY)
+    &quot;cutest_benchmark_utils.jl&quot;))</code></pre><pre><code class="nohighlight hljs">plot_work_precision (generic function with 1 method)</code></pre><h2 id="Problem-selection"><a class="docs-heading-anchor" href="#Problem-selection">Problem selection</a><a id="Problem-selection-1"></a><a class="docs-heading-anchor-permalink" href="#Problem-selection" title="Permalink"></a></h2><p><code>select_safe_problems</code> sorts candidate names, filters the measured skip map and size limits, then selects up to <code>MAX_PROBLEMS_PER_CATEGORY</code> across the 1–10, 11–100, and 101–<code>MAX_NVAR</code> variable buckets. It samples each name-sorted bucket evenly, redistributing quotas when a bucket has fewer candidates. Size strata come from CUTEst&#39;s public selection filters. The selected and eligible counts are printed per bucket.</p><pre><code class="language-julia hljs">println(&quot;MAX_PROBLEMS_PER_CATEGORY = &quot;, MAX_PROBLEMS_PER_CATEGORY)
 println(&quot;MAX_NVAR = &quot;, MAX_NVAR)
 println(&quot;MAX_NCON = &quot;, MAX_NCON)
 println(&quot;SOLVE_MAXITERS = &quot;, SOLVE_MAXITERS)
 println(&quot;SOLVE_TIMEOUT_SECONDS = &quot;, SOLVE_TIMEOUT_SECONDS)
-println(&quot;KNOWN_BAD_PROBLEMS = &quot;, join(sort(collect(KNOWN_BAD_PROBLEMS)), &quot;, &quot;))
+println(&quot;KNOWN_BAD_PROBLEMS = &quot;, join(sort(collect(keys(KNOWN_BAD_PROBLEMS))), &quot;, &quot;))
 
-bounded_equality_problems = select_safe_problems(
-    collect(CUTEst.select_sif_problems(min_con = 1, only_equ_con = true,
-        only_free_var = false))
-)
+all_equality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_equ_con = true, max_var = MAX_NVAR, max_con = MAX_NCON))
+bounded_equality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_equ_con = true, max_var = MAX_NVAR, max_con = MAX_NCON,
+    custom_filter = p -&gt; p[&quot;variables&quot;][&quot;free&quot;] &lt; p[&quot;variables&quot;][&quot;number&quot;]))
+free_equality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_equ_con = true, only_free_var = true, max_var = MAX_NVAR, max_con = MAX_NCON))
+assert_bounded_pool_coverage(all_equality_candidates, bounded_equality_candidates,
+    free_equality_candidates, &quot;Equality&quot;)
 
-bounded_inequality_problems = select_safe_problems(
-    collect(CUTEst.select_sif_problems(min_con = 1, only_ineq_con = true,
-        only_free_var = false))
-)
+all_inequality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_ineq_con = true, max_var = MAX_NVAR, max_con = MAX_NCON))
+bounded_inequality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_ineq_con = true, max_var = MAX_NVAR, max_con = MAX_NCON,
+    custom_filter = p -&gt; p[&quot;variables&quot;][&quot;free&quot;] &lt; p[&quot;variables&quot;][&quot;number&quot;]))
+free_inequality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_ineq_con = true, only_free_var = true, max_var = MAX_NVAR, max_con = MAX_NCON))
+assert_bounded_pool_coverage(all_inequality_candidates, bounded_inequality_candidates,
+    free_inequality_candidates, &quot;Inequality&quot;)
+
+bounded_equality_problems = select_safe_problems(bounded_equality_candidates)
+bounded_inequality_problems = select_safe_problems(bounded_inequality_candidates)
 
 println(&quot;Selected bounded equality-constrained problems: &quot;, length(bounded_equality_problems))
 println(join(bounded_equality_problems, &quot;, &quot;))
@@ -35,33 +48,36 @@ MAX_NVAR = 1000
 MAX_NCON = 1000
 SOLVE_MAXITERS = 1000
 SOLVE_TIMEOUT_SECONDS = 90.0
-KNOWN_BAD_PROBLEMS = bloweya, chardis1, cleuven4, cmpc10, cmpc3, cvxqp2, di
-ttert, hier13, lukvle8, lukvli7, mpc2, mss1, ninenew, patternne, reading2, 
-reading6
+KNOWN_BAD_PROBLEMS = 
+Equality eligible candidates: all=350, bounded=156, free=194
+Inequality eligible candidates: all=166, bounded=103, free=63
+Selected 50 of 156 eligible problems (selected/eligible per bucket): 1-10 v
+ars: 17/74, 11-100 vars: 17/44, 101-1000 vars: 16/38
+Selected 50 of 103 eligible problems (selected/eligible per bucket): 1-10 v
+ars: 30/83, 11-100 vars: 8/8, 101-1000 vars: 12/12
 Selected bounded equality-constrained problems: 50
-GAUSS2, DUAL2, WAYSEA1NE, BROWNDENE, HS79, GULFNE, JUDGENE, STRTCHDVNE, TRI
-GON1NE, PENLT1NE, PALMER2NE, STEENBRA, BA-L1SP, EXPFITNE, SSINE, EIGMAXC, L
-UKSAN17, DALLASM, HS7, GENROSEBNE, BOX3NE, HS54, CHANDHEQ, HS60, LEVYMONE, 
-KSS, HS48, BT9, S308NE, PALMER6ANE, MGH17S, DENSCHNDNE, HS119, CERI651B, PO
-RTSNQP, EIGMINA, THURBER, CERI651E, ENSO, ALLINITC, LEAKNET, BARDNE, GOTTFR
-, DUAL3, TRY-B, HATFLDBNE, STREGNE, SANTA, ZAMB2-11, PENLT2NE
+AIRCRFTA, HATFLDANE, HS111, HS41, HS60, HS80, KOEBHELBNE, LEVYMONE8, ODFITS
+, PALMER1NE, PALMER3ANE, PALMER4ANE, PALMER5BNE, PALMER7ANE, PFIT2, SUPERSI
+M, WEEDSNE, AVION2, CONCON, DALLASS, DECONVNE, DNIEPER, DUAL2, GOULDQP1, HI
+MMELBJ, HS119, LEVYMONE, MCONCON, NYSTROM5C, PORTFL1, PORTFL4, ROBOT, SPANH
+YD, WATER, ALJAZZAF, CHAIN, DIXCHLNV, DUAL3, EIGMAXC, EIGMINB, HIE1372D, KT
+MODEL, QR3DBD, SMBANK, STEENBRB, STEENBRD, STEENBRG, TARGUS, ZAMB2-11, ZAMB
+2-9
 Selected bounded inequality-constrained problems: 50
-PRIMALC1, POLAK4, EXPFITA, HS35, HS106, HS34, HS95, ZECEVIC3, HYDROELM, AVG
-ASB, HS17, S268, HS24, LEUVEN7, HS85, HS101, SYNTHES1, HS67, HS13, HIMMELP2
-, MIFFLIN1, DEMBO7, LOOTSMA, HAIFAS, GIGOMEZ1, CRESC100, EXPFITC, HS108, HS
-93, GMNCASE4, S277-280, GIGOMEZ2, HS36, DEMYMALO, HS105, SIMPLLPA, HS86, HS
-117, CHACONN1, LHAIFAM, TFI1, ZECEVIC4, HS57, KIWCRESC, OPTPRLOC, HS100, WO
-MFLET, PRIMALC2, POLAK3, HS33</code></pre><h2 id="Solvers"><a class="docs-heading-anchor" href="#Solvers">Solvers</a><a id="Solvers-1"></a><a class="docs-heading-anchor-permalink" href="#Solvers" title="Permalink"></a></h2><p><code>CONSTRAINED_SOLVERS</code> currently contains only <code>Ipopt</code>, run through <code>OptimizationMOI</code>. It is the only optimizer wired into the harness that accepts general equality and inequality constraints via Optimization.jl; the Optim.jl algorithms on the unconstrained page do not. Ipopt is configured with <code>max_iter = SOLVE_MAXITERS</code>, <code>max_wall_time = SOLVE_TIMEOUT_SECONDS</code>, <code>tol = 1.0e-6</code>, <code>print_level = 0</code>, and <code>hessian_approximation = &quot;limited-memory&quot;</code>. The limited-memory setting is used because <code>OptimizationNLPModels</code> supplies the objective gradient and Hessian and the constraint values and Jacobian from the CUTEst model, but not the constraint Hessians needed for an exact Hessian of the Lagrangian. The same iteration and time limits are also passed to <code>solve</code> as <code>maxiters</code> and <code>maxtime</code>. Adding further constrained backends and an exact-Hessian Ipopt variant is item 1 of #1857.</p><h2 id="Run"><a class="docs-heading-anchor" href="#Run">Run</a><a id="Run-1"></a><a class="docs-heading-anchor-permalink" href="#Run" title="Permalink"></a></h2><p>Each (problem, solver) pair is solved once by <code>run_single_solve</code>. A row records the return code as reported by Optimization.jl and a <code>status</code> of <code>OK</code> when <code>solve</code> returned, <code>FAILED</code> when it threw, or <code>LOAD_FAILED</code> when the CUTEst problem could not be constructed. The reported time is <code>sol.stats.time</code> when the solver provides a finite, non-negative value, and otherwise the wall-clock time measured around problem construction and <code>solve</code> together. <code>run_benchmarks</code> errors if a category yields no <code>OK</code> rows, so a broken environment fails the build instead of producing an empty page.</p><pre><code class="language-julia hljs">bounded_results = vcat(
+AVGASA, BURKEHAN, CRESC4, EQC, HIMMELP3, HIMMELP6, HS103, HS106, HS15, HS17
+, HS20, HS23, HS31, HS35, HS36, HS44, HS59, HS66, HS72, HS83, HS86, HS95, H
+S98, LSQFIT, QC, S365, SIMPLLPA, STANCMIN, ZECEVIC2, ZY2, AIRPORT, DEMBO7, 
+HIMMELBI, HS116, HS117, HS118, KISSING2, OPTPRLOC, CLEUVEN7, HYDROELM, HYDR
+OELS, LEUVEN7, PRIMAL1, PRIMAL2, PRIMAL3, PRIMALC1, PRIMALC2, PRIMALC5, PRI
+MALC8, SINROSNB</code></pre><h2 id="Solvers"><a class="docs-heading-anchor" href="#Solvers">Solvers</a><a id="Solvers-1"></a><a class="docs-heading-anchor-permalink" href="#Solvers" title="Permalink"></a></h2><p><code>CONSTRAINED_SOLVERS</code> currently contains only <code>Ipopt</code>, run through <code>OptimizationMOI</code>. It is the only optimizer wired into the harness that accepts general equality and inequality constraints via Optimization.jl; the Optim.jl algorithms on the unconstrained page do not. Ipopt is configured with <code>max_iter = SOLVE_MAXITERS</code>, <code>max_wall_time = SOLVE_TIMEOUT_SECONDS</code>, <code>tol = 1.0e-6</code>, <code>print_level = 0</code>, and <code>hessian_approximation = &quot;limited-memory&quot;</code>. The limited-memory setting is used because <code>OptimizationNLPModels</code> supplies the objective gradient and Hessian and the constraint values and Jacobian from the CUTEst model, but not the constraint Hessians needed for an exact Hessian of the Lagrangian. The same iteration and time limits are also passed to <code>solve</code> as <code>maxiters</code> and <code>maxtime</code>. Adding further constrained backends and an exact-Hessian Ipopt variant is item 1 of #1857.</p><h2 id="Run"><a class="docs-heading-anchor" href="#Run">Run</a><a id="Run-1"></a><a class="docs-heading-anchor-permalink" href="#Run" title="Permalink"></a></h2><p>Each (problem, solver) pair is solved once by <code>run_single_solve</code>. A row records the return code as reported by Optimization.jl and a <code>status</code> of <code>OK</code> when <code>solve</code> returned, <code>FAILED</code> when it threw, or <code>LOAD_FAILED</code> when the CUTEst problem could not be constructed. The reported time is <code>sol.stats.time</code> when the solver provides a finite, non-negative value, and otherwise the wall-clock time measured around problem construction and <code>solve</code> together. <code>run_benchmarks</code> errors if a category yields no <code>OK</code> rows, so a broken environment fails the build instead of producing an empty page.</p><pre><code class="language-julia hljs">bounded_results = vcat(
     run_benchmarks(&quot;bounded equality constrained&quot;, bounded_equality_problems,
         CONSTRAINED_SOLVERS),
     run_benchmarks(&quot;bounded inequality constrained&quot;, bounded_inequality_problems,
         CONSTRAINED_SOLVERS),
 )
 
-display(bounded_results)</code></pre><pre><code class="nohighlight hljs">Running bounded equality constrained benchmarks
-Problems: 50
-Solvers: Ipopt
-  Ipopt              GAUSS2                  
+display(bounded_results)</code></pre><pre><code class="nohighlight hljs">Warming up solvers (JIT), results are not benchmarked:
+  Ipopt              HS35                    
 ***************************************************************************
 ***
 This program contains Ipopt, a library for large-scale nonlinear optimizati
@@ -72,170 +88,1082 @@ L).
 ***************************************************************************
 ***
 
- OK Failure 0.508s
-  Ipopt              DUAL2                    OK Success 0.281s
-  Ipopt              WAYSEA1NE                OK Success 0.052s
-  Ipopt              BROWNDENE                OK Failure 0.002s
-  Ipopt              HS79                     OK Success 0.011s
-  Ipopt              GULFNE                   OK Failure 0.002s
-  Ipopt              JUDGENE                  OK Failure 0.002s
-  Ipopt              STRTCHDVNE               OK Success 0.011s
-  Ipopt              TRIGON1NE                OK Success 0.004s
-  Ipopt              PENLT1NE                 OK Failure 0.002s
-  Ipopt              PALMER2NE                OK Failure 0.002s
-  Ipopt              STEENBRA                 OK Success 0.353s
-  Ipopt              BA-L1SP                  OK Success 0.009s
-  Ipopt              EXPFITNE                 OK Failure 0.002s
-  Ipopt              SSINE                    OK Success 0.418s
-  Ipopt              EIGMAXC                  OK Success 0.062s
-  Ipopt              LUKSAN17                 OK Failure 0.007s
-  Ipopt              DALLASM                  OK Success 1.624s
-  Ipopt              HS7                      OK Success 0.008s
-  Ipopt              GENROSEBNE               OK Failure 0.104s
-  Ipopt              BOX3NE                   OK Failure 0.001s
-  Ipopt              HS54                     OK Success 0.050s
-  Ipopt              CHANDHEQ                 OK Success 0.041s
-  Ipopt              HS60                     OK Success 0.013s
-  Ipopt              LEVYMONE                 OK Failure 0.010s
-  Ipopt              KSS                      OK Success 5.238s
-  Ipopt              HS48                     OK Success 0.010s
-  Ipopt              BT9                      OK Success 0.013s
-  Ipopt              S308NE                   OK Failure 0.002s
-  Ipopt              PALMER6ANE               OK Failure 0.002s
-  Ipopt              MGH17S                   OK Failure 0.002s
-  Ipopt              DENSCHNDNE               OK Success 0.019s
-  Ipopt              HS119                    OK Success 0.024s
-  Ipopt              CERI651B                 OK Failure 0.002s
-  Ipopt              PORTSNQP                 OK Success 0.012s
-  Ipopt              EIGMINA                  OK Success 0.036s
-  Ipopt              THURBER                  OK Failure 0.002s
-  Ipopt              CERI651E                 OK Failure 0.002s
-  Ipopt              ENSO                     OK Failure 0.003s
-  Ipopt              ALLINITC                 OK Success 0.028s
-  Ipopt              LEAKNET                  OK Success 0.141s
-  Ipopt              BARDNE                   OK Failure 0.002s
-  Ipopt              GOTTFR                   OK Success 0.005s
-  Ipopt              DUAL3                    OK Success 0.102s
-  Ipopt              TRY-B                    OK Success 0.015s
-  Ipopt              HATFLDBNE                OK Infeasible 0.021s
-  Ipopt              STREGNE                  OK Success 0.005s
-  Ipopt              SANTA                    OK Failure 0.002s
-  Ipopt              ZAMB2-11                 OK Success 0.222s
-  Ipopt              PENLT2NE                 OK Failure 0.002s
+ OK Success first 20.043s compile 20.023s clean 0.011s (total 22.924s)
+  MadNLP             HS35                     OK Success first 18.629s comp
+ile 18.564s clean 0.060s (total 19.062s)
+  NLopt-SLSQP        HS35                    CUTEst solve skipped for HS35 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED first 0.000s compile 0.000s clean 0.000s (total 0.274s)
+  NLopt-AUGLAG-LBFGS HS35                    CUTEst solve skipped for HS35 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED first 0.000s compile 0.000s clean 0.000s (total 0.266s)
+
+Running bounded equality constrained benchmarks
+Problems: 50
+Solvers: Ipopt, MadNLP, NLopt-SLSQP, NLopt-AUGLAG-LBFGS
+Per-solve time cap: 90.0 s
+  Ipopt              AIRCRFTA                 OK Success 0.006s (first 0.00
+7s, compile 0.000s, decode 0.273s)
+  MadNLP             AIRCRFTA                 OK Success 0.001s (first 10.8
+59s, compile 10.856s, decode 0.278s)
+  NLopt-SLSQP        AIRCRFTA                 OK Success 0.000s (first 2.28
+3s, compile 2.257s, decode 0.271s)
+  NLopt-AUGLAG-LBFGS AIRCRFTA                 OK Success 0.001s (first 0.34
+4s, compile 0.342s, decode 0.275s)
+  Ipopt              HATFLDANE                OK Success 0.008s (first 0.01
+0s, compile 0.000s, decode 0.270s)
+  MadNLP             HATFLDANE                OK Success 0.002s (first 0.00
+2s, compile 0.000s, decode 0.281s)
+  NLopt-SLSQP        HATFLDANE                OK Success 0.000s (first 0.00
+0s, compile 0.000s, decode 0.260s)
+  NLopt-AUGLAG-LBFGS HATFLDANE                OK Success 0.001s (first 0.00
+2s, compile 0.000s, decode 0.260s)
+  Ipopt              HS111                    OK Success 0.035s (first 0.05
+5s, compile 0.000s, decode 0.329s)
+  MadNLP             HS111                    OK MaxIters 0.068s (first 0.0
+93s, compile 0.000s, decode 0.329s)
+  NLopt-SLSQP        HS111                    OK Success 0.001s (first 0.00
+2s, compile 0.000s, decode 0.329s)
+  NLopt-AUGLAG-LBFGS HS111                    OK Success 0.010s (first 0.01
+0s, compile 0.000s, decode 0.326s)
+  Ipopt              HS41                     OK Success 0.015s (first 0.01
+6s, compile 0.000s, decode 0.268s)
+  MadNLP             HS41                     OK Success 0.020s (first 0.02
+0s, compile 0.000s, decode 0.273s)
+  NLopt-SLSQP        HS41                     OK Failure 0.000s (first 0.01
+0s, compile 0.010s, decode 0.271s)
+  NLopt-AUGLAG-LBFGS HS41                     OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.271s)
+  Ipopt              HS60                     OK Success 0.014s (first 0.01
+6s, compile 0.000s, decode 0.281s)
+  MadNLP             HS60                     OK Success 0.062s (first 0.08
+7s, compile 0.000s, decode 0.293s)
+  NLopt-SLSQP        HS60                     OK Success 0.000s (first 0.00
+0s, compile 0.000s, decode 0.291s)
+  NLopt-AUGLAG-LBFGS HS60                     OK Success 0.001s (first 0.00
+1s, compile 0.000s, decode 0.286s)
+  Ipopt              HS80                     OK Success 0.010s (first 0.01
+0s, compile 0.000s, decode 0.291s)
+  MadNLP             HS80                     OK Success 0.077s (first 0.15
+5s, compile 0.074s, decode 0.301s)
+  NLopt-SLSQP        HS80                     OK Success 0.000s (first 0.00
+1s, compile 0.000s, decode 0.302s)
+  NLopt-AUGLAG-LBFGS HS80                     OK Success 0.002s (first 0.00
+3s, compile 0.000s, decode 0.307s)
+  Ipopt              KOEBHELBNE               OK Failure 0.004s (first 0.00
+5s, compile 0.000s, decode 0.284s)
+  MadNLP             KOEBHELBNE               OK Infeasible 0.001s (first 0
+.002s, compile 0.000s, decode 0.277s)
+  NLopt-SLSQP        KOEBHELBNE              CUTEst solve skipped for KOEBH
+ELBNE with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.282s)
+  NLopt-AUGLAG-LBFGS KOEBHELBNE               OK Failure 0.020s (first 0.18
+5s, compile 0.007s, decode 0.276s)
+  Ipopt              LEVYMONE8                OK Failure 0.004s (first 0.00
+5s, compile 0.000s, decode 0.285s)
+  MadNLP             LEVYMONE8                OK Infeasible 0.001s (first 0
+.001s, compile 0.000s, decode 0.281s)
+  NLopt-SLSQP        LEVYMONE8               CUTEst solve skipped for LEVYM
+ONE8 with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.276s)
+  NLopt-AUGLAG-LBFGS LEVYMONE8                OK Failure 0.001s (first 0.00
+1s, compile 0.000s, decode 0.271s)
+  Ipopt              ODFITS                   OK Success 0.018s (first 0.01
+9s, compile 0.000s, decode 0.275s)
+  MadNLP             ODFITS                   OK Success 0.009s (first 0.01
+0s, compile 0.000s, decode 0.275s)
+  NLopt-SLSQP        ODFITS                   OK Success 0.001s (first 0.00
+1s, compile 0.000s, decode 0.280s)
+  NLopt-AUGLAG-LBFGS ODFITS                   OK Success 0.004s (first 0.00
+4s, compile 0.000s, decode 0.271s)
+  Ipopt              PALMER1NE                OK Failure 0.004s (first 0.00
+5s, compile 0.000s, decode 0.272s)
+  MadNLP             PALMER1NE                OK Infeasible 0.000s (first 0
+.001s, compile 0.000s, decode 0.284s)
+  NLopt-SLSQP        PALMER1NE               CUTEst solve skipped for PALME
+R1NE with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.270s)
+  NLopt-AUGLAG-LBFGS PALMER1NE                OK Failure 0.003s (first 0.00
+4s, compile 0.000s, decode 0.267s)
+  Ipopt              PALMER3ANE               OK Failure 0.004s (first 0.00
+5s, compile 0.000s, decode 0.280s)
+  MadNLP             PALMER3ANE               OK Infeasible 0.001s (first 0
+.001s, compile 0.000s, decode 0.274s)
+  NLopt-SLSQP        PALMER3ANE              CUTEst solve skipped for PALME
+R3ANE with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.277s)
+  NLopt-AUGLAG-LBFGS PALMER3ANE               OK Failure 0.009s (first 0.00
+8s, compile 0.000s, decode 0.277s)
+  Ipopt              PALMER4ANE               OK Failure 0.004s (first 0.00
+5s, compile 0.000s, decode 0.277s)
+  MadNLP             PALMER4ANE               OK Infeasible 0.001s (first 0
+.001s, compile 0.000s, decode 0.270s)
+  NLopt-SLSQP        PALMER4ANE              CUTEst solve skipped for PALME
+R4ANE with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.279s)
+  NLopt-AUGLAG-LBFGS PALMER4ANE               OK Failure 0.010s (first 0.00
+9s, compile 0.000s, decode 0.276s)
+  Ipopt              PALMER5BNE               OK Failure 0.004s (first 0.00
+5s, compile 0.000s, decode 0.271s)
+  MadNLP             PALMER5BNE               OK Infeasible 0.001s (first 0
+.001s, compile 0.000s, decode 0.273s)
+  NLopt-SLSQP        PALMER5BNE              CUTEst solve skipped for PALME
+R5BNE with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.269s)
+  NLopt-AUGLAG-LBFGS PALMER5BNE               OK MaxIters 0.013s (first 0.2
+33s, compile 0.000s, decode 0.270s)
+  Ipopt              PALMER7ANE               OK Failure 0.002s (first 0.00
+3s, compile 0.000s, decode 0.259s)
+  MadNLP             PALMER7ANE               OK Infeasible 0.000s (first 0
+.001s, compile 0.000s, decode 0.268s)
+  NLopt-SLSQP        PALMER7ANE              CUTEst solve skipped for PALME
+R7ANE with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.273s)
+  NLopt-AUGLAG-LBFGS PALMER7ANE               OK MaxIters 0.010s (first 0.0
+12s, compile 0.000s, decode 0.267s)
+  Ipopt              PFIT2                    OK Infeasible 0.157s (first 0
+.184s, compile 0.000s, decode 0.320s)
+  MadNLP             PFIT2                    OK MaxIters 0.065s (first 0.0
+91s, compile 0.000s, decode 0.326s)
+  NLopt-SLSQP        PFIT2                    OK Failure 0.000s (first 0.00
+1s, compile 0.000s, decode 0.330s)
+  NLopt-AUGLAG-LBFGS PFIT2                    OK Success 0.014s (first 0.01
+4s, compile 0.000s, decode 0.319s)
+  Ipopt              SUPERSIM                 OK Success 0.005s (first 0.00
+6s, compile 0.000s, decode 0.249s)
+  MadNLP             SUPERSIM                 OK Success 0.001s (first 0.00
+2s, compile 0.000s, decode 0.253s)
+  NLopt-SLSQP        SUPERSIM                 OK Success 0.000s (first 0.00
+0s, compile 0.000s, decode 0.244s)
+  NLopt-AUGLAG-LBFGS SUPERSIM                 OK Failure 0.001s (first 0.00
+1s, compile 0.000s, decode 0.246s)
+  Ipopt              WEEDSNE                  OK Failure 0.004s (first 0.00
+4s, compile 0.000s, decode 0.272s)
+  MadNLP             WEEDSNE                  OK Infeasible 0.001s (first 0
+.001s, compile 0.000s, decode 0.278s)
+  NLopt-SLSQP        WEEDSNE                 CUTEst solve skipped for WEEDS
+NE with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.270s)
+  NLopt-AUGLAG-LBFGS WEEDSNE                  OK Failure 0.003s (first 0.00
+3s, compile 0.000s, decode 0.269s)
+  Ipopt              AVION2                   OK Failure 0.548s (first 0.56
+7s, compile 0.000s, decode 0.376s)
+  MadNLP             AVION2                   OK MaxIters 0.507s (first 0.4
+82s, compile 0.000s, decode 0.368s)
+  NLopt-SLSQP        AVION2                   OK Success 0.012s (first 0.01
+2s, compile 0.000s, decode 0.375s)
+  NLopt-AUGLAG-LBFGS AVION2                   OK MaxIters 0.028s (first 0.0
+30s, compile 0.000s, decode 0.377s)
+  Ipopt              CONCON                   OK Success 0.011s (first 0.01
+4s, compile 0.000s, decode 0.278s)
+  MadNLP             CONCON                   OK Success 0.005s (first 0.00
+6s, compile 0.000s, decode 0.275s)
+  NLopt-SLSQP        CONCON                   OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.279s)
+  NLopt-AUGLAG-LBFGS CONCON                   OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.278s)
+  Ipopt              DALLASS                  OK Success 0.092s (first 0.11
+8s, compile 0.000s, decode 0.277s)
+  MadNLP             DALLASS                  OK Success 0.062s (first 0.08
+9s, compile 0.000s, decode 0.284s)
+  NLopt-SLSQP        DALLASS                  OK Success 0.002s (first 0.00
+2s, compile 0.000s, decode 0.292s)
+  NLopt-AUGLAG-LBFGS DALLASS                  OK Success 0.036s (first 0.09
+0s, compile 0.000s, decode 0.276s)
+  Ipopt              DECONVNE                 OK Success 0.009s (first 0.01
+1s, compile 0.000s, decode 0.293s)
+  MadNLP             DECONVNE                 OK Success 0.008s (first 0.07
+9s, compile 0.068s, decode 0.279s)
+  NLopt-SLSQP        DECONVNE                 OK MaxIters 0.081s (first 0.1
+92s, compile 0.000s, decode 0.286s)
+  NLopt-AUGLAG-LBFGS DECONVNE                 OK MaxIters 0.097s (first 0.1
+48s, compile 0.000s, decode 0.289s)
+  Ipopt              DNIEPER                  OK Success 0.025s (first 0.02
+7s, compile 0.000s, decode 0.303s)
+  MadNLP             DNIEPER                  OK MaxIters 0.628s (first 0.6
+65s, compile 0.000s, decode 0.302s)
+  NLopt-SLSQP        DNIEPER                  OK Success 0.008s (first 0.00
+8s, compile 0.000s, decode 0.303s)
+  NLopt-AUGLAG-LBFGS DNIEPER                  OK Success 0.056s (first 0.03
+9s, compile 0.000s, decode 0.294s)
+  Ipopt              DUAL2                    OK Success 0.196s (first 0.20
+0s, compile 0.000s, decode 0.342s)
+  MadNLP             DUAL2                    OK Infeasible 0.422s (first 0
+.406s, compile 0.000s, decode 0.345s)
+  NLopt-SLSQP        DUAL2                    OK Success 0.252s (first 0.27
+2s, compile 0.000s, decode 0.349s)
+  NLopt-AUGLAG-LBFGS DUAL2                    OK Success 0.038s (first 0.05
+2s, compile 0.000s, decode 0.343s)
+  Ipopt              GOULDQP1                 OK Success 0.028s (first 0.03
+6s, compile 0.000s, decode 0.269s)
+  MadNLP             GOULDQP1                 OK Success 0.038s (first 0.05
+6s, compile 0.000s, decode 0.267s)
+  NLopt-SLSQP        GOULDQP1                 OK Success 0.004s (first 0.00
+4s, compile 0.000s, decode 0.265s)
+  NLopt-AUGLAG-LBFGS GOULDQP1                 OK Success 0.017s (first 0.01
+7s, compile 0.000s, decode 0.276s)
+  Ipopt              HIMMELBJ                 OK Failure 1.008s (first 0.98
+4s, compile 0.000s, decode 0.331s)
+  MadNLP             HIMMELBJ                 OK MaxIters 0.273s (first 0.2
+78s, compile 0.000s, decode 0.339s)
+  NLopt-SLSQP        HIMMELBJ                 OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.335s)
+  NLopt-AUGLAG-LBFGS HIMMELBJ                 OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.328s)
+  Ipopt              HS119                    OK Success 0.026s (first 0.03
+0s, compile 0.000s, decode 0.277s)
+  MadNLP             HS119                    OK Success 0.064s (first 0.09
+1s, compile 0.000s, decode 0.272s)
+  NLopt-SLSQP        HS119                    OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.275s)
+  NLopt-AUGLAG-LBFGS HS119                    OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.272s)
+  Ipopt              LEVYMONE                 OK Failure 0.044s (first 0.04
+0s, compile 0.000s, decode 0.283s)
+  MadNLP             LEVYMONE                 OK Infeasible 0.005s (first 0
+.006s, compile 0.000s, decode 0.296s)
+  NLopt-SLSQP        LEVYMONE                CUTEst solve skipped for LEVYM
+ONE with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.288s)
+  NLopt-AUGLAG-LBFGS LEVYMONE                 OK Failure 0.054s (first 0.02
+4s, compile 0.000s, decode 0.285s)
+  Ipopt              MCONCON                  OK Success 0.011s (first 0.01
+3s, compile 0.000s, decode 0.282s)
+  MadNLP             MCONCON                  OK Success 0.013s (first 0.01
+4s, compile 0.000s, decode 0.281s)
+  NLopt-SLSQP        MCONCON                  OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.279s)
+  NLopt-AUGLAG-LBFGS MCONCON                  OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.275s)
+  Ipopt              NYSTROM5C                OK Failure 0.004s (first 0.00
+5s, compile 0.000s, decode 0.364s)
+  MadNLP             NYSTROM5C                OK Infeasible 0.001s (first 0
+.001s, compile 0.000s, decode 0.361s)
+  NLopt-SLSQP        NYSTROM5C               CUTEst solve skipped for NYSTR
+OM5C with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.363s)
+  NLopt-AUGLAG-LBFGS NYSTROM5C                OK Success 0.018s (first 0.01
+8s, compile 0.000s, decode 0.368s)
+  Ipopt              PORTFL1                  OK Success 0.025s (first 0.02
+7s, compile 0.000s, decode 0.268s)
+  MadNLP             PORTFL1                  OK Success 0.067s (first 0.09
+3s, compile 0.000s, decode 0.270s)
+  NLopt-SLSQP        PORTFL1                  OK Success 0.002s (first 0.00
+2s, compile 0.000s, decode 0.269s)
+  NLopt-AUGLAG-LBFGS PORTFL1                  OK Success 0.002s (first 0.00
+2s, compile 0.000s, decode 0.272s)
+  Ipopt              PORTFL4                  OK Success 0.025s (first 0.02
+6s, compile 0.000s, decode 0.258s)
+  MadNLP             PORTFL4                  OK Success 0.092s (first 0.08
+2s, compile 0.000s, decode 0.267s)
+  NLopt-SLSQP        PORTFL4                  OK Success 0.002s (first 0.00
+2s, compile 0.000s, decode 0.268s)
+  NLopt-AUGLAG-LBFGS PORTFL4                  OK Success 0.002s (first 0.00
+2s, compile 0.000s, decode 0.264s)
+  Ipopt              ROBOT                    OK Success 0.031s (first 0.04
+1s, compile 0.000s, decode 0.278s)
+  MadNLP             ROBOT                    OK MaxIters 0.364s (first 0.3
+61s, compile 0.000s, decode 0.278s)
+  NLopt-SLSQP        ROBOT                    OK Success 0.000s (first 0.00
+0s, compile 0.000s, decode 0.286s)
+  NLopt-AUGLAG-LBFGS ROBOT                    OK Success 0.002s (first 0.00
+3s, compile 0.000s, decode 0.275s)
+  Ipopt              SPANHYD                  OK Success 0.046s (first 0.06
+8s, compile 0.000s, decode 0.480s)
+  MadNLP             SPANHYD                  OK Infeasible 0.180s (first 0
+.279s, compile 0.042s, decode 0.475s)
+  NLopt-SLSQP        SPANHYD                  OK Success 0.571s (first 0.83
+5s, compile 0.000s, decode 0.493s)
+  NLopt-AUGLAG-LBFGS SPANHYD                  OK MaxIters 0.183s (first 0.0
+53s, compile 0.000s, decode 0.486s)
+  Ipopt              WATER                    OK Success 0.032s (first 0.04
+9s, compile 0.000s, decode 0.264s)
+  MadNLP             WATER                    OK Infeasible 0.163s (first 0
+.192s, compile 0.000s, decode 0.267s)
+  NLopt-SLSQP        WATER                    OK Success 0.003s (first 0.00
+3s, compile 0.000s, decode 0.269s)
+  NLopt-AUGLAG-LBFGS WATER                    OK Success 0.012s (first 0.01
+2s, compile 0.000s, decode 0.261s)
+  Ipopt              ALJAZZAF                 OK MaxIters 3.536s (first 3.5
+93s, compile 0.000s, decode 0.303s)
+  MadNLP             ALJAZZAF                 OK MaxIters 1.483s (first 1.7
+00s, compile 0.000s, decode 0.315s)
+  NLopt-SLSQP        ALJAZZAF                 [rerun skipped: first run end
+ed with MaxTime] OK MaxTime 93.608s (first 93.608s, compile 0.000s, decode 
+0.306s)
+  NLopt-AUGLAG-LBFGS ALJAZZAF                 OK Failure 0.003s (first 0.01
+0s, compile 0.000s, decode 0.303s)
+  Ipopt              CHAIN                    OK Success 12.548s (first 14.
+451s, compile 0.000s, decode 0.297s)
+  MadNLP             CHAIN                    OK MaxIters 61.031s (first 61
+.498s, compile 0.000s, decode 0.290s)
+  NLopt-SLSQP        CHAIN                    [rerun skipped: first run end
+ed with MaxTime] OK MaxTime 91.131s (first 91.131s, compile 0.000s, decode 
+0.298s)
+  NLopt-AUGLAG-LBFGS CHAIN                    OK MaxIters 2.162s (first 2.1
+91s, compile 0.000s, decode 0.295s)
+  Ipopt              DIXCHLNV                 OK Success 9.066s (first 10.8
+30s, compile 0.000s, decode 1.762s)
+  MadNLP             DIXCHLNV                 OK Success 38.001s (first 37.
+987s, compile 0.000s, decode 1.784s)
+  NLopt-SLSQP        DIXCHLNV                 OK Failure 70.194s (first 70.
+207s, compile 0.000s, decode 1.773s)
+  NLopt-AUGLAG-LBFGS DIXCHLNV                 OK Failure 1.820s (first 2.25
+5s, compile 0.000s, decode 1.778s)
+  Ipopt              DUAL3                    OK Success 0.107s (first 0.12
+6s, compile 0.000s, decode 0.361s)
+  MadNLP             DUAL3                    OK Success 0.462s (first 0.48
+8s, compile 0.000s, decode 0.356s)
+  NLopt-SLSQP        DUAL3                    OK Success 0.515s (first 0.53
+2s, compile 0.000s, decode 0.361s)
+  NLopt-AUGLAG-LBFGS DUAL3                    OK Failure 0.003s (first 0.00
+3s, compile 0.000s, decode 0.363s)
+  Ipopt              EIGMAXC                  OK Success 0.155s (first 0.50
+9s, compile 0.000s, decode 0.540s)
+  MadNLP             EIGMAXC                  OK Success 0.153s (first 0.17
+7s, compile 0.000s, decode 0.545s)
+  NLopt-SLSQP        EIGMAXC                  OK Success 0.185s (first 0.21
+1s, compile 0.000s, decode 0.552s)
+  NLopt-AUGLAG-LBFGS EIGMAXC                  OK Success 0.083s (first 0.23
+6s, compile 0.000s, decode 0.560s)
+  Ipopt              EIGMINB                  OK Success 0.033s (first 0.03
+7s, compile 0.000s, decode 0.342s)
+  MadNLP             EIGMINB                  OK Success 0.043s (first 0.04
+6s, compile 0.000s, decode 0.342s)
+  NLopt-SLSQP        EIGMINB                  OK Success 0.034s (first 0.15
+9s, compile 0.000s, decode 0.337s)
+  NLopt-AUGLAG-LBFGS EIGMINB                  OK Success 0.029s (first 0.03
+3s, compile 0.000s, decode 0.349s)
+  Ipopt              HIE1372D                 [rerun skipped: first run end
+ed with MaxTime] OK MaxTime 91.735s (first 91.735s, compile 0.000s, decode 
+0.289s)
+  MadNLP             HIE1372D                 [rerun skipped: first run end
+ed with MaxTime] OK MaxTime 90.082s (first 90.082s, compile 0.000s, decode 
+0.300s)
+  NLopt-SLSQP        HIE1372D                 OK Failure 0.001s (first 0.00
+2s, compile 0.000s, decode 0.294s)
+  NLopt-AUGLAG-LBFGS HIE1372D                 OK Failure 0.002s (first 0.00
+2s, compile 0.000s, decode 0.290s)
+  Ipopt              KTMODEL                  OK Failure 43.398s (first 50.
+896s, compile 0.000s, decode 0.332s)
+  MadNLP             KTMODEL                  OK Infeasible 21.456s (first 
+21.626s, compile 0.000s, decode 0.335s)
+  NLopt-SLSQP        KTMODEL                  OK Failure 0.001s (first 0.00
+1s, compile 0.000s, decode 0.334s)
+  NLopt-AUGLAG-LBFGS KTMODEL                  OK Failure 0.001s (first 0.00
+1s, compile 0.000s, decode 0.333s)
+  Ipopt              QR3DBD                   OK Failure 0.675s (first 1.13
+5s, compile 0.000s, decode 0.384s)
+  MadNLP             QR3DBD                   OK Infeasible 0.031s (first 0
+.045s, compile 0.000s, decode 0.380s)
+  NLopt-SLSQP        QR3DBD                  CUTEst solve skipped for QR3DB
+D with NLopt-SLSQP: SLSQP supports at most nvar equality constraints
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.393s)
+  NLopt-AUGLAG-LBFGS QR3DBD                   OK MaxIters 3.007s (first 3.2
+30s, compile 0.000s, decode 0.391s)
+  Ipopt              SMBANK                   OK Failure 2.619s (first 2.57
+9s, compile 0.000s, decode 0.284s)
+  MadNLP             SMBANK                   OK Success 0.185s (first 0.21
+0s, compile 0.000s, decode 0.283s)
+  NLopt-SLSQP        SMBANK                   OK Success 0.040s (first 0.05
+8s, compile 0.000s, decode 0.280s)
+  NLopt-AUGLAG-LBFGS SMBANK                   OK MaxIters 0.111s (first 0.1
+29s, compile 0.000s, decode 0.282s)
+  Ipopt              STEENBRB                 OK MaxIters 26.727s (first 26
+.456s, compile 0.000s, decode 0.313s)
+  MadNLP             STEENBRB                 OK Success 1.108s (first 1.09
+6s, compile 0.000s, decode 0.292s)
+  NLopt-SLSQP        STEENBRB                 OK Failure 15.954s (first 16.
+021s, compile 0.000s, decode 0.297s)
+  NLopt-AUGLAG-LBFGS STEENBRB                 OK MaxIters 0.468s (first 0.5
+23s, compile 0.000s, decode 0.298s)
+  Ipopt              STEENBRD                 OK Success 22.403s (first 22.
+070s, compile 0.000s, decode 0.306s)
+  MadNLP             STEENBRD                 OK Infeasible 1.794s (first 1
+.753s, compile 0.000s, decode 0.307s)
+  NLopt-SLSQP        STEENBRD                 OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.306s)
+  NLopt-AUGLAG-LBFGS STEENBRD                 OK Failure 0.000s (first 0.00
+1s, compile 0.000s, decode 0.295s)
+  Ipopt              STEENBRG                 OK MaxIters 39.567s (first 39
+.940s, compile 0.000s, decode 0.293s)
+  MadNLP             STEENBRG                 OK Infeasible 2.301s (first 1
+.838s, compile 0.000s, decode 0.306s)
+  NLopt-SLSQP        STEENBRG                 OK Success 15.387s (first 15.
+376s, compile 0.000s, decode 0.302s)
+  NLopt-AUGLAG-LBFGS STEENBRG                 OK MaxIters 0.586s (first 0.6
+37s, compile 0.000s, decode 0.306s)
+  Ipopt              TARGUS                   OK MaxIters 3.423s (first 3.4
+41s, compile 0.000s, decode 0.279s)
+  MadNLP             TARGUS                   OK MaxIters 2.532s (first 2.5
+70s, compile 0.000s, decode 0.271s)
+  NLopt-SLSQP        TARGUS                   OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.272s)
+  NLopt-AUGLAG-LBFGS TARGUS                   OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.262s)
+  Ipopt              ZAMB2-11                 OK Success 0.377s (first 0.35
+0s, compile 0.000s, decode 0.305s)
+  MadNLP             ZAMB2-11                 OK MaxIters 4.921s (first 4.9
+00s, compile 0.000s, decode 0.305s)
+  NLopt-SLSQP        ZAMB2-11                 OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.313s)
+  NLopt-AUGLAG-LBFGS ZAMB2-11                 OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.309s)
+  Ipopt              ZAMB2-9                  OK Success 0.253s (first 0.28
+6s, compile 0.000s, decode 0.290s)
+  MadNLP             ZAMB2-9                  OK MaxIters 1.444s (first 1.4
+83s, compile 0.000s, decode 0.301s)
+  NLopt-SLSQP        ZAMB2-9                  OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.306s)
+  NLopt-AUGLAG-LBFGS ZAMB2-9                  OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.297s)
+  bounded equality constrained: 189/189 attempted rows completed (100.0%); 
+11 skipped; status: OK=189, SKIPPED=11
+
+Warming up solvers (JIT), results are not benchmarked:
+  Ipopt              HS35                     OK Success first 0.018s compi
+le 0.000s clean 0.015s (total 0.315s)
+  MadNLP             HS35                     OK Success first 0.088s compi
+le 0.000s clean 0.062s (total 0.424s)
+  NLopt-SLSQP        HS35                    CUTEst solve skipped for HS35 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED first 0.000s compile 0.000s clean 0.000s (total 0.264s)
+  NLopt-AUGLAG-LBFGS HS35                    CUTEst solve skipped for HS35 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED first 0.000s compile 0.000s clean 0.000s (total 0.271s)
 
 Running bounded inequality constrained benchmarks
 Problems: 50
-Solvers: Ipopt
-  Ipopt              PRIMALC1                 OK Success 0.236s
-  Ipopt              POLAK4                   OK Success 0.007s
-  Ipopt              EXPFITA                  OK Success 0.043s
-  Ipopt              HS35                     OK Success 0.013s
-  Ipopt              HS106                    OK Success 0.038s
-  Ipopt              HS34                     OK Success 0.010s
-  Ipopt              HS95                     OK Success 0.010s
-  Ipopt              ZECEVIC3                 OK Success 0.016s
-  Ipopt              HYDROELM                 OK Success 2.064s
-  Ipopt              AVGASB                   OK Success 0.016s
-  Ipopt              HS17                     OK Success 0.017s
-  Ipopt              S268                     OK Success 0.099s
-  Ipopt              HS24                     OK Success 0.013s
-  Ipopt              LEUVEN7                  OK Success 88.271s
-  Ipopt              HS85                     OK MaxIters 0.499s
-  Ipopt              HS101                    OK MaxIters 0.634s
-  Ipopt              SYNTHES1                 OK Success 0.014s
-  Ipopt              HS67                     OK Success 0.015s
-  Ipopt              HS13                     OK Success 0.021s
-  Ipopt              HIMMELP2                 OK Success 0.018s
-  Ipopt              MIFFLIN1                 OK Success 0.009s
-  Ipopt              DEMBO7                   OK Success 0.059s
-  Ipopt              LOOTSMA                  OK Success 0.008s
-  Ipopt              HAIFAS                   OK Success 0.013s
-  Ipopt              GIGOMEZ1                 OK Success 0.012s
-  Ipopt              CRESC100                 OK Infeasible 1.904s
-  Ipopt              EXPFITC                  OK Success 0.253s
-  Ipopt              HS108                    OK Success 0.041s
-  Ipopt              HS93                     OK Success 0.043s
-  Ipopt              GMNCASE4                 OK Success 0.147s
-  Ipopt              S277-280                 OK Success 0.008s
-  Ipopt              GIGOMEZ2                 OK Success 0.011s
-  Ipopt              HS36                     OK Success 0.009s
-  Ipopt              DEMYMALO                 OK Success 0.008s
-  Ipopt              HS105                    OK MaxIters 0.892s
-  Ipopt              SIMPLLPA                 OK Success 0.007s
-  Ipopt              HS86                     OK Success 0.015s
-  Ipopt              HS117                    OK Success 0.041s
-  Ipopt              CHACONN1                 OK Success 0.007s
-  Ipopt              LHAIFAM                  OK Failure 0.007s
-  Ipopt              TFI1                     OK Success 0.069s
-  Ipopt              ZECEVIC4                 OK Success 0.012s
-  Ipopt              HS57                     OK Success 0.022s
-  Ipopt              KIWCRESC                 OK Success 0.011s
-  Ipopt              OPTPRLOC                 OK Success 0.024s
-  Ipopt              HS100                    OK Success 0.023s
-  Ipopt              WOMFLET                  OK Success 0.022s
-  Ipopt              PRIMALC2                 OK Success 0.101s
-  Ipopt              POLAK3                   OK MaxIters 0.696s
-  Ipopt              HS33                     OK Success 0.010s
-100×7 DataFrame
- Row │ category                        problem     solver  n_vars  secs    
-    ⋯
-     │ String                          String      String  Int64   Float64 
-    ⋯
+Solvers: Ipopt, MadNLP, NLopt-SLSQP, NLopt-AUGLAG-LBFGS
+Per-solve time cap: 90.0 s
+  Ipopt              AVGASA                   OK Success 0.016s (first 0.01
+7s, compile 0.000s, decode 0.271s)
+  MadNLP             AVGASA                   OK Success 0.407s (first 0.44
+5s, compile 0.000s, decode 0.265s)
+  NLopt-SLSQP        AVGASA                  CUTEst solve skipped for AVGAS
+A with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x)
+ == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.272s)
+  NLopt-AUGLAG-LBFGS AVGASA                  CUTEst solve skipped for AVGAS
+A with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / 
+cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.272s)
+  Ipopt              BURKEHAN                 OK Infeasible 0.013s (first 0
+.015s, compile 0.000s, decode 0.267s)
+  MadNLP             BURKEHAN                 OK Infeasible 0.009s (first 0
+.009s, compile 0.000s, decode 0.264s)
+  NLopt-SLSQP        BURKEHAN                 OK Failure 0.000s (first 0.23
+1s, compile 0.230s, decode 0.266s)
+  NLopt-AUGLAG-LBFGS BURKEHAN                 OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.266s)
+  Ipopt              CRESC4                   OK Success 0.061s (first 0.08
+9s, compile 0.000s, decode 0.416s)
+  MadNLP             CRESC4                   OK MaxIters 0.090s (first 0.1
+12s, compile 0.000s, decode 0.415s)
+  NLopt-SLSQP        CRESC4                  CUTEst solve skipped for CRESC
+4 with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x)
+ == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.422s)
+  NLopt-AUGLAG-LBFGS CRESC4                  CUTEst solve skipped for CRESC
+4 with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / 
+cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.410s)
+  Ipopt              EQC                      OK Success 0.019s (first 0.02
+0s, compile 0.000s, decode 0.313s)
+  MadNLP             EQC                      OK Infeasible 0.354s (first 0
+.310s, compile 0.000s, decode 0.306s)
+  NLopt-SLSQP        EQC                      OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.312s)
+  NLopt-AUGLAG-LBFGS EQC                      OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.311s)
+  Ipopt              HIMMELP3                 OK Success 0.014s (first 0.01
+6s, compile 0.000s, decode 0.299s)
+  MadNLP             HIMMELP3                 OK Success 0.004s (first 0.00
+4s, compile 0.000s, decode 0.296s)
+  NLopt-SLSQP        HIMMELP3                CUTEst solve skipped for HIMME
+LP3 with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(
+x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.297s)
+  NLopt-AUGLAG-LBFGS HIMMELP3                CUTEst solve skipped for HIMME
+LP3 with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 
+/ cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.297s)
+  Ipopt              HIMMELP6                 OK Success 0.016s (first 0.01
+7s, compile 0.000s, decode 0.305s)
+  MadNLP             HIMMELP6                 OK Success 0.009s (first 0.00
+9s, compile 0.000s, decode 0.301s)
+  NLopt-SLSQP        HIMMELP6                CUTEst solve skipped for HIMME
+LP6 with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(
+x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.299s)
+  NLopt-AUGLAG-LBFGS HIMMELP6                CUTEst solve skipped for HIMME
+LP6 with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 
+/ cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.312s)
+  Ipopt              HS103                    OK Success 0.049s (first 0.07
+2s, compile 0.000s, decode 0.342s)
+  MadNLP             HS103                    OK MaxIters 0.682s (first 0.6
+49s, compile 0.000s, decode 0.337s)
+  NLopt-SLSQP        HS103                   CUTEst solve skipped for HS103
+ with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) 
+== 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.335s)
+  NLopt-AUGLAG-LBFGS HS103                   CUTEst solve skipped for HS103
+ with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / c
+ons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.336s)
+  Ipopt              HS106                    OK Success 0.031s (first 0.04
+5s, compile 0.000s, decode 0.267s)
+  MadNLP             HS106                    OK MaxIters 0.067s (first 0.0
+94s, compile 0.000s, decode 0.271s)
+  NLopt-SLSQP        HS106                   CUTEst solve skipped for HS106
+ with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) 
+== 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.272s)
+  NLopt-AUGLAG-LBFGS HS106                   CUTEst solve skipped for HS106
+ with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / c
+ons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.264s)
+  Ipopt              HS15                     OK Success 0.012s (first 0.01
+4s, compile 0.000s, decode 0.277s)
+  MadNLP             HS15                     OK Success 0.077s (first 0.10
+1s, compile 0.000s, decode 0.273s)
+  NLopt-SLSQP        HS15                    CUTEst solve skipped for HS15 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.277s)
+  NLopt-AUGLAG-LBFGS HS15                    CUTEst solve skipped for HS15 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.277s)
+  Ipopt              HS17                     OK Success 0.018s (first 0.02
+0s, compile 0.000s, decode 0.268s)
+  MadNLP             HS17                     OK Success 0.158s (first 0.18
+7s, compile 0.000s, decode 0.272s)
+  NLopt-SLSQP        HS17                    CUTEst solve skipped for HS17 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.270s)
+  NLopt-AUGLAG-LBFGS HS17                    CUTEst solve skipped for HS17 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.269s)
+  Ipopt              HS20                     OK Success 0.009s (first 0.01
+0s, compile 0.000s, decode 0.270s)
+  MadNLP             HS20                     OK Success 0.306s (first 0.28
+4s, compile 0.000s, decode 0.270s)
+  NLopt-SLSQP        HS20                    CUTEst solve skipped for HS20 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.284s)
+  NLopt-AUGLAG-LBFGS HS20                    CUTEst solve skipped for HS20 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.273s)
+  Ipopt              HS23                     OK Success 0.010s (first 0.01
+1s, compile 0.000s, decode 0.266s)
+  MadNLP             HS23                     OK MaxIters 0.294s (first 0.3
+26s, compile 0.000s, decode 0.262s)
+  NLopt-SLSQP        HS23                    CUTEst solve skipped for HS23 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.273s)
+  NLopt-AUGLAG-LBFGS HS23                    CUTEst solve skipped for HS23 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.256s)
+  Ipopt              HS31                     OK Success 0.014s (first 0.01
+6s, compile 0.000s, decode 0.275s)
+  MadNLP             HS31                     OK MaxIters 0.289s (first 0.2
+57s, compile 0.000s, decode 0.271s)
+  NLopt-SLSQP        HS31                    CUTEst solve skipped for HS31 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.267s)
+  NLopt-AUGLAG-LBFGS HS31                    CUTEst solve skipped for HS31 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.256s)
+  Ipopt              HS35                     OK Success 0.010s (first 0.01
+6s, compile 0.000s, decode 0.274s)
+  MadNLP             HS35                     OK Success 0.065s (first 0.07
+4s, compile 0.000s, decode 0.261s)
+  NLopt-SLSQP        HS35                    CUTEst solve skipped for HS35 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.278s)
+  NLopt-AUGLAG-LBFGS HS35                    CUTEst solve skipped for HS35 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.275s)
+  Ipopt              HS36                     OK Success 0.011s (first 0.01
+2s, compile 0.000s, decode 0.255s)
+  MadNLP             HS36                     OK Success 0.019s (first 0.02
+0s, compile 0.000s, decode 0.254s)
+  NLopt-SLSQP        HS36                    CUTEst solve skipped for HS36 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.265s)
+  NLopt-AUGLAG-LBFGS HS36                    CUTEst solve skipped for HS36 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.265s)
+  Ipopt              HS44                     OK Success 0.017s (first 0.01
+8s, compile 0.000s, decode 0.261s)
+  MadNLP             HS44                     OK MaxIters 0.866s (first 0.8
+89s, compile 0.000s, decode 0.261s)
+  NLopt-SLSQP        HS44                    CUTEst solve skipped for HS44 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.271s)
+  NLopt-AUGLAG-LBFGS HS44                    CUTEst solve skipped for HS44 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.264s)
+  Ipopt              HS59                     OK Success 0.014s (first 0.01
+7s, compile 0.000s, decode 0.301s)
+  MadNLP             HS59                     OK Success 0.011s (first 0.01
+2s, compile 0.000s, decode 0.297s)
+  NLopt-SLSQP        HS59                    CUTEst solve skipped for HS59 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.299s)
+  NLopt-AUGLAG-LBFGS HS59                    CUTEst solve skipped for HS59 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.301s)
+  Ipopt              HS66                     OK Success 0.014s (first 0.01
+5s, compile 0.000s, decode 0.267s)
+  MadNLP             HS66                     OK Success 0.031s (first 0.04
+2s, compile 0.000s, decode 0.277s)
+  NLopt-SLSQP        HS66                    CUTEst solve skipped for HS66 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.272s)
+  NLopt-AUGLAG-LBFGS HS66                    CUTEst solve skipped for HS66 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.271s)
+  Ipopt              HS72                     OK Success 0.018s (first 0.01
+9s, compile 0.000s, decode 0.266s)
+  MadNLP             HS72                     OK MaxIters 0.068s (first 0.0
+90s, compile 0.000s, decode 0.271s)
+  NLopt-SLSQP        HS72                    CUTEst solve skipped for HS72 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.263s)
+  NLopt-AUGLAG-LBFGS HS72                    CUTEst solve skipped for HS72 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.264s)
+  Ipopt              HS83                     OK Success 0.012s (first 0.01
+3s, compile 0.000s, decode 0.262s)
+  MadNLP             HS83                     OK MaxIters 0.091s (first 0.1
+11s, compile 0.000s, decode 0.270s)
+  NLopt-SLSQP        HS83                    CUTEst solve skipped for HS83 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.274s)
+  NLopt-AUGLAG-LBFGS HS83                    CUTEst solve skipped for HS83 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.259s)
+  Ipopt              HS86                     OK Success 0.017s (first 0.01
+9s, compile 0.000s, decode 0.272s)
+  MadNLP             HS86                     OK Success 0.153s (first 0.17
+6s, compile 0.000s, decode 0.264s)
+  NLopt-SLSQP        HS86                    CUTEst solve skipped for HS86 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.270s)
+  NLopt-AUGLAG-LBFGS HS86                    CUTEst solve skipped for HS86 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.267s)
+  Ipopt              HS95                     OK Success 0.011s (first 0.01
+2s, compile 0.000s, decode 0.267s)
+  MadNLP             HS95                     OK MaxIters 0.710s (first 0.7
+47s, compile 0.000s, decode 0.270s)
+  NLopt-SLSQP        HS95                    CUTEst solve skipped for HS95 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.266s)
+  NLopt-AUGLAG-LBFGS HS95                    CUTEst solve skipped for HS95 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.260s)
+  Ipopt              HS98                     OK Success 0.019s (first 0.02
+2s, compile 0.000s, decode 0.273s)
+  MadNLP             HS98                     OK Success 0.093s (first 0.08
+5s, compile 0.000s, decode 0.263s)
+  NLopt-SLSQP        HS98                    CUTEst solve skipped for HS98 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.272s)
+  NLopt-AUGLAG-LBFGS HS98                    CUTEst solve skipped for HS98 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.270s)
+  Ipopt              LSQFIT                   OK Success 0.013s (first 0.01
+4s, compile 0.000s, decode 0.263s)
+  MadNLP             LSQFIT                   OK Success 0.033s (first 0.04
+5s, compile 0.000s, decode 0.261s)
+  NLopt-SLSQP        LSQFIT                   OK Success 0.000s (first 0.32
+0s, compile 0.310s, decode 0.261s)
+  NLopt-AUGLAG-LBFGS LSQFIT                   OK Success 0.001s (first 0.00
+1s, compile 0.000s, decode 0.259s)
+  Ipopt              QC                       OK Success 0.012s (first 0.01
+4s, compile 0.000s, decode 0.320s)
+  MadNLP             QC                       OK MaxIters 1.028s (first 1.1
+13s, compile 0.000s, decode 0.317s)
+  NLopt-SLSQP        QC                      CUTEst solve skipped for QC wi
+th NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) == 
+0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.316s)
+  NLopt-AUGLAG-LBFGS QC                      CUTEst solve skipped for QC wi
+th NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / cons
+(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.317s)
+  Ipopt              S365                     OK Failure 0.004s (first 0.00
+5s, compile 0.000s, decode 0.273s)
+  MadNLP             S365                     OK Failure 0.001s (first 0.00
+1s, compile 0.000s, decode 0.283s)
+  NLopt-SLSQP        S365                    CUTEst solve skipped for S365 
+with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) =
+= 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.284s)
+  NLopt-AUGLAG-LBFGS S365                    CUTEst solve skipped for S365 
+with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / co
+ns(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.292s)
+  Ipopt              SIMPLLPA                 OK Success 0.009s (first 0.01
+0s, compile 0.000s, decode 0.253s)
+  MadNLP             SIMPLLPA                 OK Success 0.004s (first 0.00
+5s, compile 0.000s, decode 0.252s)
+  NLopt-SLSQP        SIMPLLPA                CUTEst solve skipped for SIMPL
+LPA with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(
+x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.247s)
+  NLopt-AUGLAG-LBFGS SIMPLLPA                CUTEst solve skipped for SIMPL
+LPA with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 
+/ cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.251s)
+  Ipopt              STANCMIN                 OK Success 0.012s (first 0.01
+3s, compile 0.000s, decode 0.269s)
+  MadNLP             STANCMIN                 OK MaxIters 0.063s (first 0.0
+87s, compile 0.000s, decode 0.266s)
+  NLopt-SLSQP        STANCMIN                 OK Success 0.000s (first 0.00
+0s, compile 0.000s, decode 0.272s)
+  NLopt-AUGLAG-LBFGS STANCMIN                 OK Success 0.002s (first 0.00
+2s, compile 0.000s, decode 0.258s)
+  Ipopt              ZECEVIC2                 OK Success 0.008s (first 0.00
+9s, compile 0.000s, decode 0.266s)
+  MadNLP             ZECEVIC2                 OK MaxIters 0.109s (first 0.1
+20s, compile 0.000s, decode 0.272s)
+  NLopt-SLSQP        ZECEVIC2                 OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.268s)
+  NLopt-AUGLAG-LBFGS ZECEVIC2                 OK Failure 0.000s (first 0.00
+0s, compile 0.000s, decode 0.253s)
+  Ipopt              ZY2                      OK Success 0.009s (first 0.01
+0s, compile 0.000s, decode 0.260s)
+  MadNLP             ZY2                      OK MaxIters 0.166s (first 0.1
+89s, compile 0.000s, decode 0.258s)
+  NLopt-SLSQP        ZY2                     CUTEst solve skipped for ZY2 w
+ith NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) ==
+ 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.268s)
+  NLopt-AUGLAG-LBFGS ZY2                     CUTEst solve skipped for ZY2 w
+ith NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / con
+s(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.265s)
+  Ipopt              AIRPORT                  OK Success 0.090s (first 0.11
+1s, compile 0.000s, decode 0.309s)
+  MadNLP             AIRPORT                  OK MaxIters 1.577s (first 1.5
+99s, compile 0.000s, decode 0.320s)
+  NLopt-SLSQP        AIRPORT                  OK Success 0.425s (first 0.44
+6s, compile 0.000s, decode 0.324s)
+  NLopt-AUGLAG-LBFGS AIRPORT                  OK Success 0.107s (first 0.14
+0s, compile 0.000s, decode 0.319s)
+  Ipopt              DEMBO7                   OK Success 0.042s (first 0.06
+4s, compile 0.000s, decode 0.310s)
+  MadNLP             DEMBO7                   OK MaxIters 0.211s (first 0.2
+36s, compile 0.000s, decode 0.303s)
+  NLopt-SLSQP        DEMBO7                  CUTEst solve skipped for DEMBO
+7 with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x)
+ == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.312s)
+  NLopt-AUGLAG-LBFGS DEMBO7                  CUTEst solve skipped for DEMBO
+7 with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / 
+cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.304s)
+  Ipopt              HIMMELBI                 OK Success 0.131s (first 0.12
+4s, compile 0.000s, decode 0.288s)
+  MadNLP             HIMMELBI                 OK Infeasible 1.978s (first 2
+.016s, compile 0.000s, decode 0.291s)
+  NLopt-SLSQP        HIMMELBI                CUTEst solve skipped for HIMME
+LBI with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(
+x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.290s)
+  NLopt-AUGLAG-LBFGS HIMMELBI                CUTEst solve skipped for HIMME
+LBI with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 
+/ cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.283s)
+  Ipopt              HS116                    OK Success 0.028s (first 0.03
+9s, compile 0.000s, decode 0.278s)
+  MadNLP             HS116                    OK MaxIters 0.125s (first 0.1
+51s, compile 0.000s, decode 0.279s)
+  NLopt-SLSQP        HS116                   CUTEst solve skipped for HS116
+ with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) 
+== 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.274s)
+  NLopt-AUGLAG-LBFGS HS116                   CUTEst solve skipped for HS116
+ with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / c
+ons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.268s)
+  Ipopt              HS117                    OK Success 0.032s (first 0.04
+5s, compile 0.000s, decode 0.272s)
+  MadNLP             HS117                    OK MaxIters 0.197s (first 0.1
+91s, compile 0.000s, decode 0.269s)
+  NLopt-SLSQP        HS117                   CUTEst solve skipped for HS117
+ with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) 
+== 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.281s)
+  NLopt-AUGLAG-LBFGS HS117                   CUTEst solve skipped for HS117
+ with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / c
+ons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.273s)
+  Ipopt              HS118                    OK Success 0.021s (first 0.02
+2s, compile 0.000s, decode 0.263s)
+  MadNLP             HS118                    OK Infeasible 0.317s (first 0
+.341s, compile 0.000s, decode 0.271s)
+  NLopt-SLSQP        HS118                   CUTEst solve skipped for HS118
+ with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(x) 
+== 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.276s)
+  NLopt-AUGLAG-LBFGS HS118                   CUTEst solve skipped for HS118
+ with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 / c
+ons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.277s)
+  Ipopt              KISSING2                 OK Success 2.135s (first 1.79
+3s, compile 0.000s, decode 0.348s)
+  MadNLP             KISSING2                 OK MaxIters 48.222s (first 48
+.333s, compile 0.000s, decode 0.345s)
+  NLopt-SLSQP        KISSING2                CUTEst solve skipped for KISSI
+NG2 with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(
+x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.350s)
+  NLopt-AUGLAG-LBFGS KISSING2                CUTEst solve skipped for KISSI
+NG2 with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 
+/ cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.346s)
+  Ipopt              OPTPRLOC                 OK Success 0.025s (first 0.02
+9s, compile 0.000s, decode 0.279s)
+  MadNLP             OPTPRLOC                 OK Infeasible 0.495s (first 0
+.508s, compile 0.000s, decode 0.275s)
+  NLopt-SLSQP        OPTPRLOC                CUTEst solve skipped for OPTPR
+LOC with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(
+x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.264s)
+  NLopt-AUGLAG-LBFGS OPTPRLOC                CUTEst solve skipped for OPTPR
+LOC with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 
+/ cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.263s)
+  Ipopt              CLEUVEN7                 [rerun skipped: first run end
+ed with MaxTime] OK MaxTime 90.997s (first 90.997s, compile 0.000s, decode 
+0.495s)
+  MadNLP             CLEUVEN7                 [rerun skipped: first run end
+ed with MaxTime] OK MaxTime 90.085s (first 90.085s, compile 0.000s, decode 
+0.495s)
+  NLopt-SLSQP        CLEUVEN7                 OK Failure 0.000s (first 0.00
+1s, compile 0.000s, decode 0.476s)
+  NLopt-AUGLAG-LBFGS CLEUVEN7                 OK Failure 0.001s (first 0.00
+1s, compile 0.000s, decode 0.471s)
+  Ipopt              HYDROELM                 OK Success 3.284s (first 3.36
+2s, compile 0.000s, decode 0.294s)
+  MadNLP             HYDROELM                 OK MaxIters 60.553s (first 61
+.276s, compile 0.000s, decode 0.301s)
+  NLopt-SLSQP        HYDROELM                CUTEst solve skipped for HYDRO
+ELM with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(
+x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.310s)
+  NLopt-AUGLAG-LBFGS HYDROELM                CUTEst solve skipped for HYDRO
+ELM with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 
+/ cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.307s)
+  Ipopt              HYDROELS                 OK Success 0.251s (first 0.25
+9s, compile 0.000s, decode 0.282s)
+  MadNLP             HYDROELS                 OK MaxIters 6.768s (first 7.1
+62s, compile 0.000s, decode 0.287s)
+  NLopt-SLSQP        HYDROELS                CUTEst solve skipped for HYDRO
+ELS with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(
+x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.273s)
+  NLopt-AUGLAG-LBFGS HYDROELS                CUTEst solve skipped for HYDRO
+ELS with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 
+/ cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.277s)
+  Ipopt              LEUVEN7                  [rerun skipped: first run end
+ed with MaxTime] OK MaxTime 90.828s (first 90.828s, compile 0.000s, decode 
+0.555s)
+  MadNLP             LEUVEN7                  [rerun skipped: first run end
+ed with MaxTime] OK MaxTime 90.158s (first 90.158s, compile 0.000s, decode 
+0.554s)
+  NLopt-SLSQP        LEUVEN7                  OK Failure 0.000s (first 0.00
+1s, compile 0.000s, decode 0.550s)
+  NLopt-AUGLAG-LBFGS LEUVEN7                  OK Failure 0.000s (first 0.01
+7s, compile 0.000s, decode 0.547s)
+  Ipopt              PRIMAL1                  OK Success 0.200s (first 0.14
+2s, compile 0.000s, decode 0.302s)
+  MadNLP             PRIMAL1                  OK Success 4.881s (first 5.27
+9s, compile 0.000s, decode 0.301s)
+  NLopt-SLSQP        PRIMAL1                  OK Success 0.495s (first 0.51
+9s, compile 0.000s, decode 0.298s)
+  NLopt-AUGLAG-LBFGS PRIMAL1                  OK Success 0.258s (first 0.28
+6s, compile 0.000s, decode 0.299s)
+  Ipopt              PRIMAL2                  OK Success 0.510s (first 0.41
+5s, compile 0.000s, decode 0.317s)
+  MadNLP             PRIMAL2                  OK Success 8.112s (first 8.49
+8s, compile 0.000s, decode 0.310s)
+  NLopt-SLSQP        PRIMAL2                  OK Success 2.696s (first 2.71
+7s, compile 0.000s, decode 0.308s)
+  NLopt-AUGLAG-LBFGS PRIMAL2                  OK Success 0.334s (first 0.38
+2s, compile 0.000s, decode 0.308s)
+  Ipopt              PRIMAL3                  OK Success 0.500s (first 0.62
+0s, compile 0.000s, decode 0.366s)
+  MadNLP             PRIMAL3                  OK Success 8.732s (first 9.17
+9s, compile 0.000s, decode 0.341s)
+  NLopt-SLSQP        PRIMAL3                  OK Success 4.046s (first 4.06
+4s, compile 0.000s, decode 0.359s)
+  NLopt-AUGLAG-LBFGS PRIMAL3                  OK Success 0.772s (first 0.84
+2s, compile 0.000s, decode 0.353s)
+  Ipopt              PRIMALC1                 OK Success 0.275s (first 0.30
+3s, compile 0.000s, decode 0.286s)
+  MadNLP             PRIMALC1                 OK MaxIters 1.027s (first 1.0
+80s, compile 0.000s, decode 0.279s)
+  NLopt-SLSQP        PRIMALC1                 OK Success 0.392s (first 0.41
+8s, compile 0.000s, decode 0.282s)
+  NLopt-AUGLAG-LBFGS PRIMALC1                 OK Success 0.048s (first 0.07
+3s, compile 0.000s, decode 0.275s)
+  Ipopt              PRIMALC2                 OK Success 0.089s (first 0.11
+6s, compile 0.000s, decode 0.287s)
+  MadNLP             PRIMALC2                 OK MaxIters 0.449s (first 0.4
+69s, compile 0.000s, decode 0.277s)
+  NLopt-SLSQP        PRIMALC2                 OK Success 0.443s (first 0.47
+1s, compile 0.000s, decode 0.275s)
+  NLopt-AUGLAG-LBFGS PRIMALC2                 OK Success 0.052s (first 0.07
+7s, compile 0.000s, decode 0.283s)
+  Ipopt              PRIMALC5                 OK Success 0.176s (first 0.20
+2s, compile 0.000s, decode 0.283s)
+  MadNLP             PRIMALC5                 OK MaxIters 0.750s (first 1.0
+27s, compile 0.000s, decode 0.286s)
+  NLopt-SLSQP        PRIMALC5                 OK Success 0.869s (first 0.89
+3s, compile 0.000s, decode 0.274s)
+  NLopt-AUGLAG-LBFGS PRIMALC5                 OK Success 0.060s (first 0.07
+4s, compile 0.000s, decode 0.276s)
+  Ipopt              PRIMALC8                 OK Success 2.155s (first 2.17
+0s, compile 0.000s, decode 0.285s)
+  MadNLP             PRIMALC8                 OK Infeasible 1.032s (first 1
+.313s, compile 0.000s, decode 0.289s)
+  NLopt-SLSQP        PRIMALC8                 OK Success 8.135s (first 8.16
+3s, compile 0.000s, decode 0.291s)
+  NLopt-AUGLAG-LBFGS PRIMALC8                 OK MaxIters 0.292s (first 0.2
+98s, compile 0.000s, decode 0.295s)
+  Ipopt              SINROSNB                 OK Success 85.541s (first 89.
+857s, compile 0.000s, decode 0.348s)
+  MadNLP             SINROSNB                 [rerun skipped: first run end
+ed with MaxTime] OK MaxTime 90.032s (first 90.032s, compile 0.000s, decode 
+0.327s)
+  NLopt-SLSQP        SINROSNB                CUTEst solve skipped for SINRO
+SNB with NLopt-SLSQP: constraint bounds are not of the cons(x) &lt;= 0 / cons(
+x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.333s)
+  NLopt-AUGLAG-LBFGS SINROSNB                CUTEst solve skipped for SINRO
+SNB with NLopt-AUGLAG-LBFGS: constraint bounds are not of the cons(x) &lt;= 0 
+/ cons(x) == 0 form that OptimizationNLopt passes to NLopt
+ SKIPPED SKIPPED 0.000s (first 0.000s, compile 0.000s, decode 0.341s)
+  bounded inequality constrained: 130/130 attempted rows completed (100.0%)
+; 70 skipped; status: OK=130, SKIPPED=70
+400×19 DataFrame
+ Row │ category                        problem    solver              solve
+r_c ⋯
+     │ String                          String     String              Strin
+g   ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ bounded equality constrained    GAUSS2      Ipopt        8  0.508391
-    ⋯
-   2 │ bounded equality constrained    DUAL2       Ipopt       96  0.280648
-   3 │ bounded equality constrained    WAYSEA1NE   Ipopt        2  0.052308
-1
-   4 │ bounded equality constrained    BROWNDENE   Ipopt        4  0.002032
-04
-   5 │ bounded equality constrained    HS79        Ipopt        5  0.010977
-    ⋯
-   6 │ bounded equality constrained    GULFNE      Ipopt        3  0.001919
-03
-   7 │ bounded equality constrained    JUDGENE     Ipopt        2  0.001660
-82
-   8 │ bounded equality constrained    STRTCHDVNE  Ipopt       10  0.010744
-8
-  ⋮  │               ⋮                     ⋮         ⋮       ⋮         ⋮   
+   1 │ bounded equality constrained    AIRCRFTA   Ipopt               inter
+ior ⋯
+   2 │ bounded equality constrained    AIRCRFTA   MadNLP              inter
+ior
+   3 │ bounded equality constrained    AIRCRFTA   NLopt-SLSQP         seque
+nti
+   4 │ bounded equality constrained    AIRCRFTA   NLopt-AUGLAG-LBFGS  augme
+nte
+   5 │ bounded equality constrained    HATFLDANE  Ipopt               inter
+ior ⋯
+   6 │ bounded equality constrained    HATFLDANE  MadNLP              inter
+ior
+   7 │ bounded equality constrained    HATFLDANE  NLopt-SLSQP         seque
+nti
+   8 │ bounded equality constrained    HATFLDANE  NLopt-AUGLAG-LBFGS  augme
+nte
+  ⋮  │               ⋮                     ⋮              ⋮                
     ⋱
-  94 │ bounded inequality constrained  KIWCRESC    Ipopt        3  0.010783
-9   ⋯
-  95 │ bounded inequality constrained  OPTPRLOC    Ipopt       30  0.023802
-  96 │ bounded inequality constrained  HS100       Ipopt        7  0.022841
-9
-  97 │ bounded inequality constrained  WOMFLET     Ipopt        3  0.021660
-1
-  98 │ bounded inequality constrained  PRIMALC2    Ipopt      231  0.100701
-    ⋯
-  99 │ bounded inequality constrained  POLAK3      Ipopt       12  0.696041
- 100 │ bounded inequality constrained  HS33        Ipopt        3  0.009507
-89
-                                                   2 columns and 85 rows om
+ 394 │ bounded inequality constrained  PRIMALC8   MadNLP              inter
+ior ⋯
+ 395 │ bounded inequality constrained  PRIMALC8   NLopt-SLSQP         seque
+nti
+ 396 │ bounded inequality constrained  PRIMALC8   NLopt-AUGLAG-LBFGS  augme
+nte
+ 397 │ bounded inequality constrained  SINROSNB   Ipopt               inter
+ior
+ 398 │ bounded inequality constrained  SINROSNB   MadNLP              inter
+ior ⋯
+ 399 │ bounded inequality constrained  SINROSNB   NLopt-SLSQP         seque
+nti
+ 400 │ bounded inequality constrained  SINROSNB   NLopt-AUGLAG-LBFGS  augme
+nte
+                                                 16 columns and 385 rows om
 itted</code></pre><h2 id="Summary"><a class="docs-heading-anchor" href="#Summary">Summary</a><a id="Summary-1"></a><a class="docs-heading-anchor-permalink" href="#Summary" title="Permalink"></a></h2><p><code>summarize_results</code> groups rows by category and solver. <code>completion_rate</code> is the share of runs with <code>status == &quot;OK&quot;</code>, i.e. the solver returned at all. <code>success_rate</code> is the share of runs whose return code is in <code>SUCCESS_RETCODES</code> (<code>Success</code>, <code>Terminated</code>, <code>FirstOrderOptimal</code>). Runs that stopped at <code>MaxIters</code> or <code>MaxTime</code> count as completed but not successful. <code>median_secs</code> is the median of the per-run time described above over all rows for that category and solver, including unsuccessful ones. No solution-quality metric (objective value, KKT residual, constraint violation) is recorded yet; see #1857.</p><pre><code class="language-julia hljs">bounded_summary = summarize_results(bounded_results)
 
 plot_solve_times(bounded_results, &quot;CUTEst bounded constrained Optimization.jl solve time&quot;)
-plot_success_rates(bounded_summary, &quot;CUTEst bounded constrained Optimization.jl success rate&quot;)</code></pre><pre><code class="nohighlight hljs">Return code distribution:
-  Success: 72
-  Failure: 22
-  MaxIters: 4
-  Infeasible: 2
+plot_success_rates(bounded_summary, &quot;CUTEst bounded constrained Optimization.jl success rate&quot;)
+plot_compile_times(bounded_results, &quot;CUTEst bounded constrained Optimization.jl compile time&quot;)
+plot_performance_profile(bounded_results,
+    &quot;CUTEst bounded constrained Optimization.jl performance profile&quot;)
+plot_work_precision(bounded_results,
+    &quot;CUTEst bounded constrained Optimization.jl work-precision&quot;)</code></pre><pre><code class="nohighlight hljs">Return code distribution:
+  Success: 172
+  SKIPPED: 81
+  Failure: 63
+  MaxIters: 50
+  Infeasible: 25
+  MaxTime: 9
 
-Summary:
-2×8 DataFrame
- Row │ category                        solver  completed_runs  successful_r
-uns ⋯
-     │ String                          String  Int64           Int64       
+Summary (local convergence-based solvers; success = return code in FirstOrd
+erOptimal/Success/Terminated):
+8×14 DataFrame
+ Row │ category                        solver_class          solver        
+    ⋯
+     │ String                          String                String        
     ⋯
 ─────┼─────────────────────────────────────────────────────────────────────
 ─────
-   1 │ bounded equality constrained    Ipopt               50              
- 28 ⋯
-   2 │ bounded inequality constrained  Ipopt               50              
- 44
-                                                               4 columns om
-itted</code></pre><p><img src="../figures/CUTEst_bounded_4_1.png" alt/> <img src="../figures/CUTEst_bounded_4_2.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
+   1 │ bounded equality constrained    augmented Lagrangian  NLopt-AUGLAG-L
+BFG ⋯
+   2 │ bounded equality constrained    interior point        Ipopt
+   3 │ bounded equality constrained    interior point        MadNLP
+   4 │ bounded equality constrained    sequential quadratic  NLopt-SLSQP
+   5 │ bounded inequality constrained  augmented Lagrangian  NLopt-AUGLAG-L
+BFG ⋯
+   6 │ bounded inequality constrained  interior point        Ipopt
+   7 │ bounded inequality constrained  interior point        MadNLP
+   8 │ bounded inequality constrained  sequential quadratic  NLopt-SLSQP
+                                                              12 columns om
+itted</code></pre><p><img src="../figures/CUTEst_bounded_4_1.png" alt/> <img src="../figures/CUTEst_bounded_4_2.png" alt/> <img src="../figures/CUTEst_bounded_4_3.png" alt/> <img src="../figures/CUTEst_bounded_4_4.png" alt/> <img src="../figures/CUTEst_bounded_4_5.png" alt/></p><h2 id="Appendix"><a class="docs-heading-anchor" href="#Appendix">Appendix</a><a id="Appendix-1"></a><a class="docs-heading-anchor-permalink" href="#Appendix" title="Permalink"></a></h2><p>These benchmarks are a part of the SciMLBenchmarks.jl repository, found at: <a href="https://github.com/SciML/SciMLBenchmarks.jl">https://github.com/SciML/SciMLBenchmarks.jl</a>. For more information on high-performance scientific machine learning, check out the SciML Open Source Software Organization <a href="https://sciml.ai">https://sciml.ai</a>.</p><p>To locally run this benchmark, do the following commands:</p><pre><code class="nohighlight hljs">using SciMLBenchmarks
 SciMLBenchmarks.weave_file(&quot;benchmarks/OptimizationCUTEst&quot;,&quot;CUTEst_bounded.jmd&quot;)</code></pre><p>Computer Information:</p><pre><code class="nohighlight hljs">Julia Version 1.12.7
 Commit 6d172b025e4 (2026-08-15 08:05 UTC)
 Build Info:
@@ -248,345 +1176,324 @@ Platform Info:
   GC: Built with stock GC
 Threads: 128 default, 1 interactive, 128 GC (on 128 virtual cores)
 Environment:
-  JULIA_DEPOT_PATH = /home/crackauc/github-runners/amdci8-1/.julia
   JULIA_NUM_THREADS = auto
-</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/OptimizationCUTEst/Project.toml`
+</code></pre><p>Package Information:</p><pre><code class="nohighlight hljs">Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/OptimizationCUTEst/Project.toml`
 ⌃ [1b53aba6] CUTEst v1.3.7
   [a93c6f00] DataFrames v1.8.2
-⌃ [b6b21f68] Ipopt v1.14.3
-⌃ [b8f27783] MathOptInterface v1.51.0
+  [b6b21f68] Ipopt v1.16.0
+  [2621e9c9] MadNLP v0.10.1
+⌃ [b8f27783] MathOptInterface v1.53.0
   [a4795742] NLPModels v0.21.12
-⌃ [7f7a1694] Optimization v5.4.0
-⌅ [fd9f6733] OptimizationMOI v0.5.11
-⌃ [064b21be] OptimizationNLPModels v1.1.0
-⌃ [36348300] OptimizationOptimJL v0.4.9
-⌃ [42dfb2eb] OptimizationOptimisers v0.3.15
-⌃ [91a5bcdd] Plots v1.41.6
-⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.1]
-⌃ [10745b16] Statistics v1.11.1
-⌃ [2913bbd2] StatsBase v0.34.10
+  [7f7a1694] Optimization v5.9.1
+⌃ [fd9f6733] OptimizationMOI v1.4.1
+⌃ [5d9c809f] OptimizationMadNLP v2.3.1
+⌃ [064b21be] OptimizationNLPModels v1.6.0
+⌃ [4e6fcdb7] OptimizationNLopt v0.3.18
+⌃ [36348300] OptimizationOptimJL v0.4.21
+⌃ [42dfb2eb] OptimizationOptimisers v0.3.24
+  [91a5bcdd] Plots v1.41.7
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [10745b16] Statistics v1.11.5
+  [2913bbd2] StatsBase v0.34.13
   [f3b207a7] StatsPlots v0.15.8
+  [56ddb016] Logging v1.11.0
   [de0858da] Printf v1.11.0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated`</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `~/github-runners/amdci8-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/OptimizationCUTEst/Manifest.toml`
-⌃ [47edcb42] ADTypes v1.22.0
+Info Packages marked with ⌃ have new versions available and may be upgradable.</code></pre><p>And the full manifest:</p><pre><code class="nohighlight hljs">Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/OptimizationCUTEst/Manifest.toml`
+  [47edcb42] ADTypes v1.24.0
+  [14f7f29c] AMD v0.5.4
   [621f4979] AbstractFFTs v1.5.0
+  [6e696c72] AbstractPlutoDingetjes v1.4.1
   [1520ce14] AbstractTrees v0.4.5
-⌃ [7d9f7c33] Accessors v0.1.44
-⌃ [79e6a3ab] Adapt v4.6.0
+  [7d9f7c33] Accessors v0.1.45
+⌃ [79e6a3ab] Adapt v4.7.0
   [66dad0bd] AliasTables v1.1.3
   [ec485272] ArnoldiMethod v0.4.0
   [7d9fca2a] Arpack v0.5.4
-⌃ [4fba245c] ArrayInterface v7.25.0
-  [4c555306] ArrayLayouts v1.12.2
+⌃ [4fba245c] ArrayInterface v7.30.1
+⌃ [4c555306] ArrayLayouts v1.12.2
   [13072b0f] AxisAlgorithms v1.1.0
+⌃ [aae01518] BandedMatrices v1.12.0
   [e2ed5e7c] Bijections v0.2.2
-⌃ [d1d4a3ce] BitFlags v0.1.9
-  [62783981] BitTwiddlingConvenienceFunctions v0.1.6
-⌃ [8e7c35d0] BlockArrays v1.9.3
-⌃ [70df07ce] BracketingNonlinearSolve v1.12.1
-  [2a0fbf3d] CPUSummary v0.2.7
+  [b2a6c25c] BinaryHeaps v1.1.0
+  [caf10ac8] BipartiteGraphs v0.1.14
+⌃ [8e7c35d0] BlockArrays v1.10.0
+⌃ [70df07ce] BracketingNonlinearSolve v1.12.7
+⌅ [fa961155] CEnum v0.5.0
 ⌃ [1b53aba6] CUTEst v1.3.7
-  [d360d2e6] ChainRulesCore v1.26.1
-  [fb6a15b2] CloseOpenIntervals v0.1.13
+⌃ [d360d2e6] ChainRulesCore v1.26.1
   [aaaa29a8] Clustering v0.15.8
   [523fee87] CodecBzip2 v0.8.5
-⌃ [944b1d66] CodecZlib v0.7.8
+  [944b1d66] CodecZlib v0.7.9
   [35d6a980] ColorSchemes v3.31.0
-  [3da002f7] ColorTypes v0.12.1
+⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
-  [5ae59095] Colors v0.13.1
+⌃ [5ae59095] Colors v0.13.1
 ⌅ [861a8166] Combinatorics v1.0.2
-⌃ [a80b9123] CommonMark v1.0.1
-⌃ [38540f10] CommonSolve v0.2.7
+  [38540f10] CommonSolve v0.2.14
   [bbf7d656] CommonSubexpressions v0.3.1
-⌃ [f70d9fcc] CommonWorldInvalidations v1.0.0
+  [f70d9fcc] CommonWorldInvalidations v1.2.2
   [34da2185] Compat v4.18.1
   [b152e2b5] CompositeTypes v0.1.4
   [a33af91c] CompositionsBase v0.1.2
-⌃ [2569d6c7] ConcreteStructs v0.2.4
-⌃ [f0e56b4a] ConcurrentUtilities v2.5.1
-  [8f4d0f93] Conda v1.10.3
+  [2569d6c7] ConcreteStructs v0.2.8
   [88cd18e8] ConsoleProgressMonitor v0.1.2
   [187b0558] ConstructionBase v1.6.0
   [d38c429a] Contour v0.6.3
-  [adafc99b] CpuId v0.3.1
-⌃ [a8cc5b0e] Crayons v4.1.1
+  [a8cc5b0e] Crayons v4.2.0
   [9a962f9c] DataAPI v1.16.0
   [a93c6f00] DataFrames v1.8.2
-⌃ [864edb3b] DataStructures v0.19.4
+  [864edb3b] DataStructures v0.19.6
   [e2d170a0] DataValueInterfaces v1.0.0
   [8bb1440f] DelimitedFiles v1.9.1
-⌅ [2b5f629d] DiffEqBase v6.214.1
-⌃ [459566f4] DiffEqCallbacks v4.17.0
-⌃ [77a26b50] DiffEqNoiseProcess v5.31.1
+⌃ [2b5f629d] DiffEqBase v7.21.1
+⌃ [459566f4] DiffEqCallbacks v4.19.4
   [163ba53b] DiffResults v1.1.0
-⌃ [b552c78f] DiffRules v1.15.1
-⌃ [a0c0ee7d] DifferentiationInterface v0.7.18
-  [8d63f2c5] DispatchDoctor v0.4.28
+  [b552c78f] DiffRules v1.16.0
+  [a0c0ee7d] DifferentiationInterface v0.7.21
   [b4f34e82] Distances v0.10.12
-⌃ [31c24e10] Distributions v0.25.125
-  [ffbed154] DocStringExtensions v0.9.5
-⌅ [5b8099bc] DomainSets v0.7.18
-⌃ [7c1d4256] DynamicPolynomials v0.6.6
-  [06fc5a27] DynamicQuantities v1.13.0
+⌃ [31c24e10] Distributions v0.25.131
+⌅ [ffbed154] DocStringExtensions v0.9.5
+⌃ [5b8099bc] DomainSets v0.8.1
+  [7c1d4256] DynamicPolynomials v0.6.8
   [4e289a0a] EnumX v1.0.7
-⌃ [f151be2c] EnzymeCore v0.8.20
-  [460bff9d] ExceptionUnwrapping v0.1.11
-⌃ [e2ba6199] ExprTools v0.1.10
+⌃ [f151be2c] EnzymeCore v0.8.21
+  [e2ba6199] ExprTools v0.1.11
   [55351af7] ExproniconLite v0.10.14
-  [c87230d0] FFMPEG v0.4.5
+⌃ [c87230d0] FFMPEG v0.4.5
   [b86e33f2] FFTA v0.3.1
-⌃ [7034ab61] FastBroadcast v1.3.2
+⌃ [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
-⌃ [a4df4552] FastPower v1.3.1
-⌃ [1a297f60] FillArrays v1.16.0
-⌅ [64ca27bc] FindFirstFunctions v1.8.0
-⌃ [6a86dc24] FiniteDiff v2.31.0
-⌅ [53c48c17] FixedPointNumbers v0.8.5
+⌃ [a4df4552] FastPower v1.5.0
+⌃ [1a297f60] FillArrays v1.17.0
+⌃ [64ca27bc] FindFirstFunctions v3.2.1
+  [6a86dc24] FiniteDiff v2.33.0
+⌅ [53c48c17] FixedPointNumbers v0.8.6
   [1fa38f19] Format v1.3.7
-⌃ [f6369f11] ForwardDiff v1.3.3
+  [f6369f11] ForwardDiff v1.4.6
   [a85aefff] FunctionMaps v0.1.2
   [069b7b12] FunctionWrappers v1.1.3
-⌅ [77dc65aa] FunctionWrappersWrappers v0.1.3
-⌃ [d9f16b24] Functors v0.5.2
-  [46192b85] GPUArraysCore v0.2.0
-⌃ [28b8d3ca] GR v0.73.24
-  [d7ba0133] Git v1.5.0
-  [c27321d9] Glob v1.5.0
-⌃ [86223c79] Graphs v1.14.0
-  [42e2da0e] Grisu v1.0.2
-⌅ [cd3eb016] HTTP v1.11.0
+  [77dc65aa] FunctionWrappersWrappers v1.13.0
+⌃ [d9f16b24] Functors v0.5.3
+⌃ [46192b85] GPUArraysCore v0.2.0
+  [28b8d3ca] GR v0.73.27
+  [a0844989] Gamma v1.2.0
+  [86223c79] Graphs v1.15.0
 ⌅ [eafb193a] Highlights v0.5.3
-⌃ [34004b35] HypergeometricFunctions v0.3.28
-  [7073ff75] IJulia v1.34.4
-  [615f187c] IfElse v0.1.1
-⌅ [3263718b] ImplicitDiscreteSolve v1.10.0
+  [34004b35] HypergeometricFunctions v0.3.30
+  [3263718b] ImplicitDiscreteSolve v2.3.0
   [d25df0c9] Inflate v0.1.5
-⌅ [842dd82b] InlineStrings v1.4.5
-⌃ [18e54dd8] IntegerMathUtils v0.1.3
-⌃ [a98d9a8b] Interpolations v0.16.2
-  [8197267c] IntervalSets v0.7.14
-  [3587e190] InverseFunctions v0.1.17
+⌅ [842dd82b] InlineStrings v1.4.6
+  [18e54dd8] IntegerMathUtils v0.1.4
+  [a98d9a8b] Interpolations v0.16.3
+⌃ [8197267c] IntervalSets v0.7.14
+⌃ [3587e190] InverseFunctions v0.1.17
   [41ab1584] InvertedIndices v1.3.1
-⌃ [b6b21f68] Ipopt v1.14.3
+  [b6b21f68] Ipopt v1.16.0
   [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
   [1019f520] JLFzf v0.1.11
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-⌃ [98e50ef6] JuliaFormatter v2.5.0
-  [70703baa] JuliaSyntax v1.0.2
-⌃ [ccbc3e58] JumpProcesses v9.29.0
-⌃ [5ab0869b] KernelDensity v0.6.11
-⌃ [ba0b0d4f] Krylov v0.10.6
-⌃ [b964fa9f] LaTeXStrings v1.4.0
-⌃ [23fbe1c1] Latexify v0.16.10
-  [10f19ff3] LayoutPointers v0.1.17
-⌅ [1d6d02ad] LeftChildRightSiblingTrees v0.2.1
-⌃ [87fe0de2] LineSearch v0.1.9
-⌃ [d3d80556] LineSearches v7.7.1
-⌃ [5c8ed15e] LinearOperators v2.13.0
-⌅ [7ed4a6bd] LinearSolve v3.82.0
-⌅ [2ab3a3ac] LogExpFunctions v0.3.29
+⌅ [ccbc3e58] JumpProcesses v9.32.3
+  [5ab0869b] KernelDensity v0.6.12
+⌃ [ba0b0d4f] Krylov v0.10.10
+  [40e66cde] LDLFactorizations v0.10.2
+  [2faa5264] LHLFactorization v2.2.2
+  [b964fa9f] LaTeXStrings v1.4.1
+  [23fbe1c1] Latexify v0.16.12
+  [1d6d02ad] LeftChildRightSiblingTrees v0.3.0
+⌃ [87fe0de2] LineSearch v0.1.18
+⌃ [d3d80556] LineSearches v7.8.1
+⌃ [5c8ed15e] LinearOperators v2.14.2
+⌃ [7ed4a6bd] LinearSolve v5.17.3
+⌃ [2ab3a3ac] LogExpFunctions v1.0.1
   [e6f89c97] LoggingExtras v1.2.0
-  [d8e11817] MLStyle v0.4.17
   [1914dd2f] MacroTools v0.5.16
-  [d125e4d3] ManualMemory v0.1.8
-⌃ [b8f27783] MathOptInterface v1.51.0
-⌃ [bb5d69b7] MaybeInplace v0.1.4
-  [739be429] MbedTLS v1.1.10
+  [2621e9c9] MadNLP v0.10.1
+⌃ [b8f27783] MathOptInterface v1.53.0
+  [bb5d69b7] MaybeInplace v0.1.8
   [442fdcdd] Measures v0.3.3
   [e1d29d7a] Missings v1.2.0
-⌅ [961ee093] ModelingToolkit v10.32.1
-⌃ [2e0e35c7] Moshi v0.3.7
-⌃ [46d2c3a1] MuladdMacro v0.2.4
-  [102ac46a] MultivariatePolynomials v0.5.19
-⌃ [6f286f6a] MultivariateStats v0.10.4
-  [ffc61752] Mustache v1.0.21
-  [d8a4904e] MutableArithmetics v1.8.0
+⌃ [7771a370] ModelingToolkitBase v1.70.0
+⌅ [2e0e35c7] Moshi v0.3.9
+  [46d2c3a1] MuladdMacro v0.2.7
+⌃ [102ac46a] MultivariatePolynomials v0.5.19
+  [6f286f6a] MultivariateStats v0.10.5
+⌃ [ffc61752] Mustache v1.0.21 [loaded: v1.1.0]
+⌃ [d8a4904e] MutableArithmetics v1.8.0
   [a4795742] NLPModels v0.21.12
-⌃ [d41bc354] NLSolversBase v8.0.0
-⌃ [77ba4419] NaNMath v1.1.3
-⌃ [b8a86587] NearestNeighbors v0.4.27
-⌃ [be0214bd] NonlinearSolveBase v2.11.2
-⌃ [5959db7a] NonlinearSolveFirstOrder v2.0.0
+  [d41bc354] NLSolversBase v8.0.1
+  [76087f3c] NLopt v1.2.1
+  [77ba4419] NaNMath v1.1.4
+  [b8a86587] NearestNeighbors v0.4.29
+⌃ [be0214bd] NonlinearSolveBase v2.48.0
+⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
   [510215fc] Observables v0.5.5
   [6fe1bfb0] OffsetArrays v1.17.0
-  [4d8831e6] OpenSSL v1.6.1
-⌃ [429524aa] Optim v2.1.0
-⌃ [3bd65402] Optimisers v0.4.7
-⌃ [7f7a1694] Optimization v5.4.0
-⌅ [bca83a33] OptimizationBase v4.2.0
-⌅ [fd9f6733] OptimizationMOI v0.5.11
-⌃ [064b21be] OptimizationNLPModels v1.1.0
-⌃ [36348300] OptimizationOptimJL v0.4.9
-⌃ [42dfb2eb] OptimizationOptimisers v0.3.15
-⌅ [bac558e1] OrderedCollections v1.8.1 [loaded: v2.0.1]
-⌅ [bbf590c4] OrdinaryDiffEqCore v3.28.0
-⌃ [90014a1f] PDMats v0.11.37
-⌅ [69de0a69] Parsers v2.8.4 [loaded: v2.8.8]
+⌃ [429524aa] Optim v2.3.1
+⌃ [3bd65402] Optimisers v0.4.9
+  [7f7a1694] Optimization v5.9.1
+⌃ [bca83a33] OptimizationBase v5.6.1
+⌃ [fd9f6733] OptimizationMOI v1.4.1
+⌃ [5d9c809f] OptimizationMadNLP v2.3.1
+⌃ [064b21be] OptimizationNLPModels v1.6.0
+⌃ [4e6fcdb7] OptimizationNLopt v0.3.18
+⌃ [36348300] OptimizationOptimJL v0.4.21
+⌃ [42dfb2eb] OptimizationOptimisers v0.3.24
+⌃ [bac558e1] OrderedCollections v2.0.1 [loaded: v2.0.3]
+⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.2
+  [90014a1f] PDMats v0.11.41
+⌅ [69de0a69] Parsers v2.8.8
   [ccf2f8ad] PlotThemes v3.3.0
-  [995b91a9] PlotUtils v1.4.4
-⌃ [91a5bcdd] Plots v1.41.6
-⌃ [e409e4f3] PoissonRandom v0.4.8
-  [f517fe37] Polyester v0.7.19
-  [1d0040c9] PolyesterWeave v0.2.2
+⌃ [995b91a9] PlotUtils v1.4.4
+  [91a5bcdd] Plots v1.41.7
+⌃ [e409e4f3] PoissonRandom v0.4.13
   [2dfb63ee] PooledArrays v1.4.3
   [85a6dd25] PositiveFactorizations v0.2.4
-⌃ [d236fae5] PreallocationTools v0.4.34
+  [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
-  [21216c6a] Preferences v1.5.2
-⌃ [08abe8d2] PrettyTables v3.3.2
+⌃ [21216c6a] Preferences v1.6.0 [loaded: v1.6.1]
+⌃ [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [33c8b6b6] ProgressLogging v0.1.6
-  [92933f4c] ProgressMeter v1.11.0
+⌃ [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
+⌃ [0c0d3e7f] PureKLU v1.5.0
   [1fd47b50] QuadGK v2.11.3
 ⌅ [be4d8f0f] Quadmath v0.5.13
   [c84ed2f1] Ratios v0.4.5
-  [3cdcf5f2] RecipesBase v1.3.4
+  [988b38a3] ReadOnlyArrays v0.2.0
+  [795d4caa] ReadOnlyDicts v1.0.1
+⌃ [3cdcf5f2] RecipesBase v1.3.4
   [01d81517] RecipesPipeline v0.6.12
-⌅ [731186ca] RecursiveArrayTools v3.54.0
+⌃ [731186ca] RecursiveArrayTools v4.5.1
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
   [ae029012] Requires v1.3.1
-⌃ [ae5879a3] ResettableStacks v1.2.0
+  [9fe22ead] RespecializeParams v1.3.0
   [79098fc4] Rmath v0.9.0
-⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.19
-⌃ [9dfe8606] SCCNonlinearSolve v1.13.0
-  [94e857df] SIMDTypes v0.1.0
-  [1bc83da4] SafeTestsets v0.1.0
-⌅ [0bca4576] SciMLBase v2.153.1
-⌃ [31c91b34] SciMLBenchmarks v0.1.3 [loaded: v0.2.1]
-⌃ [19f34311] SciMLJacobianOperators v0.1.13
-⌅ [a6db7da4] SciMLLogging v1.10.1
-⌃ [c0aeaf25] SciMLOperators v1.21.0
-⌃ [431bcebd] SciMLPublic v1.0.1
-⌃ [53ae85a6] SciMLStructures v1.10.0
+⌃ [f2b01f46] Roots v3.0.8
+⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.26
+⌃ [9dfe8606] SCCNonlinearSolve v1.15.3
+⌃ [0bca4576] SciMLBase v3.54.0
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+⌃ [19f34311] SciMLJacobianOperators v0.1.19
+  [a6db7da4] SciMLLogging v2.1.0
+⌃ [c0aeaf25] SciMLOperators v1.30.0
+  [431bcebd] SciMLPublic v1.3.0
+⌃ [53ae85a6] SciMLStructures v1.10.5
   [6c6a2e73] Scratch v1.3.0
   [91c51154] SentinelArrays v1.4.10
   [efcf1570] Setfield v1.1.2
-⌃ [992d4aef] Showoff v1.0.3
-  [777ac1f9] SimpleBufferStream v1.2.0
-⌃ [727e6d20] SimpleNonlinearSolve v2.11.0
+  [992d4aef] Showoff v1.1.1
+⌃ [727e6d20] SimpleNonlinearSolve v2.14.5
   [699a6c99] SimpleTraits v0.9.6
-⌃ [a2af1166] SortingAlgorithms v1.2.2
-⌃ [9f842d2f] SparseConnectivityTracer v1.2.1
-⌃ [0a514795] SparseMatrixColorings v0.4.27
-⌃ [276daf66] SpecialFunctions v2.7.2
-  [860ef19b] StableRNGs v1.0.4
+  [ff4d7338] SolverCore v0.3.10
+  [a2af1166] SortingAlgorithms v1.2.3
+  [a57abbd0] SparseColumnPivotedQR v2.1.8
+⌃ [9f842d2f] SparseConnectivityTracer v1.2.3
+⌃ [0a514795] SparseMatrixColorings v0.4.28
+  [276daf66] SpecialFunctions v2.9.0
+⌃ [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
-⌃ [aedffcd0] Static v1.4.0
-  [0d7ed370] StaticArrayInterface v1.10.0
-⌃ [90137ffa] StaticArrays v1.9.18
+⌃ [90137ffa] StaticArrays v1.9.20
   [1e83bf80] StaticArraysCore v1.4.4
-⌃ [10745b16] Statistics v1.11.1
+  [10745b16] Statistics v1.11.5
   [82ae8749] StatsAPI v1.8.0
-⌃ [2913bbd2] StatsBase v0.34.10
-⌅ [4c63d2b9] StatsFuns v1.5.2
+  [2913bbd2] StatsBase v0.34.13
+  [4c63d2b9] StatsFuns v2.2.1
   [f3b207a7] StatsPlots v0.15.8
-  [7792a7ef] StrideArraysCore v0.5.9
   [69024149] StringEncodings v0.3.7
-⌅ [892a3eda] StringManipulation v0.4.4
-⌃ [2efcf032] SymbolicIndexingInterface v0.3.48
-⌅ [19f23fe9] SymbolicLimits v0.2.3
-⌅ [d1185830] SymbolicUtils v3.32.0
-⌅ [0c5d862f] Symbolics v6.58.0
+⌅ [892a3eda] StringManipulation v0.5.0
+  [2efcf032] SymbolicIndexingInterface v0.3.55
+⌃ [19f23fe9] SymbolicLimits v1.2.1
+⌃ [d1185830] SymbolicUtils v4.46.6
+⌃ [0c5d862f] Symbolics v7.39.2
   [ab02a1b2] TableOperations v1.2.0
   [3783bdb8] TableTraits v1.0.1
-⌃ [bd369af6] Tables v1.12.1 [loaded: v1.14.0]
+  [bd369af6] Tables v1.14.0
   [ed4db957] TaskLocalValues v0.1.3
   [62fd8b95] TensorCore v0.1.1
-  [8ea1fca8] TermInterface v2.0.0
-⌃ [5d786b92] TerminalLoggers v0.1.7
-⌃ [1c621080] TestItems v1.0.0
-⌃ [8290d209] ThreadingUtilities v0.5.5
+⌃ [8ea1fca8] TermInterface v2.0.0
+  [5d786b92] TerminalLoggers v0.1.8
 ⌅ [a759f4b9] TimerOutputs v0.5.29
   [3bb67fe8] TranscodingStreams v0.11.3
-  [410a4b4d] Tricks v0.1.13
   [781d530d] TruncatedStacktraces v1.4.0
-⌃ [5c2747f8] URIs v1.6.1
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-⌃ [1986cc42] Unitful v1.28.0
-  [a7c27f48] Unityper v0.1.6
   [41fe7b60] Unzip v0.2.0
-  [81def892] VersionParsing v1.3.0
+  [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
-⌃ [cc8bc4a8] Widgets v0.6.7
+  [cc8bc4a8] Widgets v0.6.8
   [efce3f68] WoodburyMatrices v1.1.0
-  [ddb6d928] YAML v0.4.16
-  [c2297ded] ZMQ v1.5.1
-⌃ [ae81ac8f] ASL_jll v0.1.3+0
+⌃ [ddb6d928] YAML v0.4.16 [loaded: v0.4.17]
+  [ae81ac8f] ASL_jll v0.1.5+0
 ⌅ [68821587] Arpack_jll v3.5.2+0
   [6e34b625] Bzip2_jll v1.0.9+0
-⌃ [bb5f6f25] CUTEst_jll v2.6.0+0
-  [83423d85] Cairo_jll v1.18.7+0
+  [bb5f6f25] CUTEst_jll v2.7.0+0
+⌃ [83423d85] Cairo_jll v1.18.7+0
   [ee1fde0b] Dbus_jll v1.16.2+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-⌃ [2e619515] Expat_jll v2.8.1+0
-⌅ [b22a6f82] FFMPEG_jll v8.1.0+0
+  [2e619515] Expat_jll v2.8.4+0
+⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
   [d7e528f0] FreeType2_jll v2.14.3+1
   [559328eb] FriBidi_jll v1.0.17+0
-⌃ [0656b61e] GLFW_jll v3.4.1+1
-⌅ [d2c73de3] GR_jll v0.73.24+0
+  [0656b61e] GLFW_jll v3.5.1+0
+  [d2c73de3] GR_jll v0.73.27+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
-  [020c3dae] Git_LFS_jll v3.7.1+0
-⌃ [f8c6e375] Git_jll v2.54.0+0
-⌃ [7746bdde] Glib_jll v2.86.3+0
-⌃ [3b182d85] Graphite2_jll v1.3.15+0
-⌅ [2e76f6c2] HarfBuzz_jll v8.5.1+0
-⌃ [e33a78d0] Hwloc_jll v2.13.0+1
+⌃ [7746bdde] Glib_jll v2.88.3+0
+  [3b182d85] Graphite2_jll v1.3.16+0
+  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
+⌃ [e33a78d0] Hwloc_jll v2.14.0+0
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
-⌅ [9cc047cb] Ipopt_jll v300.1400.1901+0
-⌃ [aacddb02] JpegTurbo_jll v3.1.5+0
+⌅ [9cc047cb] Ipopt_jll v300.1400.1902+0
+  [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
-⌃ [88015f11] LERC_jll v4.1.0+0
-⌃ [1d63c593] LLVMOpenMP_jll v18.1.8+0
+  [88015f11] LERC_jll v4.2.0+0
+  [1d63c593] LLVMOpenMP_jll v23.1.1+0
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
-  [4b2f31a3] Libmount_jll v2.42.0+0
-⌃ [89763e89] Libtiff_jll v4.7.2+0
-  [38a345b3] Libuuid_jll v2.42.0+0
-  [d00139f3] METIS_jll v5.1.3+0
+⌃ [4b2f31a3] Libmount_jll v2.42.0+0
+  [89763e89] Libtiff_jll v4.7.3+0
+⌃ [38a345b3] Libuuid_jll v2.42.0+0
+  [d00139f3] METIS_jll v5.1.4+0
   [856f044c] MKL_jll v2025.2.0+0
-⌅ [d7ed1dd3] MUMPS_seq_jll v500.800.200+0
-  [c8ffd9c3] MbedTLS_jll v2.28.1010+0
+  [d7ed1dd3] MUMPS_seq_jll v500.900.100+0
+  [079eb43e] NLopt_jll v2.11.0+0
   [e7412a2a] Ogg_jll v1.3.6+0
-⌃ [656ef2d0] OpenBLAS32_jll v0.3.33+1
-⌃ [9bd350c2] OpenSSH_jll v10.3.1+0
+  [656ef2d0] OpenBLAS32_jll v0.3.34+0
   [efe28fd5] OpenSpecFun_jll v0.5.6+0
   [91d4177d] Opus_jll v1.6.1+0
-⌃ [36c8627f] Pango_jll v1.57.1+0
+  [36c8627f] Pango_jll v1.58.2+0
   [30392449] Pixman_jll v0.46.4+0
   [c0090381] Qt6Base_jll v6.10.2+2
-⌃ [629bc702] Qt6Declarative_jll v6.10.2+1
+  [629bc702] Qt6Declarative_jll v6.10.2+2
   [ce943373] Qt6ShaderTools_jll v6.10.2+1
   [6de9746b] Qt6Svg_jll v6.10.2+0
   [e99dba38] Qt6Wayland_jll v6.10.2+1
-⌃ [f50d1b31] Rmath_jll v0.5.1+0
-⌃ [54dcf436] SIFDecode_jll v3.1.0+0
-⌃ [319450e9] SPRAL_jll v2025.9.18+0
+  [f50d1b31] Rmath_jll v0.5.2+0
+  [54dcf436] SIFDecode_jll v3.1.1+0
+  [319450e9] SPRAL_jll v2025.9.18+1
   [a44049a8] Vulkan_Loader_jll v1.3.243+0
   [a2964d1f] Wayland_jll v1.24.0+0
 ⌅ [02c8fc9c] XML2_jll v2.13.9+0
-  [ffd25f8a] XZ_jll v5.8.3+0
+  [ffd25f8a] XZ_jll v5.8.4+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
-  [4f6342f7] Xorg_libX11_jll v1.8.13+0
+⌃ [4f6342f7] Xorg_libX11_jll v1.8.13+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
   [935fb764] Xorg_libXcursor_jll v1.2.4+0
   [a3789734] Xorg_libXdmcp_jll v1.1.6+0
   [1082639a] Xorg_libXext_jll v1.3.8+0
   [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
-⌃ [a51aa0fd] Xorg_libXi_jll v1.8.3+0
+⌃ [a51aa0fd] Xorg_libXi_jll v1.8.4+0
   [d1454406] Xorg_libXinerama_jll v1.1.7+0
   [ec84b674] Xorg_libXrandr_jll v1.5.6+0
-  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
   [a65dc6b1] Xorg_libpciaccess_jll v0.19.0+0
   [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
   [cc61e674] Xorg_libxkbfile_jll v1.2.0+0
@@ -596,26 +1503,24 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
   [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
   [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
-  [35661453] Xorg_xkbcomp_jll v1.4.7+0
-⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+1
+⌃ [35661453] Xorg_xkbcomp_jll v1.4.7+0
+⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
-  [8f1865be] ZeroMQ_jll v4.3.6+0
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
 ⌅ [214eeab7] fzf_jll v0.61.1+0
-⌃ [a4ae2306] libaom_jll v3.13.3+0
-⌃ [0ac62f75] libass_jll v0.17.4+0
+⌃ [a4ae2306] libaom_jll v3.14.1+0
+  [0ac62f75] libass_jll v0.17.5+0
   [1183f4f0] libdecor_jll v0.2.2+0
-⌃ [8e53e030] libdrm_jll v2.4.125+1
+  [8e53e030] libdrm_jll v2.4.134+0
   [2db6ffa8] libevdev_jll v1.13.4+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
-  [b53b4c65] libpng_jll v1.6.58+0
-  [a9144af2] libsodium_jll v1.0.21+0
+⌃ [b53b4c65] libpng_jll v1.6.58+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
-  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌃ [1317d2d5] oneTBB_jll v2022.3.0+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
   [dfaa095f] x265_jll v4.1.0+0
   [d8fb68d0] xkbcommon_jll v1.13.0+0
@@ -668,4 +1573,4 @@ Info Packages marked with ⌃ and ⌅ have new versions available. Those with �
   [8e850b90] libblastrampoline_jll v5.15.0+0
   [8e850ede] nghttp2_jll v1.64.0+1
   [3f19e933] p7zip_jll v17.7.0+0
-Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Optimization/2drosenbrock/">« 2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a><a class="docs-footer-nextpage" href="../CUTEst_quadratic/">CUTEst Quadratic Optimization.jl Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Saturday 17 October 2026 18:43">Saturday 17 October 2026</span>. Using Julia version 1.13.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+Info Packages marked with ⌃ and ⌅ have new versions available. Those with ⌃ may be upgradable, but those with ⌅ are restricted by compatibility constraints from upgrading. To see why use `status --outdated -m`</code></pre></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../../Optimization/2drosenbrock/">« 2-Dimensional Rosenbrock Function Nonlinear Optimization Benchmark</a><a class="docs-footer-nextpage" href="../CUTEst_quadratic/">CUTEst Quadratic Optimization.jl Benchmarks »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="auto">Automatic (OS)</option><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option><option value="catppuccin-latte">catppuccin-latte</option><option value="catppuccin-frappe">catppuccin-frappe</option><option value="catppuccin-macchiato">catppuccin-macchiato</option><option value="catppuccin-mocha">catppuccin-mocha</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> version 1.19.0 on <span class="colophon-date" title="Tuesday 20 October 2026 06:14">Tuesday 20 October 2026</span>. Using Julia version 1.13.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
