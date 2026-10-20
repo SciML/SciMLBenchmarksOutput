@@ -223,13 +223,13 @@ short_solutions["BBO (Tsit5 default tol)"] = res1
 ```
 
 ```
-3.001 s (21066454 allocations: 803.31 MiB)
+2.939 s (21007281 allocations: 801.07 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 2.782938308006188
- 2.0729886246422153
- 0.0458434319392136
- 0.5022948636506916
+ 0.741189416168004
+ 0.8469918997996646
+ 0.08078465527568746
+ 0.5000773147121458
 ```
 
 
@@ -243,13 +243,13 @@ short_solutions["BBO (Tsit5 reltol=1e-9)"] = res1
 ```
 
 ```
-2.970 s (21162118 allocations: 805.99 MiB)
+2.964 s (21242248 allocations: 808.52 MiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.47786222282492696
- 0.2651947547226754
- 0.05804548565735307
- 0.49914807701872643
+ 0.427662976533689
+ 0.8982231688470127
+ 0.13309188594957277
+ 0.5009075845204596
 ```
 
 
@@ -263,13 +263,13 @@ short_solutions["BBO (Vern9 1e-9)"] = res1
 ```
 
 ```
-4.818 s (42519424 allocations: 1.11 GiB)
+4.813 s (42376102 allocations: 1.11 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.3038120051957347
- 1.0481880933754488
- 0.059359455127387405
- 0.500810825567845
+ 0.269167742190918
+ 0.8675330265078323
+ 0.17189058217583497
+ 0.49966553376298745
 ```
 
 
@@ -601,9 +601,9 @@ asicSymbolicImpl)"{SymbolicUtils.SymReal}}}}}}(ModelingToolkitBase.AtomicAr
 rayDict{SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSymbolicImpl)"{Symb
 olicUtils.SymReal}, Dict{SymbolicUtils.BasicSymbolicImpl.var"typeof(BasicSy
 mbolicImpl)"{SymbolicUtils.SymReal}, SymbolicUtils.BasicSymbolicImpl.var"ty
-peof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}(v(t) => 1.0, Initial(wˍt(
-t)) => false, b => 0.8, a => 0.7, τinv => 0.08, l => 0.5, Initial(vˍt(t)) =
-> false, Initial(w(t)) => false, w(t) => 1.0, Initial(v(t)) => false…), Mod
+peof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}}}(v(t) => 1.0, Initial(v(t)
+) => false, Initial(wˍt(t)) => false, b => 0.8, Initial(vˍt(t)) => false, a
+ => 0.7, τinv => 0.08, l => 0.5, Initial(w(t)) => false, w(t) => 1.0…), Mod
 elingToolkitBase.AtomicArrayDict{SymbolicUtils.BasicSymbolicImpl.var"typeof
 (BasicSymbolicImpl)"{SymbolicUtils.SymReal}, Dict{SymbolicUtils.BasicSymbol
 icImpl.var"typeof(BasicSymbolicImpl)"{SymbolicUtils.SymReal}, SymbolicUtils
@@ -733,7 +733,7 @@ short_solutions["GN_ORIG_DIRECT_L"] = res1
 ```
 
 ```
-6.877 s (59865528 allocations: 1.56 GiB)
+6.855 s (59865528 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  0.1920438957477088
@@ -751,13 +751,13 @@ short_solutions["GN_CRS2_LM"] = res1
 ```
 
 ```
-6.847 s (59740224 allocations: 1.56 GiB)
+6.997 s (59740224 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.7000000416297744
- 0.8000000189937473
- 0.07999999821196636
- 0.5000000000779021
+ 0.7000901073520914
+ 0.8000114439120442
+ 0.0799933943628506
+ 0.5000000467429484
 ```
 
 
@@ -769,13 +769,13 @@ short_solutions["GN_ISRES"] = res1
 ```
 
 ```
-6.840 s (59770053 allocations: 1.56 GiB)
+6.859 s (59770053 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 3.3170126711322157
- 3.0523511613548893
- 0.06999729292239043
- 0.5086368998113225
+ 4.388686241701901
+ 4.205524545334197
+ 0.08531487804176452
+ 0.5165286699818172
 ```
 
 
@@ -787,13 +787,13 @@ short_solutions["GN_ESCH"] = res1
 ```
 
 ```
-6.795 s (59770053 allocations: 1.56 GiB)
+6.931 s (59770053 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 2.9675879748952614
- 2.6405691249011563
- 0.06782287516680888
- 0.515643227952844
+ 2.9654095992371836
+ 0.4371327199712715
+ 0.020866076018565223
+ 0.49924445431268333
 ```
 
 
@@ -826,7 +826,7 @@ short_solutions["LN_BOBYQA"] = res1
 ```
 
 ```
-1.254 s (11028088 allocations: 294.58 MiB)
+1.265 s (11028088 allocations: 294.58 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  0.7000000000188623
@@ -844,7 +844,7 @@ short_solutions["LN_NELDERMEAD"] = res1
 ```
 
 ```
-641.375 ms (5748224 allocations: 153.55 MiB)
+631.491 ms (5748224 allocations: 153.55 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.0
@@ -862,7 +862,7 @@ short_solutions["LD_SLSQP"] = res1
 ```
 
 ```
-8.721 s (71095530 allocations: 1.90 GiB)
+8.768 s (71095530 allocations: 1.90 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  0.700000000015133
@@ -880,7 +880,7 @@ short_solutions["LN_COBYLA"] = res1
 ```
 
 ```
-6.879 s (59740084 allocations: 1.56 GiB)
+6.925 s (59740084 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  0.1829436856114406
@@ -898,7 +898,7 @@ short_solutions["LN_NEWUOA_BOUND"] = res1
 ```
 
 ```
-626.316 ms (4325260 allocations: 115.54 MiB)
+623.582 ms (4325260 allocations: 115.54 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  0.24815174877228105
@@ -916,13 +916,13 @@ short_solutions["LN_PRAXIS"] = res1
 ```
 
 ```
-564.341 ms (4983300 allocations: 133.12 MiB)
+621.506 ms (5246030 allocations: 140.13 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
- 0.7000000000151818
- 0.8000000000056973
- 0.07999999999921886
- 0.5000000000000325
+ 0.7000000000151287
+ 0.8000000000059342
+ 0.0799999999992364
+ 0.5000000000000221
 ```
 
 
@@ -934,7 +934,7 @@ short_solutions["LN_SBPLX"] = res1
 ```
 
 ```
-6.892 s (59740066 allocations: 1.56 GiB)
+6.989 s (59740066 allocations: 1.56 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  0.7000016809870933
@@ -952,7 +952,7 @@ short_solutions["LD_MMA"] = res1
 ```
 
 ```
-16.381 s (119380443 allocations: 3.39 GiB)
+16.693 s (119380443 allocations: 3.39 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  0.2194953414908776
@@ -982,18 +982,18 @@ println("closest to the true parameters: ", best_dist_name, " (max|est-true| = "
 ```
 
 ```
-BBO (Tsit5 default tol)     estimate=[2.783, 2.073, 0.046, 0.502]  retcode=
-MaxIters  loss=0.001711649113556161  max|est-true|=2.08
-BBO (Tsit5 reltol=1e-9)     estimate=[0.478, 0.265, 0.058, 0.499]  retcode=
-MaxIters  loss=0.0006221620478309127  max|est-true|=0.535
-BBO (Vern9 1e-9)            estimate=[1.304, 1.048, 0.059, 0.501]  retcode=
-MaxIters  loss=0.00022139904908659546  max|est-true|=0.604
+BBO (Tsit5 default tol)     estimate=[0.741, 0.847, 0.081, 0.5]  retcode=Ma
+xIters  loss=1.1195882041168969e-5  max|est-true|=0.047
+BBO (Tsit5 reltol=1e-9)     estimate=[0.428, 0.898, 0.133, 0.501]  retcode=
+MaxIters  loss=0.00089388888536599  max|est-true|=0.272
+BBO (Vern9 1e-9)            estimate=[0.269, 0.868, 0.172, 0.5]  retcode=Ma
+xIters  loss=0.0008014784470582032  max|est-true|=0.431
 GN_CRS2_LM                  estimate=[0.7, 0.8, 0.08, 0.5]  retcode=MaxIter
-s  loss=1.6080893720106011e-18  max|est-true|=4.16e-8
-GN_ESCH                     estimate=[2.968, 2.641, 0.068, 0.516]  retcode=
-MaxIters  loss=0.05144876827556504  max|est-true|=2.27
-GN_ISRES                    estimate=[3.317, 3.052, 0.07, 0.509]  retcode=M
-axIters  loss=0.016295563630935397  max|est-true|=2.62
+s  loss=1.944197726102618e-12  max|est-true|=9.01e-5
+GN_ESCH                     estimate=[2.965, 0.437, 0.021, 0.499]  retcode=
+MaxIters  loss=0.0003175856994032462  max|est-true|=2.27
+GN_ISRES                    estimate=[4.389, 4.206, 0.085, 0.517]  retcode=
+MaxIters  loss=0.06205001570957812  max|est-true|=3.69
 GN_ORIG_DIRECT_L            estimate=[0.192, 1.132, 1.111, 0.51]  retcode=M
 axIters  loss=0.11016600767987259  max|est-true|=1.03
 LD_MMA                      estimate=[0.219, 0.704, 0.133, 0.5]  retcode=Ma
@@ -1009,12 +1009,12 @@ s  loss=8.965505337532214e-5  max|est-true|=0.3
 LN_NEWUOA_BOUND             estimate=[0.248, 0.439, 0.085, 0.499]  retcode=
 Success  loss=0.00042978296411709017  max|est-true|=0.452
 LN_PRAXIS                   estimate=[0.7, 0.8, 0.08, 0.5]  retcode=Success
-  loss=4.764803684006091e-25  max|est-true|=1.52e-11
+  loss=5.36754271940152e-25  max|est-true|=1.51e-11
 LN_SBPLX                    estimate=[0.7, 0.8, 0.08, 0.5]  retcode=MaxIter
 s  loss=5.041392563911391e-16  max|est-true|=1.68e-6
 lowest loss: LD_SLSQP (loss = 4.724821748139161e-25)
-closest to the true parameters: LD_SLSQP (max|est-true| = 1.513300595945566
-e-11)
+closest to the true parameters: LN_PRAXIS (max|est-true| = 1.51287871119620
+83e-11)
 ```
 
 
@@ -1036,13 +1036,13 @@ long_solutions["BBO_adaptive_de_rand_1_bin"] = res1
 ```
 
 ```
-23.352 s (223927630 allocations: 4.63 GiB)
+23.209 s (224309522 allocations: 4.64 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.9045639900613051
- 1.072353663126293
- 0.1088608850987871
- 0.5669399724401264
+ 0.9426760379710977
+ 1.0652914786154668
+ 0.08911992261002938
+ 0.5218250949015131
 ```
 
 
@@ -1054,7 +1054,7 @@ long_solutions["GN_ORIG_DIRECT_L"] = res1
 ```
 
 ```
-56.890 s (546202158 allocations: 11.28 GiB)
+56.580 s (546202158 allocations: 11.28 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
  1.1111111111111116
@@ -1072,13 +1072,13 @@ long_solutions["GN_CRS2_LM"] = res1
 ```
 
 ```
-114.642 s (1091640234 allocations: 22.55 GiB)
+113.987 s (1091640234 allocations: 22.55 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.6999999999966269
- 0.8000000000028153
- 0.08000000000031934
- 0.49999999999844014
+ 0.6999999999966329
+ 0.8000000000028302
+ 0.08000000000032029
+ 0.4999999999984416
 ```
 
 
@@ -1090,13 +1090,13 @@ long_solutions["GN_ISRES"] = res1
 ```
 
 ```
-287.052 s (2729250063 allocations: 56.38 GiB)
+284.194 s (2729250063 allocations: 56.38 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 0.6999999995289723
- 0.8000000000149426
- 0.07999999995287503
- 0.4999999996953084
+ 0.7000000041562078
+ 0.7999999958605696
+ 0.07999999988501204
+ 0.5000000014225955
 ```
 
 
@@ -1108,13 +1108,13 @@ long_solutions["GN_ESCH"] = res1
 ```
 
 ```
-114.573 s (1091700060 allocations: 22.55 GiB)
+114.366 s (1091700063 allocations: 22.55 GiB)
 retcode: MaxIters
 u: 4-element Vector{Float64}:
- 1.0073620728925934
- 1.1269404643893863
- 0.09774496863166648
- 0.5229991020159539
+ 2.488012852232664
+ 2.5910137157546655
+ 0.12210544064426454
+ 0.4774460979954282
 ```
 
 
@@ -1141,7 +1141,7 @@ long_solutions["LN_BOBYQA"] = res1
 ```
 
 ```
-3.630 s (34932564 allocations: 738.99 MiB)
+3.615 s (34932564 allocations: 738.99 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  0.6999999999966582
@@ -1159,7 +1159,7 @@ long_solutions["LN_NELDERMEAD"] = res1
 ```
 
 ```
-3.409 s (32477100 allocations: 687.05 MiB)
+3.364 s (32477100 allocations: 687.05 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  1.0
@@ -1177,7 +1177,7 @@ long_solutions["LD_SLSQP"] = res1
 ```
 
 ```
-303.313 ms (2728974 allocations: 61.56 MiB)
+304.730 ms (2728974 allocations: 61.56 MiB)
 retcode: Success
 u: 4-element Vector{Float64}:
  0.999947033693279
@@ -1207,14 +1207,14 @@ println("closest to the true parameters: ", best_dist_name, " (max|est-true| = "
 ```
 
 ```
-BBO_adaptive_de_rand_1_bin  estimate=[0.905, 1.072, 0.109, 0.567]  retcode=
-MaxIters  loss=102.88679913260954  max|est-true|=0.272
+BBO_adaptive_de_rand_1_bin  estimate=[0.943, 1.065, 0.089, 0.522]  retcode=
+MaxIters  loss=64.27936324010106  max|est-true|=0.265
 GN_CRS2_LM                  estimate=[0.7, 0.8, 0.08, 0.5]  retcode=MaxIter
-s  loss=7.134677279873513e-19  max|est-true|=3.37e-12
-GN_ESCH                     estimate=[1.007, 1.127, 0.098, 0.523]  retcode=
-MaxIters  loss=58.30288967523854  max|est-true|=0.327
+s  loss=7.134691498914623e-19  max|est-true|=3.37e-12
+GN_ESCH                     estimate=[2.488, 2.591, 0.122, 0.477]  retcode=
+MaxIters  loss=704.5697798658714  max|est-true|=1.79
 GN_ISRES                    estimate=[0.7, 0.8, 0.08, 0.5]  retcode=MaxIter
-s  loss=3.6836179073134965e-16  max|est-true|=4.71e-10
+s  loss=1.850013957747529e-13  max|est-true|=4.16e-9
 GN_ORIG_DIRECT_L            estimate=[1.111, 1.111, 0.101, 0.576]  retcode=
 MaxIters  loss=81.06091854552861  max|est-true|=0.411
 LD_SLSQP                    estimate=[1.0, 1.0, 1.0, 0.866]  retcode=Succes
@@ -1223,7 +1223,7 @@ LN_BOBYQA                   estimate=[0.7, 0.8, 0.08, 0.5]  retcode=Success
   loss=7.134817955780692e-19  max|est-true|=3.34e-12
 LN_NELDERMEAD               estimate=[1.0, 1.0, 1.0, 0.866]  retcode=Succes
 s  loss=3160.4055222879815  max|est-true|=0.92
-lowest loss: GN_CRS2_LM (loss = 7.134677279873513e-19)
+lowest loss: GN_CRS2_LM (loss = 7.134691498914623e-19)
 closest to the true parameters: LN_BOBYQA (max|est-true| = 3.34177130412172
 1e-12)
 ```
@@ -1275,17 +1275,17 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [a93c6f00] DataFrames v1.8.2
 ⌃ [bcd4f6db] DelayDiffEq v6.4.1
 ⌃ [1130ab10] DiffEqParamEstim v2.6.1
-  [31c24e10] Distributions v0.25.131
+⌃ [31c24e10] Distributions v0.25.131
   [f6369f11] ForwardDiff v1.4.6
 ⌃ [961ee093] ModelingToolkit v11.43.0
 ⌃ [7771a370] ModelingToolkitBase v1.70.0
   [76087f3c] NLopt v1.2.1
 ⌃ [7f7a1694] Optimization v5.9.0
-  [3e6eede4] OptimizationBBO v0.4.12
+⌃ [3e6eede4] OptimizationBBO v0.4.12
 ⌃ [4e6fcdb7] OptimizationNLopt v0.3.18
   [1dea7af3] OrdinaryDiffEq v7.8.1
 ⌃ [ab63da0c] ParallelParticleSwarms v1.6.2
-  [65888b18] ParameterizedFunctions v5.27.0
+⌃ [65888b18] ParameterizedFunctions v5.27.0
   [91a5bcdd] Plots v1.41.7
 ⌃ [731186ca] RecursiveArrayTools v4.5.1
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
@@ -1349,7 +1349,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
-  [31c24e10] Distributions v0.25.131
+⌃ [31c24e10] Distributions v0.25.131
 ⌅ [ffbed154] DocStringExtensions v0.9.5
 ⌃ [5b8099bc] DomainSets v0.8.1
   [7c1d4256] DynamicPolynomials v0.6.8
@@ -1359,9 +1359,9 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [e2ba6199] ExprTools v0.1.11
   [55351af7] ExproniconLite v0.10.14
 ⌃ [c87230d0] FFMPEG v0.4.5
-  [7034ab61] FastBroadcast v1.4.0
+⌃ [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
-  [a4df4552] FastPower v1.5.0
+⌃ [a4df4552] FastPower v1.5.0
 ⌃ [1a297f60] FillArrays v1.17.0
 ⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
@@ -1384,7 +1384,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌅ [842dd82b] InlineStrings v1.4.6
   [18e54dd8] IntegerMathUtils v0.1.4
 ⌃ [8197267c] IntervalSets v0.7.14
-  [3587e190] InverseFunctions v0.1.17
+⌃ [3587e190] InverseFunctions v0.1.17
   [41ab1584] InvertedIndices v1.3.1
   [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
@@ -1419,7 +1419,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌃ [ffc61752] Mustache v1.0.21 [loaded: v1.1.0]
 ⌃ [d8a4904e] MutableArithmetics v1.8.0
   [76087f3c] NLopt v1.2.1
-  [77ba4419] NaNMath v1.1.4
+⌃ [77ba4419] NaNMath v1.1.4
 ⌃ [8913a72c] NonlinearSolve v4.30.0
 ⌃ [be0214bd] NonlinearSolveBase v2.49.5
 ⌃ [5959db7a] NonlinearSolveFirstOrder v2.6.1
@@ -1428,7 +1428,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [d8793406] ObjectFile v0.5.1
   [6fe1bfb0] OffsetArrays v1.17.0
 ⌃ [7f7a1694] Optimization v5.9.0
-  [3e6eede4] OptimizationBBO v0.4.12
+⌃ [3e6eede4] OptimizationBBO v0.4.12
 ⌃ [bca83a33] OptimizationBase v5.5.3
 ⌃ [4e6fcdb7] OptimizationNLopt v0.3.18
 ⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.3]
@@ -1446,22 +1446,22 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
 ⌃ [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
 ⌃ [ab63da0c] ParallelParticleSwarms v1.6.2
-  [65888b18] ParameterizedFunctions v5.27.0
+⌃ [65888b18] ParameterizedFunctions v5.27.0
   [d96e819e] Parameters v0.13.1
 ⌅ [69de0a69] Parsers v2.8.8
   [06bb1623] PenaltyFunctions v0.3.0
   [ccf2f8ad] PlotThemes v3.3.0
 ⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
-  [e409e4f3] PoissonRandom v0.4.13
+⌃ [e409e4f3] PoissonRandom v0.4.13
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
-⌃ [21216c6a] Preferences v1.5.2 [loaded: v1.6.0]
+⌃ [21216c6a] Preferences v1.5.2 [loaded: v1.6.1]
 ⌃ [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [33c8b6b6] ProgressLogging v0.1.6
-  [92933f4c] ProgressMeter v1.11.0
+⌃ [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
 ⌃ [0c0d3e7f] PureKLU v1.4.2
   [1fd47b50] QuadGK v2.11.3
@@ -1522,7 +1522,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [bd369af6] Tables v1.14.0
   [ed4db957] TaskLocalValues v0.1.3
   [62fd8b95] TensorCore v0.1.1
-  [8ea1fca8] TermInterface v2.0.0
+⌃ [8ea1fca8] TermInterface v2.0.0
   [5d786b92] TerminalLoggers v0.1.8
 ⌃ [a759f4b9] TimerOutputs v1.2.1
   [e689c965] Tracy v0.1.6
@@ -1542,18 +1542,18 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [cd4c43a9] Dierckx_jll v0.2.0+0
 ⌅ [7cc45869] Enzyme_jll v0.0.293+0
   [2702e6a9] EpollShim_jll v0.0.20230411+1
-  [2e619515] Expat_jll v2.8.4+0
+⌃ [2e619515] Expat_jll v2.8.4+0
 ⌅ [b22a6f82] FFMPEG_jll v8.1.2+0
   [a3f928ae] Fontconfig_jll v2.17.1+0
-  [d7e528f0] FreeType2_jll v2.14.3+1
-  [559328eb] FriBidi_jll v1.0.17+0
+⌃ [d7e528f0] FreeType2_jll v2.14.3+1
+⌃ [559328eb] FriBidi_jll v1.0.17+0
   [0656b61e] GLFW_jll v3.5.1+0
   [d2c73de3] GR_jll v0.73.27+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
-  [7746bdde] Glib_jll v2.88.3+0
+⌃ [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
-  [2e76f6c2] HarfBuzz_jll v100.14004.0+0
+⌃ [2e76f6c2] HarfBuzz_jll v100.14004.0+0
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
   [aacddb02] JpegTurbo_jll v3.2.0+1
   [c1c5ebd0] LAME_jll v3.100.3+0
@@ -1566,7 +1566,7 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [94ce4f54] Libiconv_jll v1.18.0+0
 ⌃ [4b2f31a3] Libmount_jll v2.42.0+0
   [89763e89] Libtiff_jll v4.7.3+0
-  [38a345b3] Libuuid_jll v2.42.0+0
+⌃ [38a345b3] Libuuid_jll v2.42.0+0
   [856f044c] MKL_jll v2025.2.0+0
   [079eb43e] NLopt_jll v2.11.0+0
   [e7412a2a] Ogg_jll v1.3.6+0
@@ -1585,16 +1585,16 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [ffd25f8a] XZ_jll v5.8.4+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
-  [4f6342f7] Xorg_libX11_jll v1.8.13+0
+⌃ [4f6342f7] Xorg_libX11_jll v1.8.13+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
   [935fb764] Xorg_libXcursor_jll v1.2.4+0
   [a3789734] Xorg_libXdmcp_jll v1.1.6+0
   [1082639a] Xorg_libXext_jll v1.3.8+0
   [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
-  [a51aa0fd] Xorg_libXi_jll v1.8.4+0
+⌃ [a51aa0fd] Xorg_libXi_jll v1.8.4+0
   [d1454406] Xorg_libXinerama_jll v1.1.7+0
   [ec84b674] Xorg_libXrandr_jll v1.5.6+0
-  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
   [a65dc6b1] Xorg_libpciaccess_jll v0.19.0+0
   [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
   [cc61e674] Xorg_libxkbfile_jll v1.2.0+0
@@ -1615,15 +1615,15 @@ Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
   [2db6ffa8] libevdev_jll v1.13.4+0
-  [f638f0a6] libfdk_aac_jll v2.0.4+0
+⌅ [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
 ⌃ [b53b4c65] libpng_jll v1.6.58+0
-  [9a156e7d] libva_jll v2.23.0+0
+⌃ [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
 ⌃ [1317d2d5] oneTBB_jll v2022.3.0+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
-  [dfaa095f] x265_jll v4.1.0+0
+⌅ [dfaa095f] x265_jll v4.1.0+0
   [d8fb68d0] xkbcommon_jll v1.13.0+0
   [0dad84c5] ArgTools v1.1.2
   [56f22d72] Artifacts v1.11.0
