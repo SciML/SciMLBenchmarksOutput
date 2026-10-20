@@ -532,9 +532,9 @@ biopredyn_b5_cost (generic function with 1 method)
 ```
 
 ```
-6.401871 seconds (7.31 M allocations: 346.871 MiB, 3.27% gc time, 98.35% 
+6.370588 seconds (7.31 M allocations: 346.858 MiB, 2.73% gc time, 98.31% 
 compilation time)
-  0.041093 seconds (13.34 k allocations: 8.070 MiB)
+  0.175785 seconds (13.34 k allocations: 8.070 MiB, 76.03% gc time)
 31477.21426675107
 ```
 
@@ -625,9 +625,9 @@ res_bbo.objective
 ```
 
 ```
-2184.381109 seconds (671.09 M allocations: 421.718 GiB, 10.79% gc time, 0.1
-9% compilation time)
-6387.503471897512
+2151.260614 seconds (668.96 M allocations: 420.293 GiB, 10.31% gc time, 0.2
+0% compilation time)
+6985.472289148782
 ```
 
 
@@ -643,9 +643,9 @@ res_nlopt.objective
 ```
 
 ```
-2140.638211 seconds (716.94 M allocations: 457.940 GiB, 13.96% gc time, 0.0
-3% compilation time)
-7188.6166592091495
+1262.073771 seconds (435.87 M allocations: 270.104 GiB, 12.31% gc time, 0.0
+5% compilation time)
+7575.343039534713
 ```
 
 
@@ -658,9 +658,9 @@ res_pso.objective
 ```
 
 ```
-299.625734 seconds (251.01 M allocations: 152.797 GiB, 83.71% gc time, 17.6
-2% compilation time)
-7439.292056734032
+229.682595 seconds (200.49 M allocations: 119.095 GiB, 82.08% gc time, 26.1
+0% compilation time)
+7261.498643810764
 ```
 
 
@@ -696,9 +696,9 @@ nothing
 ```
 
 ```
-BBO -> LN_BOBYQA: 3763.0944394480157 (215.351015288s)
-GN_CRS2_LM -> LN_BOBYQA: 6933.506544556334 (519.349076969s)
-ParallelPSOArray -> LN_BOBYQA: 7278.780883788539 (321.405114764s)
+BBO -> LN_BOBYQA: 3708.9347979980507 (221.499268099s)
+GN_CRS2_LM -> LN_BOBYQA: 6203.489386885705 (246.148016506s)
+ParallelPSOArray -> LN_BOBYQA: 6842.234540624456 (327.242672415s)
 ```
 
 
@@ -721,12 +721,12 @@ df = DataFrame(
 ─────┼─────────────────────────────────────────────
    1 │ Reference nominal parameters        4276.21
    2 │ Starting guess (no fit)            31477.2
-   3 │ BBO_adaptive_de_rand_1_bin          6387.5
-   4 │ GN_CRS2_LM                          7188.62
-   5 │ ParallelPSOArray                    7439.29
-   6 │ LN_BOBYQA polish (from BBO)         3763.09
-   7 │ LN_BOBYQA polish (from GN_CRS2_L…   6933.51
-   8 │ LN_BOBYQA polish (from ParallelP…   7278.78
+   3 │ BBO_adaptive_de_rand_1_bin          6985.47
+   4 │ GN_CRS2_LM                          7575.34
+   5 │ ParallelPSOArray                    7261.5
+   6 │ LN_BOBYQA polish (from BBO)         3708.93
+   7 │ LN_BOBYQA polish (from GN_CRS2_L…   6203.49
+   8 │ LN_BOBYQA polish (from ParallelP…   6842.23
 ```
 
 
@@ -840,27 +840,27 @@ Environment:
 Package Information:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Project.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Project.toml`
   [6e4b80f9] BenchmarkTools v1.8.0
   [a134a8b2] BlackBoxOptim v0.6.12
   [a93c6f00] DataFrames v1.8.2
 ⌃ [bcd4f6db] DelayDiffEq v6.4.1
 ⌃ [1130ab10] DiffEqParamEstim v2.6.1
-  [31c24e10] Distributions v0.25.131
+⌃ [31c24e10] Distributions v0.25.131
   [f6369f11] ForwardDiff v1.4.6
 ⌃ [961ee093] ModelingToolkit v11.43.0
 ⌃ [7771a370] ModelingToolkitBase v1.70.0
   [76087f3c] NLopt v1.2.1
 ⌃ [7f7a1694] Optimization v5.9.0
-  [3e6eede4] OptimizationBBO v0.4.12
-  [4e6fcdb7] OptimizationNLopt v0.3.18
+⌃ [3e6eede4] OptimizationBBO v0.4.12
+⌃ [4e6fcdb7] OptimizationNLopt v0.3.18
   [1dea7af3] OrdinaryDiffEq v7.8.1
 ⌃ [ab63da0c] ParallelParticleSwarms v1.6.2
-  [65888b18] ParameterizedFunctions v5.27.0
+⌃ [65888b18] ParameterizedFunctions v5.27.0
   [91a5bcdd] Plots v1.41.7
 ⌃ [731186ca] RecursiveArrayTools v4.5.1
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
-  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
 Info Packages marked with ⌃ have new versions available and may be upgradable.
 Warning The project dependencies or compat requirements have changed since the manifest was last resolved. It is recommended to `Pkg.resolve()` or consider `Pkg.update()` if necessary.
 ```
@@ -868,7 +868,7 @@ Warning The project dependencies or compat requirements have changed since the m
 And the full manifest:
 
 ```
-Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Manifest.toml`
+Status `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/ParameterEstimation/Manifest.toml`
   [47edcb42] ADTypes v1.24.0
   [14f7f29c] AMD v0.5.4
   [6e696c72] AbstractPlutoDingetjes v1.4.1
@@ -879,7 +879,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ec485272] ArnoldiMethod v0.4.0
 ⌃ [4fba245c] ArrayInterface v7.30.1
 ⌃ [4c555306] ArrayLayouts v1.12.2
-  [a9b6321e] Atomix v1.2.1
+⌃ [a9b6321e] Atomix v1.2.1
 ⌃ [aae01518] BandedMatrices v1.12.0
   [6e4b80f9] BenchmarkTools v1.8.0
   [e2ed5e7c] Bijections v0.2.2
@@ -888,8 +888,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [a134a8b2] BlackBoxOptim v0.6.12
 ⌃ [8e7c35d0] BlockArrays v1.10.0
 ⌃ [70df07ce] BracketingNonlinearSolve v1.12.7
-  [fa961155] CEnum v0.5.0
-  [d360d2e6] ChainRulesCore v1.26.1
+⌅ [fa961155] CEnum v0.5.0
+⌃ [d360d2e6] ChainRulesCore v1.26.1
   [35d6a980] ColorSchemes v3.31.0
 ⌃ [3da002f7] ColorTypes v0.12.1
   [c3611d14] ColorVectorSpace v0.11.0
@@ -920,8 +920,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [163ba53b] DiffResults v1.1.0
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
-  [31c24e10] Distributions v0.25.131
-  [ffbed154] DocStringExtensions v0.9.5
+⌃ [31c24e10] Distributions v0.25.131
+⌅ [ffbed154] DocStringExtensions v0.9.5
 ⌃ [5b8099bc] DomainSets v0.8.1
   [7c1d4256] DynamicPolynomials v0.6.8
   [4e289a0a] EnumX v1.0.7
@@ -930,9 +930,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [e2ba6199] ExprTools v0.1.11
   [55351af7] ExproniconLite v0.10.14
 ⌃ [c87230d0] FFMPEG v0.4.5
-  [7034ab61] FastBroadcast v1.4.0
+⌃ [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
-  [a4df4552] FastPower v1.5.0
+⌃ [a4df4552] FastPower v1.5.0
 ⌃ [1a297f60] FillArrays v1.17.0
 ⌃ [64ca27bc] FindFirstFunctions v3.2.1
   [6a86dc24] FiniteDiff v2.33.0
@@ -955,7 +955,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [842dd82b] InlineStrings v1.4.6
   [18e54dd8] IntegerMathUtils v0.1.4
 ⌃ [8197267c] IntervalSets v0.7.14
-  [3587e190] InverseFunctions v0.1.17
+⌃ [3587e190] InverseFunctions v0.1.17
   [41ab1584] InvertedIndices v1.3.1
   [92d709cd] IrrationalConstants v0.2.6
   [82899510] IteratorInterfaceExtensions v1.0.0
@@ -963,8 +963,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [692b3bcd] JLLWrappers v1.8.0
 ⌅ [682c06a0] JSON v0.21.4
   [ae98c720] Jieko v0.2.1
-⌃ [ccbc3e58] JumpProcesses v9.32.3
-⌃ [63c18a36] KernelAbstractions v0.9.42
+⌅ [ccbc3e58] JumpProcesses v9.32.3
+⌅ [63c18a36] KernelAbstractions v0.9.42
 ⌃ [ba0b0d4f] Krylov v0.10.9
   [2faa5264] LHLFactorization v2.2.2
 ⌅ [929cbde3] LLVM v9.13.1
@@ -999,10 +999,10 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d8793406] ObjectFile v0.5.1
   [6fe1bfb0] OffsetArrays v1.17.0
 ⌃ [7f7a1694] Optimization v5.9.0
-  [3e6eede4] OptimizationBBO v0.4.12
+⌃ [3e6eede4] OptimizationBBO v0.4.12
 ⌃ [bca83a33] OptimizationBase v5.5.3
-  [4e6fcdb7] OptimizationNLopt v0.3.18
-⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.2]
+⌃ [4e6fcdb7] OptimizationNLopt v0.3.18
+⌅ [bac558e1] OrderedCollections v1.8.2 [loaded: v2.0.3]
   [1dea7af3] OrdinaryDiffEq v7.8.1
 ⌃ [6ad6398a] OrdinaryDiffEqBDF v2.4.8
 ⌃ [bbf590c4] OrdinaryDiffEqCore v4.17.1
@@ -1017,22 +1017,22 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [79d7bb75] OrdinaryDiffEqVerner v2.4.1
   [90014a1f] PDMats v0.11.41
 ⌃ [ab63da0c] ParallelParticleSwarms v1.6.2
-  [65888b18] ParameterizedFunctions v5.27.0
+⌃ [65888b18] ParameterizedFunctions v5.27.0
   [d96e819e] Parameters v0.13.1
 ⌅ [69de0a69] Parsers v2.8.8
   [06bb1623] PenaltyFunctions v0.3.0
   [ccf2f8ad] PlotThemes v3.3.0
 ⌃ [995b91a9] PlotUtils v1.4.4
   [91a5bcdd] Plots v1.41.7
-  [e409e4f3] PoissonRandom v0.4.13
+⌃ [e409e4f3] PoissonRandom v0.4.13
   [2dfb63ee] PooledArrays v1.4.3
   [d236fae5] PreallocationTools v1.7.1
   [aea7be01] PrecompileTools v1.3.4
-⌃ [21216c6a] Preferences v1.5.2 [loaded: v1.6.0]
+⌃ [21216c6a] Preferences v1.5.2 [loaded: v1.6.1]
 ⌃ [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [33c8b6b6] ProgressLogging v0.1.6
-  [92933f4c] ProgressMeter v1.11.0
+⌃ [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
 ⌃ [0c0d3e7f] PureKLU v1.4.2
   [1fd47b50] QuadGK v2.11.3
@@ -1052,12 +1052,12 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌃ [9dfe8606] SCCNonlinearSolve v1.15.3
 ⌃ [91a8cdf1] SciCompDSL v1.0.3
 ⌃ [0bca4576] SciMLBase v3.53.3
-  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/crackauc/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
-  [19f34311] SciMLJacobianOperators v0.1.19
+  [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/julia/github-runners/amdci1-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/crackauc/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
+⌃ [19f34311] SciMLJacobianOperators v0.1.19
   [a6db7da4] SciMLLogging v2.1.0
 ⌃ [c0aeaf25] SciMLOperators v1.30.0
   [431bcebd] SciMLPublic v1.3.0
-  [53ae85a6] SciMLStructures v1.10.5
+⌃ [53ae85a6] SciMLStructures v1.10.5
   [7e506255] ScopedValues v1.6.2
   [6c6a2e73] Scratch v1.3.0
   [91c51154] SentinelArrays v1.4.10
@@ -1065,15 +1065,15 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [992d4aef] Showoff v1.1.1
   [05bca326] SimpleDiffEq v1.18.0
 ⌃ [727e6d20] SimpleNonlinearSolve v2.14.3
-  [510db2f7] SimpleOptimization v2.0.1
+⌃ [510db2f7] SimpleOptimization v2.0.1
   [699a6c99] SimpleTraits v0.9.6
   [ed01d8cd] Sobol v1.5.0
   [a2af1166] SortingAlgorithms v1.2.3
   [a57abbd0] SparseColumnPivotedQR v2.1.8
-  [9f842d2f] SparseConnectivityTracer v1.2.3
-  [0a514795] SparseMatrixColorings v0.4.28
+⌃ [9f842d2f] SparseConnectivityTracer v1.2.3
+⌃ [0a514795] SparseMatrixColorings v0.4.28
   [276daf66] SpecialFunctions v2.9.0
-  [860ef19b] StableRNGs v1.0.4
+⌃ [860ef19b] StableRNGs v1.0.4
   [0c0c59c1] StarAlgebras v0.3.0
   [64909d44] StateSelection v1.11.1
 ⌃ [90137ffa] StaticArrays v1.9.20
@@ -1086,22 +1086,22 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [892a3eda] StringManipulation v0.5.0
   [53d494c1] StructIO v0.3.1
   [2efcf032] SymbolicIndexingInterface v0.3.55
-  [19f23fe9] SymbolicLimits v1.2.1
+⌃ [19f23fe9] SymbolicLimits v1.2.1
 ⌃ [d1185830] SymbolicUtils v4.46.5
 ⌃ [0c5d862f] Symbolics v7.39.2
   [3783bdb8] TableTraits v1.0.1
   [bd369af6] Tables v1.14.0
   [ed4db957] TaskLocalValues v0.1.3
   [62fd8b95] TensorCore v0.1.1
-  [8ea1fca8] TermInterface v2.0.0
+⌃ [8ea1fca8] TermInterface v2.0.0
   [5d786b92] TerminalLoggers v0.1.8
 ⌃ [a759f4b9] TimerOutputs v1.2.1
   [e689c965] Tracy v0.1.6
   [781d530d] TruncatedStacktraces v1.4.0
-  [5c2747f8] URIs v1.7.0
+⌃ [5c2747f8] URIs v1.7.0
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
-⌃ [013be700] UnsafeAtomics v0.3.2
+⌅ [013be700] UnsafeAtomics v0.3.2
   [41fe7b60] Unzip v0.2.0
   [d30d5f5c] WeakCacheSets v0.1.0
   [44d3d7a6] Weave v0.10.12
@@ -1122,7 +1122,7 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [d2c73de3] GR_jll v0.73.27+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
   [61579ee1] Ghostscript_jll v9.55.1+0
-  [7746bdde] Glib_jll v2.88.3+0
+⌃ [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
   [2e76f6c2] HarfBuzz_jll v100.14004.0+0
   [1d5cc7b8] IntelOpenMP_jll v2025.2.0+0
@@ -1135,9 +1135,9 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
-  [4b2f31a3] Libmount_jll v2.42.0+0
+⌃ [4b2f31a3] Libmount_jll v2.42.0+0
   [89763e89] Libtiff_jll v4.7.3+0
-  [38a345b3] Libuuid_jll v2.42.0+0
+⌃ [38a345b3] Libuuid_jll v2.42.0+0
   [856f044c] MKL_jll v2025.2.0+0
   [079eb43e] NLopt_jll v2.11.0+0
   [e7412a2a] Ogg_jll v1.3.6+0
@@ -1156,16 +1156,16 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [ffd25f8a] XZ_jll v5.8.4+0
   [f67eecfb] Xorg_libICE_jll v1.1.2+0
   [c834827a] Xorg_libSM_jll v1.2.6+0
-  [4f6342f7] Xorg_libX11_jll v1.8.13+0
+⌃ [4f6342f7] Xorg_libX11_jll v1.8.13+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
   [935fb764] Xorg_libXcursor_jll v1.2.4+0
   [a3789734] Xorg_libXdmcp_jll v1.1.6+0
   [1082639a] Xorg_libXext_jll v1.3.8+0
   [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
-  [a51aa0fd] Xorg_libXi_jll v1.8.4+0
+⌃ [a51aa0fd] Xorg_libXi_jll v1.8.4+0
   [d1454406] Xorg_libXinerama_jll v1.1.7+0
   [ec84b674] Xorg_libXrandr_jll v1.5.6+0
-  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
   [a65dc6b1] Xorg_libpciaccess_jll v0.19.0+0
   [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
   [cc61e674] Xorg_libxkbfile_jll v1.2.0+0
@@ -1175,8 +1175,8 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [975044d2] Xorg_xcb_util_keysyms_jll v0.4.1+0
   [0d47668e] Xorg_xcb_util_renderutil_jll v0.3.10+0
   [c22f9ab0] Xorg_xcb_util_wm_jll v0.4.2+0
-  [35661453] Xorg_xkbcomp_jll v1.4.7+0
-  [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
+⌃ [35661453] Xorg_xkbcomp_jll v1.4.7+0
+⌃ [33bec58e] Xorg_xkeyboard_config_jll v2.47.0+2
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
   [3161d3a3] Zstd_jll v1.5.7+1
   [35ca27e7] eudev_jll v3.2.14+0
@@ -1186,13 +1186,13 @@ Status `~/github-runners/amdci3-1/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/be
   [1183f4f0] libdecor_jll v0.2.2+0
   [8e53e030] libdrm_jll v2.4.134+0
   [2db6ffa8] libevdev_jll v1.13.4+0
-  [f638f0a6] libfdk_aac_jll v2.0.4+0
+⌅ [f638f0a6] libfdk_aac_jll v2.0.4+0
   [36db933b] libinput_jll v1.28.1+0
 ⌃ [b53b4c65] libpng_jll v1.6.58+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
   [009596ad] mtdev_jll v1.1.7+0
-  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌃ [1317d2d5] oneTBB_jll v2022.3.0+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
   [dfaa095f] x265_jll v4.1.0+0
   [d8fb68d0] xkbcommon_jll v1.13.0+0
