@@ -278,9 +278,9 @@ Success rate : [0.0, 0.0196078, 0.0196078, 0.0196078, 0.0392157, 0.0392157,
  BenchmarkResults :
 Run length : [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3728
 , 6105, 10000]
-Success rate : [0.00392157, 0.00196078, 0.0, 0.00196078, 0.00784314, 0.0156
-863, 0.0313725, 0.0294118, 0.0588235, 0.0686275, 0.17451, 0.247059, 0.33921
-6, 0.392157, 0.441176]
+Success rate : [0.0, 0.00196078, 0.00196078, 0.0, 0.00784314, 0.0117647, 0.
+0215686, 0.0352941, 0.0568627, 0.0647059, 0.168627, 0.245098, 0.335294, 0.3
+86275, 0.421569]
  BenchmarkResults :
 Run length : [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3728
 , 6105, 10000]
@@ -296,15 +296,15 @@ Success rate : [0.0, 0.0, 0.0, 0.0, 0.00196078, 0.00784314, 0.0137255, 0.02
  BenchmarkResults :
 Run length : [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3728
 , 6105, 10000]
-Success rate : [0.0588235, 0.0588235, 0.0882353, 0.182353, 0.356863, 0.5019
-61, 0.578431, 0.609804, 0.615686, 0.62549, 0.641176, 0.668627, 0.682353, 0.
-688235, 0.701961]
+Success rate : [0.0588235, 0.0588235, 0.0882353, 0.180392, 0.35098, 0.51176
+5, 0.582353, 0.6, 0.621569, 0.621569, 0.64902, 0.662745, 0.684314, 0.698039
+, 0.692157]
  BenchmarkResults :
 Run length : [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3728
 , 6105, 10000]
-Success rate : [0.315686, 0.301961, 0.335294, 0.331373, 0.345098, 0.352941,
- 0.341176, 0.331373, 0.366667, 0.37451, 0.423529, 0.435294, 0.478431, 0.515
-686, 0.515686]
+Success rate : [0.307843, 0.321569, 0.319608, 0.321569, 0.323529, 0.337255,
+ 0.307843, 0.343137, 0.366667, 0.390196, 0.407843, 0.452941, 0.468627, 0.51
+1765, 0.511765]
  BenchmarkResults :
 Run length : [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3728
 , 6105, 10000]
@@ -338,9 +338,9 @@ Success rate : [0.0235294, 0.0294118, 0.0392157, 0.0568627, 0.188235, 0.325
  BenchmarkResults :
 Run length : [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3728
 , 6105, 10000]
-Success rate : [0.0, 0.00196078, 0.00196078, 0.00588235, 0.0196078, 0.02352
-94, 0.0352941, 0.0411765, 0.0627451, 0.170588, 0.25098, 0.339216, 0.407843,
- 0.513725, 0.6]
+Success rate : [0.0, 0.0, 0.0, 0.00196078, 0.0156863, 0.0235294, 0.0352941,
+ 0.0411765, 0.0686275, 0.168627, 0.258824, 0.335294, 0.401961, 0.505882, 0.
+588235]
  BenchmarkResults :
 Run length : [10, 16, 27, 44, 72, 118, 193, 316, 518, 848, 1389, 2276, 3728
 , 6105, 10000]
@@ -448,39 +448,39 @@ end
 ```
 
 ```
-BBO_adaptive_de_rand_1_bin   final success = 0.508   solved = 261/510   med
+BBO_adaptive_de_rand_1_bin   final success = 0.508   solved = 267/510   med
 ian TTS = 0.006 s
-BBO_de_rand_2_bin            final success = 0.486   solved = 244/510   med
+BBO_de_rand_2_bin            final success = 0.486   solved = 242/510   med
 ian TTS = 0.005 s
-HybridPSO_LBFGS              final success = 0.757   solved = 391/510   med
+HybridPSO_LBFGS              final success = 0.757   solved = 384/510   med
 ian TTS = 0.012 s
-NLopt.GN_CRS2_LM()           final success = 0.600   solved = 294/510   med
+NLopt.GN_CRS2_LM()           final success = 0.588   solved = 293/510   med
 ian TTS = 0.004 s
 NLopt.GN_DIRECT()            final success = 0.549   solved = 280/510   med
 ian TTS = 0.012 s
-NLopt.GN_ESCH()              final success = 0.441   solved = 229/510   med
+NLopt.GN_ESCH()              final success = 0.422   solved = 237/510   med
 ian TTS = 0.008 s
-NelderMead                   final success = 0.522   solved = 250/510   med
+NelderMead                   final success = 0.522   solved = 251/510   med
 ian TTS = 0.000 s
-Optim.SAMIN                  final success = 0.453   solved = 230/510   med
-ian TTS = 0.011 s
-OptimizationEvolutionary.DE() final success = 0.449   solved = 241/510   me
-dian TTS = 0.003 s
-OptimizationEvolutionary.ES() final success = 0.363   solved = 184/510   me
-dian TTS = 0.000 s
-OptimizationEvolutionary.GA() final success = 0.394   solved = 193/510   me
-dian TTS = 0.000 s
-OptimizationMetaheuristics.DE final success = 0.647   solved = 330/510   me
-dian TTS = 0.007 s
-OptimizationMetaheuristics.ECA final success = 0.749   solved = 383/510   m
-edian TTS = 0.006 s
-PSOKernel                    final success = 0.702   solved = 362/510   med
-ian TTS = 0.010 s
-ScipyDifferentialEvolution   final success = 0.516   solved = 254/510   med
-ian TTS = 0.078 s
-SerialPSO                    final success = 0.578   solved = 293/510   med
+Optim.SAMIN                  final success = 0.453   solved = 242/510   med
 ian TTS = 0.012 s
-SyncPSOKernel                final success = 0.682   solved = 353/510   med
+OptimizationEvolutionary.DE() final success = 0.449   solved = 245/510   me
+dian TTS = 0.003 s
+OptimizationEvolutionary.ES() final success = 0.363   solved = 180/510   me
+dian TTS = 0.000 s
+OptimizationEvolutionary.GA() final success = 0.394   solved = 200/510   me
+dian TTS = 0.000 s
+OptimizationMetaheuristics.DE final success = 0.647   solved = 322/510   me
+dian TTS = 0.007 s
+OptimizationMetaheuristics.ECA final success = 0.749   solved = 378/510   m
+edian TTS = 0.006 s
+PSOKernel                    final success = 0.692   solved = 359/510   med
+ian TTS = 0.010 s
+ScipyDifferentialEvolution   final success = 0.512   solved = 268/510   med
+ian TTS = 0.072 s
+SerialPSO                    final success = 0.578   solved = 292/510   med
+ian TTS = 0.013 s
+SyncPSOKernel                final success = 0.682   solved = 350/510   med
 ian TTS = 0.011 s
 ```
 
@@ -680,7 +680,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
 ⌅ [052768ef] CUDA v5.11.3
 ⌃ [13f3f980] CairoMakie v0.15.13
 ⌃ [f6369f11] ForwardDiff v1.4.5
-  [63c18a36] KernelAbstractions v0.9.42
+⌅ [63c18a36] KernelAbstractions v0.9.42
   [c03570c3] Memoize v0.4.4
 ⌃ [7f7a1694] Optimization v5.7.1
 ⌃ [3e6eede4] OptimizationBBO v0.4.11
@@ -719,13 +719,13 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
   [a134a8b2] BlackBoxOptim v0.6.12
   [4552ee2b] BlackBoxOptimizationBenchmarking v2.1.0
 ⌃ [70df07ce] BracketingNonlinearSolve v1.12.5
-  [fa961155] CEnum v0.5.0
+⌅ [fa961155] CEnum v0.5.0
   [96374032] CRlibm v1.0.2
 ⌅ [052768ef] CUDA v5.11.3
 ⌃ [1af6417a] CUDA_Runtime_Discovery v2.1.0
   [159f3aea] Cairo v1.1.1
 ⌃ [13f3f980] CairoMakie v0.15.13
-  [d360d2e6] ChainRulesCore v1.26.1
+⌃ [d360d2e6] ChainRulesCore v1.26.1
   [6b39b394] CodecZstd v0.8.7
   [a2cac450] ColorBrewer v0.4.2
   [35d6a980] ColorSchemes v3.31.0
@@ -756,18 +756,18 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
   [b552c78f] DiffRules v1.16.0
   [a0c0ee7d] DifferentiationInterface v0.7.21
   [b4f34e82] Distances v0.10.12
-  [31c24e10] Distributions v0.25.131
-  [ffbed154] DocStringExtensions v0.9.5
+⌃ [31c24e10] Distributions v0.25.131
+⌅ [ffbed154] DocStringExtensions v0.9.5
   [4e289a0a] EnumX v1.0.7
 ⌃ [7da242da] Enzyme v0.13.199
-  [f151be2c] EnzymeCore v0.8.21
+⌃ [f151be2c] EnzymeCore v0.8.21
 ⌅ [86b6b26d] Evolutionary v0.11.9
   [429591f6] ExactPredicates v2.2.9
   [e2ba6199] ExprTools v0.1.11
   [b86e33f2] FFTA v0.3.1
-  [7034ab61] FastBroadcast v1.4.0
+⌃ [7034ab61] FastBroadcast v1.4.0
   [9aa1b823] FastClosures v0.3.2
-  [a4df4552] FastPower v1.5.0
+⌃ [a4df4552] FastPower v1.5.0
   [5789e2e9] FileIO v1.20.0
   [8fc22ac5] FilePaths v0.9.0
   [48062228] FilePathsBase v0.9.24
@@ -781,7 +781,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
   [663a7486] FreeTypeAbstraction v0.10.8
   [069b7b12] FunctionWrappers v1.1.3
   [77dc65aa] FunctionWrappersWrappers v1.13.0
-⌃ [0c68f7d7] GPUArrays v11.5.13
+⌅ [0c68f7d7] GPUArrays v11.5.13
 ⌅ [46192b85] GPUArraysCore v0.2.0
 ⌅ [61eb1bfa] GPUCompiler v1.17.1
 ⌅ [096a3bc2] GPUToolbox v1.1.1
@@ -802,8 +802,8 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
   [18e54dd8] IntegerMathUtils v0.1.4
   [a98d9a8b] Interpolations v0.16.3
 ⌃ [d1acc4aa] IntervalArithmetic v1.0.11
-  [8197267c] IntervalSets v0.7.14
-  [3587e190] InverseFunctions v0.1.17
+⌃ [8197267c] IntervalSets v0.7.14
+⌃ [3587e190] InverseFunctions v0.1.17
   [92d709cd] IrrationalConstants v0.2.6
   [f1662d9f] Isoband v0.1.1
   [c8e1da08] IterTools v1.10.0
@@ -813,11 +813,11 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
 ⌅ [682c06a0] JSON v0.21.4
   [0f8b85d8] JSON3 v1.14.3
   [b835a17e] JpegTurbo v0.1.6
-  [63c18a36] KernelAbstractions v0.9.42
+⌅ [63c18a36] KernelAbstractions v0.9.42
   [5ab0869b] KernelDensity v0.6.12
 ⌃ [ba0b0d4f] Krylov v0.10.9
 ⌃ [2faa5264] LHLFactorization v2.2.0
-⌃ [929cbde3] LLVM v9.13.0
+⌅ [929cbde3] LLVM v9.13.0
   [8b046642] LLVMLoopInfo v1.0.0
   [b964fa9f] LaTeXStrings v1.4.1
 ⌅ [73f95e8e] LatticeRules v0.0.1
@@ -859,7 +859,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
 ⌃ [4e6fcdb7] OptimizationNLopt v0.3.16
 ⌃ [36348300] OptimizationOptimJL v0.4.19
 ⌃ [cce07bd8] OptimizationSciPy v0.4.10
-  [bac558e1] OrderedCollections v2.0.1
+⌃ [bac558e1] OrderedCollections v2.0.1 [loaded: v2.0.3]
   [90014a1f] PDMats v0.11.41
   [f57f5aa1] PNGFiles v0.4.5
   [19eb6ba3] Packing v0.5.1
@@ -874,11 +874,11 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
   [85a6dd25] PositiveFactorizations v0.2.4
 ⌃ [d236fae5] PreallocationTools v1.6.0
   [aea7be01] PrecompileTools v1.3.4
-⌃ [21216c6a] Preferences v1.5.2 [loaded: v1.6.0]
-  [08abe8d2] PrettyTables v3.4.8
+⌃ [21216c6a] Preferences v1.5.2 [loaded: v1.6.1]
+⌃ [08abe8d2] PrettyTables v3.4.8
   [27ebfcd6] Primes v0.5.7
   [33c8b6b6] ProgressLogging v0.1.6
-  [92933f4c] ProgressMeter v1.11.0
+⌃ [92933f4c] ProgressMeter v1.11.0
   [43287f4e] PtrArrays v1.4.0
 ⌃ [0c0d3e7f] PureKLU v1.4.1
 ⌃ [6099a3de] PythonCall v0.9.35
@@ -889,7 +889,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
   [e6cf234a] RandomNumbers v1.6.0
   [b3c3ace0] RangeArrays v0.3.2
   [c84ed2f1] Ratios v0.4.5
-  [3cdcf5f2] RecipesBase v1.3.4
+⌃ [3cdcf5f2] RecipesBase v1.3.4
 ⌃ [731186ca] RecursiveArrayTools v4.5.0
   [189a3867] Reexport v1.2.2
   [05181044] RelocatableFolders v1.0.1
@@ -899,7 +899,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
 ⌃ [f2b01f46] Roots v3.0.7
   [5eaf0fd0] RoundingEmulator v0.2.1
 ⌃ [7e49a35a] RuntimeGeneratedFunctions v0.5.25
-  [fdea26ae] SIMD v3.7.2
+⌃ [fdea26ae] SIMD v3.7.2
 ⌃ [0bca4576] SciMLBase v3.49.2
   [31c91b34] SciMLBenchmarks v0.2.1 [loaded: `/home/runner/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/src/SciMLBenchmarks.jl` (v0.2.1) expected `/home/runner/.julia/packages/SciMLBenchmarks/ceJyd/src/SciMLBenchmarks.jl` (v0.2.1)]
 ⌃ [19f34311] SciMLJacobianOperators v0.1.17
@@ -917,7 +917,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
 ⌃ [727e6d20] SimpleNonlinearSolve v2.14.0
 ⌃ [510db2f7] SimpleOptimization v2.0.0
   [699a6c99] SimpleTraits v0.9.6
-  [45858cf5] Sixel v0.1.5
+⌃ [45858cf5] Sixel v0.1.5
   [66db9d55] SnoopPrecompile v1.0.3
   [ed01d8cd] Sobol v1.5.0
   [a2af1166] SortingAlgorithms v1.2.3
@@ -925,7 +925,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
 ⌃ [9f842d2f] SparseConnectivityTracer v1.2.2
 ⌃ [0a514795] SparseMatrixColorings v0.4.26
   [276daf66] SpecialFunctions v2.9.0
-  [860ef19b] StableRNGs v1.0.4
+⌃ [860ef19b] StableRNGs v1.0.4
   [cae243ae] StackViews v0.1.2
 ⌃ [90137ffa] StaticArrays v1.9.19
   [1e83bf80] StaticArraysCore v1.4.4
@@ -935,9 +935,9 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
   [4c63d2b9] StatsFuns v2.2.1
   [69024149] StringEncodings v0.3.7
 ⌅ [892a3eda] StringManipulation v0.5.0
-  [09ab397b] StructArrays v0.7.3
+⌃ [09ab397b] StructArrays v0.7.3
   [53d494c1] StructIO v0.3.1
-  [856f2bd8] StructTypes v1.11.0
+⌃ [856f2bd8] StructTypes v1.11.0
   [2efcf032] SymbolicIndexingInterface v0.3.55
   [3783bdb8] TableTraits v1.0.1
 ⌃ [bd369af6] Tables v1.13.0 [loaded: v1.14.0]
@@ -952,7 +952,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
   [3a884ed6] UnPack v1.0.2
   [1cfade01] UnicodeFun v0.4.1
 ⌃ [1986cc42] Unitful v1.28.0
-  [013be700] UnsafeAtomics v0.3.2
+⌅ [013be700] UnsafeAtomics v0.3.2
   [e17b2a0c] UnsafePointers v1.0.0
   [44d3d7a6] Weave v0.10.12
   [e3aaa7dc] WebP v0.1.3
@@ -964,7 +964,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
 ⌅ [d1e2174e] CUDA_Compiler_jll v0.4.4+1
 ⌃ [4ee394cb] CUDA_Driver_jll v13.3.1+0
 ⌅ [76a88914] CUDA_Runtime_jll v0.21.0+1
-  [83423d85] Cairo_jll v1.18.7+0
+⌃ [83423d85] Cairo_jll v1.18.7+0
   [a38c48d9] CoreMath_jll v0.1.0+0
 ⌅ [5ae413db] EarCut_jll v2.2.4+0
 ⌅ [7cc45869] Enzyme_jll v0.0.290+0
@@ -975,7 +975,7 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
   [559328eb] FriBidi_jll v1.0.17+0
 ⌅ [b0724c58] GettextRuntime_jll v0.22.4+0
 ⌅ [59f7168a] Giflib_jll v5.2.3+0
-  [7746bdde] Glib_jll v2.88.3+0
+⌃ [7746bdde] Glib_jll v2.88.3+0
   [3b182d85] Graphite2_jll v1.3.16+0
 ⌅ [2e76f6c2] HarfBuzz_jll v8.5.1+0
   [905a6f67] Imath_jll v3.2.2+0
@@ -990,9 +990,9 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
 ⌅ [e9f186c6] Libffi_jll v3.4.7+0
   [7e76a0d4] Libglvnd_jll v1.7.1+1
   [94ce4f54] Libiconv_jll v1.18.0+0
-  [4b2f31a3] Libmount_jll v2.42.0+0
+⌃ [4b2f31a3] Libmount_jll v2.42.0+0
   [89763e89] Libtiff_jll v4.7.3+0
-  [38a345b3] Libuuid_jll v2.42.0+0
+⌃ [38a345b3] Libuuid_jll v2.42.0+0
   [856f044c] MKL_jll v2025.2.0+0
   [079eb43e] NLopt_jll v2.11.0+0
   [e98f9f5b] NVTX_jll v3.2.2+0
@@ -1005,12 +1005,12 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
   [30392449] Pixman_jll v0.46.4+0
   [f50d1b31] Rmath_jll v0.5.2+0
 ⌃ [ffd25f8a] XZ_jll v5.8.3+0
-  [4f6342f7] Xorg_libX11_jll v1.8.13+0
+⌃ [4f6342f7] Xorg_libX11_jll v1.8.13+0
   [0c0b7dd1] Xorg_libXau_jll v1.0.13+0
   [a3789734] Xorg_libXdmcp_jll v1.1.6+0
   [1082639a] Xorg_libXext_jll v1.3.8+0
   [d091e8ba] Xorg_libXfixes_jll v6.0.2+0
-  [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
+⌃ [ea2f1a96] Xorg_libXrender_jll v0.9.12+0
   [a65dc6b1] Xorg_libpciaccess_jll v0.19.0+0
   [c7cfdc94] Xorg_libxcb_jll v1.17.1+0
   [c5fb5394] Xorg_xtrans_jll v1.6.0+0
@@ -1021,13 +1021,13 @@ Status `~/_work/SciMLBenchmarks.jl/SciMLBenchmarks.jl/benchmarks/PSOGlobalOptimi
 ⌃ [0ac62f75] libass_jll v0.17.4+0
   [8e53e030] libdrm_jll v2.4.134+0
   [f638f0a6] libfdk_aac_jll v2.0.4+0
-  [b53b4c65] libpng_jll v1.6.58+0
-  [075b6546] libsixel_jll v1.10.5+0
+⌃ [b53b4c65] libpng_jll v1.6.58+0
+⌃ [075b6546] libsixel_jll v1.10.5+0
   [9a156e7d] libva_jll v2.23.0+0
   [f27f6e37] libvorbis_jll v1.3.8+0
 ⌃ [c5f90fcd] libwebp_jll v1.6.0+0
   [f8abcde7] micromamba_jll v2.3.1+0
-  [1317d2d5] oneTBB_jll v2022.3.0+0
+⌃ [1317d2d5] oneTBB_jll v2022.3.0+0
   [4d7b5844] pixi_jll v0.76.2+0
 ⌅ [1270edf5] x264_jll v10164.0.1+0
   [dfaa095f] x265_jll v4.1.0+0
