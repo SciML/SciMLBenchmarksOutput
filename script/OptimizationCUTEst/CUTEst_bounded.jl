@@ -18,17 +18,30 @@ println("MAX_NVAR = ", MAX_NVAR)
 println("MAX_NCON = ", MAX_NCON)
 println("SOLVE_MAXITERS = ", SOLVE_MAXITERS)
 println("SOLVE_TIMEOUT_SECONDS = ", SOLVE_TIMEOUT_SECONDS)
-println("KNOWN_BAD_PROBLEMS = ", join(sort(collect(KNOWN_BAD_PROBLEMS)), ", "))
+println("KNOWN_BAD_PROBLEMS = ", join(sort(collect(keys(KNOWN_BAD_PROBLEMS))), ", "))
 
-bounded_equality_problems = select_safe_problems(
-    collect(CUTEst.select_sif_problems(min_con = 1, only_equ_con = true,
-        only_free_var = false))
-)
+all_equality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_equ_con = true, max_var = MAX_NVAR, max_con = MAX_NCON))
+bounded_equality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_equ_con = true, max_var = MAX_NVAR, max_con = MAX_NCON,
+    custom_filter = p -> p["variables"]["free"] < p["variables"]["number"]))
+free_equality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_equ_con = true, only_free_var = true, max_var = MAX_NVAR, max_con = MAX_NCON))
+assert_bounded_pool_coverage(all_equality_candidates, bounded_equality_candidates,
+    free_equality_candidates, "Equality")
 
-bounded_inequality_problems = select_safe_problems(
-    collect(CUTEst.select_sif_problems(min_con = 1, only_ineq_con = true,
-        only_free_var = false))
-)
+all_inequality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_ineq_con = true, max_var = MAX_NVAR, max_con = MAX_NCON))
+bounded_inequality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_ineq_con = true, max_var = MAX_NVAR, max_con = MAX_NCON,
+    custom_filter = p -> p["variables"]["free"] < p["variables"]["number"]))
+free_inequality_candidates = collect(CUTEst.select_sif_problems(min_con = 1,
+    only_ineq_con = true, only_free_var = true, max_var = MAX_NVAR, max_con = MAX_NCON))
+assert_bounded_pool_coverage(all_inequality_candidates, bounded_inequality_candidates,
+    free_inequality_candidates, "Inequality")
+
+bounded_equality_problems = select_safe_problems(bounded_equality_candidates)
+bounded_inequality_problems = select_safe_problems(bounded_inequality_candidates)
 
 println("Selected bounded equality-constrained problems: ", length(bounded_equality_problems))
 println(join(bounded_equality_problems, ", "))
@@ -50,6 +63,11 @@ bounded_summary = summarize_results(bounded_results)
 
 plot_solve_times(bounded_results, "CUTEst bounded constrained Optimization.jl solve time")
 plot_success_rates(bounded_summary, "CUTEst bounded constrained Optimization.jl success rate")
+plot_compile_times(bounded_results, "CUTEst bounded constrained Optimization.jl compile time")
+plot_performance_profile(bounded_results,
+    "CUTEst bounded constrained Optimization.jl performance profile")
+plot_work_precision(bounded_results,
+    "CUTEst bounded constrained Optimization.jl work-precision")
 
 
 using SciMLBenchmarks
